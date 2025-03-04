@@ -417,6 +417,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
     }
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver, private val session: FirSession) {
     var errors: Int = 0
         private set

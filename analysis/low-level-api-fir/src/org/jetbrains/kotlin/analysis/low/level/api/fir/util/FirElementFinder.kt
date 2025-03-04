@@ -116,6 +116,7 @@ internal class FirElementFinder : FirSessionComponent {
                 }
             }
 
+            @OptIn(DirectDeclarationsAccess::class)
             val additionalPathPrefix = firFile.declarations
                 .singleOrNull()
                 .takeIf { it is FirScript }
@@ -304,6 +305,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
     }
 
     companion object {
+        @OptIn(DirectDeclarationsAccess::class)
         fun build(element: FirDeclaration): FirFileStructureNode = when (element) {
             is FirFile -> Container(
                 element = element,

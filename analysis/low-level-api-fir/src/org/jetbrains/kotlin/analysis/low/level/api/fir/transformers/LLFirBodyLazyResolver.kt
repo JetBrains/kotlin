@@ -127,6 +127,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
      */
     override val skipDependencyTargetResolutionStep: Boolean get() = true
 
+    @OptIn(DirectDeclarationsAccess::class)
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
         when (target) {
             is FirRegularClass -> {

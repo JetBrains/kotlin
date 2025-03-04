@@ -81,6 +81,7 @@ sealed class FirClassSymbol<out C : FirClass>(classId: ClassId) : FirClassLikeSy
     val resolvedSuperTypes: List<ConeKotlinType>
         get() = resolvedSuperTypeRefs.map { it.coneType }
 
+    @DirectDeclarationsAccess
     val declarationSymbols: List<FirBasedSymbol<*>>
         get() = fir.declarations.map { it.symbol }
 

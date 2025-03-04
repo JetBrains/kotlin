@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(DirectDeclarationsAccess::class)
 class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private val lombokService: LombokService
         get() = session.lombokService

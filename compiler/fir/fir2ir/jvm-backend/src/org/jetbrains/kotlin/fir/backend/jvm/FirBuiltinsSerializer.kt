@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSession): BuiltinsSerializer {
 
     override fun serialize(filesMetadata: List<MetadataSource.File>): List<Pair<FqName, ByteArray>> {

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -257,6 +258,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         }
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(list: MutableList<TYPE>, name: Name) {
         declarations.mapNotNullTo(list) { declaration ->
             if (declaration is FirCallableDeclaration && declaration.symbol.callableId.callableName == name) {

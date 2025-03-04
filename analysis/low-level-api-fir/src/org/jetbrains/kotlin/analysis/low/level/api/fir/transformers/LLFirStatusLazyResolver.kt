@@ -117,6 +117,7 @@ private class LLFirStatusTargetResolver(
         klass.typeParameters.forEach { it.transformSingle(transformer, data = null) }
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private fun resolveCallableMembers(klass: FirClass) {
         for (member in klass.declarations) {
             if (member !is FirCallableDeclaration || !resolveMode.shouldBeResolved(member)) continue

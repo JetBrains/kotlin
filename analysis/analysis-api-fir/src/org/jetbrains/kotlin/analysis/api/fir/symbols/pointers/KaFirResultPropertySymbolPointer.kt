@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirScript
@@ -29,6 +30,7 @@ internal class KaFirResultPropertySymbolPointer(
             scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript
         } ?: return null
 
+        @OptIn(DirectDeclarationsAccess::class)
         val lastProperty = script.declarations.lastOrNull() as? FirProperty ?: return null
         if (lastProperty.origin !is FirDeclarationOrigin.ScriptCustomization.ResultProperty) return null
         return analysisSession.firSymbolBuilder.variableBuilder.buildPropertySymbol(lastProperty.symbol) as? KaKotlinPropertySymbol

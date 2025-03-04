@@ -168,6 +168,7 @@ internal sealed class LLFirTargetResolver(
         }
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private fun resolveDataClassMemberDependencies(function: FirSimpleFunction) {
         when {
             /**

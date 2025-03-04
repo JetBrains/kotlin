@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -39,6 +40,7 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
             toPhase = toPhase,
         )
 
+        @OptIn(DirectDeclarationsAccess::class)
         if (toPhase == FirResolvePhase.STATUS && fir.declarations.none { it is FirCallableDeclaration }) {
             for (superType in fir.superConeTypes) {
                 val classSymbol = superType.toClassSymbol(session) ?: continue

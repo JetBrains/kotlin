@@ -123,6 +123,7 @@ object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name 
     }
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 abstract class MetadataLegacySerializerPhaseBase(
     name: String
 ) : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact>(

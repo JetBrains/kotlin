@@ -276,6 +276,8 @@ internal fun deserializeClassToSymbol(
 
 private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
     val representation = valueClassRepresentation ?: return null
+
+    @OptIn(DirectDeclarationsAccess::class)
     val constructor = klass.declarations.firstNotNullOfOrNull { declaration ->
         (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
     } ?: errorWithAttachment("Value class must have primary constructor") {

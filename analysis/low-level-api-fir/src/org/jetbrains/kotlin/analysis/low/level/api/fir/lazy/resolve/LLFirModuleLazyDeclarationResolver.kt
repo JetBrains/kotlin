@@ -49,6 +49,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      *
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      */
+    @OptIn(DirectDeclarationsAccess::class)
     fun lazyResolveWithCallableMembers(target: FirRegularClass, toPhase: FirResolvePhase) {
         if (target.resolvePhase >= toPhase && target.declarations.all { it !is FirCallableDeclaration || it.resolvePhase >= toPhase }) {
             return

@@ -924,7 +924,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return null
     }
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun convertNonConstPropertyInitializerFir(property: FirProperty, containingClass: ClassNode): JCExpression? {
         val propertyInitializer = property.initializer ?: return null
         val reference = propertyInitializer.toReference(kaptContext.firSession!!)

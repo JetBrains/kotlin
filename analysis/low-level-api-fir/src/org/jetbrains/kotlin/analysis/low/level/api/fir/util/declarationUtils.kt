@@ -44,6 +44,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
 /**
  * 'Non-local' stands for not local classes/functions/etc.
  */
+@OptIn(DirectDeclarationsAccess::class)
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, provider: FirProvider): FirDeclaration {
     // TODO test what way faster
     if (isPhysical) {
@@ -209,6 +210,7 @@ private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeD
 }
 
 @LLFirInternals
+@OptIn(DirectDeclarationsAccess::class)
 val FirFile.codeFragment: FirCodeFragment
     get() {
         return declarations.singleOrNull() as? FirCodeFragment
@@ -223,15 +225,18 @@ internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Uni
         action(property)
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     for (statement in declarations) {
         action(statement)
     }
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 internal inline fun FirRegularClass.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     declarations.forEach(action)
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 internal inline fun FirFile.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     declarations.forEach(action)
 }
@@ -288,6 +293,8 @@ internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.contai
 
 fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
     val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)
+
+    @OptIn(DirectDeclarationsAccess::class)
     return stringClassSymbol?.fir?.declarations?.singleOrNull {
         it is FirSimpleFunction && it.name == OperatorNameConventions.PLUS
     }?.symbol as? FirNamedFunctionSymbol

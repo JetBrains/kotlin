@@ -104,6 +104,7 @@ internal open class LLFirDiagnosticVisitor(
      * accessible children. For example, a file checker can report a diagnostic on a top-level class, but not its member function.
      */
     private fun commitPendingDiagnosticsOnNestedDeclarations(element: FirElement) {
+        @OptIn(DirectDeclarationsAccess::class)
         val declarationContainer = when (element) {
             // Script `FirFile`s can be checked by file checkers, which report diagnostics on the declarations inside the `FirScript`, so we
             // have to unwrap the script from the file to commit the diagnostics on the script's declarations.

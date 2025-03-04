@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.*
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirRenderer(
     builder: StringBuilder = StringBuilder(),
     override val annotationRenderer: FirAnnotationRenderer? = FirAnnotationRenderer(),

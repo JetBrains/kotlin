@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
         klass: FirClass,

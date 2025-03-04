@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
 // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
+@OptIn(DirectDeclarationsAccess::class)
 fun serializeSingleFirFile(
     file: FirFile, session: FirSession, scopeSession: ScopeSession,
     actualizedExpectDeclarations: Set<FirDeclaration>?,

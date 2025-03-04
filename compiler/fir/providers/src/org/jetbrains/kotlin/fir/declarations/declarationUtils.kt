@@ -85,6 +85,7 @@ fun FirClass.processAllDeclarations(
         it.processAllCallables(processor)
         it.processDeclaredConstructors(processor)
     }
+    @OptIn(DirectDeclarationsAccess::class)
     declarations.forEach {
         if (it !is FirAnonymousInitializer) return@forEach
         processor(it.symbol)

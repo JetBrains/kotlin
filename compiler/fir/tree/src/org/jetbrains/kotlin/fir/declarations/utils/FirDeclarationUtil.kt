@@ -32,9 +32,11 @@ val FirClassLikeDeclaration.classId: ClassId
 
 val FirClass.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNotNull { it.coneTypeSafe() }
 
+@OptIn(DirectDeclarationsAccess::class)
 val FirClass.anonymousInitializers: List<FirAnonymousInitializer>
     get() = declarations.filterIsInstance<FirAnonymousInitializer>()
 
+@DirectDeclarationsAccess
 val FirClass.delegateFields: List<FirField>
     get() = declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
 

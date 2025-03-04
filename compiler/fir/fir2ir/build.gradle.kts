@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
@@ -54,6 +56,14 @@ dependencies {
 optInToObsoleteDescriptorBasedAPI()
 
 val generationRoot = projectDir.resolve("tests-gen")
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+        )
+    )
+}
 
 sourceSets {
     "main" { projectDefault() }

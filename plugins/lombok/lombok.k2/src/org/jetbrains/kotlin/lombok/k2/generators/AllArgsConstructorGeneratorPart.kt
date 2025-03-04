@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -20,7 +21,7 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
             ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
     }
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     override fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField> {
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()

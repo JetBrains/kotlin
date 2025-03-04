@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.assignment.plugin.k2
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirAssignmentPluginAssignAltererExtension(
     session: FirSession
 ) : FirAssignExpressionAltererExtension(session) {

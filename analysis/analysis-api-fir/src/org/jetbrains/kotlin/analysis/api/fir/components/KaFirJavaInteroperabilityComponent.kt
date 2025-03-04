@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
@@ -234,6 +235,7 @@ internal class KaFirJavaInteroperabilityComponent(
                         .firstIsInstanceOrNull<PsiTypeParameterListOwner>()
 
                     if (member != null) {
+                        @OptIn(DirectDeclarationsAccess::class)
                         val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisSession.analysisScope) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354

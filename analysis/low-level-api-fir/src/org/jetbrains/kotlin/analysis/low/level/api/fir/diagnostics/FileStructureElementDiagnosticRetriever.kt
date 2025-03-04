@@ -63,6 +63,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
 
         declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
+        @OptIn(DirectDeclarationsAccess::class)
         val declarationContainer = when (declaration) {
             is FirFile -> declaration.declarations.singleOrNull() as? FirScript ?: declaration
             is FirScript, is FirRegularClass -> declaration

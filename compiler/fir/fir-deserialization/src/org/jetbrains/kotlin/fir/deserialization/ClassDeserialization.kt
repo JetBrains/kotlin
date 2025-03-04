@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
 
+@OptIn(DirectDeclarationsAccess::class)
 fun deserializeClassToSymbol(
     classId: ClassId,
     classProto: ProtoBuf.Class,

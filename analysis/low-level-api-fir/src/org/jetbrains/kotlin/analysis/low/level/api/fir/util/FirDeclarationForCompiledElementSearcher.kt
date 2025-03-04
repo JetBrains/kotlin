@@ -138,6 +138,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         }
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
         val classCandidate = declaration.containingClassOrObject?.let(::findNonLocalClassLikeDeclaration)
             ?: errorWithFirSpecificEntries("Enum entry must have containing class", psi = declaration)

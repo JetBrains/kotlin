@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
@@ -206,6 +207,8 @@ internal class KaFirScopeProvider(
             val declaredScope = (declaredMemberScope as? KaFirDelegatingNamesAwareScope)?.firScope ?: return createEmptyScope()
 
             val fir = getFirForScope()
+
+            @OptIn(DirectDeclarationsAccess::class)
             val delegateFields = fir.delegateFields
 
             if (delegateFields.isEmpty()) {

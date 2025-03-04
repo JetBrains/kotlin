@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToIndex
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirElementSerializer private constructor(
     private val session: FirSession,
     private val scopeSession: ScopeSession,

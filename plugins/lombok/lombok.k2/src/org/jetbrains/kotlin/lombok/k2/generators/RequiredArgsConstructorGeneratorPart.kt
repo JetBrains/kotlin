@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.psi
 
+@OptIn(DirectDeclarationsAccess::class)
 class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<RequiredArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
         return lombokService.getRequiredArgsConstructor(classSymbol)

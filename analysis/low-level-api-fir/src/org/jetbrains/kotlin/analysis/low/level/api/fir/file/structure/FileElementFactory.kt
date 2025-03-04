@@ -46,6 +46,7 @@ internal object FileElementFactory {
         }
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private fun lazyResolveClassGeneratedMembers(firClass: FirRegularClass) {
         val classMembersToResolve = buildList {
             for (member in firClass.declarations) {
