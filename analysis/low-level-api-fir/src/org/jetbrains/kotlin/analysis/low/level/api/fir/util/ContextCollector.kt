@@ -124,7 +124,7 @@ object ContextCollector {
     }
 
     fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
-        val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration(::isValidTarget)
+        val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration { isValidTarget(it) }
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
             if (designationPath != null) {
