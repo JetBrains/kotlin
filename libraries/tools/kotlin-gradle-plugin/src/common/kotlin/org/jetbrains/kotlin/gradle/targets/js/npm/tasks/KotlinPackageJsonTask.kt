@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -135,7 +134,6 @@ constructor(
                 ).disallowChanges()
 
 
-
 //                compilationResolver.map { resolver ->
 //
 //
@@ -155,19 +153,6 @@ constructor(
                         resolver.aggregatedConfiguration
                             .incoming
                             .files
-//                            .artifactView { artifactView ->
-//                                artifactView.componentFilter { componentIdentifier ->
-//                                    componentIdentifier is ProjectComponentIdentifier
-//                                }
-//                            }
-//                            .artifacts
-//                            .artifactFiles // FileCollection
-                            // TODO KT-74735
-//                            .filter @Suppress("DEPRECATION") {
-//                                it.id `is` CompositeProjectComponentArtifactMetadata
-//                            }
-//                            .map { it.file }
-//                            .toSet()
                     }
                 ).disallowChanges()
 
@@ -185,21 +170,6 @@ constructor(
                     it as KotlinPackageJsonTask
                     it.npmResolutionManager.get().isConfiguringState()
                 }
-
-
-//                // TODO remove because we're going to fetch the files using Configuration publicPackageJsonConfigurationName instead
-//                task.dependsOn(
-//                    project.provider {
-//                        findDependentTasks(
-//                            nodeJsRoot.resolver,
-//                            getCompilationResolver(
-//                                nodeJsRoot,
-//                                projectPath,
-//                                compilationDisambiguatedName
-//                            ).compilationNpmResolution
-//                        )
-//                    }
-//                )
 
                 task.dependsOn(nodeJsRoot.npmCachesSetupTaskProvider)
             }
@@ -239,6 +209,6 @@ constructor(
             projectPath: String,
             compilationDisambiguatedName: String,
         ): KotlinCompilationNpmResolver =
-            nodeJsRoot.resolver[projectPath][compilationDisambiguatedName]
+            nodeJsRoot.resolver.get(projectPath).get(compilationDisambiguatedName)
     }
 }
