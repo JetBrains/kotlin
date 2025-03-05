@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -99,8 +100,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val moduleData = BinaryModuleData.createDependencyModuleData(
-                Name.special("<shared dependencies of ${mainModuleName.asString()}")
+            val moduleData = FirBinaryDependenciesModuleData(
+                Name.special("<shared dependencies of ${mainModuleName.asString()}>")
             )
             moduleData.bindSession(this)
 

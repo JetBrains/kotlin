@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -205,8 +204,7 @@ fun createLibraryListForJvm(
     configuration: CompilerConfiguration,
     friendPaths: List<String>
 ): DependencyListForCliModule {
-    val binaryModuleData = BinaryModuleData.initialize(Name.identifier(moduleName))
-    val libraryList = DependencyListForCliModule.build(binaryModuleData) {
+    val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
         dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
         dependencies(configuration.jvmModularRoots.map { it.absolutePath })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())

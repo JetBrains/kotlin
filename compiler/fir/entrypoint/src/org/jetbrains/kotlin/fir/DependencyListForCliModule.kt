@@ -8,10 +8,22 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
+import org.jetbrains.kotlin.name.Name
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class DependencyListForCliModule(
+/**
+ * This class represents the set of dependencies for some source module.
+ *
+ * [moduleDataProvider] is the service which will be used by deserialized symbol
+ * provider to determine to exactly which dependency the deserialized declaration belongs.
+ * There is a contract that any module data returned by [moduleDataProvider] is present in
+ * either [regularDependencies], [dependsOnDependencies] or [friendDependencies].
+ *
+ * The constructor of [DependencyListForCliModule] is an implementation detail,
+ * please use [DependencyListForCliModule.build] functions for creation of new instances.
+ */
+class DependencyListForCliModule @PrivateSessionConstructor constructor(
     val regularDependencies: List<FirModuleData>,
     val dependsOnDependencies: List<FirModuleData>,
     val friendDependencies: List<FirModuleData>,
@@ -23,10 +35,10 @@ class DependencyListForCliModule(
         }
 
         inline fun build(
-            binaryModuleData: BinaryModuleData,
+            mainModuleName: Name,
             init: Builder.BuilderForDefaultDependenciesModule.() -> Unit = {},
         ): DependencyListForCliModule {
-            return build { defaultDependenciesSet(binaryModuleData, init) }
+            return build { defaultDependenciesSet(mainModuleName, init) }
         }
     }
 
@@ -49,27 +61,40 @@ class DependencyListForCliModule(
             dependencies(moduleData, paths, allDependsOnDependencies)
         }
 
-        inline fun defaultDependenciesSet(binaryModuleData: BinaryModuleData, init: BuilderForDefaultDependenciesModule.() -> Unit) {
-            BuilderForDefaultDependenciesModule(binaryModuleData).apply(init)
+        inline fun defaultDependenciesSet(
+            mainModuleName: Name,
+            init: BuilderForDefaultDependenciesModule.() -> Unit,
+        ) {
+            BuilderForDefaultDependenciesModule(
+                regular = createData("<regular dependencies of $mainModuleName>"),
+                dependsOn = createData("<dependsOn dependencies of $mainModuleName>"),
+                friend = createData("<friends dependencies of $mainModuleName>")
+            ).apply(init)
         }
 
-        inner class BuilderForDefaultDependenciesModule(val binaryModuleData: BinaryModuleData) {
+        fun createData(name: String): FirBinaryDependenciesModuleData = FirBinaryDependenciesModuleData(Name.special(name))
+
+        inner class BuilderForDefaultDependenciesModule(
+            val regular: FirBinaryDependenciesModuleData,
+            val dependsOn: FirBinaryDependenciesModuleData,
+            val friend: FirBinaryDependenciesModuleData
+        ) {
             init {
-                allRegularDependencies += binaryModuleData.regular
-                allDependsOnDependencies += binaryModuleData.dependsOn
-                allFriendDependencies += binaryModuleData.friend
+                allRegularDependencies += regular
+                allDependsOnDependencies += dependsOn
+                allFriendDependencies += friend
             }
 
             fun dependencies(paths: Collection<String>) {
-                dependencies(binaryModuleData.regular, paths)
+                dependencies(regular, paths)
             }
 
             fun friendDependencies(paths: Collection<String>) {
-                friendDependencies(binaryModuleData.friend, paths)
+                friendDependencies(friend, paths)
             }
 
             fun dependsOnDependencies(paths: Collection<String>) {
-                dependsOnDependencies(binaryModuleData.dependsOn, paths)
+                dependsOnDependencies(dependsOn, paths)
             }
         }
 
@@ -118,6 +143,7 @@ class DependencyListForCliModule(
             }
 
             val moduleDataProvider = MultipleModuleDataProvider(pathFiltersMap)
+            @OptIn(PrivateSessionConstructor::class)
             return DependencyListForCliModule(
                 regularDependencies = regularDependencies,
                 dependsOnDependencies = dependsOnDependencies,

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.BinaryModuleData
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -42,9 +42,10 @@ object FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing
         kotlinScopeProvider: FirKotlinScopeProvider,
         resolvedLibraries: List<KotlinLibrary>,
     ): List<FirSymbolProvider> {
-        val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(FORWARD_DECLARATIONS_MODULE_NAME).apply {
-            bindSession(session)
-        }
+        val forwardDeclarationsModuleData =
+            FirBinaryDependenciesModuleData(FORWARD_DECLARATIONS_MODULE_NAME).apply {
+                bindSession(session)
+            }
         val provider = NativeForwardDeclarationsSymbolProvider(
             session,
             forwardDeclarationsModuleData,

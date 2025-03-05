@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
@@ -35,18 +36,16 @@ internal inline fun <F> PhaseContext.firFrontend(
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
-    val binaryModuleData = BinaryModuleData.initialize(mainModuleName)
     val dependencyList = DependencyListForCliModule.build {
         val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isCInteropLibrary() }
-        defaultDependenciesSet(binaryModuleData) {
+        defaultDependenciesSet(mainModuleName) {
             dependencies(regularLibs.map { it.libraryFile.absolutePath })
             friendDependencies(config.friendModuleFiles.map { it.absolutePath })
             dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
         }
         if (interopLibs.isNotEmpty()) {
             val interopModuleData =
-                    BinaryModuleData.createDependencyModuleData(
-                            Name.special("<regular interop dependencies of $mainModuleName>"),
+                    FirBinaryDependenciesModuleData(Name.special("<regular interop dependencies of $mainModuleName>"),
                             FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
             dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
