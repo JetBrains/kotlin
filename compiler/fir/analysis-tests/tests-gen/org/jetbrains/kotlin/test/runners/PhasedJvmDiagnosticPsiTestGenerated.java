@@ -52384,6 +52384,77 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestDataPath("$PROJECT_ROOT")
     public class ContextSensitiveResolutionUsingExpectedType {
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CallArgumentPosition {
+        @Test
+        @TestMetadata("ambiguouslyImported.kt")
+        public void testAmbiguouslyImported() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/ambiguouslyImported.kt");
+        }
+
+        @Test
+        @TestMetadata("ambiguouslyImportedInvisible.kt")
+        public void testAmbiguouslyImportedInvisible() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/ambiguouslyImportedInvisible.kt");
+        }
+
+        @Test
+        @TestMetadata("invisibleImported.kt")
+        public void testInvisibleImported() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/invisibleImported.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleOverloads.kt")
+        public void testMultipleOverloads() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/multipleOverloads.kt");
+        }
+
+        @Test
+        @TestMetadata("noContextSensitiveResolutionShouldHappen.kt")
+        public void testNoContextSensitiveResolutionShouldHappen() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/noContextSensitiveResolutionShouldHappen.kt");
+        }
+
+        @Test
+        @TestMetadata("nonEnums.kt")
+        public void testNonEnums() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/nonEnums.kt");
+        }
+
+        @Test
+        @TestMetadata("pcla.kt")
+        public void testPcla() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/pcla.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleDisabledFeature.kt")
+        public void testSimpleDisabledFeature() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/simpleDisabledFeature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleGeneric.kt")
+        public void testSimpleGeneric() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/simpleGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("varargs.kt")
+        public void testVarargs() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/varargs.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition")
       @TestDataPath("$PROJECT_ROOT")
       public class TypePosition {
