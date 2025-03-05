@@ -6,7 +6,7 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 
 fun box(): String {
-    val df = @Import DataFrame.read("https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv")
+    val df = dataFrameOf("full_name", "a", "b")(1, 2, 3)
     df.full_name
     return "OK"
 }

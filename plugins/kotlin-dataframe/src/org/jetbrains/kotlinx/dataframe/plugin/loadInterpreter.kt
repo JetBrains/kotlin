@@ -37,11 +37,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Match0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Preserve0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Preserve1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Properties0
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Read0
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadCSV0
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadDelimStr
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadJson0
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadJsonStr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Remove0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Rename
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameInto
@@ -107,7 +102,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameXs
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataRowReadJsonStr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Drop0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Drop1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Drop2
@@ -163,9 +157,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameMapping
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColumnsConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
@@ -284,7 +276,6 @@ internal inline fun <reified T> String.load(): T {
         "With0" -> With0()
         "PerRowCol" -> PerRowCol()
         "Explode0" -> Explode0()
-        "Read0" -> Read0()
         "Insert0" -> Insert0()
         "Insert1" -> Insert1()
         "Insert2" -> Insert2()
@@ -296,8 +287,6 @@ internal inline fun <reified T> String.load(): T {
         "Under4" -> Under4()
         "Join0" -> Join0()
         "Match0" -> Match0()
-        "ReadJson0" -> ReadJson0()
-        "ReadCSV0" -> ReadCSV0()
         "Rename" -> Rename()
         "RenameMapping" -> RenameMapping()
         "Select0" -> Select0()
@@ -317,9 +306,6 @@ internal inline fun <reified T> String.load(): T {
         "RenameInto" -> RenameInto()
         "DataFrameGroupBy" -> DataFrameGroupBy()
         "AggregateDslInto" -> AggregateDslInto()
-        "ReadJsonStr" -> ReadJsonStr()
-        "DataRowReadJsonStr" -> DataRowReadJsonStr()
-        "ReadDelimStr" -> ReadDelimStr()
         "GroupByToDataFrame" -> GroupByToDataFrame()
         "GroupByInto" -> GroupByInto()
         "ToDataFrameFrom0" -> ToDataFrameFrom()
@@ -397,8 +383,6 @@ internal inline fun <reified T> String.load(): T {
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         "ToDataFrameColumn" -> ToDataFrameColumn()
-        "StringColumns" -> StringColumnsConstructor()
-        "ReadExcel" -> ReadExcel()
         "FillNulls0" -> FillNulls0()
         "UpdateWith0" -> UpdateWith0()
         "Flatten0" -> Flatten0()
