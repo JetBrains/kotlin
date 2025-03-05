@@ -332,10 +332,9 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             val components = buildMap {
                 put("Init", unitStats.initStats?.millis ?: 0)
                 put("Analysis", unitStats.analysisStats?.millis ?: 0)
-
-                unitStats.translationToIrStats?.millis?.let { put("Translation to IR", it) }
-                unitStats.irLoweringStats?.millis?.let { put("IR Lowering", it) }
-                unitStats.backendStats?.millis?.let { put("Backend", it) }
+                unitStats.translationToIrStats?.millis?.let { put("Translation", it) }
+                unitStats.irLoweringStats?.millis?.let { put("Lowering", it) }
+                unitStats.backendStats?.millis?.let { put("Generation", it) }
             }
 
             return CumulativeTime(
