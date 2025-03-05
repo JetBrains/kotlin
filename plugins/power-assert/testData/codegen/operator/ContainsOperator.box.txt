@@ -1,16 +1,16 @@
----
+test1: ---
 assert("Name" in listOf("Hello", "World"))
               |  |
               |  [Hello, World]
               false
 ---
----
+test2: ---
 assert(" in " in listOf("Hello", "World"))
               |  |
               |  [Hello, World]
               false
 ---
----
+test3: ---
 assert(
     " in "
 
@@ -24,17 +24,29 @@ assert(
 
 )
 ---
----
+test4: ---
 assert("Name"/*in*/in/*in*/listOf("Hello", "World"))
                    |       |
                    |       [Hello, World]
                    false
 ---
----
+test5: ---
 assert(("Name" in listOf("Hello", "World")) in listOf(true))
                |  |                         |  |
                |  |                         |  [true]
                |  |                         false
                |  [Hello, World]
                false
+---
+test6: ---
+assert(str in "Hello")
+       |
+       false
+       a
+---
+test7: ---
+assert(char in "Hello")
+       |
+       false
+       a
 ---
