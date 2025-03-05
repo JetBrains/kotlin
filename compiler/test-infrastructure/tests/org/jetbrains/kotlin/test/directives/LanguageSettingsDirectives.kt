@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
@@ -62,6 +63,11 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val EXPLICIT_RETURN_TYPES_MODE by enumDirective(
         "Configures explicit API mode (AnalysisFlags.explicitReturnTypes)",
         additionalParser = ExplicitApiMode.Companion::fromString
+    )
+
+    val RETURN_VALUE_CHECKER_MODE by enumDirective(
+        "Configures return value checker mode (AnalysisFlags.returnValueCheckerMode)",
+        additionalParser = ReturnValueCheckerMode.Companion::fromString
     )
 
     val ALLOW_KOTLIN_PACKAGE by directive(

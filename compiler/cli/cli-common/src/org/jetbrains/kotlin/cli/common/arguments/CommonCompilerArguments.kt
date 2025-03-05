@@ -575,6 +575,17 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
+        value = "-Xreturn-value-checker",
+        valueDescription = "{check|full|disable}",
+        description = """Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."""
+    )
+    var returnValueChecker: String = ReturnValueCheckerMode.DISABLED.state
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xinference-compatibility",
         description = "Enable compatibility changes for the generic type inference algorithm."
     )
@@ -909,6 +920,10 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
             fillWarningLevelMap(collector)
+            ReturnValueCheckerMode.fromString(returnValueChecker)?.also { put(AnalysisFlags.returnValueCheckerMode, it) } ?: collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Unknown value for parameter -Xreturn-value-checker: '$returnValueChecker'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
+            )
         }
     }
 

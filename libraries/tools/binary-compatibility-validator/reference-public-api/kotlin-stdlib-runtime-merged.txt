@@ -74,6 +74,9 @@ public abstract interface annotation class kotlin/ExtensionFunctionType : java/l
 public abstract interface class kotlin/Function {
 }
 
+public abstract interface annotation class kotlin/IgnorableReturnValue : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/KotlinNothingValueException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
@@ -137,6 +140,9 @@ public abstract interface annotation class kotlin/Metadata : java/lang/annotatio
 	public abstract fun pn ()Ljava/lang/String;
 	public abstract fun xi ()I
 	public abstract fun xs ()Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/MustUseReturnValue : java/lang/annotation/Annotation {
 }
 
 public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {

@@ -9155,6 +9155,71 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crv")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Crv {
+      @Test
+      @TestMetadata("assignments.kt")
+      public void testAssignments() {
+        runTest("compiler/testData/diagnostics/tests/crv/assignments.kt");
+      }
+
+      @Test
+      @TestMetadata("basic.kt")
+      public void testBasic() {
+        runTest("compiler/testData/diagnostics/tests/crv/basic.kt");
+      }
+
+      @Test
+      @TestMetadata("casts.kt")
+      public void testCasts() {
+        runTest("compiler/testData/diagnostics/tests/crv/casts.kt");
+      }
+
+      @Test
+      @TestMetadata("classesAndThis.kt")
+      public void testClassesAndThis() {
+        runTest("compiler/testData/diagnostics/tests/crv/classesAndThis.kt");
+      }
+
+      @Test
+      @TestMetadata("controlFlow.kt")
+      public void testControlFlow() {
+        runTest("compiler/testData/diagnostics/tests/crv/controlFlow.kt");
+      }
+
+      @Test
+      @TestMetadata("exclusions.kt")
+      public void testExclusions() {
+        runTest("compiler/testData/diagnostics/tests/crv/exclusions.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdas.kt")
+      public void testLambdas() {
+        runTest("compiler/testData/diagnostics/tests/crv/lambdas.kt");
+      }
+
+      @Test
+      @TestMetadata("loops.kt")
+      public void testLoops() {
+        runTest("compiler/testData/diagnostics/tests/crv/loops.kt");
+      }
+
+      @Test
+      @TestMetadata("nullability.kt")
+      public void testNullability() {
+        runTest("compiler/testData/diagnostics/tests/crv/nullability.kt");
+      }
+
+      @Test
+      @TestMetadata("scopes.kt")
+      public void testScopes() {
+        runTest("compiler/testData/diagnostics/tests/crv/scopes.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {
