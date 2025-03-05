@@ -31,7 +31,6 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         nativeProject(
             "generic-kmp-app-plus-lib-with-tests",
@@ -51,7 +50,6 @@ class LoggingConfigurationJvmIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("jvmTargetModernDsl")
-    @BrokenOnMacosTest
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         project("jvmTargetModernDsl", gradleVersion) {
             checkLoggingConfigurations("build.gradle.kts", ":compileKotlin", defaultBuildOptions)
@@ -90,7 +88,8 @@ private fun TestProject.checkLoggingConfigurations(gradleKtsPath: String, mainCo
 }
 
 private fun TestProject.checkDebugLogPlusImplicitVerboseTrue(mainCompileTask: String, buildOptions: BuildOptions) {
-    build("clean", mainCompileTask, buildOptions = buildOptions) {
+    // KT-75850: we need to explicitly invalidate the CC here,as changing the logLevel doesn't trigger it
+    build("clean", "-PinvalidateCC${generateIdentifier()}", mainCompileTask, buildOptions = buildOptions) {
         assertOutputContains("[DEBUG]")
         assertOutputContains("Kotlin compiler args:.*-verbose".toRegex())
         assertOutputContains("IncrementalCompilationOptions.*reportSeverity=3".toRegex())
