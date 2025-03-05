@@ -67,6 +67,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseContentScopeProvider"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinOptimizingGlobalSearchScopeMerger"
+    />
+
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>

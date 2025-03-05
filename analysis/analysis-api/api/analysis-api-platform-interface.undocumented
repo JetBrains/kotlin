@@ -73,6 +73,7 @@ permissions/KotlinAnalysisPermissionOptions.kt:Companion:getInstance()
 permissions/KotlinDefaultAnalysisPermissionOptions.kt:KotlinDefaultAnalysisPermissionOptions
 projectStructure/KaContentScopeProvider.kt:Companion:getInstance(Project)
 projectStructure/KaDanglingFileModuleImpl.kt:KaDanglingFileModuleImpl
+projectStructure/KaGlobalSearchScopeMerger.kt:Companion:getInstance(Project)
 projectStructure/KaModuleBase.kt:abstract KaModuleBase
 projectStructure/KaResolutionScope.kt:Companion:forModule(KaModule)
 projectStructure/KaResolutionScopeProvider.kt:Companion:getInstance(Project)
@@ -82,7 +83,8 @@ projectStructure/KotlinCompilerPluginsProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinCompilerPluginsProvider.kt:KotlinCompilerPluginsProvider:enum CompilerPluginType
 projectStructure/KotlinContentScopeRefiner.kt:Companion:EP_NAME
 projectStructure/KotlinContentScopeRefiner.kt:Companion:getRefiners(Project)
-projectStructure/KotlinGlobalSearchScopeMerger.kt:Companion:getInstance(Project)
+projectStructure/KotlinGlobalSearchScopeMergeStrategy.kt:Companion:EP_NAME
+projectStructure/KotlinGlobalSearchScopeMergeStrategy.kt:Companion:getMergeStrategies(Project)
 projectStructure/KotlinModuleDependentsProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinModuleDependentsProviderBase.kt:abstract KotlinModuleDependentsProviderBase
 projectStructure/KotlinModuleOutputProvider.kt:Companion:getInstance(Project)

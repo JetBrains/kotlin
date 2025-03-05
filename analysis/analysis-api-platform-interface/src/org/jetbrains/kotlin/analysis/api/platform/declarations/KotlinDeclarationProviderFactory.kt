@@ -39,7 +39,7 @@ public interface KotlinDeclarationProviderFactory : KotlinPlatformComponent {
  * [createDeclarationProvider]. [KotlinDeclarationProviderMerger] should implement proper merging logic that takes these concerns into
  * account.
  *
- * The provider merger should consider merging scopes with [KotlinGlobalSearchScopeMerger][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger]
+ * The provider merger should consider merging scopes with [KaGlobalSearchScopeMerger][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger]
  * if there is a useful implementation provided by the platform.
  */
 public interface KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
