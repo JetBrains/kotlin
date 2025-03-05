@@ -540,6 +540,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     isInline = false,
                     isExpect = false,
                     modality = Modality.FINAL,
+                    // k/wasm and k/js rely on signatures, therefore we must set a "unique" signature here
                     symbol = IrSimpleFunctionSymbolImpl(signature = IdSignature.LoweredDeclarationSignature(parentField.symbol.signature!!, -1, 0)),
                     isTailrec = false,
                     isSuspend = false,
