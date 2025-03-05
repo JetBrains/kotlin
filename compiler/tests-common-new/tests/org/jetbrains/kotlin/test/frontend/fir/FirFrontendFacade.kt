@@ -136,7 +136,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
         for (module in modules) {
             val regularModules = libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module)
-            val friendModules = libraryList.friendsDependencies + moduleInfoProvider.getDependentFriendSourceModules(module)
+            val friendModules = libraryList.friendDependencies + moduleInfoProvider.getDependentFriendSourceModules(module)
             val dependsOnModules = libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module)
 
             val moduleData = FirSourceModuleData(

@@ -155,7 +155,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             Name.identifier("$rootModuleName-common"),
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
-            dependencyList.friendsDependencies,
+            dependencyList.friendDependencies,
             CommonPlatforms.defaultCommonPlatform,
         )
 
@@ -163,7 +163,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             Name.identifier(rootModuleName),
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies + commonModuleData,
-            dependencyList.friendsDependencies,
+            dependencyList.friendDependencies,
             JvmPlatforms.jvm8,
         )
 
