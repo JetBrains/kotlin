@@ -12,7 +12,9 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergerStrategyProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergerStrategyProvider
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
 @OptIn(KaImplementationDetail::class)
@@ -41,6 +43,10 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
 
         with(project.extensionArea.getExtensionPoint(KotlinContentScopeRefiner.EP_NAME)) {
             registerExtension(KaResolveExtensionToContentScopeRefinerBridge(), disposable)
+        }
+
+        with(project.extensionArea.getExtensionPoint(KotlinGlobalSearchScopeMergerStrategyProvider.EP_NAME)) {
+            registerExtension(KotlinResolveExtensionGeneratedFileScopeMergerStrategyProvider(), disposable)
         }
     }
 }
