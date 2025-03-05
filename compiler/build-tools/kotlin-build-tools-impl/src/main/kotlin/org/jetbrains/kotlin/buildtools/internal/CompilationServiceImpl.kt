@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -156,6 +157,7 @@ internal object CompilationServiceImpl : CompilationService {
         arguments: List<String>,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
+        setupIdeaStandaloneExecution()
         val compiler = K2JVMCompiler()
         val parsedArguments = compiler.createArguments()
         parseCommandLineArguments(arguments, parsedArguments)
