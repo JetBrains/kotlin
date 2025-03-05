@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendCo
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -176,9 +175,8 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             testServices.compilerConfigurationProvider.getPackagePartProviderFactory(emptyModule)
         )
         val moduleName = Name.identifier(emptyModule.name)
-        val binaryModuleData = BinaryModuleData.initialize(moduleName)
         val libraryList = FirFrontendFacade.initializeLibraryList(
-            emptyModule, binaryModuleData, targetPlatform, configuration, testServices
+            emptyModule, moduleName, targetPlatform, configuration, testServices
         )
 
         val session = prepareSessions(

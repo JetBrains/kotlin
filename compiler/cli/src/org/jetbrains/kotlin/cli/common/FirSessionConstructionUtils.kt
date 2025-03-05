@@ -369,6 +369,7 @@ object SessionConstructionUtils {
     ): SessionWithSources<F> =
         createSingleSession(
             scripts, Name.identifier("${rootModuleName.asString()}-scripts"),
+            @OptIn(PrivateSessionConstructor::class)
             DependencyListForCliModule(
                 libraryList.regularDependencies,
                 listOf(lastModuleData),

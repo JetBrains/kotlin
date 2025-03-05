@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.lookupTracker
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -47,7 +46,6 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import java.nio.file.Paths
 
 object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
@@ -225,8 +223,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 WasmTarget.WASI -> WasmPlatforms.wasmWasi
             }
         } else JsPlatforms.defaultJsPlatform
-        val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName)
-        val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
+        val dependencyList = DependencyListForCliModule.build(escapedMainModuleName) {
             dependencies(libraries)
             friendDependencies(friendLibraries)
             // TODO: !!! dependencies module data?
