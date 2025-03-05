@@ -1,5 +1,5 @@
 Invalidated sessions:
 fragment1.kt
 fragment2.kt
-library
+library (resolvable session)
 sourceModule

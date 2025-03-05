@@ -46,7 +46,16 @@ internal class AnalysisTestSession(
         get() = underlyingSession.isValid()
 
     override val description: String
-        get() = ktTestModule.ktModule.toString()
+        get() = buildString {
+            val kaModule = ktTestModule.ktModule
+            append(kaModule)
+
+            // Analysis sessions are always "resolvable", so we're marking the analysis session for a `KaLibraryModule` as a resolvable
+            // session to be consistent with the LL FIR test results.
+            if (kaModule is KaLibraryModule) {
+                append(" (resolvable session)")
+            }
+        }
 }
 
 abstract class AbstractModuleStateModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {

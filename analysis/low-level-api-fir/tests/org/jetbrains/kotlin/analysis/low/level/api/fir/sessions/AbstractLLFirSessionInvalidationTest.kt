@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.TestSession
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -38,7 +39,13 @@ internal class LLTestSession(
         get() = underlyingSession.isValid
 
     override val description: String
-        get() = ktTestModule.ktModule.toString()
+        get() = buildString {
+            val kaModule = ktTestModule.ktModule
+            append(kaModule)
+            if (kaModule is KaLibraryModule && underlyingSession is LLFirResolvableModuleSession) {
+                append(" (resolvable session)")
+            }
+        }
 }
 
 abstract class AbstractModuleStateModificationLLFirSessionInvalidationTest : AbstractLLFirSessionInvalidationTest() {

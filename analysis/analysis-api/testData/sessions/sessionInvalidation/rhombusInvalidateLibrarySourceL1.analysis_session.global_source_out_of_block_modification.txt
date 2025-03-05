@@ -4,4 +4,4 @@ B
 C
 D
 L1
-L2
+L2 (resolvable session)

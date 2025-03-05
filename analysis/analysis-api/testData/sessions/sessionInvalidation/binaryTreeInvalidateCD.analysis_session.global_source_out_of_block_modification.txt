@@ -6,5 +6,5 @@ D
 E
 F
 G
-L1
-L2
+L1 (resolvable session)
+L2 (resolvable session)

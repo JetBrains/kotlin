@@ -3,5 +3,5 @@ A
 B
 C
 D
-L1
+L1 (resolvable session)
 L2
