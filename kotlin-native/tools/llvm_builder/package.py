@@ -254,7 +254,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     Downloads a single commit from the given repository.
     """
     default_repo = "https://github.com/Kotlin/llvm-project"
-    default_branch = "kotlin/llvm-16.0.0-apple" if host_is_darwin() else "kotlin/llvm-16.0.0"
+    default_branch = "haitaka/kotlin/llvm-19.1-apple" # if host_is_darwin() else "kotlin/llvm-16.0.0"
     repo = default_repo if repo is None else repo
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
