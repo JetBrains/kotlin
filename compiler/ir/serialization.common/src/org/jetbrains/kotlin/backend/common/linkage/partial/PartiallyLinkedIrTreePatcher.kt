@@ -533,6 +533,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 val stabilityField = owner
 
+                // We use stageController to make sure valid unique signatures are generated for k/js and k/wasm
                 val stabilityGetter = builtIns.irFactory.stageController.restrictTo(parentField) {
                     builtIns.irFactory.buildFun {
                         startOffset = UNDEFINED_OFFSET
@@ -565,9 +566,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 val getterFunName = owner.name.asString().removeSuffix(COMPOSE_STABLE_FIELD_MARKER) + COMPOSE_STABILITY_GETTER_MARKER
                 val artificialGetterFunName = $$"$$getterFunName$artificial"
                 return (owner.parent as? IrDeclarationContainer)?.let { parent ->
-                    parent.findDeclaration<IrSimpleFunction> { it.name.asString() == getterFunName }
-                        ?: parent.findDeclaration<IrSimpleFunction> { it.name.asString() == artificialGetterFunName }   // try to find already-crafted artificial getter
-                        ?: generateArtificialStabilityGetter(artificialGetterFunName, parent, owner)                           // generate one if none found
+                    parent.findDeclaration<IrSimpleFunction> {
+                        it.name.asString() == getterFunName ||
+                                it.name.asString() == artificialGetterFunName // try to find already-crafted artificial getter
+                    } ?: generateArtificialStabilityGetter(artificialGetterFunName, parent, owner) // generate one if none found
                 }
 
             }
