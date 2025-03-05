@@ -141,7 +141,7 @@ internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymb
 
     override val isOverrideImpl: Boolean
         get() = withValidityAssertion {
-            // The existence of `override` keyword doesn't guaranty that the setter overrides something
+            // The existence of the `override` keyword doesn't guarantee that the setter overrides something
             // as its base version may have `val`
             owningKaProperty.isOverride && firSymbol.isSetterOverride(analysisSession)
         }
