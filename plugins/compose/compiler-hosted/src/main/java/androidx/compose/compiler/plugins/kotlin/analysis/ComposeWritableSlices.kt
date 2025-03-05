@@ -1,6 +1,5 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
-import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.lower.KeyInfo
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -25,7 +24,5 @@ object ComposeWritableSlices {
     val HAS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val FUNCTION_METRICS: WritableSlice<IrElement, FunctionMetrics> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }

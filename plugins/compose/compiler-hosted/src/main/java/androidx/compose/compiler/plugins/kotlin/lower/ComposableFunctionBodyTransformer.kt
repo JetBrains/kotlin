@@ -622,7 +622,7 @@ class ComposableFunctionBodyTransformer(
                 encounteredCapturedComposableCall()
             }
             metrics.recordFunction(scope.metrics)
-            context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, declaration, scope.metrics)
+            declaration.functionMetrics = scope.metrics
         }
     }
 
