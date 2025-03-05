@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTestFailureExpectation
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.util.jetbrainsAnnotationDependencies
 import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
@@ -73,15 +72,14 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    @BrokenOnMacosTest(failureExpectation = BrokenOnMacosTestFailureExpectation.AFTER_AGP_8_5_0)
     fun `test - simple project - ide dependency resolution`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "externalAndroidTarget-simple",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-            buildJdk = jdkVersion.location
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion).disableConfigurationCache_KT70416(),
+            buildJdk = jdkVersion.location,
         ) {
             resolveIdeDependencies { dependencies ->
                 dependencies["androidMain"].assertMatches(
