@@ -26,8 +26,8 @@ class BinaryModuleData(
 
             return BinaryModuleData(
                 createData("<regular dependencies of $mainModuleName>"),
-                createData("<dependsOn dependencies of $mainModuleName"),
-                createData("<friends dependencies of $mainModuleName")
+                createData("<dependsOn dependencies of $mainModuleName>"),
+                createData("<friends dependencies of $mainModuleName>")
             )
         }
     }
