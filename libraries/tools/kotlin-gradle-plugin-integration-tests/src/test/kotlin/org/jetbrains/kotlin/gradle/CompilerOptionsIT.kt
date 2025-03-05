@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
+import org.jetbrains.kotlin.gradle.utils.named
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
@@ -484,29 +487,23 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Syncs languageSettings changes to the related compiler options")
     @MppGradlePluginTests
-    @BrokenOnMacosTest
     fun syncLanguageSettingsToCompilerOptions(gradleVersion: GradleVersion) {
         project("mpp-default-hierarchy", gradleVersion) {
-            buildGradle.appendText(
-                //language=groovy
-                """
-                |
-                |kotlin.sourceSets.configureEach {
-                |    languageSettings.apiVersion = "1.7"
-                |    languageSettings.languageVersion = "1.8"
-                |}
-                |
-                |tasks.register("printCompilerOptions") {
-                |    dependsOn(kotlinTaskToCheck)
-                |    def tasksContainer = project.tasks
-                |    doLast {
-                |        def kotlinTask = tasks.getByName(kotlinTaskToCheck) as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<?>
-                |        logger.warn("###AV:${'$'}{kotlinTask.compilerOptions.apiVersion.getOrNull()}")
-                |        logger.warn("###LV:${'$'}{kotlinTask.compilerOptions.languageVersion.getOrNull()}")
-                |    }
-                |}
-                """.trimMargin()
-            )
+            buildScriptInjection {
+                kotlinMultiplatform.sourceSets.configureEach { sourceSet ->
+                    sourceSet.languageSettings.apiVersion = "1.7"
+                    sourceSet.languageSettings.languageVersion = "1.8"
+                }
+                project.tasks.register("printCompilerOptions") { task ->
+                    val taskName = project.property("kotlinTaskToCheck") as String
+                    task.dependsOn(taskName)
+                    val compilerOptionsProvider = project.tasks.named<KotlinCompilationTask<*>>(taskName).map { it.compilerOptions }
+                    task.doLast {
+                        it.logger.warn("###AV:${compilerOptionsProvider.get().apiVersion.getOrNull()}")
+                        it.logger.warn("###LV:${compilerOptionsProvider.get().languageVersion.getOrNull()}")
+                    }
+                }
+            }
 
             listOf(
                 "compileCommonMainKotlinMetadata",
@@ -528,33 +525,29 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @GradleTest
     @DisplayName("Syncs compiler option changes to the related language settings")
     @MppGradlePluginTests
-    @BrokenOnMacosTest
     fun syncCompilerOptionsToLanguageSettings(gradleVersion: GradleVersion) {
         project("mpp-default-hierarchy", gradleVersion) {
-            buildGradle.appendText(
-                //language=groovy
-                """
-                |
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).all {
-                |    compilerOptions {
-                |        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7
-                |        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
-                |    }
-                |}
-                |
-                |tasks.register("printLanguageSettingsOptions") {
-                |    doLast {
-                |        def languageSettings = kotlin.sourceSets.getByName(kotlinSourceSet).languageSettings
-                |        logger.warn("")
-                |        logger.warn("###AV:${'$'}{languageSettings.apiVersion}")
-                |        logger.warn("###LV:${'$'}{languageSettings.languageVersion}")
-                |    }
-                |}
-                """.trimMargin()
-            )
+            buildScriptInjection {
+                project.tasks.withType(KotlinCompilationTask::class.java).all { task ->
+                    task.compilerOptions.apiVersion.set(KotlinVersion.KOTLIN_1_7)
+                    task.compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                }
+                project.tasks.register("printLanguageSettingsOptions") { task ->
+                    val languageSettingsProvider = project.provider {
+                        val sourceSetName = project.property("kotlinSourceSet") as String
+                        kotlinMultiplatform.sourceSets.getByName(sourceSetName).languageSettings
+                    }
+                    task.doLast {
+                        it.logger.warn("")
+                        it.logger.warn("###AV:${languageSettingsProvider.get().apiVersion}")
+                        it.logger.warn("###LV:${languageSettingsProvider.get().languageVersion}")
+                    }
+                }
+            }
 
             listOf(
                 "commonMain",
