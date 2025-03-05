@@ -40,13 +40,13 @@ assert(("Name" in listOf("Hello", "World")) in listOf(true))
 ---
 test6: ---
 assert(str in "Hello")
-       |
-       false
+       |   |
+       |   false
        a
 ---
 test7: ---
 assert(char in "Hello")
-       |
-       false
+       |    |
+       |    false
        a
 ---
