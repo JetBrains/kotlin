@@ -776,13 +776,14 @@ class IrDeclarationDeserializer(
                 .mapNotNull { it.get(IrDeclarationOrigin.Companion) as? IrDeclarationOriginImpl }
                 .associateBy { it.name }
         }
+        private val unknownDeclarationOriginCache = mutableMapOf<String, IrDeclarationOrigin>()
     }
 
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOrigin {
         val originName = libraryFile.string(protoName)
         return IrDeclarationOrigin.GeneratedByPlugin.fromSerializedString(originName)
             ?: declarationOriginIndex[originName]
-            ?: IrDeclarationOriginImpl(originName)
+            ?: unknownDeclarationOriginCache.getOrPut(originName) { IrDeclarationOriginImpl(originName) }
     }
 
     fun deserializeDeclaration(proto: ProtoDeclaration, setParent: Boolean = true): IrDeclaration {

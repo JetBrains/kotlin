@@ -930,7 +930,7 @@ class IrBodyDeserializer(
         return if (originName.startsWith(componentPrefix))
             IrStatementOrigin.COMPONENT_N.withIndex(originName.removePrefix(componentPrefix).toInt())
         else
-            statementOriginIndex[originName] ?: error("Unexpected statement origin: $originName")
+            statementOriginIndex[originName] ?: unknownStatementOriginCache.getOrPut(originName) { IrStatementOriginImpl(originName) }
     }
 
     /**
@@ -973,5 +973,6 @@ class IrBodyDeserializer(
             .declaredMemberProperties
             .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
             .associateBy { it.debugName }
+        private val unknownStatementOriginCache = mutableMapOf<String, IrStatementOrigin>()
     }
 }
