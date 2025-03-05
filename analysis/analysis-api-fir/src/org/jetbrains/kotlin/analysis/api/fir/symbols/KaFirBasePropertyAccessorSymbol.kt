@@ -32,13 +32,35 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 /**
  * Provides base implementation for property accessors
  */
-internal interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<KtPropertyAccessor, FirPropertyAccessorSymbol> {
+internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<KtPropertyAccessor, FirPropertyAccessorSymbol> {
     val owningKaProperty: KaFirKotlinPropertySymbol<*>
+
+    private val isGetter: Boolean get() = this is KaFirBasePropertyGetterSymbol
 
     override val lazyFirSymbol: Lazy<FirPropertyAccessorSymbol>
         get() = throw UnsupportedOperationException()
 
-    abstract override val firSymbol: FirPropertyAccessorSymbol
+    override val backingPsi: KtPropertyAccessor?
+        get() {
+            val property = owningKaProperty.backingPsi as? KtProperty ?: return null
+            return if (isGetter) {
+                property.getter
+            } else {
+                property.setter
+            }
+        }
+
+    override val firSymbol: FirPropertyAccessorSymbol
+        get() {
+            val propertySymbol = owningKaProperty.firSymbol
+            return if (isGetter) {
+                propertySymbol.getterSymbol
+            } else {
+                propertySymbol.setterSymbol
+            } ?: errorWithAttachment("${if (isGetter) "Getter" else "Setter"} is not found") {
+                withFirSymbolEntry("property", propertySymbol)
+            }
+        }
 
     override val analysisSession: KaFirSession
         get() = owningKaProperty.analysisSession
@@ -109,46 +131,32 @@ internal interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<KtProper
     val hasStableParameterNamesImpl: Boolean
         get() = withValidityAssertion { true }
 
+    private val annotationUseSiteTarget: AnnotationUseSiteTarget
+        get() = if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
+
     val annotationsImpl: KaAnnotationList
-    val isOverrideImpl: Boolean
-}
-
-internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymbol {
-    override val backingPsi: KtPropertyAccessor?
-        get() = (owningKaProperty.backingPsi as? KtProperty)?.getter
-
-    override val firSymbol: FirPropertyAccessorSymbol
-        get() = owningKaProperty.firSymbol.getterSymbol ?: errorWithAttachment("Getter is not found") {
-            withFirSymbolEntry("property", owningKaProperty.firSymbol)
-        }
-
-    override val isOverrideImpl: Boolean
-        get() = withValidityAssertion {
-            owningKaProperty.ifSource { owningKaProperty.backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                ?: (firSymbol.isOverride || firSymbol.fir.propertySymbol.isOverride)
-        }
-
-    override val annotationsImpl: KaAnnotationList
         get() = withValidityAssertion {
             if (backingPsi?.annotationEntries.isNullOrEmpty() &&
-                owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) == false
+                owningKaProperty.backingPsi?.hasAnnotation(annotationUseSiteTarget) == false
             ) {
                 KaBaseEmptyAnnotationList(token)
             } else {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             }
         }
+
+    val isOverrideImpl: Boolean
+}
+
+internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymbol {
+    override val isOverrideImpl: Boolean
+        get() = withValidityAssertion {
+            owningKaProperty.ifSource { owningKaProperty.backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                ?: (firSymbol.isOverride || firSymbol.fir.propertySymbol.isOverride)
+        }
 }
 
 internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymbol {
-    override val backingPsi: KtPropertyAccessor?
-        get() = (owningKaProperty.backingPsi as? KtProperty)?.setter
-
-    override val firSymbol: FirPropertyAccessorSymbol
-        get() = owningKaProperty.firSymbol.setterSymbol ?: errorWithAttachment("Setter is not found") {
-            withFirSymbolEntry("property", owningKaProperty.firSymbol)
-        }
-
     override val returnTypeImpl: KaType
         get() = withValidityAssertion { analysisSession.builtinTypes.unit }
 
@@ -157,17 +165,6 @@ internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymb
             // The existence of the `override` keyword doesn't guarantee that the setter overrides something
             // as its base version may have `val`
             owningKaProperty.isOverride && firSymbol.isSetterOverride(analysisSession)
-        }
-
-    override val annotationsImpl: KaAnnotationList
-        get() = withValidityAssertion {
-            if (backingPsi?.annotationEntries.isNullOrEmpty() &&
-                owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_SETTER) == false
-            ) {
-                KaBaseEmptyAnnotationList(token)
-            } else {
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-            }
         }
 
     val parameterImpl: KaValueParameterSymbol
