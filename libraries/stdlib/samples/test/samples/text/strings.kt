@@ -549,8 +549,7 @@ class Strings {
         assertPrints(regexLimit, "[a, b, c3d4e]")
 
         val emptyString = "".split(",")
-        assertPrints(emptyString, "[]")
-        assertPrints("Size of empty string split result: ${emptyString.size}", "Size of empty string split result: 1")
+        assertEquals(listOf(""), emptyString)
     }
 
     @Sample
