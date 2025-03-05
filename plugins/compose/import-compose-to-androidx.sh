@@ -21,15 +21,7 @@ fi
 composeSnapshotRepoPath="$androidxPath/compose/compiler/compose-compiler-snapshot-repository/"
 androidxVersionsPath="$androidxPath/gradle/libs.versions.toml"
 
-./gradlew \
-  -Dmaven.repo.local="$composeSnapshotRepoPath" \
-  :kotlin-stdlib:install \
-  :kotlin-script-runtime:install \
-  :kotlin-daemon-embeddable:install \
-  :kotlin-compiler-embeddable:install \
-  :plugins:compose:compiler:install \
-  :kotlinx-serialization-compiler-plugin.embeddable:install \
-  :kotlin-parcelize-compiler:install
+./gradlew -Dmaven.repo.local="$composeSnapshotRepoPath" install
 
 # Substitute compose compiler snapshot version in libs.versions.toml
 sed -i '' -E 's/composeCompilerPlugin = "[^"]+"/composeCompilerPlugin = "2.2.255-SNAPSHOT"/g' "$androidxVersionsPath"
