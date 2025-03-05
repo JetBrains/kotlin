@@ -12,6 +12,8 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.Serializable
@@ -24,7 +26,7 @@ internal class ToolingDiagnosticRenderingOptions(
     val showSeverityEmoji: Boolean,
     val coloredOutput: Boolean,
     val ignoreWarningMode: Boolean,
-    val warningMode: WarningMode
+    val warningMode: WarningMode,
 ) : Serializable {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
@@ -47,10 +49,28 @@ internal class ToolingDiagnosticRenderingOptions(
                     showStacktrace = showStacktrace,
                     showSeverityEmoji = !project.isInIdeaEnvironment.get() && !HostManager.hostIsMingw,
                     coloredOutput = project.showColoredDiagnostics(),
-                    ignoreWarningMode = internalDiagnosticsIgnoreWarningMode ?: false,
+                    ignoreWarningMode = internalDiagnosticsIgnoreWarningMode == true,
                     warningMode = project.gradle.startParameter.warningMode
                 )
             }
+        }
+    }
+
+    fun effectiveSeverity(severity: ToolingDiagnostic.Severity): ToolingDiagnostic.Severity? {
+        return if (ignoreWarningMode) {
+            severity
+        } else {
+            // Early return if warnings are disabled and it's not an error and not fatal
+            if (warningMode == WarningMode.None && severity == WARNING) {
+                return null
+            }
+
+            return if (severity == WARNING && warningMode == WarningMode.Fail)
+                ERROR
+            else
+                severity
+
+            //TODO: KT-74986 Support WarningMode.Summary mode for gradle diagnostics
         }
     }
 }
@@ -111,9 +131,9 @@ internal fun ToolingDiagnostic.isSuppressed(options: ToolingDiagnosticRenderingO
         // Non-suppressible
         id == KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id -> false
 
-        severity == ToolingDiagnostic.Severity.WARNING -> id in options.suppressedWarningIds
+        severity == WARNING -> id in options.suppressedWarningIds
 
-        severity == ToolingDiagnostic.Severity.ERROR -> id in options.suppressedErrorIds
+        severity == ERROR -> id in options.suppressedErrorIds
 
         // NB: FATALs can not be suppressed
         else -> false
