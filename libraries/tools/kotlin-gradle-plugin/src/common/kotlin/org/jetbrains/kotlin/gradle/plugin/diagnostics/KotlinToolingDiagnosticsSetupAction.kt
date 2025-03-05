@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     val collectorProvider = kotlinToolingDiagnosticsCollectorProvider
@@ -33,6 +34,7 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
         renderReportedDiagnostics(
             collectorProvider.get().getDiagnosticsForProject(project),
             logger,
+            null, //FIXME: passing problemsReporter here leads to YarnGradlePluginIT.testFailingWithLockFileUpdate failure
             diagnosticRenderingOptions
         )
     }
