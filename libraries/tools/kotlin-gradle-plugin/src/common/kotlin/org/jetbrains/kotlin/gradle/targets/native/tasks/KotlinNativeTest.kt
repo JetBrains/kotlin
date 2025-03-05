@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.gradle.utils.SystemGetEnvSource.Companion.getAllEnvironmentVariables
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
@@ -40,7 +39,7 @@ constructor(
 ) : KotlinTest(execOps) {
 
     private val processOptions: ProcessLaunchOptions = objects.processLaunchOptions {
-        environment.putAll(providers.getAllEnvironmentVariables())
+        includeSystemEnvironment.set(true)
     }
 
     @get:Internal
@@ -82,9 +81,9 @@ constructor(
 
     @get:Internal
     var environment: Map<String, Any>
-        get() = processOptions.environment.get()
+        get() = processOptions.customEnvironment.orNull.orEmpty()
         set(value) {
-            processOptions.environment.set(providers.provider {
+            processOptions.customEnvironment.set(providers.provider {
                 value.mapValues { it.value.toString() }
             })
         }
@@ -123,7 +122,7 @@ constructor(
 
     @JvmOverloads
     fun environment(name: String, value: Any, tracked: Boolean = true) {
-        processOptions.environment.put(name, providers.provider { value.toString() })
+        processOptions.customEnvironment.put(name, providers.provider { value.toString() })
         if (tracked) {
             trackedEnvironmentVariablesKeys.add(name)
         }

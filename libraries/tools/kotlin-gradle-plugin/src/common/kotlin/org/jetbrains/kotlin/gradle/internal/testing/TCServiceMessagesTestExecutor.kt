@@ -12,6 +12,7 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.configure
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream
@@ -56,9 +57,7 @@ class TCServiceMessagesTestExecutor(
 
             if (spec.dryRunArgs != null) {
                 execHandle = execOps.execAsync("$description (dry run)") { exec ->
-                    exec.workingDir = spec.processLaunchOptions.workingDir.orNull?.asFile
-                    exec.environment(spec.processLaunchOptions.environment.orNull.orEmpty())
-                    exec.executable = spec.processLaunchOptions.executable.get()
+                    exec.configure(spec.processLaunchOptions)
                     // get rid of redundant output during dry-run
                     exec.standardOutput = nullOutputStream
                     exec.args = spec.dryRunArgs
@@ -72,9 +71,7 @@ class TCServiceMessagesTestExecutor(
 
             try {
                 execHandle = execOps.execAsync(description) { exec ->
-                    exec.workingDir = spec.processLaunchOptions.workingDir.orNull?.asFile
-                    exec.environment(spec.processLaunchOptions.environment.orNull.orEmpty())
-                    exec.executable = spec.processLaunchOptions.executable.get()
+                    exec.configure(spec.processLaunchOptions)
                     exec.args = spec.processArgs
                     exec.standardOutput = TCServiceMessageOutputStreamHandler(
                         client,

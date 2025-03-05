@@ -63,7 +63,7 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
                 launchOpts = objects.processLaunchOptions {
                     this.workingDir.set(forkOptions.workingDir)
                     this.executable.set(forkOptions.executable)
-                    this.environment.set(
+                    this.customEnvironment.set(
                         providers.provider { forkOptions.environment.mapValues { it.value.toString() } }
                     )
                 },

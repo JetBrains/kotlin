@@ -9,6 +9,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
@@ -27,18 +28,24 @@ interface ProcessLaunchOptions {
     val workingDir: DirectoryProperty
 
     /**
-     * The environment variables to use when launching the process.
+     * Custom environment variables to use when launching the process.
      *
-     * Note that the processes may be launched using
-     * [org.gradle.process.ExecOperations].
-     * If so, then when no environment variables are provided then
-     * [org.gradle.process.ExecOperations]
-     * will copy all values from [System.getenv].
-     * Otherwise, if _any_ environment variables are set, then _no_ values from
-     * [System.getenv] be used.
-     * This may result in the `PATH` environment variable being unset.
+     * If [includeSystemEnvironment] is enabled then these values will override
+     * any system environment variables.
+     *
+     * Use [ProcessLaunchOptions.Companion.computeEnvironment] to compute the final environment
+     * to use when launching the process.
      */
-    val environment: MapProperty<String, String>
+    val customEnvironment: MapProperty<String, String>
+
+    /**
+     * If `true` use the current System environment ([System.getenv]) when launching the external process.
+     *
+     * The values can be overridden using [customEnvironment].
+     *
+     * Defaults to `false`.
+     */
+    val includeSystemEnvironment: Property<Boolean>
 
     companion object {
         /**
@@ -50,7 +57,31 @@ interface ProcessLaunchOptions {
             newInstance<ProcessLaunchOptions>()
                 .apply {
                     workingDir.convention(directoryProperty().fileValue(File(".")))
+                    includeSystemEnvironment.convention(false)
                     block()
                 }
+
+        /**
+         * Compute the final environment to use when launching the process.
+         *
+         * **NOTE** Only use this function in the execution phase.
+         * It calls [System.getenv], which if used in the configuration phase
+         * Gradle will register _all_ environment variables as configuration cache inputs.
+         */
+        internal fun ProcessLaunchOptions.computeEnvironment(): Map<String, String?> =
+            buildMap {
+                if (includeSystemEnvironment.get()) {
+                    putAll(System.getenv().mapValues { (_, v) -> v ?: "" })
+                }
+                putAll(
+                    customEnvironment.orNull.orEmpty()
+                )
+            }
+
+        internal fun ExecSpec.configure(options: ProcessLaunchOptions) {
+            executable = options.executable.get()
+            workingDir = options.workingDir.orNull?.asFile
+            environment = options.computeEnvironment()
+        }
     }
 }

@@ -6702,8 +6702,9 @@ public final class org/jetbrains/kotlin/gradle/utils/RunProcessResult {
 
 public abstract interface class org/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions$Companion;
-	public abstract fun getEnvironment ()Lorg/gradle/api/provider/MapProperty;
+	public abstract fun getCustomEnvironment ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getIncludeSystemEnvironment ()Lorg/gradle/api/provider/Property;
 	public abstract fun getWorkingDir ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
