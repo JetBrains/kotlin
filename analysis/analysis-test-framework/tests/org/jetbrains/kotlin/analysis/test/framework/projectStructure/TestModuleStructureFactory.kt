@@ -101,18 +101,22 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         modulesByName: ModulesByName,
         libraryCache: LibraryCache,
-    ) = when (ktModule) {
-        is KaNotUnderContentRootModule, is KaBuiltinsModule -> {
-            // Not-under-content-root and builtin modules have no external dependencies on purpose
+    ) {
+        when (ktModule) {
+            is KaNotUnderContentRootModule, is KaBuiltinsModule -> {
+                // Not-under-content-root and builtin modules have no external dependencies on purpose
+            }
+            is KaDanglingFileModule -> {
+                // Dangling file modules get dependencies from their context
+            }
+            is KtModuleWithModifiableDependencies -> {
+                if (!ktModule.areDependenciesComplete) {
+                    addModuleDependencies(testModule, modulesByName, ktModule)
+                    addLibraryDependencies(testModule, testServices, ktModule, libraryCache)
+                }
+            }
+            else -> error("Unexpected module type: " + ktModule.javaClass.name)
         }
-        is KaDanglingFileModule -> {
-            // Dangling file modules get dependencies from their context
-        }
-        is KtModuleWithModifiableDependencies -> {
-            addModuleDependencies(testModule, modulesByName, ktModule)
-            addLibraryDependencies(testModule, testServices, ktModule, libraryCache)
-        }
-        else -> error("Unexpected module type: " + ktModule.javaClass.name)
     }
 
     private fun addModuleDependencies(

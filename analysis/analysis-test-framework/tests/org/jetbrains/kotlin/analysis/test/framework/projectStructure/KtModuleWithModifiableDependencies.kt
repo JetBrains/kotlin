@@ -18,6 +18,12 @@ abstract class KtModuleWithModifiableDependencies : KaModuleBase() {
     abstract override val directFriendDependencies: MutableList<KaModule>
 
     /**
+     * Whether the dependencies of the module are complete and shouldn't be modified further.
+     */
+    open val areDependenciesComplete: Boolean
+        get() = false
+
+    /**
      * When dependencies are modifiable, transitive `dependsOn` dependencies must be recomputed each time as [directDependsOnDependencies]
      * may have been mutated.
      */

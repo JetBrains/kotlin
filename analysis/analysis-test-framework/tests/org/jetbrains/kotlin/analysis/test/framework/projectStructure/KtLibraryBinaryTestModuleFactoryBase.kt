@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -31,23 +32,29 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
         val (binaryRoots, _) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
         val decompiledFiles = binaryRoots.flatMap { decompileToPsiFiles(it, testServices, project) }
 
+        val libraryModule = KaLibraryModuleImpl(
+            testModule.name,
+            testModule.targetPlatform(testServices),
+            StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+                binaryRoots,
+                emptyList(),
+                testServices.environmentManager.getApplicationEnvironment(),
+                project,
+            ),
+            project,
+            binaryRoots = binaryRoots,
+            librarySources = null,
+            isSdk = false,
+        )
+
+        if (testModule.directives.contains(AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES)) {
+            libraryModule.directRegularDependencies += KaLibraryFallbackDependenciesModuleImpl(libraryModule)
+        }
+
         return KtTestModule(
             testModuleKind,
             testModule,
-            KaLibraryModuleImpl(
-                testModule.name,
-                testModule.targetPlatform(testServices),
-                StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                    binaryRoots,
-                    emptyList(),
-                    testServices.environmentManager.getApplicationEnvironment(),
-                    project,
-                ),
-                project,
-                binaryRoots = binaryRoots,
-                librarySources = null,
-                isSdk = false,
-            ),
+            libraryModule,
             decompiledFiles,
         )
     }

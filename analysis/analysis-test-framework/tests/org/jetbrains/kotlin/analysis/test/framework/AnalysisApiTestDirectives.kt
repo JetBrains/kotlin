@@ -49,4 +49,13 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         description = "Specifies the module name which should be treated as a context module for the current one (can overwrite 'CONTEXT_MODULE')",
         applicability = DirectiveApplicability.Module
     )
+
+    /**
+     * When applied to a library module, specifies that the library module should depend on a [KaLibraryFallbackDependenciesModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule]
+     * instead of the regular dependencies set by the test infrastructure.
+     */
+    val FALLBACK_DEPENDENCIES by directive(
+        description = "Specifies that the library module should depend on a fallback dependencies module instead of the regular dependencies set by the test infrastructure.",
+        applicability = DirectiveApplicability.Module,
+    )
 }

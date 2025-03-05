@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -32,7 +33,10 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
-        Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform(testServices).isMultiPlatform())
+        Assume.assumeFalse(
+            "Compilation of multi-platform libraries is not supported",
+            testModule.targetPlatform(testServices).isMultiPlatform(),
+        )
 
         val (libraryJars, librarySourcesJars) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
 
@@ -93,6 +97,10 @@ fun createKtLibrarySourceModule(
         project,
         binaryLibrary = libraryKtModule,
     )
+
+    if (testModule.directives.contains(AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES)) {
+        librarySourceKtModule.directRegularDependencies += KaLibraryFallbackDependenciesModuleImpl(libraryKtModule)
+    }
 
     libraryKtModule.librarySources = librarySourceKtModule
     return KtTestModule(TestModuleKind.LibrarySource, testModule, librarySourceKtModule, decompiledPsiFilesFromSourceJar)
