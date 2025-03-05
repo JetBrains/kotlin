@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 
@@ -15,7 +14,6 @@ class MppKotlinDslClasspathModeIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("kotlin-mpp-classpathMode")
-    @BrokenOnMacosTest
     fun testErrorInClasspathMode(
         gradleVersion: GradleVersion,
     ) {
