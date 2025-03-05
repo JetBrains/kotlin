@@ -3,4 +3,5 @@ fragment1.kt
 fragment2.kt
 fragment3.kt
 library
+library (resolvable session)
 sourceModule

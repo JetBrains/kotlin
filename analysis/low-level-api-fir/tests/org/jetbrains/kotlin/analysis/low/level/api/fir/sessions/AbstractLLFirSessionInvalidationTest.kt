@@ -22,10 +22,20 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 abstract class AbstractLLFirSessionInvalidationTest : AbstractSessionInvalidationTest<LLFirSession>() {
     override val resultFileSuffix: String? get() = null
 
-    override fun getSession(ktTestModule: KtTestModule): TestSession<LLFirSession> {
-        val sessionCache = LLFirSessionCache.getInstance(ktTestModule.ktModule.project)
-        val underlyingSession = sessionCache.getSession(ktTestModule.ktModule, preferBinary = true)
-        return LLTestSession(ktTestModule, underlyingSession)
+    override fun getSessions(ktTestModule: KtTestModule): List<TestSession<LLFirSession>> {
+        val kaModule = ktTestModule.ktModule
+        val sessionCache = LLFirSessionCache.getInstance(kaModule.project)
+
+        val sessions = buildList {
+            add(sessionCache.getSession(kaModule, preferBinary = false))
+
+            // `KaLibraryModule` can describe both a resolvable library session and a binary library session. So we have to make sure that
+            // we also add the binary session.
+            if (kaModule is KaLibraryModule) {
+                add(sessionCache.getSession(kaModule, preferBinary = true))
+            }
+        }
+        return sessions.map { LLTestSession(ktTestModule, it) }
     }
 
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)

@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KaSession>() {
     override val resultFileSuffix: String get() = "analysis_session"
 
-    override fun getSession(ktTestModule: KtTestModule): TestSession<KaSession> {
+    override fun getSessions(ktTestModule: KtTestModule): List<TestSession<KaSession>> {
         val sessionProvider = KaSessionProvider.getInstance(ktTestModule.ktModule.project)
         val analysisSession = sessionProvider.getAnalysisSession(ktTestModule.ktModule)
-        return AnalysisTestSession(ktTestModule, analysisSession)
+        return listOf(AnalysisTestSession(ktTestModule, analysisSession))
     }
 
     /**

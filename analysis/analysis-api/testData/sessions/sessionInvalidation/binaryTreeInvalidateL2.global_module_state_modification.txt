@@ -7,4 +7,6 @@ E
 F
 G
 L1
+L1 (resolvable session)
 L2
+L2 (resolvable session)

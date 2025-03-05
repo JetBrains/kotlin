@@ -2,3 +2,4 @@ Invalidated sessions:
 A
 C
 L2
+L2 (resolvable session)

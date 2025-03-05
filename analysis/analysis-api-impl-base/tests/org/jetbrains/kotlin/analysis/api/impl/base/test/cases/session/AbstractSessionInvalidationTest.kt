@@ -36,7 +36,7 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
      */
     protected abstract val resultFileSuffix: String?
 
-    protected abstract fun getSession(ktTestModule: KtTestModule): TestSession<S>
+    protected abstract fun getSessions(ktTestModule: KtTestModule): List<TestSession<S>>
 
     /**
      * In some cases, it might be legal for a session cache to evict sessions which are still valid. Such sessions would fail the validity
@@ -47,11 +47,11 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
     override fun doTest(testServices: TestServices) {
         val ktTestModules = testServices.ktTestModuleStructure.mainModules
 
-        val sessionsBeforeModification = getSessions(ktTestModules)
+        val sessionsBeforeModification = getAllSessions(ktTestModules)
         checkSessionValidityBeforeModification(sessionsBeforeModification, testServices)
 
         testServices.ktTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
-        val sessionsAfterModification = getSessions(ktTestModules)
+        val sessionsAfterModification = getAllSessions(ktTestModules)
 
         val invalidatedSessions = buildSet {
             addAll(sessionsBeforeModification)
@@ -65,7 +65,7 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
         checkUntouchedSessionValidity(untouchedSessions, testServices)
     }
 
-    private fun getSessions(modules: List<KtTestModule>): List<TestSession<S>> = modules.map(::getSession)
+    private fun getAllSessions(modules: List<KtTestModule>): List<TestSession<S>> = modules.flatMap(::getSessions)
 
     private fun checkInvalidatedModules(
         invalidatedSessions: Set<TestSession<S>>,

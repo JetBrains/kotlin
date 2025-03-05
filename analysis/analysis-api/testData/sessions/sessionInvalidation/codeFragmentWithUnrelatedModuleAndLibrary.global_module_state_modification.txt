@@ -2,4 +2,5 @@ Invalidated sessions:
 fragment1.kt
 sourceModule
 unrelatedLibrary
+unrelatedLibrary (resolvable session)
 unrelatedModule
