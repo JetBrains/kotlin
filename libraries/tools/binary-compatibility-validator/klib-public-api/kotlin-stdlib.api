@@ -14194,13 +14194,10 @@ final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValueOfIntrinsic(kotlin
 final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValuesIntrinsic(): kotlin/Array<#A> // kotlin.wasm.internal/enumValuesIntrinsic|enumValuesIntrinsic(){0§<kotlin.Enum<0:0>>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin/Int): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.Int){}[0]
+final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin/Long): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.wasm.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/unsafeGetScratchRawMemory(): kotlin/Int // kotlin.wasm.internal/unsafeGetScratchRawMemory|unsafeGetScratchRawMemory(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i32_compareTo(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.internal/wasm_i32_compareTo|wasm_i32_compareTo(kotlin.Int;kotlin.Int){}[0]
