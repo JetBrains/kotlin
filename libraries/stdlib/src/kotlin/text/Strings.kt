@@ -1389,6 +1389,8 @@ public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: B
  * To avoid ambiguous results when strings in [delimiters] have characters in common, this method proceeds from
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
+ *
+ * @sample samples.text.Strings.split
  */
 public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
     if (delimiters.size == 1) {
@@ -1417,6 +1419,7 @@ public fun CharSequence.splitToSequence(vararg delimiters: Char, ignoreCase: Boo
  * @param delimiters One or more characters to be used as delimiters.
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
+ * @sample samples.text.Strings.split
  */
 public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
     if (delimiters.size == 1) {
@@ -1433,6 +1436,7 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
  * @param delimiter String used as delimiter
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
+ * @sample samples.text.Strings.split
  */
 private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: Int): List<String> {
     requireNonNegativeLimit(limit)
@@ -1462,6 +1466,7 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
  *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
+ * @sample samples.text.Strings.split
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)

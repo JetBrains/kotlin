@@ -518,6 +518,38 @@ class Strings {
     }
 
     @Sample
+    fun split() {
+        val commaSplit = "apple,banana,cherry".split(",")
+        assertPrints(commaSplit, "[apple, banana, cherry]")
+
+        val multipleSplit = "apple,banana;cherry:orange".split(",", ";", ":")
+        assertPrints(multipleSplit, "[apple, banana, cherry, orange]")
+
+        val charSplit = "apple,banana;cherry".split(',', ';')
+        assertPrints(charSplit, "[apple, banana, cherry]")
+
+        val limitSplit = "a,b,c,d,e".split(",", limit = 3)
+        assertPrints(limitSplit, "[a, b, c,d,e]")
+
+        val emptyResults = ",a,b,c,".split(",")
+        assertPrints(emptyResults, "[, a, b, c, ]")
+
+        val mixedCase = "abcXdef".split("x")
+        val mixedCaseIgnored = "abcXdef".split("x", ignoreCase = true)
+        assertPrints(mixedCase, "[abcXdef]")  // No match with case sensitivity
+        assertPrints(mixedCaseIgnored, "[abc, def]")  // Matches with case insensitivity
+
+        val regexSplit = "apple123banana456cherry".split(Regex("\\d+"))
+        assertPrints(regexSplit, "[apple, banana, cherry]")
+
+        val regexLimit = "a1b2c3d4e".split(Regex("\\d"), limit = 3)
+        assertPrints(regexLimit, "[a, b, c3d4e]")
+
+        val emptyString = "".split(",")
+        assertPrints(emptyString, "[]")
+    }
+
+    @Sample
     fun formatStatic() {
         // format negative number in parentheses
         val negativeNumberInParentheses = String.format("%(d means %1\$d", -31416)
