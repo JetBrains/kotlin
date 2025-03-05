@@ -550,6 +550,7 @@ class Strings {
 
         val emptyString = "".split(",")
         assertPrints(emptyString, "[]")
+        assertPrints("Size of empty string split result: ${emptyString.size}", "Size of empty string split result: 1")
     }
 
     @Sample
