@@ -170,8 +170,10 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         if (includeLibraryModules) {
             removeAllSessionsFrom(sourceCache)
             removeAllSessionsFrom(binaryCache)
+            removeAllLibraryFallbackDependenciesSessions()
         } else {
-            // `binaryCache` can only contain library modules, so we only need to remove sessions from `sourceCache`.
+            // `binaryCache` and `libraryFallbackDependenciesCache` can only contain library modules, so we only need to remove sessions
+            // from `sourceCache`.
             removeAllMatchingSessionsFrom(sourceCache) { it !is KaLibraryModule && it !is KaLibrarySourceModule }
         }
 
@@ -216,6 +218,18 @@ class LLFirSessionCache(private val project: Project) : Disposable {
 
     private fun removeAllScriptSessionsFrom(storage: SessionStorage) {
         removeAllMatchingSessionsFrom(storage) { it is KaScriptModule || it is KaScriptDependencyModule }
+    }
+
+    fun removeAllLibraryFallbackDependenciesSessions() {
+        removeAllSessionsFrom(libraryFallbackDependenciesCache)
+    }
+
+    /**
+     * Removes all resolvable sessions for [KaLibraryModule]s and [KaLibrarySourceModule]s from the session cache. The function does not
+     * affect *binary* library sessions.
+     */
+    fun removeAllResolvableLibrarySessions() {
+        removeAllMatchingSessionsFrom(sourceCache) { it is KaLibraryModule || it is KaLibrarySourceModule }
     }
 
     private fun removeAllSessionsFrom(storage: SessionStorage) {

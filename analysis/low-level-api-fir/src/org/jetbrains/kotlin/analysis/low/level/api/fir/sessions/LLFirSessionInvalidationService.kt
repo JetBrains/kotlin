@@ -16,12 +16,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificatio
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener
 import org.jetbrains.kotlin.analysis.api.platform.modification.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 
 /**
@@ -44,10 +39,17 @@ class LLFirSessionInvalidationService(private val project: Project) {
                             // Modification of builtins might affect any session, so all sessions need to be invalidated.
                             invalidationService.invalidateAll(includeLibraryModules = true)
                         }
+                        is KaLibraryModule -> {
+                            invalidationService.invalidate(module)
+
+                            // A modification to a library module is also a (likely) modification of any fallback dependency module.
+                            invalidationService.invalidateFallbackDependencies()
+                        }
                         else -> invalidationService.invalidate(module)
                     }
 
-                // We do not need to handle `KaBuiltinsModule` here because builtins cannot be affected by out-of-block modification.
+                // We do not need to handle `KaBuiltinsModule` and `KaLibraryModule` here because builtins/libraries cannot be affected by
+                // out-of-block modification.
                 is KotlinModuleOutOfBlockModificationEvent -> invalidationService.invalidate(event.module)
 
                 is KotlinGlobalModuleStateModificationEvent -> invalidationService.invalidateAll(includeLibraryModules = true)
@@ -109,6 +111,32 @@ class LLFirSessionInvalidationService(private val project: Project) {
             } else {
                 sessionCache.removeAllDanglingFileSessions()
             }
+        }
+    }
+
+    /**
+     * Invalidates the sessions of all [KaLibraryFallbackDependenciesModule]s and all dependent resolvable library sessions.
+     *
+     * When we receive a modification event for a [KaLibraryModule], we have to assume that the content of the library module has been
+     * changed in some way. Such a change not only affects the library session, but also all [KaLibraryFallbackDependenciesModule]s, each of
+     * which essentially covers (almost) all libraries in the project. So a modification to any library module is also a modification to all
+     * fallback dependency modules.
+     */
+    private fun invalidateFallbackDependencies() = performInvalidation {
+        // This solution assumes that only resolvable library sessions can be dependents of fallback dependencies sessions. It would be
+        // better to call `invalidate` on each `KaLibraryFallbackDependenciesModule` in the cache ony-by-one as a more general solution.
+        // However, this approach is blocked by KT-75688: If we kick off the individual invalidation of fallback modules right now, all
+        // source sessions that depend on any fallback module's `dependentLibrary` would be invalidated as well.
+        sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
+            // Technically, the `KaLibraryFallbackDependenciesModule` which has the modified `KaLibraryModule` as a dependent is *not*
+            // affected by a modification to that library module. But there's no large practical advantage in being this selective, so the
+            // simpler solution of invalidating all sessions is better.
+            sessionCache.removeAllLibraryFallbackDependenciesSessions()
+
+            // This is an approximation. Not all resolvable library sessions might depend on fallback dependencies, in which case removing
+            // them here is a waste. However, for all practical purposes (especially considering usage in IJ), most of them do, and so this
+            // is a sensible simplification.
+            sessionCache.removeAllResolvableLibrarySessions()
         }
     }
 
