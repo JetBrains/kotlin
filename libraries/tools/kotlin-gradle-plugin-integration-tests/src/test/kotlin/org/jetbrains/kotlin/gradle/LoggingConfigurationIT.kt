@@ -31,7 +31,6 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         nativeProject(
             "generic-kmp-app-plus-lib-with-tests",
@@ -51,7 +50,6 @@ class LoggingConfigurationJvmIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("jvmTargetModernDsl")
-    @BrokenOnMacosTest
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         project("jvmTargetModernDsl", gradleVersion) {
             checkLoggingConfigurations("build.gradle.kts", ":compileKotlin", defaultBuildOptions)
@@ -60,8 +58,10 @@ class LoggingConfigurationJvmIT : KGPBaseTest() {
 }
 
 private fun TestProject.checkLoggingConfigurations(gradleKtsPath: String, mainCompileTask: String, defaultBuildOptions: BuildOptions) {
-    val debugBuildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-    val infoBuildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
+    // CC should be disabled, because changing logLevel doesn't cause the CC invalidation
+    val buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+    val debugBuildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)
+    val infoBuildOptions = buildOptions.copy(logLevel = LogLevel.INFO)
 
     var currentVerboseSetting: String = "//insertable_at_kotlin_lvl"
 
