@@ -19,7 +19,7 @@ import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 class AgpCompatibilityCheckTest {
-    private val projectWithAgpApplied = buildProject() {
+    private val projectWithAgpApplied = buildProject {
         gradle.registerMinimalVariantImplementationFactoriesForTests()
         plugins.apply("com.android.library")
     }
@@ -52,7 +52,9 @@ class AgpCompatibilityCheckTest {
 
     @Test
     fun testDiagnosticNotTriggeredOnNoAgpPluginApplied() {
-        val project = buildProject()
+        val project = buildProject {
+            gradle.registerMinimalVariantImplementationFactoriesForTests()
+        }
 
         project.runAgpCompatibilityCheckIfAgpIsApplied(unsupportedAgpVersion)
 
