@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Path
+import java.util.logging.Logger
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -161,6 +163,18 @@ internal fun Collection<ToolingDiagnostic>.assertContainsSingleDiagnostic(
         fail("Expected to have 1 diagnostic with id '${factory.id}', but ${matches.size} were reported:\n${matches.render()}")
     }
     return matches.single()
+}
+
+internal abstract class TestsProblemsReporter : ProblemsReporter {
+    private val logger = Logger.getLogger(this::class.java.name)
+
+    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, parameters: ProblemsReporter.Parameters) {
+        logger.info("Report problem diagnostic: $diagnostic")
+    }
+
+    class Factory : ProblemsReporter.Factory {
+        override fun getInstance(objects: ObjectFactory): ProblemsReporter = objects.newInstance<TestsProblemsReporter>()
+    }
 }
 
 private fun Collection<ToolingDiagnostic>.render(): String = joinToString(separator = "\n----\n")
