@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableSoftValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
  * A type of cache which is used by [LLFirSessionCache] to store [LLFirSession]s.
@@ -130,7 +132,9 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     }
 
     private fun checkSessionValidity(session: LLFirSession) {
-        require(session.isValid) { "A session acquired via `getSession` should always be valid. Module: ${session.ktModule}" }
+        requireWithAttachment(session.isValid, { "A session acquired via `getSession` should always be valid." }) {
+            withKaModuleEntry("module", session.ktModule)
+        }
     }
 
     /**
