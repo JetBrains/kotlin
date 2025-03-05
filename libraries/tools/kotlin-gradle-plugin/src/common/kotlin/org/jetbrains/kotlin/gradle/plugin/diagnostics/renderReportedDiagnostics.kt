@@ -25,21 +25,7 @@ internal fun renderReportedDiagnostic(
     logger: Logger,
     renderingOptions: ToolingDiagnosticRenderingOptions
 ) {
-    val effectiveSeverity = if (renderingOptions.ignoreWarningMode) {
-        diagnostic.severity
-    } else {
-        // Early return if warnings are disabled and it's not an error and not fatal
-        if (renderingOptions.warningMode == WarningMode.None && diagnostic.severity == WARNING) {
-            return
-        }
-
-        if (diagnostic.severity == WARNING && renderingOptions.warningMode == WarningMode.Fail)
-            ERROR
-        else
-            diagnostic.severity
-
-        //TODO: KT-74986 Support WarningMode.Summary mode for gradle diagnostics
-    }
+    val effectiveSeverity = renderingOptions.effectiveSeverity(diagnostic.severity) ?: return
 
     when (effectiveSeverity) {
         WARNING -> logger.warn("w: ${diagnostic.render(renderingOptions)}\n")
