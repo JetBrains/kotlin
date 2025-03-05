@@ -95,7 +95,9 @@ class LLFirSessionInvalidationService(private val project: Project) {
             // the root session, so they effectively don't depend on the root session at that moment and don't need to be invalidated.
             if (!didSessionExist) return@collectSessionsAndPublishInvalidationEvent
 
-            KotlinModuleDependentsProvider.getInstance(project).getTransitiveDependents(module).forEach(sessionCache::removeSession)
+            KotlinModuleDependentsProvider.getInstance(project)
+                .getTransitiveDependents(module)
+                .forEach(::invalidateDependent)
 
             // Due to a missing IDE implementation for script dependents (see KTIJ-25620), script sessions need to be invalidated globally:
             //  - A script may include other scripts, so a script modification may affect any other script.
@@ -111,6 +113,26 @@ class LLFirSessionInvalidationService(private val project: Project) {
             } else {
                 sessionCache.removeAllDanglingFileSessions()
             }
+        }
+    }
+
+    /**
+     * Invalidates the session(s) associated with [module]. The module must be a *dependent* of the [KaModule] for which the modification
+     * event was received.
+     *
+     * Dependents have to be handled specially because of a special relationship between a [KaLibraryModule] and its dependencies. Only a
+     * resolvable session for a [KaLibraryModule] takes its dependencies into account. A binary session for a library module cannot have any
+     * dependencies. Conversely, when we encounter a [KaLibraryModule] as a *dependent*, it can only describe a resolvable session, not a
+     * binary session. So it would be inefficient to remove the binary session for the library module from the cache.
+     *
+     * For example, if the [KaLibraryModule] is a dependent of a [KaLibraryFallbackDependenciesModule], only resolvable library sessions
+     * which actually rely on the fallback dependencies should be invalidated.
+     */
+    private fun invalidateDependent(module: KaModule) {
+        if (module is KaLibraryModule) {
+            sessionCache.removeSourceSession(module)
+        } else {
+            sessionCache.removeSession(module)
         }
     }
 

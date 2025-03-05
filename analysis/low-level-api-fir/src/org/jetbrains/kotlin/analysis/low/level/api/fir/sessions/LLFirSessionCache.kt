@@ -141,7 +141,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     fun removeSession(module: KaModule): Boolean {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        val didSourceSessionExist = removeSessionFrom(module, sourceCache)
+        val didSourceSessionExist = removeSourceSessionInWriteAction(module)
 
         val didOtherSessionExist = when (module) {
             is KaLibraryModule -> removeSessionFrom(module, binaryCache)
@@ -156,6 +156,18 @@ class LLFirSessionCache(private val project: Project) : Disposable {
 
         return didSourceSessionExist || didOtherSessionExist
     }
+
+    /**
+     * Removes the source session associated with the given [module] after it has been invalidated. Must be called in a write action.
+     *
+     * @return `true` if the source session was removed successfully.
+     */
+    fun removeSourceSession(module: KaModule): Boolean {
+        ApplicationManager.getApplication().assertWriteAccessAllowed()
+        return removeSourceSessionInWriteAction(module)
+    }
+
+    private fun removeSourceSessionInWriteAction(module: KaModule): Boolean = removeSessionFrom(module, sourceCache)
 
     private fun removeSessionFrom(module: KaModule, storage: SessionStorage): Boolean = storage.remove(module) != null
 
