@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
  * Merges [GlobalSearchScope]s according to platform-specific strategies with the goal of creating an optimized combined scope. If possible,
  * the merger should especially try to merge scopes which can be the basis of [KaModule.contentScope][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.contentScope]s.
  *
- * If there are no good scope merging strategies, [KotlinSimpleGlobalSearchScopeMerger] should be registered by the platform.
+ * If there are no good scope merging strategies, [KotlinOptimizingGlobalSearchScopeMerger] should be registered by the platform.
  */
 public interface KotlinGlobalSearchScopeMerger : KotlinPlatformComponent {
     /**
      * Creates a merged [GlobalSearchScope] which represents a *union* of all [scopes].
      */
-    public fun union(scopes: Collection<GlobalSearchScope>): GlobalSearchScope
+    public fun union(project: Project, scopes: Collection<GlobalSearchScope>): GlobalSearchScope
 
     public companion object {
         public fun getInstance(project: Project): KotlinGlobalSearchScopeMerger = project.service()

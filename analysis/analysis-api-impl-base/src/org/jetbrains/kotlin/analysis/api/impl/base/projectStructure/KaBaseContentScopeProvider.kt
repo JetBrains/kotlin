@@ -49,13 +49,14 @@ internal class KaBaseContentScopeProvider : KaContentScopeProvider {
     ): GlobalSearchScope {
         val scopeMerger = KotlinGlobalSearchScopeMerger.getInstance(module.project)
 
-        val mergedEnlargementScope = scopeMerger.union(enlargementScopes)
+        val mergedEnlargementScope = scopeMerger.union(module.project, enlargementScopes)
         if (restrictionScopes.isEmpty()) {
             return mergedEnlargementScope
         }
 
-        // `KotlinGlobalSearchScopeMerger` cannot merge intersections of scopes, so for now we have to apply the scopes as individual
-        // intersections. In the future, we might consider to implement intersection merging as well.
+        // `KotlinGlobalSearchScopeMerger` cannot merge intersections of scopes,
+        // so for now we have to apply the scopes as individual intersections.
+        // In the future, we might consider implementing intersection merging as well.
         return restrictionScopes.fold(mergedEnlargementScope) { resultScope, scope -> resultScope.intersectWith(scope) }
     }
 }

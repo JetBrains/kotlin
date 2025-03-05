@@ -15,5 +15,11 @@
         area="IDEA_PROJECT"
         dynamic="true"
     />
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kotlinGlobalSearchScopeMergerStrategyProvider"
+        interface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergerStrategyProvider"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
   </extensionPoints>
 </idea-plugin>

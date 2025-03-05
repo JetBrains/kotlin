@@ -19,7 +19,11 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
     override fun getResolutionScope(module: KaModule): KaResolutionScope {
         val moduleWithDependentScopes = getModuleAndDependenciesContentScopes(module)
-        return KaBaseResolutionScope(module, KotlinGlobalSearchScopeMerger.getInstance(module.project).union(moduleWithDependentScopes))
+        return KaBaseResolutionScope(
+            module,
+            KotlinGlobalSearchScopeMerger.getInstance(module.project)
+                .union(module.project, moduleWithDependentScopes)
+        )
     }
 
     @OptIn(KaPlatformInterface::class)

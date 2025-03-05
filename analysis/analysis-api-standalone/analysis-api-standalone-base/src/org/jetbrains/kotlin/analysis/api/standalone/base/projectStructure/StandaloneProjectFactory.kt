@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibi
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinSimpleGlobalSearchScopeMerger
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinOptimizingGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -200,7 +200,7 @@ object StandaloneProjectFactory {
         val modules = projectStructureProvider.allModules
         project.registerService(KotlinProjectStructureProvider::class.java, projectStructureProvider)
         project.registerService(KotlinModuleDependentsProvider::class.java, KtStaticModuleDependentsProvider(modules))
-        project.registerService(KotlinGlobalSearchScopeMerger::class.java, KotlinSimpleGlobalSearchScopeMerger())
+        project.registerService(KotlinGlobalSearchScopeMerger::class.java, KotlinOptimizingGlobalSearchScopeMerger())
 
         initialiseVirtualFileFinderServices(
             environment,
