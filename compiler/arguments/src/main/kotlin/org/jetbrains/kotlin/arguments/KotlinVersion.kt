@@ -72,17 +72,36 @@ object KotlinVersionAsNameSerializer : KSerializer<KotlinVersion> {
 
 object AllDetailsKotlinVersionSerializer : KSerializer<Set<KotlinVersion>> {
     private val delegateSerializer: KSerializer<Set<KotlinVersion>> = SetSerializer(AllKotlinVersionSerializer)
-    override val descriptor: SerialDescriptor = delegateSerializer.descriptor
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.arguments.SetKotlinVersion") {
+        element<String>("type")
+        element<Set<KotlinVersion>>("values")
+    }
 
     override fun serialize(
         encoder: Encoder,
         value: Set<KotlinVersion>,
     ) {
-        delegateSerializer.serialize(encoder, value)
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, KotlinVersion::class.qualifiedName!!)
+            encodeSerializableElement(descriptor, 1, delegateSerializer, value)
+        }
     }
 
     override fun deserialize(decoder: Decoder): Set<KotlinVersion> {
-        return delegateSerializer.deserialize(decoder)
+        var type = ""
+        val values = mutableSetOf<KotlinVersion>()
+        decoder.decodeStructure(descriptor) {
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> type = decodeStringElement(descriptor, 0)
+                    1 -> values.addAll(decodeSerializableElement(descriptor, 1, delegateSerializer))
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+        }
+        require(type.isNotEmpty() && values.isNotEmpty())
+        return values.toSet()
     }
 }
 

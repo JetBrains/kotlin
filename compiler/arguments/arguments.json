@@ -21,55 +21,61 @@
         }
     ],
     "types": {
-        "kotlinVersions": [
-            {
-                "name": "1.0",
-                "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
-                    "deprecatedVersion": "1.9.20",
-                    "removedVersion": "2.0.0"
+        "kotlinVersions": {
+            "type": "org.jetbrains.kotlin.arguments.KotlinVersion",
+            "values": [
+                {
+                    "name": "1.0",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": "1.9.20",
+                        "removedVersion": "2.0.0"
+                    }
+                },
+                {
+                    "name": "1.9",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.9.20",
+                        "stabilizedVersion": "1.9.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "2.0",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.9.20",
+                        "stabilizedVersion": "2.0.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
-            },
-            {
-                "name": "1.9",
-                "releaseVersionsMetadata": {
-                    "introducedVersion": "1.9.20",
-                    "stabilizedVersion": "1.9.20",
-                    "deprecatedVersion": null,
-                    "removedVersion": null
+            ]
+        },
+        "jvmTargets": {
+            "type": "org.jetbrains.kotlin.arguments.JvmTarget",
+            "values": [
+                {
+                    "name": "1.6",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": "1.9.20",
+                        "removedVersion": "2.0.0"
+                    }
+                },
+                {
+                    "name": "1.8",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
-            },
-            {
-                "name": "2.0",
-                "releaseVersionsMetadata": {
-                    "introducedVersion": "1.9.20",
-                    "stabilizedVersion": "2.0.0",
-                    "deprecatedVersion": null,
-                    "removedVersion": null
-                }
-            }
-        ],
-        "jvmTargets": [
-            {
-                "name": "1.6",
-                "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
-                    "deprecatedVersion": "1.9.20",
-                    "removedVersion": "2.0.0"
-                }
-            },
-            {
-                "name": "1.8",
-                "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
-                    "deprecatedVersion": null,
-                    "removedVersion": null
-                }
-            }
-        ]
+            ]
+        }
     },
     "topLevel": {
         "name": "commonToolArguments",
