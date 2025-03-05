@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.plusIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
  * This is the base class for factories, which create various sessions for compilation.
@@ -245,9 +245,14 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 generatedSymbolsProvider,
             )
 
+            val allLibrariesProviders = buildList {
+                addAll(structuredDependencyProvidersWithoutSource.librariesProviders)
+                addIfNotNull(additionalOptionalAnnotationsProvider)
+            }
+
             val structuredProvidersForModule = StructuredProviders(
                 sourceProviders = sourceProviders,
-                librariesProviders = structuredDependencyProvidersWithoutSource.librariesProviders.plusIfNotNull(additionalOptionalAnnotationsProvider),
+                librariesProviders = allLibrariesProviders,
                 sharedProvider = structuredDependencyProvidersWithoutSource.sharedProvider,
             ).also {
                 register(StructuredProviders::class, it)

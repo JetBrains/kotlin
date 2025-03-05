@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.FrontendContext
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelinePhase
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import java.io.File
 
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
@@ -208,17 +210,21 @@ private fun <F> prepareKlibSessions(
                 extensionRegistrars,
                 configuration,
             )
+        },
+        librarySessionForHmppCommonModuleProducer = { sessionProvider, sharedLibrarySession, librariesList, libraryList ->
+            TODO("Not supported yet. KT-77030")
+        },
+        createSourceSession = { _, moduleData, sessionProvider, sessionConfigurator ->
+            sessionFactory.createSourceSession(
+                moduleData,
+                sessionProvider,
+                extensionRegistrars,
+                configuration,
+                icData = icData,
+                init = sessionConfigurator,
+            )
         }
-    ) { _, moduleData, sessionProvider, sessionConfigurator ->
-        sessionFactory.createSourceSession(
-            moduleData,
-            sessionProvider,
-            extensionRegistrars,
-            configuration,
-            icData = icData,
-            init = sessionConfigurator,
-        )
-    }
+    )
 }
 
 /**
@@ -264,29 +270,52 @@ fun <F> prepareMetadataSessions(
                 packagePartProvider,
                 languageVersionSettings,
             )
+        },
+        librarySessionForHmppCommonModuleProducer = { sessionProvider, sharedLibrarySession, commonModuleLibraryList, resolvedLibraries  ->
+            FirMetadataSessionFactory.createLibrarySession(
+                sessionProvider,
+                sharedLibrarySession,
+                commonModuleLibraryList.moduleDataProvider,
+                projectEnvironment,
+                extensionRegistrars,
+                librariesScope,
+                resolvedLibraries,
+                packagePartProvider,
+                languageVersionSettings,
+            )
+        },
+        createSourceSession = { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
+            FirMetadataSessionFactory.createSourceSession(
+                moduleData,
+                sessionProvider,
+                projectEnvironment,
+                incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
+                extensionRegistrars,
+                configuration,
+                init = sessionConfigurator
+            )
         }
-    ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
-        FirMetadataSessionFactory.createSourceSession(
-            moduleData,
-            sessionProvider,
-            projectEnvironment,
-            incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
-            extensionRegistrars,
-            configuration,
-            init = sessionConfigurator
-        )
-    }
+    )
 }
 
 // ---------------------------------------------------- Implementation ----------------------------------------------------
 
 typealias FirSessionProducer<F> = (List<F>, FirModuleData, FirProjectSessionProvider, FirSessionConfigurator.() -> Unit) -> FirSession
 
+fun interface FirCommonLibrarySessionForHmppProducer {
+    fun createSession(
+        sessionProvider: FirProjectSessionProvider,
+        sharedLibrarySession: FirSession,
+        moduleDataListOfCurrentModule: DependencyListForCliModule,
+        klibDependencies: List<KotlinResolvedLibrary>,
+    ): FirSession
+}
+
 /**
  * Container for abstract, platform-independent utilities for creating FIR sessions for potentially hmpp module
  */
 object SessionConstructionUtils {
-    inline fun <F> prepareSessions(
+    fun <F> prepareSessions(
         files: List<F>,
         configuration: CompilerConfiguration,
         rootModuleName: Name,
@@ -298,6 +327,7 @@ object SessionConstructionUtils {
         fileBelongsToModule: (F, String) -> Boolean,
         createSharedLibrarySession: (FirProjectSessionProvider) -> FirSession,
         createLibrarySession: (FirProjectSessionProvider, sharedLibrarySession: FirSession) -> FirSession,
+        librarySessionForHmppCommonModuleProducer: FirCommonLibrarySessionForHmppProducer,
         createSourceSession: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
@@ -312,11 +342,11 @@ object SessionConstructionUtils {
         val sessionProvider = FirProjectSessionProvider()
 
         val sharedLibrarySession = createSharedLibrarySession(sessionProvider)
-        val librarySession = createLibrarySession(sessionProvider, sharedLibrarySession)
+        createLibrarySession(sessionProvider, sharedLibrarySession)
         val extraAnalysisMode = configuration.useFirExtraCheckers
         val experimentalAnalysisMode = configuration.useFirExperimentalCheckers
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-            registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
+            registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
 
             if (extraAnalysisMode) {
                 registerExtraCommonCheckers()
@@ -341,7 +371,13 @@ object SessionConstructionUtils {
                 sessionProvider, sessionConfigurator, isCommonSource, createSourceSession
             )
 
-            else -> createSessionsForHmppProject(
+            languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) -> createSessionsForHierarchicalMppProject(
+                nonScriptFiles, rootModuleName, hmppModuleStructure, libraryList, configuration,
+                sharedLibrarySession, targetPlatform, sessionProvider, librarySessionForHmppCommonModuleProducer,
+                sessionConfigurator, fileBelongsToModule, createSourceSession
+            )
+
+            else -> createSessionsForMppProject(
                 nonScriptFiles, rootModuleName, hmppModuleStructure, libraryList, targetPlatform,
                 sessionProvider, sessionConfigurator, fileBelongsToModule, createSourceSession
             )
@@ -355,14 +391,14 @@ object SessionConstructionUtils {
                 )
     }
 
-    inline fun <F> createScriptsSession(
+    private fun <F> createScriptsSession(
         scripts: List<F>,
         rootModuleName: Name,
         libraryList: DependencyListForCliModule,
         lastModuleData: FirModuleData,
         targetPlatform: TargetPlatform,
         sessionProvider: FirProjectSessionProvider,
-        noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
         createSourceSession: FirSessionProducer<F>,
     ): SessionWithSources<F> =
         createSingleSession(
@@ -378,13 +414,13 @@ object SessionConstructionUtils {
             sessionProvider, sessionConfigurator, createSourceSession
         )
 
-    inline fun <F> createSingleSession(
+    private fun <F> createSingleSession(
         files: List<F>,
         rootModuleName: Name,
         libraryList: DependencyListForCliModule,
         targetPlatform: TargetPlatform,
         sessionProvider: FirProjectSessionProvider,
-        noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
         createFirSession: FirSessionProducer<F>,
     ): SessionWithSources<F> {
         val platformModuleData = FirSourceModuleData(
@@ -402,13 +438,13 @@ object SessionConstructionUtils {
         return SessionWithSources(session, files)
     }
 
-    inline fun <F> createSessionsForLegacyMppProject(
+    private fun <F> createSessionsForLegacyMppProject(
         files: List<F>,
         rootModuleName: Name,
         libraryList: DependencyListForCliModule,
         targetPlatform: TargetPlatform,
         sessionProvider: FirProjectSessionProvider,
-        noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
         isCommonSource: (F) -> Boolean,
         createFirSession: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
@@ -450,14 +486,14 @@ object SessionConstructionUtils {
         )
     }
 
-    inline fun <F> createSessionsForHmppProject(
+    private fun <F> createSessionsForMppProject(
         files: List<F>,
         rootModuleName: Name,
         hmppModuleStructure: HmppCliModuleStructure,
         libraryList: DependencyListForCliModule,
         targetPlatform: TargetPlatform,
         sessionProvider: FirProjectSessionProvider,
-        noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
         fileBelongsToModule: (F, String) -> Boolean,
         createFirSession: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
@@ -483,6 +519,101 @@ object SessionConstructionUtils {
             moduleDataForHmppModule[module] = moduleData
         }
 
+        return createSourceSessionsForMppCompilation(
+            hmppModuleStructure, moduleDataForHmppModule, files, fileBelongsToModule,
+            createFirSession, sessionProvider, sessionConfigurator
+        )
+    }
+
+    private fun <F> createSessionsForHierarchicalMppProject(
+        files: List<F>,
+        rootModuleName: Name,
+        hmppModuleStructure: HmppCliModuleStructure,
+        libraryListForLeafModule: DependencyListForCliModule,
+        configuration: CompilerConfiguration,
+        sharedLibrarySession: FirSession,
+        targetPlatform: TargetPlatform,
+        sessionProvider: FirProjectSessionProvider,
+        librarySessionForHmppCommonModuleProducer: FirCommonLibrarySessionForHmppProducer,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
+        fileBelongsToModule: (F, String) -> Boolean,
+        createFirSession: FirSessionProducer<F>,
+    ): List<SessionWithSources<F>> {
+        val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
+
+        for ((index, module) in hmppModuleStructure.modules.withIndex()) {
+            val dependencies = hmppModuleStructure.sourceDependencies[module]
+                ?.map { moduleDataForHmppModule.getValue(it) }
+                .orEmpty()
+            val moduleName = if (index == hmppModuleStructure.modules.lastIndex) {
+                rootModuleName
+            } else {
+                Name.special("<${module.name}>")
+            }
+
+            val isLeaf = index == hmppModuleStructure.modules.lastIndex
+
+            val libraryList = if (isLeaf) {
+                libraryListForLeafModule
+            } else {
+                val libPaths = hmppModuleStructure.moduleDependencies[module].orEmpty().toMutableSet()
+
+                /*
+                 * It's expected that each hmpp module will contain unique dependencies and none of the metadata klibs
+                 * won't appear twice on a different levels of the module graph. If this happens, then we will have
+                 * the same library to be present in dependencies twice, so we will deserialize it twice, which will be
+                 * slow and potentially could lead to some unexpected problems.
+                 *
+                 * So to guarantee this contract even if it wasn't satisfied by the caller of the compiler, we
+                 * remove library dependency from the module if the same library is already visible for this
+                 * module via its source dependency modules.
+                 */
+                for (dependency in hmppModuleStructure.sourceDependencies[module].orEmpty()) {
+                    libPaths -= hmppModuleStructure.moduleDependencies[dependency].orEmpty()
+                }
+                val resolvedLibraries = MetadataFrontendPipelinePhase.computeResolvedKlibs(
+                    libPaths.map { File(it) },
+                    configuration.messageCollector
+                )
+
+                DependencyListForCliModule.build(moduleName) {
+                    dependencies(libPaths)
+                }.also { libraryList ->
+                    librarySessionForHmppCommonModuleProducer.createSession(
+                        sessionProvider,
+                        sharedLibrarySession,
+                        libraryList,
+                        resolvedLibraries,
+                    )
+                }
+            }
+
+            val moduleData = FirSourceModuleData(
+                moduleName,
+                dependencies = libraryList.regularDependencies,
+                dependsOnDependencies = dependencies,
+                friendDependencies = libraryListForLeafModule.friendDependencies,
+                targetPlatform,
+                isCommon = !isLeaf
+            )
+            moduleDataForHmppModule[module] = moduleData
+        }
+
+        return createSourceSessionsForMppCompilation(
+            hmppModuleStructure, moduleDataForHmppModule, files, fileBelongsToModule,
+            createFirSession, sessionProvider, sessionConfigurator
+        )
+    }
+
+    private fun <F> createSourceSessionsForMppCompilation(
+        hmppModuleStructure: HmppCliModuleStructure,
+        moduleDataForHmppModule: LinkedHashMap<HmppCliModule, FirModuleData>,
+        files: List<F>,
+        fileBelongsToModule: (F, String) -> Boolean,
+        createFirSession: FirSessionProducer<F>,
+        sessionProvider: FirProjectSessionProvider,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
+    ): List<SessionWithSources<F>> {
         return hmppModuleStructure.modules.mapIndexed { i, module ->
             val moduleData = moduleDataForHmppModule.getValue(module)
             val sources = files.filter { fileBelongsToModule(it, module.name) }

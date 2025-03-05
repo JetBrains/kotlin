@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -44,11 +45,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
+import kotlin.collections.orEmpty
 
 object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, MetadataFrontendPipelineArtifact>(
     name = "MetadataFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
+    fun computeResolvedKlibs(paths: List<File>, messageCollector: MessageCollector): List<KotlinResolvedLibraryImpl> {
+        val klibFiles = paths.filter { it.isDirectory || it.extension == "klib" }.map { it.absolutePath }
+        val logger = messageCollector.toLogger()
+
+        // TODO: This is a workaround for KT-63573. Revert it back when KT-64169 is fixed.
+//        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, logger).getFullResolvedList()
+        return klibFiles.map {
+            KotlinResolvedLibraryImpl(
+                resolveSingleFileKlib(
+                    org.jetbrains.kotlin.konan.file.File(it),
+                    logger
+                )
+            )
+        }
+    }
+
     override fun executePhase(input: ConfigurationPipelineArtifact): MetadataFrontendPipelineArtifact {
         val (configuration, diagnosticsReporter, rootDisposable) = input
         val messageCollector = configuration.messageCollector
@@ -63,23 +81,10 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             dependsOnDependencies(refinedPaths.map { it.absolutePath })
         }
 
-        val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
-            .filterIsInstance<JvmClasspathRoot>()
-            .filter { it.file.isDirectory || it.file.extension == "klib" }
-            .map { it.file.absolutePath }
-
-        val logger = messageCollector.toLogger()
-
-        // TODO: This is a workaround for KT-63573. Revert it back when KT-64169 is fixed.
-//        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, logger).getFullResolvedList()
-        val resolvedLibraries = klibFiles.map {
-            KotlinResolvedLibraryImpl(
-                resolveSingleFileKlib(
-                    org.jetbrains.kotlin.konan.file.File(it),
-                    logger
-                )
-            )
-        }
+        val resolvedLibraries = computeResolvedKlibs(
+            configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file },
+            messageCollector
+        )
 
         val perfManager = configuration.perfManager
         val environment = KotlinCoreEnvironment.createForProduction(

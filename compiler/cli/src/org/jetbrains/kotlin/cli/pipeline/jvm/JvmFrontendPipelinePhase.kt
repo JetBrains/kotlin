@@ -39,11 +39,13 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmIncrementalCompilationSymbolProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.createSymbolProviders
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -356,34 +358,48 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     predefinedJavaComponents = predefinedJavaComponents,
                 )
             },
-        ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
-            FirJvmSessionFactory.createSourceSession(
-                moduleData,
-                sessionProvider,
-                javaSourcesScope,
-                projectEnvironment,
-                createIncrementalCompilationSymbolProviders = { session ->
-                    // Temporary solution for KT-61942 - we need to share the provider built on top of previously compiled files,
-                    // because we do not distinguish classes generated from common and platform sources, so may end up with the
-                    // same type loaded from both. And if providers are not shared, the types will not match on the actualizing.
-                    // The proper solution would be to build IC providers only on class files generated for the currently compiled module.
-                    // But to solve it we need to have a mapping from module to its class files.
-                    // TODO: reimplement with splitted providers after fixing KT-62686
-                    if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
-                    else {
-                        firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
-                        createProviderAndScopeForIncrementalCompilation(moduleFiles)
-                            ?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
-                                firJvmIncrementalCompilationSymbolProviders = it
-                            }
-                    }
-                },
-                extensionRegistrars,
-                configuration,
-                predefinedJavaComponents = predefinedJavaComponents,
-                needRegisterJavaElementFinder = true,
-                sessionConfigurator,
-            )
-        }
+            librarySessionForHmppCommonModuleProducer = { sessionProvider, sharedLibrarySession, commonModuleLibraryList, resolvedLibraries ->
+                FirMetadataSessionFactory.createLibrarySession(
+                    sessionProvider,
+                    sharedLibrarySession,
+                    commonModuleLibraryList.moduleDataProvider,
+                    projectEnvironment,
+                    extensionRegistrars,
+                    librariesScope,
+                    resolvedLibraries,
+                    packagePartProviderForLibraries as PackageAndMetadataPartProvider,
+                    configuration.languageVersionSettings,
+                )
+            },
+            createSourceSession = { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
+                FirJvmSessionFactory.createSourceSession(
+                    moduleData,
+                    sessionProvider,
+                    javaSourcesScope,
+                    projectEnvironment,
+                    createIncrementalCompilationSymbolProviders = { session ->
+                        // Temporary solution for KT-61942 - we need to share the provider built on top of previously compiled files,
+                        // because we do not distinguish classes generated from common and platform sources, so may end up with the
+                        // same type loaded from both. And if providers are not shared, the types will not match on the actualizing.
+                        // The proper solution would be to build IC providers only on class files generated for the currently compiled module.
+                        // But to solve it we need to have a mapping from module to its class files.
+                        // TODO: reimplement with splitted providers after fixing KT-62686
+                        if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
+                        else {
+                            firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
+                            createProviderAndScopeForIncrementalCompilation(moduleFiles)
+                                ?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
+                                    firJvmIncrementalCompilationSymbolProviders = it
+                                }
+                        }
+                    },
+                    extensionRegistrars,
+                    configuration,
+                    predefinedJavaComponents = predefinedJavaComponents,
+                    needRegisterJavaElementFinder = true,
+                    sessionConfigurator,
+                )
+            }
+        )
     }
 }
