@@ -120,10 +120,11 @@ internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymb
         get() = withValidityAssertion {
             if (backingPsi?.annotationEntries.isNullOrEmpty() &&
                 owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) == false
-            )
+            ) {
                 KaBaseEmptyAnnotationList(token)
-            else
+            } else {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            }
         }
 }
 
@@ -150,10 +151,11 @@ internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymb
         get() = withValidityAssertion {
             if (backingPsi?.annotationEntries.isNullOrEmpty() &&
                 owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_SETTER) == false
-            )
+            ) {
                 KaBaseEmptyAnnotationList(token)
-            else
+            } else {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            }
         }
 
     val parameterImpl: KaValueParameterSymbol
