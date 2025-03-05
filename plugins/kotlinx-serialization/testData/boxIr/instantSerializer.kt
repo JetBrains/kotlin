@@ -36,9 +36,8 @@ import kotlinx.serialization.json.*
 class Holder(val i: Instant)
 
 fun box(): String {
-    return "OK"
     val h = Holder(Instant.parse("2025-01-04T23:59:14.0001242Z"))
     val msg = Json.encodeToString(h)
-    return if (msg == """{"instant":"2025-01-04T23:59:14.0001242Z"}""") "OK" else "FAIL: $msg"
+    return if (msg == """{"i":"2025-01-04T23:59:14.000124200Z"}""") "OK" else "FAIL: $msg"
 }
 
