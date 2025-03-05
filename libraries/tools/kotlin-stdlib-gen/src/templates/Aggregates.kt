@@ -268,8 +268,10 @@ object Aggregates : TemplateGroupBase() {
                 selectorType.startsWith("java") -> selectorType.substringAfterLast('.')
                 else -> selectorType
             }
-            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
-            annotation("@OverloadResolutionByLambdaReturnType")
+            if (selectorType !in listOf("Int", "UInt")) {
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
+            }
             specialFor(ArraysOfUnsigned) {
                 annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
             }
