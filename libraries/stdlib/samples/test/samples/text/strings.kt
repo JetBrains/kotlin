@@ -534,6 +534,9 @@ class Strings {
         val emptyResults = ",a,b,c,".split(",")
         assertPrints(emptyResults, "[, a, b, c, ]")
 
+        val consecutiveSeparators = "a,,b,,,c".split(",")
+        assertPrints(consecutiveSeparators, "[a, , b, , , c]")
+
         val mixedCase = "abcXdef".split("x")
         val mixedCaseIgnored = "abcXdef".split("x", ignoreCase = true)
         assertPrints(mixedCase, "[abcXdef]")  // No match with case sensitivity
