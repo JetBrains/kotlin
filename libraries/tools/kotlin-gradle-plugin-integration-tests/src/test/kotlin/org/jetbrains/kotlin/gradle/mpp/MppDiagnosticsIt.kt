@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -143,9 +142,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
-    @BrokenOnMacosTest
     fun testErrorsFailOnlyRelevantProjects(gradleVersion: GradleVersion) {
-        project("errorsFailOnlyRelevantProjects", gradleVersion) {
+        project(
+            "errorsFailOnlyRelevantProjects",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             buildAndFail("brokenProjectA:assemble") {
                 assertEqualsToFile(expectedOutputFile("brokenA"), extractProjectsAndTheirDiagnostics())
             }
@@ -179,9 +182,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
-    @BrokenOnMacosTest
     fun testDiagnosticsRenderingWithStacktraceOption(gradleVersion: GradleVersion) {
-        project("diagnosticsRenderingWithStacktraceOption", gradleVersion) {
+        project(
+            "diagnosticsRenderingWithStacktraceOption",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,
             // need to override that to mimic real-life scenarios
             val options = buildOptions.copy(showDiagnosticsStacktrace = null, stacktraceMode = null)
