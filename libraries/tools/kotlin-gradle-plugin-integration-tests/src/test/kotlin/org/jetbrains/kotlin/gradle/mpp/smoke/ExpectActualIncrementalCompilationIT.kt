@@ -25,7 +25,8 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK2().copy(
             // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
-            enableUnsafeIncrementalCompilationForMultiplatform = true
+            enableUnsafeIncrementalCompilationForMultiplatform = true,
+            logLevel = LogLevel.DEBUG,
         )
 
     @DisplayName("File with actual declaration needs recompiling")
@@ -42,7 +43,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
                 kotlinSourcesDir(sourceSet).resolve("ActualFunFoo.kt").addPrivateVal()
             }
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
                 assertIncrementalCompilation(
                     listOf(
@@ -66,7 +67,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             val commonSourceKt = kotlinSourcesDir("commonMain").resolve("UsedInFileWithExpectFun.kt")
             commonSourceKt.replaceWithVersion("sourceCompatibleAbiChange")
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
                 assertIncrementalCompilation(
                     listOf(
@@ -90,7 +91,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
             kotlinSourcesDir("commonMain").resolve("ExpectClassBar.kt").addPrivateVal()
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
                 assertIncrementalCompilation(
                     listOf(
