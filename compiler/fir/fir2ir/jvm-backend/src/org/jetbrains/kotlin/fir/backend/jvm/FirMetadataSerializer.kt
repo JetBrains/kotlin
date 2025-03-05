@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.util.metadataVersion
+import org.jetbrains.kotlin.util.jvmMetadataVersion
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -99,7 +99,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS),
         session.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS),
-        configuration.metadataVersion(session.languageVersionSettings.languageVersion),
+        configuration.jvmMetadataVersion(session.languageVersionSettings.languageVersion),
         session.languageVersionSettings.jvmDefaultMode,
         stringTable,
         constValueProvider = null,
