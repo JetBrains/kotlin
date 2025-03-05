@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 /**
- * [KaBaseResolutionScope] encapsulates special handling required for
- * generated and shadowed scopes provided by [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider].
- * After KT-74541 is fixed, these scopes will be contained directly in [org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.contentScope].
- *
  * [KaBaseResolutionScope] is not intended to be created manually,
  * it's a responsibility of [org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider]
  * Please, use [Companion.forModule]
@@ -41,35 +37,36 @@ internal class KaBaseResolutionScope(
     }
 
     override fun contains(file: VirtualFile): Boolean {
-        return resolutionScope.contains(file) || isFromGeneratedModule(file)
+        return resolutionScope.contains(file) || isAccessibleDanglingFile(file)
     }
 
     override fun contains(element: PsiElement): Boolean {
-        return resolutionScope.contains(element) || isFromGeneratedModule(element)
+        return resolutionScope.contains(element) || isAccessibleDanglingFile(element)
     }
 
-    private fun isFromGeneratedModule(element: PsiElement): Boolean {
+    private fun isAccessibleDanglingFile(element: PsiElement): Boolean {
         val ktFile = element.containingFile as? KtFile ?: return false
-        if (ktFile.isDangling) {
-            val module = KaModuleProvider.getModule(useSiteModule.project, ktFile, useSiteModule)
-            return module.isAccessibleFromUseSiteModule()
+        if (!ktFile.isDangling) {
+            return false
         }
-
-        val virtualFile = ktFile.virtualFile ?: return false
-        return isFromGeneratedModule(virtualFile)
+        val module = ktFile.contextModule ?: KaModuleProvider.getModule(useSiteModule.project, ktFile, useSiteModule)
+        return module.isAccessibleFromUseSiteModule()
     }
 
-    /**
-     * To support files from [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider]
-     * which are not dangling files
-     */
-    private fun isFromGeneratedModule(virtualFile: VirtualFile): Boolean {
-        val analysisContextModule = virtualFile.analysisContextModule ?: return false
-        return analysisContextModule.isAccessibleFromUseSiteModule()
+    private fun isAccessibleDanglingFile(virtualFile: VirtualFile): Boolean {
+        return virtualFile.analysisContextModule?.isAccessibleFromUseSiteModule() == true
     }
 
     private fun KaModule.isAccessibleFromUseSiteModule(): Boolean {
-        return this == useSiteModule || this in useSiteModule.allDirectDependencies()
+        return this in buildSet {
+            add(useSiteModule)
+            addAll(useSiteModule.directRegularDependencies)
+            addAll(useSiteModule.directFriendDependencies)
+            addAll(useSiteModule.transitiveDependsOnDependencies)
+            if (useSiteModule is KaLibrarySourceModule) {
+                add(useSiteModule.binaryLibrary)
+            }
+        }
     }
 
     override fun toString(): String {

@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.utils.topologicalSort
 
 /**
@@ -34,3 +39,13 @@ public fun KaModule.asDebugString(indent: Int = 0): String =
         }
         append("}")
     }.prependIndent("  ".repeat(indent))
+
+/**
+ * Used by the Analysis API engine
+ * to mark [VirtualFile] generated from [KaResolveExtension][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension].
+ *
+ * This property is used to define whether [analysisContextModule] of a [VirtualFile]
+ * was set by [KaResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider] or not.
+ */
+@KaImplementationDetail
+public var VirtualFile.isGeneratedByResolveExtensions: Boolean? by UserDataProperty(Key.create("IS_GENERATED_BY_RESOLVE_EXTENSIONS"))

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.isGeneratedByResolveExtensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -301,6 +302,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
         val ktFile = factory.createFile(fileName, fileText)
         val virtualFile = ktFile.virtualFile
         virtualFile.analysisContextModule = ktModule
+        virtualFile.isGeneratedByResolveExtensions = true
         virtualFile.navigationTargetsProvider = navigationTargetsProvider
         return ktFile
     }

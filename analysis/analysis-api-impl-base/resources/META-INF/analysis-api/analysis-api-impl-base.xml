@@ -93,5 +93,6 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
+    <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
   </extensions>
 </idea-plugin>
