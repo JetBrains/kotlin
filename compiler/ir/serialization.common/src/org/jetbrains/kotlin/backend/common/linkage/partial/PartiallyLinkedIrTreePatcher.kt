@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -528,18 +529,27 @@ internal class PartiallyLinkedIrTreePatcher(
                 return symbol.owner.name.asString().endsWith(COMPOSE_STABLE_FIELD_MARKER)
             }
 
-            fun IrFieldSymbol.generateArtificialStabilityGetter(getterName: String, parent: IrDeclarationContainer): IrSimpleFunction {
+            fun IrFieldSymbol.generateArtificialStabilityGetter(getterName: String, parent: IrDeclarationContainer, parentField: IrField): IrSimpleFunction {
 
                 val stabilityField = owner
 
-                val stabilityGetter = builtIns.irFactory.buildFun {
-                    startOffset = UNDEFINED_OFFSET
-                    endOffset = UNDEFINED_OFFSET
-                    name = Name.identifier(getterName)
-                    returnType = stabilityField.type
-                    visibility = DescriptorVisibilities.PUBLIC
-                    origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
-                }.also { fn ->
+                val stabilityGetter = builtIns.irFactory.createSimpleFunction(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    name = Name.identifier(getterName),
+                    returnType = stabilityField.type,
+                    visibility = DescriptorVisibilities.PUBLIC,
+                    origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION,
+                    isInline = false,
+                    isExpect = false,
+                    modality = Modality.FINAL,
+                    // k/wasm and k/js rely on signatures, therefore we must set a "unique" signature here
+                    symbol = IrSimpleFunctionSymbolImpl(signature = IdSignature.LoweredDeclarationSignature(parentField.symbol.signature!!, -1, 0)),
+                    isTailrec = false,
+                    isSuspend = false,
+                    isOperator = false,
+                    isInfix = false,
+                ).also { fn ->
                     fn.parent = parent
                     fn.body = builtIns.irFactory.createBlockBody(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -564,7 +574,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 return (owner.parent as? IrDeclarationContainer)?.let { parent ->
                     parent.findDeclaration<IrSimpleFunction> { it.name.asString() == getterFunName }
                         ?: parent.findDeclaration<IrSimpleFunction> { it.name.asString() == artificialGetterFunName }   // try to find already-crafted artificial getter
-                        ?: generateArtificialStabilityGetter(artificialGetterFunName, parent)                           // generate one if none found
+                        ?: generateArtificialStabilityGetter(artificialGetterFunName, parent, owner)                           // generate one if none found
                 }
 
             }
