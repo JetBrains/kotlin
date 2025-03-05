@@ -30,9 +30,10 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     // Schedule diagnostics rendering
     launch {
         configurationResult.await()
-        renderReportedDiagnostics(
-            collectorProvider.get().getDiagnosticsForProject(project),
+        val diagnostics = collectorProvider.map { it.getDiagnosticsForProject(project) }.get()
+        diagnostics.renderReportedDiagnostics(
             logger,
+            null, //FIXME: passing problemsReporter here leads to YarnGradlePluginIT.testFailingWithLockFileUpdate failure
             diagnosticRenderingOptions
         )
     }
