@@ -106,7 +106,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
     @GradleTest
     internal fun shouldNotPrintAnythingIfJavaAndKotlinJvmTargetsAreDifferent(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
@@ -154,7 +154,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
     @GradleTest
     internal fun shouldProduceJavaKotlinJvmTargetDifferenceWarningOnlyForRelatedTasks(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
@@ -355,7 +355,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             projectName = "kapt2/simple",
             gradleVersion = gradleVersion,
         ) {
-            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) 11 else 17
+            val toolchainJavaVersion = 17
 
             gradleProperties.append(
                 """
@@ -501,7 +501,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     private fun TestProject.setJavaCompilationCompatibility(
-        target: JavaVersion
+        target: JavaVersion,
     ) {
         //language=Groovy
         buildGradle.append(
@@ -517,7 +517,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     private fun TestProject.useToolchainToCompile(
-        jdkVersion: Int
+        jdkVersion: Int,
     ) {
         //language=Groovy
         buildGradle.append(

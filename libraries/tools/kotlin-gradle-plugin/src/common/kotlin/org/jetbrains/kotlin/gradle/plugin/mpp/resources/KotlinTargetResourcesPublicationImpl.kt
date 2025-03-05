@@ -8,14 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
@@ -208,8 +204,5 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         const val RESOURCES_ZIP_EXTENSION = "${RESOURCES_CLASSIFIER}.zip"
 
         const val RESOURCES_PATH = "ResourcesPath"
-
-        val minimumGradleVersionForVariantReselection = GradleVersion.version("7.6")
     }
-
 }

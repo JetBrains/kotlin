@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.gradle.arguments
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 class KotlinTaskProperties(
-    private val providerFactory: ProviderFactory
+    private val providerFactory: ProviderFactory,
 ) {
     private val toKotlinVersionMapper: (String) -> KotlinVersion = { KotlinVersion.fromVersion(it) }
     private val toBooleanMapper: (String) -> Boolean = { it.toBoolean() }
@@ -22,20 +21,10 @@ class KotlinTaskProperties(
 
     private fun <T : Any> readProperty(
         propertyName: String,
-        mapper: (String) -> T
+        mapper: (String) -> T,
     ): Provider<T> {
         return providerFactory.gradleProperty(propertyName)
-            .configurationCacheCompat<String>()
             .map(mapper)
-    }
-
-    private fun <T : Any> Provider<T>.configurationCacheCompat(): Provider<T> {
-        return if (GradleVersion.current() < GradleVersion.version("7.4")) {
-            @Suppress("DEPRECATION")
-            this.forUseAtConfigurationTime()
-        } else {
-            this
-        }
     }
 
     companion object {

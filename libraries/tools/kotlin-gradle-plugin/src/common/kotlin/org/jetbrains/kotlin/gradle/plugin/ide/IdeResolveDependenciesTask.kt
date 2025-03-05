@@ -9,14 +9,15 @@ import com.google.gson.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.File
 import java.lang.reflect.Type
@@ -29,7 +30,7 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
     return locateOrRegisterTask("resolveIdeDependencies") { task ->
         task.description = "Debugging/Diagnosing task that will resolve dependencies for the IDE"
         task.group = "ide"
-        task.notCompatibleWithConfigurationCacheCompat("Just a debugging util")
+        task.notCompatibleWithConfigurationCache("Just a debugging util")
         task.kotlinIdeMultiplatformImport.value(project.kotlinIdeMultiplatformImport).finalizeValue()
         // Fixes circular dependency on eager tasks initialization
         task.kotlinIdeMultiplatformImport.get().addDependencyOnResolvers(task)

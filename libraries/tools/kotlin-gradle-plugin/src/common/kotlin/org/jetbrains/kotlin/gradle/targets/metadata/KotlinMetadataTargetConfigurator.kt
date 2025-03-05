@@ -208,7 +208,7 @@ class KotlinMetadataTargetConfigurator :
         compilation.compileDependencyFiles += sourceSet.dependsOnClosureCompilePath
 
         // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
-        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.getResolvedArtifactsCompat(project)
+        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.resolvedArtifacts
         compilation.compileDependencyFiles += project.files(artifacts.map { it.filterNot { it.isMpp }.map { it.file } })
 
         // Transformed Multiplatform Libraries based on source set visibility

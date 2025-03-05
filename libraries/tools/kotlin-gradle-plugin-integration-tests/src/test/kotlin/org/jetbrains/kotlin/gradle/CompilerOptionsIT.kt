@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.fir.declarations.builder.buildScript
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
@@ -462,11 +461,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
         ) {
-            if (gradleVersion < GradleVersion.version("7.1")) {
-                buildGradle.append("archivesBaseName = \"myNativeLib\"")
-            } else {
-                buildGradle.append("base.archivesName.set(\"myNativeLib\")")
-            }
+            buildGradle.append("base.archivesName.set(\"myNativeLib\")")
 
             build(":compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")

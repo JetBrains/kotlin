@@ -15,9 +15,8 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.readSystemPropertyAtConfigurationTime
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 /**
@@ -35,7 +34,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
 
     fun registerTestTask(
         taskHolder: TaskProvider<out AbstractTestTask>,
-        aggregate: TaskProvider<KotlinTestReport> = allTestsTask
+        aggregate: TaskProvider<KotlinTestReport> = allTestsTask,
     ) {
         project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder)
         project.cleanAllTestTask.configure { it.dependsOn(cleanTaskName(taskHolder.name)) }
@@ -63,7 +62,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
     fun getOrCreateAggregatedTestTask(
         name: String,
         description: String,
-        parent: TaskProvider<KotlinTestReport>? = allTestsTask
+        parent: TaskProvider<KotlinTestReport>? = allTestsTask,
     ): TaskProvider<KotlinTestReport> {
         if (name == parent?.name) return parent
 
@@ -74,7 +73,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         name: String,
         description: String,
         parent: TaskProvider<KotlinTestReport>? = null,
-        configure: (TaskProvider<KotlinTestReport>) -> Unit = {}
+        configure: (TaskProvider<KotlinTestReport>) -> Unit = {},
     ): TaskProvider<KotlinTestReport> {
         val existed = project.locateTask<KotlinTestReport>(name)
         if (existed != null) return existed
@@ -88,7 +87,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
                 project.testReportsDir.map { it.dir(name) }
             ).finalizeValueOnRead()
 
-            val isIdeaActive = project.readSystemPropertyAtConfigurationTime("idea.active").isPresent
+            val isIdeaActive = project.providers.systemProperty("idea.active").isPresent
 
             if (isIdeaActive) {
                 aggregate.extensions.extraProperties.set("idea.internal.test", true)

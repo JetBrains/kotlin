@@ -196,10 +196,9 @@ data class BuildOptions(
             arguments.add("-Dorg.gradle.configuration-cache.parallel=true")
         }
 
-        if (gradleVersion >= GradleVersion.version("7.1")) {
-            val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion)
-            arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
-        }
+        val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion)
+        arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+
         if (parallel) {
             arguments.add("--parallel")
             arguments.add("--max-workers=$maxWorkers")

@@ -15,7 +15,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 
 @DisableCachingByDefault(
     because = "This task renders reported diagnostics; caching this task will hide diagnostics and obscure issues in the build"
@@ -61,7 +60,7 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
         task.description = DESCRIPTION
         task.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-        task.onlyIfCompat("errorDiagnostics are present") {
+        task.onlyIf("errorDiagnostics are present") {
             require(it is CheckKotlinGradlePluginConfigurationErrors)
             !it.errorDiagnostics.orNull.isNullOrEmpty()
         }

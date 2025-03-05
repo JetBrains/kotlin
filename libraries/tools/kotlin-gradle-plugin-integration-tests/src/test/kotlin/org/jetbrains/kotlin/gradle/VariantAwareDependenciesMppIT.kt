@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.test.assertTrue
@@ -257,24 +259,14 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             )
             buildGradle.replaceText("\"com.example:sample-lib:1.0\"", "project(':sample-lib')")
 
-            val isAtLeastGradle75 = gradleVersion >= GradleVersion.version("7.5")
-
             listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
-                    if (isAtLeastGradle75) {
-                        assertOutputContains("Variant ${target}ApiElements")
-                    } else {
-                        assertOutputContains("variant \"${target}ApiElements\" [")
-                    }
+                    assertOutputContains("Variant ${target}ApiElements")
                 }
 
                 if (suffix == "Classpath") {
                     build("dependencyInsight", "--configuration", "${target}Runtime$suffix", "--dependency", "sample-lib") {
-                        if (isAtLeastGradle75) {
-                            assertOutputContains("Variant ${target}RuntimeElements")
-                        } else {
-                            assertOutputContains("variant \"${target}RuntimeElements\" [")
-                        }
+                        assertOutputContains("Variant ${target}RuntimeElements")
                     }
                 }
             }

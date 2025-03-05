@@ -171,7 +171,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     )
 
 
-                    task.doNotTrackStateCompat("Tracked by external webpack tool")
+                    task.doNotTrackState("Tracked by external webpack tool")
 
                     task.dependsOn(linkSyncTask)
 

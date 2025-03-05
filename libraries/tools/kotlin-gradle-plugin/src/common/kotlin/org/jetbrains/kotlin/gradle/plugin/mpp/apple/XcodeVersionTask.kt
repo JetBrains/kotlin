@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
@@ -64,7 +63,7 @@ internal abstract class XcodeVersionTask : DefaultTask() {
 
             return project.locateOrRegisterTask("xcodeVersion") { task ->
                 if (!HostManager.hostIsMac) {
-                    task.onlyIfCompat("Task can be run only on MacOS") { false }
+                    task.onlyIf("Task can be run only on MacOS") { false }
                     return@locateOrRegisterTask
                 }
 

@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import kotlin.io.path.appendText
@@ -221,7 +220,7 @@ class KotlinAndroidIT : KGPBaseTest() {
             }
 
             // Gradle 6 + AGP 4 produce a deprecation warning on parallel executions about resolving a configuration from another project
-            build(":Lib:lintFlavor1Debug", buildOptions = buildOptions.copy(parallel = gradleVersion >= GradleVersion.version("7.0"))) {
+            build(":Lib:lintFlavor1Debug", buildOptions = buildOptions.copy(parallel = true)) {
                 assertOutputDoesNotContain("as an external dependency and not analyze it.")
             }
         }

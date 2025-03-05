@@ -15,9 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -27,10 +25,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import kotlin.reflect.KClass
 
@@ -144,7 +142,7 @@ internal class NodeJsRootPluginApplier(
                     nodeJsRoot.rootPackageDirectory.map { it.file(NpmProject.Companion.PACKAGE_JSON) }
                 ).disallowChanges()
 
-                task.onlyIfCompat("Prepare NPM project only in configuring state") {
+                task.onlyIf("Prepare NPM project only in configuring state") {
                     it as RootPackageJsonTask
                     it.npmResolutionManager.get().isConfiguringState()
                 }
@@ -183,7 +181,7 @@ internal class NodeJsRootPluginApplier(
                     }
                 ).disallowChanges()
 
-                npmInstall.onlyIfCompat("No package.json files for install") { task ->
+                npmInstall.onlyIf("No package.json files for install") { task ->
                     task as KotlinNpmInstallTask
                     task.preparedFiles.all { file ->
                         file.exists()

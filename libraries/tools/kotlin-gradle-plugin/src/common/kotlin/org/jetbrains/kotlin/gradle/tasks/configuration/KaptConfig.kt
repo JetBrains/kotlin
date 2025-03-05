@@ -7,13 +7,11 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import com.intellij.util.lang.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
@@ -21,12 +19,11 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.disab
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
-import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.detachedResolvable
-import org.jetbrains.kotlin.gradle.utils.listProperty
 import java.io.File
 
 internal open class KaptConfig<TASK : KaptTask>(
@@ -61,7 +58,7 @@ internal open class KaptConfig<TASK : KaptTask>(
     internal constructor(
         project: Project,
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
-        ext: KaptExtensionConfig
+        ext: KaptExtensionConfig,
     ) : this(project, ext) {
         configureTask { task ->
             task.classpath.from(
@@ -108,17 +105,12 @@ internal open class KaptConfig<TASK : KaptTask>(
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            val transformActionClass =
-                if (GradleVersion.current() >= GradleVersion.version("5.4"))
-                    StructureTransformAction::class.java
-                else
-                    StructureTransformLegacyAction::class.java
-            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
+            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
                 transformSpec.from.setAttribute(artifactType, "jar")
                 transformSpec.to.setAttribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
-            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
+            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
                 transformSpec.from.setAttribute(artifactType, "directory")
                 transformSpec.to.setAttribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
@@ -198,7 +190,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
     constructor(
         project: Project,
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
-        ext: KaptExtensionConfig
+        ext: KaptExtensionConfig,
     ) : super(project, kaptGenerateStubsTask, ext) {
         project.configurations.findResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
             ?: project.configurations.createResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
