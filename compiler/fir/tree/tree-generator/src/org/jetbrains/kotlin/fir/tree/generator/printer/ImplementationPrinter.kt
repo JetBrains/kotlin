@@ -109,7 +109,10 @@ internal class ImplementationPrinter(
                                     )
                                 }
 
-                                "dispatchReceiver", "extensionReceiver", "companionObject" -> {
+                                // For most of the cases dispatch/extension receivers are handled with the `explicitReceiver` case above
+                                // But FirSuperReceiverExpressionImpl doesn't have explicitReceiver
+                                "dispatchReceiver" if (this.typeName != "FirSuperReceiverExpressionImpl") -> {}
+                                "extensionReceiver", "companionObject" -> {
                                 }
 
                                 else -> {
@@ -183,7 +186,10 @@ internal class ImplementationPrinter(
                                     }
                                 }
 
-                                field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
+                                // For most of the cases dispatch/extension receivers are handled with the `explicitReceiver` case above
+                                // But FirSuperReceiverExpressionImpl doesn't have explicitReceiver
+                                field.name == "dispatchReceiver" && this.typeName != "FirSuperReceiverExpressionImpl" -> {}
+                                field.name == "extensionReceiver" -> {}
 
                                 field.withTransform -> {
                                     if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {

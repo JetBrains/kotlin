@@ -48,12 +48,14 @@ internal class FirSuperReceiverExpressionImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
+        dispatchReceiver?.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSuperReceiverExpressionImpl {
         transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
+        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         transformCalleeReference(transformer, data)
         return this
     }
