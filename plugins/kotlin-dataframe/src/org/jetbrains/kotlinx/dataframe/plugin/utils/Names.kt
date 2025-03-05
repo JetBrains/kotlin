@@ -62,9 +62,10 @@ object Names {
     val DATA_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchema"))
     val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
     val DURATION_CLASS_ID = kotlin.time.Duration::class.classId()
-    val LOCAL_DATE_CLASS_ID = kotlinx.datetime.LocalDate::class.classId()
-    val LOCAL_DATE_TIME_CLASS_ID = kotlinx.datetime.LocalDateTime::class.classId()
-    val INSTANT_CLASS_ID = kotlinx.datetime.Instant::class.classId()
+
+    val LOCAL_DATE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDate"))
+    val LOCAL_DATE_TIME_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDateTime"))
+    val INSTANT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("Instant"))
 
     val PAIR = ClassId(FqName("kotlin"), Name.identifier("Pair"))
     val PAIR_CONSTRUCTOR = CallableId(FqName("kotlin"), FqName("Pair"), Name.identifier("Pair"))

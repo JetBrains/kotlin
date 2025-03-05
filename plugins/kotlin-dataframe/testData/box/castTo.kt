@@ -2,10 +2,12 @@ import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.*
+import java.net.URL
 
 fun box(): String {
-    val sample =
-        @Import DataFrame.readCSV("https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv")
+    val sample = dataFrameOf("full_name", "html_url", "stargazers_count", "topics", "watchers")(
+        "JetBrains/JPS", URL("https://github.com/JetBrains/JPS"), 23, "[]", 23
+    )
 
     val organizations = listOf("https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv")
     organizations.forEach { organization ->

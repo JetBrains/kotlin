@@ -4,9 +4,11 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.*
 
 fun box(): String {
-    val df = @Import DataFrame.readJson("testResources/achievements_all.json")
-
-    val df2 = df.explode { achievements }
+   val df2 = dataFrameOf("id", "name", "preStage")(
+        1, "11", null,
+        2, "22", 1,
+        3, "33", null,
+    ).group { id and name and preStage }.into("achievements")
 
     val df3 = df2
         .filter { achievements.preStage != null }

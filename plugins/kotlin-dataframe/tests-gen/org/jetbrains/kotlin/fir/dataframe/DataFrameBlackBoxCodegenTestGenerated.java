@@ -413,66 +413,6 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
-  @TestMetadata("read.kt")
-  public void testRead() {
-    runTest("testData/box/read.kt");
-  }
-
-  @Test
-  @TestMetadata("readCSV.kt")
-  public void testReadCSV() {
-    runTest("testData/box/readCSV.kt");
-  }
-
-  @Test
-  @TestMetadata("readExcel.kt")
-  public void testReadExcel() {
-    runTest("testData/box/readExcel.kt");
-  }
-
-  @Test
-  @TestMetadata("readExcel_stringColumns.kt")
-  public void testReadExcel_stringColumns() {
-    runTest("testData/box/readExcel_stringColumns.kt");
-  }
-
-  @Test
-  @TestMetadata("readJson.kt")
-  public void testReadJson() {
-    runTest("testData/box/readJson.kt");
-  }
-
-  @Test
-  @TestMetadata("readJsonStr_const.kt")
-  public void testReadJsonStr_const() {
-    runTest("testData/box/readJsonStr_const.kt");
-  }
-
-  @Test
-  @TestMetadata("readJsonStr_datarow.kt")
-  public void testReadJsonStr_datarow() {
-    runTest("testData/box/readJsonStr_datarow.kt");
-  }
-
-  @Test
-  @TestMetadata("readJsonStr_localProperty.kt")
-  public void testReadJsonStr_localProperty() {
-    runTest("testData/box/readJsonStr_localProperty.kt");
-  }
-
-  @Test
-  @TestMetadata("readJsonStr_memberProperty.kt")
-  public void testReadJsonStr_memberProperty() {
-    runTest("testData/box/readJsonStr_memberProperty.kt");
-  }
-
-  @Test
-  @TestMetadata("read_localFile.kt")
-  public void testRead_localFile() {
-    runTest("testData/box/read_localFile.kt");
-  }
-
-  @Test
   @TestMetadata("reducedGroupBy.kt")
   public void testReducedGroupBy() {
     runTest("testData/box/reducedGroupBy.kt");
@@ -650,18 +590,6 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("transformReplaceFunctionCall.kt")
   public void testTransformReplaceFunctionCall() {
     runTest("testData/box/transformReplaceFunctionCall.kt");
-  }
-
-  @Test
-  @TestMetadata("trimIndent.kt")
-  public void testTrimIndent() {
-    runTest("testData/box/trimIndent.kt");
-  }
-
-  @Test
-  @TestMetadata("trimMargin.kt")
-  public void testTrimMargin() {
-    runTest("testData/box/trimMargin.kt");
   }
 
   @Test

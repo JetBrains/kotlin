@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
-import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -62,14 +61,12 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.isGroupBy
 
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
-    cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
-    schemasDirectory: String?,
     isTest: Boolean,
     dumpSchemas: Boolean
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
-            Checker(cache, schemasDirectory, isTest), FunctionCallSchemaReporter.takeIf { dumpSchemas }
+            Checker(isTest), FunctionCallSchemaReporter.takeIf { dumpSchemas }
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOfNotNull(
             PropertyAccessSchemaReporter.takeIf { dumpSchemas }
@@ -82,8 +79,6 @@ class ExpressionAnalysisAdditionalChecker(
 }
 
 private class Checker(
-    val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
-    val schemasDirectory: String?,
     val isTest: Boolean,
 ) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
@@ -95,7 +90,7 @@ private class Checker(
     }
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        with(KotlinTypeFacadeImpl(context.session, cache, schemasDirectory, isTest)) {
+        with(KotlinTypeFacadeImpl(context.session, isTest)) {
             analyzeCast(expression, reporter, context)
 //            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
 //                override var errorReported: Boolean = false

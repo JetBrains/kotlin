@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
-import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.SchemaProperty
 import org.jetbrains.kotlinx.dataframe.plugin.analyzeRefinedCallShape
@@ -85,10 +84,7 @@ import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
 class FunctionCallTransformer(
-    override val resolutionPath: String?,
     session: FirSession,
-    override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
-    override val schemasDirectory: String?,
     override val isTest: Boolean,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
