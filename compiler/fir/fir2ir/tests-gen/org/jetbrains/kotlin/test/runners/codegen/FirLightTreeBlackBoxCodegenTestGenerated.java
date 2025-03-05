@@ -22667,6 +22667,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
       }
 
       @Test
+      @TestMetadata("argumentPosition.kt")
+      public void testArgumentPosition() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/argumentPosition.kt");
+      }
+
+      @Test
       @TestMetadata("eitherInTypePosition.kt")
       public void testEitherInTypePosition() {
         runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/eitherInTypePosition.kt");
