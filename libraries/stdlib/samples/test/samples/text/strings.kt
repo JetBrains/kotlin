@@ -627,4 +627,30 @@ class Strings {
         // Throws if startIndex or endIndex is out of range of the char sequence indices
         assertFails { text.removeRange(startIndex = 7, endIndex = 20) }
     }
+
+    @Suppress("KotlinConstantConditions")
+    @Sample
+    fun stringEquals() {
+        assertTrue("" == "")
+        assertTrue("abc" == "abc")
+
+        assertFalse("abc" == "abcd")
+        assertFalse("abc" == "Abc")
+        // If a character's case doesn't matter, strings could be compared in a case-insensitive manner
+        assertTrue("abc".equals("Abc", ignoreCase = true))
+
+        val builder = StringBuilder("abc")
+        assertPrints(builder, "abc")
+        // Although the builder holds the same character sequence, it is not a String
+        assertFalse("abc".equals(builder))
+    }
+
+    @Sample
+    fun stringPlus() {
+        assertEquals("Kodee", "Ko" + "dee")
+        // 2 is not a string, but plus concatenates its string representation with the "Kotlin " string
+        assertEquals("Kotlin 2", "Kotlin " + 2)
+        // list is converted to a String first and then concatenated with the "Numbers: " string
+        assertEquals("Numbers: [1, 2, 3]", "Numbers: " + listOf(1, 2, 3))
+    }
 }
