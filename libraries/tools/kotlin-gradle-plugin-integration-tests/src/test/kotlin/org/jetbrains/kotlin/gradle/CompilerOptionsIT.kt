@@ -489,7 +489,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Syncs languageSettings changes to the related compiler options")
     @MppGradlePluginTests
-    @BrokenOnMacosTest
     fun syncLanguageSettingsToCompilerOptions(gradleVersion: GradleVersion) {
         project("mpp-default-hierarchy", gradleVersion) {
             buildGradle.appendText(
@@ -503,11 +502,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 |
                 |tasks.register("printCompilerOptions") {
                 |    dependsOn(kotlinTaskToCheck)
-                |    def tasksContainer = project.tasks
+                |    def kotlinTask = project.tasks.getByName(kotlinTaskToCheck) as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<?>
+                |    def compilerOptions = kotlinTask.compilerOptions
                 |    doLast {
-                |        def kotlinTask = tasks.getByName(kotlinTaskToCheck) as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<?>
-                |        logger.warn("###AV:${'$'}{kotlinTask.compilerOptions.apiVersion.getOrNull()}")
-                |        logger.warn("###LV:${'$'}{kotlinTask.compilerOptions.languageVersion.getOrNull()}")
+                |        logger.warn("###AV:${'$'}{compilerOptions.apiVersion.getOrNull()}")
+                |        logger.warn("###LV:${'$'}{compilerOptions.languageVersion.getOrNull()}")
                 |    }
                 |}
                 """.trimMargin()
@@ -536,7 +535,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Syncs compiler option changes to the related language settings")
     @MppGradlePluginTests
-    @BrokenOnMacosTest
     fun syncCompilerOptionsToLanguageSettings(gradleVersion: GradleVersion) {
         project("mpp-default-hierarchy", gradleVersion) {
             buildGradle.appendText(
@@ -551,8 +549,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 |}
                 |
                 |tasks.register("printLanguageSettingsOptions") {
+            |        def languageSettings = kotlin.sourceSets.getByName(kotlinSourceSet).languageSettings
                 |    doLast {
-                |        def languageSettings = kotlin.sourceSets.getByName(kotlinSourceSet).languageSettings
                 |        logger.warn("")
                 |        logger.warn("###AV:${'$'}{languageSettings.apiVersion}")
                 |        logger.warn("###LV:${'$'}{languageSettings.languageVersion}")
