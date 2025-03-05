@@ -29,7 +29,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
-import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 
 @ExperimentalPathApi
@@ -179,9 +178,12 @@ class BuildCacheIT : KGPBaseTest() {
 
     @DisplayName("Restore from build cache should not break incremental compilation")
     @GradleTest
-    @BrokenOnMacosTest
     fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
-        project("incrementalMultiproject", gradleVersion) {
+        project(
+            "incrementalMultiproject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+        ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
             build("clean", "assemble") {
@@ -193,7 +195,7 @@ class BuildCacheIT : KGPBaseTest() {
             bKtSourceFile.modify { it.replace("fun b() {}", "fun b() {}\nfun b2() {}") }
             val affectedAppSourceFile = projectPath.resolve("app/src/main/kotlin/foo/BB.kt")
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertIncrementalCompilation(
                     expectedCompiledKotlinFiles = relativeToProject(listOf(bKtSourceFile, affectedAppSourceFile))
                 )
@@ -203,9 +205,12 @@ class BuildCacheIT : KGPBaseTest() {
 
     @DisplayName("Restore from build cache and consequent compilation error should not break incremental compilation")
     @GradleTest
-    @BrokenOnMacosTest
     fun testIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
-        project("incrementalMultiproject", gradleVersion) {
+        project(
+            "incrementalMultiproject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+        ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
             build("clean", "assemble") {
@@ -216,7 +221,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             bKtSourceFile.modify { it.replace("fun b() {}", "fun b() {}\nfun b2) {}") }
 
-            buildAndFail("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            buildAndFail("assemble") {
                 assertTasksFailed(":lib:compileKotlin")
                 assertOutputDoesNotContain("On recompilation full rebuild will be performed")
                 val affectedFiles = setOf(
@@ -227,7 +232,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             bKtSourceFile.modify { it.replace("fun b2) {}", "fun b2() {}") }
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 val affectedFiles = setOf(
                     bKtSourceFile,
                     subProject("app").kotlinSourcesDir().resolve("foo/BB.kt"),
@@ -239,9 +244,12 @@ class BuildCacheIT : KGPBaseTest() {
 
     @DisplayName("A compilation error doesn't break kapt incremental compilation after restoring from build cache")
     @GradleTest
-    @BrokenOnMacosTest
     fun testKaptIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
-        project("kapt2/kaptAvoidance", gradleVersion) {
+        project(
+            "kapt2/kaptAvoidance",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+        ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
             build("clean", "assemble") {
@@ -268,7 +276,7 @@ class BuildCacheIT : KGPBaseTest() {
                         """.trimIndent()
             }
 
-            buildAndFail("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            buildAndFail("assemble") {
                 assertTasksFailed(":app:compileKotlin")
                 assertOutputDoesNotContain("On recompilation full rebuild will be performed")
                 assertCompiledKotlinSources(listOf(projectPath.relativize(fileToEdit)), output)
@@ -276,7 +284,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             fileToEdit.replaceText("return", "return this")
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertIncrementalCompilation(expectedCompiledKotlinFiles = listOf(projectPath.relativize(fileToEdit)))
                 assertCompiledKotlinSourcesHandleKapt(
                     listOf(projectPath.relativize(fileToEdit)),
