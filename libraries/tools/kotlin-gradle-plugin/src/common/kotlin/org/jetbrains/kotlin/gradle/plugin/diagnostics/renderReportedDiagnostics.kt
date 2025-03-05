@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 
 internal fun ToolingDiagnostic.renderReportedDiagnostic(
     logger: Logger,
+    problemsReporter: ProblemsReporter?,
     renderingOptions: ToolingDiagnosticRenderingOptions,
 ) {
-    if (problemsReporter != null) {
-        problemsReporter.reportProblemDiagnostic(this, renderingOptions, logger)
-    } else {
-        val renderedDiagnostic: ReportedDiagnostic = renderReportedDiagnostic(this, logger, renderingOptions) ?: return
-        if (renderedDiagnostic.severity == FATAL) {
-            throw this.createAnExceptionForFatalDiagnostic(renderingOptions)
-        }
+    for (diagnostic in diagnostics) {
+        renderReportedDiagnostic(diagnostic, logger, renderingOptions)
+        problemsReporter?.reportProblemDiagnostic(diagnostic, renderingOptions)
     }
 }
 
