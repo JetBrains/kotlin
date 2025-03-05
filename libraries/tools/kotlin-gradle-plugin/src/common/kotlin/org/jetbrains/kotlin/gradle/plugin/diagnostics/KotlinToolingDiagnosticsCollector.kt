@@ -7,17 +7,29 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 private typealias ToolingDiagnosticId = String
 private typealias GradleProjectPath = String
 
-internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildServiceParameters.None> {
+internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
+    private val objects: ObjectFactory,
+) : BuildService<KotlinToolingDiagnosticsCollector.Parameter> {
+    interface Parameter : BuildServiceParameters {
+        val problemsReporterFactory: Property<ProblemsReporter.Factory>
+    }
+
+    val problemsReporter by lazy { parameters.problemsReporterFactory.get().getInstance(objects) }
+
     /**
      * When collector is in transparent mode, any diagnostics received will be immediately rendered
      * instead of collected
@@ -38,7 +50,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         reportOnce: Boolean = false,
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
-        if (reportedIds.add(key) || !reportOnce){
+        if (reportedIds.add(key) || !reportOnce) {
             handleDiagnostic(project, diagnostic)
         }
     }
@@ -63,6 +75,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
             val options = from.diagnosticRenderingOptions.get()
             if (!diagnostic.isSuppressed(options)) {
                 renderReportedDiagnostic(diagnostic, logger, options)
+                problemsReporter.reportProblemDiagnostic(diagnostic, options)
             }
         }
     }
@@ -77,6 +90,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
 
         if (isTransparent) {
             renderReportedDiagnostic(diagnostic, project.logger, options)
+            problemsReporter.reportProblemDiagnostic(diagnostic, options)
             return
         }
 
@@ -91,8 +105,9 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
 }
 
 internal val Project.kotlinToolingDiagnosticsCollectorProvider: Provider<KotlinToolingDiagnosticsCollector>
-    get() = gradle.registerClassLoaderScopedBuildService(KotlinToolingDiagnosticsCollector::class)
-
+    get() = gradle.registerClassLoaderScopedBuildService(KotlinToolingDiagnosticsCollector::class) {
+        it.parameters.problemsReporterFactory.set(variantImplementationFactoryProvider<ProblemsReporter.Factory>())
+    }
 
 internal val Project.kotlinToolingDiagnosticsCollector: KotlinToolingDiagnosticsCollector
     get() = kotlinToolingDiagnosticsCollectorProvider.get()
