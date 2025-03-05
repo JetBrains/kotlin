@@ -7,34 +7,46 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KaSession>() {
     override val resultFileSuffix: String get() = "analysis_session"
 
-    override fun getSession(ktModule: KaModule) =
-        KaSessionProvider.getInstance(ktModule.project).getAnalysisSession(ktModule)
-
-    override fun getSessionKtModule(session: KaSession): KaModule = session.useSiteModule
-    override fun isSessionValid(session: KaSession): Boolean = session.isValid()
+    override fun getSession(ktTestModule: KtTestModule): TestSession<KaSession> {
+        val sessionProvider = KaSessionProvider.getInstance(ktTestModule.ktModule.project)
+        val analysisSession = sessionProvider.getAnalysisSession(ktTestModule.ktModule)
+        return AnalysisTestSession(ktTestModule, analysisSession)
+    }
 
     /**
      * The analysis session cache disregards whether libraries were invalidated during global invalidation, so some valid library analysis
      * sessions may have been evicted from the cache and should not be checked for validity.
      */
-    override fun shouldSkipValidityCheck(session: KaSession): Boolean =
+    override fun shouldSkipValidityCheck(session: TestSession<KaSession>): Boolean =
         when (modificationEventKind) {
             KotlinModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
             KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
-            -> {
-                session.useSiteModule is KaLibraryModule || session.useSiteModule is KaLibrarySourceModule
+                -> {
+                val useSiteModule = session.underlyingSession.useSiteModule
+                useSiteModule is KaLibraryModule || useSiteModule is KaLibrarySourceModule
             }
             else -> false
         }
+}
+
+internal class AnalysisTestSession(
+    override val ktTestModule: KtTestModule,
+    override val underlyingSession: KaSession,
+) : TestSession<KaSession>() {
+    override val isValid: Boolean
+        get() = underlyingSession.isValid()
+
+    override val description: String
+        get() = ktTestModule.ktModule.toString()
 }
 
 abstract class AbstractModuleStateModificationAnalysisSessionInvalidationTest : AbstractAnalysisSessionInvalidationTest() {

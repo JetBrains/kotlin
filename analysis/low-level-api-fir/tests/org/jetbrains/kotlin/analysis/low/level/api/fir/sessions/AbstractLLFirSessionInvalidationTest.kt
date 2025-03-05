@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.TestSession
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 
 /**
@@ -20,13 +21,24 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 abstract class AbstractLLFirSessionInvalidationTest : AbstractSessionInvalidationTest<LLFirSession>() {
     override val resultFileSuffix: String? get() = null
 
-    override fun getSession(ktModule: KaModule): LLFirSession =
-        LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
-
-    override fun getSessionKtModule(session: LLFirSession): KaModule = session.ktModule
-    override fun isSessionValid(session: LLFirSession): Boolean = session.isValid
+    override fun getSession(ktTestModule: KtTestModule): TestSession<LLFirSession> {
+        val sessionCache = LLFirSessionCache.getInstance(ktTestModule.ktModule.project)
+        val underlyingSession = sessionCache.getSession(ktTestModule.ktModule, preferBinary = true)
+        return LLTestSession(ktTestModule, underlyingSession)
+    }
 
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+internal class LLTestSession(
+    override val ktTestModule: KtTestModule,
+    override val underlyingSession: LLFirSession,
+) : TestSession<LLFirSession>() {
+    override val isValid: Boolean
+        get() = underlyingSession.isValid
+
+    override val description: String
+        get() = ktTestModule.ktModule.toString()
 }
 
 abstract class AbstractModuleStateModificationLLFirSessionInvalidationTest : AbstractLLFirSessionInvalidationTest() {

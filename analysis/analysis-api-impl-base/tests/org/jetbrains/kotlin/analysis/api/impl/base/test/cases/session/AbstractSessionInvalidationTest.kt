@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificatio
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -20,8 +21,10 @@ import org.jetbrains.kotlin.test.services.assertions
  *
  * [AbstractSessionInvalidationTest] is a base class for invalidation tests of `KaSession` and `LLFirSession`, which share the test
  * data but not necessarily the result data (see also [resultFileSuffix]).
+ *
+ * @param S The type of the session, either an LL FIR or an analysis session.
  */
-abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBasedTest() {
+abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest() {
     /**
      * The kind of modification event to be published for the invalidation. Each modification event is tested separately and has its own
      * associated result file.
@@ -33,26 +36,22 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
      */
     protected abstract val resultFileSuffix: String?
 
-    protected abstract fun getSession(ktModule: KaModule): SESSION
-
-    protected abstract fun getSessionKtModule(session: SESSION): KaModule
-
-    protected abstract fun isSessionValid(session: SESSION): Boolean
+    protected abstract fun getSession(ktTestModule: KtTestModule): TestSession<S>
 
     /**
      * In some cases, it might be legal for a session cache to evict sessions which are still valid. Such sessions would fail the validity
      * check (see [checkSessionsMarkedInvalid]) and should be skipped.
      */
-    protected open fun shouldSkipValidityCheck(session: SESSION): Boolean = false
+    protected open fun shouldSkipValidityCheck(session: TestSession<S>): Boolean = false
 
     override fun doTest(testServices: TestServices) {
-        val ktModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
+        val ktTestModules = testServices.ktTestModuleStructure.mainModules
 
-        val sessionsBeforeModification = getSessions(ktModules)
+        val sessionsBeforeModification = getSessions(ktTestModules)
         checkSessionValidityBeforeModification(sessionsBeforeModification, testServices)
 
         testServices.ktTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
-        val sessionsAfterModification = getSessions(ktModules)
+        val sessionsAfterModification = getSessions(ktTestModules)
 
         val invalidatedSessions = buildSet {
             addAll(sessionsBeforeModification)
@@ -66,20 +65,20 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
         checkUntouchedSessionValidity(untouchedSessions, testServices)
     }
 
-    private fun getSessions(modules: List<KaModule>): List<SESSION> = modules.map(::getSession)
+    private fun getSessions(modules: List<KtTestModule>): List<TestSession<S>> = modules.map(::getSession)
 
     private fun checkInvalidatedModules(
-        invalidatedSessions: Set<SESSION>,
+        invalidatedSessions: Set<TestSession<S>>,
         testServices: TestServices,
     ) {
-        val invalidatedModuleDescriptions = invalidatedSessions
-            .map { getSessionKtModule(it).toString() }
+        val invalidatedSessionDescriptions = invalidatedSessions
+            .map { it.description }
             .distinct()
             .sorted()
 
         val actualText = buildString {
-            appendLine("Module names of invalidated sessions:")
-            invalidatedModuleDescriptions.forEach { appendLine(it) }
+            appendLine("Invalidated sessions:")
+            invalidatedSessionDescriptions.forEach { appendLine(it) }
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(
@@ -95,35 +94,35 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
     }
 
     private fun checkSessionValidityBeforeModification(
-        sessions: List<SESSION>,
+        sessions: List<TestSession<S>>,
         testServices: TestServices,
     ) {
         sessions.forEach { session ->
-            testServices.assertions.assertTrue(isSessionValid(session)) {
+            testServices.assertions.assertTrue(session.isValid) {
                 "The session `$session` should be valid before invalidation is triggered."
             }
         }
     }
 
     private fun checkSessionsMarkedInvalid(
-        invalidatedSessions: Set<SESSION>,
+        invalidatedSessions: Set<TestSession<S>>,
         testServices: TestServices,
     ) {
         invalidatedSessions.forEach { session ->
             if (shouldSkipValidityCheck(session)) return@forEach
 
-            testServices.assertions.assertFalse(isSessionValid(session)) {
+            testServices.assertions.assertFalse(session.isValid) {
                 "The invalidated session `${session}` should have been marked invalid."
             }
         }
     }
 
     private fun checkUntouchedSessionValidity(
-        sessions: Set<SESSION>,
+        sessions: Set<TestSession<S>>,
         testServices: TestServices,
     ) {
         sessions.forEach { session ->
-            testServices.assertions.assertTrue(isSessionValid(session)) {
+            testServices.assertions.assertTrue(session.isValid) {
                 "The session `$session` has not been evicted from the session cache and should still be valid."
             }
         }
