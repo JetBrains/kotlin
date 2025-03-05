@@ -68,7 +68,7 @@ object FirSessionFactoryHelper {
             moduleName,
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
-            dependencyList.friendsDependencies,
+            dependencyList.friendDependencies,
             platform,
         )
         return FirJvmSessionFactory.createSourceSession(

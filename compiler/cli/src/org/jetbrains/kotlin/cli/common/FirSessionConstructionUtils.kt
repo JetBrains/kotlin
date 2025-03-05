@@ -372,7 +372,7 @@ object SessionConstructionUtils {
             DependencyListForCliModule(
                 libraryList.regularDependencies,
                 listOf(lastModuleData),
-                libraryList.friendsDependencies,
+                libraryList.friendDependencies,
                 libraryList.moduleDataProvider
             ),
             targetPlatform,
@@ -392,7 +392,7 @@ object SessionConstructionUtils {
             rootModuleName,
             libraryList.regularDependencies,
             libraryList.dependsOnDependencies,
-            libraryList.friendsDependencies,
+            libraryList.friendDependencies,
             targetPlatform,
         )
 
@@ -417,7 +417,7 @@ object SessionConstructionUtils {
             Name.identifier("${rootModuleName.asString()}-common"),
             libraryList.regularDependencies,
             listOf(),
-            libraryList.friendsDependencies,
+            libraryList.friendDependencies,
             targetPlatform,
             isCommon = true
         )
@@ -426,7 +426,7 @@ object SessionConstructionUtils {
             rootModuleName,
             libraryList.regularDependencies,
             listOf(commonModuleData),
-            libraryList.friendsDependencies,
+            libraryList.friendDependencies,
             targetPlatform,
             isCommon = false
         )
@@ -477,7 +477,7 @@ object SessionConstructionUtils {
                 moduleName,
                 libraryList.regularDependencies,
                 dependsOnDependencies = dependencies,
-                libraryList.friendsDependencies,
+                libraryList.friendDependencies,
                 targetPlatform,
                 isCommon = index < hmppModuleStructure.modules.size - 1
             )

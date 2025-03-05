@@ -15,7 +15,7 @@ import java.nio.file.Paths
 class DependencyListForCliModule(
     val regularDependencies: List<FirModuleData>,
     val dependsOnDependencies: List<FirModuleData>,
-    val friendsDependencies: List<FirModuleData>,
+    val friendDependencies: List<FirModuleData>,
     val moduleDataProvider: ModuleDataProvider,
 ) {
     companion object {
@@ -70,7 +70,7 @@ class DependencyListForCliModule(
                 return DependencyListForCliModule(
                     allRegularDependencies,
                     dependsOnDependencies = allDependsOnDependencies,
-                    friendsDependencies = allFriendsDependencies,
+                    friendDependencies = allFriendsDependencies,
                     SingleModuleDataProvider(binaryModuleData.regular)
                 )
             }
