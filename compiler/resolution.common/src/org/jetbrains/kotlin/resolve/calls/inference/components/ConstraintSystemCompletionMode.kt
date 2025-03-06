@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 enum class ConstraintSystemCompletionMode(
-    val allLambdasShouldBeAnalyzed: Boolean,
+    val allPostponedAtomsShouldBeAnalyzed: Boolean,
+    // Actually, it's related to all ConeFunctionTypeRelatedPostponedResolvedAtom including callable references
+    val allLambdasShouldBeAnalyzed: Boolean = allPostponedAtomsShouldBeAnalyzed,
     val shouldForkPointConstraintsBeResolved: Boolean,
     val fixNotInferredTypeVariablesToErrorType: Boolean,
 ) {
     FULL(
-        allLambdasShouldBeAnalyzed = true,
+        allPostponedAtomsShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = true,
         fixNotInferredTypeVariablesToErrorType = true,
     ),
     PCLA_POSTPONED_CALL(
+        allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
@@ -32,16 +35,23 @@ enum class ConstraintSystemCompletionMode(
      * ```
      */
     PARTIAL(
+        allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
     ),
     UNTIL_FIRST_LAMBDA(
+        allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
         /* See testData/diagnostics/tests/inference/inferenceForkRegressionSimple.kt */
         shouldForkPointConstraintsBeResolved = true,
         // This one is quite questionable, but should not matter too much
         // because anyway overload ambiguity would be reported for error candidates
         fixNotInferredTypeVariablesToErrorType = true,
-    ),
+    );
+
+    init {
+        // allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
+        assert(!allPostponedAtomsShouldBeAnalyzed || allLambdasShouldBeAnalyzed)
+    }
 }
