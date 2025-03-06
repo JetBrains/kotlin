@@ -29,6 +29,11 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/cli-tests/testData/cli"), Pattern.compile("^(.+)\\.args$"), null, false);
   }
 
+  @TestMetadata("emptyLlvmPasses.args")
+  public void testEmptyLlvmPasses() {
+    runTest("native/native.tests/cli-tests/testData/cli/emptyLlvmPasses.args");
+  }
+
   @TestMetadata("experimentalCheckers.args")
   public void testExperimentalCheckers() {
     runTest("native/native.tests/cli-tests/testData/cli/experimentalCheckers.args");

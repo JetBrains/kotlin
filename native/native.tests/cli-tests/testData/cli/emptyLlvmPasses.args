@@ -1,0 +1,2 @@
+$TESTDATA_DIR$/simple.kt
+-Xllvm-module-passes=
