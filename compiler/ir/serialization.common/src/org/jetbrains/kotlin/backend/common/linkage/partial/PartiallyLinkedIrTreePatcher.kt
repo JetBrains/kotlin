@@ -624,6 +624,25 @@ internal class PartiallyLinkedIrTreePatcher(
                     null
                 }
         }
+
+        override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrRichPropertyReference {
+            expression.transformChildrenVoid(this)
+
+            // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
+            expression.reflectionTargetLinkageError = expression.checkReferencedDeclaration(expression.reflectionTargetSymbol)
+            if (expression.reflectionTargetLinkageError != null) {
+                (expression.reflectionTargetSymbol?.owner as? IrProperty)?.let { property ->
+                    // checkReferencedDeclaration() above generates a stub for reflectionTargetSymbol itself, but
+                    // we also to need create stubs for the property's getter and setter to not leave unbound IR.
+                    property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                    if (expression.setterFunction != null) {
+                        property.setter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                    }
+                }
+            }
+            return expression
+        }
+
         // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression
 
