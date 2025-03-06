@@ -11,7 +11,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ProcessForkOptions
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -32,9 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
-class KotlinMocha
-@InternalKotlinGradlePluginApi
-constructor(
+class KotlinMocha internal constructor(
     @Transient
     override val compilation: KotlinJsIrCompilation,
     private val basePath: String,
@@ -42,6 +39,18 @@ constructor(
     private val providers: ProviderFactory,
 ) :
     KotlinJsTestFramework {
+
+    @Deprecated("Manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+        basePath: String,
+    ) : this(
+        compilation = compilation,
+        basePath = basePath,
+        objects = compilation.target.project.objects,
+        providers = compilation.target.project.providers,
+    )
+
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject

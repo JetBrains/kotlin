@@ -9,26 +9,33 @@ import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
-import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
 @OptIn(ExperimentalWasmDsl::class)
 abstract class KotlinD8Ir
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
+internal constructor(
     target: KotlinJsIrTarget,
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
 ) :
     KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        target: KotlinJsIrTarget,
+    ) : this(
+        target = target,
+        objects = target.project.objects,
+        providers = target.project.providers,
+    )
 
     private val d8 = D8Plugin.applyWithEnvSpec(project)
 

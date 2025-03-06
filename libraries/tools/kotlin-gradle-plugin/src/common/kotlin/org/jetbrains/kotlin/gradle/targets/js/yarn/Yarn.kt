@@ -18,6 +18,30 @@ class Yarn internal constructor(
     execOps: ExecOperations,
     objects: ObjectFactory,
 ) : NpmApiExecution<YarnEnvironment> {
+
+    /**
+     * Manually creating new instances of this class is deprecated.
+     *
+     * An instance of [Yarn] can be found from the extensions
+     * [WasmYarnRootExtension][org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension]
+     * and
+     * [YarnRootExtension][org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension].
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension.packageManager
+     * @see org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension.packageManager
+     */
+    @Deprecated(
+        message = "Manually creating instances of this class is deprecated. " +
+                "An instance can be obtained via WasmYarnRootExtension or YarnRootExtension. " +
+                "Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNREACHABLE_CODE", "unused")
+    constructor() : this(
+        execOps = error("Cannot create instance of Npm. Constructor is deprecated."),
+        objects = error("Cannot create instance of Npm. Constructor is deprecated."),
+    )
+
     private val yarnWorkspaces = YarnWorkspaces(
         execOps = execOps,
         objects = objects,

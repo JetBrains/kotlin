@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -29,9 +29,8 @@ import javax.inject.Inject
 
 @DisableCachingByDefault
 abstract class KotlinJsTest
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
+internal constructor(
     @Transient
     @Internal
     override var compilation: KotlinJsIrCompilation,
@@ -40,6 +39,16 @@ constructor(
     execOps: ExecOperations,
 ) : KotlinTest(execOps),
     RequiresNpmDependencies {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+    ) : this(
+        compilation = compilation,
+        objects = compilation.target.project.objects,
+        providers = compilation.target.project.providers,
+        execOps = (compilation.target.project as ProjectInternal).services.get(ExecOperations::class.java),
+    )
 
     @Input
     var environment = mutableMapOf<String, String>()

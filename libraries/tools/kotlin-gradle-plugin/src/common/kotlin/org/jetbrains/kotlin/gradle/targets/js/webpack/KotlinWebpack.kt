@@ -9,10 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Incubating
 import org.gradle.api.file.*
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.FileTreeElement
-import org.gradle.api.file.RegularFile
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -46,15 +42,24 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinWebpack
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
+internal constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+    ) : this(
+        compilation = compilation,
+        objects = compilation.project.objects,
+        execOps = (compilation.project as ProjectInternal).services.get(ExecOperations::class.java),
+    )
+
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
 

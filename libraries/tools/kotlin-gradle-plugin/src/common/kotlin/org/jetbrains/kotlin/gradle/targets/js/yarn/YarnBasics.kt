@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
-import org.gradle.internal.logging.progress.ProgressLoggerFactory
 import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
@@ -15,12 +14,26 @@ import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import java.io.File
-import javax.inject.Inject
 
 abstract class YarnBasics internal constructor(
     private val execOps: ExecOperations,
     private val objects: ObjectFactory,
 ) : NpmApiExecution<YarnEnvironment> {
+
+    /**
+     * Extending this class is deprecated. See [YarnWorkspaces] for details.
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.yarn.YarnWorkspaces
+     */
+    @Deprecated(
+        message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNREACHABLE_CODE", "unused")
+    constructor() : this(
+        execOps = error("Cannot create instance of YarnBasics. Constructor is deprecated."),
+        objects = error("Cannot create instance of YarnBasics. Constructor is deprecated."),
+    )
 
     @Deprecated(
         "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",

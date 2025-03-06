@@ -21,6 +21,32 @@ class YarnWorkspaces internal constructor(
     execOps = execOps,
     objects = objects,
 ) {
+
+    /**
+     * Manually creating new instances of this class is deprecated.
+     *
+     * An instance of [YarnWorkspaces] can be found from
+     * [Yarn.yarnWorkspaces][org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn.yarnWorkspaces].
+     *
+     * An instance of [Yarn] can be found using the extensions
+     * [WasmYarnRootExtension][org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension]
+     * and
+     * [YarnRootExtension][org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension].
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn.yarnWorkspaces
+     */
+    @Deprecated(
+        message = "Manually creating instances of this class is deprecated. " +
+                "An instance can be obtained via Yarn.yarnWorkspaces, and Yarn can be obtained using WasmYarnRootExtension or YarnRootExtension. " +
+                "Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNREACHABLE_CODE", "unused")
+    constructor() : this(
+        execOps = error("Cannot create instance of YarnWorkspaces. Constructor is deprecated, see Kdoc for details."),
+        objects = error("Cannot create instance of YarnWorkspaces. Constructor is deprecated, see Kdoc for details."),
+    )
+
     override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> {
         return listOf(
             nodeJs

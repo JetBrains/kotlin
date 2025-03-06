@@ -17,7 +17,6 @@ import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
@@ -31,20 +30,33 @@ import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class KotlinNativeTest
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
-    objects: ObjectFactory,
-    execOps: ExecOperations,
-    private val providers: ProviderFactory,
+internal constructor(
+    objects: ObjectFactory?,
+    providers: ProviderFactory?,
+    execOps: ExecOperations?,
 ) : KotlinTest(execOps) {
 
-    private val processOptions: ProcessLaunchOptions = objects.processLaunchOptions {
-        environment.putAll(providers.getAllEnvironmentVariables())
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    constructor() : this(
+        objects = null,
+        providers = null,
+        execOps = null,
+    )
+
+    // TODO KT-75294 When the deprecated secondary constructor is removed, move `objects` to a non-null constructor property.
+    private val objects: ObjectFactory = objects ?: this.project.objects
+
+    // TODO KT-75294 When the deprecated secondary constructor is removed, move `providers` to a non-null constructor property.
+    private val providers: ProviderFactory = providers ?: this.project.providers
+
+    private val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
+        environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
     }
 
     @get:Internal
-    val executableProperty: Property<FileCollection> = objects.property(FileCollection::class.java)
+    abstract val executableProperty: Property<FileCollection>
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -168,6 +180,7 @@ constructor(
 
     protected abstract class TestCommand {
         abstract val executable: String
+
         abstract fun cliArgs(
             testLogger: String?,
             checkExitCode: Boolean,
@@ -212,17 +225,25 @@ constructor(
  */
 @DisableCachingByDefault
 abstract class KotlinNativeHostTest
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
-    objects: ObjectFactory,
-    execOps: ExecOperations,
-    providers: ProviderFactory,
+internal constructor(
+    objects: ObjectFactory?,
+    providers: ProviderFactory?,
+    execOps: ExecOperations?,
 ) : KotlinNativeTest(
     objects = objects,
-    execOps = execOps,
     providers = providers,
+    execOps = execOps,
 ) {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    constructor() : this(
+        objects = null,
+        providers = null,
+        execOps = null,
+    )
+
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -243,17 +264,25 @@ constructor(
  */
 @DisableCachingByDefault
 abstract class KotlinNativeSimulatorTest
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
-    objects: ObjectFactory,
-    execOps: ExecOperations,
-    providers: ProviderFactory,
+internal constructor(
+    objects: ObjectFactory?,
+    providers: ProviderFactory?,
+    execOps: ExecOperations?,
 ) : KotlinNativeTest(
     objects = objects,
-    execOps = execOps,
     providers = providers,
+    execOps = execOps,
 ) {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    constructor() : this(
+        objects = null,
+        providers = null,
+        execOps = null,
+    )
+
     @Deprecated("Use the property 'device' instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal
     var deviceId: String
