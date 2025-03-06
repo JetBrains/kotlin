@@ -128,7 +128,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
     override fun visitClass(declaration: IrClass, data: MutableList<IrFunction>) {
         declaration.acceptChildren(this, data)
 
-        if (declaration.isLocal) return
+        if (declaration.isOriginallyLocal) return
 
 
         if (declaration.isInner) {
@@ -149,7 +149,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
         declaration.acceptChildren(this, data)
 
         if (!declaration.isLateinit || declaration.isFakeOverride
-                || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal)
+                || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isOriginallyLocal)
             return
 
         val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")

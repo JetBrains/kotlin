@@ -265,7 +265,7 @@ internal class JsUsefulDeclarationProcessor(
 
         return !context.es6mode ||
                 currentFun?.dispatchReceiverParameter == null ||
-                currentClass != null && (currentClass.isInner || currentClass.isLocal)
+                currentClass != null && (currentClass.isInner || currentClass.isOriginallyLocal)
     }
 
     private fun IrClass.containsInterfaceDefaultImplementation(): Boolean {

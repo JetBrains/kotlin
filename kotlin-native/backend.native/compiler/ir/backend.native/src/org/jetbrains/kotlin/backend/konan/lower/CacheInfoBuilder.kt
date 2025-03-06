@@ -45,7 +45,7 @@ internal class CacheInfoBuilder(
                 override fun visitClass(declaration: IrClass) {
                     declaration.acceptChildrenVoid(this)
 
-                    if (!declaration.isInterface && !declaration.isLocal
+                    if (!declaration.isInterface && !declaration.isOriginallyLocal
                             && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
                     ) {
                         val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields(generationState.llvm)

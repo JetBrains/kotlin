@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.isOriginallyLocalClass
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 
 /**
@@ -82,5 +83,5 @@ open class LocalClassPopupLowering(
     }
 
     protected open fun shouldPopUp(klass: IrClass, currentScope: ScopeWithIr?): Boolean =
-        klass.isLocalNotInner()
+        klass.isLocalNotInner() || klass.isOriginallyLocalClass
 }

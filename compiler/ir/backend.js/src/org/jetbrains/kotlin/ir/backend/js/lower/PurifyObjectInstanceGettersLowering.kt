@@ -106,7 +106,7 @@ class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) :
                         (this is IrSetField && receiver?.isPureStatementForObjectInitialization(owner) == true && value.isPureStatementForObjectInitialization(owner)) ||
                         // Only current object could be initialized inside the object constructor, so we need to ignore it as an effect
                         (this is IrSetField && symbol.owner.isObjectInstanceField()) ||
-                        (this is IrSetValue && symbol.owner.isLocal && value.isPureStatementForObjectInitialization(owner))
+                        (this is IrSetValue && symbol.owner.isOriginallyLocal && value.isPureStatementForObjectInitialization(owner))
                 )
 
     }

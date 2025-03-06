@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-        declaration.visibility
+        DescriptorVisibilities.PRIVATE
 
     fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
         DescriptorVisibilities.PRIVATE
@@ -667,6 +667,7 @@ open class LocalDeclarationsLowering(
             container.fileOrNull?.let { cleanUpLocalFunctionsForUnboundSymbols(it) }
 
             localClasses.values.forEach {
+                it.declaration.isOriginallyLocalClass = true
                 it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
                 it.closure.capturedValues.associateTo(it.capturedValueToField) { capturedValue ->
                     capturedValue.owner to PotentiallyUnusedField()

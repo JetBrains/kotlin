@@ -203,24 +203,36 @@ val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNa
 
 val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name == SpecialNames.NO_NAME_PROVIDED
 
-val IrDeclaration.isLocal: Boolean
-    get() {
-        var current: IrElement = this
-        while (current !is IrPackageFragment) {
-            require(current is IrDeclaration)
+/**
+ * Used to mark local classes that have been lifted out of their local scope and changed their visibility to a non-local one.
+ *
+ * Sometimes it is useful to be able to distinguish such classes even after they were lifted.
+ */
+var IrClass.isOriginallyLocalClass: Boolean by irFlag(copyByDefault = true)
 
-            if (current is IrDeclarationWithVisibility) {
-                if (current.visibility == DescriptorVisibilities.LOCAL) return true
-            }
+private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibility) -> Boolean): Boolean {
+    var current: IrElement = this
+    while (current !is IrPackageFragment) {
+        require(current is IrDeclaration)
 
-            if (current.isAnonymousObject) return true
-            if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
-
-            current = current.parent
+        if (current is IrDeclarationWithVisibility) {
+            if (isLocal(current)) return true
         }
 
-        return false
+        if (current.isAnonymousObject) return true
+        if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
+
+        current = current.parent
     }
+
+    return false
+}
+
+val IrDeclaration.isLocal: Boolean
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL }
+
+val IrDeclaration.isOriginallyLocal: Boolean
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it is IrClass && it.isOriginallyLocalClass }
 
 @ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module

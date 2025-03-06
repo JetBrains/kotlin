@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
+import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -136,7 +139,20 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
                     statements += expression
                 }
-                LocalDeclarationsLowering(context).lower(irBlock, container, data, localClasses, adaptedFunctions)
+                LocalDeclarationsLowering(
+                    context,
+                    visibilityPolicy = object : VisibilityPolicy {
+                        /**
+                         * Local classes extracted from inline lambdas are not yet lifted, so their visibility should remain local.
+                         * They will be visited for the second time _after_ function inlining, and only then will they be lifted to
+                         * the nearest declaration container by [LocalClassPopupLowering],
+                         * so that's when we will change their visibility to private.
+                         */
+                        override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
+                            declaration.visibility
+                    }
+                )
+                    .lower(irBlock, container, data, localClasses, adaptedFunctions)
                 irBlock.statements.addAll(0, localClasses)
 
                 for (lambda in inlineLambdas) {
