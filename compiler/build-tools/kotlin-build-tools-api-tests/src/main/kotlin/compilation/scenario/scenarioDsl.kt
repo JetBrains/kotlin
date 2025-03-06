@@ -167,31 +167,32 @@ private class ScenarioDsl(
     override fun module(
         moduleName: String,
         dependencies: List<ScenarioModule>,
-        snapshotInlinedClassesInDependencies: Boolean,
+        snapshotConfig: SnapshotConfig,
         additionalCompilationArguments: List<String>,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotInlinedClassesInDependencies, additionalCompilationArguments)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotInlinedClassesInDependencies, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotInlinedClassesInDependencies, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
+            project.module(moduleName, transformedDependencies, snapshotConfig, additionalCompilationArguments)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
     }
 
+    @Synchronized
     override fun trackedModule(
         moduleName: String,
         dependencies: List<ScenarioModule>,
-        snapshotInlinedClassesInDependencies: Boolean,
+        snapshotConfig: SnapshotConfig,
         additionalCompilationArguments: List<String>,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotInlinedClassesInDependencies, additionalCompilationArguments)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotInlinedClassesInDependencies, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotInlinedClassesInDependencies, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
+            project.module(moduleName, transformedDependencies, snapshotConfig, additionalCompilationArguments)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
     }
 }
 

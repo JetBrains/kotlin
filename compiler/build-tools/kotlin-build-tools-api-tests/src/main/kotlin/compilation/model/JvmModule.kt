@@ -21,7 +21,7 @@ class JvmModule(
     moduleDirectory: Path,
     dependencies: List<Dependency>,
     defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
-    private val snapshotInlinedClasses: Boolean, // it's directly accessible from top-level BTA api, so it's not a part of any config type
+    private val snapshotConfig: SnapshotConfig,
     additionalCompilationArguments: List<String> = emptyList(),
 ) : AbstractModule(
     project,
@@ -74,8 +74,8 @@ class JvmModule(
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
         val snapshot = BaseTest.compilationService.calculateClasspathSnapshot(
             dependency.location.toFile(),
-            ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
-            //parseInlinedLocalClasses = snapshotInlinedClasses,
+            snapshotConfig.granularity,
+            //snapshotConfig.useInlineLambdaSnapshotting, //TODO(KT-62555)
         )
         val hash = snapshot.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()

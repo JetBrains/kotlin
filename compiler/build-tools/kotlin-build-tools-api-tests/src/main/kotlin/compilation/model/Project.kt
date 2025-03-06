@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import java.nio.file.Path
@@ -26,7 +27,7 @@ class Project(
     fun module(
         moduleName: String,
         dependencies: List<Module> = emptyList(),
-        snapshotInlinedClassesInDependencies: Boolean = false,
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
         additionalCompilationArguments: List<String> = emptyList(),
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
@@ -37,7 +38,7 @@ class Project(
             moduleDirectory = moduleDirectory,
             dependencies = dependencies,
             defaultStrategyConfig = defaultStrategyConfig,
-            snapshotInlinedClasses = snapshotInlinedClassesInDependencies,
+            snapshotConfig = snapshotConfig,
             additionalCompilationArguments = additionalCompilationArguments
         )
         module.sourcesDirectory.createDirectories()

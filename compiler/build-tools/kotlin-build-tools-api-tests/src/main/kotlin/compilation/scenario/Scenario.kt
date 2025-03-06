@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 
 interface Scenario {
     /**
@@ -28,7 +30,7 @@ interface Scenario {
     fun module(
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
-        snapshotInlinedClassesInDependencies: Boolean = false,
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
         additionalCompilationArguments: List<String> = emptyList(),
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)? = null,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)? = null,
@@ -54,7 +56,7 @@ interface Scenario {
     fun trackedModule(
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
-        snapshotInlinedClassesInDependencies: Boolean = false,
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
         additionalCompilationArguments: List<String> = emptyList(),
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)? = null,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)? = null,
