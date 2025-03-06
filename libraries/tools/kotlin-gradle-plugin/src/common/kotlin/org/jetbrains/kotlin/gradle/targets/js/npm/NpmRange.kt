@@ -5,21 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GT
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GTEQ
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LT
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LTEQ
 import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
 /**
-[startVersion] or [endVersion] equaling null means Infinite on appropriate edge,
-In this case appropriate [startInclusive] or [endInclusive] do no matter
+ * [startVersion] or [endVersion] equaling null means Infinite on appropriate edge.
+ * In this case appropriate [startInclusive] or [endInclusive] does not matter.
  */
 data class NpmRange(
     val startVersion: SemVer? = null,
     val startInclusive: Boolean = false,
     val endVersion: SemVer? = null,
-    val endInclusive: Boolean = false
+    val endInclusive: Boolean = false,
 ) {
     override fun toString(): String {
         if (startVersion == endVersion && startInclusive && endInclusive) {
@@ -27,12 +23,12 @@ data class NpmRange(
         }
 
         val start = if (startVersion != null)
-            "${if (startInclusive) GTEQ else GT}$startVersion"
+            "${if (startInclusive) ">=" else ">"}$startVersion"
         else
             ""
 
         val end = if (endVersion != null)
-            "${if (endInclusive) LTEQ else LT}$endVersion"
+            "${if (endInclusive) "<=" else "<"}$endVersion"
         else
             ""
 
