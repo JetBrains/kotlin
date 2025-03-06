@@ -220,6 +220,25 @@ class Candidate(
         _postponedAtoms += atom
     }
 
+    // ------------------------ Context-sensitively resolved arguments ------------------------------------
+
+    private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirPropertyAccessExpression, FirExpression>? =
+        null
+
+    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
+
+        if (_updatedArgumentsFromContextSensitiveResolution == null) {
+            _updatedArgumentsFromContextSensitiveResolution = mutableMapOf()
+        }
+
+        check(_updatedArgumentsFromContextSensitiveResolution!!.put(old, new) == null) {
+            "We shouldn't put the value for $old twice"
+        }
+    }
+
+    fun getUpdatedArgumentFromContextSensitiveResolution(arg: FirExpression): FirExpression? {
+        return _updatedArgumentsFromContextSensitiveResolution?.get(arg)
+    }
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
     val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()
