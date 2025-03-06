@@ -114,7 +114,7 @@ javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no
  * ./gradlew :native:swift:swift-export-embeddable:testSwiftExportStandaloneWithEmbeddable --info -Pkotlin.native.enabled=true -Pteamcity=true
  */
 
-val swiftExportStandaloneTests = configurations.detachedConfiguration().apply {
+val swiftExportStandaloneSimpleIT = configurations.detachedConfiguration().apply {
     isTransitive = false
     // Don't add dependencies here
     dependencies.add(project.dependencies.projectTests(":native:swift:swift-export-standalone-integration-tests:simple"))
@@ -147,7 +147,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
 val shadedIntransitiveTestDependenciesJar = rewriteDepsToShadedJar(
     files(
         intransitiveTestDependenciesJars,
-        swiftExportStandaloneTests,
+        swiftExportStandaloneSimpleIT,
     ),
     embeddableCompilerDummyForDependenciesRewriting("shadedTestDependencies") {
         destinationDirectory.set(project.layout.buildDirectory.dir("testDependenciesShaded"))
@@ -181,13 +181,13 @@ val transitiveTestRuntimeClasspath = configurations.detachedConfiguration().appl
     dependencies.add(libs.junit.jupiter.engine.get())
 }
 
-val unarchivedStandaloneTestClasses = tasks.register<Sync>("unarchiveTestClasses") {
-    dependsOn(swiftExportStandaloneTests)
-    from(zipTree(provider { swiftExportStandaloneTests.singleFile }))
-    into(layout.buildDirectory.dir("unarchiveTestClasses"))
+val unarchivedStandaloneSimpleITClasses = tasks.register<Sync>("unarchivedStandaloneSimpleITClasses") {
+    dependsOn(swiftExportStandaloneSimpleIT)
+    from(zipTree(provider { swiftExportStandaloneSimpleIT.singleFile }))
+    into(layout.buildDirectory.dir("unarchivedStandaloneSimpleITClasses"))
 }
 
-val testTask = nativeTest("testSwiftExportStandaloneWithEmbeddable", null) {
+nativeTest("testSimpleITWithEmbeddable", null) {
     classpath = files(
         // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
         swiftExportEmbeddableJar,
@@ -197,6 +197,6 @@ val testTask = nativeTest("testSwiftExportStandaloneWithEmbeddable", null) {
         transitiveTestRuntimeClasspath,
     )
     testClassesDirs = files(
-        unarchivedStandaloneTestClasses,
+        unarchivedStandaloneSimpleITClasses,
     )
 }
