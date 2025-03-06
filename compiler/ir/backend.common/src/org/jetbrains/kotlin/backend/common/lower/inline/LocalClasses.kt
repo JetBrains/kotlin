@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
@@ -136,7 +137,8 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
                     statements += expression
                 }
-                LocalDeclarationsLowering(context).lower(irBlock, container, data, localClasses, adaptedFunctions)
+                LocalDeclarationsLowering(context, visibilityPolicy = VisibilityPolicy.FOR_LOCAL_CLASSES_IN_INLINE_LAMBDAS)
+                    .lower(irBlock, container, data, localClasses, adaptedFunctions)
                 irBlock.statements.addAll(0, localClasses)
 
                 for (lambda in inlineLambdas) {

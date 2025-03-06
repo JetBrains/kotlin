@@ -594,7 +594,7 @@ internal class RTTIGenerator(
                 relativeName = irClass.name.asString()
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
-            irClass.isLocal -> {
+            irClass.isOriginallyLocal -> {
                 relativeName = irClass.name.asString()
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
             }

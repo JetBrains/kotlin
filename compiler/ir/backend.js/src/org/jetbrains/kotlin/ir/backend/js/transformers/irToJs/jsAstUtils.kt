@@ -637,7 +637,7 @@ private val nameMappingOriginAllowList = setOf(
 private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: IrClass): Boolean {
     val currentFunction = context.currentFunction ?: return false
 
-    if (this == null || !context.staticContext.backendContext.es6mode || superClass.isInterface || isInner || isLocal) return false
+    if (this == null || !context.staticContext.backendContext.es6mode || superClass.isInterface || isInner || isOriginallyLocal) return false
 
     // Account for lambda expressions as well.
     val currentFunctionsIncludingParents = currentFunction.parentDeclarationsWithSelf.filterIsInstance<IrFunction>().toList()
