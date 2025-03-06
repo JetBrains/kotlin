@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 
 /**
@@ -21,9 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
  * Currently, it will also consider a declaration from source and one from binary equivalent if all conditions are met for backward
  * compatibility with K1.
  */
-class ConeEquivalentCallConflictResolver(
-    private val inferenceComponents: InferenceComponents,
-) : ConeCallConflictResolver() {
+class ConeEquivalentCallConflictResolver(private val session: FirSession) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean
@@ -46,7 +43,10 @@ class ConeEquivalentCallConflictResolver(
                     val otherCandidate = resultIterator.next()
                     val other = otherCandidate.symbol.fir
                     if (other is FirCallableDeclaration && other.symbol.containingClassLookupTag() == null) {
-                        if (areEquivalentTopLevelCallables(me, myCandidate, other, otherCandidate)) {
+                        val callablesAreEquivalent = areEquivalentTopLevelCallables(me, other, session) {
+                            myCandidate.mappedArgumentsOrderRepresentation.contentEquals(otherCandidate.mappedArgumentsOrderRepresentation)
+                        }
+                        if (callablesAreEquivalent) {
                             /**
                              * If we have an expect function in the result set and encounter a non-expect function among non-processed
                              * candidates, then we need to prefer this new function to the original expect one
@@ -63,39 +63,6 @@ class ConeEquivalentCallConflictResolver(
             result += myCandidate
         }
         return result
-    }
-
-    private fun areEquivalentTopLevelCallables(
-        first: FirCallableDeclaration,
-        firstCandidate: Candidate,
-        second: FirCallableDeclaration,
-        secondCandidate: Candidate
-    ): Boolean {
-        if (first.symbol.callableId != second.symbol.callableId) return false
-        // Emulate behavior from K1 where declarations from the same source module are never equivalent.
-        // We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
-        // See a.containingDeclaration == b.containingDeclaration check in
-        // org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent.
-        // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
-        // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
-        if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
-        if (first is FirVariable != second is FirVariable) {
-            return false
-        }
-        if (!firstCandidate.mappedArgumentsOrderRepresentation.contentEquals(secondCandidate.mappedArgumentsOrderRepresentation)) {
-            return false
-        }
-
-        val overrideChecker = FirStandardOverrideChecker(inferenceComponents.session)
-        return if (first is FirProperty && second is FirProperty) {
-            overrideChecker.isOverriddenProperty(first, second, ignoreVisibility = true) &&
-                    overrideChecker.isOverriddenProperty(second, first, ignoreVisibility = true)
-        } else if (first is FirSimpleFunction && second is FirSimpleFunction) {
-            overrideChecker.isOverriddenFunction(first, second, ignoreVisibility = true) &&
-                    overrideChecker.isOverriddenFunction(second, first, ignoreVisibility = true)
-        } else {
-            false
-        }
     }
 
     /**
@@ -119,4 +86,45 @@ class ConeEquivalentCallConflictResolver(
             }
             return result
         }
+
+
+    companion object {
+        fun areEquivalentTopLevelCallables(
+            first: FirCallableDeclaration,
+            second: FirCallableDeclaration,
+            session: FirSession,
+            argumentMappingIsEqual: (() -> Boolean)?
+        ): Boolean {
+            if (first.symbol.callableId != second.symbol.callableId) return false
+            // Emulate behavior from K1 where declarations from the same source module are never equivalent.
+            // We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
+            // See a.containingDeclaration == b.containingDeclaration check in
+            // org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent.
+            // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
+            // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
+            if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
+            if (first is FirVariable != second is FirVariable) {
+                return false
+            }
+            if (argumentMappingIsEqual?.invoke() == false) {
+                return false
+            }
+
+            val overrideChecker = FirStandardOverrideChecker(session)
+            @Suppress("IntroduceWhenSubject")
+            return when {
+                first is FirProperty && second is FirProperty -> {
+                    overrideChecker.isOverriddenProperty(first, second, ignoreVisibility = true) &&
+                            overrideChecker.isOverriddenProperty(second, first, ignoreVisibility = true)
+                }
+
+                first is FirSimpleFunction && second is FirSimpleFunction -> {
+                    overrideChecker.isOverriddenFunction(first, second, ignoreVisibility = true) &&
+                            overrideChecker.isOverriddenFunction(second, first, ignoreVisibility = true)
+                }
+
+                else -> false
+            }
+        }
+    }
 }
