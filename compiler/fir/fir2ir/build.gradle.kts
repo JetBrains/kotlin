@@ -105,8 +105,8 @@ if (kotlinBuildProperties.isTeamcityBuild) {
      * So to fix this inconvenience in local environment, those
      *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them
     */
-    tasks.create("aggregateTests")
-    tasks.create("nightlyTests")
+    tasks.register("aggregateTests")
+    tasks.register("nightlyTests")
 }
 
 testsJar()

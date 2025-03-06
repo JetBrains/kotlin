@@ -212,7 +212,10 @@ internal open class TCServiceMessagesClient(
         if (settings.treatFailedTestOutputAsStacktrace) {
             stackTraceOutput.append(text)
         } else {
-            results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
+            results.output(
+                descriptor.id,
+                DefaultTestOutputEvent(System.currentTimeMillis(), destination, text)
+            )
         }
     }
 

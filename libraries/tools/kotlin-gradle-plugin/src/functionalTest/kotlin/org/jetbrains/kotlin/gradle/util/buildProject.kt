@@ -7,10 +7,20 @@ package org.jetbrains.kotlin.gradle.util
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.problems.ProblemReporter
+import org.gradle.api.problems.ProblemSpec
+import org.gradle.api.problems.internal.AdditionalDataBuilderFactory
+import org.gradle.api.problems.internal.InternalProblemReporter
+import org.gradle.api.problems.internal.InternalProblemSpec
+import org.gradle.api.problems.internal.InternalProblems
+import org.gradle.api.problems.internal.Problem
+import org.gradle.api.problems.internal.ProblemsProgressEventEmitterHolder
+import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -23,7 +33,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -39,6 +48,7 @@ fun buildProject(
     .also {
         disableDownloadingKonanFromMavenCentral(it)
         it.enableDependencyVerification(false)
+        applyWorkaroundFor31862()
     }
     .apply(configureProject)
     .let { it as ProjectInternal }
@@ -181,4 +191,28 @@ fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
 
 fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
+}
+
+// Workaround for https://github.com/gradle/gradle/issues/31862
+private fun applyWorkaroundFor31862() {
+    ProblemsProgressEventEmitterHolder.init(InternalProblemsStub())
+}
+
+private class InternalProblemsStub : InternalProblems {
+    override fun getReporter(): ProblemReporter = TODO()
+    override fun getInternalReporter(): InternalProblemReporter = InternalProblemReporterStub()
+    override fun getAdditionalDataBuilderFactory(): AdditionalDataBuilderFactory = TODO()
+}
+
+private class InternalProblemReporterStub : InternalProblemReporter {
+    override fun report(problem: Problem, id: OperationIdentifier) {}
+    override fun create(action: Action<InternalProblemSpec?>): Problem = TODO()
+    override fun report(problem: Problem) {}
+    override fun report(problems: MutableCollection<out Problem>) {}
+    override fun throwing(
+        exception: Throwable,
+        problems: MutableCollection<out Problem>
+    ): RuntimeException = TODO()
+    override fun reporting(spec: Action<ProblemSpec?>) {}
+    override fun throwing(spec: Action<ProblemSpec?>): java.lang.RuntimeException = TODO()
 }

@@ -26,8 +26,6 @@ project.apply {
     from(rootProject.file("../../gradle/versions.gradle.kts"))
 }
 
-val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
-
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 val intellijReleaseType: String by extra {
     when {
@@ -180,7 +178,7 @@ fun prepareDeps(
         }
     }
 
-    val mergeSources = tasks.create("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
+    val mergeSources = tasks.register("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
         dependsOn(sources)
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
@@ -194,7 +192,7 @@ fun prepareDeps(
         archiveVersion.set(intellijVersion)
     }
 
-    val sourcesFile = mergeSources.outputs.files.singleFile
+    val sourcesFile = mergeSources.map { it.outputs.files.singleFile }
 
     val makeIde = if (androidStudioBuild != null) {
         buildIvyRepositoryTask(
@@ -228,7 +226,7 @@ fun prepareDeps(
     }
 }
 
-when(kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
     null -> {}
     "master" -> {} // for intellij/kt-master, intellij maven artifacts are used instead of manual unpacked dependencies
     else -> {
@@ -248,7 +246,7 @@ fun buildIvyRepositoryTask(
     organization: String,
     repoDirectory: File,
     pathRemap: ((String) -> String)? = null,
-    sources: File? = null
+    sources: Provider<File>? = null
 ): TaskProvider<Task> {
     fun ResolvedArtifact.storeDirectory(): CleanableStore =
         CleanableStore[repoDirectory.resolve("$organization/${moduleVersion.id.name}").absolutePath]
@@ -312,7 +310,7 @@ fun buildIvyRepositoryTask(
                     File(artifactsDirectory, "lib"),
                     File(artifactsDirectory, "lib"),
                     File(moduleDirectory, "ivy"),
-                    *listOfNotNull(sources).toTypedArray()
+                    *listOfNotNull(sources?.get()).toTypedArray()
                 )
 
                 val pluginsDirectory = File(artifactsDirectory, "plugins")
@@ -328,7 +326,7 @@ fun buildIvyRepositoryTask(
                                 File(it, "lib"),
                                 File(it, "lib"),
                                 File(moduleDirectory, "ivy"),
-                                *listOfNotNull(sources).toTypedArray()
+                                *listOfNotNull(sources?.get()).toTypedArray()
                             )
                         }
                 }
@@ -364,7 +362,7 @@ fun writeIvyXml(
         document("UTF-8", "1.0") {
             element("ivy-module") {
                 attribute("version", "2.0")
-                attribute("xmlns:m", "http://ant.apache.org/ivy/maven")
+                attribute("xmlns:m", "https://ant.apache.org/ivy/maven")
 
                 emptyElement("info") {
                     attributes(
@@ -397,7 +395,7 @@ fun writeIvyXml(
                                     "conf" to "default"
                                 )
                             }
-                    }
+                        }
 
                     sourcesJar.forEach { jarFile ->
                         emptyElement("artifact") {
