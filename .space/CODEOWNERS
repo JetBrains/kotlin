@@ -381,6 +381,7 @@
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
 /libraries/tools/script-runtime/ "Kotlin Frontend"
 /libraries/tools/required-reason-finder/ "Kotlin Build Tools"
+/libraries/tools/kotlin-dataframe/ "Kotlin Build Tools"
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
 /libraries/pom.xml "Kotlin Build Infrastructure"
