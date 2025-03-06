@@ -3,13 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js
+package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import com.google.gson.stream.JsonWriter
 import java.io.StringWriter
 
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
 fun String.jsQuoted(): String =
     StringWriter().also {
         JsonWriter(it).value(this)
