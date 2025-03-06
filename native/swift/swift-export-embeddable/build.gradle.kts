@@ -117,7 +117,7 @@ javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no
 val swiftExportStandaloneTests = configurations.detachedConfiguration().apply {
     isTransitive = false
     // Don't add dependencies here
-    dependencies.add(project.dependencies.projectTests(":native:swift:swift-export-standalone"))
+    dependencies.add(project.dependencies.projectTests(":native:swift:swift-export-standalone-integration-tests:simple"))
 }
 
 val intransitiveTestDependenciesJars = configurations.detachedConfiguration().apply {
@@ -140,6 +140,8 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.projectTests(":compiler:tests-common-new"))
     dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure"))
     dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure-utils"))
+
+    dependencies.add(project.dependencies.project(":native:swift:swift-export-standalone-integration-tests"))
 }
 
 val shadedIntransitiveTestDependenciesJar = rewriteDepsToShadedJar(
