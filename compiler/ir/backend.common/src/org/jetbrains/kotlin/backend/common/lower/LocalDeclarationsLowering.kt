@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-        declaration.visibility
+        DescriptorVisibilities.PRIVATE
 
     fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
         DescriptorVisibilities.PRIVATE
@@ -47,6 +47,15 @@ interface VisibilityPolicy {
 
     companion object {
         val DEFAULT = object : VisibilityPolicy {}
+
+        /**
+         * Local classes extracted from inline lambdas are not yet lifted, so their visibility should remain local.
+         * They will be visited for the second time _after_ function inlining, and only then will they be lifted to the nearest declaration
+         * container by [LocalClassPopupLowering], so that's when we will change their visibility to private.
+         */
+        val FOR_LOCAL_CLASSES_IN_INLINE_LAMBDAS = object : VisibilityPolicy {
+            override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility = declaration.visibility
+        }
     }
 }
 
@@ -667,6 +676,7 @@ open class LocalDeclarationsLowering(
             container.fileOrNull?.let { cleanUpLocalFunctionsForUnboundSymbols(it) }
 
             localClasses.values.forEach {
+                it.declaration.isOriginallyLocalClass = true
                 it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
                 it.closure.capturedValues.associateTo(it.capturedValueToField) { capturedValue ->
                     capturedValue.owner to PotentiallyUnusedField()
