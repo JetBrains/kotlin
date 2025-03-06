@@ -35,7 +35,7 @@ internal open class TCServiceMessagesClient(
     val settings: TCServiceMessagesClientSettings,
     val log: Logger,
 ) : ServiceMessageParserCallback {
-    var afterMessage = false
+    private var afterMessage = false
 
     inline fun <T> root(actions: () -> T): T {
         val tsStart = System.currentTimeMillis()
@@ -87,7 +87,7 @@ internal open class TCServiceMessagesClient(
         afterMessage = true
     }
 
-    protected open fun getSuiteName(message: BaseTestSuiteMessage) = message.suiteName
+    protected open fun getSuiteName(message: BaseTestSuiteMessage): String? = message.suiteName
 
     override fun regularText(text: String) {
         val actualText = if (afterMessage && settings.ignoreLineEndingAfterMessage)
