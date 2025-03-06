@@ -412,7 +412,6 @@ class BasicIncrementalJavaInteropIT : KGPBaseTest() {
 
     @DisplayName("Basic scenario: Kotlin constant tracks a Java constant")
     @GradleTest
-    @BrokenOnMacosTest
     fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
         project("kt-69042-basic-java-interop", gradleVersion) {
             build("assemble")
@@ -420,7 +419,12 @@ class BasicIncrementalJavaInteropIT : KGPBaseTest() {
             val javaSource = projectPath.resolve("src/main/java/JavaConstants.java")
             javaSource.replaceWithVersion("newValue")
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            // KT-75850: we need to explicitly invalidate the CC here, as changing the logLevel doesn't trigger it
+            build(
+                "assemble",
+                "-PinvalidateCC${generateIdentifier()}",
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+            ) {
                 assertTasksExecuted(":compileJava", ":compileKotlin")
                 assertIncrementalCompilation(listOf(kotlinSourcesDir().resolve("usage.kt")).relativizeTo(projectPath))
             }
