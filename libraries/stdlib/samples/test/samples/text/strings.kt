@@ -2,6 +2,7 @@ package samples.text
 
 import samples.*
 import java.util.Locale
+import java.util.regex.Pattern
 import kotlin.test.*
 
 class Strings {
@@ -612,6 +613,37 @@ class Strings {
         assertPrints(splitByMultipleSpaces, "[a, b, c]")
 
         val splitBySingleSpace = "a  b    c".split(Regex("\\s"))
+        assertPrints(splitBySingleSpace, "[a, , b, , , , c]")
+    }
+
+    @Sample
+    fun splitWithPattern() {
+        val digitSplit = "apple123banana456cherry".split(Pattern.compile("\\d+"))
+        assertPrints(digitSplit, "[apple, banana, cherry]")
+
+        val wordBoundarySplit = "The quick brown fox".split(Pattern.compile("\\s+"))
+        assertPrints(wordBoundarySplit, "[The, quick, brown, fox]")
+
+        val limitSplit = "a,b,c,d,e".split(Pattern.compile(","), limit = 3)
+        assertPrints(limitSplit, "[a, b, c,d,e]")
+
+        val patternGroups = "abc-123def_456ghi".split(Pattern.compile("[\\-_]\\d+"))
+        assertPrints(patternGroups, "[abc, def, ghi]")
+
+        val caseInsensitiveSplit = "Apple123Banana45CHERRY".split(Pattern.compile("[a-z]+", Pattern.CASE_INSENSITIVE))
+        assertPrints(caseInsensitiveSplit, "[, 123, 45, ]")
+
+        val emptyInputResult = "".split(Pattern.compile("sep"))
+        assertPrints(emptyInputResult, "[]")
+        assertPrints(emptyInputResult.size, "1")
+
+        val emptyDelimiterSplit = "abc".split(Pattern.compile(""))
+        assertPrints(emptyDelimiterSplit, "[a, b, c, ]")
+
+        val splitByMultipleSpaces = "a  b    c".split(Pattern.compile("\\s+"))
+        assertPrints(splitByMultipleSpaces, "[a, b, c]")
+
+        val splitBySingleSpace = "a  b    c".split(Pattern.compile("\\s"))
         assertPrints(splitBySingleSpace, "[a, , b, , , , c]")
     }
 

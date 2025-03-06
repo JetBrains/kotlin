@@ -389,6 +389,7 @@ public inline fun String.Companion.format(locale: Locale?, format: String, varar
 
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
+ * @sample samples.text.Strings.splitWithPattern
  */
 public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String> {
     requireNonNegativeLimit(limit)
