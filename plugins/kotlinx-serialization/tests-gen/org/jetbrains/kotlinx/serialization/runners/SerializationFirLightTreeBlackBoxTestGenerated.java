@@ -160,6 +160,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("instantSerializer.kt")
+    public void testInstantSerializer() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/instantSerializer.kt");
+    }
+
+    @Test
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/interfaces.kt");
