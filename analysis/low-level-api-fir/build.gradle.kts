@@ -20,7 +20,7 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":compiler:fir:checkers:checkers.wasm"))
-    api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:backend.common.jvm"))
     api(project(":compiler:cli-common"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))

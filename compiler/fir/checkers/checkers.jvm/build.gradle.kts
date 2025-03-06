@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:checkers"))
-    api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:fir-jvm"))
 
     /*
      * We can't remove this dependency until we use

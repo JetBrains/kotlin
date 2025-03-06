@@ -18,7 +18,7 @@ dependencies {
     api(project(":compiler:fir:resolve"))
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
-    api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))

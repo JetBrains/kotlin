@@ -13,7 +13,7 @@ dependencies {
 
     api(project(":compiler:fir:cones"))
     api(project(":compiler:fir:tree"))
-    api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:resolve"))

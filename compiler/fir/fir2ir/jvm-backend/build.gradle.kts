@@ -10,7 +10,7 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:providers"))
     compileOnly(project(":compiler:fir:semantics"))
-    compileOnly(project(":compiler:fir:java"))
+    compileOnly(project(":compiler:fir:fir-jvm"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:fir:fir-serialization"))
