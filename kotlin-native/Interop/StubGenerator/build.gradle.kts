@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.nativeDistribution.asProperties
+import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 
 plugins {
@@ -73,6 +75,9 @@ tasks {
         // Set the konan.home property because we run the cinterop tool not from a distribution jar
         // so it will not be able to determine this path by itself.
         systemProperty("konan.home", nativeProtoDistribution.root.asFile) // at most target description is required in the distribution.
+        systemProperty("kotlin.native.propertyOverrides", llvmDistributionSource.asProperties.entries.joinToString(separator = ";") {
+            "${it.key}=${it.value}"
+        })
         environment["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
     }
 }
