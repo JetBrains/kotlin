@@ -233,7 +233,7 @@ class FileLocalIdSignatureComputer(
                 val klibOrigin = file.module.descriptor.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin ?: return@run false
                 val version = klibOrigin.library.versions.abiVersion ?: return@run false
                 !version.isAtLeast(2, 2, 0)
-                        || klibOrigin.library.versions.compilerVersion == "2.2.0-dev-4719"
+                        || klibOrigin.library.versions.compilerVersion == "2.2.0-dev-7255"
             }
 
             if (oldFormat) {
