@@ -14,6 +14,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.additionalJavaModules = from.additionalJavaModules?.copyOf()
     to.allowNoSourceFiles = from.allowNoSourceFiles
     to.allowUnstableDependencies = from.allowUnstableDependencies
+    to.annotationsInMetadata = from.annotationsInMetadata
     to.assertionsMode = from.assertionsMode
     to.backendThreads = from.backendThreads
     to.buildFile = from.buildFile

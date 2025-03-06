@@ -1,6 +1,5 @@
 // LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // FULL_JDK
-// JVM_ABI_K1_K2_DIFF: K2 stores annotations in metadata (KT-57919).
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class AnnProperty

@@ -6,10 +6,10 @@ MODULE main
 					K1
 						(x: kotlin/String)
 					K2
-						(@org/jetbrains/annotations/NotNull x: @kotlin/jvm/internal/EnhancedNullability kotlin/String)
+						(x: @kotlin/jvm/internal/EnhancedNullability kotlin/String)
 			FUNCTION takeNullable(Ljava/lang/String;)V
 				Property: class.metadata.function.valueParameters
 					K1
 						(x: kotlin/String?)
 					K2
-						(@org/jetbrains/annotations/Nullable x: @kotlin/jvm/internal/EnhancedNullability kotlin/String?)
+						(x: @kotlin/jvm/internal/EnhancedNullability kotlin/String?)

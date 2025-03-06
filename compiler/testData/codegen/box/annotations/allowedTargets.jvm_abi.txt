@@ -1,9 +1,0 @@
-MODULE main
-	CLASS C.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(IIIIIII)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(x1: kotlin/Int, x2: kotlin/Int, x3: kotlin/Int, x4: kotlin/Int, x5: kotlin/Int, x6: kotlin/Int, x7: kotlin/Int)
-					K2
-						(@ParameterAnnotation @UniversalAnnotation @AnotherUniversalAnnotation x1: kotlin/Int, x2: kotlin/Int, @PropertyOrParameterAnnotation x3: kotlin/Int, @ParameterOrFieldAnnotation x4: kotlin/Int, x5: kotlin/Int, @AnotherUniversalAnnotation x6: kotlin/Int, @UniversalAnnotation x7: kotlin/Int)

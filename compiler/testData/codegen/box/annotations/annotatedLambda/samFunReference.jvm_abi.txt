@@ -1,9 +1,0 @@
-MODULE main
-	CLASS SamFunReferenceKt.class
-		PACKAGE METADATA
-			FUNCTION annotatedABC(Ljava/lang/String;Ljava/lang/String;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(x: kotlin/String, y: kotlin/String)
-					K2
-						(@Ann(x = "OK0") x: kotlin/String, @Ann(x = "OK1") y: kotlin/String)

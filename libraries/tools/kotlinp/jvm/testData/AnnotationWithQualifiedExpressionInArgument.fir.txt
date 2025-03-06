@@ -1,6 +1,5 @@
 // A.class
 // ------------------------------------------
-@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class A : kotlin/Annotation {
 
   // signature: <init>(BSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;)V
@@ -50,7 +49,6 @@ public final annotation class A : kotlin/Annotation {
 }
 // Aliased.class
 // ------------------------------------------
-@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class Aliased : kotlin/Annotation {
 
   // signature: <init>(BSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;)V

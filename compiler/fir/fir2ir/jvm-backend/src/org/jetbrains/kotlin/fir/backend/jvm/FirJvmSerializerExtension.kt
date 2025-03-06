@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.constant.KClassValue
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -105,6 +107,8 @@ open class FirJvmSerializerExtension(
         }
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
+
+    protected open val isOptionalAnnotationClassSerialization: Boolean get() = false
 
     override fun serializeClass(
         klass: FirClass,
@@ -369,7 +373,10 @@ open class FirJvmSerializerExtension(
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     private inline fun serializeAnnotations(declaration: FirAnnotationContainer?, addAnnotation: (ProtoBuf.Annotation) -> Unit) {
-        if (metadataVersion.isAtLeast(2, 2, 0)) {
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationsInMetadata) ||
+            declaration in localDelegatedProperties ||
+            isOptionalAnnotationClassSerialization
+        ) {
             for (annotation in declaration?.allRequiredAnnotations(session, additionalMetadataProvider).orEmpty()) {
                 addAnnotation(annotationSerializer.serializeAnnotation(annotation))
             }

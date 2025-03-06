@@ -1,9 +1,0 @@
-MODULE main
-	CLASS test/Test.class
-		CLASS METADATA
-			FUNCTION foo(Ljava/lang/String;)Ljava/lang/String;
-				Property: class.metadata.function.valueParameters
-					K1
-						(a: kotlin/String)
-					K2
-						(@test/Anno(value = "OK") a: kotlin/String)

@@ -135,6 +135,7 @@ where advanced options include:
   -Xcompile-builtins-as-part-of-stdlib
                              Enable behaviour needed to compile builtins as part of JVM stdlib
   -Xoutput-builtins-metadata Output builtins metadata as .kotlin_builtins files
+  -Xannotations-in-metadata  Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.
   -Xno-inline                Disable method inlining.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
