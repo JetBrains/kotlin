@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import java.io.*
 import kotlin.math.min
 
-open class RewriteSourceMapFilterReader(
+internal open class RewriteSourceMapFilterReader(
     val input: Reader
 ) : FilterReader(input) {
     // This implementation works only when source map contents starts

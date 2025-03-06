@@ -136,7 +136,7 @@ class RewriteSourceMapFilterReaderTest {
         )
     }
 
-    class RewriteSourceMapFilterReaderMock(input: Reader, srcSourceRoot: String, targetSourceRoot: String) :
+    internal class RewriteSourceMapFilterReaderMock(input: Reader, srcSourceRoot: String, targetSourceRoot: String) :
         RewriteSourceMapFilterReader(input) {
         init {
             setProperties(this, srcSourceRoot, targetSourceRoot)
