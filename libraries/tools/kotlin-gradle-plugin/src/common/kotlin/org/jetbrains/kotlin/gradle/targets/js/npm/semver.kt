@@ -13,7 +13,7 @@ data class SemVer(
     val minor: BigInteger,
     val patch: BigInteger,
     val preRelease: String? = null,
-    val build: String? = null
+    val build: String? = null,
 ) : Comparable<SemVer> {
     override fun compareTo(other: SemVer): Int {
         val compareMajor = major.compareTo(other.major)
@@ -266,8 +266,8 @@ fun Version.toSemVer(): SemVer =
         major.toBigInteger(),
         minor.toBigInteger(),
         patch.toBigInteger(),
-        preRelease = preReleaseIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null },
-        build = buildIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null }
+        preRelease = preReleaseIdentifiers.joinToString(".").ifEmpty { null },
+        build = buildIdentifiers.joinToString(".").ifEmpty { null },
     )
 
 fun SemVer.toVersion(): Version =
