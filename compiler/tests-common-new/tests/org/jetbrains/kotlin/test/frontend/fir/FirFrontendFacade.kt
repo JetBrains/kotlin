@@ -191,7 +191,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(
                         mainModuleName = moduleName,
                         sessionProvider = sessionProvider,
-                        moduleDataProvider = moduleDataProvider,
                         languageVersionSettings = languageVersionSettings,
                         extensionRegistrars = extensionRegistrars,
                     )
@@ -211,7 +210,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                         moduleName,
                         sessionProvider,
-                        moduleDataProvider,
                         projectEnvironment,
                         extensionRegistrars,
                         projectFileSearchScope,

@@ -195,7 +195,6 @@ private fun <F> prepareKlibSessions(
             sessionFactory.createSharedLibrarySession(
                 rootModuleName,
                 sessionProvider,
-                libraryList.moduleDataProvider,
                 configuration,
                 extensionRegistrars,
             )
@@ -249,7 +248,6 @@ fun <F> prepareMetadataSessions(
             FirMetadataSessionFactory.createSharedLibrarySession(
                 rootModuleName,
                 sessionProvider,
-                libraryList.moduleDataProvider,
                 languageVersionSettings,
                 extensionRegistrars,
             )

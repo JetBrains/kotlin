@@ -43,7 +43,6 @@ object TestFirWasmSessionFactory {
         val sharedLibrarySession = FirWasmSessionFactory.createSharedLibrarySession(
             mainModuleName,
             sessionProvider,
-            moduleDataProvider,
             configuration,
             extensionRegistrars
         )

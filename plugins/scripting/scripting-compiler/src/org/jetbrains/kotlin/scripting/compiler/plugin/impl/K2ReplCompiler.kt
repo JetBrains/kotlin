@@ -138,7 +138,6 @@ class K2ReplCompiler(
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = moduleName,
                 sessionProvider = sessionProvider,
-                moduleDataProvider = moduleDataProvider,
                 projectEnvironment = projectEnvironment,
                 extensionRegistrars = extensionRegistrars,
                 scope = projectFileSearchScope,

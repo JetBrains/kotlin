@@ -42,7 +42,6 @@ object FirSessionFactoryHelper {
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             moduleName,
             sessionProvider,
-            dependencyList.moduleDataProvider,
             projectEnvironment,
             extensionRegistrars,
             librariesScope,
