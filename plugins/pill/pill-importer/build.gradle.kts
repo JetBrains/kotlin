@@ -1,7 +1,5 @@
 import java.lang.reflect.Modifier
 import java.net.URLClassLoader
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     kotlin("jvm")
@@ -41,14 +39,14 @@ fun runPillTask(taskName: String) {
 
 val jar: Jar by tasks
 
-val pill by tasks.creating {
+val pill by tasks.registering {
     notCompatibleWithConfigurationCache("The task requires the complete Gradle project model")
     dependsOn(jar)
     dependsOn(":createIdeaHomeForTests")
     doLast { runPillTask("pill") }
 }
 
-val unpill by tasks.creating {
+val unpill by tasks.registering {
     notCompatibleWithConfigurationCache("The task requires the complete Gradle project model")
     dependsOn(jar)
     doLast { runPillTask("unpill") }
