@@ -345,7 +345,6 @@ psi/KtCodeFragment.kt:KtCodeFragment:abstract getContentElement()
 psi/KtCodeFragment.kt:KtCodeFragment:getContextContainingFile()
 psi/KtCodeFragment.kt:KtCodeFragment:getOriginalContext()
 psi/KtCodeFragment.kt:KtCodeFragment:importsAsImportList()
-psi/KtCodeFragment.kt:KtCodeFragment:null
 psi/KtCodeFragment.kt:abstract KtCodeFragment
 psi/KtCodeFragment.kt:fun KotlinCodeFragmentImportModificationListener
 psi/KtCodeFragmentBase.kt:KtCodeFragmentBase
@@ -1699,7 +1698,6 @@ psi/psiUtil/KtStringTemplateExpressionManipulator.kt:KtStringTemplateExpressionM
 psi/psiUtil/PsiChildRange.kt:Companion:EMPTY
 psi/psiUtil/PsiChildRange.kt:Companion:singleElement(PsiElement)
 psi/psiUtil/PsiChildRange.kt:PsiChildRange:isEmpty
-psi/psiUtil/PsiChildRange.kt:PsiChildRange:null
 psi/psiUtil/PsiChildRange.kt:data PsiChildRange
 psi/psiUtil/StringTemplateExpressionManipulator.kt:StringTemplateExpressionManipulator
 psi/psiUtil/ktPsiUtil.kt:@OptIn(KtPsiInconsistencyHandling::class) isContractDescriptionCallPsiCheck()
@@ -2204,7 +2202,6 @@ psi/stubs/impl/KotlinFileStubImpl.kt:KotlinFileStubImpl:partFqName
 psi/stubs/impl/KotlinFunctionStubImpl.kt:Companion:deserializeContract(StubInputStream)
 psi/stubs/impl/KotlinFunctionStubImpl.kt:KotlinFunctionStubImpl
 psi/stubs/impl/KotlinFunctionStubImpl.kt:KotlinFunctionStubImpl:@Throws(IOException::class) serializeContract(StubOutputStream)
-psi/stubs/impl/KotlinFunctionStubImpl.kt:KotlinFunctionStubImpl:null
 psi/stubs/impl/KotlinImportAliasStubImpl.kt:KotlinImportAliasStubImpl
 psi/stubs/impl/KotlinImportDirectiveStubImpl.kt:KotlinImportDirectiveStubImpl
 psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl
@@ -2222,7 +2219,6 @@ psi/stubs/impl/KotlinPlaceHolderWithTextStubImpl.kt:KotlinPlaceHolderWithTextStu
 psi/stubs/impl/KotlinPropertyAccessorStubImpl.java:KotlinPropertyAccessorStubImpl
 psi/stubs/impl/KotlinPropertyAccessorStubImpl.java:KotlinPropertyAccessorStubImpl:KotlinPropertyAccessorStubImpl(StubElement, boolean, boolean, boolean)
 psi/stubs/impl/KotlinPropertyStubImpl.kt:KotlinPropertyStubImpl
-psi/stubs/impl/KotlinPropertyStubImpl.kt:KotlinPropertyStubImpl:null
 psi/stubs/impl/KotlinScriptStubImpl.kt:KotlinScriptStubImpl
 psi/stubs/impl/KotlinStubBaseImpl.kt:STUB_TO_STRING_PREFIX
 psi/stubs/impl/KotlinStubBaseImpl.kt:open KotlinStubBaseImpl
@@ -2246,7 +2242,6 @@ psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic computeMask((Kt
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic computeMaskFromModifierList(KtModifierList)
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic maskHasModifier(Long, KtModifierKeywordToken)
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic maskToString(Long)
-psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:null
 psi/stubs/impl/Utils.kt:Utils
 psi/stubs/impl/Utils.kt:Utils:wrapStrings(List<String>)
 psi/userDataUtil.kt:CopyablePsiUserDataProperty

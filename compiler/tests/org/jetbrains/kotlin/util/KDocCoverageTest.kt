@@ -185,6 +185,7 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
     private fun KtDeclaration.shouldBeRendered(): Boolean =
         when {
             (this as? KtObjectDeclaration)?.isCompanion() == true -> false
+            this is KtClassInitializer -> false
             this.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> false
             this is KtProperty && this.name in ignoredPropertyNames -> false
             this is KtNamedFunction && this.name in ignoredFunctionNames -> false
