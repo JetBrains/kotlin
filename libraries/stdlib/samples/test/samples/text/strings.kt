@@ -548,8 +548,11 @@ class Strings {
         val regexLimit = "a1b2c3d4e".split(Regex("\\d"), limit = 3)
         assertPrints(regexLimit, "[a, b, c3d4e]")
 
-        val emptyString = "".split(",")
-        assertEquals(listOf(""), emptyString)
+        val emptyInputResult = "".split(",")
+        assertEquals(listOf(""), emptyInputResult)
+
+        val emptyDelimiterSplit = "abc".split("")
+        assertPrints(emptyDelimiterSplit, "[, a, b, c, ]")
     }
 
     @Sample
