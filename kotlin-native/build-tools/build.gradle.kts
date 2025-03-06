@@ -105,9 +105,5 @@ gradlePlugin {
             id = "platform-manager"
             implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
         }
-        create("nativeProtoDistribution") {
-            id = "native-proto-distribution"
-            implementationClass = "org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionPlugin"
-        }
     }
 }

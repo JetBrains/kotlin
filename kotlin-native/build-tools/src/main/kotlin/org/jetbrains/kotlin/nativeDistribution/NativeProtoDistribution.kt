@@ -6,17 +6,11 @@
 package org.jetbrains.kotlin.nativeDistribution
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
-import javax.inject.Inject
-
-internal open class NativeProtoDistribution @Inject constructor(val distribution: NativeDistribution)
 
 /**
  * Get Native "proto" distribution.
  *
  * Only [konan.properties][NativeDistribution.konanProperties] is available inside it.
- *
- * Requires [NativeProtoDistributionPlugin] to be applied to the project.
  */
 val Project.nativeProtoDistribution: NativeDistribution
-    get() = extensions.getByType(NativeProtoDistribution::class).distribution
+    get() = NativeDistribution(project(":kotlin-native").layout.projectDirectory)
