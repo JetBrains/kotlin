@@ -233,7 +233,7 @@ abstract class LlvmOptimizationPipeline(
                     passes: ${passDescription}
                 """.trimIndent()
             }
-            if (passes.isEmpty()) return
+            if (passDescription.isEmpty()) return
             val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
             require(errorCode == null) {
                 LLVMGetErrorMessage(errorCode)!!.toKString()
