@@ -11,23 +11,26 @@ import kotlin.reflect.KType
 internal class KFunctionDescription(
         val flags: Int,
         val arity: Int,
-        val fqName: String,
-        val name: String,
-        val returnType: KType
+        val fqName: String?,
+        val name: String?,
+        val returnType: KType?,
+        val reflectionTargetLinkageError: String?,
 )
 
-internal abstract class KFunctionImpl<out R>(val description: KFunctionDescription): KFunction<R> {
-    final override val returnType get() = description.returnType
+internal abstract class KFunctionImpl<out R>(val description: KFunctionDescription) : KFunction<R> {
+    final override val returnType get() = maybeThrowPLError() ?: description.returnType!!
     val flags get() = description.flags
     val arity get() = description.arity
-    val fqName get() = description.fqName
+    val fqName get() = description.fqName!!
     val receiver get() = computeReceiver()
-    final override val name get() = description.name
+    final override val name get() = maybeThrowPLError() ?: description.name!!
 
     open fun computeReceiver(): Any? = null
 
     override fun equals(other: Any?): Boolean {
+        maybeThrowPLError()
         if (other !is KFunctionImpl<*>) return false
+        other.maybeThrowPLError()
         return fqName == other.fqName && receiver == other.receiver
                 && arity == other.arity && flags == other.flags
     }
@@ -39,9 +42,23 @@ internal abstract class KFunctionImpl<out R>(val description: KFunctionDescripti
         return res
     }
 
-    override fun hashCode() = evalutePolynom(31, fqName.hashCode(), receiver.hashCode(), arity, flags)
+    override fun hashCode(): Int {
+        maybeThrowPLError()
+        return evalutePolynom(31, fqName.hashCode(), receiver.hashCode(), arity, flags)
+    }
 
     override fun toString(): String {
-        return "${if (name == "<init>") "constructor" else "function " + name}"
+        maybeThrowPLError()
+        return "$functionKind $name"
+    }
+
+    private val functionKind: String
+        get() = if (description.name == "<init>") "constructor" else "function"
+
+    private fun maybeThrowPLError(): Nothing? {
+        description.reflectionTargetLinkageError?.let {
+            ThrowIrLinkageError(it)
+        }
+        return null
     }
 }
