@@ -166,14 +166,29 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<Set<NpmRange>>() {
         )
 
     companion object {
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith(""""=""""))
         const val EQ = "="
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith("""">""""))
         const val GT = ">"
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith(""""<""""))
         const val LT = "<"
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith("""">=""""))
         const val GTEQ = ">="
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith(""""<=""""))
         const val LTEQ = "<="
 
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith("""" """"))
         const val AND = " "
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith("""" || """"))
         const val OR = " || "
+
+        @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.4.", ReplaceWith(""""*""""))
         const val WILDCARD = "*"
     }
 }
