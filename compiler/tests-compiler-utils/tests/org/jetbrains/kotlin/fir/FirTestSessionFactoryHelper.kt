@@ -58,6 +58,7 @@ object FirTestSessionFactoryHelper {
         project: Project,
         sourceScope: GlobalSearchScope,
         librariesScope: GlobalSearchScope,
+        configuration: CompilerConfiguration,
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
@@ -71,7 +72,7 @@ object FirTestSessionFactoryHelper {
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
                 getPackagePartProvider
             ),
-            configuration = CompilerConfiguration(),
+            configuration,
             PsiBasedProjectFileSearchScope(sourceScope),
             PsiBasedProjectFileSearchScope(librariesScope),
             incrementalCompilationContext = null,
