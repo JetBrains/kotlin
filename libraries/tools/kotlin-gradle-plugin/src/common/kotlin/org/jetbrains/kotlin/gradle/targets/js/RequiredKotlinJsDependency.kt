@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency

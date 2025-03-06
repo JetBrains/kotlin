@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.StringWriter
 import javax.inject.Inject
 
-@Suppress("LeakingThis")
 abstract class KotlinWebpackRule @Inject constructor(private val name: String) : Named {
     @get:Input
     abstract val enabled: Property<Boolean>
