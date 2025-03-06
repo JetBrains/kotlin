@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -43,10 +41,8 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -155,17 +151,18 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: A) {
-        val languageVersion = module.directives.singleOrZeroValue(LANGUAGE_VERSION)
-        val languageVersionSettings = if (languageVersion != null) {
-            LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(languageVersion))
-        } else {
-            LanguageVersionSettingsImpl.DEFAULT
-        }
+        val languageSettingsBuilder = testServices.defaultsProvider.newLanguageSettingsBuilder()
+        languageSettingsBuilder.configureUsingDirectives(
+            testServices.defaultDirectives,
+            testServices.environmentConfigurators,
+            testServices.defaultsProvider.targetBackend,
+            testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
+        )
 
         val emptyModule = TestModule(
             name = "dump-${module.name}", files = emptyList(),
             allDependencies = listOf(DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)),
-            RegisteredDirectives.Empty, languageVersionSettings
+            RegisteredDirectives.Empty, languageSettingsBuilder.build()
         )
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(emptyModule)
         val environment = VfsBasedProjectEnvironment(

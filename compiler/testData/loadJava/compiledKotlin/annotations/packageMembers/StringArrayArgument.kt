@@ -5,6 +5,10 @@
 // LANGUAGE: +MultiPlatformProjects
 // K1/K2 difference: KT-60820
 
+// IGNORE_FIR_METADATA_LOADING_K2_WITH_ANNOTATIONS_IN_METADATA
+// ^ With annotations in metadata, compiler also loads `t = <implicitArrayOf>()` in some annotation classes.
+// Once AnnotationsInMetadata is enabled by default, this directive can be removed and the txt dump can be updated.
+
 // MODULE: common
 // FILE: common.kt
 package test

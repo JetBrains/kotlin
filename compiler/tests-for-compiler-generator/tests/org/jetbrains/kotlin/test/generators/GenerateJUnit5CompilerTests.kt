@@ -304,6 +304,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
             }
+
+            testClass<AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest> {
+                model("loadJava/compiledKotlin", extension = "kt")
+                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
