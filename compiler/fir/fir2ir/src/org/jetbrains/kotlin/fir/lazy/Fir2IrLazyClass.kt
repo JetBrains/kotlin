@@ -262,4 +262,6 @@ class Fir2IrLazyClass(
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true
+
+    override val isK2: Boolean = true
 }

@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
@@ -30,13 +28,8 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
     }
     if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
     if (hasJvmDefault()) return true
-    when (val klass = parentAsClass) {
-        is IrLazyClass -> klass.classProto?.let {
-            return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
-        }
-        is IrMaybeDeserializedClass -> return klass.isNewPlaceForBodyGeneration
-    }
-    return jvmDefaultMode.isEnabled
+    val parentAsMaybeDeserializedClass = parent as? IrMaybeDeserializedClass
+    return parentAsMaybeDeserializedClass?.isNewPlaceForBodyGeneration ?: jvmDefaultMode.isEnabled
 }
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)

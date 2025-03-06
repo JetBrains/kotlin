@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -38,6 +39,9 @@ import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
@@ -62,7 +66,7 @@ class IrLazyClass(
     override var hasEnumEntries: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrClass(), IrLazyDeclarationBase {
+) : IrClass(), IrLazyDeclarationBase, IrMaybeDeserializedClass {
     init {
         symbol.bind(this)
         this.deserializedIr = lazy {
@@ -141,4 +145,12 @@ class IrLazyClass(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val moduleName: String?
+        get() = classProto?.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { nameResolver?.getString(it) }
+
+    override val isNewPlaceForBodyGeneration: Boolean?
+        get() = classProto?.let { JvmProtoBufUtil.isNewPlaceForBodyGeneration(it) }
+
+    override val isK2: Boolean = false
 }

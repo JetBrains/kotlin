@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFq
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
@@ -31,8 +30,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.*
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
@@ -465,13 +462,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {
-                is IrLazyClass -> {
-                    val classProto = current.classProto ?: return null
-                    val nameResolver = current.nameResolver ?: return null
-                    return classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)
-                        ?.let(nameResolver::getString)
-                        ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
-                }
                 is IrMaybeDeserializedClass ->
                     return current.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 is IrExternalPackageFragment -> {

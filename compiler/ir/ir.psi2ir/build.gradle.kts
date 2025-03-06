@@ -8,6 +8,7 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
+    implementation(project(":core:metadata.jvm"))
     compileOnly(intellijCore())
 }
 
