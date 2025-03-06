@@ -525,6 +525,14 @@ abstract class IncrementalCompilerRunner<
             allDirtySources.addAll(dirtySources)
             dirtyFilesProvider.cachedHistory.store(transaction, allDirtySources)
 
+            outputItemsCollector.outputs.firstOrNull { !it.outputFile.exists() }?.let { brokenOutput ->
+                reporter.warn { "Expected output item, but file doesn't exist: ${brokenOutput.outputFile}" }
+                reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
+                bufferingMessageCollector.forward(originalMessageCollector)
+                check(exitCode != ExitCode.OK) { "Expected compiler error, but got exitCode=$exitCode" }
+                break
+            }
+
             val generatedFiles = outputItemsCollector.outputs.map {
                 it.toGeneratedFile(metadataVersionFromLanguageVersion)
             }
