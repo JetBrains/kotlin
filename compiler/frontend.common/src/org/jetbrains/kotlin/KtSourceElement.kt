@@ -515,6 +515,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * See [org.jetbrains.kotlin.config.LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument] and its usages
      */
     object ErrorExpressionForTopLevelLambda : KtFakeSourceElementKind()
+
+    /**
+     * When resolving ENTRY as `MyEnum.ENTRY` this is used for the `MyEnum` part
+     */
+    object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

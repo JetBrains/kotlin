@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
+import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
@@ -76,6 +77,8 @@ class PostponedArgumentsAnalyzer(
                 )
 
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
+            is ConeSimpleNameForContextSensitiveResolution ->
+                processSimpleNameForContextSensitiveResolution(argument, candidate)
         }
     }
 
@@ -139,6 +142,57 @@ class PostponedArgumentsAnalyzer(
                 resolvedType, source, resolutionContext.bodyResolveComponents.file.source
             )
         }
+    }
+
+    private fun processSimpleNameForContextSensitiveResolution(
+        atom: ConeSimpleNameForContextSensitiveResolution,
+        topLevelCandidate: Candidate,
+    ) {
+        atom.analyzed = true
+
+        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()) as ConeSubstitutor
+        val substitutedExpectedType = substitutor.safeSubstitute(topLevelCandidate.csBuilder, atom.expectedType) as ConeKotlinType
+
+        if (!runContextSensitiveResolutionAndApplyResultsIfSuccessful(atom, topLevelCandidate, substitutedExpectedType)) {
+            ArgumentCheckingProcessor.resolveArgumentExpression(
+                topLevelCandidate,
+                atom.fallbackSubAtom,
+                substitutedExpectedType,
+                CheckerSinkImpl(topLevelCandidate),
+                context = resolutionContext,
+                isReceiver = false,
+                isDispatch = false,
+            )
+        }
+    }
+
+    /**
+     * @return true if results were successfully applied
+     */
+    private fun runContextSensitiveResolutionAndApplyResultsIfSuccessful(
+        atom: ConeSimpleNameForContextSensitiveResolution,
+        topLevelCandidate: Candidate,
+        substitutedExpectedType: ConeKotlinType,
+    ): Boolean {
+        val originalExpression = atom.expression
+
+        val newExpression =
+            resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(originalExpression, substitutedExpectedType)
+                ?: return false
+
+        atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
+
+        ArgumentCheckingProcessor.resolveArgumentExpression(
+            topLevelCandidate,
+            ConeResolutionAtom.createRawAtom(newExpression),
+            substitutedExpectedType,
+            CheckerSinkImpl(topLevelCandidate),
+            context = resolutionContext,
+            isReceiver = false,
+            isDispatch = false,
+        )
+
+        return true
     }
 
     fun analyzeLambda(

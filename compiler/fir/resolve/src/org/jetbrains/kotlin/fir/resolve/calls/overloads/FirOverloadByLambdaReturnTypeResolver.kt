@@ -137,7 +137,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                              * and in this state we cannot validly start resolve of a current candidate.
                              * For this reason we copy these atoms and reset their sub-atoms.
                              */
-                            else ConeResolutionAtomWithPostponedChild(it.expression)
+                            else it.makeFreshCopy()
                         }
                     ),
                 )

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -220,6 +221,25 @@ class Candidate(
         _postponedAtoms += atom
     }
 
+    // ------------------------ Context-sensitively resolved arguments ------------------------------------
+
+    private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirPropertyAccessExpression, FirExpression>? =
+        null
+
+    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
+        if (_updatedArgumentsFromContextSensitiveResolution == null) {
+            _updatedArgumentsFromContextSensitiveResolution = mutableMapOf()
+        }
+
+        val existingValue = _updatedArgumentsFromContextSensitiveResolution!!.put(old, new)
+        check(existingValue == null) {
+            "We shouldn't put the value for $old twice"
+        }
+    }
+
+    fun getUpdatedArgumentFromContextSensitiveResolution(arg: FirElement): FirExpression? {
+        return _updatedArgumentsFromContextSensitiveResolution?.get(arg)
+    }
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
     val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()

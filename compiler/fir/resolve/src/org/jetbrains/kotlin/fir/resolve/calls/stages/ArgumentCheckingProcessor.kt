@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -114,6 +116,8 @@ internal object ArgumentCheckingProcessor {
             is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
+                is FirPropertyAccessExpression -> preprocessSimpleNameReferenceForContextSensitiveResolution(atom)
+                else -> error("Unknown kind of atom with postponed child: ${atom.expression::class}")
             }
 
             is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
@@ -305,7 +309,21 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.callableReferenceExpression
         val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(expression)
         val postponedAtom = ConeResolvedCallableReferenceAtom(expression, expectedType, lhs, context.session)
-        atom.subAtom = postponedAtom
+        atom.setPostponedSubAtom(postponedAtom)
+        candidate.addPostponedAtom(postponedAtom)
+    }
+
+    private fun ArgumentContext.preprocessSimpleNameReferenceForContextSensitiveResolution(atom: ConeResolutionAtomWithPostponedChild) {
+        val expression = atom.expression as FirPropertyAccessExpression
+
+        if (expectedType == null || !session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) {
+            atom.useFallbackSubAtom()
+            resolveArgumentExpression(atom.subAtom!!)
+            return
+        }
+
+        val postponedAtom = ConeSimpleNameForContextSensitiveResolution(expression, expectedType, candidate, atom.fallbackSubAtom!!)
+        atom.setPostponedSubAtom(postponedAtom)
         candidate.addPostponedAtom(postponedAtom)
     }
 
@@ -339,7 +357,7 @@ internal object ArgumentCheckingProcessor {
         }
         ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
             candidate.addPostponedAtom(it)
-            atom.subAtom = it
+            atom.setPostponedSubAtom(it)
         }
         return true
     }
@@ -362,7 +380,7 @@ internal object ArgumentCheckingProcessor {
             sourceForFunctionExpression = expression.source,
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
 
-        atom.subAtom = resolvedArgument
+        atom.setPostponedSubAtom(resolvedArgument)
         candidate.addPostponedAtom(resolvedArgument)
 
         if (expectedType != null) {

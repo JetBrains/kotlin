@@ -68,8 +68,6 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
@@ -388,7 +386,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
         val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
 
-        result.transformArgumentList(expectedArgumentsTypeMapping)
+        result.transformArgumentList(expectedArgumentsTypeMapping, subCandidate)
 
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
@@ -474,7 +472,10 @@ class FirCallCompletionResultsWriterTransformer(
         return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
     }
 
-    private fun FirCall.transformArgumentList(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
+    private fun FirCall.transformArgumentList(
+        expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?,
+        candidate: Candidate? = null,
+    ) {
         val mapping = (argumentList as? FirResolvedArgumentList)?.mapping
 
         class ArgumentTransformer : FirTransformer<Nothing?>() {
@@ -487,10 +488,13 @@ class FirCallCompletionResultsWriterTransformer(
                 }
 
                 // Once we encounter the first "real" expression, we delegate to the outer transformer.
-                val transformed = element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping)
+                val transformed =
+                    element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping).let {
+                        candidate?.getUpdatedArgumentFromContextSensitiveResolution(it) ?: it
+                    }
 
-                // Finally, the result can be wrapped in a SAM conversion if necessary.
                 if (transformed is FirExpression) {
+                    // Finally, the result can be wrapped in a SAM conversion if necessary.
                     val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
                     expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
                         @Suppress("UNCHECKED_CAST")
@@ -501,7 +505,8 @@ class FirCallCompletionResultsWriterTransformer(
                     }
                 }
 
-                return transformed
+                @Suppress("UNCHECKED_CAST")
+                return transformed as E
             }
 
             override fun transformNamedArgumentExpression(
