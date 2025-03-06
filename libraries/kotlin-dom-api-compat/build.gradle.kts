@@ -74,7 +74,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
     compilerOptions.allWarningsAsErrors.set(true)
 }
 
-val emptyJavadocJar by tasks.creating(Jar::class) {
+val emptyJavadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 

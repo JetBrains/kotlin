@@ -221,13 +221,15 @@ fun Project.projectTest(
 
         if (shouldInstrument) {
             val instrumentationArgsProperty = project.providers.gradleProperty("kotlin.test.instrumentation.args")
-            val testInstrumenterOutputs = project.tasks.findByPath(":test-instrumenter:jar")!!.outputs.files
+            dependsOn(":test-instrumenter:jar")
+            val testInstrumenterOutput = project.rootProject.subprojects.single { it.path == ":test-instrumenter" }
+                .tasks.named("jar")
+                .map { it.outputs.files.singleFile }
             doFirst {
-                val agent = testInstrumenterOutputs.singleFile
+                val agent = testInstrumenterOutput.get()
                 val args = instrumentationArgsProperty.orNull?.let { "=$it" }.orEmpty()
                 jvmArgs("-javaagent:$agent$args")
             }
-            dependsOn(":test-instrumenter:jar")
         }
 
         // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores
