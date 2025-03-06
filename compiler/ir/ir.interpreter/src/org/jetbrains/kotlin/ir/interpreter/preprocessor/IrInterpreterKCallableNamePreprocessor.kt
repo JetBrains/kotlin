@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.interpreter.property
+import org.jetbrains.kotlin.ir.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 // This code will be optimized but not completely turned into "ab" result.
 class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
-        if (!expression.isKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
+        if (!expression.isInterpretableKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
         return handleCallableReference(expression, data)
     }
 
@@ -71,9 +72,14 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     }
 
     companion object {
-        fun IrCall.isKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
+        fun IrCall.isInterpretableKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
             val receiver = this.dispatchReceiver
             if (receiver !is IrCallableReference<*> && receiver !is IrRichCallableReference<*>) {
+                return false
+            }
+
+            if (receiver is IrRichCallableReference<*> && receiver.reflectionTargetLinkageError != null) {
+                // There was a partial linkage error of reflectionTargetSymbol -> we don't have accurate information about the callable's name.
                 return false
             }
 
