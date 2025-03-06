@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
-import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
@@ -41,7 +41,7 @@ data class KotlinWebpackConfig(
     var sourceMaps: Boolean = false,
     var export: Boolean = true,
     var progressReporter: Boolean = false,
-    var resolveFromModulesFirst: Boolean = false
+    var resolveFromModulesFirst: Boolean = false,
 ) : WebpackRulesDsl {
 
     val entryInput: String?
@@ -94,14 +94,14 @@ data class KotlinWebpackConfig(
         var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
-        var client: Client? = null
+        var client: Client? = null,
     ) : Serializable {
         data class Client(
-            var overlay: Any /* Overlay | Boolean */
+            var overlay: Any, /* Overlay | Boolean */
         ) : Serializable {
             data class Overlay(
                 var errors: Boolean,
-                var warnings: Boolean
+                var warnings: Boolean,
             ) : Serializable
         }
 
@@ -110,20 +110,20 @@ data class KotlinWebpackConfig(
             val target: String,
             val pathRewrite: MutableMap<String, String>? = null,
             val secure: Boolean? = null,
-            val changeOrigin: Boolean? = null
+            val changeOrigin: Boolean? = null,
         ) : Serializable
     }
 
     @Suppress("unused")
     data class Optimization(
         var runtimeChunk: Any?,
-        var splitChunks: Any?
+        var splitChunks: Any?,
     ) : Serializable
 
     @Suppress("unused")
     data class WatchOptions(
         var aggregateTimeout: Int? = null,
-        var ignored: Any? = null
+        var ignored: Any? = null,
     ) : Serializable
 
     fun save(configFile: File) {
