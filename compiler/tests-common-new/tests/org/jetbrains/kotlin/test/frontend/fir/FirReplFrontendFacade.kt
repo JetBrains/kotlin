@@ -80,7 +80,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.special("<${testModule.name}>"),
             testServices.firModuleInfoProvider.firSessionProvider,
-            libraryList.moduleDataProvider,
             projectEnvironment,
             extensionRegistrars,
             librariesSearchScope,

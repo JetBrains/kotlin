@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirJvmTargetProvider
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -46,7 +47,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
     fun createSharedLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
         extensionRegistrars: List<FirExtensionRegistrar>,
         scope: AbstractProjectFileSearchScope,
@@ -59,7 +59,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
             mainModuleName,
             context,
             sessionProvider,
-            moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars
         ) { session, moduleData, scopeProvider, extensionSyntheticFunctionInterfaceProvider ->
@@ -77,7 +76,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
                 FirCloneableSymbolProvider(session, moduleData, scopeProvider),
                 OptionalAnnotationClassesProvider(
                     session,
-                    moduleDataProvider,
+                    SingleModuleDataProvider(moduleData),
                     scopeProvider,
                     packagePartProvider
                 )

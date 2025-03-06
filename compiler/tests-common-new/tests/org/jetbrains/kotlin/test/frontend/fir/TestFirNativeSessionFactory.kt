@@ -37,7 +37,6 @@ object TestFirNativeSessionFactory {
         val sharedLibrarySession = FirNativeSessionFactory.createSharedLibrarySession(
             mainModuleName,
             sessionProvider,
-            moduleDataProvider,
             configuration,
             extensionRegistrars,
         )

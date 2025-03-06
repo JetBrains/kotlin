@@ -40,7 +40,6 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
     fun createSharedLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
@@ -48,7 +47,6 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             mainModuleName,
             context = null,
             sessionProvider,
-            moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars
         ) { session, moduleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->

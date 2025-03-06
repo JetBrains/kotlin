@@ -335,7 +335,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 FirJvmSessionFactory.createSharedLibrarySession(
                     rootModuleName,
                     sessionProvider,
-                    libraryList.moduleDataProvider,
                     projectEnvironment,
                     extensionRegistrars,
                     librariesScope,

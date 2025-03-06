@@ -33,7 +33,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
     fun createSharedLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
@@ -41,7 +40,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
             mainModuleName,
             createLibraryContext(configuration),
             sessionProvider,
-            moduleDataProvider,
             configuration.languageVersionSettings,
             extensionRegistrars,
         ) { session, moduleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->

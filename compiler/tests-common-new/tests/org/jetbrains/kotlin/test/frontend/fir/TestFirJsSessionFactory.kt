@@ -33,7 +33,6 @@ object TestFirJsSessionFactory {
         val sharedLibrarySession = FirJsSessionFactory.createSharedLibrarySession(
             mainModuleName,
             sessionProvider,
-            moduleDataProvider,
             configuration,
             extensionRegistrars,
         )

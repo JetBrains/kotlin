@@ -129,7 +129,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.identifier(rootModuleName),
             projectSessionProvider,
-            dependencyList.moduleDataProvider,
             projectEnvironment,
             FirExtensionRegistrar.getInstances(project),
             librariesScope,
