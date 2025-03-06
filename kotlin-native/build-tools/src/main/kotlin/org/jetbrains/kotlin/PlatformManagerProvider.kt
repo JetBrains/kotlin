@@ -15,8 +15,10 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.newInstance
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.target.buildDistribution
+import org.jetbrains.kotlin.nativeDistribution.asProperties
+import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import javax.inject.Inject
@@ -47,7 +49,12 @@ open class PlatformManagerProvider @Inject constructor(
 
     @get:Internal("dependencies are: konanProperties and konanDataDir")
     val platformManager = distribution.map {
-        PlatformManager(buildDistribution(it.root.asFile.absolutePath, konanDataDir.orNull))
+        PlatformManager(Distribution(
+                konanHome = it.root.asFile.absolutePath,
+                onlyDefaultProfiles = true,
+                propertyOverrides = project.llvmDistributionSource.asProperties.toMap(), // toMap() is required for serialization support.
+                konanDataDir = konanDataDir.orNull,
+        ))
     }
 }
 
