@@ -6,61 +6,30 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.internal.hash.FileHasher
-import org.gradle.internal.hash.Hashing.defaultFunction
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
-import java.nio.file.Files
+import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir as appendConfigsFromDirInternal
+import org.jetbrains.kotlin.gradle.targets.js.internal.calculateDirHash as calculateDirHashInternal
+import org.jetbrains.kotlin.gradle.targets.js.internal.toHex as toHexInternal
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Suppress("DeprecatedCallableAddReplaceWith")
 fun Appendable.appendConfigsFromDir(confDir: File) {
-    val files = confDir.listFiles() ?: return
-
-    files.asSequence()
-        .filter { it.isFile }
-        .filter { it.extension == "js" }
-        .sortedBy { it.name }
-        .forEach {
-            appendLine("// ${it.name}")
-            append(it.readText())
-            appendLine()
-            appendLine()
-        }
+    appendConfigsFromDirInternal(confDir)
 }
 
-fun ByteArray.toHex(): String {
-    val result = CharArray(size * 2) { ' ' }
-    var i = 0
-    forEach {
-        val n = it.toInt()
-        result[i++] = Character.forDigit(n shr 4 and 0xF, 16)
-        result[i++] = Character.forDigit(n and 0xF, 16)
-    }
-    return String(result)
-}
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Suppress("DeprecatedCallableAddReplaceWith")
+fun ByteArray.toHex(): String =
+    toHexInternal()
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Suppress("DeprecatedCallableAddReplaceWith")
 fun FileHasher.calculateDirHash(
     dir: File,
-): String? {
-    if (!dir.isDirectory) return null
-
-    val hasher = defaultFunction().newHasher()
-    dir.walk()
-        .forEach { file ->
-            hasher.putString(file.toRelativeString(dir))
-            if (file.isFile) {
-                if (!Files.isSymbolicLink(file.toPath())) {
-                    hasher.putHash(hash(file))
-                } else {
-                    val absoluteFile = file.absoluteFile
-                    hasher.putHash(hash(absoluteFile))
-                    hasher.putString(absoluteFile.toRelativeString(dir))
-                }
-            }
-        }
-
-    return hasher.hash().toByteArray().toHex()
-}
+): String? =
+    calculateDirHashInternal(dir)
 
 const val JS = "js"
 const val MJS = "mjs"
