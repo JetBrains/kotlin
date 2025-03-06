@@ -214,6 +214,17 @@ val IrFunction.nonDispatchParameters: List<IrValueParameter>
 val IrFunctionAccessExpression.nonDispatchArguments: List<IrExpression?>
     get() = if (symbol.owner.dispatchReceiverParameter != null) arguments.drop(1) else arguments.toList()
 
+/**
+ * The function that will be called on `KCallable.invoke()`.
+ *
+ * Note: in the future it may be possible that `getterFunction` would be nullable, at which point it won't be that easy.
+ */
+val IrRichCallableReference<*>.invokeFunction: IrSimpleFunction
+    get() = when (this) {
+        is IrRichFunctionReference -> invokeFunction
+        is IrRichPropertyReference -> getterFunction
+    }
+
 val IrBody.statements: List<IrStatement>
     get() = when (this) {
         is IrBlockBody -> statements
