@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Comp
 
 abstract class KotlinJsIrTarget
 @Inject
-constructor(
+internal constructor(
     project: Project,
     platformType: KotlinPlatformType,
 ) :
