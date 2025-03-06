@@ -36,14 +36,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @JsGradlePluginTests
     @TestMetadata("kotlin-js-browser-project")
     fun testJsBrowserProject(gradleVersion: GradleVersion) {
-        project(
-            "kotlin-js-browser-project",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
-                "We currently have other warnings when `STABLE_CONFIGURATION_CACHE` is enabled unrelated to build services declaration, " +
-                        "so we check for this kind of warnings in the build output (see KT-55563 and KT-55740)"
-            ) { gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0) }
-        ) {
+        project("kotlin-js-browser-project", gradleVersion) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
@@ -55,14 +48,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @GradleTest
     @JsGradlePluginTests
     fun testJsNodeJsProject(gradleVersion: GradleVersion) {
-        project(
-            "kotlin-js-nodejs-project",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
-                "We currently have other warnings when `STABLE_CONFIGURATION_CACHE` is enabled unrelated to build services declaration, " +
-                        "so we check for this kind of warnings in the build output (see KT-55563 and KT-55740)"
-            ) { gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0) }
-        ) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
@@ -74,14 +60,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @GradleTest
     @MppGradlePluginTests
     fun testMppProject(gradleVersion: GradleVersion) {
-        project(
-            "new-mpp-lib-with-tests",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
-                "We currently have other warnings when `STABLE_CONFIGURATION_CACHE` is enabled unrelated to build services declaration, " +
-                        "so we check for this kind of warnings in the build output (see KT-55563 and KT-55740)"
-            ) { gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0) }
-        ) {
+        project("new-mpp-lib-with-tests", gradleVersion) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
