@@ -18,7 +18,7 @@ dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:fir:fir-serialization"))
-    implementation(project(":compiler:fir:native"))
+    implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.backend.native"))
     implementation(project(":compiler:ir.inline"))

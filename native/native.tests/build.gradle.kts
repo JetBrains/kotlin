@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation(projectTests(":generators:test-generator"))
     testImplementation(project(":compiler:ir.serialization.native"))
-    testImplementation(project(":compiler:fir:native"))
+    testImplementation(project(":compiler:fir:fir-native"))
     testImplementation(project(":core:compiler.common.native"))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(project(":native:swift:swift-export-standalone"))
