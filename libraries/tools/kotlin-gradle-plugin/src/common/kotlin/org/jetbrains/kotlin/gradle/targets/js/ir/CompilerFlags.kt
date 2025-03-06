@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 /**
- * @see [compiler/testData/cli/js/jsExtraHelp.out]
+ * See `compiler/testData/cli/js/jsExtraHelp.out`
  */
 
 internal const val ENABLE_DCE = "-Xir-dce"
