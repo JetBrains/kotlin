@@ -1,9 +1,0 @@
-MODULE main
-	CLASS BuilderInferenceWithAnnotationKt.class
-		PACKAGE METADATA
-			FUNCTION liveData(Lkotlin/jvm/functions/Function2;)LLiveData;
-				Property: class.metadata.function.valueParameters
-					K1
-						(block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<LiveDataScope<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
-					K2
-						(@kotlin/BuilderInference block: @kotlin/ExtensionFunctionType suspend kotlin/Function2<LiveDataScope<T#0>, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)

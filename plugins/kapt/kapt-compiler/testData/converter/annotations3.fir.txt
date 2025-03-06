@@ -128,9 +128,6 @@ public final class Test {
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 @java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
 /**
- * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
- * @kotlin/annotation/Repeatable
- * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY])
  * public final annotation class TypeParceler<T#0 (* T *), T#1 (* P *) : Parceler<in T#0>> : kotlin/Annotation {
  *
  *   // signature: <init>()V

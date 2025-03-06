@@ -1,9 +1,0 @@
-MODULE main
-	CLASS X$Y.class
-		CLASS METADATA
-			FUNCTION f7(I)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(x: kotlin/Int)
-					K2
-						(@ClassHolder(value = A7.B7.C7::class) x: kotlin/Int)

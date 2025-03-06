@@ -31,7 +31,6 @@ public abstract interface FooComponent {
      *   private constructor()
      *
      *   // signature: create(Ljava/lang/String;)Ljava/lang/String;
-     *   @kotlin/jvm/JvmStatic
      *   public final fun create(context: kotlin/String): kotlin/String
      *
      *   // module name: main
@@ -108,7 +107,6 @@ public final class JvmStaticTest {
      *   // field: one:I
      *   // getter: getOne()I
      *   // synthetic method for annotations: getOne$annotations()V
-     *   @kotlin/jvm/JvmStatic
      *   public final val one: kotlin/Int
      *     public final get
      *

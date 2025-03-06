@@ -1,3 +1,5 @@
+// LANGUAGE: +AnnotationsInMetadata
+
 import kotlin.annotation.AnnotationTarget.*
 
 @Target(

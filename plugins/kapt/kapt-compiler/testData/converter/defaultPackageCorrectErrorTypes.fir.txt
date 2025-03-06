@@ -97,7 +97,6 @@ import java.lang.Number;
 
 @ClassRefAnnotation(value = {RootClass.class})
 /**
- * @test/ClassRefAnnotation(value = [RootClass::class])
  * public final class test/PackedWithAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V

@@ -1,9 +1,0 @@
-MODULE lib
-	CLASS a/Foo.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(I)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(param: kotlin/Int)
-					K2
-						(@a/NoTarget @a/PropValueField @a/ParameterOnly param: kotlin/Int)

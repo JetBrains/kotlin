@@ -57,7 +57,7 @@ public enum Enum1 {
  * public final enum class Enum2 : kotlin/Enum<Enum2> {
  *
  *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;I)V
- *   private constructor(@Anno1(value = "first") col: kotlin/String, @Anno1(value = "second") col2: kotlin/Int)
+ *   private constructor(col: kotlin/String, col2: kotlin/Int)
  *
  *   // signature: color()Ljava/lang/String;
  *   public final fun color(): kotlin/String
