@@ -5,9 +5,12 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
+import org.jetbrains.kotlin.allopen.gradle.AllOpenExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.noarg.gradle.NoArgExtension
 import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -21,7 +24,6 @@ class MppCompilerPluginsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app/sample-lib")
-    @BrokenOnMacosTest
     fun testMppBuildWithCompilerPlugins(gradleVersion: GradleVersion) {
 
         val printOptionsTaskName = "printCompilerPluginOptions"
@@ -44,26 +46,34 @@ class MppCompilerPluginsIT : KGPBaseTest() {
                 """id("org.jetbrains.kotlin.plugin.noarg")""",
             )
 
-            buildGradle.append(
-                """
-                allOpen { annotation 'com.example.Annotation' }
-                noArg { annotation 'com.example.Annotation' }
-
-                task $printOptionsTaskName {
-                    // if the tasks are not configured during evaluation phase, configuring them during execution
-                    // leads to new dependencies unsuccessfully added to the resolved compilerPluginsClasspath configuration
-                    kotlin.targets.all { compilations.all { /*force to configure the*/ compileTaskProvider.get() } }
-                    doFirst {
-                        kotlin.sourceSets.each { sourceSet ->
-                            def args = sourceSet.languageSettings.compilerPluginArguments
-                            def cp = sourceSet.languageSettings.compilerPluginClasspath.files
-                            println sourceSet.name + '$argsMarker' + args
-                            println sourceSet.name + '$classpathMarker' + cp
+            buildScriptInjection {
+                project.extensions.configure(AllOpenExtension::class.java) {
+                    it.annotation("com.example.Annotation")
+                }
+                project.extensions.configure(NoArgExtension::class.java) {
+                    it.annotation("com.example.Annotation")
+                }
+                project.tasks.register(printOptionsTaskName) { task ->
+                    val extension = project.multiplatformExtension
+                    extension.targets.all { target ->
+                        target.compilations.all { compilation -> /*force to configure the*/ compilation.compileTaskProvider.get() }
+                    }
+                    val arguments = project.provider {
+                        extension.sourceSets.associate { sourceSet ->
+                            val languageSettings = sourceSet.languageSettings as DefaultLanguageSettingsBuilder
+                            val args = languageSettings.compilerPluginArguments
+                            val cp = languageSettings.compilerPluginClasspath?.files
+                            sourceSet.name to (args to cp)
+                        }
+                    }
+                    task.doFirst {
+                        arguments.get().forEach { sourceSetName, (args, cp) ->
+                            println("$sourceSetName$argsMarker$args")
+                            println("$sourceSetName$classpathMarker$cp")
                         }
                     }
                 }
-                """.trimIndent()
-            )
+            }
 
             projectPath.resolve("src/commonMain/kotlin/Annotation.kt").writeText(
                 """
