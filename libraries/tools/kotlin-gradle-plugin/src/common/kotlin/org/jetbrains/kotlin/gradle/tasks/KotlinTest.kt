@@ -13,20 +13,30 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class KotlinTest
-@InternalKotlinGradlePluginApi
 @Inject
-constructor(
-    private val execOps: ExecOperations,
+internal constructor(
+    execOps: ExecOperations?,
 ) : AbstractTestTask() {
+
+    @Deprecated(message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    constructor() : this(
+        execOps = null,
+    )
+
+    // TODO KT-75294 When the deprecated secondary constructor is removed, move execOps to a non-null constructor property.
+    private val execOps: ExecOperations =
+        execOps ?: @Suppress("DEPRECATION") project.getExecOperations()
+
     @Input
     @Optional
     var targetName: String? = null

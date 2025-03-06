@@ -31,6 +31,7 @@ abstract class BaseYarnRootExtension internal constructor(
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
+
     init {
         check(project == project.rootProject)
     }

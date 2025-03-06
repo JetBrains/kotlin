@@ -22,6 +22,29 @@ class Npm internal constructor(
     private val objects: ObjectFactory,
 ) : NpmApiExecution<NpmEnvironment> {
 
+    /**
+     * Manually creating new instances of this class is deprecated.
+     *
+     * Instead, an instance of [Npm] can be found from the extensions
+     * [NpmExtension][org.jetbrains.kotlin.gradle.targets.js.npm.NpmExtension]
+     * and
+     * [WasmNpmExtension][org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension].
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.npm.NpmExtension.packageManager
+     * @see org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension.packageManager
+     */
+    @Deprecated(
+        message = "Manually creating instances of this class is deprecated. " +
+                "An instance can be obtained via NpmExtension or WasmNpmExtension. " +
+                "Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Suppress("UNREACHABLE_CODE", "unused")
+    constructor() : this(
+        execOps = error("Cannot create instance of Npm. Constructor is deprecated."),
+        objects = error("Cannot create instance of Npm. Constructor is deprecated."),
+    )
+
     override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> {
         return listOf(
             nodeJs

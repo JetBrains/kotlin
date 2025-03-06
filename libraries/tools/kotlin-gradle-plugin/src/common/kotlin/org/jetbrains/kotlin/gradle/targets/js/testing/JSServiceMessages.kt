@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings

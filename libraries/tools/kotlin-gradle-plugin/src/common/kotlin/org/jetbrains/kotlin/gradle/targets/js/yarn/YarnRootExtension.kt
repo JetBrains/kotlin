@@ -10,8 +10,12 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
+import javax.inject.Inject
 
-open class YarnRootExtension(
+open class YarnRootExtension
+@Inject
+internal constructor(
     project: Project,
     nodeJsRoot: NodeJsRootExtension,
     yarnSpec: YarnRootEnvSpec,
@@ -24,6 +28,20 @@ open class YarnRootExtension(
     objects = objects,
     execOps = execOps,
 ) {
+
+    @Deprecated("Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        project: Project,
+        nodeJsRoot: NodeJsRootExtension,
+        yarnSpec: YarnRootEnvSpec,
+    ) : this(
+        project = project,
+        nodeJsRoot = nodeJsRoot,
+        yarnSpec = yarnSpec,
+        objects = project.objects,
+        execOps = @Suppress("DEPRECATION") project.getExecOperations(),
+    )
+
     companion object {
         const val YARN: String = "kotlinYarn"
 
