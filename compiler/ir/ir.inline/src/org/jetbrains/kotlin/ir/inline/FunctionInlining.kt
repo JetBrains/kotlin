@@ -294,11 +294,8 @@ private class CallInlining(
                 functionArgument is IrFunctionExpression ->
                     inlineFunctionExpression(asCallOf(functionArgument.function, emptyList()), functionArgument.function, functionArgument)
 
-                functionArgument is IrRichFunctionReference ->
+                functionArgument is IrRichCallableReference<*> ->
                     inlineFunctionExpression(asCallOf(functionArgument.invokeFunction, functionArgument.boundValues), functionArgument.invokeFunction, functionArgument.attributeOwnerId)
-
-                functionArgument is IrRichPropertyReference ->
-                    inlineFunctionExpression(asCallOf(functionArgument.getterFunction, functionArgument.boundValues), functionArgument.getterFunction, functionArgument.attributeOwnerId)
 
                 else ->
                     super.visitCall(expression)
@@ -658,15 +655,9 @@ private class CallInlining(
                 substituteMap[parameter] = variableInitializer
                 when (variableInitializer) {
                     is IrCallableReference<*> -> error("Can't inline given reference, it should've been lowered\n${variableInitializer.render()}")
-                    is IrRichFunctionReference -> {
+                    is IrRichCallableReference<*> -> {
                         evaluationBuilder.evaluateCapturedValues(
                             variableInitializer.invokeFunction.parameters,
-                            variableInitializer.boundValues
-                        )
-                    }
-                    is IrRichPropertyReference -> {
-                        evaluationBuilder.evaluateCapturedValues(
-                            variableInitializer.getterFunction.parameters,
                             variableInitializer.boundValues
                         )
                     }
