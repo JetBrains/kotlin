@@ -200,6 +200,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
     ":js:js.config",
+    ":js:js.frontend.common",
     ":wasm:wasm.config",
 ).also { extra["commonCompilerModules"] = it }
 

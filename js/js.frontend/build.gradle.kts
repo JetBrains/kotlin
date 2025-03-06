@@ -13,6 +13,7 @@ dependencies {
     api(project(":js:js.ast"))
     api(project(":js:js.parser"))
     api(project(":js:js.serializer"))
+    api(project(":js:js.frontend.common"))
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 }
