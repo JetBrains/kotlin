@@ -148,6 +148,11 @@ sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolved
 
 //  ------------- Lambdas -------------
 
+// A lambda or a callable reference.
+// We separate this kind of atom because for them, we might fix earlier type variables contained inside the parameter
+// type of the relevant function expected type.
+sealed class ConeFunctionTypeRelatedPostponedResolvedAtom : ConePostponedResolvedAtom()
+
 class ConeResolvedLambdaAtom(
     override val expression: FirAnonymousFunctionExpression,
     expectedType: ConeKotlinType?,
@@ -161,7 +166,7 @@ class ConeResolvedLambdaAtom(
     // NB: It's not null right now only for lambdas inside the calls
     // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
     val sourceForFunctionExpression: KtSourceElement?,
-) : ConePostponedResolvedAtom() {
+) : ConeFunctionTypeRelatedPostponedResolvedAtom() {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType
@@ -198,7 +203,7 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
-) : ConePostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
+) : ConeFunctionTypeRelatedPostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConeResolvedLambdaAtom? = null
@@ -237,7 +242,7 @@ class ConeResolvedCallableReferenceAtom(
     private val initialExpectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
     private val session: FirSession
-) : ConePostponedResolvedAtom(), PostponedCallableReferenceMarker {
+) : ConeFunctionTypeRelatedPostponedResolvedAtom(), PostponedCallableReferenceMarker {
     var subAtom: ConeAtomWithCandidate? = null
         private set
 
