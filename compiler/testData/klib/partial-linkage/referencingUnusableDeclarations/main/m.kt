@@ -49,6 +49,10 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to constructor 'InnerToNested.<init>' can not be evaluated: The call site provides 1 more value argument(s) than the constructor expects")) { referenceInnerToNestedConstructorWithoutDispatchReceiver() }
     expectFailure(linkage("Reference to constructor 'InnerToNested.<init>' can not be evaluated: The call site provides 1 more value argument(s) than the constructor expects")) { referenceInnerToNestedConstructorWithDispatchReceiver(classWithChangedMembers) }
 
+    expectFailure(linkage("Reference to constructor 'NestedToInner.<init>' can not be evaluated: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { invokeNestedToInnerConstructorWithoutDispatchReceiver() }
+    expectFailure(linkage("Reference to constructor 'InnerToNested.<init>' can not be evaluated: The call site provides 1 more value argument(s) than the constructor expects")) { invokeInnerToNestedConstructorWithoutDispatchReceiver(classWithChangedMembers) }
+    expectFailure(linkage("Reference to constructor 'InnerToNested.<init>' can not be evaluated: The call site provides 1 more value argument(s) than the constructor expects")) { invokeInnerToNestedConstructorWithDispatchReceiver(classWithChangedMembers) }
+
     expectFailure(linkage("Reference to function 'functionWithUnlinkedParameter' can not be evaluated: Function uses unlinked class symbol '/RemovedClass'")) { referenceFunctionWithUnlinkedParameter() }
     expectFailure(linkage("Reference to function 'functionWithUnlinkedReturnValue' can not be evaluated: Function uses unlinked class symbol '/RemovedClass'")) { referenceFunctionWithUnlinkedReturnValue() }
     expectFailure(linkage("Reference to function 'functionWithRemovedTypeParameter' can not be evaluated: Function uses unlinked class symbol '/RemovedClass' (via type parameter '#0')")) { referenceFunctionWithRemovedTypeParameter() }
