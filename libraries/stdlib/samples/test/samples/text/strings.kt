@@ -441,14 +441,8 @@ class Strings {
         val toFind = "ever"
 
         assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 0: Found at 1")
-        assertPrints(
-            matchDetails(inputString, toFind, 2),
-            "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6"
-        )
-        assertPrints(
-            matchDetails(inputString, toFind, 10),
-            "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found"
-        )
+        assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
+        assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
 
     @Sample
