@@ -38,7 +38,7 @@ class Strings {
     @Sample
     fun trimIndent() {
         val withoutIndent =
-                """
+            """
                     ABC
                     123
                     456
@@ -440,8 +440,14 @@ class Strings {
         val toFind = "ever"
 
         assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 0: Found at 1")
-        assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
-        assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
+        assertPrints(
+            matchDetails(inputString, toFind, 2),
+            "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6"
+        )
+        assertPrints(
+            matchDetails(inputString, toFind, 10),
+            "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found"
+        )
     }
 
     @Sample
@@ -527,6 +533,15 @@ class Strings {
 
         val charSplit = "apple,banana;cherry".split(',', ';')
         assertPrints(charSplit, "[apple, banana, cherry]")
+
+        val multiCharDelimiter = "apple--banana--cherry".split("--")
+        assertPrints(multiCharDelimiter, "[apple, banana, cherry]")
+
+        val longerDelimiterFirst = "apple<-banana<--cherry<-<--orange".split("<--", "<-")
+        assertPrints(longerDelimiterFirst, "[apple, banana, cherry, , orange]")
+
+        val shorterDelimiterFirst = "apple<-banana<--cherry<-<--orange".split("<-", "<--")
+        assertPrints(shorterDelimiterFirst, "[apple, banana, -cherry, , -orange]")
 
         val limitSplit = "a,b,c,d,e".split(",", limit = 3)
         assertPrints(limitSplit, "[a, b, c,d,e]")
