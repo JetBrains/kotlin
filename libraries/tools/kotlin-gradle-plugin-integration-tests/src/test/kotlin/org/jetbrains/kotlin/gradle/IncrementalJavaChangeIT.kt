@@ -390,15 +390,18 @@ class BasicIncrementalJavaInteropIT : KGPBaseTest() {
 
     @DisplayName("Basic scenario: Kotlin constant tracks a Java constant")
     @GradleTest
-    @BrokenOnMacosTest
     fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
-        project("kt-69042-basic-java-interop", gradleVersion) {
+        project(
+            "kt-69042-basic-java-interop",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+        ) {
             build("assemble")
 
             val javaSource = projectPath.resolve("src/main/java/JavaConstants.java")
             javaSource.replaceWithVersion("newValue")
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertTasksExecuted(":compileJava", ":compileKotlin")
                 assertIncrementalCompilation(listOf(kotlinSourcesDir().resolve("usage.kt")).relativizeTo(projectPath))
             }
