@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isOriginallyLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -142,7 +142,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
     private fun hackSimpleClassWithCapturing(constructor: IrConstructor) {
         val irClass = constructor.parentAsClass
 
-        if (irClass.superClass != null || (!irClass.isInner && !irClass.isLocal)) return
+        if (irClass.superClass != null || (!irClass.isInner && !irClass.isOriginallyLocal)) return
 
         val statements = (constructor.body as? IrBlockBody)?.statements ?: return
         val delegationConstructorIndex = statements.indexOfFirst { it is IrDelegatingConstructorCall }
