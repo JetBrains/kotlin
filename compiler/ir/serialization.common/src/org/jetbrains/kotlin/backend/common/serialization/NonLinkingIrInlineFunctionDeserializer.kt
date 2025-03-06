@@ -132,8 +132,10 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         function.body = bodyWithRemappedSymbols
         function.parameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
-        function.parentsWithSelf.forEach {
-            if (it is IrDeclaration && it.parent is IrExternalPackageFragment) {
+
+        // Patch the last parent to be able to get the correct file entry from the inline function
+        function.parentDeclarationsWithSelf.last().let {
+            if (it.parent is IrExternalPackageFragment) {
                 val deserializedFile = deserializedFunction.file
                 it.parent = IrFileImpl(
                     fileEntry = deserializedFile.fileEntry,
