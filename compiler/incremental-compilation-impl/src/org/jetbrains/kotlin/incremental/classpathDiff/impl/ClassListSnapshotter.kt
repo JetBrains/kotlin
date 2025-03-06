@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotJavaClass
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotKotlinClass
-import org.jetbrains.kotlin.incremental.impl.ClassInfoGeneratorContextWithLocalClassSnapshotting
-import org.jetbrains.kotlin.incremental.impl.ClassInfoGeneratorContextWithLocalClassSnapshotting.ClassMultiHashProvider
-import org.jetbrains.kotlin.incremental.impl.DefaultClassInfoGeneratorContext
-import org.jetbrains.kotlin.incremental.impl.KotlinClassInfoGenerator
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.CLASS
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.SYNTHETIC_CLASS
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -44,8 +41,6 @@ internal class PlainClassListSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
     private val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
 
-    private val classInfoGenerator = KotlinClassInfoGenerator(DefaultClassInfoGeneratorContext)
-
     private fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
         return classFileToSnapshotMap.getOrPut(classFile) {
             val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
@@ -64,7 +59,12 @@ internal class PlainClassListSnapshotter(
                     InaccessibleClassSnapshot
                 }
                 clazz.classInfo.isKotlinClass -> metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
-                    snapshotKotlinClass(clazz, settings.granularity, classInfoGenerator = classInfoGenerator)
+                    val kotlinClassInfo = KotlinClassInfo.createFrom(
+                        clazz.classInfo.classId,
+                        clazz.classInfo.kotlinClassHeader!!,
+                        clazz.contents,
+                    )
+                    snapshotKotlinClass(clazz, settings.granularity, kotlinClassInfo)
                 }
                 else -> metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
                     snapshotJavaClass(clazz, settings.granularity)
@@ -121,10 +121,6 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
 
     private val inlinedClassSnapshotter = InlinedClassSnapshotter()
 
-    private val classInfoGenerator = KotlinClassInfoGenerator(
-        ClassInfoGeneratorContextWithLocalClassSnapshotting(multiHashProvider = this as ClassMultiHashProvider)
-    )
-
     /**
      * General note:
      * queueForRegularSnapshot is used to avoid loading class data twice. This requirement is a cause for most of the complexity
@@ -177,9 +173,23 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
             InaccessibleClassSnapshot
         } else if (classFileWithContents.classInfo.isKotlinClass) {
             metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
-                snapshotKotlinClass(classFileWithContents, settings.granularity, classInfoGenerator = classInfoGenerator)
-                // beware of recursion - classInfoGenerator might require inlinedSnapshots!
-                // inlinedSnapshots calculation must not directly call regular snapshotting to prevent infinite loops
+                /**
+                 * This part is sensitive: extra info computation might require inlinedSnapshots,
+                 * so inlinedSnapshots calculation must not directly call regular snapshotting to prevent infinite loops
+                 */
+                val extraInfo = ExtraInfoGeneratorWithInlinedClassSnapshotting(
+                    classMultiHashProvider = this as ClassMultiHashProvider,
+                ).getExtraInfo(
+                    classFileWithContents.classInfo.kotlinClassHeader!!,
+                    classFileWithContents.contents,
+                )
+
+                val kotlinClassInfo = KotlinClassInfo.createFrom(
+                    classFileWithContents.classInfo.classId,
+                    classFileWithContents.classInfo.kotlinClassHeader!!,
+                    extraInfo = extraInfo
+                )
+                snapshotKotlinClass(classFileWithContents, settings.granularity, kotlinClassInfo)
             }
         } else {
             metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {

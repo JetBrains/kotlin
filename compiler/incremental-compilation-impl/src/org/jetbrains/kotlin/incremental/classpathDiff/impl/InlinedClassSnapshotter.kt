@@ -5,10 +5,40 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
+import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
 import org.jetbrains.kotlin.incremental.impl.InstanceOwnerRecordingClassVisitor
 import org.jetbrains.kotlin.incremental.impl.hashToLong
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
+
+internal interface ClassMultiHashProvider {
+    /**
+     * Provides multi-hash of required class' abis.
+     *
+     * Some of these classes might reference other classes, so the implementation is required to
+     * fetch transitive dependencies, deduplicate the whole dependency tree, and only then
+     * to apply the multihash (if it's symmetric, which is usually a good trait)
+     */
+    fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>): Long
+}
+
+internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
+    private val classMultiHashProvider: ClassMultiHashProvider
+) : ExtraClassInfoGenerator() {
+    private val methodToUsedFqNames = mutableMapOf<JvmMemberSignature.Method, MutableSet<JvmClassName>>()
+
+    override fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
+        return InstanceOwnerRecordingClassVisitor(classNode, methodToUsedClassesMap = methodToUsedFqNames)
+    }
+
+    override fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
+        val usedInstances = methodToUsedFqNames[methodSignature] ?: mutableSetOf()
+        return ownMethodHash xor classMultiHashProvider.searchAndGetFullAbiHashOfUsedClasses(usedInstances)
+    }
+}
 
 /**
  * Manages inlined class interdependencies for [org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassListSnapshotterWithInlinedClassSupport]

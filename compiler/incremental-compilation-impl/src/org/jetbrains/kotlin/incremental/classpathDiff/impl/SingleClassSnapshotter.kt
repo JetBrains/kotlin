@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff.impl
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.*
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotJavaClass
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassE
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotField
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
-import org.jetbrains.kotlin.incremental.impl.KotlinClassInfoGenerator
 import org.jetbrains.kotlin.incremental.impl.SelectiveClassVisitor
 import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
@@ -39,10 +39,8 @@ internal object SingleClassSnapshotter {
     fun snapshotKotlinClass(
         classFile: ClassFileWithContents,
         granularity: ClassSnapshotGranularity,
-        classInfoGenerator: KotlinClassInfoGenerator
+        kotlinClassInfo: KotlinClassInfo,
     ): KotlinClassSnapshot {
-        val kotlinClassInfo = classInfoGenerator
-            .createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
         val classId = kotlinClassInfo.classId
         val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).hashToLong()
         val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }

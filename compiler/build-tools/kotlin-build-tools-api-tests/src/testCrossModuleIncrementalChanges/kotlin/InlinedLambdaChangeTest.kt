@@ -273,7 +273,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
-    @Disabled("broken! other snapshotting strategies might work better here")
+    @Disabled("broken! but why doesn't callable bytecode change on recompile?")
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by a anonymous object - slightly evil")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
@@ -291,7 +291,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             lib.replaceFileWithVersion("SomeClass.kt", "withOverload")
 
             lib.compile(expectedDirtySet = setOf("SomeClass.kt", "callable.kt"))
-            app.compile(expectedDirtySet = setOf())
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }

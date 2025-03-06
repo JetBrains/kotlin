@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
 import org.jetbrains.kotlin.incremental.impl.KotlinClassInfoGenerator
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
@@ -106,10 +107,35 @@ class KotlinClassInfo(
     }
 
     companion object {
-        private val defaultKotlinClassInfoGenerator = KotlinClassInfoGenerator()
-
+        /**
+         * Compatibility note: used by JPS plugin
+         *
+         * Note #2: this form of KotlinClassInfo is also used by all IC Runners for populating in-module cache
+         */
         fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
-            return defaultKotlinClassInfoGenerator.createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
+            return createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
+        }
+
+        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
+            return createFrom(
+                classId,
+                classHeader,
+                extraInfo = ExtraClassInfoGenerator().getExtraInfo(classHeader, classContents),
+            )
+        }
+
+        /**
+         * Allows callers to customize [ExtraInfo] computation.
+         */
+        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, extraInfo: ExtraInfo): KotlinClassInfo {
+            return KotlinClassInfo(
+                classId,
+                classHeader.kind,
+                classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
+                classHeader.strings ?: emptyArray(),
+                classHeader.multifileClassName,
+                extraInfo = extraInfo
+            )
         }
     }
 }

@@ -15,56 +15,18 @@ import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 
-internal object ExtraClassInfoGenerator {
-    fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray, context: ClassInfoGeneratorContext): ExtraInfo {
-        /**
-         * Implementation is short-lived, because in default mode it's basically nothing, and in inlined-snapshotting mode
-         * it holds class-local method-to-usages mapping (one fun can't be defined in multiple classfiles)
-         */
-        val impl = when (context) {
-            is DefaultClassInfoGeneratorContext ->
-                ExtraClassInfoGeneratorImpl.Normal()
-            is ClassInfoGeneratorContextWithLocalClassSnapshotting ->
-                ExtraClassInfoGeneratorImpl.WithInlinedClassSnapshotting(context.multiHashProvider)
-        }
-        return impl.getExtraInfo(classHeader, classContents)
-    }
-}
-
-private sealed class ExtraClassInfoGeneratorImpl() {
-    abstract fun makeClassVisitor(classNode: ClassNode): ClassVisitor
-
-    abstract fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long
-
-    class Normal() : ExtraClassInfoGeneratorImpl() {
-        override fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
-            return classNode
-        }
-
-        override fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
-            return ownMethodHash
-        }
+open class ExtraClassInfoGenerator() {
+    protected open fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
+        return classNode
     }
 
-    class WithInlinedClassSnapshotting(
-        private val classMultiHashProvider: ClassInfoGeneratorContextWithLocalClassSnapshotting.ClassMultiHashProvider
-    ) : ExtraClassInfoGeneratorImpl() {
-        private val methodToUsedFqNames = mutableMapOf<JvmMemberSignature.Method, MutableSet<JvmClassName>>()
-
-        override fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
-            return InstanceOwnerRecordingClassVisitor(classNode, methodToUsedClassesMap = methodToUsedFqNames)
-        }
-
-        override fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
-            val usedInstances = methodToUsedFqNames[methodSignature] ?: mutableSetOf()
-            return ownMethodHash xor classMultiHashProvider.searchAndGetFullAbiHashOfUsedClasses(usedInstances)
-        }
+    protected open fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
+        return ownMethodHash
     }
 
     fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {

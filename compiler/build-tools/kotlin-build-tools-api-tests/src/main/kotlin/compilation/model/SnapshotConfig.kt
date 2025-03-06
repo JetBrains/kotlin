@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
  */
 data class SnapshotConfig(
     val granularity: ClassSnapshotGranularity,
-    val useInlineLambdaSnapshotting: Boolean, // TODO(KT-62555) - now has no effect
+    val useInlineLambdaSnapshotting: Boolean,
 )
