@@ -30,8 +30,7 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
         val callableReference = expression.dispatchReceiver
         val boundArgs = when (callableReference) {
             is IrCallableReference<*> -> callableReference.arguments.filterNotNull()
-            is IrRichPropertyReference -> callableReference.boundValues.toList() // make a copy
-            is IrRichFunctionReference -> callableReference.boundValues.toList() // make a copy
+            is IrRichCallableReference<*> -> callableReference.boundValues.toList() // make a copy
             else -> return super.visitCall(expression, data)
         }
 
@@ -58,8 +57,7 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
         // Callable reference shouldn't have any bound arguments
         when (callableReference) {
             is IrCallableReference<*> -> callableReference.arguments.fill(null)
-            is IrRichPropertyReference -> callableReference.boundValues.clear()
-            is IrRichFunctionReference -> callableReference.boundValues.clear()
+            is IrRichCallableReference<*> -> callableReference.boundValues.clear()
             else -> return super.visitCall(expression, data)
         }
 
@@ -75,7 +73,7 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     companion object {
         fun IrCall.isKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
             val receiver = this.dispatchReceiver
-            if (receiver !is IrCallableReference<*> && receiver !is IrRichPropertyReference && receiver !is IrRichFunctionReference) {
+            if (receiver !is IrCallableReference<*> && receiver !is IrRichCallableReference<*>) {
                 return false
             }
 
