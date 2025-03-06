@@ -2,7 +2,9 @@
 // ALLOW_AST_ACCESS
 // NO_CHECK_SOURCE_VS_BINARY
 // IGNORE_BACKEND_K1: JVM_IR, ANY
-// LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects -AnnotationsInMetadata
+// ^ With annotations in metadata, compiler also loads `t = <implicitArrayOf>()` in some annotation classes.
+// Once AnnotationsInMetadata is enabled by default, this directive can be removed and the txt dump can be updated.
 // K1/K2 difference: KT-60820
 
 // MODULE: common
