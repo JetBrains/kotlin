@@ -78,14 +78,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
     override fun IrBuilderWithScope.generateSuperClassConstructorCall(superClassType: IrType, functionReference: IrRichFunctionReference) : IrDelegatingConstructorCall {
         return irDelegatingConstructorCall(superClassType.classOrFail.owner.primaryConstructor!!).apply {
             functionReference.reflectionTargetSymbol?.let { reflectionTarget ->
-                val description = KFunctionDescription(
-                        functionReferenceReflectionTarget = reflectionTarget.owner,
-                        referencedFunction = functionReference.invokeFunction,
-                        boundParameters = functionReference.boundValues.size,
-                        isCoercedToUnit = functionReference.hasUnitConversion,
-                        isSuspendConversion = functionReference.hasSuspendConversion,
-                        isVarargConversion = functionReference.hasVarargConversion
-                )
+                val description = KFunctionDescription(generationState.context, functionReference)
                 typeArguments[0] = functionReference.invokeFunction.returnType
                 arguments[0] = irKFunctionDescription(description)
             }
@@ -143,27 +136,25 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
     }
 
     private class KFunctionDescription(
-            private val functionReferenceReflectionTarget: IrFunction,
-            private val referencedFunction: IrFunction,
-            private val boundParameters: Int,
-            private val isCoercedToUnit: Boolean,
-            private val isSuspendConversion: Boolean,
-            private val isVarargConversion: Boolean,
+            private val context: Context,
+            private val functionReference: IrRichFunctionReference,
     ) {
+        private val functionReferenceReflectionTarget = functionReference.reflectionTargetSymbol!!.owner
+
         // this value is used only for hashCode and equals, to distinguish different wrappers on same functions
         fun getFlags(): Int {
             return listOfNotNull(
-                    (1 shl 0).takeIf { referencedFunction.isSuspend },
-                    (1 shl 1).takeIf { isVarargConversion },
-                    (1 shl 2).takeIf { isSuspendConversion },
-                    (1 shl 3).takeIf { isCoercedToUnit },
-                    (1 shl 4).takeIf { isFunInterfaceConstructorAdapter() }
+                    (1 shl 0).takeIf { functionReference.invokeFunction.isSuspend },
+                    (1 shl 1).takeIf { functionReference.hasVarargConversion },
+                    (1 shl 2).takeIf { functionReference.hasSuspendConversion },
+                    (1 shl 3).takeIf { functionReference.hasUnitConversion },
+                    (1 shl 4).takeIf { isFunInterfaceConstructorAdapter() },
             ).sum()
         }
 
         fun getFqName(): String {
             return if (isFunInterfaceConstructorAdapter())
-                referencedFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
+                functionReferenceReflectionTarget.returnType.getClass()!!.fqNameForIrSerialization.toString()
             else
                 functionReferenceReflectionTarget.computeFullName()
         }
@@ -174,7 +165,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
 
         fun getArity(): Int {
-            return referencedFunction.parameters.size - boundParameters + if (referencedFunction.isSuspend) 1 else 0
+            return functionReference.invokeFunction.parameters.size - functionReference.boundValues.size + if (functionReference.invokeFunction.isSuspend) 1 else 0
         }
 
         fun returnType(): IrType {
@@ -182,6 +173,6 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
 
         private fun isFunInterfaceConstructorAdapter() =
-                referencedFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
+                functionReference.invokeFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
     }
 }
