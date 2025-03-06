@@ -74,12 +74,4 @@ MODULE main
 					K1
 						<set-?>: kotlin/String
 					K2
-						@Ann value: kotlin/String
-	CLASS Delegate.class
-		CLASS METADATA
-			PROPERTY getDelegate()Ljava/lang/String;
-				Property: class.metadata.property.setterValueParameter
-					K1
-						<set-?>: kotlin/String
-					K2
-						@Ann <set-?>: kotlin/String
+						value: kotlin/String

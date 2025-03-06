@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // LAMBDAS: INDY
+// LANGUAGE: +AnnotationsInMetadata
 
 import kotlin.annotation.AnnotationTarget.*
 

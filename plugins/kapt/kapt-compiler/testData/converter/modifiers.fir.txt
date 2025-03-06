@@ -46,7 +46,6 @@ package modifiers;
  *   public constructor()
  *
  *   // signature: overloads(Ljava/lang/String;I)Ljava/lang/String;
- *   @kotlin/jvm/JvmOverloads
  *   public final fun overloads(a: kotlin/String (* = ... *), n: kotlin/Int (* = ... *)): kotlin/String
  *
  *   // signature: strictFp()V

@@ -76,6 +76,9 @@ class FirJvmBackendExtension(
                     override fun getPackageFqNameIndexByString(fqName: String): Int = stringTable.getPackageFqNameIndexByString(fqName)
                 }
             ) {
+                override val isOptionalAnnotationClassSerialization: Boolean
+                    get() = true
+
                 override fun serializeClass(
                     klass: FirClass,
                     proto: ProtoBuf.Class.Builder,

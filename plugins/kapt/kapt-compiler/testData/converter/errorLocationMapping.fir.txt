@@ -27,7 +27,6 @@ import kotlin.reflect.KClass;
 
 @Anno(a = ABC.class)
 /**
- * @Anno
  * public final class ErrorInAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -129,7 +128,6 @@ import kotlin.reflect.KClass;
  *   public final fun f4(): error/NonExistentClass
  *
  *   // signature: f5(Lerror/NonExistentClass;Ljava/lang/String;)V
- *   @kotlin/jvm/JvmOverloads
  *   public final fun f5(a: error/NonExistentClass, b: kotlin/String (* = ... *)): kotlin/Unit
  *
  *   // signature: overloads(Lerror/NonExistentClass;)V
@@ -252,7 +250,6 @@ public final class ErrorInDeclarations {
      *   private constructor()
      *
      *   // signature: f6(Lerror/NonExistentClass;)V
-     *   @kotlin/jvm/JvmStatic
      *   public final fun f6(a: error/NonExistentClass): kotlin/Unit
      *
      *   // module name: main

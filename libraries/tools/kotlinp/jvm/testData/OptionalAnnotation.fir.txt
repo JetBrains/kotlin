@@ -3,10 +3,6 @@
 package {
 
   // signature: ok()V
-  @test/A(x = 42)
-  @test/B(a = ["OK", ""])
-  @test/C
-  @test/D
   public final fun ok(): kotlin/Unit
 
   // module name: jvm

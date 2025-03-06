@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Foo.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(I)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(inner: kotlin/Int)
-					K2
-						(@MyAnnotation inner: kotlin/Int)

@@ -1,9 +1,0 @@
-MODULE main
-	CLASS test/Foo.class
-		CLASS METADATA
-			PROPERTY getDelegate()Ljava/lang/String;
-				Property: class.metadata.property.setterValueParameter
-					K1
-						value: kotlin/String
-					K2
-						@test/Ann2 @test/Ann1 value: kotlin/String

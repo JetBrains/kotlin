@@ -1,9 +1,0 @@
-MODULE main
-	CLASS LocalClassWithCapturedParamsKt$localCaptured$A.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(ILjava/lang/String;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(z: kotlin/String)
-					K2
-						(@Simple(value = "K") z: kotlin/String)

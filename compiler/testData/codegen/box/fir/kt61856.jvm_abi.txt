@@ -1,9 +1,0 @@
-MODULE lib
-	CLASS BoardContentLogController.class
-		CLASS METADATA
-			FUNCTION getBoardContentItemLogs(Ljava/util/List;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(emails: kotlin/collections/List<kotlin/String>)
-					K2
-						(@javax/validation/constraints/Email.List(value = []) emails: kotlin/collections/List<kotlin/String>)

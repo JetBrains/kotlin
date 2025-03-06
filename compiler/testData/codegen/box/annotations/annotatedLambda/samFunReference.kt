@@ -1,8 +1,7 @@
 // TARGET_BACKEND: JVM
 // SAM_CONVERSIONS: CLASS
-// WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: K2 stores annotations in metadata (KT-57919).
 
+// WITH_STDLIB
 // FILE: Test.java
 
 class Test {

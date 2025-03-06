@@ -825,6 +825,18 @@ If API Level >= 2.2 -- no-op."""
             field = value
         }
 
+    @Argument(
+        value = "-Xannotations-in-metadata",
+        description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), " +
+                "and read annotations from the metadata if they are present."
+    )
+    @Enables(LanguageFeature.AnnotationsInMetadata)
+    var annotationsInMetadata = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

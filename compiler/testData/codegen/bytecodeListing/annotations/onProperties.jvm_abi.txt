@@ -1,18 +1,12 @@
 MODULE main
 	CLASS A.class
 		CLASS METADATA
-			CONSTRUCTOR <init>(II)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(x: kotlin/Int, y: kotlin/Int)
-					K2
-						(@AnnParam x: kotlin/Int, @AnnParam y: kotlin/Int)
 			PROPERTY getP()I
 				Property: class.metadata.property.setterValueParameter
 					K1
 						<set-?>: kotlin/Int
 					K2
-						@AnnParam value: kotlin/Int
+						value: kotlin/Int
 			PROPERTY getY()I
 				Property: class.metadata.property.getterModifiers
 					K1

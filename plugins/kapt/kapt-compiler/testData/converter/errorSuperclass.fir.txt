@@ -20,7 +20,6 @@ package test;
 
 @Anno()
 /**
- * @test/Anno
  * internal final class test/ClassWithParent : kotlin/CharSequence {
  *
  *   // signature: <init>()V
