@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSupp
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
+import org.jetbrains.kotlin.fir.resolve.calls.js.JsCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.types.typeContext

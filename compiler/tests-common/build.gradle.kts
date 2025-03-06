@@ -31,6 +31,7 @@ dependencies {
     testApi(project(":compiler:fir:checkers:checkers.native"))
     testApi(project(":compiler:fir:checkers:checkers.wasm"))
     testApi(project(":compiler:fir:fir-jvm"))
+    testApi(project(":compiler:fir:fir-js"))
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
