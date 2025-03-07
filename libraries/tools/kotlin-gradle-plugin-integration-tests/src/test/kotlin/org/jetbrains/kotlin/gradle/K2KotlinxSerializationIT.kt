@@ -37,7 +37,6 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
 
     @DisplayName("Compile code with kotlinx.serialization K2 against old K1 library without enum factory support (KT-57704).")
     @GradleTest
-    @BrokenOnMacosTest
     fun `test kotlinx serialization K2 against K1 library`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         project(
             projectName = "kotlinxSerializationK2AgainstK1Lib/lib",
@@ -48,6 +47,8 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
                 gradleVersion,
                 "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
             )
+                // KGP 1.7.20 is not compatible with configuration cache in Gradle 8
+                .copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")
