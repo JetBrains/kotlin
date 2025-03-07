@@ -4,11 +4,11 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("__root___testOptSetInt__TypesOfArguments__Swift_Set_Swift_Int32__opt___")
-public fun __root___testOptSetInt__TypesOfArguments__Swift_Set_Swift_Int32__opt___(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____")
+public fun __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __s = if (s == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.collections.Set<Int>>(s)
     val _result = testOptSetInt(__s)
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
 @ExportedBridge("__root___testSetAny__TypesOfArguments__Swift_Set_KotlinRuntime_KotlinBase___")

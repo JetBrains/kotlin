@@ -144,7 +144,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Array_Swift_String__Swift_String_opt__ExportedKotlinPackages_kotlin_Throwable_opt___(__kt, missingFields, message ?? nil, cause.map { it in it.__externalRCRef() } ?? 0)
+            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Array_Swift_String__Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, missingFields, message ?? nil, cause.map { it in it.__externalRCRef() } ?? 0)
         }
         package override init(
             __externalRCRef: Swift.UInt
@@ -163,7 +163,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_String_opt___(__kt, message ?? nil)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String___(__kt, message ?? nil)
         }
         public override init(
             message: Swift.String?,
@@ -171,14 +171,14 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_String_opt__ExportedKotlinPackages_kotlin_Throwable_opt___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? 0)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? 0)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_ExportedKotlinPackages_kotlin_Throwable_opt___(__kt, cause.map { it in it.__externalRCRef() } ?? 0)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? 0)
         }
         package override init(
             __externalRCRef: Swift.UInt
@@ -274,7 +274,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.internal {
         }
         public init(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-            readIfAbsent: @escaping @convention(block) (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
+            readIfAbsent: @escaping (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
         ) {
             let __kt = kotlinx_serialization_internal_ElementMarker_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -319,7 +319,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase {
         func contextual(
             kClass: Swift.Never,
-            provider: @escaping @convention(block) (Swift.Array<Swift.Never>) -> Swift.Never
+            provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
         ) -> Swift.Void
         func contextual(
             kClass: Swift.Never,
@@ -333,15 +333,15 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         @available(*, deprecated, message: "Deprecated in favor of function with more precise name: polymorphicDefaultDeserializer. Replacement: polymorphicDefaultDeserializer(baseClass, defaultDeserializerProvider)")
         func polymorphicDefault(
             baseClass: Swift.Never,
-            defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
+            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
         ) -> Swift.Void
         func polymorphicDefaultDeserializer(
             baseClass: Swift.Never,
-            defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
+            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
         ) -> Swift.Void
         func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping @convention(block) (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
         ) -> Swift.Void
     }
     open class SerializersModule: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -380,7 +380,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, KotlinRuntimeSupport._KotlinBridged {
         public func contextual(
             kClass: Swift.Never,
-            provider: @escaping @convention(block) (Swift.Array<Swift.Never>) -> Swift.Never
+            provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
@@ -404,13 +404,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
         public func polymorphicDefaultDeserializer(
             baseClass: Swift.Never,
-            defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
+            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
         public func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping @convention(block) (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
@@ -851,7 +851,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     public static func buildClassSerialDescriptor(
         serialName: Swift.String,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        builderAction: @escaping @convention(block) () -> Swift.Void
+        builderAction: @escaping () -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase(__externalRCRef: kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOfArguments__Swift_String_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U2829202D_U20Swift_Void__(serialName, typeParameters.__externalRCRef(), {
             let originalBlock = builderAction
@@ -862,7 +862,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         serialName: Swift.String,
         kind: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        builder: @escaping @convention(block) () -> Swift.Void
+        builder: @escaping () -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase(__externalRCRef: kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArguments__Swift_String_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialKind_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U2829202D_U20Swift_Void__(serialName, kind.__externalRCRef(), typeParameters.__externalRCRef(), {
             let originalBlock = builder
@@ -894,7 +894,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     ) -> (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)? {
-        return switch kotlinx_serialization_descriptors_getContextualDescriptor__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef(), descriptor.__externalRCRef()) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor; }
+        return { switch kotlinx_serialization_descriptors_getContextualDescriptor__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef(), descriptor.__externalRCRef()) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor; } }()
     }
     public static func getPolymorphicDescriptors(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
@@ -1103,7 +1103,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.StringFormat where
 public extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector where Self : KotlinRuntimeSupport._KotlinBridged {
     public func contextual(
         kClass: Swift.Never,
-        provider: @escaping @convention(block) (Swift.Array<Swift.Never>) -> Swift.Never
+        provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
@@ -1123,19 +1123,19 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules.Serializer
     @available(*, deprecated, message: "Deprecated in favor of function with more precise name: polymorphicDefaultDeserializer. Replacement: polymorphicDefaultDeserializer(baseClass, defaultDeserializerProvider)")
     public func polymorphicDefault(
         baseClass: Swift.Never,
-        defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
+        defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public func polymorphicDefaultDeserializer(
         baseClass: Swift.Never,
-        defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
+        defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public func polymorphicDefaultSerializer(
         baseClass: Swift.Never,
-        defaultSerializerProvider: @escaping @convention(block) (Swift.Never) -> Swift.Never
+        defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
@@ -1200,7 +1200,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors.Serial
 public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     public protocol ChunkedDecoder: KotlinRuntime.KotlinBase {
         func decodeStringChunked(
-            consumeChunk: @escaping @convention(block) (Swift.String) -> Swift.Void
+            consumeChunk: @escaping (Swift.String) -> Swift.Void
         ) -> Swift.Void
     }
     public protocol CompositeDecoder: KotlinRuntime.KotlinBase {
@@ -1781,7 +1781,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
 }
 public extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder where Self : KotlinRuntimeSupport._KotlinBridged {
     public func decodeStringChunked(
-        consumeChunk: @escaping @convention(block) (Swift.String) -> Swift.Void
+        consumeChunk: @escaping (Swift.String) -> Swift.Void
     ) -> Swift.Void {
         return kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(self.__externalRCRef(), {
             let originalBlock = consumeChunk

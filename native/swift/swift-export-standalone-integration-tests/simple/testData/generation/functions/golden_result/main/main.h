@@ -15,37 +15,37 @@ void __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt
 
 NSString * __root___bar_get__TypesOfArguments__Swift_Int32__(int32_t receiver);
 
-NSString * __root___bar_get__TypesOfArguments__Swift_Int32_opt___(NSNumber * receiver);
+NSString * __root___bar_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * receiver);
 
 NSString * __root___bar_get__TypesOfArguments__main_Foo__(uintptr_t receiver);
 
-NSString * __root___bar_get__TypesOfArguments__main_Foo_opt___(uintptr_t receiver);
+NSString * __root___bar_get__TypesOfArguments__Swift_Optional_main_Foo___(uintptr_t receiver);
 
 void __root___foo__TypesOfArguments__Swift_Int32__(int32_t receiver);
 
-void __root___foo__TypesOfArguments__Swift_Int32_opt___(NSNumber * receiver);
+void __root___foo__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * receiver);
 
 void __root___foo__TypesOfArguments__main_Foo__(uintptr_t receiver);
 
-void __root___foo__TypesOfArguments__main_Foo_opt___(uintptr_t receiver);
+void __root___foo__TypesOfArguments__Swift_Optional_main_Foo___(uintptr_t receiver);
 
 int32_t __root___foo();
 
 NSString * __root___foo_get__TypesOfArguments__Swift_Int32__(int32_t receiver);
 
-NSString * __root___foo_get__TypesOfArguments__Swift_Int32_opt___(NSNumber * receiver);
+NSString * __root___foo_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * receiver);
 
 NSString * __root___foo_get__TypesOfArguments__main_Foo__(uintptr_t receiver);
 
-NSString * __root___foo_get__TypesOfArguments__main_Foo_opt___(uintptr_t receiver);
+NSString * __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(uintptr_t receiver);
 
 void __root___foo_set__TypesOfArguments__Swift_Int32_Swift_String__(int32_t receiver, NSString * v);
 
-void __root___foo_set__TypesOfArguments__Swift_Int32_opt__Swift_String__(NSNumber * receiver, NSString * v);
+void __root___foo_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * receiver, NSString * v);
 
 void __root___foo_set__TypesOfArguments__main_Foo_Swift_String__(uintptr_t receiver, NSString * v);
 
-void __root___foo_set__TypesOfArguments__main_Foo_opt__Swift_String__(uintptr_t receiver, NSString * v);
+void __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__(uintptr_t receiver, NSString * v);
 
 uintptr_t __root___return_any_should_append_runtime_import();
 
@@ -69,5 +69,4 @@ int32_t overload_foo__TypesOfArguments__Swift_Double__(double arg1);
 
 void overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo__(uintptr_t arg1);
 
-void overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(uintptr_t arg1);
-
+void overload_foo__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_overload_Foo___(uintptr_t arg1);

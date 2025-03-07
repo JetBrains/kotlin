@@ -45,11 +45,11 @@ uintptr_t __root___normal_get();
 
 void __root___normal_set__TypesOfArguments__anyU20main_Foeble__(uintptr_t newValue);
 
-uintptr_t __root___nullable__TypesOfArguments__anyU20main_Foeble_opt___(uintptr_t value);
+uintptr_t __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(uintptr_t value);
 
 uintptr_t __root___nullable_get();
 
-void __root___nullable_set__TypesOfArguments__anyU20main_Foeble_opt___(uintptr_t newValue);
+void __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(uintptr_t newValue);
 
 uintptr_t repeating_conformances_Child1_init_allocate();
 

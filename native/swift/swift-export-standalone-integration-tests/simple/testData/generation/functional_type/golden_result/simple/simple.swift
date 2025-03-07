@@ -29,7 +29,7 @@ public func foo_2() -> () -> Swift.Void {
     }()
 }
 public func foo_consume_simple(
-    block: @escaping @convention(block) () -> Swift.Void
+    block: @escaping () -> Swift.Void
 ) -> Swift.Void {
     return __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock = block

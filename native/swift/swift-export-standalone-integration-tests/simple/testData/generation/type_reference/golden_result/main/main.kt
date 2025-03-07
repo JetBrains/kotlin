@@ -292,41 +292,41 @@ public fun __root___combine__TypesOfArguments__main_Class_without_package_Export
     combine(__arg1, __arg2, __arg3, __arg4)
 }
 
-@ExportedBridge("__root___extensionOnNullabeRef__TypesOfArguments__main_Class_without_package_opt___")
-public fun __root___extensionOnNullabeRef__TypesOfArguments__main_Class_without_package_opt___(`receiver`: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___extensionOnNullabeRef__TypesOfArguments__Swift_Optional_main_Class_without_package___")
+public fun __root___extensionOnNullabeRef__TypesOfArguments__Swift_Optional_main_Class_without_package___(`receiver`: kotlin.native.internal.NativePtr): Unit {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Class_without_package
     __receiver.extensionOnNullabeRef()
 }
 
-@ExportedBridge("__root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___")
-public fun __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___(`receiver`: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Optional_Swift_Int32___")
+public fun __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Optional_Swift_Int32___(`receiver`: kotlin.native.internal.NativePtr): Unit {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(`receiver`)
     __receiver.extensionOnNullablePrimitive()
 }
 
-@ExportedBridge("__root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Int32_opt___")
-public fun __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Int32_opt___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Optional_Swift_Int32___")
+public fun __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Optional_Swift_Int32___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(`receiver`)
     val _result = __receiver.extensionVarOnNullablePrimitive
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Int32_opt__Swift_String__")
-public fun __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Int32_opt__Swift_String__(`receiver`: kotlin.native.internal.NativePtr, v: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__")
+public fun __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(`receiver`: kotlin.native.internal.NativePtr, v: kotlin.native.internal.NativePtr): Unit {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(`receiver`)
     val __v = interpretObjCPointer<kotlin.String>(v)
     __receiver.extensionVarOnNullablePrimitive = __v
 }
 
-@ExportedBridge("__root___extensionVarOnNullableRef_get__TypesOfArguments__main_Class_without_package_opt___")
-public fun __root___extensionVarOnNullableRef_get__TypesOfArguments__main_Class_without_package_opt___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___extensionVarOnNullableRef_get__TypesOfArguments__Swift_Optional_main_Class_without_package___")
+public fun __root___extensionVarOnNullableRef_get__TypesOfArguments__Swift_Optional_main_Class_without_package___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Class_without_package
     val _result = __receiver.extensionVarOnNullableRef
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___extensionVarOnNullableRef_set__TypesOfArguments__main_Class_without_package_opt__Swift_String__")
-public fun __root___extensionVarOnNullableRef_set__TypesOfArguments__main_Class_without_package_opt__Swift_String__(`receiver`: kotlin.native.internal.NativePtr, v: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__")
+public fun __root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__(`receiver`: kotlin.native.internal.NativePtr, v: kotlin.native.internal.NativePtr): Unit {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Class_without_package
     val __v = interpretObjCPointer<kotlin.String>(v)
     __receiver.extensionVarOnNullableRef = __v
@@ -335,11 +335,11 @@ public fun __root___extensionVarOnNullableRef_set__TypesOfArguments__main_Class_
 @ExportedBridge("__root___nullablePrim_get")
 public fun __root___nullablePrim_get(): kotlin.native.internal.NativePtr {
     val _result = nullablePrim
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
-@ExportedBridge("__root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___")
-public fun __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___nullablePrim_set__TypesOfArguments__Swift_Optional_Swift_Int32___")
+public fun __root___nullablePrim_set__TypesOfArguments__Swift_Optional_Swift_Int32___(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(newValue)
     nullablePrim = __newValue
 }
@@ -347,23 +347,23 @@ public fun __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newVa
 @ExportedBridge("__root___nullableRef_get")
 public fun __root___nullableRef_get(): kotlin.native.internal.NativePtr {
     val _result = nullableRef
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___")
-public fun __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___nullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package___")
+public fun __root___nullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package___(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Class_without_package
     nullableRef = __newValue
 }
 
-@ExportedBridge("__root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___")
-public fun __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___nullable_input_prim__TypesOfArguments__Swift_Optional_Swift_Int32___")
+public fun __root___nullable_input_prim__TypesOfArguments__Swift_Optional_Swift_Int32___(i: kotlin.native.internal.NativePtr): Unit {
     val __i = if (i == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(i)
     nullable_input_prim(__i)
 }
 
-@ExportedBridge("__root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___")
-public fun __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___nullable_input_ref__TypesOfArguments__Swift_Optional_main_Class_without_package___")
+public fun __root___nullable_input_ref__TypesOfArguments__Swift_Optional_main_Class_without_package___(i: kotlin.native.internal.NativePtr): Unit {
     val __i = if (i == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(i) as Class_without_package
     nullable_input_ref(__i)
 }
@@ -371,13 +371,13 @@ public fun __root___nullable_input_ref__TypesOfArguments__main_Class_without_pac
 @ExportedBridge("__root___nullable_output_prim")
 public fun __root___nullable_output_prim(): kotlin.native.internal.NativePtr {
     val _result = nullable_output_prim()
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
 @ExportedBridge("__root___nullable_output_ref")
 public fun __root___nullable_output_ref(): kotlin.native.internal.NativePtr {
     val _result = nullable_output_ref()
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___produce_ABSTRACT_CLASS")

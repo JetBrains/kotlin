@@ -287,8 +287,7 @@ private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<Bri
             .replace(".", "_")
             .replace(",", "_")
             .replace("<", "_")
-            .replace(">", "_") +
-                if (it.bridge is Bridge.AsOptionalWrapper) "_opt_" else ""
+            .replace(">", "_")
     }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}".cIdentifier
@@ -831,7 +830,11 @@ private sealed class Bridge(
 
     class AsOptionalWrapper(
         val wrappedObject: Bridge,
-    ) : Bridge(wrappedObject.swiftType, wrappedObject.kotlinType, wrappedObject.cType) {
+    ) : Bridge(
+        wrappedObject.swiftType.optional(),
+        wrappedObject.kotlinType,
+        wrappedObject.cType
+    ) {
 
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
@@ -842,7 +845,7 @@ private sealed class Bridge(
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "if ($valueExpression == null) return kotlin.native.internal.NativePtr.NULL else return ${
+                    return "if ($valueExpression == null) kotlin.native.internal.NativePtr.NULL else ${
                         wrappedObject.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
                     }"
                 }
@@ -859,9 +862,9 @@ private sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential -> "switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
+                    is AsObject, is AsExistential -> "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                         wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
-                    }; }"
+                    }; } }()"
                     is AsIs,
                     is AsOpaqueObject,
                     is AsOutError,

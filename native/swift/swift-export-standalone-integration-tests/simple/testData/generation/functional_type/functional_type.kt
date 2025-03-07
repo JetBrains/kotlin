@@ -60,8 +60,7 @@ fun consume_block_with_reftype_consumer(block: (Foo) -> Unit): Unit = TODO()
 fun consume_block_with_reftype_zip(block: Function2<Foo, Foo, Bar>): Bar = TODO()
 fun consume_block_with_reftype_unzip(block: Function1<Bar, Foo>): Foo = TODO()
 
-// todo: suport
-// fun consume_block_with_opt_reftype_unzip(block: Function1<Bar?, Foo?>): Foo? = TODO()
+fun consume_block_with_opt_reftype(block: Function4<Int?, Bar?, String?, Set<Any>?, Foo?>): Unit = TODO()
 
 // MODULE: data
 // EXPORT_TO_SWIFT

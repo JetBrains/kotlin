@@ -81,8 +81,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UInt_KotlinR
     }
 }
 
-@ExportedBridge("__root___Object_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase_opt___")
-public fun __root___Object_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase_opt___(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Unit {
+@ExportedBridge("__root___Object_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun __root___Object_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_KotlinRuntime_KotlinBase___(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ____error = __error
@@ -251,20 +251,20 @@ public fun __root___throwing_fun_nullable(_out_error: kotlinx.cinterop.COpaquePo
     val ___out_error = _out_error
     try {
         val _result = throwing_fun_nullable()
-        return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+        return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
         return kotlin.native.internal.NativePtr.NULL
     }
 }
 
-@ExportedBridge("__root___throwing_fun_nullable__TypesOfArguments__KotlinRuntime_KotlinBase_opt___")
-public fun __root___throwing_fun_nullable__TypesOfArguments__KotlinRuntime_KotlinBase_opt___(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ___out_error = _out_error
     try {
         val _result = throwing_fun_nullable(__arg)
-        return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+        return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
         return kotlin.native.internal.NativePtr.NULL

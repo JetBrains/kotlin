@@ -44,6 +44,24 @@ fun saveRefBlock(block: (Bar) -> Bar) {
 }
 fun callRefBlock(with: Bar): Bar = ref_block(with)
 
+// MODULE: optional_types(data)
+// EXPORT_TO_SWIFT
+// FILE: optional_types.kt
+
+private lateinit var optional_ref_block: (Bar?) -> Bar?
+
+fun saveOptRefBlock(block: (Bar?) -> Bar?) {
+    optional_ref_block = block
+}
+fun callOptRefBlock(with: Bar?): Bar? = optional_ref_block(with)
+
+private lateinit var optional_prim_block: (Int?) -> Int?
+
+fun saveOptPrimBlock(block: (Int?) -> Int?) {
+    optional_prim_block = block
+}
+fun callOptPrimBlock(with: Int?): Int? = optional_prim_block(with)
+
 // MODULE: primitive_types
 // EXPORT_TO_SWIFT
 // FILE: primitive_types.kt

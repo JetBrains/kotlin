@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 public func testOptSetInt(
     s: Swift.Set<Swift.Int32>?
 ) -> Swift.Set<Swift.Int32>? {
-    return __root___testOptSetInt__TypesOfArguments__Swift_Set_Swift_Int32__opt___(s.map { it in Set(it.map { it in NSNumber(value: it) }) } ?? nil).map { it in it as! Swift.Set<Swift.Int32> }
+    return __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(s.map { it in Set(it.map { it in NSNumber(value: it) }) } ?? nil).map { it in it as! Swift.Set<Swift.Int32> }
 }
 public func testSetAny(
     s: Swift.Set<KotlinRuntime.KotlinBase>

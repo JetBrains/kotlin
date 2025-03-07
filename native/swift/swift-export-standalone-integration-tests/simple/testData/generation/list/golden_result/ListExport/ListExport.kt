@@ -81,10 +81,9 @@ public fun __root___testListString__TypesOfArguments__Swift_Array_Swift_String__
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testOptListInt__TypesOfArguments__Swift_Array_Swift_Int32__opt___")
-public fun __root___testOptListInt__TypesOfArguments__Swift_Array_Swift_Int32__opt___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array_Swift_Int32____")
+public fun __root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array_Swift_Int32____(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = if (l == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.collections.List<Int>>(l)
     val _result = testOptListInt(__l)
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
-

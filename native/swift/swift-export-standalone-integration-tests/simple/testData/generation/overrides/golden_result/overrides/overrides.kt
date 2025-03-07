@@ -35,8 +35,8 @@ public fun AbstractDerived2_abstractFun1(self: kotlin.native.internal.NativePtr)
     __self.abstractFun1()
 }
 
-@ExportedBridge("Child_actuallyOverride__TypesOfArguments__Swift_Int32_opt__overrides_Parent_overrides_Parent_opt___")
-public fun Child_actuallyOverride__TypesOfArguments__Swift_Int32_opt__overrides_Parent_overrides_Parent_opt___(self: kotlin.native.internal.NativePtr, nullable: kotlin.native.internal.NativePtr, poly: kotlin.native.internal.NativePtr, nullablePoly: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___")
+public fun Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self: kotlin.native.internal.NativePtr, nullable: kotlin.native.internal.NativePtr, poly: kotlin.native.internal.NativePtr, nullablePoly: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val __nullable = if (nullable == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(nullable)
     val __poly = kotlin.native.internal.ref.dereferenceExternalRCRef(poly) as Parent
@@ -77,14 +77,14 @@ public fun Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self: k
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Child
     val _result = __self.objectOptionalFunc(__arg)
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Child_objectOptionalVar_get")
 public fun Child_objectOptionalVar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val _result = __self.objectOptionalVar
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Child_objectVar_get")
@@ -249,14 +249,14 @@ public fun Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self: 
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Child
     val _result = __self.objectOptionalFunc(__arg)
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Parent_objectOptionalVar_get")
 public fun Parent_objectOptionalVar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = __self.objectOptionalVar
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Parent_objectVar_get")
@@ -306,28 +306,28 @@ public fun Parent_subtypeObjectVar_get(self: kotlin.native.internal.NativePtr): 
 public fun Parent_subtypeOptionalObjectFunc(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = __self.subtypeOptionalObjectFunc()
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Parent_subtypeOptionalObjectVar_get")
 public fun Parent_subtypeOptionalObjectVar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = __self.subtypeOptionalObjectVar
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Parent_subtypeOptionalPrimitiveFunc")
 public fun Parent_subtypeOptionalPrimitiveFunc(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = __self.subtypeOptionalPrimitiveFunc()
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
 @ExportedBridge("Parent_subtypeOptionalPrimitiveVar_get")
 public fun Parent_subtypeOptionalPrimitiveVar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = __self.subtypeOptionalPrimitiveVar
-    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
 @ExportedBridge("Parent_value_get")

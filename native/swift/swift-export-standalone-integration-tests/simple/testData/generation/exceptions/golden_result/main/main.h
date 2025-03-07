@@ -13,7 +13,7 @@ void __root___Object_init_initialize__TypesOfArguments__Swift_UInt_Swift_Unicode
 
 void __root___Object_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase__(uintptr_t __kt, uintptr_t arg, uintptr_t * __error);
 
-void __root___Object_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase_opt___(uintptr_t __kt, uintptr_t arg, uintptr_t * __error);
+void __root___Object_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_KotlinRuntime_KotlinBase___(uintptr_t __kt, uintptr_t arg, uintptr_t * __error);
 
 void __root___Object_init_initialize__TypesOfArguments__Swift_UInt_main_Object__(uintptr_t __kt, uintptr_t arg, uintptr_t * __error);
 
@@ -41,11 +41,10 @@ uintptr_t __root___throwing_fun_never(uintptr_t * _out_error) __attribute((noret
 
 uintptr_t __root___throwing_fun_nullable(uintptr_t * _out_error);
 
-uintptr_t __root___throwing_fun_nullable__TypesOfArguments__KotlinRuntime_KotlinBase_opt___(uintptr_t arg, uintptr_t * _out_error);
+uintptr_t __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(uintptr_t arg, uintptr_t * _out_error);
 
 uintptr_t __root___throwing_fun_object(uintptr_t * _out_error);
 
 uintptr_t __root___throwing_fun_object__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t arg, uintptr_t * _out_error);
 
 void __root___throwing_fun_void(uintptr_t * _out_error);
-

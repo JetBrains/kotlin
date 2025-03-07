@@ -269,7 +269,7 @@ public var block: main.closure {
     }
 }
 public func consume_closure(
-    block: @escaping @convention(block) main.closure
+    block: @escaping main.closure
 ) -> Swift.Void {
     return __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock = block
@@ -277,7 +277,7 @@ public func consume_closure(
     }())
 }
 public func deeper_closure_typealiase(
-    block: @escaping @convention(block) main.deeper_closure_typealias
+    block: @escaping main.deeper_closure_typealias
 ) -> main.deeper_closure_typealias {
     return {
         let nativeBlock = __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({

@@ -44,7 +44,7 @@ public func foo(
 public func foo(
     _ receiver: Swift.Int32?
 ) -> Swift.Void {
-    return __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+    return __root___foo__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func foo(
     _ receiver: main.Foo
@@ -54,7 +54,7 @@ public func foo(
 public func foo(
     _ receiver: main.Foo?
 ) -> Swift.Void {
-    return __root___foo__TypesOfArguments__main_Foo_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
+    return __root___foo__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? 0)
 }
 public func foo() -> Swift.Int32 {
     return __root___foo()
@@ -67,7 +67,7 @@ public func getBar(
 public func getBar(
     _ receiver: Swift.Int32?
 ) -> Swift.String {
-    return __root___bar_get__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+    return __root___bar_get__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func getBar(
     _ receiver: main.Foo
@@ -77,7 +77,7 @@ public func getBar(
 public func getBar(
     _ receiver: main.Foo?
 ) -> Swift.String {
-    return __root___bar_get__TypesOfArguments__main_Foo_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
+    return __root___bar_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? 0)
 }
 public func getFoo(
     _ receiver: Swift.Int32
@@ -87,7 +87,7 @@ public func getFoo(
 public func getFoo(
     _ receiver: Swift.Int32?
 ) -> Swift.String {
-    return __root___foo_get__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+    return __root___foo_get__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func getFoo(
     _ receiver: main.Foo
@@ -97,7 +97,7 @@ public func getFoo(
 public func getFoo(
     _ receiver: main.Foo?
 ) -> Swift.String {
-    return __root___foo_get__TypesOfArguments__main_Foo_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
+    return __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? 0)
 }
 public func return_any_should_append_runtime_import() -> KotlinRuntime.KotlinBase {
     return KotlinRuntime.KotlinBase(__externalRCRef: __root___return_any_should_append_runtime_import())
@@ -112,7 +112,7 @@ public func setFoo(
     _ receiver: Swift.Int32?,
     v: Swift.String
 ) -> Swift.Void {
-    return __root___foo_set__TypesOfArguments__Swift_Int32_opt__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v)
+    return __root___foo_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v)
 }
 public func setFoo(
     _ receiver: main.Foo,
@@ -124,7 +124,7 @@ public func setFoo(
     _ receiver: main.Foo?,
     v: Swift.String
 ) -> Swift.Void {
-    return __root___foo_set__TypesOfArguments__main_Foo_opt__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? 0, v)
+    return __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? 0, v)
 }
 public extension ExportedKotlinPackages.namespace1.local_functions {
     public static func foo() -> Swift.Void {
@@ -197,6 +197,6 @@ public extension ExportedKotlinPackages.overload {
     public static func foo(
         arg1: ExportedKotlinPackages.overload.Foo?
     ) -> Swift.Void {
-        return overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(arg1.map { it in it.__externalRCRef() } ?? 0)
+        return overload_foo__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_overload_Foo___(arg1.map { it in it.__externalRCRef() } ?? 0)
     }
 }

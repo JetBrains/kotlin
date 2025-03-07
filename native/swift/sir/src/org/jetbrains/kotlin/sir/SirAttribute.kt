@@ -48,12 +48,4 @@ public sealed interface SirAttribute {
         override val identifier: String get() = "escaping"
         override val arguments: List<SirArgument>? get() = null
     }
-
-    sealed class Convention : SirAttribute {
-        override val identifier = "convention"
-
-        object Block : Convention() {
-            override val arguments = listOf(SirArgument("block"))
-        }
-    }
 }

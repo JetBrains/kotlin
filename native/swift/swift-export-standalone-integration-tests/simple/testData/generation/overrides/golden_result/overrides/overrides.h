@@ -9,7 +9,7 @@ int32_t AbstractBase_abstractVal_get(uintptr_t self);
 
 void AbstractDerived2_abstractFun1(uintptr_t self);
 
-void Child_actuallyOverride__TypesOfArguments__Swift_Int32_opt__overrides_Parent_overrides_Parent_opt___(uintptr_t self, NSNumber * nullable, uintptr_t poly, uintptr_t nullablePoly);
+void Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(uintptr_t self, NSNumber * nullable, uintptr_t poly, uintptr_t nullablePoly);
 
 void Child_finalOverrideFunc(uintptr_t self);
 

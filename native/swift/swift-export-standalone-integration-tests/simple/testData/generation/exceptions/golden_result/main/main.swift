@@ -68,7 +68,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRef: __kt)
         var __error: UInt = 0
-        __root___Object_init_initialize__TypesOfArguments__Swift_UInt_KotlinRuntime_KotlinBase_opt___(__kt, arg.map { it in it.__externalRCRef() } ?? 0, &__error)
+        __root___Object_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_KotlinRuntime_KotlinBase___(__kt, arg.map { it in it.__externalRCRef() } ?? 0, &__error)
         guard __error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: __error)) }
     }
 }
@@ -152,15 +152,15 @@ public func throwing_fun_nullable() throws -> KotlinRuntime.KotlinBase? {
     var _out_error: UInt = 0
     let _result = __root___throwing_fun_nullable(&_out_error)
     guard _out_error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: _out_error)) }
-    return switch _result { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); }
+    return { switch _result { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); } }()
 }
 public func throwing_fun_nullable(
     arg: KotlinRuntime.KotlinBase?
 ) throws -> KotlinRuntime.KotlinBase? {
     var _out_error: UInt = 0
-    let _result = __root___throwing_fun_nullable__TypesOfArguments__KotlinRuntime_KotlinBase_opt___(arg.map { it in it.__externalRCRef() } ?? 0, &_out_error)
+    let _result = __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(arg.map { it in it.__externalRCRef() } ?? 0, &_out_error)
     guard _out_error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: _out_error)) }
-    return switch _result { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); }
+    return { switch _result { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); } }()
 }
 public func throwing_fun_object() throws -> main.Object {
     var _out_error: UInt = 0
