@@ -18,9 +18,13 @@ class SubpuginsIT : KGPBaseTest() {
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
     @GradleTest
-    @BrokenOnMacosTest
     fun testGradleSubplugin(gradleVersion: GradleVersion) {
-        project("kotlinGradleSubplugin", gradleVersion) {
+        project(
+            "kotlinGradleSubplugin",
+            gradleVersion,
+            // second build reuses the configuration cache, so no "ExampleSubplugin loaded" is logged
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
