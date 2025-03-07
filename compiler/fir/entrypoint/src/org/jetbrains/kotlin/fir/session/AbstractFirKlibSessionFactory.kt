@@ -123,20 +123,21 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
             extensionRegistrars,
             configuration,
             init,
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
-                listOfNotNull(
-                    symbolProvider,
-                    generatedSymbolsProvider,
-                    icData?.let {
-                        KlibIcCacheBasedSymbolProvider(
-                            session,
-                            SingleModuleDataProvider(moduleData),
-                            kotlinScopeProvider,
-                            it,
-                            flexibleTypeFactory = createFlexibleTypeFactory(session),
-                        )
-                    },
-                    *dependencies.toTypedArray(),
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
+                SourceProviders(
+                    listOfNotNull(
+                        symbolProvider,
+                        generatedSymbolsProvider,
+                        icData?.let {
+                            KlibIcCacheBasedSymbolProvider(
+                                session,
+                                SingleModuleDataProvider(moduleData),
+                                kotlinScopeProvider,
+                                it,
+                                flexibleTypeFactory = createFlexibleTypeFactory(session),
+                            )
+                        },
+                    )
                 )
             }
         )

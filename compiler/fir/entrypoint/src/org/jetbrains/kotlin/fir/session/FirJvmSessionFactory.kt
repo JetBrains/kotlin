@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.FirJvmActualizingBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -159,22 +160,24 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
             extensionRegistrars,
             configuration,
             init,
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
 
                 val incrementalCompilationSymbolProviders = createIncrementalCompilationSymbolProviders(session)
 
-                listOfNotNull(
+                val providers = listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
                     *(incrementalCompilationSymbolProviders?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                     incrementalCompilationSymbolProviders?.symbolProviderForBinariesFromIncrementalCompilation,
                     javaSymbolProvider,
-                    initializeForStdlibIfNeeded(projectEnvironment, session, kotlinScopeProvider, dependencies),
-                    *dependencies.toTypedArray(),
-                    incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
+                    initializeForStdlibIfNeeded(projectEnvironment, session, kotlinScopeProvider),
+                )
+                SourceProviders(
+                    providers,
+                    incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation
                 )
             }
         ).also {
@@ -236,14 +239,17 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         projectEnvironment: AbstractProjectEnvironment,
         session: FirSession,
         kotlinScopeProvider: FirKotlinScopeProvider,
-        dependencies: List<FirSymbolProvider>,
     ): FirSymbolProvider? {
         return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
             val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(projectEnvironment.getSearchScopeForProjectLibraries())
             val builtinsSymbolProvider = initializeBuiltinsProvider(session, session.moduleData, kotlinScopeProvider, kotlinClassFinder)
             if (session.moduleData.dependsOnDependencies.isNotEmpty()) {
                 runIf(!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
-                    val refinedSourceSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
+                    val refinedSourceSymbolProviders = session.moduleData.dependsOnDependencies
+                        .map { it.session }
+                        .flatMap { it.symbolProvider.flatten() }
+                        .filter { it.session.kind == FirSession.Kind.Source }
+                        .distinct()
                     FirJvmActualizingBuiltinSymbolProvider(builtinsSymbolProvider, refinedSourceSymbolProviders)
                 }
             } else {

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.plusIfNotNull
 
 /**
  * This is the base class for factories, which create various sessions for compilation.
@@ -160,7 +161,16 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val providers = createProviders(this, kotlinScopeProvider)
-            val providersWithShared = providers + sharedLibrarySession.symbolProvider
+            register(
+                StructuredProviders::class,
+                StructuredProviders(
+                    sourceProviders = emptyList(),
+                    librariesProviders = providers,
+                    sharedProvider = sharedLibrarySession.symbolProvider,
+                )
+            )
+
+            val providersWithShared = providers + sharedLibrarySession.symbolProvider.flatten()
 
             val symbolProvider = FirCachingCompositeSymbolProvider(this, providersWithShared)
             register(FirSymbolProvider::class, symbolProvider)
@@ -188,8 +198,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
-            dependencies: List<FirSymbolProvider>,
-        ) -> List<FirSymbolProvider>
+        ) -> SourceProviders
     ): FirSession {
         val languageVersionSettings = configuration.languageVersionSettings
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
@@ -225,29 +234,51 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProviders = computeDependencyProviderList(moduleData)
+            val structuredDependencyProvidersWithoutSource = computeDependencyProviderList(moduleData)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
-            val providers = createProviders(
+            val (sourceProviders, additionalOptionalAnnotationsProvider) = createProviders(
                 this,
                 kotlinScopeProvider,
                 firProvider.symbolProvider,
                 generatedSymbolsProvider,
-                dependencyProviders,
             )
+
+            val structuredProvidersForModule = StructuredProviders(
+                sourceProviders = sourceProviders,
+                librariesProviders = structuredDependencyProvidersWithoutSource.librariesProviders.plusIfNotNull(additionalOptionalAnnotationsProvider),
+                sharedProvider = structuredDependencyProvidersWithoutSource.sharedProvider,
+            ).also {
+                register(StructuredProviders::class, it)
+            }
+
+            val providersListWithoutSources = buildList {
+                structuredProvidersForModule.librariesProviders.flatMapTo(this) { it.flatten() }
+                addAll(structuredProvidersForModule.sharedProvider.flatten())
+            }.distinct()
+
+            val providersList = structuredProvidersForModule.sourceProviders + providersListWithoutSources
 
             register(
                 FirSymbolProvider::class,
                 FirCachingCompositeSymbolProvider(
-                    this, providers,
+                    this, providersList,
                     expectedCachesToBeCleanedOnce = generatedSymbolsProvider != null
                 )
             )
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
+            register(
+                DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY,
+                FirCachingCompositeSymbolProvider(this, providersListWithoutSources)
+            )
         }
     }
+
+    protected data class SourceProviders(
+        val sourceProviders: List<FirSymbolProvider>,
+        val additionalOptionalAnnotationsProvider: FirSymbolProvider? = null,
+    )
 
     protected abstract fun createKotlinScopeProviderForSourceSession(
         moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
@@ -261,21 +292,42 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
     // ==================================== Utilities ====================================
 
-    private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
+    private fun computeDependencyProviderList(moduleData: FirModuleData): StructuredProviders {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
         // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
         // to prevent false positive resolution errors (see KT-57369 for an example).
-        return (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
-            .mapNotNull { sessionProvider?.getSession(it) }
-            .flatMap { it.symbolProvider.flatten() }
-            .distinct()
+
+        val providersFromDependencies = (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
             .sortedBy { it.session.kind }
+            .map { it to it.session.structuredProviders }
+
+        val dependencyProviders = providersFromDependencies.flatMap { (dependencyModuleData, providers) ->
+            when (dependencyModuleData.session.kind) {
+                FirSession.Kind.Library -> providers.librariesProviders.also { check(providers.sourceProviders.isEmpty()) }
+
+                // Dependency providers for common and platform modules are basically the same, so there is no need in duplicating them.
+                FirSession.Kind.Source -> providers.sourceProviders
+            }
+        }
+
+        // Here we are looking for the first binary dependency to support source-source dependency between
+        // regular modules.
+        // TODO(KT-75896): Such dependencies might occur only in old tests, which are not migrated to CLI facades yet.
+        val sharedProvider = providersFromDependencies
+            .first { (moduleData, _) -> moduleData.session.kind == FirSession.Kind.Library }
+            .second.sharedProvider
+
+        return StructuredProviders(
+            sourceProviders = emptyList(),
+            dependencyProviders,
+            sharedProvider
+        )
     }
 
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
     *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
     *  It depends on the session's kind of the top-level provider */
-    private fun FirSymbolProvider.flatten(): List<FirSymbolProvider> {
+    protected fun FirSymbolProvider.flatten(): List<FirSymbolProvider> {
         val originalSession = session.takeIf { it.kind == FirSession.Kind.Source }
         val result = mutableListOf<FirSymbolProvider>()
 

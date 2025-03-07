@@ -135,7 +135,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             extensionRegistrars,
             configuration,
             init,
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {
                     val precompiledBinariesPackagePartProvider = it.precompiledBinariesPackagePartProvider
@@ -153,12 +153,13 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
                     }
                 }
 
-                listOfNotNull(
-                    symbolProvider,
-                    *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
-                    symbolProviderForBinariesFromIncrementalCompilation,
-                    generatedSymbolsProvider,
-                    *dependencies.toTypedArray(),
+                SourceProviders(
+                    listOfNotNull(
+                        symbolProvider,
+                        *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
+                        symbolProviderForBinariesFromIncrementalCompilation,
+                        generatedSymbolsProvider,
+                    )
                 )
             }
         )

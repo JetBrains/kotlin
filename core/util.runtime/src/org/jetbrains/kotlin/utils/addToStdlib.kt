@@ -408,3 +408,8 @@ inline fun <T, S> MutableList<T>.assignFrom(other: Iterable<S>, transform: (S) -
 fun <T> MutableList<T>.assignFrom(other: Iterable<T>) {
     assignFrom(other) { it }
 }
+
+fun <T : Any> List<T>.plusIfNotNull(element: T?): List<T> = when (element) {
+    null -> this
+    else -> this + element
+}
