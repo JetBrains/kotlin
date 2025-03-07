@@ -8,6 +8,7 @@ plugins {
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
+    `java-test-fixtures`
 }
 
 repositories {
@@ -494,38 +495,41 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
     }
 
-    sourceSets.create("testingUtilities") {
+    sourceSets.getByName("testFixtures") {
         val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
         compileClasspath += gradlePluginVariantSourceSet.output
-        runtimeClasspath += gradlePluginVariantSourceSet.output
 
+        // test source set has a task dependency on testFixture which produces cyclic dependency when trying to inherit dependencies from test; just exclude self dependency as a workaround
+        fun Configuration.dependenciesWithoutSelf() = dependencies.filterNot {
+            it is ProjectDependency && it.path == project.path
+        }
+
+        // Share dependencies with functionalTest
         configurations.getByName(implementationConfigurationName) {
             extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.implementationConfigurationName))
-            extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
+            dependencies.addAllLater(
+                provider {
+                    configurations.getByName(testSourceSet.implementationConfigurationName).dependenciesWithoutSelf()
+                }
+            )
         }
 
+        // Also share runtime dependencies, but we don't actually resolve testFixturesRuntimeClasspath anywhere
         configurations.getByName(runtimeOnlyConfigurationName) {
             extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.runtimeOnlyConfigurationName))
-            extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
+            dependencies.addAllLater(
+                provider {
+                    configurations.getByName(testSourceSet.runtimeOnlyConfigurationName).dependenciesWithoutSelf()
+                }
+            )
         }
     }
 
-    // Pull out some KGP testing utilities into a separate compilation to compile against JDK 8, have access to internal KGP APIs and reuse them in KGP-IT
-    val kgpTestingUtilities = configurations.create("kgpTestingUtilities") {
-        isCanBeConsumed = true
-        isCanBeResolved = false
-    }
-    val testingUtilitiesCompilation = kotlin.target.compilations.getByName("testingUtilities")
-    testingUtilitiesCompilation.associateWith(kotlin.target.compilations.getByName("common"))
-    testingUtilitiesCompilation.compileJavaTaskProvider.configure {
+    // Enforce lowest jvm version to make testFixtures compatible with KGP-IT injections
+    val testFixturesCompilation = kotlin.target.compilations.getByName("testFixtures")
+    testFixturesCompilation.compileJavaTaskProvider.configure {
         sourceCompatibility = JavaLanguageVersion.of(8).toString()
         targetCompatibility = JavaLanguageVersion.of(8).toString()
-    }
-
-    testingUtilitiesCompilation.output.classesDirs.forEach {
-        kgpTestingUtilities.outgoing.artifact(it) {
-            builtBy(testingUtilitiesCompilation.compileTaskProvider)
-        }
     }
 
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
@@ -544,7 +548,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     )
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
-    functionalTestCompilation.associateWith(testingUtilitiesCompilation)
+    functionalTestCompilation.associateWith(testFixturesCompilation)
 
     tasks.register<Test>("functionalTest") {
         systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
@@ -617,3 +621,10 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         dependsOn("lincheckTest")
     }
 }
+
+fun avoidPublishingTestFixtures() {
+    val javaComponent = components["java"] as AdhocComponentWithVariants
+    javaComponent.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+    javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
+}
+avoidPublishingTestFixtures()
