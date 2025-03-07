@@ -536,8 +536,7 @@ class Strings {
         assertPrints(limitSplit, "[a, b, c->d->e]")
 
         val emptyInputResult = "".split("sep")
-        assertPrints(emptyInputResult, "[]")
-        assertPrints(emptyInputResult.size, "1")
+        assertTrue(emptyInputResult == listOf(""))
 
         val emptyDelimiterSplit = "abc".split("")
         assertPrints(emptyDelimiterSplit, "[, a, b, c, ]")
@@ -565,6 +564,9 @@ class Strings {
 
         val limitSplit = "a,b,c,d,e".split(',', limit = 3)
         assertPrints(limitSplit, "[a, b, c,d,e]")
+
+        val emptyInputResult = "".split('|')
+        assertTrue(emptyInputResult == listOf(""))
 
         val mixedCase = "abcXdef".split('x')
         assertPrints(mixedCase, "[abcXdef]")  // No match with case sensitivity
@@ -597,8 +599,7 @@ class Strings {
         assertPrints(caseInsensitiveSplit, "[, 123, 45, ]")
 
         val emptyInputResult = "".split(Regex("sep"))
-        assertPrints(emptyInputResult, "[]")
-        assertPrints(emptyInputResult.size, "1")
+        assertTrue(emptyInputResult == listOf(""))
 
         val emptyDelimiterSplit = "abc".split(Regex(""))
         assertPrints(emptyDelimiterSplit, "[, a, b, c, ]")
@@ -628,8 +629,7 @@ class Strings {
         assertPrints(caseInsensitiveSplit, "[, 123, 45, ]")
 
         val emptyInputResult = "".split(Pattern.compile("sep"))
-        assertPrints(emptyInputResult, "[]")
-        assertPrints(emptyInputResult.size, "1")
+        assertTrue(emptyInputResult == listOf(""))
 
         val emptyDelimiterSplit = "abc".split(Pattern.compile(""))
         assertPrints(emptyDelimiterSplit, "[a, b, c, ]")
