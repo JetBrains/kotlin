@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,13 +30,10 @@ import java.util.concurrent.locks.ReentrantLock
 internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractChecker) {
     private val globalLock = ReentrantLock()
 
-    inline fun <R> withGlobalLock(
-        lockingIntervalMs: Long = lockingInterval,
-        action: () -> R,
-    ): R {
+    inline fun <R> withGlobalLock(action: () -> R): R {
         if (!globalLockEnabled) return action()
 
-        return globalLock.lockWithPCECheck(lockingIntervalMs, action)
+        return globalLock.lockWithPCECheck(action)
     }
 
     /**
@@ -353,6 +350,12 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         resolveStateFieldUpdater.set(this, FirResolvedToPhaseState(toPhase))
         currentState.latch.countDown()
     }
+
+    companion object {
+        val lockingInterval: Long by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            Registry.intValue("kotlin.analysis.ll.locking.interval", 100).toLong()
+        }
+    }
 }
 
 private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
@@ -363,10 +366,6 @@ private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
 
 private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
     Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
-}
-
-private val lockingInterval: Long by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    Registry.intValue("kotlin.analysis.ll.locking.interval", 100).toLong()
 }
 
 /**
