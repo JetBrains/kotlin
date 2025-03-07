@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface JvmClasspathSnapshottingOperation : BuildOperation {
+public interface JvmClasspathSnapshottingOperation : BuildOperation<JvmClasspathEntrySnapshot> {
     public class Option<V> internal constructor(public val id: String)
 
     public operator fun <V> get(key: Option<V>): V?

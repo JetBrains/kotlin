@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface JsKlibCompilationOperation : BuildOperation {
+public interface JsKlibCompilationOperation : BuildOperation<Unit> {
     public val compilerArguments: JsCompilerArguments
 }

@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface JsBinaryLinkingOperation : BuildOperation {
+public interface JsBinaryLinkingOperation : BuildOperation<Unit> {
     public val linkerArguments: JsLinkerArguments
 }

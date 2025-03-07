@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface WasmBinaryLinkingOperation : BuildOperation {
+public interface WasmBinaryLinkingOperation : BuildOperation<Unit> {
     public val linkerArguments: WasmLinkerArguments
 }

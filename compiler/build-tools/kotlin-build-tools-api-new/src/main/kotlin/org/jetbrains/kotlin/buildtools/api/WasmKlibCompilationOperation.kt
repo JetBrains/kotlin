@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface WasmKlibCompilationOperation : BuildOperation {
+public interface WasmKlibCompilationOperation : BuildOperation<Unit> {
     public val compilerArguments: WasmCompilerArguments
 }

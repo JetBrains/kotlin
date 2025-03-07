@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface JvmCompilationOperation : BuildOperation {
+public interface JvmCompilationOperation : BuildOperation<Unit> {
     public class Option<V> internal constructor(public val id: String)
 
     public operator fun <V> get(key: Option<V>): V?

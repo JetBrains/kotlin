@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import java.util.concurrent.CompletableFuture
+
 public interface KotlinToolchain {
     public val jvm: JvmPlatformToolchain
     public val js: JsPlatformToolchain
@@ -14,15 +16,15 @@ public interface KotlinToolchain {
     public fun makeExecutionPolicy(): ExecutionPolicy
 
     // no @JvmOverloads on interfaces :(
-    public fun executeOperation(
-        operation: BuildOperation,
-    )
+    public fun <R> executeOperation(
+        operation: BuildOperation<R>,
+    ): CompletableFuture<R>
 
-    public fun executeOperation(
-        operation: BuildOperation,
+    public fun <R> executeOperation(
+        operation: BuildOperation<R>,
         executionMode: ExecutionPolicy = makeExecutionPolicy(),
         logger: KotlinLogger? = null,
-    )
+    ): CompletableFuture<R>
 
     /**
      * This must be called at the end of the project build (i.e., all build operations scoped to the project are finished)

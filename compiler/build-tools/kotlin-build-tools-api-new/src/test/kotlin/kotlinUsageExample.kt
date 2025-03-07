@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.JvmClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.JvmDumbIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.JvmDumbIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.JvmIcLookupTracker
@@ -57,10 +58,20 @@ fun jvmIc(classLoader: ClassLoader) {
         Paths.get("lib/b.jar"),
     )
 
-    val snapshots = dependencies
+    val snapshotOperations = dependencies
         .associate { origin -> origin to origin.resolveSibling("${origin.fileName}.snapshot") }
-        .map { (origin, snapshotPath) -> snapshotPath to kotlinToolchain.jvm.calculateClasspathSnapshot(origin, granularity = JvmClassSnapshotGranularity.CLASS_LEVEL) }
-        .map { (snapshotPath, snapshot) -> snapshotPath.also { snapshot.saveSnapshot(it) } }
+        .map { (origin, snapshotPath) ->
+            snapshotPath to kotlinToolchain.jvm.makeClasspathSnapshottingOperation(origin).apply {
+                set(JvmClasspathSnapshottingOperation.GRANULARITY, JvmClassSnapshotGranularity.CLASS_LEVEL)
+            }
+        }
+//        .map { (snapshotPath, snapshot) -> snapshotPath.also { snapshot.saveSnapshot(it) } }
+
+    val snapshots = snapshotOperations.map { (snapshotPath, operation) ->
+        val snapshot = kotlinToolchain.executeOperation(operation).get()
+        snapshot.saveSnapshot(snapshotPath)
+        snapshotPath
+    }
 
     val compilation = kotlinToolchain.jvm.makeJvmCompilationOperation()
 

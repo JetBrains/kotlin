@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface NativeKlibCompilationOperation : BuildOperation {
+public interface NativeKlibCompilationOperation : BuildOperation<Unit> {
     public val compilerArguments: NativeCompilerArguments
 }

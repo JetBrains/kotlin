@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-public interface NativeBinaryLinkingOperation : BuildOperation {
+public interface NativeBinaryLinkingOperation : BuildOperation<Unit> {
     public val linkerArguments: NativeLinkerArguments
 }
