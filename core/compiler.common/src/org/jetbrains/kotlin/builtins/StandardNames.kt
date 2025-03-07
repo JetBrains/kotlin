@@ -54,6 +54,8 @@ object StandardNames {
 
     @JvmField val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")
 
+    @JvmField val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
+
     @JvmField val CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"))
 
     @JvmField val RESULT_FQ_NAME = FqName("kotlin.Result")
