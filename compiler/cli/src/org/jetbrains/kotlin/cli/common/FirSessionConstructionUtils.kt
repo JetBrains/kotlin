@@ -300,7 +300,14 @@ fun <F> prepareMetadataSessions(
 
 // ---------------------------------------------------- Implementation ----------------------------------------------------
 
-typealias FirSessionProducer<F> = (List<F>, FirModuleData, FirProjectSessionProvider, FirSessionConfigurator.() -> Unit) -> FirSession
+fun interface FirSessionProducer<F> {
+    fun createSession(
+        files: List<F>,
+        moduleData: FirModuleData,
+        sessionProvider: FirProjectSessionProvider,
+        sessionConfigurator: FirSessionConfigurator.() -> Unit,
+    ): FirSession
+}
 
 fun interface FirCommonLibrarySessionForHmppProducer {
     fun createSession(
@@ -421,7 +428,7 @@ object SessionConstructionUtils {
         targetPlatform: TargetPlatform,
         sessionProvider: FirProjectSessionProvider,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
-        createFirSession: FirSessionProducer<F>,
+        sourceSessionProducer: FirSessionProducer<F>,
     ): SessionWithSources<F> {
         val platformModuleData = FirSourceModuleData(
             rootModuleName,
@@ -431,7 +438,7 @@ object SessionConstructionUtils {
             targetPlatform,
         )
 
-        val session = createFirSession(files, platformModuleData, sessionProvider) {
+        val session = sourceSessionProducer.createSession(files, platformModuleData, sessionProvider) {
             sessionConfigurator()
             useCheckers(CliOnlyLanguageVersionSettingsCheckers)
         }
@@ -446,7 +453,7 @@ object SessionConstructionUtils {
         sessionProvider: FirProjectSessionProvider,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         isCommonSource: (F) -> Boolean,
-        createFirSession: FirSessionProducer<F>,
+        sourceSessionProducer: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
         val commonModuleData = FirSourceModuleData(
             Name.identifier("${rootModuleName.asString()}-common"),
@@ -472,8 +479,8 @@ object SessionConstructionUtils {
             (if (isCommonSource(file)) commonFiles else platformFiles).add(file)
         }
 
-        val commonSession = createFirSession(commonFiles, commonModuleData, sessionProvider, sessionConfigurator)
-        val platformSession = createFirSession(platformFiles, platformModuleData, sessionProvider) {
+        val commonSession = sourceSessionProducer.createSession(commonFiles, commonModuleData, sessionProvider, sessionConfigurator)
+        val platformSession = sourceSessionProducer.createSession(platformFiles, platformModuleData, sessionProvider) {
             sessionConfigurator()
             // The CLI session might contain an opt-in for an annotation that's defined in the platform module.
             // Therefore, only run the opt-in LV checker on the platform module.
@@ -610,14 +617,14 @@ object SessionConstructionUtils {
         moduleDataForHmppModule: LinkedHashMap<HmppCliModule, FirModuleData>,
         files: List<F>,
         fileBelongsToModule: (F, String) -> Boolean,
-        createFirSession: FirSessionProducer<F>,
+        sourceSessionProducer: FirSessionProducer<F>,
         sessionProvider: FirProjectSessionProvider,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): List<SessionWithSources<F>> {
         return hmppModuleStructure.modules.mapIndexed { i, module ->
             val moduleData = moduleDataForHmppModule.getValue(module)
             val sources = files.filter { fileBelongsToModule(it, module.name) }
-            val session = createFirSession(sources, moduleData, sessionProvider) {
+            val session = sourceSessionProducer.createSession(sources, moduleData, sessionProvider) {
                 sessionConfigurator()
                 // The CLI session might contain an opt-in for an annotation that's defined in one of the modules.
                 // The only module that's guaranteed to have a dependency on this module is the last one.
