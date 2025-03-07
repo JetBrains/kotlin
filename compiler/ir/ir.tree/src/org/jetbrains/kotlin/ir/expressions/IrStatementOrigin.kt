@@ -14,6 +14,17 @@ class IrStatementOriginImpl(override val debugName: String) : IrStatementOrigin,
 
     override fun toString(): String = debugName
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is IrStatementOriginImpl) return false
+
+        if (debugName != other.debugName) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = debugName.hashCode()
+
     companion object : PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, IrStatementOriginImpl>> {
         override fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, IrStatementOriginImpl> =
             IrStatementOriginImpl(property.name)
