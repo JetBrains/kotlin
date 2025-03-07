@@ -199,7 +199,6 @@ val unarchivedStandaloneExternalITClasses = tasks.register<Sync>("unarchivedStan
     dependsOn(swiftExportStandaloneExternalIT)
     from(zipTree(provider { swiftExportStandaloneExternalIT.singleFile }))
     into(layout.buildDirectory.dir("unarchivedStandaloneExternalITClasses"))
-    exclude("META-INF/MANIFEST.MF")
 }
 
 nativeTest("testSimpleITWithEmbeddable", null) {
