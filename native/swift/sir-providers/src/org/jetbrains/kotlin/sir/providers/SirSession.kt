@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.FqName
@@ -28,8 +27,7 @@ public interface SirSession :
     SirTrampolineDeclarationsProvider,
     SirModuleProvider,
     SirTypeProvider,
-    SirVisibilityChecker,
-    SirChildrenProvider
+    SirVisibilityChecker
 {
     public val sirSession: SirSession
         get() = this
@@ -43,7 +41,6 @@ public interface SirSession :
     public val moduleProvider: SirModuleProvider
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
-    public val childrenProvider: SirChildrenProvider
 
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy
         get() = typeProvider.errorTypeStrategy
@@ -80,9 +77,6 @@ public interface SirSession :
 
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
-
-    override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
-        with(childrenProvider) { this@extractDeclarations.extractDeclarations(ktAnalysisSession) }
 }
 
 /**
@@ -191,10 +185,6 @@ public interface SirTrampolineDeclarationsProvider {
 public interface SirModuleProvider {
 
     public fun KaModule.sirModule(): SirModule
-}
-
-public interface SirChildrenProvider {
-    public fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration>
 }
 
 public interface SirTypeProvider {

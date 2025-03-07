@@ -54,5 +54,4 @@ internal class StandaloneSirSession(
         unsupportedTypeStrategy = unsupportedTypeStrategy
     )
     override val visibilityChecker = SirVisibilityCheckerImpl(unsupportedDeclarationReporter)
-    override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 }

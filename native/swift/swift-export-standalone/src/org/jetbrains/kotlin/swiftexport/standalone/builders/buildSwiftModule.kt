@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.providers.utils.extractDeclarations
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
@@ -75,7 +76,7 @@ private fun KaSession.traverseTopLevelDeclarationsInScopes(
 
 private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession: KaSession): Sequence<SirDeclaration> =
     with(sirSession) {
-        generateSequence(this@allDeclarations.extractDeclarations(kaSession)) {
+        generateSequence(this@allDeclarations.extractDeclarations(kaSession, sirSession)) {
             it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }.takeIf { it.count() > 0 }
         }.flatMap { it }
     }

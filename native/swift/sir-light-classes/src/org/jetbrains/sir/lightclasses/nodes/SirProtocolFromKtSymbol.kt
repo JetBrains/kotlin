@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
+import org.jetbrains.kotlin.sir.providers.utils.extractDeclarations
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -62,7 +63,7 @@ internal class SirProtocolFromKtSymbol(
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations(useSiteSession, sirSession)
             .toList()
     }
 }
@@ -110,7 +111,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations(useSiteSession, sirSession)
             .map {
                 when (it) {
                     is SirFunction -> SirRelocatedFunction(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }

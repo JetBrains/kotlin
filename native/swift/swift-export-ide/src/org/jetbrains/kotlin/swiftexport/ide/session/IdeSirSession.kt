@@ -38,9 +38,6 @@ public class IdeSirSession(
         sirSession = sirSession,
     )
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(unsupportedDeclarationReporter)
-    override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
-        sirSession = sirSession,
-    )
 
     override val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider =
         SirTrampolineDeclarationsProviderImpl(sirSession, targetPackageFqName)

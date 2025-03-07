@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.providers.utils.extractDeclarations
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 class TestSirSession(
@@ -46,9 +47,6 @@ class TestSirSession(
         sirSession = sirSession,
     )
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(SilentUnsupportedDeclarationReporter)
-    override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
-        sirSession = sirSession,
-    )
 
     override val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider =
         SirTrampolineDeclarationsProviderImpl(sirSession, null)
@@ -57,7 +55,7 @@ class TestSirSession(
 inline fun <R> translate(file: KtFile, action: (List<SirDeclaration>) -> R) {
     analyze(file) {
         with(TestSirSession(useSiteModule)) {
-            action(file.symbol.fileScope.extractDeclarations(useSiteSession).toList())
+            action(file.symbol.fileScope.extractDeclarations(useSiteSession, sirSession).toList())
         }
     }
 }
