@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
-import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.*
