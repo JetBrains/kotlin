@@ -32,7 +32,7 @@ data class PropertyName(val identifier: Name, val columnNameAnnotation: FirAnnot
         fun buildAnnotation(name: String): FirAnnotation {
             return org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation {
                 annotationTypeRef = buildResolvedTypeRef {
-                    type = Names.COLUMN_NAME_ANNOTATION.defaultType(emptyList())
+                    coneType = Names.COLUMN_NAME_ANNOTATION.defaultType(emptyList())
                 }
                 argumentMapping = buildAnnotationArgumentMapping {
                     mapping[Names.COLUMN_NAME_ARGUMENT] = buildLiteralExpression(

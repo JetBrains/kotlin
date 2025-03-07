@@ -82,7 +82,7 @@ private fun KClass<*>.classId(): ClassId {
 }
 
 fun ConeKotlinType.isDataFrame(session: FirSession) =
-    isSubtypeOf(ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID), arrayOf(ConeStarProjection), isNullable = false), session)
+    isSubtypeOf(ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID), arrayOf(ConeStarProjection), isMarkedNullable = false), session)
 
 fun ConeKotlinType.isGroupBy(session: FirSession) = fullyExpandedClassId(session) == Names.GROUP_BY_CLASS_ID
 

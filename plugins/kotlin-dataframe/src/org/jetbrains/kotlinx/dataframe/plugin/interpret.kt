@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -53,7 +55,6 @@ import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableString
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.fir.types.isStarProjection
@@ -61,8 +62,6 @@ import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.returnType
 import org.jetbrains.kotlin.fir.types.toConeTypeProjection
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -111,7 +110,7 @@ fun <T> KotlinTypeFacade.interpret(
             val value: Any = if (lens == Interpreter.Id) {
                 firTypeProjection.toConeTypeProjection()
             } else {
-                val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.type
+                val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.coneType
                 if (type is ConeIntersectionType) return@forEachIndexed
                 Marker(type)
             }
@@ -149,8 +148,9 @@ fun <T> KotlinTypeFacade.interpret(
             }
 
             is Interpreter.ReturnType -> {
-                val returnType = it.expression.resolvedType.returnType(session)
-                Interpreter.Success(Marker(returnType))
+                (it.expression.resolvedType as? ConeClassLikeType)?.returnType(session)?.let { returnType ->
+                    Interpreter.Success(Marker(returnType))
+                }
             }
 
             is Interpreter.Dsl -> {
@@ -352,7 +352,7 @@ fun SessionContext.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): Plu
 
 fun SessionContext.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
     val symbol = coneClassLikeType.toSymbol(session) as? FirRegularClassSymbol ?: return PluginDataFrameSchema.EMPTY
-    val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.firstOrNull() != session.builtinTypes.anyType.type) {
+    val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.firstOrNull() != session.builtinTypes.anyType.coneType) {
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as? FirRegularClassSymbol
         rootSchemaSymbol?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     } else {
@@ -397,7 +397,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
         val column = when (it.classId) {
             Names.DATA_COLUMN_CLASS_ID -> {
                 val type = when (val arg = it.typeArguments.single()) {
-                    is ConeStarProjection -> session.builtinTypes.nullableAnyType.type
+                    is ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
                     else -> arg as ConeClassLikeType
                 }
                 SimpleDataColumn(f(result), Marker(type))
@@ -458,7 +458,7 @@ private fun SessionContext.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeP
                 is ConeTypeParameterType -> {
                     val projection = mapping[type.lookupTag.typeParameterSymbol]
                     if (projection is ConeStarProjection) {
-                        type.lookupTag.typeParameterSymbol.resolvedBounds.singleOrNull()?.type
+                        type.lookupTag.typeParameterSymbol.resolvedBounds.singleOrNull()?.coneType
                     } else {
                         projection as? ConeKotlinType
                     }
@@ -524,7 +524,7 @@ private fun KotlinTypeFacade.toKPropertyApproximation(
             ?.let {
                 (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirLiteralExpression).value as String
             }
-        val kotlinType = symbol.resolvedReturnTypeRef.type
+        val kotlinType = symbol.resolvedReturnTypeRef.coneType
 
         val type1 = Marker(kotlinType)
         KPropertyApproximation(columnName ?: propertyName, type1)

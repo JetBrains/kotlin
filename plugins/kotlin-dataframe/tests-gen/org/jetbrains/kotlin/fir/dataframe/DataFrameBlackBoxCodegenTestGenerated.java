@@ -311,12 +311,6 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
-  @TestMetadata("main.kt")
-  public void testMain() {
-    runTest("testData/box/main.kt");
-  }
-
-  @Test
   @TestMetadata("mapToFrame.kt")
   public void testMapToFrame() {
     runTest("testData/box/mapToFrame.kt");

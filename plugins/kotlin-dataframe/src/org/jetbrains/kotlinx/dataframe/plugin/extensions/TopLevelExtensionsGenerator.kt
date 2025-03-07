@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -22,10 +23,8 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -88,7 +87,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                     (annotation.argumentMapping.mapping[Names.COLUMN_NAME_ARGUMENT] as? FirLiteralExpression)?.value as? String?
                 }
                 val name = property.name
-                val marker = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
+                val marker = owner.constructType(arrayOf(), isMarkedNullable = false).toTypeProjection(Variance.INVARIANT)
 
                 val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.classId?.equals(
                         Names.DATA_ROW_CLASS_ID) == true) {
@@ -100,15 +99,15 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                 }
 
                 if (
-                    resolvedReturnTypeRef.type.classId?.equals(Names.LIST) == true &&
-                    (resolvedReturnTypeRef.type.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(
+                    resolvedReturnTypeRef.coneType.classId?.equals(Names.LIST) == true &&
+                    (resolvedReturnTypeRef.coneType.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(
                         Names.DATA_SCHEMA_CLASS_ID, session) == true
                 ) {
                     require(columnGroupProjection == null)
                     resolvedReturnTypeRef = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
-                        typeArguments = arrayOf(resolvedReturnTypeRef.type.typeArguments[0]),
-                        isNullable = false
+                        typeArguments = arrayOf(resolvedReturnTypeRef.coneType.typeArguments[0]),
+                        isMarkedNullable = false
                     ).toFirResolvedTypeRef()
                 }
 
@@ -117,7 +116,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                     receiverType = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
                         typeArguments = arrayOf(marker),
-                        isNullable = false
+                        isMarkedNullable = false
                     ),
                     propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
                     returnTypeRef = resolvedReturnTypeRef,
@@ -129,7 +128,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.COLUM_GROUP_CLASS_ID),
                             typeArguments = arrayOf(columnGroupProjection),
-                            isNullable = false
+                            isMarkedNullable = false
                         ).toFirResolvedTypeRef()
                     }
 
@@ -140,7 +139,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                     receiverType = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID),
                         typeArguments = arrayOf(marker),
-                        isNullable = false
+                        isMarkedNullable = false
                     ),
                     propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
                     returnTypeRef = columnReturnType,

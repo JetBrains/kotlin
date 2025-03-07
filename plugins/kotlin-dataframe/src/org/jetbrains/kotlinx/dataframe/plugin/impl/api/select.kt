@@ -220,13 +220,13 @@ fun SimpleCol.isColOf(type: ConeKotlinType, session: FirSession): Boolean {
         is SimpleDataColumn -> this.type.type
         is SimpleColumnGroup -> ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-            typeArguments = arrayOf(session.builtinTypes.anyType.type),
-            isNullable = false
+            typeArguments = arrayOf(session.builtinTypes.anyType.coneType),
+            isMarkedNullable = false
         )
         is SimpleFrameColumn -> ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
-            typeArguments = arrayOf(session.builtinTypes.anyType.type),
-            isNullable = false
+            typeArguments = arrayOf(session.builtinTypes.anyType.coneType),
+            isMarkedNullable = false
         )
     }
     return columnType.isSubtypeOf(type, session)

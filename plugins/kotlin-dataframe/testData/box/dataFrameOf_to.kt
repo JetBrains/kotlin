@@ -5,7 +5,7 @@ import org.jetbrains.kotlinx.dataframe.io.*
 
 fun box(): String {
     val df = dataFrameOf(
-        Pair("a", listOf(1, 2))
+        Pair("a", listOf(1, 2)),
         "b" to listOf("str1", "str2"),
     )
     val i: Int = df.a[0]

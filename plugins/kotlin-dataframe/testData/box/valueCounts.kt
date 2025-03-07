@@ -11,6 +11,6 @@ fun box(): String {
 
     val counts1 = df.valueCounts(resultColumn = "a") { a }
     val col: DataColumn<String> = counts1.a
-    val col1: DataColumn<Int> counts1.a1
+    val col1: DataColumn<Int> = counts1.a1
     return "OK"
 }
