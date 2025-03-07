@@ -95,10 +95,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
-            FORWARD_DECLARATIONS_MODULE_NAME,
-            moduleDataProvider.platform,
-        ).apply {
+        val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(FORWARD_DECLARATIONS_MODULE_NAME).apply {
             bindSession(session)
         }
 

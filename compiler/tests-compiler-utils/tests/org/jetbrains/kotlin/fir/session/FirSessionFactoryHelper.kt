@@ -35,7 +35,7 @@ object FirSessionFactoryHelper {
         dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
-        val binaryModuleData = BinaryModuleData.initialize(moduleName, platform)
+        val binaryModuleData = BinaryModuleData.initialize(moduleName)
         val dependencyList = DependencyListForCliModule.build(binaryModuleData, init = dependenciesConfigurator)
         val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
         val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)

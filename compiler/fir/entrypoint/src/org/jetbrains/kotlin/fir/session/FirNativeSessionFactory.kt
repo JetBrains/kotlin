@@ -42,10 +42,7 @@ object FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing
         kotlinScopeProvider: FirKotlinScopeProvider,
         resolvedLibraries: List<KotlinLibrary>,
     ): List<FirSymbolProvider> {
-        val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
-            FORWARD_DECLARATIONS_MODULE_NAME,
-            moduleDataProvider.platform,
-        ).apply {
+        val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(FORWARD_DECLARATIONS_MODULE_NAME).apply {
             bindSession(session)
         }
         val provider = NativeForwardDeclarationsSymbolProvider(
