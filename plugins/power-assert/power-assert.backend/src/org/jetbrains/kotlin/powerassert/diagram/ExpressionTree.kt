@@ -226,6 +226,12 @@ fun buildTree(
                 }
             }
 
+            override fun visitTry(aTry: IrTry, data: Node) {
+                // Transform try-expressions as singular expressions.
+                val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                chainNode.addChild(ExpressionNode(aTry))
+            }
+
             override fun visitWhen(expression: IrWhen, data: Node) {
                 val whenNode = WhenNode(expression).also { data.addChild(it) }
 

@@ -1,9 +1,6 @@
 test1: ---
 assert(try { false } catch (_: Throwable) { true } finally { true })
-       |   |                              |                |
-       |   |                              |                kotlin.Unit
-       |   |                              true
-       |   false
+       |
        false
 ---
 test2: ---
@@ -15,13 +12,14 @@ assert(a == b && try { false } catch (_: Throwable) { true } finally { true })
 ---
 test2: ---
 assert(a == b && try { false } catch (_: Throwable) { true } finally { true })
-       | |  |    |   |                              |                |
-       | |  |    |   |                              |                kotlin.Unit
-       | |  |    |   |                              true
-       | |  |    |   false
+       | |  |    |
        | |  |    false
        | |  1
        | true
        1
 ---
-test3: ---error---
+test3: ---
+assert(try { throw Exception("error") } catch (_: Throwable) { false } finally { true })
+       |
+       false
+---

@@ -16,20 +16,17 @@ fun box(): String {
 
 fun test1() {
   { // BLOCK
-    val tmp_0: Boolean = { // BLOCK
+    val tmp_0: Boolean = try { // BLOCK
       false
     }
-    val tmp_1: Boolean = { // BLOCK
+    catch (<unused var>: Throwable){ // BLOCK
       true
     }
-    val tmp_2: Unit = { // BLOCK
+    finally { // BLOCK
       true /*~> Unit */
     }
-    val tmp_3: Boolean = try tmp_0
-    catch (<unused var>: Throwable)tmp_1
-    finally tmp_2
-    assert(value = tmp_3, lazyMessage = local fun <anonymous>(): String {
-      return "\nassert(try { false } catch (_: Throwable) { true } finally { true })" + "\n       |   |                              |                |" + "\n       |   |                              |                " + tmp_2 + "\n       |   |                              " + tmp_1 + "\n       |   " + tmp_0 + "\n       " + tmp_3 + "\n"
+    assert(value = tmp_0, lazyMessage = local fun <anonymous>(): String {
+      return "\nassert(try { false } catch (_: Throwable) { true } finally { true })" + "\n       |" + "\n       " + tmp_0 + "\n"
     }
 )
   }
@@ -37,31 +34,28 @@ fun test1() {
 
 fun test2(a: Int, b: Int) {
   { // BLOCK
-    val tmp_4: Int = a
-    val tmp_5: Int = b
-    val tmp_6: Boolean = EQEQ(arg0 = tmp_4, arg1 = tmp_5)
+    val tmp_1: Int = a
+    val tmp_2: Int = b
+    val tmp_3: Boolean = EQEQ(arg0 = tmp_1, arg1 = tmp_2)
     when {
-      tmp_6 -> { // BLOCK
-        val tmp_7: Boolean = { // BLOCK
+      tmp_3 -> { // BLOCK
+        val tmp_4: Boolean = try { // BLOCK
           false
         }
-        val tmp_8: Boolean = { // BLOCK
+        catch (<unused var>: Throwable){ // BLOCK
           true
         }
-        val tmp_9: Unit = { // BLOCK
+        finally { // BLOCK
           true /*~> Unit */
         }
-        val tmp_10: Boolean = try tmp_7
-        catch (<unused var>: Throwable)tmp_8
-        finally tmp_9
-        assert(value = tmp_10, lazyMessage = local fun <anonymous>(): String {
-          return "\nassert(a == b && try { false } catch (_: Throwable) { true } finally { true })" + "\n       | |  |    |   |                              |                |" + "\n       | |  |    |   |                              |                " + tmp_9 + "\n       | |  |    |   |                              " + tmp_8 + "\n       | |  |    |   " + tmp_7 + "\n       | |  |    " + tmp_10 + "\n       | |  " + tmp_5 + "\n       | " + tmp_6 + "\n       " + tmp_4 + "\n"
+        assert(value = tmp_4, lazyMessage = local fun <anonymous>(): String {
+          return "\nassert(a == b && try { false } catch (_: Throwable) { true } finally { true })" + "\n       | |  |    |" + "\n       | |  |    " + tmp_4 + "\n       | |  " + tmp_2 + "\n       | " + tmp_3 + "\n       " + tmp_1 + "\n"
         }
 )
       }
       else -> { // BLOCK
         assert(value = false, lazyMessage = local fun <anonymous>(): String {
-          return "\nassert(a == b && try { false } catch (_: Throwable) { true } finally { true })" + "\n       | |  |" + "\n       | |  " + tmp_5 + "\n       | " + tmp_6 + "\n       " + tmp_4 + "\n"
+          return "\nassert(a == b && try { false } catch (_: Throwable) { true } finally { true })" + "\n       | |  |" + "\n       | |  " + tmp_2 + "\n       | " + tmp_3 + "\n       " + tmp_1 + "\n"
         }
 )
       }
@@ -71,20 +65,17 @@ fun test2(a: Int, b: Int) {
 
 fun test3() {
   { // BLOCK
-    val tmp_11: Nothing = { // BLOCK
+    val tmp_5: Boolean = try { // BLOCK
       throw Exception(p0 = "error")
     }
-    val tmp_12: Boolean = { // BLOCK
+    catch (<unused var>: Throwable){ // BLOCK
       false
     }
-    val tmp_13: Unit = { // BLOCK
+    finally { // BLOCK
       true /*~> Unit */
     }
-    val tmp_14: Boolean = try tmp_11
-    catch (<unused var>: Throwable)tmp_12
-    finally tmp_13
-    assert(value = tmp_14, lazyMessage = local fun <anonymous>(): String {
-      return "\nassert(try { throw Exception(\"error\") } catch (_: Throwable) { false } finally { true })" + "\n       |   |                                                 |                 |" + "\n       |   |                                                 |                 " + tmp_13 + "\n       |   |                                                 " + tmp_12 + "\n       |   " + tmp_11 + "\n       " + tmp_14 + "\n"
+    assert(value = tmp_5, lazyMessage = local fun <anonymous>(): String {
+      return "\nassert(try { throw Exception(\"error\") } catch (_: Throwable) { false } finally { true })" + "\n       |" + "\n       " + tmp_5 + "\n"
     }
 )
   }
