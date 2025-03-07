@@ -16,9 +16,7 @@ assert(foo@(if (a < b) a == b else if (b < a) b == a else false))
 ---
 test3: ---
 assert(foo@(try { false } catch (e: Exception) { true }))
-            |   |                              |
-            |   |                              true
-            |   false
+            |
             false
 ---
 test4: ---

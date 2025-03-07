@@ -16,9 +16,7 @@ assert(@Ann @AnnWithConstructor(true) if (a < b) a == b else if (b < a) b == a e
 ---
 test3: ---
 assert(@Ann @AnnWithConstructor(a = true) try { false } catch (e: Exception) { true })
-                                          |   |                              |
-                                          |   |                              true
-                                          |   false
+                                          |
                                           false
 ---
 test4: ---

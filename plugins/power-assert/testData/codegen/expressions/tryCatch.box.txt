@@ -1,50 +1,36 @@
 test1: ---
 assert(try { false } catch (e: Exception) { true })
-       |   |                              |
-       |   |                              true
-       |   false
+       |
        false
 ---
 test2: ---
 assert(try { true; a > b } catch (e: NullPointerException) { b > a } catch (e: Exception) { b == a })
-       |   |                                               |                              |
-       |   |                                               |                              false
-       |   |                                               true
-       |   false
+       |
        false
 ---
 test3: ---
 assert(try { a > b } catch (e: Exception) { b == a } finally { a < b })
-       |   |                              |                  |
-       |   |                              |                  kotlin.Unit
-       |   |                              false
-       |   false
+       |
        false
 ---
 test4: ---
 assert(try { a > b } finally { a == b ; 10})
-       |   |                 |
-       |   |                 kotlin.Unit
-       |   false
+       |
        false
 ---
 test5: ---
 assert(try { a > b } catch (e: Exception) { b == a } finally { a < b } == (a.inc() == 2))
-       |   |                              |                  |         |   | |     |
-       |   |                              |                  |         |   | |     true
-       |   |                              |                  |         |   | 2
-       |   |                              |                  |         |   1
-       |   |                              |                  |         false
-       |   |                              |                  kotlin.Unit
-       |   |                              false
-       |   false
+       |                                                               |   | |     |
+       |                                                               |   | |     true
+       |                                                               |   | 2
+       |                                                               |   1
+       |                                                               false
        false
 ---
 test6: ---
 assert(
     try {
-    |   |
-    |   false
+    |
     false
 
         when {
@@ -52,9 +38,6 @@ assert(
             else -> false
         }
     } finally {
-              |
-              kotlin.Unit
-
         1
     }
 )
