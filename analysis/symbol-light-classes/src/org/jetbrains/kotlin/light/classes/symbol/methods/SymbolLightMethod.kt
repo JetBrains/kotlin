@@ -71,10 +71,6 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     protected inline fun <T> withFunctionSymbol(crossinline action: KaSession.(FType) -> T): T =
         functionSymbolPointer.withSymbol(ktModule, action)
 
-    override fun isVarArgs(): Boolean = withFunctionSymbol { functionSymbol ->
-        functionSymbol.valueParameters.lastOrNull()?.isVararg == true
-    }
-
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
             parent = this@SymbolLightMethod,

@@ -32,13 +32,13 @@ public final class C /* C*/ {
   public  C(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.Nullable() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
-  public  C(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
-
-  @kotlin.jvm.JvmOverloads()
   public  C(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double)
 
   @kotlin.jvm.JvmOverloads()
   public  C(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double, boolean);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double, boolean)
+
+  @kotlin.jvm.JvmOverloads()
+  public /* vararg */  C(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 
   @kotlin.jvm.JvmOverloads()
   public final /* vararg */ void varargWithDefaultsBefore(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  varargWithDefaultsBefore(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
@@ -48,6 +48,12 @@ public final class C /* C*/ {
 
   @kotlin.jvm.JvmOverloads()
   public final /* vararg */ void varargWithDefaultsBefore(int, double, boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  varargWithDefaultsBefore(int, double, boolean, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
+
+  @kotlin.jvm.JvmOverloads()
+  public final /* vararg */ void varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 
   @kotlin.jvm.JvmOverloads()
   public final void bar();//  bar()
@@ -101,13 +107,7 @@ public final class C /* C*/ {
   public final void varargWithDefaultInMiddle(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double, boolean);//  varargWithDefaultInMiddle(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double, boolean)
 
   @kotlin.jvm.JvmOverloads()
-  public final void varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
-
-  @kotlin.jvm.JvmOverloads()
   public final void varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double);//  varargWithOneDefault(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double)
-
-  @kotlin.jvm.JvmOverloads()
-  public final void varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 
   @kotlin.jvm.JvmOverloads()
   public final void varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double);//  varargWithTwoDefaults(int, @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], double)
