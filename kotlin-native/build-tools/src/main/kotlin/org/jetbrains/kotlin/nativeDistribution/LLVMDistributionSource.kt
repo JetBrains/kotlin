@@ -16,8 +16,26 @@ import kotlin.io.path.isDirectory
 private const val ROOT_PROPERTY_NAME = "kotlin.native.llvm"
 private val supportedHosts = listOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
 
+/**
+ * Which components are contained in LLVM distribution:
+ * - [DEV] - almost every component;
+ * - [ESSENTIALS] - only necessary for the Native distribution
+ *
+ * *NOTE*: `kotlin-native/konan/konan.properties` uses [DEV], because it's required to build the Native compiler itself.
+ */
 enum class LLVMDistributionKind {
+    /**
+     * Includes (almost) every possible component.
+     *
+     * Suitable for building/testing Native compiler itself.
+     */
     DEV,
+
+    /**
+     * Includes only necessary components.
+     *
+     * Suitable for the Native distribution.
+     */
     ESSENTIALS,
 }
 
@@ -86,7 +104,7 @@ val Project.llvmDistributionSource: LLVMDistributionSource
         }
     }
 
-private val LLVMDistributionKind.nameForProperties: String
+val LLVMDistributionKind.nameForProperties: String
     get() = when (this) {
         LLVMDistributionKind.DEV -> "dev"
         LLVMDistributionKind.ESSENTIALS -> "user"
@@ -124,4 +142,4 @@ val LLVMDistributionSource.asProperties: Map<String, String>
         is LLVMDistributionSource.Local -> this.localAsProperties
         is LLVMDistributionSource.Default -> this.distributions.remoteAsProperties
         is LLVMDistributionSource.Next -> this.distributions.remoteAsProperties
-    }
+    }.toMap() // toMap() is required to work with Gradle/Java serialization for some reason.

@@ -46,13 +46,9 @@ open class PrepareKonanProperties @Inject constructor(
 
     /**
      * Hostnames for which to update the default llvm variant.
-     * - `user` - smaller, includes only necessary components.
-     * - `dev` - bigger, includes (almost) every possible component. Use this one,
-     *           if your feature requires component that is not a part of user distribution (yet).
      */
-    // Note: by default konan.properties use `dev` variant because it is needed for building our LLVM dynamic library.
     @get:Input
-    val llvmVariants: MapProperty<KonanTarget, String> = objectFactory.mapProperty(KonanTarget::class.java, String::class.java)
+    val llvmVariants: MapProperty<KonanTarget, LLVMDistributionKind> = objectFactory.mapProperty(KonanTarget::class.java, LLVMDistributionKind::class.java)
 
     /**
      * LLVM version to update in `konan.properties`
@@ -71,7 +67,7 @@ open class PrepareKonanProperties @Inject constructor(
                 filter(mapOf(
                         "beginToken" to "$",
                         "endToken" to "",
-                        "tokens" to mapOf("llvm.${host}.dev" to "\$llvm.${host}.${llvmVariant}")
+                        "tokens" to mapOf("llvm.${host}.dev" to "\$llvm.${host}.${llvmVariant.nameForProperties}")
                 ), ReplaceTokens::class.java)
             }
         }

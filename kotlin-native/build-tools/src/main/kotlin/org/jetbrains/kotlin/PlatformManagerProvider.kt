@@ -35,13 +35,16 @@ open class PlatformManagerProvider @Inject constructor(
         providerFactory: ProviderFactory,
         project: Project,
 ) {
-    @get:Internal("only konan.properties file matters")
+    @get:Internal("only konan.properties and its override matter")
     val distribution = objectFactory.nativeDistributionProperty().convention(project.nativeProtoDistribution)
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
     protected val konanProperties = project.nativeProtoDistribution.konanProperties
+
+    @get:Input
+    val konanPropertiesOverride: Map<String, String> = project.llvmDistributionSource.asProperties
 
     @get:Input
     @get:Optional
@@ -52,7 +55,7 @@ open class PlatformManagerProvider @Inject constructor(
         PlatformManager(Distribution(
                 konanHome = it.root.asFile.absolutePath,
                 onlyDefaultProfiles = true,
-                propertyOverrides = project.llvmDistributionSource.asProperties.toMap(), // toMap() is required for serialization support.
+                propertyOverrides = konanPropertiesOverride,
                 konanDataDir = konanDataDir.orNull,
         ))
     }
