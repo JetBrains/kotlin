@@ -255,7 +255,14 @@ open class FirDeclarationsResolveTransformer(
                         // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
                         property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
                         property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.coneType))
+                        property.setter?.transformReturnTypeRef(
+                            transformer,
+                            ResolutionMode.UpdateImplicitTypeRef(
+                                buildResolvedTypeRef {
+                                    coneType = session.builtinTypes.unitType.coneType
+                                }
+                            )
+                        )
                     }
                 }
 
@@ -992,7 +999,7 @@ open class FirDeclarationsResolveTransformer(
                     source = newSource
                     diagnostic = ConeSimpleDiagnostic("empty body", DiagnosticKind.Other)
                 }
-            result.transformReturnTypeRef(transformer, withExpectedType(returnTypeRef))
+            result.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(returnTypeRef))
         }
 
         return result
@@ -1164,7 +1171,7 @@ open class FirDeclarationsResolveTransformer(
                 is ResolutionMode.ReceiverResolution,
                 is ResolutionMode.Delegate,
                     -> transformTopLevelAnonymousFunctionExpression(anonymousFunctionExpression, null)
-                is ResolutionMode.WithStatus -> error("Should not be here in WithStatus mode")
+                is ResolutionMode.WithStatus, is ResolutionMode.UpdateImplicitTypeRef -> error("Should not be here in ${data::class} mode")
             }
         }
     }
@@ -1437,7 +1444,7 @@ open class FirDeclarationsResolveTransformer(
                 if (anonymousFunction.bodyResolved) return@withFullBodyResolve anonymousFunction
 
                 if (expectedReturnTypeRef is FirResolvedTypeRef) {
-                    anonymousFunction.transformReturnTypeRef(transformer, withExpectedType(expectedReturnTypeRef))
+                    anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(expectedReturnTypeRef))
                 }
 
                 transformFunction(
@@ -1486,7 +1493,7 @@ open class FirDeclarationsResolveTransformer(
         val resultType = inferredType
             ?: return backingField.transformReturnTypeRef(
                 transformer,
-                withExpectedType(
+                ResolutionMode.UpdateImplicitTypeRef(
                     buildErrorTypeRef {
                         diagnostic = ConeSimpleDiagnostic(
                             "Cannot infer variable type without an initializer",
@@ -1499,7 +1506,7 @@ open class FirDeclarationsResolveTransformer(
         val expectedType = resultType.toExpectedTypeRef(fallbackSource = backingField.source)
         return backingField.transformReturnTypeRef(
             transformer,
-            withExpectedType(
+            ResolutionMode.UpdateImplicitTypeRef(
                 expectedType.approximateDeclarationType(session, backingField.visibilityForApproximation(), isLocal = false)
             )
         )
@@ -1519,20 +1526,16 @@ open class FirDeclarationsResolveTransformer(
                 else -> null
             }
 
-            variable.transformReturnTypeRef(
-                transformer,
-                withExpectedType(
-                    resultType?.let {
-                        val expectedType = it.toExpectedTypeRef(fallbackSource = variable.source)
-                        expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
-                    } ?: buildErrorTypeRef {
-                        diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
-                        source = variable.source
-                    }
-                )
-            )
+            val newTypeRef: FirResolvedTypeRef = resultType?.let {
+                val expectedType = it.toExpectedTypeRef(fallbackSource = variable.source)
+                expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocal)
+            } ?: buildErrorTypeRef {
+                diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
+                source = variable.source
+            }
+            variable.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(newTypeRef))
             if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
-                variable.getter?.transformReturnTypeRef(transformer, withExpectedType(variable.returnTypeRef))
+                variable.getter?.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(newTypeRef))
             }
         }
     }

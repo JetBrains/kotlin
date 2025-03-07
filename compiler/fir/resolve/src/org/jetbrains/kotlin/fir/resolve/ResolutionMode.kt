@@ -100,6 +100,8 @@ sealed class ResolutionMode(
         }
     }
 
+    class UpdateImplicitTypeRef(val newTypeRef: FirResolvedTypeRef) : ResolutionMode(forceFullCompletion = false)
+
     /**
      * This resolution mode is used for resolving the LHS of assignments.
      *
