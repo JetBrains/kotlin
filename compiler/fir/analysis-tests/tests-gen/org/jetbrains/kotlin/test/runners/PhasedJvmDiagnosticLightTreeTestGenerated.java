@@ -2118,6 +2118,30 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("unnamedLocalVariableVsNamedUnderscore.kt")
+    public void testUnnamedLocalVariableVsNamedUnderscore() {
+      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariableVsNamedUnderscore.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedLocalVariables.kt")
+    public void testUnnamedLocalVariables() {
+      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedParameterOnOverride.kt")
+    public void testUnnamedParameterOnOverride() {
+      runTest("compiler/testData/diagnostics/tests/unnamedParameterOnOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
+    public void testUnnamedTypeArgumentVsNamedUnderscore() {
+      runTest("compiler/testData/diagnostics/tests/unnamedTypeArgumentVsNamedUnderscore.kt");
+    }
+
+    @Test
     @TestMetadata("Unresolved.kt")
     public void testUnresolved() {
       runTest("compiler/testData/diagnostics/tests/Unresolved.kt");

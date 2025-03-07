@@ -203,6 +203,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       runTest("compiler/testData/diagnostics/tests/unnamedArgsInJavaAnnotations.kt");
     }
 
+    @Test
+    @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
+    public void testUnnamedTypeArgumentVsNamedUnderscore() {
+      runTest("compiler/testData/diagnostics/tests/unnamedTypeArgumentVsNamedUnderscore.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/annotations")
     @TestDataPath("$PROJECT_ROOT")
