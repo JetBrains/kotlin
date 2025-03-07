@@ -226,6 +226,26 @@ class CompositionTests {
         advance()
     }
 
+
+    // regression test for b/401484249
+    @Test
+    fun composableCallInArray() = compositionTest {
+        var count by mutableIntStateOf(10)
+        compose {
+            StringArray(count)
+            val text = remember { 0 }.toString()
+            Text(text)
+        }
+
+        validate {
+            Text("0")
+        }
+
+        count -= 5
+        advance()
+        revalidate()
+    }
+
     @Test
     fun enumParameter() = compositionTest {
         var state by mutableStateOf(TestComposeEnum.A)
@@ -477,4 +497,17 @@ class PresenterImpl(
         onCompose()
         Text("Hello")
     }
+}
+
+@Composable
+fun StringArray(count: Int) =
+    Array(count) {
+        TwoRemembers()
+    }
+
+@Composable
+fun TwoRemembers(): String {
+    val string = remember { "string" }
+    val string2 by remember { mutableStateOf(string) }
+    return string2
 }

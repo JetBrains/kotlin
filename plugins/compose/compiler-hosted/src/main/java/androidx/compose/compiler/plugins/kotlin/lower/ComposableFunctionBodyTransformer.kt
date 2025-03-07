@@ -2911,7 +2911,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.associatedComposableSingletonStub != null) {
             // This call has an associated stub in ComposableSingletons class. This stub is not
             // directly reachable by any code in this module, but might be used by other external libraries.
@@ -2921,12 +2921,12 @@ class ComposableFunctionBodyTransformer(
             property?.transformChildrenVoid()
         }
 
-        if (expression.isComposableCall() || expression.isSyntheticComposableCall()) {
+        if (expression is IrCall && (expression.isComposableCall() || expression.isSyntheticComposableCall())) {
             return visitComposableCall(expression)
         }
 
         when {
-            expression.symbol.owner.isInline -> {
+            expression.symbol.owner.isInline || expression.symbol.owner.isInlineArrayConstructor() -> {
                 val captureScope = Scope.CaptureScope()
                 withScope(Scope.CallScope(expression, this)) {
                     expression.arguments.fastForEachIndexed { index, arg ->
@@ -2952,7 +2952,7 @@ class ComposableFunctionBodyTransformer(
                     expression
                 }
             }
-            expression.isComposableSingletonGetter() -> {
+            expression is IrCall && expression.isComposableSingletonGetter() -> {
                 // This looks like `ComposableSingletonClass.lambda-123`, which is a static/saved
                 // call of composableLambdaInstance. We want to transform the property here now
                 // so the assumptions about the invocation order assumed by source locations is
@@ -2960,9 +2960,9 @@ class ComposableFunctionBodyTransformer(
                 val getter = expression.symbol.owner
                 val property = getter.correspondingPropertySymbol?.owner
                 property?.transformChildrenVoid()
-                return super.visitCall(expression)
+                return super.visitFunctionAccess(expression)
             }
-            else -> return super.visitCall(expression)
+            else -> return super.visitFunctionAccess(expression)
         }
     }
 
@@ -4023,7 +4023,7 @@ class ComposableFunctionBodyTransformer(
             val inComposableCall: Boolean
                 get() = (parent as? Scope.CallScope)?.expression?.let { call ->
                     with(transformer) {
-                        call.isComposableCall() || call.isSyntheticComposableCall()
+                        call is IrCall && (call.isComposableCall() || call.isSyntheticComposableCall())
                     }
                 } == true
 
@@ -4503,7 +4503,7 @@ class ComposableFunctionBodyTransformer(
         class ParametersScope : BlockScope("parameters")
 
         class CallScope(
-            val expression: IrCall,
+            val expression: IrFunctionAccessExpression,
             private val transformer: ComposableFunctionBodyTransformer,
         ) : Scope("call") {
             override val isInComposable: Boolean
