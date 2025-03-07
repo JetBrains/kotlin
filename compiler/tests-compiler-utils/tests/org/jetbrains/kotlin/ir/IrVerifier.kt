@@ -90,7 +90,7 @@ class IrVerifier(
     override fun visitProperty(declaration: IrProperty) {
         visitDeclaration(declaration)
 
-        require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
+        require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH) == declaration.isFakeOverride) {
             "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
         }
     }
@@ -153,7 +153,7 @@ class IrVerifier(
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         visitFunction(declaration)
 
-        require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
+        require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH) == declaration.isFakeOverride) {
             "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
         }
     }

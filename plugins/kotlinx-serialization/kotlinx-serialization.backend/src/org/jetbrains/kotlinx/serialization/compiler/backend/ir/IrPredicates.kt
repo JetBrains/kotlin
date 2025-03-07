@@ -252,7 +252,7 @@ internal fun getSerializableClassDescriptorByCompanion(companion: IrClass): IrCl
 
 
 internal fun IrExpression.isInitializePropertyFromParameter(): Boolean =
-    this is IrGetValueImpl && this.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+    this is IrGetValueImpl && this.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH
 
 internal val IrConstructorCall.constructedClass
     get() = this.symbol.owner.constructedClass

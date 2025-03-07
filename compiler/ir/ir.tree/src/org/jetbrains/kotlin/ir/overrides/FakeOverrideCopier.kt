@@ -27,7 +27,7 @@ internal class FakeOverrideCopier(
         return declaration.factory.createFunctionWithLateBinding(
             startOffset = parentClass.startOffset,
             endOffset = parentClass.endOffset,
-            origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
+            origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
             name = declaration.name,
             visibility = declaration.visibility,
             isInline = declaration.isInline,
@@ -57,7 +57,7 @@ internal class FakeOverrideCopier(
 
         return declaration.factory.createPropertyWithLateBinding(
             parentClass.startOffset, parentClass.endOffset,
-            customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
+            customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
             declaration.name,
             declaration.visibility,
             customization.modality ?: declaration.modality,

@@ -17,7 +17,7 @@ interface IrDeclarationOrigin {
 
     companion object {
         val DEFINED by IrDeclarationOriginImpl
-        val FAKE_OVERRIDE by IrDeclarationOriginImpl
+        val FAKE_OVERRIDE_PATCH by IrDeclarationOriginImpl
         val FOR_LOOP_ITERATOR by IrDeclarationOriginImpl
         val FOR_LOOP_VARIABLE by IrDeclarationOriginImpl
         val FOR_LOOP_IMPLICIT_VARIABLE by IrDeclarationOriginImpl

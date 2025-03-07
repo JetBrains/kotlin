@@ -327,7 +327,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                                     origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
                                     delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                                    origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                                    origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH -> origin
                                     origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                                     getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                     else -> origin
@@ -344,7 +344,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 setter, property, this, symbols.setterSymbol, type, irParent, true,
                                 when {
                                     delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                                    origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                                    origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH -> origin
                                     origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                                     setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                     else -> origin
@@ -976,7 +976,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         firAnnotationContainer: FirAnnotationContainer, origin: IrDeclarationOrigin,
     ) {
         if ((firAnnotationContainer as? FirDeclaration)?.let { it.isFromLibrary || it.isPrecompiled } == true
-            || origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            || origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH
             // When `firAnnotationContainer` is not in a compile target file, we will not fill contents for
             // this annotation container later. Therefore, we have to set its annotations here.
             || firAnnotationContainer.isDeclaredInFilesBeingCompiled()

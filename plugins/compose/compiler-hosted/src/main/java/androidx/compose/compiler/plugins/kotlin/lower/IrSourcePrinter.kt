@@ -145,7 +145,7 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
+        if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH) return
         declaration.scoped {
             declaration.printAnnotations(onePerLine = true)
             if (declaration.overriddenSymbols.isNotEmpty()) {
@@ -1072,7 +1072,7 @@ class IrSourcePrinterVisitor(
             .firstOrNull {
                 if (it.name == param.name) {
                     val init = it.backingField?.initializer?.expression as? IrGetValue
-                    init?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+                    init?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH
                 } else false
             }
     }
@@ -1138,7 +1138,7 @@ class IrSourcePrinterVisitor(
         val nonParamDeclarations = declaration
             .declarations
             .filter { it != primaryConstructor && !ctorProperties.contains(it) }
-            .filter { it.origin != IrDeclarationOrigin.FAKE_OVERRIDE }
+            .filter { it.origin != IrDeclarationOrigin.FAKE_OVERRIDE_PATCH }
         if (nonParamDeclarations.isNotEmpty()) {
             bracedBlock {
                 nonParamDeclarations.printJoin("\n")
@@ -1161,7 +1161,7 @@ class IrSourcePrinterVisitor(
         }
         val printableDeclarations = declarations
             .filter { it !is IrConstructor }
-            .filter { it.origin != IrDeclarationOrigin.FAKE_OVERRIDE }
+            .filter { it.origin != IrDeclarationOrigin.FAKE_OVERRIDE_PATCH }
         if (printableDeclarations.isNotEmpty()) {
             bracedBlock {
                 printableDeclarations.printJoin("\n")

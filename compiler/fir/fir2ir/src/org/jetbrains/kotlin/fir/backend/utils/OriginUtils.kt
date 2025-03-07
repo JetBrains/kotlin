@@ -70,8 +70,8 @@ fun FirDeclaration?.computeIrOrigin(
         }
 
         this is FirCallableDeclaration -> when {
-            fakeOverrideOwnerLookupTag != null && fakeOverrideOwnerLookupTag != containingClassLookupTag() -> IrDeclarationOrigin.FAKE_OVERRIDE
-            isSubstitutionOrIntersectionOverride || isHiddenToOvercomeSignatureClash == true -> IrDeclarationOrigin.FAKE_OVERRIDE
+            fakeOverrideOwnerLookupTag != null && fakeOverrideOwnerLookupTag != containingClassLookupTag() -> IrDeclarationOrigin.FAKE_OVERRIDE_PATCH
+            isSubstitutionOrIntersectionOverride || isHiddenToOvercomeSignatureClash == true -> IrDeclarationOrigin.FAKE_OVERRIDE_PATCH
             parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && symbol.isJavaOrEnhancement -> {
                 IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             }
@@ -98,7 +98,7 @@ private val nameToOperationConventionOrigin: Map<Name, IrStatementOrigin> = mapO
 )
 
 internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
-    is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+    is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH
     is FirResolvedNamedReference -> when (val symbol = resolvedSymbol) {
         is FirSyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
         is FirNamedFunctionSymbol -> when {

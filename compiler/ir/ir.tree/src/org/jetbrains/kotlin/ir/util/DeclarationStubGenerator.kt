@@ -148,7 +148,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH)
                         || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 stubGenerator = this, typeTranslator,
             ).generateParentDeclaration()
@@ -193,7 +193,7 @@ abstract class DeclarationStubGenerator(
 
         val origin =
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                IrDeclarationOrigin.FAKE_OVERRIDE
+                IrDeclarationOrigin.FAKE_OVERRIDE_PATCH
             else computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareSimpleFunction(descriptor.original) {
             IrLazyFunction(
@@ -201,7 +201,7 @@ abstract class DeclarationStubGenerator(
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
+                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
             ).generateParentDeclaration().also {

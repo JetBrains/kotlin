@@ -415,7 +415,7 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
     }
 
     override fun getKind() =
-        if (owner.origin == IrDeclarationOrigin.FAKE_OVERRIDE) CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        if (owner.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH) CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
     override fun copy(

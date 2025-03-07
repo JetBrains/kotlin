@@ -172,7 +172,7 @@ internal class ComposableTypeTransformer(
         // case, we want to update those calls as well.
         if (
             containingClass != null &&
-            ownerFn.origin == IrDeclarationOrigin.FAKE_OVERRIDE && (
+            ownerFn.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH && (
                     // Fake override refers to composable if container is synthetic composable (K2)
                     // or function type is composable (K1)
                     containingClass.defaultType.isSyntheticComposableFunction() || (

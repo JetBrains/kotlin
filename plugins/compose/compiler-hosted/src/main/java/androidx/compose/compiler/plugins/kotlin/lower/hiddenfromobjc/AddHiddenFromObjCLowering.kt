@@ -93,7 +93,7 @@ class AddHiddenFromObjCLowering(
     }
 
     private fun IrFunction.isSyntheticFun(): Boolean =
-        origin == IrDeclarationOrigin.FAKE_OVERRIDE || startOffset < 0 || endOffset < 0
+        origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH || startOffset < 0 || endOffset < 0
 
 
     override fun visitFunction(declaration: IrFunction): IrStatement {

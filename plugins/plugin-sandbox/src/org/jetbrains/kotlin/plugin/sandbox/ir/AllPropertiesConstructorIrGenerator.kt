@@ -92,8 +92,8 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             klass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS } ?: context.irBuiltIns.anyClass.owner
 
         val properties =
-            klass.properties.toList().sortedWith(Comparator.comparing { if (it.origin == IrDeclarationOrigin.FAKE_OVERRIDE) 0 else 1 })
-        val overriddenProperties = properties.takeWhile { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+            klass.properties.toList().sortedWith(Comparator.comparing { if (it.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH) 0 else 1 })
+        val overriddenProperties = properties.takeWhile { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH }
         val superConstructor = when {
             superClass.defaultType.isAny() -> superClass.constructors.singleOrNull { c -> c.parameters.none { it.kind == IrParameterKind.Regular } }
             else -> {

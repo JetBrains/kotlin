@@ -87,7 +87,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                         ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
                         irPropertyType,
                         irValueParameter.symbol,
-                        IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+                        IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH
                     )
                 )
         }
@@ -228,7 +228,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
-        return context.symbolTable.descriptorExtension.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor, propertyDescriptor.isDelegated).apply {
+        return context.symbolTable.descriptorExtension.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE_PATCH, propertyDescriptor, propertyDescriptor.isDelegated).apply {
             this.getter = propertyDescriptor.getter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }

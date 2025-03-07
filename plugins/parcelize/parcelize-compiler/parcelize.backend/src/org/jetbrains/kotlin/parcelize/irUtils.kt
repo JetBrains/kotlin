@@ -215,7 +215,7 @@ fun IrClass.typeParameterMapping(instantiation: IrType): Map<IrTypeParameterSymb
 }
 
 val IrField.isFromPrimaryConstructor: Boolean
-    get() = (initializer?.expression as? IrGetValue)?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+    get() = (initializer?.expression as? IrGetValue)?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH
 
 private fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol

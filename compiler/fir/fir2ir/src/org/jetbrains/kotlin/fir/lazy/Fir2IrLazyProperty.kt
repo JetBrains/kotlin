@@ -169,7 +169,7 @@ class Fir2IrLazyProperty(
                 fir.delegate
             )
         }
-        origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+        origin != IrDeclarationOrigin.FAKE_OVERRIDE_PATCH -> {
             fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
@@ -200,7 +200,7 @@ class Fir2IrLazyProperty(
             origin = when {
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                 fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH -> origin
                 origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                 fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                 else -> origin
@@ -225,7 +225,7 @@ class Fir2IrLazyProperty(
             origin = when {
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                 fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH -> origin
                 origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                 fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                 else -> origin

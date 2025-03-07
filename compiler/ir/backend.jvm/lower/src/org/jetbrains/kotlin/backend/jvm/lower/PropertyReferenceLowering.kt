@@ -166,7 +166,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             returnType = method.returnType
             visibility = method.visibility
             isFakeOverride = true
-            origin = IrDeclarationOrigin.FAKE_OVERRIDE
+            origin = IrDeclarationOrigin.FAKE_OVERRIDE_PATCH
         }.apply {
             overriddenSymbols += method.symbol
             dispatchReceiverParameter = thisReceiver!!.copyTo(this)

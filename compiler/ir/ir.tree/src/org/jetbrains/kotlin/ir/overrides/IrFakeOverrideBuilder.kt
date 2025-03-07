@@ -258,7 +258,7 @@ class IrFakeOverrideBuilder(
     }
 
     /**
-     * If there is a mix of [IrOverridableMember]s with origin=[IrDeclarationOrigin.FAKE_OVERRIDE]s (true "fake overrides")
+     * If there is a mix of [IrOverridableMember]s with origin=[IrDeclarationOrigin.FAKE_OVERRIDE_PATCH]s (true "fake overrides")
      * and [IrOverridableMember]s that were customized with the help of [IrUnimplementedOverridesStrategy] (customized "fake overrides"),
      * then leave only true ones. Rationale: They should point to non-abstract callable members in one of super classes, so
      * effectively they are implemented in the current class.
@@ -266,7 +266,7 @@ class IrFakeOverrideBuilder(
     private fun filterOutCustomizedFakeOverrides(overridableMembers: Collection<FakeOverride>): Collection<FakeOverride> {
         if (overridableMembers.size < 2) return overridableMembers
 
-        val (trueFakeOverrides, customizedFakeOverrides) = overridableMembers.partition { it.override.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+        val (trueFakeOverrides, customizedFakeOverrides) = overridableMembers.partition { it.override.origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH }
         return trueFakeOverrides.ifEmpty { customizedFakeOverrides }
     }
 

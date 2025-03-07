@@ -117,7 +117,7 @@ abstract class DefaultArgumentFunctionFactory(
                 })
                 return generateDefaultsFunctionImpl(
                     declaration,
-                    IrDeclarationOrigin.FAKE_OVERRIDE,
+                    IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
                     visibility,
                     copiedAnnotations,
                     true,

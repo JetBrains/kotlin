@@ -258,7 +258,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     function.parent = facadeClass
 
     if (shouldGeneratePartHierarchy) {
-        function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
+        function.origin = IrDeclarationOrigin.FAKE_OVERRIDE_PATCH
         function.body = null
         function.overriddenSymbols = listOf(symbol)
     } else {

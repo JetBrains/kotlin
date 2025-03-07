@@ -57,7 +57,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
 }
 
 private val IrField.primaryConstructorParameter: Boolean
-    get() = (initializer?.expression as? IrGetValue)?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+    get() = (initializer?.expression as? IrGetValue)?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH
 
 abstract class InitializersLoweringBase(open val context: CommonBackendContext) {
     protected fun extractInitializers(irClass: IrClass, filter: (IrDeclaration) -> Boolean) =

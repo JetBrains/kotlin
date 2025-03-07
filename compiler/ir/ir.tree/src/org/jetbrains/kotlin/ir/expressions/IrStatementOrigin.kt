@@ -102,7 +102,7 @@ interface IrStatementOrigin {
         val SUSPEND_CONVERSION by IrStatementOriginImpl
         val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by IrStatementOriginImpl
 
-        val INITIALIZE_PROPERTY_FROM_PARAMETER by IrStatementOriginImpl
+        val INITIALIZE_PROPERTY_FROM_PARAMETER_PATCH by IrStatementOriginImpl
         val INITIALIZE_FIELD by IrStatementOriginImpl
 
         val PROPERTY_REFERENCE_FOR_DELEGATE by IrStatementOriginImpl

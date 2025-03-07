@@ -55,7 +55,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
-        require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+        require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE_PATCH) {
             "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations"
         }
         require(annotations.all { it.typeArguments.isEmpty() }) {

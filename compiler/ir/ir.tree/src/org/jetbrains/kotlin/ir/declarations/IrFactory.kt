@@ -180,7 +180,7 @@ open class IrFactory(
         isInfix: Boolean,
         isExternal: Boolean = false,
         containerSource: DeserializedContainerSource? = null,
-        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
     ): IrSimpleFunction =
         IrFunctionImpl(
             startOffset = startOffset,
@@ -221,7 +221,7 @@ open class IrFactory(
         isOperator: Boolean,
         isInfix: Boolean,
         isExternal: Boolean = false,
-        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
     ): IrFunctionWithLateBinding =
         IrFunctionWithLateBindingImpl(
             startOffset = startOffset,
@@ -280,7 +280,7 @@ open class IrFactory(
         isExternal: Boolean = false,
         containerSource: DeserializedContainerSource? = null,
         isExpect: Boolean = false,
-        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
     ): IrProperty =
         IrPropertyImpl(
             startOffset = startOffset,
@@ -314,7 +314,7 @@ open class IrFactory(
         isDelegated: Boolean,
         isExternal: Boolean = false,
         isExpect: Boolean = false,
-        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE_PATCH,
     ): IrPropertyWithLateBinding =
         IrPropertyWithLateBindingImpl(
             startOffset = startOffset,
