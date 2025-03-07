@@ -195,6 +195,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
+        isForLeafHmppModule: Boolean,
         init: FirSessionConfigurator.() -> Unit,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
@@ -247,6 +248,12 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
             val allLibrariesProviders = buildList {
                 addAll(structuredDependencyProvidersWithoutSource.librariesProviders)
+                // metadata klibs for specific source sets contain declarations only from exactly this source set
+                // so to see declarations from previous source sets (e.g. common, if we are in jvmAndJs module) we need to
+                // propagate binary dependencies from our source dependsOn modules
+                if (!isForLeafHmppModule) {
+                    moduleData.dependsOnDependencies.flatMapTo(this) { it.session.structuredProviders.librariesProviders }
+                }
                 addIfNotNull(additionalOptionalAnnotationsProvider)
             }
 

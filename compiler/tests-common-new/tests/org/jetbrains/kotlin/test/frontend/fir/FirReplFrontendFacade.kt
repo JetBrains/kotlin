@@ -161,6 +161,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             configuration = compilerConfiguration,
             predefinedJavaComponents = replCompilationEnvironment.predefinedJavaComponents,
             needRegisterJavaElementFinder = true,
+            isForLeafHmppModule = false,
         ) {
             if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
                 registerExtraCommonCheckers()

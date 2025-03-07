@@ -97,11 +97,12 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                 )
             ),
             projectEnvironment,
-            { null },
+            createIncrementalCompilationSymbolProviders = { null },
             FirExtensionRegistrar.getInstances(project),
             configuration,
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
+            isForLeafHmppModule = false,
             init = {
                 registerComponent(
                     FirBuiltinSyntheticFunctionInterfaceProvider::class,

@@ -371,7 +371,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration.languageVersionSettings,
                 )
             },
-            createSourceSession = { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
+            createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionProvider, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     sessionProvider,
@@ -397,6 +397,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration,
                     predefinedJavaComponents = predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
+                    isForLeafHmppModule = isForLeafHmppModule,
                     sessionConfigurator,
                 )
             }

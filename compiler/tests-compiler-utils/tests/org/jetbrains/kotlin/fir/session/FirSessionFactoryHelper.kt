@@ -79,6 +79,7 @@ object FirSessionFactoryHelper {
             configuration,
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder,
+            isForLeafHmppModule = false,
         ) {
             registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
             sessionConfigurator()

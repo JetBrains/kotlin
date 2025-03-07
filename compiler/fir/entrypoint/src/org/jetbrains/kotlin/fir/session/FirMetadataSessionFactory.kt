@@ -126,6 +126,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
+        isForLeafHmppModule: Boolean,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return createSourceSession(
@@ -134,6 +135,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             sessionProvider,
             extensionRegistrars,
             configuration,
+            isForLeafHmppModule,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null

@@ -372,6 +372,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     incrementalCompilationContext = null,
                     extensionRegistrars = extensionRegistrars,
                     configuration = configuration,
+                    isForLeafHmppModule = false,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -386,6 +387,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     configuration,
                     predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
+                    isForLeafHmppModule = false,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -404,6 +406,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     sessionProvider,
                     extensionRegistrars,
                     configuration,
+                    isForLeafHmppModule = false,
                     init = sessionConfigurator
                 ).also(::registerExtraComponents)
             }

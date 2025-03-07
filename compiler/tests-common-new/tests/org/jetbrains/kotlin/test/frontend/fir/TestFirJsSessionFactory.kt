@@ -59,6 +59,7 @@ object TestFirJsSessionFactory {
             sessionProvider,
             extensionRegistrars,
             configuration,
+            isForLeafHmppModule = false,
             icData = null,
             sessionConfigurator
         )

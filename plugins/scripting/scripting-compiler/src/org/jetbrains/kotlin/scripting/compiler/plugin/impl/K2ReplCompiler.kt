@@ -334,6 +334,7 @@ private fun compileImpl(
         // TODO: from script config
         state.predefinedJavaComponents,
         needRegisterJavaElementFinder = true,
+        isForLeafHmppModule = false,
         init = {},
     )
     val rawFir = session.buildFirFromKtFiles(allSourceFiles)

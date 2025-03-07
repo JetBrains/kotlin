@@ -69,6 +69,7 @@ object TestFirWasmSessionFactory {
             sessionProvider,
             extensionRegistrars,
             configuration,
+            isForLeafHmppModule = false,
             icData = null,
             init = sessionConfigurator
         )

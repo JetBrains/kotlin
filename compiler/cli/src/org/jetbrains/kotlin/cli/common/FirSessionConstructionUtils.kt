@@ -214,12 +214,13 @@ private fun <F> prepareKlibSessions(
         librarySessionForHmppCommonModuleProducer = { sessionProvider, sharedLibrarySession, librariesList, libraryList ->
             TODO("Not supported yet. KT-77030")
         },
-        createSourceSession = { _, moduleData, sessionProvider, sessionConfigurator ->
+        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionProvider, sessionConfigurator ->
             sessionFactory.createSourceSession(
                 moduleData,
                 sessionProvider,
                 extensionRegistrars,
                 configuration,
+                isForLeafHmppModule,
                 icData = icData,
                 init = sessionConfigurator,
             )
@@ -284,7 +285,7 @@ fun <F> prepareMetadataSessions(
                 languageVersionSettings,
             )
         },
-        createSourceSession = { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
+        createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionProvider, sessionConfigurator ->
             FirMetadataSessionFactory.createSourceSession(
                 moduleData,
                 sessionProvider,
@@ -292,6 +293,7 @@ fun <F> prepareMetadataSessions(
                 incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
                 extensionRegistrars,
                 configuration,
+                isForLeafHmppModule,
                 init = sessionConfigurator
             )
         }
@@ -301,9 +303,14 @@ fun <F> prepareMetadataSessions(
 // ---------------------------------------------------- Implementation ----------------------------------------------------
 
 fun interface FirSessionProducer<F> {
+    /**
+     * @param isForLeafHmppModule could be set to true only for leaf modules in HMPP hierarchies
+     * in case if HMPP compilation scheme is enabled
+     */
     fun createSession(
         files: List<F>,
         moduleData: FirModuleData,
+        isForLeafHmppModule: Boolean,
         sessionProvider: FirProjectSessionProvider,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession
@@ -438,7 +445,7 @@ object SessionConstructionUtils {
             targetPlatform,
         )
 
-        val session = sourceSessionProducer.createSession(files, platformModuleData, sessionProvider) {
+        val session = sourceSessionProducer.createSession(files, platformModuleData, isForLeafHmppModule = false, sessionProvider) {
             sessionConfigurator()
             useCheckers(CliOnlyLanguageVersionSettingsCheckers)
         }
@@ -479,8 +486,19 @@ object SessionConstructionUtils {
             (if (isCommonSource(file)) commonFiles else platformFiles).add(file)
         }
 
-        val commonSession = sourceSessionProducer.createSession(commonFiles, commonModuleData, sessionProvider, sessionConfigurator)
-        val platformSession = sourceSessionProducer.createSession(platformFiles, platformModuleData, sessionProvider) {
+        val commonSession = sourceSessionProducer.createSession(
+            commonFiles,
+            commonModuleData,
+            isForLeafHmppModule = false,
+            sessionProvider,
+            sessionConfigurator
+        )
+        val platformSession = sourceSessionProducer.createSession(
+            platformFiles,
+            platformModuleData,
+            isForLeafHmppModule = false,
+            sessionProvider
+        ) {
             sessionConfigurator()
             // The CLI session might contain an opt-in for an annotation that's defined in the platform module.
             // Therefore, only run the opt-in LV checker on the platform module.
@@ -624,11 +642,17 @@ object SessionConstructionUtils {
         return hmppModuleStructure.modules.mapIndexed { i, module ->
             val moduleData = moduleDataForHmppModule.getValue(module)
             val sources = files.filter { fileBelongsToModule(it, module.name) }
-            val session = sourceSessionProducer.createSession(sources, moduleData, sessionProvider) {
+            val isLeafModule = i == hmppModuleStructure.modules.lastIndex
+            val session = sourceSessionProducer.createSession(
+                sources,
+                moduleData,
+                isForLeafHmppModule = isLeafModule,
+                sessionProvider
+            ) {
                 sessionConfigurator()
                 // The CLI session might contain an opt-in for an annotation that's defined in one of the modules.
                 // The only module that's guaranteed to have a dependency on this module is the last one.
-                if (i == hmppModuleStructure.modules.lastIndex) {
+                if (isLeafModule) {
                     useCheckers(CliOnlyLanguageVersionSettingsCheckers)
                 }
             }
