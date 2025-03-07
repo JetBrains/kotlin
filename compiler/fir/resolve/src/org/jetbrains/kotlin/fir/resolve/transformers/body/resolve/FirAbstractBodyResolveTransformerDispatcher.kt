@@ -117,15 +117,14 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): FirTypeRef {
-        if (data !is ResolutionMode.WithExpectedType)
+        if (data !is ResolutionMode.UpdateImplicitTypeRef)
             return implicitTypeRef
 
         /**
          * We should transform a provided type to process such references in [transformAnnotationCall] by [transformForeignAnnotationCall]
          * because usually we do not run such transformations on replaced types explicitly
          */
-        @OptIn(ResolutionMode.WithExpectedType.ExpectedTypeRefAccess::class)
-        return data.expectedTypeRef.transformSingle(this, data)
+        return data.newTypeRef.transformSingle(this, data)
     }
 
     // ------------------------------------- Expressions -------------------------------------

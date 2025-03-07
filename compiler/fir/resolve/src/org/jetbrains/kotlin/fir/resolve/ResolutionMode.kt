@@ -101,6 +101,14 @@ sealed class ResolutionMode(
     }
 
     /**
+     * Should be used only for type refs transformations, it forces to replace implicit type refs.
+     * For other cases, it works just like [ContextIndependent], i.e., resolves yet unresolved explicit type references.
+     *
+     * See [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformImplicitTypeRef]
+     */
+    class UpdateImplicitTypeRef(val newTypeRef: FirResolvedTypeRef) : ResolutionMode(forceFullCompletion = false)
+
+    /**
      * This resolution mode is used for resolving the LHS of assignments.
      *
      * It is generally treated like [ContextIndependent], however it carries the containing assignment which is needed for
