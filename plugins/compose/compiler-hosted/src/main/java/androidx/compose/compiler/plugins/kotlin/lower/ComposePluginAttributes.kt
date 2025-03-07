@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 
 internal var IrDeclaration.isDefaultParamStub: Boolean by irFlag(true)
 
-internal var IrCall.associatedComposableSingletonStub: IrCall? by irAttribute(true)
+internal var IrFunctionAccessExpression.associatedComposableSingletonStub: IrCall? by irAttribute(true)
 
 internal var IrSimpleFunction.isVirtualFunctionWithDefaultParam: Boolean? by irAttribute(true)
 
