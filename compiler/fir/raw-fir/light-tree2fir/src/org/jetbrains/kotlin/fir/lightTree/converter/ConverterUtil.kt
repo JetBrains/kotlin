@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.text
 
 fun String?.nameAsSafeName(defaultName: String = ""): Name {
     return when {
@@ -59,5 +60,3 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
     }
     return false
 }
-
-val FirUserTypeRef.isUnderscored get() = qualifier.lastOrNull()?.name?.asString() == "_"

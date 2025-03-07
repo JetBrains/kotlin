@@ -2491,6 +2491,13 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
+    val FirUserTypeRef.isUnderscored: Boolean
+        get() {
+            val qualifierSource = qualifier.lastOrNull()?.source ?: return false
+            val text = qualifierSource.lighterASTNode.getChildNodeByType(IDENTIFIER)?.asText
+            return text == "_"
+        }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionType
      */
