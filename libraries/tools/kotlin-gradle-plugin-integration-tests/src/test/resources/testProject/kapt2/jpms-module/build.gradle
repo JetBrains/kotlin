@@ -29,12 +29,13 @@ kotlin {
 }
 
 compileJava {
+    def module = sourceSets.main.output.asPath
     doFirst {
         options.compilerArgs += [
                 //workaround to make classpath into modules for java compilation so auto modules would work
                 '--module-path', classpath.asPath,
                 //provide compiled kotlin classes to javac (needed for java/kotlin mixed sources to work)
-                '--patch-module', "my.module=${sourceSets.main.output.asPath}"
+                '--patch-module', "my.module=${module}"
         ]
     }
 }
