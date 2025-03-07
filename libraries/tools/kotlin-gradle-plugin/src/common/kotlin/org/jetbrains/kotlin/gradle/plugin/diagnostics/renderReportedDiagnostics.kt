@@ -8,17 +8,16 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 
 internal fun renderReportedDiagnostics(
     diagnostics: Collection<ToolingDiagnostic>,
     logger: Logger,
-    problemsReporter: ProblemsReporter,
     renderingOptions: ToolingDiagnosticRenderingOptions,
 ) {
     for (diagnostic in diagnostics) {
         renderReportedDiagnostic(diagnostic, logger, renderingOptions)
-        problemsReporter.reportProblemDiagnostic(diagnostic, renderingOptions)
     }
 }
 

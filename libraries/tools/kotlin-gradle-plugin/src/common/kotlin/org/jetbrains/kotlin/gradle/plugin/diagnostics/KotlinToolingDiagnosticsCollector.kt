@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.*
@@ -28,7 +29,8 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         val problemsReporterFactory: Property<ProblemsReporter.Factory>
     }
 
-    val problemsReporter by lazy { parameters.problemsReporterFactory.get().getInstance(objects) }
+    @get:Internal
+    private val problemsReporter get() = parameters.problemsReporterFactory.get().getInstance(objects)
 
     /**
      * When collector is in transparent mode, any diagnostics received will be immediately rendered

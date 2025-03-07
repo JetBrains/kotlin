@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     val collectorProvider = kotlinToolingDiagnosticsCollectorProvider
@@ -33,7 +34,6 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
         renderReportedDiagnostics(
             collectorProvider.get().getDiagnosticsForProject(project),
             logger,
-            collectorProvider.map { it.problemsReporter }.get(),
             diagnosticRenderingOptions
         )
     }
