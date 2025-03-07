@@ -1020,9 +1020,9 @@ open class FirDeclarationsResolveTransformer(
             // Separate annotation transformers are responsible in the case of non-local functions.
             function
                 .transformReturnTypeRef(this, data)
-                .transformContextParameters(this, data)
-                .transformValueParameters(this, data)
-                .transformAnnotations(this, data)
+                .transformContextParameters(this, ResolutionMode.ContextIndependent)
+                .transformValueParameters(this, ResolutionMode.ContextIndependent)
+                .transformAnnotations(this, ResolutionMode.ContextIndependent)
         }
 
         if (!bodyResolved) {
@@ -1030,7 +1030,7 @@ open class FirDeclarationsResolveTransformer(
         }
 
         if (shouldResolveEverything && function is FirContractDescriptionOwner) {
-            function.transformContractDescription(this, data)
+            function.transformContractDescription(this, ResolutionMode.ContextIndependent)
         }
 
         val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(function)
