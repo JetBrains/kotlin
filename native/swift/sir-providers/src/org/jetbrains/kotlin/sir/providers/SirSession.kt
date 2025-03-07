@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.sir.*
  * 2. [FirSession][org.jetbrains.kotlin.fir.FirSession] from K2.
  */
 public interface SirSession :
-    SirDeclarationNamer,
     SirDeclarationProvider,
     SirParentProvider,
     SirTrampolineDeclarationsProvider,
@@ -34,7 +33,6 @@ public interface SirSession :
 
     public val enumGenerator: SirEnumGenerator
 
-    public val declarationNamer: SirDeclarationNamer
     public val declarationProvider: SirDeclarationProvider
     public val parentProvider: SirParentProvider
     public val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider
@@ -46,8 +44,6 @@ public interface SirSession :
         get() = typeProvider.errorTypeStrategy
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy
         get() = typeProvider.unsupportedTypeStrategy
-
-    override fun KaDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
 
     override fun KaDeclarationSymbol.toSir(): SirTranslationResult = with(declarationProvider) { this@toSir.toSir() }
 

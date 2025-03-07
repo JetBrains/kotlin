@@ -28,7 +28,6 @@ import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 class TestSirSession(
     kaModule: KaModule,
 ) : SirSession {
-    override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
     override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider()
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(

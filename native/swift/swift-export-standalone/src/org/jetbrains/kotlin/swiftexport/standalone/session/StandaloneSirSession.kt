@@ -26,9 +26,6 @@ internal class StandaloneSirSession(
     override val moduleProvider: SirModuleProvider,
     val targetPackageFqName: FqName? = null,
 ) : SirSession {
-
-    override val declarationNamer = SirDeclarationNamerImpl()
-
     override val declarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
             ktModule = useSiteModule,

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
