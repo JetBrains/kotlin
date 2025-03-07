@@ -225,7 +225,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 WasmTarget.WASI -> WasmPlatforms.wasmWasi
             }
         } else JsPlatforms.defaultJsPlatform
-        val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, platform)
+        val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName)
         val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
             dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
             friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })

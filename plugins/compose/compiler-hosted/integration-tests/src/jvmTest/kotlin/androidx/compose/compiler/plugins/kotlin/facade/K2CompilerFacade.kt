@@ -118,10 +118,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val rootModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
 
         val projectSessionProvider = FirProjectSessionProvider()
-        val binaryModuleData = BinaryModuleData.initialize(
-            Name.identifier(rootModuleName),
-            CommonPlatforms.defaultCommonPlatform,
-        )
+        val binaryModuleData = BinaryModuleData.initialize(Name.identifier(rootModuleName))
         val dependencyList = DependencyListForCliModule.build(binaryModuleData)
         val projectEnvironment = VfsBasedProjectEnvironment(
             project,

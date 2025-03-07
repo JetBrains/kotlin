@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -206,10 +205,7 @@ fun createLibraryListForJvm(
     configuration: CompilerConfiguration,
     friendPaths: List<String>
 ): DependencyListForCliModule {
-    val binaryModuleData = BinaryModuleData.initialize(
-        Name.identifier(moduleName),
-        JvmPlatforms.unspecifiedJvmPlatform,
-    )
+    val binaryModuleData = BinaryModuleData.initialize(Name.identifier(moduleName))
     val libraryList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
         dependencies(configuration.jvmModularRoots.map { it.toPath() })

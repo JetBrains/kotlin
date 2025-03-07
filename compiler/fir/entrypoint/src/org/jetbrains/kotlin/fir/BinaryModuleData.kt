@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 class BinaryModuleData(
     val regular: FirModuleData,
@@ -16,18 +15,14 @@ class BinaryModuleData(
     companion object {
         fun createDependencyModuleData(
             name: Name,
-            platform: TargetPlatform,
             capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
         ): FirModuleData {
             return FirBinaryDependenciesModuleData(name, capabilities)
         }
 
-        fun initialize(
-            mainModuleName: Name,
-            platform: TargetPlatform,
-        ): BinaryModuleData {
+        fun initialize(mainModuleName: Name): BinaryModuleData {
             fun createData(name: String): FirModuleData =
-                createDependencyModuleData(Name.special(name), platform)
+                createDependencyModuleData(Name.special(name))
 
             return BinaryModuleData(
                 createData("<regular dependencies of $mainModuleName>"),
