@@ -20190,6 +20190,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("multipleInheritanceClash.kt")
+    public void testMultipleInheritanceClash() {
+      runTest("compiler/testData/codegen/box/inline/multipleInheritanceClash.kt");
+    }
+
+    @Test
     @TestMetadata("propertyAccessorInline.kt")
     public void testPropertyAccessorInline() {
       runTest("compiler/testData/codegen/box/inline/propertyAccessorInline.kt");
