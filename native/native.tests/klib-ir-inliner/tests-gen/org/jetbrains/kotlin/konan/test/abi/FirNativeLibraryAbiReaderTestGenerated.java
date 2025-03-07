@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.abi;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/dump-abi/content")
 @TestDataPath("$PROJECT_ROOT")
-@FirPipeline()
 public class FirNativeLibraryAbiReaderTestGenerated extends AbstractFirNativeLibraryAbiReaderTest {
   @Test
   public void testAllFilesPresentInContent() {

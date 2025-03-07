@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.generateTestCaseWithSingleModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
@@ -34,7 +33,6 @@ import kotlin.time.Duration.Companion.minutes
 
 @Tag("driver")
 @TestDataPath("\$PROJECT_ROOT")
-@FirPipeline
 class KonanDriverTest : AbstractNativeSimpleTest() {
     private val konanHome get() = testRunSettings.get<KotlinNativeHome>().dir
     private val buildDir get() = testRunSettings.get<Binaries>().testBinariesDir

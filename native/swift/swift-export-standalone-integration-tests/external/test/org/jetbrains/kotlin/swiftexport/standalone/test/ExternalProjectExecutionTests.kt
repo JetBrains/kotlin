@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
@@ -24,7 +23,6 @@ import java.io.File
 
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/execution")
 @TestDataPath("\$PROJECT_ROOT")
-@FirPipeline
 @UseStandardTestCaseGroupProvider
 class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
 

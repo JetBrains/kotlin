@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TE
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
@@ -29,7 +28,6 @@ import java.io.File
 @EnforcedHostTarget
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
-@FirPipeline
 class CachesAutoBuildTest : AbstractNativeSimpleTest() {
 
     @BeforeEach

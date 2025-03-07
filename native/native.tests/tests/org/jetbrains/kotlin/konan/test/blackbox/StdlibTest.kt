@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "10m")
 // Stdlib tests rely on `-Xmulti-platform` thus don't work with one-stage mode.
 @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
-@FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory

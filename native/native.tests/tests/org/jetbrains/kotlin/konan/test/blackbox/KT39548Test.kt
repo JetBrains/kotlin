@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.junit.jupiter.api.Assumptions
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.Test
 @ClassicPipeline()
 class ClassicKT39548Test : KT39548TestBase()
 
-@FirPipeline
 class FirClassicKT39548Test : KT39548TestBase()
 
 abstract class KT39548TestBase : AbstractNativeSimpleTest() {

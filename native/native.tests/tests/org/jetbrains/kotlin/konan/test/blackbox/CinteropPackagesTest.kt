@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertNotNull
@@ -33,7 +32,6 @@ import kotlin.test.assertTrue
 
 // It could be another less obvious approach: to run same tests under new test system 1) with renaming and 2) without,
 // while CInteropPackagesTest is simple and straightforward, and also allows to validate new test system's package rename approach.
-@FirPipeline
 class CInteropPackagesTest : AbstractNativeSimpleTest() {
     @Test
     fun testAllTestSourcesInCinteropPackages() {

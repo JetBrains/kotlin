@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
 @Tag("litmuskt-native")
 @UseStandardTestCaseGroupProvider()
 @EnforcedHostTarget()
-@FirPipeline()
 public class FirLitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInStandalone() {

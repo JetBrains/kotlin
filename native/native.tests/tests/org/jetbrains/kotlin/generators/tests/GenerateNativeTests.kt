@@ -42,7 +42,6 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
                 annotations = listOf(
-                    *frontendFir(),
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
@@ -76,7 +75,6 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
                 annotations = listOf(
-                    *frontendFir(),
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
@@ -86,7 +84,6 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
                 annotations = listOf(
-                    *frontendFir(),
                     provider<UseExtTestCaseGroupProvider>(),
                     *noPartialLinkage()
                 )
@@ -116,7 +113,6 @@ fun main() {
                 suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
                     infrastructure(),
-                    *frontendFir(),
                     provider<UseStandardTestCaseGroupProvider>()
                 )
             ) {
@@ -137,9 +133,6 @@ fun main() {
             }
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "FirNativePartialLinkageTestGenerated",
-                annotations = listOf(
-                    *frontendFir(),
-                )
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -157,9 +150,6 @@ fun main() {
             }
             testClass<AbstractNativeKlibCompatibilityTest>(
                 suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
-                annotations = listOf(
-                    *frontendFir(),
-                )
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -167,11 +157,7 @@ fun main() {
 
         // KLIB cross-compilation tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
-            testClass<AbstractFirKlibCrossCompilationIdentityTest>(
-                annotations = listOf(
-                    *frontendFir(),
-                )
-            ) {
+            testClass<AbstractFirKlibCrossCompilationIdentityTest> {
                 model()
             }
         }
@@ -202,9 +188,6 @@ fun main() {
             }
             testClass<AbstractNativeCInteropKT39120Test>(
                 suiteTestClassName = "CInteropKT39120TestGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
             ) {
                 model("KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
             }
@@ -239,9 +222,6 @@ fun main() {
             }
             testClass<AbstractNativeObjCExportTest>(
                 suiteTestClassName = "FirObjCExportTestGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -268,7 +248,6 @@ fun main() {
                     provider<UseStandardTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
-                    *frontendFir()
                 )
             ) {
                 model()
@@ -285,7 +264,7 @@ fun main() {
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "AtomicfuNativeFirTestGenerated",
-                annotations = listOf(*atomicfuNative(), *frontendFir(), provider<UseExtTestCaseGroupProvider>())
+                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
@@ -310,7 +289,6 @@ fun main() {
                     litmusktNative(),
                     provider<UseStandardTestCaseGroupProvider>(),
                     forceHostTarget(),
-                    *frontendFir(),
                 )
             ) {
                 model("standalone")
@@ -329,9 +307,6 @@ fun main() {
                 }
                 testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                     suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
-                    annotations = listOf(
-                        *frontendFir()
-                    )
                 ) {
                     model()
                 }
@@ -355,7 +330,6 @@ fun main() {
                 annotations = listOf(
                     *standalone(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendFir(),
                 )
             ) {
                 model()
@@ -367,7 +341,7 @@ fun main() {
         )
         val frontendFlags = mapOf(
             "Classic" to frontendClassic(),
-            "Fir" to frontendFir(),
+            "Fir" to emptyArray(),
         )
         // C Export
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CExport") {
@@ -395,9 +369,6 @@ fun main() {
             }
             testClass<AbstractNativeCExportInterfaceV1HeaderTest>(
                 "CExportInterfaceV1HeaderTestGenerated",
-                annotations = listOf(
-                    *frontendFir(),
-                )
             ) {
                 model("InterfaceV1HeaderTests")
             }
@@ -419,7 +390,6 @@ fun main() {
                 annotations = listOf(
                     *stress(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendFir(),
                 )
             ) {
                 model()
@@ -442,7 +412,6 @@ fun main() {
                 annotations = listOf(
                     *gc(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendFir(),
                 )
             ) {
                 model()
@@ -566,10 +535,6 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
         "propertyValue" to "ONE_STAGE_MULTI_MODULE"
     )
 }
-
-fun frontendFir() = arrayOf(
-    annotation(FirPipeline::class.java)
-)
 
 fun frontendClassic() = arrayOf(
     annotation(ClassicPipeline::class.java)

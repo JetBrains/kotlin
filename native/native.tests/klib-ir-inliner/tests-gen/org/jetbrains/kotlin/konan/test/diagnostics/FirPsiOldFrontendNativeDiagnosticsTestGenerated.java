@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.diagnostics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
-@FirPipeline()
 public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFirPsiNativeDiagnosticsTest {
   @Test
   public void testAllFilesPresentInNativeTests() {
@@ -221,7 +219,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
   @Nested
   @TestMetadata("compiler/testData/diagnostics/nativeTests/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
-  @FirPipeline()
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
@@ -274,7 +271,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
   @Nested
   @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks")
   @TestDataPath("$PROJECT_ROOT")
-  @FirPipeline()
   public class SpecialBackendChecks {
     @Test
     public void testAllFilesPresentInSpecialBackendChecks() {
@@ -284,7 +280,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class CInterop {
       @Test
       public void testAllFilesPresentInCInterop() {
@@ -421,7 +416,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class Concurrent {
       @Test
       public void testAllFilesPresentInConcurrent() {
@@ -456,7 +450,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class ImmutableBlobOf {
       @Test
       public void testAllFilesPresentInImmutableBlobOf() {
@@ -491,7 +484,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class NativeRef {
       @Test
       public void testAllFilesPresentInNativeRef() {
@@ -514,7 +506,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class ObjCInterop {
       @Test
       public void testAllFilesPresentInObjCInterop() {
@@ -687,7 +678,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class Posix {
       @Test
       public void testAllFilesPresentInPosix() {
@@ -710,7 +700,6 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect")
     @TestDataPath("$PROJECT_ROOT")
-    @FirPipeline()
     public class Reflect {
       @Test
       public void testAllFilesPresentInReflect() {

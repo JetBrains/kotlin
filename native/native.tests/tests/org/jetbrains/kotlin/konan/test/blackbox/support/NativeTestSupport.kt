@@ -50,7 +50,6 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
      */
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
-        extensionContext.tags.enforceFrontendMarks()
         val settings = createTestRunSettings(computeBlackBoxTestInstances())
 
         // Inject the required properties to test instance.
@@ -63,7 +62,6 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
 class NativeSimpleTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
-        extensionContext.tags.enforceFrontendMarks()
         val settings = createSimpleTestRunSettings()
 
         // Inject the required properties to test instance.
@@ -71,12 +69,6 @@ class NativeSimpleTestSupport : BeforeEachCallback {
             testRunSettings = settings
             testRunProvider = getOrCreateSimpleTestRunProvider()
         }
-    }
-}
-
-private fun Set<String>.enforceFrontendMarks() {
-    if (!(("frontend-fir" in this) xor ("frontend-classic" in this))) {
-        error("Test should be marked either with \"frontend-fir\" or \"frontend-classic\" tag")
     }
 }
 
@@ -194,8 +186,6 @@ object NativeTestSupport {
         enclosingTestClass: Class<*>,
         output: MutableCollection<Any>,
     ): KotlinNativeTargets {
-        tags.enforceFrontendMarks()
-
         val enforcedProperties = EnforcedProperties(enclosingTestClass)
 
         val optimizationMode = computeOptimizationMode(enforcedProperties)
@@ -570,8 +560,7 @@ object NativeTestSupport {
     private fun computePipelineType(enforcedProperties: EnforcedProperties, testClass: Class<*>): PipelineType {
         val pipelineTypeFromPipelineAnnotation = if (testClass.annotations.any { it is ClassicPipeline })
             PipelineType.K1
-        else if (testClass.annotations.any { it is FirPipeline }) PipelineType.K2
-        else error("Pipeline has to be explicitly specified!")
+        else PipelineType.K2
 
         return ClassLevelProperty.PIPELINE_TYPE.readValue(
             enforcedProperties,

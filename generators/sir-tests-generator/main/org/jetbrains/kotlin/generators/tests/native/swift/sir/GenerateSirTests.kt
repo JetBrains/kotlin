@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.swiftexport.ide.AbstractSymbolToSirTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestModel
-import org.jetbrains.kotlin.generators.tests.frontendFir
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
@@ -39,7 +38,6 @@ fun main() {
             testClass<AbstractKlibBasedSwiftRunnerTest>(
                 suiteTestClassName = "KlibBasedSwiftExportRunnerTest",
                 annotations = listOf(
-                    *frontendFir(),
                     provider<UseStandardTestCaseGroupProvider>(),
                 ),
             ) {
@@ -54,7 +52,6 @@ fun main() {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportExecutionTestGenerated",
                 annotations = listOf(
-                    *frontendFir(),
                     provider<UseStandardTestCaseGroupProvider>(),
                 ),
             ) {
