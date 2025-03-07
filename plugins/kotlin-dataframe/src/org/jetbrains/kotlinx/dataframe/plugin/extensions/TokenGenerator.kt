@@ -45,7 +45,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
             when (callShapeData) {
                 is CallShapeData.Schema -> callShapeData.columns.withIndex().associate { (index, property) ->
                     val resolvedTypeRef = buildResolvedTypeRef {
-                        type = property.dataRowReturnType
+                        coneType = property.dataRowReturnType
                     }
                     val identifier = property.propertyName.identifier
                     identifier to listOf(buildProperty(resolvedTypeRef, identifier, k, property.propertyName.columnNameAnnotation, order = index))
@@ -62,7 +62,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         receiverType = ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
                             typeArguments = arrayOf(schemaProperty.marker),
-                            isNullable = false
+                            isMarkedNullable = false
                         ),
                         propertyName = propertyName,
                         returnTypeRef = schemaProperty.dataRowReturnType.toFirResolvedTypeRef(),
@@ -76,7 +76,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         receiverType = ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.COLUMNS_SCOPE_CLASS_ID),
                             typeArguments = arrayOf(schemaProperty.marker),
-                            isNullable = false
+                            isMarkedNullable = false
                         ),
                         propertyName = propertyName,
                         returnTypeRef = schemaProperty.columnContainerReturnType.toFirResolvedTypeRef(),
@@ -115,7 +115,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         isScopeProperty: Boolean = false,
         order: Int? = null,
     ): FirProperty {
-        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type) {
+        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.coneType) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
         }.apply {
@@ -123,7 +123,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
             if (order != null) {
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
-                        type = Names.ORDER_ANNOTATION.defaultType(emptyList())
+                        coneType = Names.ORDER_ANNOTATION.defaultType(emptyList())
                     }
                     argumentMapping = buildAnnotationArgumentMapping {
                         mapping[Names.ORDER_ARGUMENT] = buildLiteralExpression(null, ConstantValueKind.Int, order, setType = true)
@@ -133,7 +133,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
             if (isScopeProperty) {
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
-                        type = Names.SCOPE_PROPERTY_ANNOTATION.defaultType(emptyList())
+                        coneType = Names.SCOPE_PROPERTY_ANNOTATION.defaultType(emptyList())
                     }
                     argumentMapping = buildAnnotationArgumentMapping()
                 }

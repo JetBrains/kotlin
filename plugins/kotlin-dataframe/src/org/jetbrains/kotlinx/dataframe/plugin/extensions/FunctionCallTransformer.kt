@@ -44,10 +44,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -64,8 +66,6 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toClassSymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -160,16 +160,16 @@ class FunctionCallTransformer(
 
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
             val typeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
+                coneType = ConeClassLikeTypeImpl(
                     lookupTag,
                     arrayOf(
                         ConeClassLikeTypeImpl(
-                            ConeClassLookupTagWithFixedSymbol(newDataFrameArgument.classId, newDataFrameArgument.symbol),
+                            ConeClassLikeLookupTagWithFixedSymbol(newDataFrameArgument.classId, newDataFrameArgument.symbol),
                             emptyArray(),
-                            isNullable = false
+                            isMarkedNullable = false
                         )
                     ),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
             return CallReturnType(typeRef)
@@ -205,21 +205,21 @@ class FunctionCallTransformer(
             val group = buildNewTypeArgument(null, Name.identifier("Group"), hash)
             val lookupTag = ConeClassLikeLookupTagImpl(Names.GROUP_BY_CLASS_ID)
             val typeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
+                coneType = ConeClassLikeTypeImpl(
                     lookupTag,
                     arrayOf(
                         ConeClassLikeTypeImpl(
-                            ConeClassLookupTagWithFixedSymbol(keys.classId, keys.symbol),
+                            ConeClassLikeLookupTagWithFixedSymbol(keys.classId, keys.symbol),
                             emptyArray<ConeTypeProjection>(),
-                            isNullable = false
+                            isMarkedNullable = false
                         ),
                         ConeClassLikeTypeImpl(
-                            ConeClassLookupTagWithFixedSymbol(group.classId, group.symbol),
+                            ConeClassLikeLookupTagWithFixedSymbol(group.classId, group.symbol),
                             emptyArray<ConeTypeProjection>(),
-                            isNullable = false
+                            isMarkedNullable = false
                         )
                     ),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
             return CallReturnType(typeRef)
@@ -287,10 +287,10 @@ class FunctionCallTransformer(
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
             superTypeRefs += buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
-                    ConeClassLookupTagWithFixedSymbol(tokenId, token.symbol),
+                coneType = ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagWithFixedSymbol(tokenId, token.symbol),
                     emptyArray(),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
 
@@ -348,7 +348,7 @@ class FunctionCallTransformer(
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 returnTypeRef = buildResolvedTypeRef {
-                    type = returnType
+                    coneType = returnType
                 }
                 val parameterSymbol = receiverType?.let {
                     val itName = Name.identifier("it")
@@ -357,11 +357,11 @@ class FunctionCallTransformer(
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = buildResolvedTypeRef {
-                            type = receiverType
+                            coneType = receiverType
                         }
                         this.name = itName
                         this.symbol = parameterSymbol
-                        containingFunctionSymbol = fSymbol
+                        containingDeclarationSymbol = fSymbol
                         isCrossinline = false
                         isNoinline = false
                         isVararg = false
@@ -403,17 +403,17 @@ class FunctionCallTransformer(
                 isLambda = true
                 hasExplicitParameterList = false
                 typeRef = buildResolvedTypeRef {
-                    type = if (receiverType != null) {
+                    coneType = if (receiverType != null) {
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
                             typeArguments = arrayOf(receiverType, returnType),
-                            isNullable = false
+                            isMarkedNullable = false
                         )
                     } else {
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function0"))),
                             typeArguments = arrayOf(returnType),
-                            isNullable = false
+                            isMarkedNullable = false
                         )
                     }
                 }
@@ -431,7 +431,7 @@ class FunctionCallTransformer(
             if (receiverType != null) {
                 typeArguments += buildTypeProjectionWithVariance {
                     typeRef = buildResolvedTypeRef {
-                        type = receiverType
+                        coneType = receiverType
                     }
                     variance = Variance.INVARIANT
                 }
@@ -439,7 +439,7 @@ class FunctionCallTransformer(
 
             typeArguments += buildTypeProjectionWithVariance {
                 typeRef = buildResolvedTypeRef {
-                    type = returnType
+                    coneType = returnType
                 }
                 variance = Variance.INVARIANT
             }
@@ -512,14 +512,14 @@ class FunctionCallTransformer(
                             ConeClassLikeTypeImpl(
                                 ConeClassLikeLookupTagImpl(Names.COLUM_GROUP_CLASS_ID),
                                 typeArguments = arrayOf(nestedSchema.schema.defaultType()),
-                                isNullable = false
+                                isMarkedNullable = false
                             )
 
                         val dataRowReturnType =
                             ConeClassLikeTypeImpl(
                                 ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
                                 typeArguments = arrayOf(nestedSchema.schema.defaultType()),
-                                isNullable = false
+                                isMarkedNullable = false
                             )
 
                         SchemaProperty(schema.defaultType(), PropertyName.of(it.name), dataRowReturnType, columnsContainerReturnType)
@@ -531,7 +531,7 @@ class FunctionCallTransformer(
                             ConeClassLikeTypeImpl(
                                 ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
                                 typeArguments = arrayOf(nestedClassMarker.schema.defaultType()),
-                                isNullable = false
+                                isMarkedNullable = false
                             )
 
                         SchemaProperty(

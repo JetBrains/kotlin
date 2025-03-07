@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullability
@@ -45,7 +44,7 @@ fun KotlinTypeFacade.fillNullsImpl(
         if (p + it.name() in paths && it is SimpleDataColumn) {
             val coneType = it.type.type as? ConeSimpleKotlinType
             if (coneType != null) {
-                val type = coneType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+                val type = coneType.withNullability(nullable = false, session.typeContext)
                 it.changeType(Marker.invoke(type))
             } else {
                 // report?

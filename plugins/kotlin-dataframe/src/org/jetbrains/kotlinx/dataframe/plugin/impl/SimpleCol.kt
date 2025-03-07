@@ -2,8 +2,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
@@ -111,13 +110,13 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
     return if (type.fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID) {
         val schema = pluginDataFrameSchema(type.typeArguments[0])
         val group = SimpleColumnGroup(name, schema.columns())
-        val column = if (type.isNullable) {
+        val column = if (type.isMarkedNullable) {
             makeNullable(group)
         } else {
             group
         }
         column
-    } else if (type.fullyExpandedClassId(session) == Names.DF_CLASS_ID && type.nullability == ConeNullability.NOT_NULL) {
+    } else if (type.fullyExpandedClassId(session) == Names.DF_CLASS_ID && !type.isMarkedNullable) {
         val schema = pluginDataFrameSchema(type.typeArguments[0])
         SimpleFrameColumn(name, schema.columns())
     } else {

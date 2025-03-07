@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -36,17 +36,12 @@ class DataRowSchemaSupertype(session: FirSession) : FirSupertypeGenerationExtens
             && session.predicateBasedProvider.matches(PREDICATE, declaration)
     }
 
-
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
-    ): List<FirResolvedTypeRef> {
+    ): List<ConeKotlinType> {
         if (resolvedSupertypes.any { it.toClassLikeSymbol(session)?.classId == dataRowSchema }) return emptyList()
-        return listOf(
-            buildResolvedTypeRef {
-                type = dataRowSchema.constructClassLikeType(emptyArray())
-            }
-        )
+        return listOf(dataRowSchema.constructClassLikeType(emptyArray()))
     }
 }

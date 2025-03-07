@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -50,13 +51,17 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         )
         this.returnTypeRef = returnTypeRef
         receiverParameter = buildReceiverParameter {
+            this.symbol = FirReceiverParameterSymbol()
+            containingDeclarationSymbol = firPropertySymbol
+            moduleData = session.moduleData
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             typeRef = receiverType.toFirResolvedTypeRef()
         }
         val classId = callableId.classId
         if (classId != null) {
             dispatchReceiverType = if (symbol != null) {
                 ConeClassLikeTypeImpl(
-                    ConeClassLookupTagWithFixedSymbol(classId, symbol),
+                    ConeClassLikeLookupTagWithFixedSymbol(classId, symbol),
                     emptyArray(),
                     false
                 )

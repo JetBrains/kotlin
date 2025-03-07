@@ -13,7 +13,7 @@ class AddId : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = buildList {
-            add(simpleColumnOf(columnName, session.builtinTypes.intType.type))
+            add(simpleColumnOf(columnName, session.builtinTypes.intType.coneType))
             addAll(receiver.columns())
         }
         return PluginDataFrameSchema(columns)

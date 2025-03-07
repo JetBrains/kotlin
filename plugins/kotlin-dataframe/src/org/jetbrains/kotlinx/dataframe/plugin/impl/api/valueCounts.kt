@@ -22,7 +22,7 @@ class ValueCounts : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val res = columns?.resolve(receiver)?.map { it.column } ?: receiver.columns()
         val generator = ColumnNameGenerator(res.map { it.name })
-        val count = SimpleDataColumn(generator.addUnique(resultColumn), session.builtinTypes.intType.type.wrap())
+        val count = SimpleDataColumn(generator.addUnique(resultColumn), session.builtinTypes.intType.coneType.wrap())
         return PluginDataFrameSchema(res + count)
     }
 }

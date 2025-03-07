@@ -7,15 +7,13 @@ package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 fun FirResolvedTypeRef.projectOverDataColumnType() =
     ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(Names.DATA_COLUMN_CLASS_ID),
         arrayOf(coneType.toTypeProjection(Variance.INVARIANT)),
-        isNullable = false
+        isMarkedNullable = false
     )
