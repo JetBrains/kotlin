@@ -851,7 +851,6 @@ tasks {
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
-        dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:native.tests:litmus-tests:check")
         dependsOn(":native:swift:sir-light-classes:check")
