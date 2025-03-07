@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:util"))
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:frontend.common-psi"))
-    implementation(project(":compiler:ir.psi2ir"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(libs.intellij.fastutil)
 

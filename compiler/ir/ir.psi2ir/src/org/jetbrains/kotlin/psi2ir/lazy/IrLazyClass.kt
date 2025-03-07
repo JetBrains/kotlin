@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -66,7 +65,7 @@ class IrLazyClass(
     override var hasEnumEntries: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrClass(), IrLazyDeclarationBase, IrMaybeDeserializedClass {
+) : IrClass(), IrLazyClassBase {
     init {
         symbol.bind(this)
         this.deserializedIr = lazy {
@@ -152,5 +151,5 @@ class IrLazyClass(
     override val isNewPlaceForBodyGeneration: Boolean?
         get() = classProto?.let { JvmProtoBufUtil.isNewPlaceForBodyGeneration(it) }
 
-    override val isK2: Boolean = false
+    override val isK2: Boolean get() = false
 }

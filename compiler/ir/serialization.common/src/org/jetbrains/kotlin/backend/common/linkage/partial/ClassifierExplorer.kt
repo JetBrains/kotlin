@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable.*
@@ -99,7 +99,7 @@ internal class ClassifierExplorer(
             return exploredSymbols.registerUnusable(this, MissingClassifier(this))
         }
 
-        (owner as? IrLazyClass)?.let { lazyIrClass ->
+        (owner as? IrLazyClassBase)?.takeIf { !it.isK2 }?.let { lazyIrClass ->
             val isEffectivelyMissingClassifier =
                 /* Lazy IR declaration is present but wraps a special "not found" class descriptor. */
                 lazyIrClass.descriptor is NotFoundClasses.MockClassDescriptor

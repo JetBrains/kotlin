@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
-import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -462,7 +462,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         var current: IrDeclarationParent? = function.parent
         while (current != null) {
             when (current) {
-                is IrMaybeDeserializedClass ->
+                is IrLazyClassBase ->
                     return current.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 is IrExternalPackageFragment -> {
                     val source = current.containerSource ?: return null
