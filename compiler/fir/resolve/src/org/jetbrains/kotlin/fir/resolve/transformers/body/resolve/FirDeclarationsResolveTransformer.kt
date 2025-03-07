@@ -741,7 +741,7 @@ open class FirDeclarationsResolveTransformer(
             }
 
             if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
-                transformFunction(accessor, ResolutionMode.ContextIndependent, shouldResolveEverything)
+                transformFunction(accessor, resolutionModeForBody = ResolutionMode.ContextIndependent, shouldResolveEverything)
             } else {
                 transformFunctionWithGivenSignature(accessor, shouldResolveEverything)
             }
@@ -970,7 +970,7 @@ open class FirDeclarationsResolveTransformer(
 
     private fun <F : FirFunction> transformFunctionWithGivenSignature(function: F, shouldResolveEverything: Boolean): F {
         @Suppress("UNCHECKED_CAST")
-        val result = transformFunction(function, ResolutionMode.ContextIndependent, shouldResolveEverything) as F
+        val result = transformFunction(function, resolutionModeForBody = ResolutionMode.ContextIndependent, shouldResolveEverything) as F
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
@@ -1007,7 +1007,7 @@ open class FirDeclarationsResolveTransformer(
 
     private fun transformFunction(
         function: FirFunction,
-        data: ResolutionMode,
+        resolutionModeForBody: ResolutionMode,
         shouldResolveEverything: Boolean,
     ): FirFunction = whileAnalysing(session, function) {
         val bodyResolved = function.bodyResolved
@@ -1017,14 +1017,14 @@ open class FirDeclarationsResolveTransformer(
             // Annotations here are required only in the case of a local class member function.
             // Separate annotation transformers are responsible in the case of non-local functions.
             function
-                .transformReturnTypeRef(this, data)
+                .transformReturnTypeRef(this, ResolutionMode.ContextIndependent)
                 .transformContextParameters(this, ResolutionMode.ContextIndependent)
                 .transformValueParameters(this, ResolutionMode.ContextIndependent)
                 .transformAnnotations(this, ResolutionMode.ContextIndependent)
         }
 
         if (!bodyResolved) {
-            function.transformBody(this, data)
+            function.transformBody(this, resolutionModeForBody)
         }
 
         if (shouldResolveEverything && function is FirContractDescriptionOwner) {
@@ -1436,9 +1436,13 @@ open class FirDeclarationsResolveTransformer(
             withFullBodyResolve {
                 if (anonymousFunction.bodyResolved) return@withFullBodyResolve anonymousFunction
 
+                if (expectedReturnTypeRef is FirResolvedTypeRef) {
+                    anonymousFunction.transformReturnTypeRef(transformer, withExpectedType(expectedReturnTypeRef))
+                }
+
                 transformFunction(
                     anonymousFunction,
-                    expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent,
+                    resolutionModeForBody = expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent,
                     shouldResolveEverything = true,
                 ) as FirAnonymousFunction
             }
