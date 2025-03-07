@@ -283,6 +283,12 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     public void testIfExpression() {
       runTest("plugins/power-assert/testData/codegen/expressions/IfExpression.kt");
     }
+
+    @Test
+    @TestMetadata("TryExpression.kt")
+    public void testTryExpression() {
+      runTest("plugins/power-assert/testData/codegen/expressions/TryExpression.kt");
+    }
   }
 
   @Nested
