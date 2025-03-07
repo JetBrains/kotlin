@@ -31,16 +31,12 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
     ) {
         val javaTarget = declaration.getAnnotationByClassId(Java.Target, context.session) ?: return
         when (val kotlinTarget = declaration.getTargetAnnotation(context.session)) {
-            null -> reportIncompatibleTargetsNotSpecified(javaTarget, context, reporter)
-            else -> reportIncompatibleTargetsSpecified(kotlinTarget, javaTarget, context, reporter)
+            null -> reporter.reportOn(javaTarget.source, FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA, context)
+            else -> reportIncompatibleTargets(kotlinTarget, javaTarget, context, reporter)
         }
     }
 
-    fun reportIncompatibleTargetsNotSpecified(javaTarget: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(javaTarget.source, FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED, context)
-    }
-
-    fun reportIncompatibleTargetsSpecified(kotlinTarget: FirAnnotation, javaTarget: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    fun reportIncompatibleTargets(kotlinTarget: FirAnnotation, javaTarget: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         val correspondingJavaTargets = kotlinTarget.extractArguments(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets)
             .groupBy { KOTLIN_TO_JAVA_ANNOTATION_TARGETS[it] }.toMutableMap()
         // remove things which are included in the Java @Target annotation
@@ -50,7 +46,7 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
         if (correspondingJavaTargets.isNotEmpty()) {
             reporter.reportOn(
                 javaTarget.source,
-                FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_SPECIFIED,
+                FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS,
                 correspondingJavaTargets.keys.filterNotNull(),
                 correspondingJavaTargets.values.flatten(),
                 context
