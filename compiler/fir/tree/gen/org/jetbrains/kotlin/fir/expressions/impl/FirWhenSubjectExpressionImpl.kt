@@ -11,35 +11,62 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirExpressionRef
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
-import org.jetbrains.kotlin.name.StandardClassIds
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirWhenSubjectExpressionImpl(
-    override val source: KtSourceElement?,
+    @property:UnresolvedExpressionTypeAccess
+    override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val whenRef: FirExpressionRef<FirWhenExpression>,
+    override var calleeReference: FirReference,
+    override var contextArguments: MutableOrEmptyList<FirExpression>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
+    override var explicitReceiver: FirExpression?,
+    override var dispatchReceiver: FirExpression?,
+    override var extensionReceiver: FirExpression?,
+    override var source: KtSourceElement?,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
 ) : FirWhenSubjectExpression() {
-    @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType?
-        get() = whenRef.value.subjectVariable?.initializer?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        calleeReference.accept(visitor, data)
+        contextArguments.forEach { it.accept(visitor, data) }
+        typeArguments.forEach { it.accept(visitor, data) }
+        explicitReceiver?.accept(visitor, data)
+        if (dispatchReceiver !== explicitReceiver) {
+            dispatchReceiver?.accept(visitor, data)
+        }
+        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+            extensionReceiver?.accept(visitor, data)
+        }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {
         transformAnnotations(transformer, data)
+        transformCalleeReference(transformer, data)
+        contextArguments.transformInplace(transformer, data)
+        transformTypeArguments(transformer, data)
+        explicitReceiver = explicitReceiver?.transform(transformer, data)
+        if (dispatchReceiver !== explicitReceiver) {
+            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
+        }
+        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+            extensionReceiver = extensionReceiver?.transform(transformer, data)
+        }
         return this
     }
 
@@ -48,11 +75,59 @@ internal class FirWhenSubjectExpressionImpl(
         return this
     }
 
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {
+        calleeReference = calleeReference.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {
+        typeArguments.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {
+        explicitReceiver = explicitReceiver?.transform(transformer, data)
+        return this
+    }
+
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        require(newConeTypeOrNull == coneTypeOrNull) { "${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '${newConeTypeOrNull}'. Current type is '$coneTypeOrNull'" }
+        coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        calleeReference = newCalleeReference
+    }
+
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {
+        contextArguments = newContextArguments.toMutableOrEmpty()
+    }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments = newTypeArguments.toMutableOrEmpty()
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {
+        extensionReceiver = newExtensionReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 }

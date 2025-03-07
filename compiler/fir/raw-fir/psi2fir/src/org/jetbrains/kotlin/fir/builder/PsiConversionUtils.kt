@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.buildWhenSubjectAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -29,10 +30,8 @@ internal fun KtWhenCondition.toFirWhenCondition(
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
-    val firSubjectExpression = buildWhenSubjectExpression {
-        source = firSubjectSource
-        whenRef = whenRefWithSubject
-    }
+    val firSubjectExpression = buildWhenSubjectAccess(firSubjectSource, whenRefWithSubject.value.subjectVariable)
+
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildEqualityOperatorCall {
