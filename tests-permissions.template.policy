@@ -23,11 +23,23 @@ grant {
     // org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback
     permission java.util.PropertyPermission "idea.io.use.nio2", "write";
 
+    // org.jetbrains.kotlin.cli.jvm.compiler.IdeaStandaloneExecutionSetup.doSetup()
+    permission java.util.PropertyPermission "project.structure.add.tools.jar.to.new.jdk", "write";
+    permission java.util.PropertyPermission "psi.track.invalidation", "write";
+    permission java.util.PropertyPermission "psi.incremental.reparse.depth.limit", "write";
+    permission java.util.PropertyPermission "psi.sleep.in.validity.check", "write";
+    permission java.util.PropertyPermission "ide.hide.excluded.files", "write";
+    permission java.util.PropertyPermission "ast.loading.filter", "write";
+    permission java.util.PropertyPermission "idea.ignore.disabled.plugins", "write";
+    permission java.util.PropertyPermission "platform.random.idempotence.check.rate", "write";
+    permission java.util.PropertyPermission "idea.plugins.compatible.build", "write";
+
     // Needed for copying files (strange, but deal with this later)
     permission java.lang.RuntimePermission "accessUserInformation";
 
     // org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser.createClassLoader
     permission java.lang.RuntimePermission "createClassLoader";
+    permission java.lang.RuntimePermission "closeClassLoader";
 
     // Add JUnit/testing framework permissions
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";

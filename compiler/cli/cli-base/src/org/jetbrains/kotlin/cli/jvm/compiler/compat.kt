@@ -16,19 +16,19 @@ object IdeaStandaloneExecutionSetup {
     fun doSetup() {
         checkInHeadlessMode()
 
-        System.getProperties().setProperty("project.structure.add.tools.jar.to.new.jdk", "false")
-        System.getProperties().setProperty("psi.track.invalidation", "true")
-        System.getProperties().setProperty("psi.incremental.reparse.depth.limit", "1000")
-        System.getProperties().setProperty("psi.sleep.in.validity.check", "false")
-        System.getProperties().setProperty("ide.hide.excluded.files", "false")
-        System.getProperties().setProperty("ast.loading.filter", "false")
-        System.getProperties().setProperty("idea.ignore.disabled.plugins", "true")
-        System.getProperties().setProperty("platform.random.idempotence.check.rate", "1000")
+        System.setProperty("project.structure.add.tools.jar.to.new.jdk", "false")
+        System.setProperty("psi.track.invalidation", "true")
+        System.setProperty("psi.incremental.reparse.depth.limit", "1000")
+        System.setProperty("psi.sleep.in.validity.check", "false")
+        System.setProperty("ide.hide.excluded.files", "false")
+        System.setProperty("ast.loading.filter", "false")
+        System.setProperty("idea.ignore.disabled.plugins", "true")
+        System.setProperty("platform.random.idempotence.check.rate", "1000")
         workaroundEarlyAccessRegistryQueryProblem()
         // Setting the build number explicitly avoids the command-line compiler
         // reading /tmp/build.txt in an attempt to get a build number from there.
         // See intellij platform PluginManagerCore.getBuildNumber.
-        System.getProperties().setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
+        System.setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
     }
 
     /**

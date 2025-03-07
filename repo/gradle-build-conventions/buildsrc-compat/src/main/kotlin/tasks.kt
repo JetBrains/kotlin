@@ -276,7 +276,7 @@ fun Project.projectTest(
                         )
                         .replace(
                             "{{jdk}}",
-                            """permission java.io.FilePermission "${javaLauncher.orNull?.executablePath ?: error("No java launcher")}-", "read";"""
+                            """permission java.io.FilePermission "${javaLauncher.orNull?.executablePath?.asFile?.parentFile?.parentFile?.absolutePath ?: error("No java launcher")}/-", "read";"""
                         )
                         .replace("{{inputs}}", inputPermissions.joinToString("\n    "))
                         .replace("{{additional_permissions}}", additionalPermissions.joinToString("\n    "))
