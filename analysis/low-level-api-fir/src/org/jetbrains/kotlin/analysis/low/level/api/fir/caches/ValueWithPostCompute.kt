@@ -52,36 +52,32 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getValue(): VALUE {
-        when (val stateSnapshot = value) {
-            is ValueIsPostComputingNow -> {
-                if (stateSnapshot.threadId == Thread.currentThread().id) {
-                    return stateSnapshot.value as VALUE
-                } else {
-                    lock?.lockWithPCECheck { // wait until other thread which holds the lock now computes the value
-                        when (value) {
-                            ValueIsNotComputed -> {
-                                // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
-                                // in this case, we should try to recalculate the value
-                                return computeValueWithoutLock()
-                            }
-
-                            else -> {
-                                // other thread computed the value for us
-                                return value as VALUE
-                            }
+    fun getValue(): VALUE = when (val stateSnapshot = value) {
+        is ValueIsPostComputingNow -> {
+            if (stateSnapshot.threadId == Thread.currentThread().id) {
+                stateSnapshot.value as VALUE
+            } else {
+                // wait until another thread that holds the lock now computes the value
+                lock?.lockWithPCECheck {
+                    when (value) {
+                        ValueIsNotComputed -> {
+                            // if we have a PCE during value computation,
+                            // then we will enter the critical section with `value == ValueIsNotComputed`
+                            // in this case, we should try to recalculate the value
+                            computeValueWithoutLock()
                         }
-                    } ?: return value as VALUE
-                }
-            }
-            ValueIsNotComputed -> lock?.lockWithPCECheck {
-                return computeValueWithoutLock()
-            } ?: return value as VALUE
 
-            else -> {
-                return stateSnapshot as VALUE
+                        // another thread computed the value for us
+                        else -> value as VALUE
+                    }
+                } ?: (value as VALUE)
             }
         }
+        ValueIsNotComputed -> lock?.lockWithPCECheck {
+            computeValueWithoutLock()
+        } ?: (value as VALUE)
+
+        else -> stateSnapshot as VALUE
     }
 
     @Suppress("UNCHECKED_CAST")
