@@ -458,6 +458,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
+      @TestMetadata("blockToFunctionLifetime.kt")
+      public void testBlockToFunctionLifetime() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/blockToFunctionLifetime.kt");
+      }
+
+      @Test
       @TestMetadata("direct.kt")
       public void testDirect() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/direct.kt");
