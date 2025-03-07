@@ -6,6 +6,7 @@
 package test.collections.behaviors
 
 import test.collections.CompareContext
+import kotlin.collections.contains
 
 public fun <T> CompareContext<List<T>>.listBehavior() {
     equalityBehavior()
@@ -119,4 +120,29 @@ public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: Stri
     propertyEquals { containsAll(listOf<Any?>(null)) }
 }
 
+public fun <T> CompareContext<Sequence<T>>.sequenceBehavior() {
+    propertyEquals { count() }
+    propertyEquals { toList() }
+    propertyEquals { toSet() }
 
+    compareProperty({ iterator() }, { iteratorBehavior() })
+
+    if (expected.iterator().hasNext()) {
+        propertyEquals { first() }
+        propertyEquals { firstOrNull() }
+        propertyEquals { last() }
+        propertyEquals { lastOrNull() }
+    } else {
+        propertyFailsWith<NoSuchElementException> { first() }
+        propertyEquals { firstOrNull() }
+        propertyFailsWith<NoSuchElementException> { last() }
+        propertyEquals { lastOrNull() }
+    }
+
+    (object {}).let { propertyEquals { contains(it as Any?) } }
+
+    if (expected.iterator().hasNext()) {
+        val firstElement = expected.first()
+        propertyEquals { contains(firstElement) }
+    }
+}

@@ -5,6 +5,7 @@
 
 package test.collections
 
+import test.collections.behaviors.sequenceBehavior
 import kotlin.random.Random
 import kotlin.test.*
 
@@ -752,11 +753,78 @@ public class SequenceTest {
         assertEquals(setOf(1, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toSet())
     }
 
-    @Test fun toList() {
-        assertEquals(emptyList(), emptySequence<Int>().toList())
-        assertEquals(listOf(42), sequenceOf(42).toList())
-        assertEquals(listOf(3, 2, 1), sequenceOf(3, 2, 1).toList())
-        assertEquals(listOf(1, 2, 1, 3, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toList())
+    @Test fun sequenceOfEmpty() {
+        compare(emptyList<Int>().asSequence(), sequenceOf<Int>()) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfSingleElement() {
+        compare(listOf(42).asSequence(), sequenceOf(42)) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfVararg() {
+        compare(listOf(1, 2, 3).asSequence(), sequenceOf(1, 2, 3)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(1, 2, 1, 3, 2, 3).asSequence(), sequenceOf(1, 2, 1, 3, 2, 3)) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfDifferentTypes() {
+        compare(listOf("string").asSequence(), sequenceOf("string")) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(42.5).asSequence(), sequenceOf(42.5)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(true).asSequence(), sequenceOf(true)) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfComplexObjects() {
+        data class Person(val name: String, val yearOfBirth: Int? = null)
+
+        val john = Person("John", 1940)
+        val paul = Person("Paul", 1942)
+        val george = Person("George", 1943)
+        val ringo = Person("Ringo", 1940)
+
+        compare(listOf(john, paul, george, ringo).asSequence(), sequenceOf(john, paul, george, ringo)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(john).asSequence(), sequenceOf(john)) {
+            sequenceBehavior()
+        }
+
+        compare(
+            listOf(john, null, paul, null, george, null, ringo).asSequence(),
+            sequenceOf(john, null, paul, null, george, null, ringo)
+        ) {
+            sequenceBehavior()
+        }
+
+        compare(listOf<Person?>(null).asSequence(), sequenceOf<Person?>(null)) {
+            sequenceBehavior()
+        }
+    }
+
+    @Test fun sequenceOfCanBeUsedWithMethodReferences() {
+        val strings = listOf("a", "b", "c")
+
+        for ((expected, actual) in (strings.map { listOf(it).asSequence() } zip strings.map(::sequenceOf))) {
+            compare(expected, actual) {
+                sequenceBehavior()
+            }
+        }
     }
 
     /*
