@@ -1,7 +1,7 @@
 ---
 assert(+b)
        ||
-       |true
+       |false
        false
 ---
 ---
@@ -11,3 +11,4 @@ assert(+b == 3)
        |2
        2
 ---
+

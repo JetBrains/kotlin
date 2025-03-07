@@ -217,6 +217,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("boundedPropertyReference.kt")
+    public void testBoundedPropertyReference() {
+      runTest("plugins/power-assert/testData/codegen/callableReference/boundedPropertyReference.kt");
+    }
+
+    @Test
     @TestMetadata("classLiteralReference.kt")
     public void testClassLiteralReference() {
       runTest("plugins/power-assert/testData/codegen/callableReference/classLiteralReference.kt");
@@ -226,6 +232,30 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("functionReference.kt")
     public void testFunctionReference() {
       runTest("plugins/power-assert/testData/codegen/callableReference/functionReference.kt");
+    }
+
+    @Test
+    @TestMetadata("functionReferenceWithTypeParameter.kt")
+    public void testFunctionReferenceWithTypeParameter() {
+      runTest("plugins/power-assert/testData/codegen/callableReference/functionReferenceWithTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReference.kt")
+    public void testPropertyReference() {
+      runTest("plugins/power-assert/testData/codegen/callableReference/propertyReference.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReferenceWithTypeParameter.kt")
+    public void testPropertyReferenceWithTypeParameter() {
+      runTest("plugins/power-assert/testData/codegen/callableReference/propertyReferenceWithTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("referenceToConstructor.kt")
+    public void testReferenceToConstructor() {
+      runTest("plugins/power-assert/testData/codegen/callableReference/referenceToConstructor.kt");
     }
   }
 
@@ -260,6 +290,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("SmartCast.kt")
     public void testSmartCast() {
       runTest("plugins/power-assert/testData/codegen/cast/SmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("UnsafeCast.kt")
+    public void testUnsafeCast() {
+      runTest("plugins/power-assert/testData/codegen/cast/UnsafeCast.kt");
     }
   }
 
@@ -773,6 +809,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     public void testListOperationsRequire() {
       runTest("plugins/power-assert/testData/codegen/lambda/ListOperationsRequire.kt");
     }
+
+    @Test
+    @TestMetadata("test.kt")
+    public void testTest() {
+      runTest("plugins/power-assert/testData/codegen/lambda/test.kt");
+    }
   }
 
   @Nested
@@ -785,9 +827,21 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("AssertionOperator.kt")
+    public void testAssertionOperator() {
+      runTest("plugins/power-assert/testData/codegen/nullsafe/AssertionOperator.kt");
+    }
+
+    @Test
     @TestMetadata("ConditionalAccess.kt")
     public void testConditionalAccess() {
       runTest("plugins/power-assert/testData/codegen/nullsafe/ConditionalAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("thisSafeCall.kt")
+    public void testThisSafeCall() {
+      runTest("plugins/power-assert/testData/codegen/nullsafe/thisSafeCall.kt");
     }
   }
 

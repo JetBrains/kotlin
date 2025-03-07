@@ -1,0 +1,39 @@
+---
+assert(A::foo == { true })
+       |      |
+       |      false
+       val A.foo: kotlin.Boolean
+---
+---
+assert(A::foo.isOpen)
+       |      |
+       |      false
+       val A.foo: kotlin.Boolean
+---
+---
+assert((A::foo)(A()))
+        |       |
+        |       false
+        |       A
+        val A.foo: kotlin.Boolean
+---
+---
+assert(List<Int>::bar.name == "foo")
+       |              |    |
+       |              |    false
+       |              bar
+       val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
+---
+---
+assert(List<Int>::bar.isConst)
+       |              |
+       |              false
+       val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
+---
+---
+assert((List<Int>::bar)(listOf(1,2,3)))
+        |               |
+        |               false
+        |               [1, 2, 3]
+        val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
+---

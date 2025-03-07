@@ -15,20 +15,11 @@ assert(@Ann @AnnWithConstructor(true) if (a < b) a == b else if (b < a) b == a e
                                           1
 ---
 ---
-assert(
-    @Ann @AnnWithConstructor(a = true) try {
-                                       |   |
-                                       |   false
-                                       false
-
-        false
-    } catch (e: Exception) {
-                           |
-                           true
-
-        true
-    }
-)
+assert(@Ann @AnnWithConstructor(a = true) try { false } catch (e: Exception) { true })
+                                          |   |                              |
+                                          |   |                              true
+                                          |   false
+                                          false
 ---
 ---
 assert(

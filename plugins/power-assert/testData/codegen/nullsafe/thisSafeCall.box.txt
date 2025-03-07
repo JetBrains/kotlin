@@ -1,0 +1,14 @@
+---
+assert(this?.length == 5)
+       |     |      |
+       |     |      false
+       |     3
+       abc
+---
+---
+assert(this?.length == 5)
+       |     |      |
+       |     |      false
+       |     null
+       null
+---
