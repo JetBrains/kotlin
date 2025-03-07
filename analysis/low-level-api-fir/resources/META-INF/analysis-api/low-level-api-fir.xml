@@ -16,6 +16,13 @@
     />
 
     <registryKey
+        defaultValue="100"
+        description="A frequency in milliseconds for re-acquiring a phase lock during parallel resolve to perform `checkCanceled()`."
+        key="kotlin.analysis.ll.locking.interval"
+        restartRequired="true"
+    />
+
+    <registryKey
         defaultValue="true"
         description="Enable the JVM builtin actualization workaround (KT-72390) when depending on stdlib sources. Only applies to modules which depend on stdlib sources regardless of this setting."
         key="kotlin.analysis.jvmBuiltinActualizationForStdlibSources"

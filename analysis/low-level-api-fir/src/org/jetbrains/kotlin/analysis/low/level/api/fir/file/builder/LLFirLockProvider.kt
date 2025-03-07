@@ -31,7 +31,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private val globalLock = ReentrantLock()
 
     inline fun <R> withGlobalLock(
-        lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
+        lockingIntervalMs: Long = lockingInterval,
         action: () -> R,
     ): R {
         if (!globalLockEnabled) return action()
@@ -152,7 +152,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private fun waitOnBarrier(
         stateSnapshot: FirInProcessOfResolvingToPhaseStateWithBarrier,
     ): Boolean {
-        return stateSnapshot.barrier.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)
+        return stateSnapshot.barrier.await(lockingInterval, TimeUnit.MILLISECONDS)
     }
 
     private fun FirElementWithResolveState.trySettingBarrier(
@@ -306,7 +306,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
 
                     try {
                         // Waiting until another thread released the lock
-                        currentState.latch.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)
+                        currentState.latch.await(lockingInterval, TimeUnit.MILLISECONDS)
                     } finally {
                         previousState?.waitingFor = null
                     }
@@ -365,7 +365,9 @@ private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION)
     Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
 }
 
-private const val DEFAULT_LOCKING_INTERVAL = 50L
+private val lockingInterval: Long by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    Registry.intValue("kotlin.analysis.ll.locking.interval", 100).toLong()
+}
 
 /**
  * @see FirInProcessOfResolvingToJumpingPhaseState
