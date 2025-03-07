@@ -1002,9 +1002,7 @@ open class FirDeclarationsResolveTransformer(
         function: FirFunction,
         data: ResolutionMode
     ): FirFunction {
-        if (function.bodyResolved) return function
-
-        return transformFunction(function, data, shouldResolveEverything = true)
+        error("Concrete transform functions should be called")
     }
 
     private fun transformFunction(
@@ -1436,9 +1434,12 @@ open class FirDeclarationsResolveTransformer(
         return context.withAnonymousFunction(anonymousFunction, components) {
             doTransformTypeParameters(anonymousFunction)
             withFullBodyResolve {
+                if (anonymousFunction.bodyResolved) return@withFullBodyResolve anonymousFunction
+
                 transformFunction(
                     anonymousFunction,
-                    expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent
+                    expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent,
+                    shouldResolveEverything = true,
                 ) as FirAnonymousFunction
             }
         }.apply { replaceTypeRef(lambdaType) }
