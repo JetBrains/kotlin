@@ -852,8 +852,7 @@ tasks {
         dependsOn(":native:native.tests:klib-compatibility:check")
         dependsOn(":tools:binary-compatibility-validator:check")
         dependsOn(":native:objcexport-header-generator:check")
-        // We run external tests via non-embeddable as their dependency graph is more complicated.
-        dependsOn(":native:swift:swift-export-standalone-integration-tests:external:test")
+        dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
         dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:native.tests:litmus-tests:check")
