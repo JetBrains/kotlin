@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.gradle.testing
 
 import kotlin.reflect.full.memberProperties
-import kotlin.test.assertEquals
 
-// Pretty print diffable by text and copypastable collection-like hierarchies
-class PP(
-    val value: Any,
+/** Pretty print diffable by text and copypastable collection-like hierarchies */
+class PrettyPrint<T : Any>(
+    val value: T,
     val indentation: Int,
 ) {
     override fun toString(): String {
@@ -21,20 +20,16 @@ class PP(
             is Map<*, *> -> arrayOf(
                 "mutableMapOf(",
                 *value.map { it }.sortedBy { it.key.toString() }.map {
-                    "${twoSpaces}${it.key?.pp()} to ${it.value?.pp(nextIndentationDepth)},"
+                    "${twoSpaces}${it.key?.prettyPrinted()} to ${it.value?.prettyPrinted(nextIndentationDepth)},"
                 }.toTypedArray(),
                 ")",
             )
             is Iterable<*> -> {
-                val innerValue = value.map { "${twoSpaces}${it?.pp(nextIndentationDepth)}," }.toTypedArray()
-                when (value) {
+                val orderedValue = if (value is Set<*>) value.sortedBy { it.toString() }.toSet() else value
+                val innerValue = orderedValue.map { "${twoSpaces}${it?.prettyPrinted(nextIndentationDepth)}," }.toTypedArray()
+                when (orderedValue) {
                     is Set<*> -> arrayOf(
                         "mutableSetOf(",
-                        *innerValue,
-                        ")",
-                    )
-                    is List<*> -> arrayOf(
-                        "mutableListOf(",
                         *innerValue,
                         ")",
                     )
@@ -58,7 +53,7 @@ class PP(
                     arrayOf(
                         "${kClass.simpleName}(",
                         *kClass.memberProperties.map { prop ->
-                            "${twoSpaces}${prop.name} = ${prop.getter.call(value)?.pp(nextIndentationDepth)},"
+                            "${twoSpaces}${prop.name} = ${prop.getter.call(value)?.prettyPrinted(nextIndentationDepth)},"
                         }.toTypedArray(),
                         ")",
                     )
@@ -76,20 +71,11 @@ class PP(
     }
 
     override fun equals(other: Any?): Boolean {
-        var otherUnwrapped = other
-        if (other is PP) otherUnwrapped = other.value
-        return value.equals(otherUnwrapped)
+        if (other !is PrettyPrint<*>) return false
+        return value.equals(other.value)
     }
 
-    private fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)
+    private fun Any.prettyPrinted(indentation: Int = 0): PrettyPrint<Any> = PrettyPrint(this, indentation)
 }
 
-object AssertionTypeCollapsedToAny : AssertionError("Assertion type parameter collapsed to Any, please specify type explicitly")
-
-// FIXME: Hack @OnlyInputTypes?
-inline fun <reified T> assertEqualsPP(expected: T, actual: T) {
-    if (T::class.java == Any::class.java) {
-        throw AssertionTypeCollapsedToAny
-    }
-    assertEquals(PP(expected as Any, 0), PP(actual as Any, 0))
-}
+val <T : Any> T.prettyPrinted: PrettyPrint<T> get() = PrettyPrint(this, 0)
