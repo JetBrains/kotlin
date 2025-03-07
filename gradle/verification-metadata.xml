@@ -8,6 +8,8 @@
          <trust group="androidx.compose.runtime" name="runtime-jvmstubs"/>
          <trust group="androidx.compose.runtime" name="runtime-test-utils"/>
          <trust group="androidx.compose.runtime" name="runtime-test-utils-jvmstubs"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-reflect" version="1.5.31" reason="Workaround for IDEA 2025.1 sync issues"/>
+         <trust group="org.jetbrains.kotlinx" name="kotlinx-serialization-protobuf-jvm" version="1.6.3" reason="Workaround for IDEA 2025.1 sync issues"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
          <trust file=".*[.]module" regex="true"/>
