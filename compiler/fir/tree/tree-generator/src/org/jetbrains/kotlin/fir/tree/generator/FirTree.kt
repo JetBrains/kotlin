@@ -1041,9 +1041,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val whenSubjectExpression: Element by element(Expression) {
-        parent(expression)
-
-        +field("whenRef", whenRefType)
+        parent(propertyAccessExpression)
     }
 
     val desugaredAssignmentValueReferenceExpression: Element by element(Expression) {

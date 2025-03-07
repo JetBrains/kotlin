@@ -25,8 +25,8 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Equality operator call with non-2 arguments" }
 
-        val l = arguments[0].unwrapToMoreUsefulExpression().toArgumentInfo(context)
-        val r = arguments[1].unwrapToMoreUsefulExpression().toArgumentInfo(context)
+        val l = arguments[0].toArgumentInfo(context)
+        val r = arguments[1].toArgumentInfo(context)
 
         checkSenselessness(l.smartCastType, r.smartCastType, context, expression, reporter)
 

@@ -220,6 +220,11 @@ class ErrorNodeDiagnosticCollectorComponent(
                 return
             }
 
+            // If something is wrong with the `when` subject access, then there's already an error on the `when` subject itself.
+            if (source?.kind is KtFakeSourceElementKind.UnresolvedWhenConditionSubject) {
+                return
+            }
+
             for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
                 reporter.report(coneDiagnostic, context)
             }

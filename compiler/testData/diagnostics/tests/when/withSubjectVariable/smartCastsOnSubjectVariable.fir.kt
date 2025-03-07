@@ -11,7 +11,7 @@ fun test1(x: Any?) =
 fun test2() {
     when (val a: String? = "") {
         "test" -> a.length
-        <!SENSELESS_NULL_IN_WHEN!>null<!> -> {}
+        null -> {}
         else -> a.length
     }
 }

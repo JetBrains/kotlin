@@ -49,7 +49,6 @@ class VariableStorage(private val session: FirSession) {
         val isImplicit = unwrapped is FirThisReceiverExpression ||
                 unwrapped.toResolvedCallableSymbol(session)?.isContextParameter() == true
         val symbol = when (unwrapped) {
-            is FirWhenSubjectExpression -> unwrapped.whenRef.value.subjectVariable?.symbol
             is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
             is FirResolvable -> unwrapped.calleeReference.symbol
             else -> null

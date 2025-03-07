@@ -449,12 +449,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(whenSubjectExpression) {
-            default("coneTypeOrNull") {
-                value = "whenRef.value.subjectVariable?.initializer?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()"
-                withGetter = true
-            }
-            additionalImports(whenExpression, standardClassIdsType, constructClassLikeTypeImport)
-            additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+            defaultNull("explicitReceiver", "dispatchReceiver", "extensionReceiver", withGetter = true)
+            defaultEmptyList("contextArguments", withGetter = true)
+            defaultEmptyList("typeArguments", withGetter = true)
         }
 
         impl(desugaredAssignmentValueReferenceExpression) {

@@ -415,10 +415,10 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 //        builder(checkedSafeCallSubject) {
 //            useTypes(expressionType)
 //        }
-//
-//        builder(whenSubjectExpression) {
-//            useTypes(whenExpressionType)
-//        }
+
+        builder(whenSubjectExpression) {
+            parents += qualifiedAccessExpressionBuilder
+        }
 
         noBuilder(literalExpression)
 

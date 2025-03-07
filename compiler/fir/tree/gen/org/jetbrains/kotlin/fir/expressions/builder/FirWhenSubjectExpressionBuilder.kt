@@ -12,33 +12,59 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionImpl
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 
 @FirBuilderDsl
-class FirWhenSubjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: KtSourceElement? = null
+class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    lateinit var whenRef: FirExpressionRef<FirWhenExpression>
+    override var source: KtSourceElement? = null
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    lateinit var calleeReference: FirNamedReference
 
     override fun build(): FirWhenSubjectExpression {
         return FirWhenSubjectExpressionImpl(
-            source,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
-            whenRef,
+            source,
+            nonFatalDiagnostics.toMutableOrEmpty(),
+            calleeReference,
         )
     }
 
 
-    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var coneTypeOrNull: ConeKotlinType?
+    @Deprecated("Modification of 'contextArguments' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextArguments: MutableList<FirExpression> = mutableListOf()
+
+    @Deprecated("Modification of 'typeArguments' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+
+    @Deprecated("Modification of 'explicitReceiver' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var explicitReceiver: FirExpression?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'dispatchReceiver' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var dispatchReceiver: FirExpression?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'extensionReceiver' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var extensionReceiver: FirExpression?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

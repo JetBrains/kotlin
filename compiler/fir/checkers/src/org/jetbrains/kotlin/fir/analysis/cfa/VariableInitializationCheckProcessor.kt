@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.unwrapLValue
 import org.jetbrains.kotlin.fir.packageFqName
@@ -186,6 +187,7 @@ abstract class VariableInitializationCheckProcessor {
         context: CheckerContext,
     ) {
         if (doNotReportUninitializedVariable) return
+        if (node.fir is FirWhenSubjectExpression) return
         if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) return
         val symbol = node.fir.calleeReference.toResolvedVariableSymbol() ?: return
         if (doNotReportConstantUninitialized && symbol.isConst) return

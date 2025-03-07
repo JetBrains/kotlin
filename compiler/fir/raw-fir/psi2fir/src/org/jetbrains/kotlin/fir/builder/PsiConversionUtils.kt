@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.buildWhenSubjectAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -24,15 +25,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
-    whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
+    subjectVariable: FirVariable?,
     convert: KtExpression?.(String, fallbackSource: KtElement) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
-    val firSubjectExpression = buildWhenSubjectExpression {
-        source = firSubjectSource
-        whenRef = whenRefWithSubject
-    }
+    val firSubjectExpression = buildWhenSubjectAccess(firSubjectSource, subjectVariable)
+
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildEqualityOperatorCall {
@@ -67,12 +66,12 @@ internal fun KtWhenCondition.toFirWhenCondition(
 }
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
-    subject: FirExpressionRef<FirWhenExpression>,
+    subjectVariable: FirVariable?,
     convert: KtExpression?.(String, fallbackSource: KtElement) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val conditions = this.map { condition ->
-        condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
+        condition.toFirWhenCondition(subjectVariable, convert, toFirOrErrorTypeRef)
     }
 
     require(conditions.isNotEmpty())
