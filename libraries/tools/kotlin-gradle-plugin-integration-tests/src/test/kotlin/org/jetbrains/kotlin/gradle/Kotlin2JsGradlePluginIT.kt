@@ -313,14 +313,20 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 }
             }
 
-            buildAndFail("developmentExecutableCompileSync") {
-                assertTasksFailed(":developmentExecutableValidateGeneratedByCompilerTypeScript")
+            buildAndFail("jsDevelopmentExecutableCompileSync") {
+                assertTasksFailed(":jsDevelopmentExecutableValidateGeneratedByCompilerTypeScript")
                 assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
                 assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
             }
 
-            build("productionExecutableCompileSync") {
-                assertTasksExecuted(":productionExecutableValidateGeneratedByCompilerTypeScript")
+            build("jsProductionExecutableCompileSync") {
+                assertTasksExecuted(":jsProductionExecutableValidateGeneratedByCompilerTypeScript")
+                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":jsProductionExecutableValidateGeneratedByCompilerTypeScript")
                 assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
                 assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
             }
