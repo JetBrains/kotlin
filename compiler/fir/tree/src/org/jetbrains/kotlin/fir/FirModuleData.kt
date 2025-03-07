@@ -86,6 +86,9 @@ abstract class FirModuleData : FirSessionComponent {
 /**
  * Module data for source module.
  * Might contain dependencies on other modules (either source or binary).
+ *
+ * Note that [FirSourceModuleData] could be used for IC providers, so declarations with
+ * this module data are not obligated to be source-defined.
  */
 class FirSourceModuleData(
     override val name: Name,
@@ -96,7 +99,7 @@ class FirSourceModuleData(
     override val isCommon: Boolean = platform.isCommon(),
 ) : FirModuleData() {
     override val session: FirSession
-        get() = boundSession ?: sessionNotBound()
+        get() = boundSession ?: sessionNotBoundError()
 
     override val capabilities: FirModuleCapabilities
         get() = FirModuleCapabilities.Empty
@@ -130,12 +133,12 @@ class FirBinaryDependencyModuleData(
     override val isCommon: Boolean
         get() = false
     override val session: FirSession
-        get() = boundSession ?: sessionNotBound()
+        get() = boundSession ?: sessionNotBoundError()
     override val stableModuleName: String?
         get() = null
 }
 
-private fun FirModuleData.sessionNotBound(): Nothing {
+private fun FirModuleData.sessionNotBoundError(): Nothing {
     error("module data ${this::class.simpleName}:${name} not bound to session")
 }
 

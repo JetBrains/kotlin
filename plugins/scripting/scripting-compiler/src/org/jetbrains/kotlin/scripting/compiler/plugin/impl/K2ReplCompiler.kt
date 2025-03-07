@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirModuleCapabilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -195,13 +194,12 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
 
     val baseDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-base>"))
 
-    private fun makeLibraryModuleData(name: Name): FirModuleDataImpl = FirSourceModuleData(
+    private fun makeLibraryModuleData(name: Name): FirSourceModuleData = FirSourceModuleData(
         name,
         dependencies = emptyList(),
         dependsOnDependencies = emptyList(),
         friendDependencies = emptyList(),
         platform,
-        FirModuleCapabilities.Empty
     )
 
     val pathToModuleData: MutableMap<Path, FirModuleData> = mutableMapOf()
@@ -237,13 +235,12 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
     }
 
     fun addNewSnippetModuleData(name: Name): FirModuleData =
-        FirModuleDataImpl(
+        FirSourceModuleData(
             name,
             dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
             dependsOnDependencies = emptyList(),
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             platform,
-            FirModuleCapabilities.Empty
         ).also { moduleDataHistory.add(it) }
 }
 
