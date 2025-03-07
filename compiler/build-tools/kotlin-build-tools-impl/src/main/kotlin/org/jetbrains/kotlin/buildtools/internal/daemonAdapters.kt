@@ -100,7 +100,7 @@ internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?,
                         return@map relativePath ?: it.normalize().absolutePath
                     }
                 }
-            debug("compile iteration: ${sourceFiles.joinToString()}")
+            debug("Kotlin compile iteration: ${sourceFiles.joinToString()}")
         }
         debug("compiler exit code: ${compileIterationResult.exitCode}")
     }
