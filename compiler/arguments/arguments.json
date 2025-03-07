@@ -22,7 +22,7 @@
     ],
     "types": {
         "kotlinVersions": {
-            "type": "org.jetbrains.kotlin.arguments.KotlinVersion",
+            "type": "org.jetbrains.kotlin.arguments.types.KotlinVersionType",
             "values": [
                 {
                     "name": "1.0",
@@ -54,7 +54,7 @@
             ]
         },
         "jvmTargets": {
-            "type": "org.jetbrains.kotlin.arguments.JvmTarget",
+            "type": "org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType",
             "values": [
                 {
                     "name": "1.6",

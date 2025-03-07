@@ -19,6 +19,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable(with = KotlinJvmTargetAsNameSerializer::class)
@@ -75,7 +76,7 @@ object AllDetailsJvmTargetSerializer : KSerializer<Set<JvmTarget>> {
         value: Set<JvmTarget>,
     ) {
         encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, JvmTarget::class.qualifiedName!!)
+            encodeStringElement(descriptor, 0, KotlinJvmTargetType::class.qualifiedName!!)
             encodeSerializableElement(descriptor, 1, delegateSerializer, value)
         }
     }

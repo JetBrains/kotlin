@@ -19,6 +19,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import org.jetbrains.kotlin.arguments.types.KotlinVersionType
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable(with = KotlinVersionAsNameSerializer::class)
@@ -82,7 +83,7 @@ object AllDetailsKotlinVersionSerializer : KSerializer<Set<KotlinVersion>> {
         value: Set<KotlinVersion>,
     ) {
         encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, KotlinVersion::class.qualifiedName!!)
+            encodeStringElement(descriptor, 0, KotlinVersionType::class.qualifiedName!!)
             encodeSerializableElement(descriptor, 1, delegateSerializer, value)
         }
     }
