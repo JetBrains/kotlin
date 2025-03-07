@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.unwrapLValue
 import org.jetbrains.kotlin.fir.packageFqName
@@ -194,7 +195,8 @@ abstract class VariableInitializationCheckProcessor {
             !symbol.isExternal &&
             node.fir.hasMatchingReceiver(this) &&
             symbol in properties &&
-            !symbol.isInitializedAt(node, data = this)
+            !symbol.isInitializedAt(node, data = this) &&
+            node.fir !is FirWhenSubjectExpression
         ) {
             reportUninitializedVariable(reporter, node, symbol, context)
         }

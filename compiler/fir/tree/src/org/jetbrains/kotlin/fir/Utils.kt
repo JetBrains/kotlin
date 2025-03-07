@@ -17,7 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithAlteredDefaults
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -370,6 +375,23 @@ fun FirOperation.toAugmentedAssignSourceKind() = when (this) {
     FirOperation.DIV_ASSIGN -> KtFakeSourceElementKind.DesugaredDivAssign
     FirOperation.REM_ASSIGN -> KtFakeSourceElementKind.DesugaredRemAssign
     else -> error("Unexpected operator: $name")
+}
+
+fun buildWhenSubjectAccess(conditionSource: KtSourceElement, subjectVariable: FirVariable?): FirPropertyAccessExpression {
+    return buildWhenSubjectExpression {
+        source = conditionSource
+        calleeReference = when (subjectVariable) {
+            null -> buildErrorNamedReference {
+                source = conditionSource.fakeElement(KtFakeSourceElementKind.UnresolvedWhenConditionSubject)
+                diagnostic = ConeSimpleDiagnostic("No subject in when", DiagnosticKind.Other)
+            }
+            // We can't yet create a resolved property access expression, as we don't know the return type.
+            else -> buildSimpleNamedReference {
+                source = conditionSource.fakeElement(KtFakeSourceElementKind.WhenCondition)
+                name = subjectVariable.name
+            }
+        }
+    }
 }
 
 fun ConeKotlinType.toFirResolvedTypeRef(

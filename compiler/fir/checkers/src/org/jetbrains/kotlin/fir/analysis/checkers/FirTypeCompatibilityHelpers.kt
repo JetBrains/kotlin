@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.whenSubject
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
-    is FirWhenSubjectExpression -> whenRef.value.subjectVariable?.initializer ?: this
+    is FirWhenSubjectExpression -> whenSubject ?: this
     else -> this
 }
 
