@@ -2920,7 +2920,7 @@ open class PsiRawFirBuilder(
                             buildWhenBranch(hasGuard = entryGuard != null) {
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
-                                    ref,
+                                    subjectVariable,
                                     { toFirExpression(it) },
                                     { toFirOrErrorType() },
                                 ).guardedBy(entryGuard)
@@ -2948,7 +2948,7 @@ open class PsiRawFirBuilder(
                                                 buildErrorExpression {
                                                     source = condition.toFirSourceElement()
                                                     nonExpressionElement = condition.toFirWhenCondition(
-                                                        ref,
+                                                        subjectVariable,
                                                         { toFirExpression(it) },
                                                         { toFirOrErrorType() },
                                                     )

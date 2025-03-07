@@ -245,6 +245,10 @@ private val KtFakeSourceElementKind.shouldIgnoreSimpleDiagnostic: Boolean
     get() = this == KtFakeSourceElementKind.DelegatingConstructorCall
             || this == KtFakeSourceElementKind.ErrorTypeRef
 
+private val KtFakeSourceElementKind.shouldIgnoreAllDiagnostics: Boolean
+    // If something is wrong with the `when` subject access, then there's already an error on the `when` subject itself.
+    get() = this == KtFakeSourceElementKind.UnresolvedWhenConditionSubject
+
 fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?, session: FirSession): KtDiagnostic? =
     when (val symbol = this) {
         is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId, session)
@@ -263,9 +267,10 @@ fun ConeDiagnostic.toFirDiagnostics(
     source: KtSourceElement?,
     callOrAssignmentSource: KtSourceElement?
 ): List<KtDiagnostic> {
-    return when (this) {
-        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
-        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
+    return when {
+        this is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
+        this is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
+        (source?.kind as? KtFakeSourceElementKind)?.shouldIgnoreAllDiagnostics == true -> emptyList()
         else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource, session))
     }
 }

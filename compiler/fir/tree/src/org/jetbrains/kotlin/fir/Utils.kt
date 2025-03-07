@@ -17,7 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithAlteredDefaults
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -29,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATORS
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
@@ -370,6 +376,24 @@ fun FirOperation.toAugmentedAssignSourceKind() = when (this) {
     FirOperation.DIV_ASSIGN -> KtFakeSourceElementKind.DesugaredDivAssign
     FirOperation.REM_ASSIGN -> KtFakeSourceElementKind.DesugaredRemAssign
     else -> error("Unexpected operator: $name")
+}
+
+fun buildWhenSubjectAccess(conditionSource: KtSourceElement, subjectVariable: FirVariable?): FirPropertyAccessExpression {
+    return buildWhenSubjectExpression {
+        source = conditionSource
+        calleeReference = when (subjectVariable) {
+            null -> buildErrorNamedReference {
+                source = conditionSource.fakeElement(KtFakeSourceElementKind.UnresolvedWhenConditionSubject)
+                name = SpecialNames.WHEN_SUBJECT
+                diagnostic = ConeSimpleDiagnostic("No subject in when", DiagnosticKind.Other)
+            }
+            // We can't yet create a resolved property access expression, as we don't know the return type.
+            else -> buildSimpleNamedReference {
+                source = conditionSource.fakeElement(KtFakeSourceElementKind.WhenCondition)
+                name = subjectVariable.name
+            }
+        }
+    }
 }
 
 fun ConeKotlinType.toFirResolvedTypeRef(
