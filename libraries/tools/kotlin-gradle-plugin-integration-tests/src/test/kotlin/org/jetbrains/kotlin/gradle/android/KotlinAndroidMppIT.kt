@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
@@ -67,7 +66,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("mpp source sets are registered in AGP")
     @GradleAndroidTest
-    @BrokenOnMacosTest
     fun testAndroidMppSourceSets(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -76,7 +74,11 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         project(
             "new-mpp-android-source-sets",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                // AGP's SourceSetsTask is not CC compatible
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+            ),
             buildJdk = jdkVersion.location
         ) {
             build("sourceSets") {
@@ -534,7 +536,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("android app can depend on mpp lib")
     @GradleAndroidTest
-    @BrokenOnMacosTest
     fun testAndroidWithNewMppApp(
         gradleVersion: GradleVersion,
         agpVersion: String,
