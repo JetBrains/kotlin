@@ -85,7 +85,7 @@ class MavenExecutionResult {
         return check(new Action<MavenExecutionResult>() {
             @Override
             public void run(MavenExecutionResult execResult) {
-                Pattern kotlinCompileIteration = Pattern.compile("(?m)Kotlin compile iteration: (.*)$");
+                Pattern kotlinCompileIteration = Pattern.compile("(?m)compile iteration: (.*)$");
                 Matcher m = kotlinCompileIteration.matcher(stdout);
 
                 Set<String> normalizedActualPaths = new HashSet<String>();
