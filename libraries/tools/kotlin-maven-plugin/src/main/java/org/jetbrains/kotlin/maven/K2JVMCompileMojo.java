@@ -327,7 +327,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 compileConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration();
         ClasspathSnapshotBasedIncrementalCompilationApproachParameters classpathSnapshotParams =
                 new ClasspathSnapshotBasedIncrementalCompilationApproachParameters(Collections.EMPTY_LIST,
-                                                                                   new File(cachesDir, "dep.snapshot"));
+                                                                                   new File(cachesDir, "shrunk-classpath-snapshot.bin"));
         compileConfig.useIncrementalCompilation(cachesDir, SourcesChanges.ToBeCalculated.INSTANCE, classpathSnapshotParams, icConf);
 
         return compilationResult -> {
