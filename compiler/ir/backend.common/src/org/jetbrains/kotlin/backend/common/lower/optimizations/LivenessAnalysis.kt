@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower.optimizations
 
-import org.jetbrains.kotlin.backend.common.copy
-import org.jetbrains.kotlin.backend.common.forEachBit
+import org.jetbrains.kotlin.utils.copy
+import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
