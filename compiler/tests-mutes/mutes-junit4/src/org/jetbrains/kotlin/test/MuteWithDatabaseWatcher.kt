@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test
 
 import com.nordstrom.automation.junit.*
-import org.jetbrains.kotlin.test.mutes.DO_AUTO_MUTE
 import org.jetbrains.kotlin.test.mutes.getMutedTest
 import org.jetbrains.kotlin.test.mutes.mutedMessage
 import org.jetbrains.kotlin.test.mutes.testKey
@@ -21,13 +20,6 @@ class MuteWithDatabaseWatcher : MethodWatcher<FrameworkMethod> {
         child: FrameworkMethod?,
         callable: ReflectiveCallable?,
     ) {
-        val description: Description = LifecycleHooks.describeChild(runner, child)
-        val testClass = description.testClass
-        val testMethod = description.methodName
-        val testKey = testKey(testClass, testMethod)
-        if (DO_AUTO_MUTE.isMuted(testKey)) {
-            throw AssumptionViolatedException("Muted")
-        }
     }
 
     override fun afterInvocation(
@@ -36,21 +28,20 @@ class MuteWithDatabaseWatcher : MethodWatcher<FrameworkMethod> {
         callable: ReflectiveCallable?,
         thrown: Throwable?,
     ) {
-        val description: Description = LifecycleHooks.describeChild(runner, child)
-        val testClass = description.testClass
-        val testMethod = description.methodName
-        val testKey = testKey(testClass, testMethod)
-        val mutedTest = getMutedTest(testClass, testMethod)
+        val description: Description? = LifecycleHooks.describeChild(runner, child)
+        if (description != null && description.isTest) {
+            val testClass = description.testClass
+            val testMethod = description.methodName
+            val testKey = testKey(testClass, testMethod)
+            val mutedTest = getMutedTest(testClass, testMethod)
 
-        if (thrown != null) {
-            if (mutedTest != null) {
-                if (mutedTest.isFlaky) {
-                    DO_AUTO_MUTE.muteTest(testKey)
+            if (thrown != null) {
+                if (mutedTest != null) {
+                    throw AssumptionViolatedException(mutedMessage(testClass, testMethod))
                 }
-                throw AssumptionViolatedException(mutedMessage(testClass, testMethod))
+            } else if (mutedTest?.isFlaky == false) {
+                throw Exception("Muted non-flaky test $testKey finished successfully. Please remove it from csv file")
             }
-        } else if (mutedTest?.isFlaky == false) {
-            throw Exception("Muted non-flaky test $testKey finished successfully. Please remove it from csv file")
         }
     }
 
