@@ -155,6 +155,7 @@ fun Project.projectTest(
     maxMetaspaceSizeMb: Int = 512,
     reservedCodeCacheSizeMb: Int = 256,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
+    additionalPermissions: List<String> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
     if (jUnitMode == JUnitMode.JUnit5) {
@@ -234,6 +235,58 @@ fun Project.projectTest(
             dependsOn(":test-instrumenter:jar")
         }
 
+        val disableInputsCheck =
+            project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
+        if (!disableInputsCheck) {
+            val permissionsTemplateFile = rootProject.file("tests-permissions.template.policy")
+            inputs.file(permissionsTemplateFile).withPathSensitivity(PathSensitivity.RELATIVE)
+
+            doFirst {
+                val addedDirs = HashSet<File>()
+                val inputPermissions = inputs.files.files.flatMapTo(HashSet<String>()) { file ->
+                    if (file.isDirectory()) {
+                        addedDirs.add(file)
+                        listOf("""permission java.io.FilePermission "${file.absolutePath}/-", "read";""")
+                    } else if (file.extension == "class") {
+                        listOfNotNull(
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read";""".takeIf { addedDirs.add(file.parentFile) }
+                        )
+                    } else if (file.extension == "jar") {
+                        listOf(
+                            """permission java.io.FilePermission "${file.absolutePath}", "read";"""
+                        )
+                    } else {
+                        val add = addedDirs.add(file.parentFile)
+                        listOfNotNull(
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read";""".takeIf { add }, // Not accurate, shouldn't blindly allow the whole folder
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""".takeIf { add },
+                            """permission java.io.FilePermission "${file.absolutePath}", "read";"""
+                        )
+                    }
+                }.sorted()
+
+                val policyFile = file("${project.layout.buildDirectory.get()}/tests-inputs-security.policy")
+                policyFile.parentFile.mkdirs()
+
+                policyFile.writeText(
+                    permissionsTemplateFile.readText()
+                        .replace(
+                            "{{temp_dir}}",
+                            """permission java.io.FilePermission "${System.getProperty("java.io.tmpdir")}-", "read,write,delete";"""
+                        )
+                        .replace(
+                            "{{jdk}}",
+                            """permission java.io.FilePermission "${javaLauncher.orNull?.executablePath ?: error("No java launcher")}-", "read";"""
+                        )
+                        .replace("{{inputs}}", inputPermissions.joinToString("\n    "))
+                        .replace("{{additional_permissions}}", additionalPermissions.joinToString("\n    "))
+                )
+
+                println("Security policy for test inputs generated to ${policyFile.absolutePath}")
+                jvmArgs("-Djava.security.manager", "-Djava.security.policy=${policyFile.absolutePath}")
+            }
+        }
+
         // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores
         // Choosing a value MALLOC_ARENA_MAX is generally a tradeoff between performance and memory consumption.
         // Not setting MALLOC_ARENA_MAX gives the best performance, but may mean higher memory use.
@@ -278,7 +331,10 @@ fun Project.projectTest(
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
         systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
-        systemProperty("kotlin.test.update.test.data", if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false")
+        systemProperty(
+            "kotlin.test.update.test.data",
+            if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false"
+        )
         systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")

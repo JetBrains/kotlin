@@ -1,0 +1,47 @@
+grant {
+    // Basic permissions needed for tests to run
+    permission java.util.PropertyPermission "*", "read";
+    permission java.lang.RuntimePermission "getClassLoader";
+    permission java.lang.RuntimePermission "setContextClassLoader";
+
+    // KtUsefulTestCase
+    permission java.util.PropertyPermission "apple.awt.UIElement", "write";
+    permission java.lang.RuntimePermission "getenv.TEAMCITY_VERSION";
+
+    // ???
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.misc";
+
+    // com.intellij.util.io.ByteBufferUtil.cleanBuffer
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.nio.ch";
+
+    // org.jetbrains.kotlin.util.PerformanceManager.initializeCurrentThread
+    permission java.lang.management.ManagementPermission "control";
+
+    // com.intellij.openapi.util.io.FileUtilRt$FilesToDeleteHolder.createFilesToDelete
+    permission java.lang.RuntimePermission "shutdownHooks";
+
+    // org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback
+    permission java.util.PropertyPermission "idea.io.use.nio2", "write";
+
+    // Needed for copying files (strange, but deal with this later)
+    permission java.lang.RuntimePermission "accessUserInformation";
+
+    // org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser.createClassLoader
+    permission java.lang.RuntimePermission "createClassLoader";
+
+    // Add JUnit/testing framework permissions
+    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+    permission java.lang.RuntimePermission "accessDeclaredMembers";
+
+    // Temp directory
+    {{temp_dir}}
+
+    // JDK
+    {{jdk}}
+
+    // Allow access to declared input directories
+    {{inputs}}
+    
+    // Additional permissions
+    {{additional_permissions}}
+};

@@ -43,8 +43,17 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(
+    parallel = true,
+    additionalPermissions = listOf(
+        """permission java.util.PropertyPermission "kotlin.incremental.compilation", "write";""",
+        """permission java.util.PropertyPermission "kotlin.incremental.compilation.js", "write";"""
+    )
+) {
     workingDir = rootDir
+
+    inputs.dir("../../jps/jps-plugin/testData/incremental")
+
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
