@@ -99,7 +99,10 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         updatePhase: Boolean,
         action: () -> Unit,
     ) {
+        var spinCount = 0
         while (true) {
+            spinCount += 1
+
             checkCanceled()
 
             @OptIn(ResolveStateAccess::class)
@@ -111,14 +114,20 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
 
             when (stateSnapshot) {
                 is FirInProcessOfResolvingToPhaseStateWithoutBarrier -> {
-                    // some thread is resolving the phase, so we wait until it finishes
-                    trySettingBarrier(toPhase, stateSnapshot)
+                    if (spinCount > spinThreshold) {
+                        // some thread is resolving the phase, so we wait until it finishes
+                        trySettingBarrier(toPhase, stateSnapshot)
+                    }
+
                     continue
                 }
 
                 is FirInProcessOfResolvingToPhaseStateWithBarrier -> {
-                    // some thread is waiting on a barrier as the declaration is being resolved, so we try too
-                    waitOnBarrier(stateSnapshot)
+                    if (spinCount > spinThreshold) {
+                        // some thread is waiting on a barrier as the declaration is being resolved, so we try too
+                        waitOnBarrier(stateSnapshot)
+                    }
+
                     continue
                 }
 
@@ -252,7 +261,10 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         actionUnderLock: () -> Unit,
         actionOnCycle: () -> Unit,
     ) {
+        var spinCount = 0
         while (true) {
+            spinCount += 1
+
             checkCanceled()
 
             @OptIn(ResolveStateAccess::class)
@@ -281,6 +293,10 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                 }
 
                 is FirInProcessOfResolvingToJumpingPhaseState -> {
+                    if (spinCount <= spinThreshold) {
+                        continue
+                    }
+
                     val previousState = jumpingResolutionStatesStack.peek()
 
                     // Not null value means we already hold a lock for another declaration in the current thread,
@@ -354,6 +370,10 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     companion object {
         val lockingInterval: Long by lazy(LazyThreadSafetyMode.PUBLICATION) {
             Registry.intValue("kotlin.analysis.ll.locking.interval", 100).toLong()
+        }
+
+        private val spinThreshold: Int by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            Registry.intValue("kotlin.analysis.ll.spin.threshold", 100)
         }
     }
 }

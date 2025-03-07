@@ -23,6 +23,13 @@
     />
 
     <registryKey
+        defaultValue="100"
+        description="A spin lock threshold in milliseconds before yielding and waiting for a phase lock."
+        key="kotlin.analysis.ll.spin.threshold"
+        restartRequired="true"
+    />
+
+    <registryKey
         defaultValue="true"
         description="Enable the JVM builtin actualization workaround (KT-72390) when depending on stdlib sources. Only applies to modules which depend on stdlib sources regardless of this setting."
         key="kotlin.analysis.jvmBuiltinActualizationForStdlibSources"
