@@ -181,8 +181,9 @@ open class FirDeclarationsResolveTransformer(
 
             var backingFieldIsAlreadyResolved = false
             context.withProperty(property) {
-                // this is required to resolve annotations on properties of local classes
+                // this is required to resolve annotations and return types on properties of local classes/scripts
                 if (shouldResolveEverything) {
+                    property.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
                     property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
                     doTransformTypeParameters(property)
                 }
@@ -190,7 +191,7 @@ open class FirDeclarationsResolveTransformer(
                 context.forPropertyInitializer {
                     if (!initializerIsAlreadyResolved) {
                         val resolutionMode = withExpectedType(returnTypeRefBeforeResolve)
-                        property.transformReturnTypeRef(transformer, resolutionMode)
+                        property
                             .transformInitializer(transformer, resolutionMode)
                             .replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
                     }
