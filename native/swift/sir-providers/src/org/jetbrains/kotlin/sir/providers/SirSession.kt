@@ -151,13 +151,6 @@ public sealed interface SirTranslationResult {
  */
 public interface SirDeclarationProvider {
     public fun KaDeclarationSymbol.toSir(): SirTranslationResult
-
-    @Deprecated(
-        "This is provided for compatibility with external code. Prefer structured result version",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith("this.toSIR().allDeclarations")
-    )
-    public fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> = toSir().allDeclarations
 }
 
 /**
