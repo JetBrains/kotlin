@@ -69,6 +69,14 @@ const val KLIB_PROPERTY_COMMONIZER_TARGET = "commonizer_target"
  */
 const val KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS = "commonizer_native_targets"
 
+
+/**
+ * Lists of enabled / suppressed language features.
+ */
+const val KLIB_PROPERTY_ENABLED_LANGUAGE_FEATURES = "enabled_language_features"
+const val KLIB_PROPERTY_SUPPRESSED_LANGUAGE_FEATURES = "suppressed_language_features"
+
+
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
  */

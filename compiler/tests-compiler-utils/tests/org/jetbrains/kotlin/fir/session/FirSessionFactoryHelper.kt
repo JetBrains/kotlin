@@ -112,6 +112,10 @@ object FirSessionFactoryHelper {
                         return LanguageFeature.State.DISABLED
                     }
 
+                    override fun getEnabledExperimentalFeatures(): List<LanguageFeature> = stub()
+
+                    override fun getSuppressedLanguageFeatures(): List<LanguageFeature> = stub()
+
                     override fun isPreRelease(): Boolean = stub()
 
                     override fun <T> getFlag(flag: AnalysisFlag<T>): T = stub()

@@ -671,6 +671,10 @@ interface LanguageVersionSettings {
                     it == LanguageFeature.State.ENABLED_WITH_WARNING
         }
 
+    fun getEnabledExperimentalFeatures(): List<LanguageFeature>
+
+    fun getSuppressedLanguageFeatures(): List<LanguageFeature>
+
     fun isPreRelease(): Boolean
 
     fun <T> getFlag(flag: AnalysisFlag<T>): T
@@ -700,13 +704,27 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
         specificFeatures[feature]?.let { return it }
 
-        val since = feature.sinceVersion
-        if (since != null && languageVersion >= since && apiVersion >= feature.sinceApiVersion) {
+        if (isEnabledByDefault(feature)) {
             return if (feature.isEnabledWithWarning) LanguageFeature.State.ENABLED_WITH_WARNING else LanguageFeature.State.ENABLED
         }
 
         return LanguageFeature.State.DISABLED
     }
+
+    override fun getEnabledExperimentalFeatures(): List<LanguageFeature> =
+        specificFeatures.filter { isEnabledOnlyByFlag(it.key, it.value) }.keys.toList()
+
+    override fun getSuppressedLanguageFeatures(): List<LanguageFeature> =
+        specificFeatures.filter { isDisabledOnlyByFlag(it.key, it.value) }.keys.toList()
+
+    private fun isEnabledOnlyByFlag(feature: LanguageFeature, state: LanguageFeature.State): Boolean =
+        !isEnabledByDefault(feature) && (state == LanguageFeature.State.ENABLED || state == LanguageFeature.State.ENABLED_WITH_WARNING)
+
+    private fun isDisabledOnlyByFlag(feature: LanguageFeature, state: LanguageFeature.State): Boolean =
+        isEnabledByDefault(feature) && state == LanguageFeature.State.DISABLED
+
+    private fun isEnabledByDefault(feature: LanguageFeature): Boolean =
+        feature.sinceVersion != null && languageVersion >= feature.sinceVersion && apiVersion >= feature.sinceApiVersion
 
     override fun toString() = buildString {
         append("Language = $languageVersion, API = $apiVersion")
