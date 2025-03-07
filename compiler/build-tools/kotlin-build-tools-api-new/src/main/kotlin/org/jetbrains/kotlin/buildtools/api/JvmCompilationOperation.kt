@@ -33,15 +33,15 @@ public interface JvmCompilationOperation : BuildOperation<Unit> {
      */
     public fun makeSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
-    //@InternalBuildToolsApi
-    /**
-     * A special mode that instructs IC to work in a dumb mode when everything is mainly controlled by JPS
-     */
-    public fun makeDumbIcOptions(): JvmDumbIncrementalCompilationOptions
-
     public companion object {
         @JvmField
         public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration> =
             Option("INCREMENTAL_COMPILATION")
+
+        @JvmField
+        public val LOOKUP_TRACKER: Option<CompilerLookupTracker> = Option("LOOKUP_TRACKER")
+
+        @JvmField
+        public val SOURCE_TO_OUTPUTS_TRACKER: Option<SourceToOutputsTracker> = Option("SOURCE_TO_OUTPUTS_TRACKER")
     }
 }

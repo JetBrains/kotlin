@@ -53,24 +53,3 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
         public val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
     }
 }
-
-//@InternalBuildToolsApi
-public class JvmDumbIncrementalCompilationConfiguration(
-    public val options: JvmDumbIncrementalCompilationOptions,
-) : JvmIncrementalCompilationConfiguration
-
-//@InternalBuildToolsApi
-public interface JvmDumbIncrementalCompilationOptions {
-    public class Option<V> internal constructor(public val id: String)
-
-    public operator fun <V> get(key: Option<V>): V?
-
-    public operator fun <V> set(key: Option<V>, value: V)
-
-    public companion object {
-        // TODO: sync with Aleksei Cherepanov on more required options
-
-        @JvmField
-        public val LOOKUP_TRACKER: Option<JvmIcLookupTracker> = Option("LOOKUP_TRACKER")
-    }
-}

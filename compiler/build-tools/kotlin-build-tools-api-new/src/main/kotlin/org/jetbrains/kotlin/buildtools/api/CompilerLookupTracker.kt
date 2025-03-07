@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-//@InternalBuildToolsApi
-public interface JvmIcLookupTracker {
+public interface CompilerLookupTracker {
     public class Position(public val line: Int, public val column: Int)
 
     public enum class ScopeKind {

@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.JvmClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.JvmClasspathSnapshottingOperation
-import org.jetbrains.kotlin.buildtools.api.JvmDumbIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.JvmDumbIncrementalCompilationOptions
-import org.jetbrains.kotlin.buildtools.api.JvmIcLookupTracker
 import org.jetbrains.kotlin.buildtools.api.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.SourceToOutputsTracker
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.KotlinVersion
+import java.nio.file.Path
 import java.nio.file.Paths
 
 fun basicJvmUse(classLoader: ClassLoader) {
@@ -92,19 +92,22 @@ fun jvmIc(classLoader: ClassLoader) {
 fun lookupTracker(classLoader: ClassLoader) {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
     val compilation = kotlinToolchain.jvm.makeJvmCompilationOperation()
-    val dumbIcOptions = compilation.makeDumbIcOptions()
-    dumbIcOptions[JvmDumbIncrementalCompilationOptions.LOOKUP_TRACKER] = object : JvmIcLookupTracker {
+    compilation[JvmCompilationOperation.LOOKUP_TRACKER] = object : CompilerLookupTracker {
         override fun recordLookup(
             filePath: String,
-            position: JvmIcLookupTracker.Position,
+            position: CompilerLookupTracker.Position,
             scopeFqName: String,
-            scopeKind: JvmIcLookupTracker.ScopeKind,
+            scopeKind: CompilerLookupTracker.ScopeKind,
             name: String,
         ) {
             TODO("Not yet implemented")
         }
     }
-    compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = JvmDumbIncrementalCompilationConfiguration(dumbIcOptions)
+    compilation[JvmCompilationOperation.SOURCE_TO_OUTPUTS_TRACKER] = object : SourceToOutputsTracker {
+        override fun recordMapping(filePath: Path, outputs: List<Path>) {
+            TODO("Not yet implemented")
+        }
+    }
     kotlinToolchain.executeOperation(compilation)
 }
 
