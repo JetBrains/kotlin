@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 data class FirJvmIncrementalCompilationSymbolProviders(
     val symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider?,
     val previousFirSessionsSymbolProviders: Collection<FirSymbolProvider>,
-    var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null,
+    val optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider?,
 )
 
 fun IncrementalCompilationContext.createSymbolProviders(
