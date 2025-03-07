@@ -30,7 +30,7 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     }
 
     @get:Internal
-    private val problemsReporter get() = parameters.problemsReporterFactory.get().getInstance(objects)
+    internal val problemsReporter get() = parameters.problemsReporterFactory.get().getInstance(objects)
 
     /**
      * When collector is in transparent mode, any diagnostics received will be immediately rendered

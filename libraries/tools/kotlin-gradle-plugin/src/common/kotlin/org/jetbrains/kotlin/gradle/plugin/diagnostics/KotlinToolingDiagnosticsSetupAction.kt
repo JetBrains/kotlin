@@ -34,6 +34,7 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
         renderReportedDiagnostics(
             collectorProvider.get().getDiagnosticsForProject(project),
             logger,
+            null, //FIXME: passing problemsReporter here leads to YarnGradlePluginIT.testFailingWithLockFileUpdate failure
             diagnosticRenderingOptions
         )
     }
