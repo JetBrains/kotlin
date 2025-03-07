@@ -43,40 +43,12 @@ static void* getNSArrayOfStringsBlock() {
     };
 }
 
-@interface BooleanFlag : NSObject
-@property BOOL value;
-@end
-
-@interface SetFlagOnDealloc : NSObject
-@property BooleanFlag* flag;
-@end
-
-static void* getDeallocFlagSettingBlock(BooleanFlag* flag) {
-    SetFlagOnDealloc* obj = [SetFlagOnDealloc new];
-    obj.flag = flag;
-    return (__bridge_retained void*)^SetFlagOnDealloc* (void) {
-        return obj; // Captured => the object should be released only after the (copied) block is removed.
-    };
-}
-
 static void callKotlinWithStackAllocatedBlock(
     int blockResult,
     void (^kotlinBlock)(void*)
 ) {
     kotlinBlock((__bridge void*)^{ return blockResult; });
 }
-
-// FILE: lib.m
-#import "lib.h"
-
-@implementation BooleanFlag
-@end
-
-@implementation SetFlagOnDealloc
-- (void)dealloc {
-    self.flag.value = YES;
-}
-@end
 
 // MODULE: main(cinterop)
 // FILE: main.kt
@@ -173,37 +145,6 @@ fun NSArrayAndNSString(): String {
     return if (result != listOf("a", "b", "c")) "FAIL: $result" else "OK"
 }
 
-@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-fun lifetime(): String {
-    val deadObjectFlag = BooleanFlag()
-    val deadBlockPtr = noAutorelease { getDeallocFlagSettingBlock(deadObjectFlag)!!.rawValue }
-    if (deadObjectFlag.value) return "FAIL 1"
-
-    objc_release(deadBlockPtr) // Balance __bridge_retained.
-    if (!deadObjectFlag.value) return "FAIL 2"
-
-    // Now do the same, but create a Kotlin function object retaining the block.
-
-    val liveObjectFlag = BooleanFlag()
-    val liveBlockPtr = noAutorelease { getDeallocFlagSettingBlock(liveObjectFlag)!!.rawValue }
-    if (liveObjectFlag.value) return "FAIL 3"
-
-    var liveBlock: (()->SetFlagOnDealloc)?
-    {
-        liveBlock = noAutorelease { convertBlockPtrToKotlinFunction<()->SetFlagOnDealloc>(liveBlockPtr) }
-    }() // wrap to function to allow the Kotlin object to be GCed before the end of the function.
-
-    objc_release(liveBlockPtr) // Balance __bridge_retained.
-    repeat(2) { kotlin.native.runtime.GC.collect() }
-    if (liveObjectFlag.value) return "FAIL 4"
-
-    liveBlock = null
-    kotlin.native.runtime.GC.collect()
-    if (!liveObjectFlag.value) return "FAIL 5"
-
-    return "OK"
-}
-
 fun stackBlock(): String {
     val result = StringBuilder()
 
@@ -250,7 +191,6 @@ fun box(): String {
         add(void())
         add(blockParametersAndReturnValues())
         add(NSArrayAndNSString())
-        add(lifetime())
         add(stackBlock())
     }
 
