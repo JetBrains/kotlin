@@ -13,15 +13,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 class SingleCandidateResolver(
@@ -78,13 +76,7 @@ class SingleCandidateResolver(
             return null
         }
 
-        val completionResult = firCallCompleter.completeCall(
-            fakeCall,
-            (resolutionParameters.expectedType as? FirResolvedTypeRef)?.let { ResolutionMode.WithExpectedType(it) }
-                ?: ResolutionMode.ContextIndependent
-        )
-
-        return completionResult
+        return firCallCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
     }
 
     private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
@@ -127,7 +119,6 @@ class ResolutionParameters(
     val singleCandidateResolutionMode: SingleCandidateResolutionMode,
     val callableSymbol: FirCallableSymbol<*>,
     val implicitReceiver: ImplicitReceiverValue<*>? = null,
-    val expectedType: FirTypeRef? = null,
     val explicitReceiver: FirExpression? = null,
     val argumentList: FirArgumentList = FirEmptyArgumentList,
     val typeArgumentList: List<FirTypeProjection> = emptyList(),
