@@ -15,5 +15,5 @@ public interface JvmPlatformToolchain {
      */
     public fun makeJvmCompilationOperation(): JvmCompilationOperation
 
-    public fun calculateClasspathSnapshot(classpathEntry: Path, granularity: JvmClassSnapshotGranularity): JvmClasspathEntrySnapshot
+    public fun makeClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
 }
