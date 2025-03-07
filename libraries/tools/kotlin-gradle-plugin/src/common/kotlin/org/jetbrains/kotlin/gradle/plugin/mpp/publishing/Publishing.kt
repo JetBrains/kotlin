@@ -99,9 +99,8 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
                 project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
                     val gradleComponent = components.find { kotlinComponent.name == it.name } ?: return@launchInStage
                     publication.from(gradleComponent)
-
-                    project.rewriteKmpDependenciesInPomForTargetPublication(kotlinComponent, publication)
                 }
+                project.rewriteKmpDependenciesInPomForTargetPublication(kotlinComponent, publication)
             }
 
             (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
