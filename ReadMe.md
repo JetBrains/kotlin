@@ -20,7 +20,7 @@ Some handy links:
  * [Forum](https://discuss.kotlinlang.org/)
  * [Kotlin Blog](https://blog.jetbrains.com/kotlin/)
  * [Subscribe to Kotlin YouTube channel](https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw)
- * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
+ * [Follow Kotlin on X (Previously Twitter)](https://x.com/kotlin)
  * [Public Slack channel](https://slack.kotlinlang.org/)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
  * [Kotlin Foundation](https://kotlinfoundation.org/)
