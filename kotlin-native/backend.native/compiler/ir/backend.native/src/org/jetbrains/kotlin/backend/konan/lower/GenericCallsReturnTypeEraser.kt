@@ -40,16 +40,19 @@ internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLowering
                 expression.transformChildrenVoid(this)
 
                 val callee = expression.target
-                if (callee != reinterpret && callee.returnType.classifierOrNull is IrTypeParameterSymbol) {
-                    val actualType = callee.returnType.eraseTypeParameters()
-                    val expectedType = expression.type
-                    if (actualType != expectedType) {
-                        expression.type = actualType
-                        return when {
-                            expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
-                            expectedType.isNothing() -> expression
-                            else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
-                        }
+                if (callee == reinterpret) return expression // It's handled specially in codegen - no cast is needed.
+
+                val returnType = callee.returnType
+                val actualType = if (returnType.classifierOrNull is IrTypeParameterSymbol)
+                    returnType.eraseTypeParameters()
+                else returnType
+                val expectedType = expression.type
+                if (actualType != expectedType) {
+                    expression.type = actualType
+                    return when {
+                        expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
+                        expectedType.isNothing() -> expression
+                        else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
                     }
                 }
 
