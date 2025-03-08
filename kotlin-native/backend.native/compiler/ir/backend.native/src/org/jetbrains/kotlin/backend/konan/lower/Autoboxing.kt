@@ -106,6 +106,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         val skipTypeCheck = forceSkipTypeCheck || !insertSafeCasts || (this as? IrTypeOperatorCall)?.operator == IrTypeOperator.CAST
         val actualType = when (this) {
             is IrGetField -> this.symbol.owner.type
+            is IrCall -> when (this.symbol) {
+                symbols.reinterpret -> this.typeArguments[1]!!
+                else -> this.type
+            }
             is IrTypeOperatorCall -> when (this.operator) {
                 IrTypeOperator.CAST -> context.irBuiltIns.anyNType
                 IrTypeOperator.IMPLICIT_CAST -> if (insertSafeCasts) this.type else context.irBuiltIns.anyNType
