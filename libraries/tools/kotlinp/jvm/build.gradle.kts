@@ -5,6 +5,7 @@ description = "kotlinp-jvm"
 
 plugins {
     kotlin("jvm")
+    `java-test-fixtures`
     id("jps-compatible")
 }
 
@@ -17,6 +18,8 @@ dependencies {
     api(project(":tools:kotlinp"))
     implementation(libs.intellij.asm)
 
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
+
     testApi(intellijCore())
 
     testCompileOnly(project(":kotlin-metadata"))
@@ -25,7 +28,6 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
 
     testRuntimeOnly(project(":kotlin-metadata-jvm"))
@@ -39,6 +41,7 @@ val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
     "main" { projectDefault() }
+    "testFixtures" { projectDefault() }
     "test" {
         projectDefault()
         this.java.srcDir(generationRoot.name)
@@ -79,5 +82,3 @@ tasks {
         dependsOn(rootProject.tasks.named("dist"))
     }
 }
-
-testsJar()
