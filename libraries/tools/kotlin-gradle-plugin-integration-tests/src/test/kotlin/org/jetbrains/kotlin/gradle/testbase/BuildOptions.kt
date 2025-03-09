@@ -32,7 +32,7 @@ data class BuildOptions(
     val warningMode: WarningMode = WarningMode.Fail,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
-    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
+    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.ENABLED,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
