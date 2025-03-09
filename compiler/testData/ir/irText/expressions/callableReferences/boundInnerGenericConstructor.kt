@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 package test
 
 class Foo<T> {

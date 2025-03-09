@@ -15,11 +15,11 @@ FILE: eagerAndPostponedCallableReferences.kt
         ^foo R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {
-        lval a1: R|A| = R|/foo|<R|A|>(::R|/singleA|, ::R|/multiple|)
-        lval a2: R|B| = R|/foo|<R|B|>(::R|/singleB|, ::R|/multiple|)
-        lval a3: R|A| = R|/foo|<R|A|>(::R|/multiple|, ::R|/singleA|)
-        lval a4: R|B| = R|/foo|<R|B|>(::R|/multiple|, ::R|/singleB|)
-        lval a5: R|A| = R|/foo|<R|A|>(::R|/singleA|, ::R|/singleA|)
-        lval a6: R|it(A & B)| = R|/foo|<R|it(A & B)|>(::R|/singleA|, ::R|/singleB|)
+        lval a1: R|@R|kotlin/ParameterName|(name = String(a))  A| = R|/foo|<R|@R|kotlin/ParameterName|(name = String(a))  A|>(::R|/singleA|, ::R|/multiple|)
+        lval a2: R|@R|kotlin/ParameterName|(name = String(a))  B| = R|/foo|<R|@R|kotlin/ParameterName|(name = String(a))  B|>(::R|/singleB|, ::R|/multiple|)
+        lval a3: R|@R|kotlin/ParameterName|(name = String(a))  A| = R|/foo|<R|@R|kotlin/ParameterName|(name = String(a))  A|>(::R|/multiple|, ::R|/singleA|)
+        lval a4: R|@R|kotlin/ParameterName|(name = String(a))  B| = R|/foo|<R|@R|kotlin/ParameterName|(name = String(a))  B|>(::R|/multiple|, ::R|/singleB|)
+        lval a5: R|@R|kotlin/ParameterName|(name = String(a))  A| = R|/foo|<R|@R|kotlin/ParameterName|(name = String(a))  A|>(::R|/singleA|, ::R|/singleA|)
+        lval a6: R|it(@R|kotlin/ParameterName|(name = String(a))  A & @R|kotlin/ParameterName|(name = String(a))  B)| = R|/foo|<R|it(@R|kotlin/ParameterName|(name = String(a))  A & @R|kotlin/ParameterName|(name = String(a))  B)|>(::R|/singleA|, ::R|/singleB|)
         R|/foo<CS errors: /foo>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(::<Ambiguity: multiple, [/multiple, /multiple]>#, ::<Ambiguity: multiple, [/multiple, /multiple]>#)
     }
