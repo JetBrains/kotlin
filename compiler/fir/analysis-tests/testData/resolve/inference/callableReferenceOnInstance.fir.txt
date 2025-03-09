@@ -9,7 +9,7 @@ FILE: callableReferenceOnInstance.kt
 
     }
     public final fun test(logger: R|KaptLogger|): R|kotlin/Unit| {
-        lval func: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>| = when () {
+        lval func: R|kotlin/reflect/KFunction1<@R|kotlin/ParameterName|(name = String(message))  kotlin/String, kotlin/Unit>| = when () {
             R|<local>/logger|.R|/KaptLogger.isVerbose| ->  {
                 R|<local>/logger|::R|/KaptLogger.warn|
             }
