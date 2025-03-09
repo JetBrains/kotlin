@@ -89,6 +89,7 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                             // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
                             compileTask.configure {
                                 inputFiles.setFrom(googleTestRoot.dir("googlemock/src/gmock-all.cc"))
+                                dependsOn(dependencies.toList().toTypedArray())
                             }
                         }
                     }
