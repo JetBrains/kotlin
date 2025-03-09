@@ -565,7 +565,7 @@ internal open class TCServiceMessagesClient(
 private fun DefaultTestOutputEventCompat(
     destination: TestOutputEvent.Destination,
     text: String,
-): DefaultTestOutputEvent = if (GradleVersion.current() <= GradleVersion.version("8.12")) {
+): DefaultTestOutputEvent = if (GradleVersion.current() < GradleVersion.version("8.12")) {
     @Suppress("DEPRECATION")
     DefaultTestOutputEvent(destination, text)
 } else {
