@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import java.net.URI
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 open class RuntimeTestingPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         val extension = extensions.create(GOOGLE_TEST_EXTENSION_NAME, GoogleTestExtension::class.java)
@@ -68,6 +67,7 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                             // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
                             compileTask.configure {
                                 inputFiles.setFrom(googleTestRoot.dir("googletest/src/gtest-all.cc"))
+                                dependsOn(dependencies.toList().toTypedArray())
                             }
                         }
                     }
