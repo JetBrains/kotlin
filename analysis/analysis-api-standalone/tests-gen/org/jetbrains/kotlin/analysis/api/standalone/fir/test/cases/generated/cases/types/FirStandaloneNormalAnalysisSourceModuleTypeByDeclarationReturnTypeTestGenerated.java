@@ -52,6 +52,30 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("functionTypeWithReceiverAndNamedParameters.kt")
+  public void testFunctionTypeWithReceiverAndNamedParameters() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionTypeWithReceiverAndNamedParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithReceiverAndNamedParametersFromExtensionReference.kt")
+  public void testFunctionTypeWithReceiverAndNamedParametersFromExtensionReference() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionTypeWithReceiverAndNamedParametersFromExtensionReference.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithReceiverAndNamedParametersFromReference.kt")
+  public void testFunctionTypeWithReceiverAndNamedParametersFromReference() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionTypeWithReceiverAndNamedParametersFromReference.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaWithAnnotatedParameterName.kt")
+  public void testLambdaWithAnnotatedParameterName() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/lambdaWithAnnotatedParameterName.kt");
+  }
+
+  @Test
   @TestMetadata("localClassType.kt")
   public void testLocalClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
@@ -67,5 +91,23 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   @TestMetadata("localNestedClassType.kt")
   public void testLocalNestedClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");
+  }
+
+  @Test
+  @TestMetadata("referenceToExtensionFunctionOfStarProjectionType.kt")
+  public void testReferenceToExtensionFunctionOfStarProjectionType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToExtensionFunctionOfStarProjectionType.kt");
+  }
+
+  @Test
+  @TestMetadata("referenceToFunctionWithVarargParameter.kt")
+  public void testReferenceToFunctionWithVarargParameter() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToFunctionWithVarargParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("referenceToMemberFunctionOfStarProjectionType.kt")
+  public void testReferenceToMemberFunctionOfStarProjectionType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToMemberFunctionOfStarProjectionType.kt");
   }
 }

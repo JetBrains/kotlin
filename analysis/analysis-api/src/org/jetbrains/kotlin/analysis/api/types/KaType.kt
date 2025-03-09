@@ -248,6 +248,22 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val parameterTypes: List<KaType>
 
     /**
+     * The function's value parameters, *excluding* receiver types and context receivers.
+     *
+     * [parameters] represent the same list of parameters as [parameterTypes] along with their names, if available.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * Foo.(x: Bar, y: String, z: String) -> Int
+     * ```
+     *
+     * The function type above has the following value parameters: `x`, `y`, `z`.
+     */
+    @KaExperimentalApi
+    public abstract val parameters: List<KaFunctionValueParameter>
+
+    /**
      * The function's arity, i.e. the number of [*parameter types*][parameterTypes].
      */
     public abstract val arity: Int
@@ -283,6 +299,39 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
+}
+
+
+/**
+ * Represents a function value parameter
+ */
+@KaExperimentalApi
+public abstract class KaFunctionValueParameter {
+    /**
+     * Type of the parameter
+     */
+    public abstract val type: KaType
+
+    /**
+     * Name of the parameter, as specified in the function signature.
+     *
+     * Note that some parameters might not have names by their nature.
+     * This applies to, for example, receiver parameters in references to member functions.
+     *
+     * ```kotlin
+     * class A {
+     *     fun foo(x: Int) {}
+     * }
+     *
+     * val fooRef = A::foo
+     * ```
+     *
+     * `fooRef` from the example above has `KaFunctionType`.
+     * This type has two `KaFunctionValueParameter`s:
+     *  - One receiver parameter of type `A`, which doesn't have any specified name
+     *  - One regular parameter `x` of type `Int`
+     */
+    public abstract val name: Name?
 }
 
 /**

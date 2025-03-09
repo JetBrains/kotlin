@@ -1,0 +1,160 @@
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 2
+  classId: kotlin/reflect/KFunction2
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: true
+  isSuspend: false
+  nullability: NON_NULLABLE
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: A
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: A
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
+      ]
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: [
+        *
+      ]
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Nothing
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Nothing
+          symbol: KaNamedClassSymbol(kotlin/Nothing)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Nothing)
+      typeArguments: []
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: null, type: /A]
+    KaBaseFunctionValueParameter [name: null, type: kotlin/Nothing]
+  ]
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: KFunction2
+      symbol: KaNamedClassSymbol(kotlin/reflect/KFunction2)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: A
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: A
+              symbol: KaNamedClassSymbol(A)
+              typeArguments: [
+                *
+              ]
+          ]
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Nothing
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Nothing
+              symbol: KaNamedClassSymbol(kotlin/Nothing)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Nothing)
+          typeArguments: []
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    nullability: NON_NULLABLE
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+  symbol: KaNamedClassSymbol(kotlin/reflect/KFunction2)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: A
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: A
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
+      ]
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: [
+        *
+      ]
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Nothing
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Nothing
+          symbol: KaNamedClassSymbol(kotlin/Nothing)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Nothing)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+  ]
+
+Rendered type:
+kotlin.reflect.KFunction2<A<*>, kotlin.Nothing, kotlin.Unit>

@@ -1,74 +1,68 @@
 KaFunctionType:
-  abbreviation: KaUsualClassType:
-    abbreviation: null
-    annotations: []
-    classId: expansion/FunctionAlias
-    nullability: NON_NULLABLE
-    qualifiers: [
-      KaResolvedClassTypeQualifier:
-        name: FunctionAlias
-        symbol: KaTypeAliasSymbol(expansion/FunctionAlias)
-        typeArguments: []
-    ]
-    symbol: KaTypeAliasSymbol(expansion/FunctionAlias)
-    typeArguments: []
+  abbreviation: null
   annotations: []
   arity: 1
-  classId: kotlin/Function1
+  classId: kotlin/reflect/KFunction1
   contextReceivers: []
   hasContextReceivers: false
   hasReceiver: false
-  isReflectType: false
+  isReflectType: true
   isSuspend: false
   nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
-      classId: kotlin/String
+      annotations: [
+        kotlin/ParameterName(name = "xx")
+          psi: null
+      ]
+      classId: kotlin/IntArray
       nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
+          name: IntArray
+          symbol: KaNamedClassSymbol(kotlin/IntArray)
           typeArguments: []
       ]
-      symbol: KaNamedClassSymbol(kotlin/String)
+      symbol: KaNamedClassSymbol(kotlin/IntArray)
       typeArguments: []
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: null, type: kotlin/String]
+    KaBaseFunctionValueParameter [name: xx, type: kotlin/IntArray]
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: Function1
-      symbol: KaNamedClassSymbol(kotlin/Function1)
+      name: KFunction1
+      symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
-          classId: kotlin/String
+          annotations: [
+            kotlin/ParameterName(name = "xx")
+              psi: null
+          ]
+          classId: kotlin/IntArray
           nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
+              name: IntArray
+              symbol: KaNamedClassSymbol(kotlin/IntArray)
               typeArguments: []
           ]
-          symbol: KaNamedClassSymbol(kotlin/String)
+          symbol: KaNamedClassSymbol(kotlin/IntArray)
           typeArguments: []
         KaUsualClassType:
           abbreviation: null
           annotations: []
-          classId: kotlin/Int
+          classId: kotlin/Unit
           nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
-              name: Int
-              symbol: KaNamedClassSymbol(kotlin/Int)
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
               typeArguments: []
           ]
-          symbol: KaNamedClassSymbol(kotlin/Int)
+          symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
       ]
   ]
@@ -76,45 +70,48 @@ KaFunctionType:
   returnType: KaUsualClassType:
     abbreviation: null
     annotations: []
-    classId: kotlin/Int
+    classId: kotlin/Unit
     nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
-        name: Int
-        symbol: KaNamedClassSymbol(kotlin/Int)
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
         typeArguments: []
     ]
-    symbol: KaNamedClassSymbol(kotlin/Int)
+    symbol: KaNamedClassSymbol(kotlin/Unit)
     typeArguments: []
-  symbol: KaNamedClassSymbol(kotlin/Function1)
+  symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
-      classId: kotlin/String
+      annotations: [
+        kotlin/ParameterName(name = "xx")
+          psi: null
+      ]
+      classId: kotlin/IntArray
       nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
+          name: IntArray
+          symbol: KaNamedClassSymbol(kotlin/IntArray)
           typeArguments: []
       ]
-      symbol: KaNamedClassSymbol(kotlin/String)
+      symbol: KaNamedClassSymbol(kotlin/IntArray)
       typeArguments: []
     KaUsualClassType:
       abbreviation: null
       annotations: []
-      classId: kotlin/Int
+      classId: kotlin/Unit
       nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
-          name: Int
-          symbol: KaNamedClassSymbol(kotlin/Int)
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
       ]
-      symbol: KaNamedClassSymbol(kotlin/Int)
+      symbol: KaNamedClassSymbol(kotlin/Unit)
       typeArguments: []
   ]
 
 Rendered type:
-expansion.FunctionAlias
+kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Unit>
