@@ -253,6 +253,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             dependsOn(nativeDependencies.llvmDependency)
             dependsOn(nativeDependencies.targetDependency(_target))
             dependsOn(this@SourceSet.dependencies)
+            // Without this explicit statement task dependency is not created even if it is requested in RuntimeTestingPlugin
+            dependsOn(project.tasks.named("downloadGoogleTest"))
             val specs = this@SourceSet.onlyIf
             val target = target
             onlyIf {
