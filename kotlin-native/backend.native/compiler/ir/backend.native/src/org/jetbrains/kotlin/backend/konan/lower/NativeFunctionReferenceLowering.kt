@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irFlag
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
+import org.jetbrains.kotlin.ir.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
 
 // [NativeSuspendFunctionsLowering] checks annotation of an extension receiver parameter type.
 // Unfortunately, it can't be checked on invoke method of lambda/reference, as it can't
@@ -39,7 +42,8 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
     private val symbols = context.symbols
 
     private val kFunctionImplSymbol = symbols.kFunctionImpl
-    private val kFunctionDescriptionSymbol = symbols.kFunctionDescription
+    private val kFunctionDescriptionCorrectSymbol = symbols.kFunctionDescriptionCorrect
+    private val kFunctionDescriptionLinkageErrorSymbol = symbols.kFunctionDescriptionLinkageError
     private val kSuspendFunctionImplSymbol = symbols.kSuspendFunctionImpl
 
     override fun postprocessClass(functionReferenceClass: IrClass, functionReference: IrRichFunctionReference) {
@@ -57,11 +61,16 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         return if (reflectionTarget == null) {
             SpecialNames.NO_NAME_PROVIDED
         } else {
-            generationState.fileLowerState.getFunctionReferenceImplUniqueName("FUNCTION_REFERENCE_FOR$${reflectionTarget.name}$").synthesizedName
+            val baseName = if (reference.reflectionTargetLinkageError != null) {
+                "FUNCTION_REFERENCE_FOR_MISSING_DECLARATION$"
+            } else {
+                "FUNCTION_REFERENCE_FOR$${reflectionTarget.name}$"
+            }
+            generationState.fileLowerState.getFunctionReferenceImplUniqueName(baseName).synthesizedName
         }
     }
 
-    override fun getSuperClassType(reference: IrRichFunctionReference) : IrType {
+    override fun getSuperClassType(reference: IrRichFunctionReference): IrType {
         return when {
             reference.reflectionTargetSymbol == null -> irBuiltIns.anyType
             reference.invokeFunction.isSuspend -> kSuspendFunctionImplSymbol.typeWith(listOf(reference.invokeFunction.returnType))
@@ -69,18 +78,19 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
     }
 
-    override fun getClassOrigin(reference: IrRichFunctionReference) : IrDeclarationOrigin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
+    override fun getClassOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     override fun getConstructorOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     override fun getInvokeMethodOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     override fun getConstructorCallOrigin(reference: IrRichFunctionReference): IrStatementOrigin? = null
 
 
-    override fun IrBuilderWithScope.generateSuperClassConstructorCall(superClassType: IrType, functionReference: IrRichFunctionReference) : IrDelegatingConstructorCall {
+    override fun IrBuilderWithScope.generateSuperClassConstructorCall(superClassType: IrType, functionReference: IrRichFunctionReference): IrDelegatingConstructorCall {
         return irDelegatingConstructorCall(superClassType.classOrFail.owner.primaryConstructor!!).apply {
             functionReference.reflectionTargetSymbol?.let { reflectionTarget ->
-                val description = KFunctionDescription(generationState.context, functionReference)
+                val reflectionTargetLinkageError = functionReference.reflectionTargetLinkageError
+                val description = if (reflectionTargetLinkageError == null) KFunctionDescription(functionReference) else null
+                arguments[0] = irKFunctionDescription(functionReference, description, reflectionTargetLinkageError)
                 typeArguments[0] = functionReference.invokeFunction.returnType
-                arguments[0] = irKFunctionDescription(description)
             }
         }
     }
@@ -120,23 +130,37 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
     }
 
-    private fun IrBuilderWithScope.irKFunctionDescription(description: KFunctionDescription): IrConstantValue {
-        val kTypeGenerator = toNativeConstantReflectionBuilder(symbols)
-
-        return irConstantObject(
-                kFunctionDescriptionSymbol.owner,
-                mapOf(
-                        "flags" to irConstantPrimitive(irInt(description.getFlags())),
-                        "arity" to irConstantPrimitive(irInt(description.getArity())),
-                        "fqName" to irConstantPrimitive(irString(description.getFqName())),
-                        "name" to irConstantPrimitive(irString(description.getName())),
-                        "returnType" to kTypeGenerator.irKType(description.returnType())
-                )
-        )
+    private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription?, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
+        if (reflectionTargetLinkageError != null) {
+            val errorMessage = generationState.context.partialLinkageSupport.prepareLinkageError(
+                    doNotLog = false,
+                    reflectionTargetLinkageError,
+                    functionReference,
+                    PLFile.determineFileFor(functionReference.invokeFunction),
+            )
+            return irConstantObject(
+                    kFunctionDescriptionLinkageErrorSymbol.owner,
+                    mapOf(
+                            "reflectionTargetLinkageError" to irConstantPrimitive(irString(errorMessage))
+                    )
+            )
+        } else {
+            requireNotNull(description)
+            val kTypeGenerator = toNativeConstantReflectionBuilder(symbols)
+            return irConstantObject(
+                    kFunctionDescriptionCorrectSymbol.owner,
+                    mapOf(
+                            "flags" to irConstantPrimitive(irInt(description.getFlags())),
+                            "arity" to irConstantPrimitive(irInt(description.getArity())),
+                            "fqName" to irConstantPrimitive(irString(description.getFqName())),
+                            "name" to irConstantPrimitive(irString(description.getName())),
+                            "returnType" to kTypeGenerator.irKType(description.returnType()),
+                    )
+            )
+        }
     }
 
     private class KFunctionDescription(
-            private val context: Context,
             private val functionReference: IrRichFunctionReference,
     ) {
         private val functionReferenceReflectionTarget = functionReference.reflectionTargetSymbol!!.owner
@@ -153,10 +177,10 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
 
         fun getFqName(): String {
-            return if (isFunInterfaceConstructorAdapter())
-                functionReferenceReflectionTarget.returnType.getClass()!!.fqNameForIrSerialization.toString()
-            else
-                functionReferenceReflectionTarget.computeFullName()
+            return when {
+                isFunInterfaceConstructorAdapter() -> functionReference.invokeFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
+                else -> functionReferenceReflectionTarget.computeFullName()
+            }
         }
 
         fun getName(): String {

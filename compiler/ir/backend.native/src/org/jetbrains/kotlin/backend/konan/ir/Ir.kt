@@ -366,6 +366,8 @@ class KonanSymbols(
     val refClass = internalClass("Ref")
     val kFunctionImpl = internalClass("KFunctionImpl")
     val kFunctionDescription = internalClass("KFunctionDescription")
+    val kFunctionDescriptionCorrect = symbolFinder.findNestedClass(kFunctionDescription, Name.identifier("Correct"))!!
+    val kFunctionDescriptionLinkageError = symbolFinder.findNestedClass(kFunctionDescription, Name.identifier("LinkageError"))!!
     val kSuspendFunctionImpl = internalClass("KSuspendFunctionImpl")
 
     val kMutableProperty0 = reflectionClass("KMutableProperty0")

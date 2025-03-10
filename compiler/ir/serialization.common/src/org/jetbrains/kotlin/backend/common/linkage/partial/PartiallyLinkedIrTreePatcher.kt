@@ -612,6 +612,18 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkExpressionTypeArguments()
         }
 
+        override fun visitRichFunctionReference(expression: IrRichFunctionReference) = expression.maybeThrowLinkageError {
+            // A type of function reference is usually FunctionN or KFunctionN, and its overriddenFunctionSymbol is FunctionN.invoke.
+            // But the type can also be a user defined fun interface, and either that interface or its SAM could have gone missing.
+            checkReferencedDeclaration(overriddenFunctionSymbol)
+                ?: checkExpressionType(type)
+                ?: run {
+                    // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
+                    reflectionTargetLinkageError = checkReferencedDeclaration(reflectionTargetSymbol)
+                    null
+                }
+        }
+
         // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression
 

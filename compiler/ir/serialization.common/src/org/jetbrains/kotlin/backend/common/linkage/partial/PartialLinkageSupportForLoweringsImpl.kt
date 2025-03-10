@@ -57,10 +57,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
         file: PLFile,
         doNotLog: Boolean
     ): IrCall {
-        val errorMessage = if (doNotLog)
-            renderLinkageError(partialLinkageCase) // Just render a message.
-        else
-            renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
+        val errorMessage = prepareLinkageError(doNotLog, partialLinkageCase, element, file)
 
         throwExpressionsGenerated++ // Track each generated `throw` expression.
 
@@ -75,6 +72,16 @@ internal class PartialLinkageSupportForLoweringsImpl(
             arguments[0] = IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage)
         }
     }
+
+    override fun prepareLinkageError(
+        doNotLog: Boolean,
+        partialLinkageCase: PartialLinkageCase,
+        element: IrElement,
+        file: PLFile,
+    ): String = if (doNotLog)
+        renderLinkageError(partialLinkageCase) // Just render a message.
+    else
+        renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
 
     fun renderAndLogLinkageError(partialLinkageCase: PartialLinkageCase, element: IrElement, file: PLFile): String {
         val errorMessage = renderLinkageError(partialLinkageCase)
