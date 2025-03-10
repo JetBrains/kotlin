@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.SwiftExportDependencies
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import kotlin.collections.contains
 
 /**
@@ -54,7 +57,7 @@ internal fun translateModulePublicApi(
         }
         val sirSession = buildSirSession(kaModules, config, module.config, stdlibReferenceHandler)
         translateModule(sirSession, kaModules.mainModule)
-        createTranslationResult(sirSession, config, module.config, kaModules, referencedStdlibTypes.toSet())
+        createTranslationResult(sirSession, config, module.config, kaModules, referencedStdlibTypes)
     }
 }
 
@@ -103,9 +106,21 @@ private fun KaSession.createTranslationResult(
     sirModule.updateImport(SirImport(config.runtimeModuleName))
     val bridgesName = "${moduleConfig.bridgeModuleName}_${sirModule.name}"
     val bridges = generateModuleBridges(sirModule, bridgesName)
+    // Serialize SirModule to sources to avoid leakage of SirSession (and KaSession, likely) outside the analyze call.
+    val swiftSourceCode = SirAsSwiftSourcesPrinter.print(
+        sirModule,
+        config.stableDeclarationsOrder,
+        config.renderDocComments,
+    )
+    val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgesName) + config.platformLibsInputModule.map { it.name }
+    val referencedSwiftModules = sirModule.imports
+        .filter { it.moduleName !in knownModuleNames }
+        .map { SwiftExportModule.Reference(it.moduleName) }
     return TranslationResult(
+        swiftModuleName = sirModule.name,
+        swiftModuleSources = swiftSourceCode,
+        referencedSwiftModules = referencedSwiftModules,
         packages = sirSession.enumGenerator.collectedPackages,
-        sirModule = sirModule,
         bridgeSources = bridges,
         moduleConfig = moduleConfig,
         bridgesModuleName = bridgesName,
@@ -133,7 +148,9 @@ private fun KaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleNa
 }
 
 internal class TranslationResult(
-    val sirModule: SirModule,
+    val swiftModuleName: String,
+    val swiftModuleSources: String,
+    val referencedSwiftModules: List<SwiftExportModule.Reference>,
     val packages: Set<FqName>,
     val bridgeSources: BridgeSources,
     val moduleConfig: SwiftModuleConfig,
