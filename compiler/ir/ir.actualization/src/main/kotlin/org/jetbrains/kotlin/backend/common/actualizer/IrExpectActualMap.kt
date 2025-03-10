@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.backend.common.actualizer.ExpectActualLinkCollector.MatchingContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentsWithSelf
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class IrExpectActualMap() {
@@ -39,4 +41,24 @@ class IrExpectActualMap() {
         ) _actualToDirectExpect.put(actualSymbol, expectSymbol)
         return registeredActual
     }
+
+    internal fun fillAdditionalMapping(
+        actualizerMapContributor: IrActualizerMapContributor,
+        context: MatchingContext
+    ) {
+        val classMapping = actualizerMapContributor.collectClassesMap().classMapping
+        _expectToActual += classMapping
+        for ((expectClass, actualClass) in classMapping) {
+            // Here we call check for two classes only to match the scopes of these classes.
+            // Abstraction of matching leaked into checking in this place :sad:
+            AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstMatchedActual(
+                expectClass,
+                actualClass,
+                context,
+                context.languageVersionSettings,
+            )
+        }
+        _expectToActual += actualizerMapContributor.collectTopLevelCallablesMap()
+    }
+
 }

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 
 /**
  * Allows extracting extra actual top-level declarations which are not presented in source code.
@@ -22,4 +24,18 @@ abstract class IrExtraActualDeclarationExtractor {
      * The method works only with top-level callables.
      */
     abstract fun extract(expectTopLevelCallables: List<IrDeclarationWithName>, expectCallableId: CallableId): List<IrSymbol>
+}
+
+/**
+ * Allows contributing additional pairs of symbols to [IrExpectActualMap], so they would be remapped during
+ * the symbol updating passes of IR actualizer
+ */
+abstract class IrActualizerMapContributor {
+    abstract fun collectClassesMap(): ActualClassInfo
+    abstract fun collectTopLevelCallablesMap(): Map<IrSymbol, IrSymbol>
+
+    class ActualClassInfo(
+        val classMapping: Map<IrClassSymbol, IrClassSymbol>,
+        val actualTypeAliases: Map<ClassId, IrTypeAliasSymbol>
+    )
 }
