@@ -18,9 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 
 object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -43,20 +44,20 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
             return
         }
 
-        val calleePropertySymbol = extensionReceiver.calleeReference.toResolvedPropertySymbol() ?: return
+        val calleeVariableSymbol = extensionReceiver.calleeReference.toResolvedVariableSymbol() ?: return
 
-        if (!calleePropertySymbol.isLateInit) {
+        if (!calleeVariableSymbol.isLateInit) {
             reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, context)
             return
         }
 
         // property must be declared in one of the outer lexical scopes
-        val containingSymbol = calleePropertySymbol.containingClassOrFile(context)
+        val containingSymbol = calleeVariableSymbol.containingClassOrFile(context)
         if (context.containingDeclarations.none { it.symbol == containingSymbol }) {
             reporter.reportOn(
                 source,
                 FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY,
-                calleePropertySymbol,
+                calleeVariableSymbol,
                 context
             )
             return
@@ -71,7 +72,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
     /**
      * Returns the containing class or file if the property is top-level.
      */
-    private fun FirPropertySymbol.containingClassOrFile(
+    private fun FirVariableSymbol<*>.containingClassOrFile(
         context: CheckerContext
     ): FirBasedSymbol<*>? {
         return getContainingClassSymbol()
