@@ -87,6 +87,11 @@ private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStra
 private class LLBinaryModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
+        // Providing `LLModuleResolutionStrategy.LAZY` strategy for `KaLibrarySourceModule` is a workaround,
+        // as `KaLibrarySourceModule` should not be used as dependencies.
+        // It was added after including the project library scope
+        // in resolution scopes of all `KaLibrarySourceModule`s and `KaLibraryModule`s.
+        // See KT-75838
         return if (module == useSiteModule || module is KaLibrarySourceModule) LLModuleResolutionStrategy.LAZY else LLModuleResolutionStrategy.STATIC
     }
 }
