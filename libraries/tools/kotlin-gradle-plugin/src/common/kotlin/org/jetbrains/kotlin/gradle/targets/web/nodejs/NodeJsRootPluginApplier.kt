@@ -46,7 +46,7 @@ internal class NodeJsRootPluginApplier(
 ) {
 
     fun apply(project: Project) {
-        MultiplePluginDeclarationDetector.Companion.detect(project)
+        MultiplePluginDeclarationDetector.detect(project)
 
         check(project == project.rootProject) {
             "${this::class.java.name} can be applied only to root project"
@@ -83,7 +83,7 @@ internal class NodeJsRootPluginApplier(
             lockFileDirectory(project.layout.projectDirectory)
         )
 
-        val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> = GradleNodeModulesCache.Companion.registerIfAbsent(
+        val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> = GradleNodeModulesCache.registerIfAbsent(
             project,
             project.projectDir,
             nodeJsRoot.nodeModulesGradleCacheDirectory,
@@ -91,7 +91,7 @@ internal class NodeJsRootPluginApplier(
         )
 
         val setupFileHasherTask =
-            project.registerTask<KotlinNpmCachesSetup>(platformDisambiguate.extensionName(KotlinNpmCachesSetup.Companion.NAME)) {
+            project.registerTask<KotlinNpmCachesSetup>(platformDisambiguate.extensionName(KotlinNpmCachesSetup.NAME)) {
                 it.description = "Setup file hasher for caches"
 
                 it.gradleNodeModules.set(gradleNodeModulesProvider)
@@ -110,7 +110,7 @@ internal class NodeJsRootPluginApplier(
 
         val objectFactory = project.objects
 
-        val npmResolutionManager: Provider<KotlinNpmResolutionManager> = KotlinNpmResolutionManager.Companion.registerIfAbsent(
+        val npmResolutionManager: Provider<KotlinNpmResolutionManager> = KotlinNpmResolutionManager.registerIfAbsent(
             project,
             objectFactory.providerWithLazyConvention {
                 nodeJsRoot.resolver.close()
@@ -125,10 +125,10 @@ internal class NodeJsRootPluginApplier(
 
         val rootPackageJson =
             project.tasks.register(
-                platformDisambiguate.extensionName(RootPackageJsonTask.Companion.NAME),
+                platformDisambiguate.extensionName(RootPackageJsonTask.NAME),
                 RootPackageJsonTask::class.java
             ) { task ->
-                task.group = NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
+                task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
                 task.description = "Create root package.json"
 
                 task.configureNodeJsEnvironmentTasks(
@@ -139,7 +139,7 @@ internal class NodeJsRootPluginApplier(
                 )
 
                 task.rootPackageJsonFile.value(
-                    nodeJsRoot.rootPackageDirectory.map { it.file(NpmProject.Companion.PACKAGE_JSON) }
+                    nodeJsRoot.rootPackageDirectory.map { it.file(NpmProject.PACKAGE_JSON) }
                 ).disallowChanges()
 
                 task.onlyIf("Prepare NPM project only in configuring state") {
@@ -153,11 +153,11 @@ internal class NodeJsRootPluginApplier(
         configureRequiresNpmDependencies(project, rootPackageJson)
 
         val npmInstall =
-            project.registerTask<KotlinNpmInstallTask>(platformDisambiguate.extensionName(KotlinNpmInstallTask.Companion.NAME)) { npmInstall ->
+            project.registerTask<KotlinNpmInstallTask>(platformDisambiguate.extensionName(KotlinNpmInstallTask.NAME)) { npmInstall ->
                 with(nodeJs) {
                     npmInstall.dependsOn(project.nodeJsSetupTaskProvider)
                 }
-                npmInstall.group = NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
+                npmInstall.group = NodeJsRootPlugin.TASKS_GROUP_NAME
                 npmInstall.description = "Find, download and link NPM dependencies and projects"
 
                 npmInstall.configureNodeJsEnvironmentTasks(
@@ -199,17 +199,17 @@ internal class NodeJsRootPluginApplier(
             }
 
         project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME),
+            platformDisambiguate.extensionName(LockCopyTask.STORE_PACKAGE_LOCK_NAME),
             LockStoreTask::class.java
         ) { task ->
             task.dependsOn(npmInstall)
-            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.Companion.PACKAGE_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
 
             task.additionalInputFiles.from(
-                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.Companion.YARN_LOCK) }
+                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
             task.additionalInputFiles.from(
-                task.outputDirectory.map { it.file(LockCopyTask.Companion.YARN_LOCK) }
+                task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
 
             task.outputDirectory.set(npm.lockFileDirectory)
@@ -227,19 +227,19 @@ internal class NodeJsRootPluginApplier(
         }
 
         project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK),
+            platformDisambiguate.extensionName(LockCopyTask.UPGRADE_PACKAGE_LOCK),
             LockStoreTask::class.java
         ) { task ->
             task.dependsOn(npmInstall)
-            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.Companion.PACKAGE_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
             task.outputDirectory.set(npm.lockFileDirectory)
             task.fileName.set(npm.lockFileName)
 
             task.additionalInputFiles.from(
-                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.Companion.YARN_LOCK) }
+                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
             task.additionalInputFiles.from(
-                task.outputDirectory.map { it.file(LockCopyTask.Companion.YARN_LOCK) }
+                task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
 
             task.lockFileMismatchReport.value(
@@ -254,7 +254,7 @@ internal class NodeJsRootPluginApplier(
         }
 
         project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME),
+            platformDisambiguate.extensionName(LockCopyTask.RESTORE_PACKAGE_LOCK_NAME),
             LockCopyTask::class.java
         ) { task ->
             task.inputFile.set(
@@ -263,10 +263,10 @@ internal class NodeJsRootPluginApplier(
                 }
             )
             task.additionalInputFiles.from(
-                npm.lockFileDirectory.map { it.file(LockCopyTask.Companion.YARN_LOCK) }
+                npm.lockFileDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
             )
             task.outputDirectory.set(nodeJsRoot.rootPackageDirectory)
-            task.fileName.set(LockCopyTask.Companion.PACKAGE_LOCK)
+            task.fileName.set(LockCopyTask.PACKAGE_LOCK)
             task.onlyIf {
                 val inputFileExists = task.inputFile.getOrNull()?.asFile?.exists() == true
                 // Workaround for "skip if not exists"
@@ -287,11 +287,11 @@ internal class NodeJsRootPluginApplier(
         ).disallowChanges()
 
         project.tasks.register(
-            platformDisambiguate.extensionName("node" + CleanDataTask.Companion.NAME_SUFFIX),
+            platformDisambiguate.extensionName("node" + CleanDataTask.NAME_SUFFIX),
             CleanDataTask::class.java
         ) {
             it.cleanableStoreProvider = nodeJs.env.map { it.cleanableStore }
-            it.group = NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
+            it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }
 
@@ -321,7 +321,7 @@ internal class NodeJsRootPluginApplier(
                     .map { it.compilationNpmResolution }
                     .map { resolution ->
                         val name = resolution.npmProjectName
-                        projectPackagesDirectory.dir(name).file(NpmProject.Companion.PACKAGE_JSON)
+                        projectPackagesDirectory.dir(name).file(NpmProject.PACKAGE_JSON)
                     }
             }
         ).disallowChanges()
