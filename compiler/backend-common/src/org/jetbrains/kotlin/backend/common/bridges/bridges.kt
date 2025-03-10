@@ -26,7 +26,7 @@ interface FunctionHandle {
     /** On finding concrete super declaration we should distinguish non-abstract java8/js default methods from
      * class ones (see [findConcreteSuperDeclaration] method in bridges.kt).
      * Note that interface methods with body compiled to jvm 8 target are assumed to be non-abstract in bridges method calculation
-     * (more details in [DescriptorBasedFunctionHandle.isBodyOwner] comment).*/
+     */
     val mayBeUsedAsSuperImplementation: Boolean
 
     fun getOverridden(): Iterable<FunctionHandle>
