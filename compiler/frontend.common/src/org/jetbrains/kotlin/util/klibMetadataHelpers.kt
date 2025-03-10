@@ -25,7 +25,7 @@ private val LANGUAGE_TO_KLIB_METADATA_VERSION = EnumMap<LanguageVersion, Metadat
     }
 }
 
-private fun LanguageVersion.toKlibMetadataVersion(): MetadataVersion = LANGUAGE_TO_KLIB_METADATA_VERSION.getValue(this)
+fun LanguageVersion.toKlibMetadataVersion(): MetadataVersion = LANGUAGE_TO_KLIB_METADATA_VERSION.getValue(this)
 
 fun CompilerConfiguration.klibMetadataVersionOrDefault(
     languageVersion: LanguageVersion = languageVersionSettings.languageVersion
