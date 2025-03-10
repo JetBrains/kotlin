@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -622,6 +623,24 @@ internal class PartiallyLinkedIrTreePatcher(
                     reflectionTargetLinkageError = checkReferencedDeclaration(reflectionTargetSymbol)
                     null
                 }
+        }
+
+        override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrRichPropertyReference {
+            expression.transformChildrenVoid(this)
+
+            // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
+            expression.reflectionTargetLinkageError = expression.checkReferencedDeclaration(expression.reflectionTargetSymbol)
+            if (expression.reflectionTargetLinkageError != null) {
+                (expression.reflectionTargetSymbol?.owner as? IrProperty)?.let { property ->
+                    // checkReferencedDeclaration() above generates a stub for reflectionTargetSymbol itself, but
+                    // we also to need create stubs for the property's getter and setter to not leave unbound IR.
+                    property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                    if (expression.setterFunction != null) {
+                        property.setter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                    }
+                }
+            }
+            return expression
         }
 
         // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
