@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -50,6 +51,24 @@ abstract class FirInferenceSession {
      * NB: The callee must pay attention that exactly current common CS will be modified.
      */
     open fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? = null
+
+    /**
+     * For non-trivial inference session (currently PCLA-only), if the type contains type variables that might be fixed,
+     * fix it and return result mapping (key = type variable, value = target type).
+     *
+     * Type variable might be fixed if it doesn't belong to an outer CS and have proper constraints.
+     *
+     * By semi-fixation we mean that only the relevant EQUALITY constraint is added,
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext.fixVariable] is not expected to be called.
+     *
+     * See `getAndSemiFixCurrentResultIfTypeVariable` chapter at [docs/fir/pcla.md]
+     *
+     * NB: The callee must pay attention that exactly current common CS will be modified.
+     */
+    open fun semiFixTypeVariablesAllowingFixationToOuterOnes(
+        type: ConeKotlinType,
+        myCs: NewConstraintSystemImpl,
+    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType> = emptyMap()
 
     // TODO: This function would be hopefully removed once KT-55692 is fixed
     @TemporaryInferenceSessionHook
