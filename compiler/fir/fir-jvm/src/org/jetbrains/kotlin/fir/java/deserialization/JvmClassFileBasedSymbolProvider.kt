@@ -8,33 +8,29 @@ package org.jetbrains.kotlin.fir.java.deserialization
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeRawType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -59,7 +55,6 @@ class JvmClassFileBasedSymbolProvider(
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ), FirJavaAwareSymbolProvider {
-    private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
     private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
 
     private val reportErrorsOnPreReleaseDependencies = with(session.languageVersionSettings) {
@@ -204,7 +199,6 @@ class JvmClassFileBasedSymbolProvider(
             KotlinJvmBinarySourceElement(
                 kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.abiStability,
             ),
-            classPostProcessor = { loadAnnotationsFromClassFile(result, it) },
             JavaAwareFlexibleTypeFactory,
         )
     }
@@ -214,33 +208,6 @@ class JvmClassFileBasedSymbolProvider(
 
     override fun hasPackage(fqName: FqName): Boolean =
         javaFacade.hasPackage(fqName)
-
-    private fun loadAnnotationsFromClassFile(
-        kotlinClass: KotlinClassFinder.Result.KotlinClass,
-        symbol: FirRegularClassSymbol
-    ) {
-        val annotations = mutableListOf<FirAnnotation>()
-        var hasPublishedApi = false
-        kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
-            object : KotlinJvmBinaryClass.AnnotationVisitor {
-                override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    if (classId == StandardClassIds.Annotations.PublishedApi) {
-                        hasPublishedApi = true
-                    }
-                    return annotationsLoader.loadAnnotationIfNotSpecial(classId, annotations)
-                }
-
-                override fun visitEnd() {
-                }
-            },
-            kotlinClass.byteContent,
-        )
-        symbol.fir.run {
-            replaceAnnotations(annotations.toMutableOrEmpty())
-            replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
-            setLazyPublishedVisibility(hasPublishedApi, null, session)
-        }
-    }
 
     private fun String?.toPath(): Path? {
         return this?.let { Paths.get(it).normalize() }

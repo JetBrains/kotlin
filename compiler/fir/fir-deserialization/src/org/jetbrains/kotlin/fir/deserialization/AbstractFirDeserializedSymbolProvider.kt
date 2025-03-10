@@ -204,7 +204,6 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val annotationDeserializer: AbstractAnnotationDeserializer?,
             val moduleData: FirModuleData?,
             val sourceElement: DeserializedContainerSource?,
-            val classPostProcessor: DeserializedClassPostProcessor?,
             val flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
         ) : ClassMetadataFindResult()
     }
@@ -230,7 +229,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return when (val result = extractClassMetadata(classId, parentContext)) {
             is ClassMetadataFindResult.NoMetadata -> FirRegularClassSymbol(classId) to result.classPostProcessor
             is ClassMetadataFindResult.Metadata -> {
-                val (nameResolver, classProto, annotationDeserializer, moduleData, sourceElement, postProcessor) = result
+                val (nameResolver, classProto, annotationDeserializer, moduleData, sourceElement) = result
                 moduleData ?: return null to null
                 val symbol = FirRegularClassSymbol(classId)
                 deserializeClassToSymbol(
@@ -250,7 +249,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     deserializeNestedClass = this::getClass,
                 )
                 symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
-                symbol to postProcessor
+                symbol to null
             }
             null -> null to null
         }

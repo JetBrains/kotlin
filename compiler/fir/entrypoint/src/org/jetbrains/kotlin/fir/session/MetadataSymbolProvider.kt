@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.serialization.deserialization.MetadataClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.readProto
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @ThreadSafeMutableState
 class MetadataSymbolProvider(
@@ -83,7 +82,6 @@ class MetadataSymbolProvider(
             annotationDeserializer = annotationDeserializer,
             moduleDataProvider.allModuleData.last(),
             sourceElement = null,
-            classPostProcessor = null,
             FirTypeDeserializer.FlexibleTypeFactory.Default,
         )
     }
