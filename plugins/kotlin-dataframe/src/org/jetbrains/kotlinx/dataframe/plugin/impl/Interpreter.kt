@@ -13,7 +13,7 @@ interface Interpreter<T> {
         val name: String,
         val klass: KType,
         val lens: Lens,
-        val defaultValue: DefaultValue<*>
+        val defaultValue: DefaultValue<*>,
     )
 
     sealed interface Lens
@@ -28,7 +28,7 @@ interface Interpreter<T> {
 
     data object GroupBy : Lens
 
-    data object  Id : Lens
+    data object Id : Lens
 
     // required to compute whether resulting schema should be inheritor of previous class or a new class
     fun startingSchema(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): PluginDataFrameSchema?
@@ -60,7 +60,8 @@ sealed interface DefaultValue<out T>
 class Present<T>(val value: T) : DefaultValue<T>
 data object Absent : DefaultValue<Nothing>
 
-open class Arguments(private val arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): KotlinTypeFacade by kotlinTypeFacade {
+open class Arguments(private val arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade) :
+    KotlinTypeFacade by kotlinTypeFacade {
     operator fun get(s: String): Any? = (arguments[s] ?: error("")).value
     operator fun contains(key: String): Boolean {
         return arguments.contains(key)
@@ -75,7 +76,10 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
 
     protected open val Arguments.startingSchema: PluginDataFrameSchema? get() = null
 
-    final override fun startingSchema(arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): PluginDataFrameSchema? {
+    final override fun startingSchema(
+        arguments: Map<String, Interpreter.Success<Any?>>,
+        kotlinTypeFacade: KotlinTypeFacade,
+    ): PluginDataFrameSchema? {
         return Arguments(arguments, kotlinTypeFacade).startingSchema
     }
 
@@ -83,7 +87,7 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
         defaultValue: DefaultValue<Value> = Absent,
         name: ArgumentName? = null,
         lens: Interpreter.Lens = Interpreter.Value,
-        crossinline converter: (CompileTimeValue) -> Value
+        crossinline converter: (CompileTimeValue) -> Value,
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Arguments, Value>> = PropertyDelegateProvider { thisRef: Any?, property ->
         val name = name?.value ?: property.name
         _expectedArguments.add(Interpreter.ExpectedArgument(name, typeOf<CompileTimeValue>(), lens, defaultValue))
@@ -100,7 +104,7 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
         name: ArgumentName? = null,
         expectedType: KType? = null,
         defaultValue: DefaultValue<Value> = Absent,
-        lens: Interpreter.Lens = Interpreter.Value
+        lens: Interpreter.Lens = Interpreter.Value,
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Arguments, Value>> = PropertyDelegateProvider { thisRef: Any?, property ->
         val name = name?.value ?: property.name
         _expectedArguments.add(
@@ -129,7 +133,10 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
 
     fun name(name: String): ArgumentName = ArgumentName.of(name)
 
-    final override fun interpret(arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): Interpreter.InterpretationResult<T> {
+    final override fun interpret(
+        arguments: Map<String, Interpreter.Success<Any?>>,
+        kotlinTypeFacade: KotlinTypeFacade,
+    ): Interpreter.InterpretationResult<T> {
         return try {
             Arguments(arguments, kotlinTypeFacade).interpret().let { Interpreter.Success(it) }
         } catch (e: Exception) {
@@ -142,7 +149,10 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
 
 interface SchemaModificationInterpreter : Interpreter<PluginDataFrameSchema> {
 
-    override fun interpret(arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): Interpreter.InterpretationResult<PluginDataFrameSchema>
+    override fun interpret(
+        arguments: Map<String, Interpreter.Success<Any?>>,
+        kotlinTypeFacade: KotlinTypeFacade,
+    ): Interpreter.InterpretationResult<PluginDataFrameSchema>
 }
 
 abstract class AbstractSchemaModificationInterpreter :

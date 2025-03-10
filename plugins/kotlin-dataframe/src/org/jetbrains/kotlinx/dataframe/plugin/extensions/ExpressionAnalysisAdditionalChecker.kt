@@ -7,15 +7,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1DelegateProvider
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.diagnostics.warning1
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -35,14 +27,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
-import org.jetbrains.kotlin.fir.types.renderReadable
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -62,7 +47,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.isGroupBy
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
     isTest: Boolean,
-    dumpSchemas: Boolean
+    dumpSchemas: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
@@ -74,7 +59,8 @@ class ExpressionAnalysisAdditionalChecker(
     }
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val propertyCheckers: Set<FirPropertyChecker> = setOfNotNull(PropertySchemaReporter.takeIf { dumpSchemas })
-        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOfNotNull(FunctionDeclarationSchemaReporter.takeIf { dumpSchemas })
+        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> =
+            setOfNotNull(FunctionDeclarationSchemaReporter.takeIf { dumpSchemas })
     }
 }
 
@@ -82,7 +68,6 @@ private class Checker(
     val isTest: Boolean,
 ) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
-        val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
         val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
         val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
         val CAST_ID = CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("cast"))
@@ -92,18 +77,6 @@ private class Checker(
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         with(KotlinTypeFacadeImpl(context.session, isTest)) {
             analyzeCast(expression, reporter, context)
-//            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
-//                override var errorReported: Boolean = false
-//
-//                override fun reportInterpretationError(call: FirFunctionCall, message: String) {
-//                    reporter.reportOn(call.source, ERROR, message, context)
-//                    errorReported = true
-//                }
-//
-//                override fun doNotReportInterpretationError() {
-//                    errorReported = true
-//                }
-//            })
         }
     }
 
@@ -111,7 +84,8 @@ private class Checker(
         val calleeReference = expression.calleeReference
         if (calleeReference !is FirResolvedNamedReference
             || calleeReference.toResolvedCallableSymbol()?.callableId != CAST_ID
-            || !calleeReference.resolvedSymbol.hasAnnotation(CHECK, session)) {
+            || !calleeReference.resolvedSymbol.hasAnnotation(CHECK, session)
+        ) {
             return
         }
         val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
@@ -135,11 +109,15 @@ private class Checker(
             for (target in targetColumns) {
                 val source = sourceMap[target.path.path]
                 val present = if (source != null) {
-                    if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) { continue }
+                    if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) {
+                        continue
+                    }
                     if (source.type.type().isSubtypeOf(target.column.type.type(), session)) {
                         true
                     } else {
-                        missingColumns += "${target.path.path} ${target.column.name}: ${source.type.type().renderReadable()} is not subtype of ${target.column.type.type()}"
+                        missingColumns += "${target.path.path} ${target.column.name}: ${
+                            source.type.type().renderReadable()
+                        } is not subtype of ${target.column.type.type()}"
                         false
                     }
                 } else {
@@ -186,7 +164,7 @@ private data object PropertyAccessSchemaReporter : FirPropertyAccessExpressionCh
     override fun check(
         expression: FirPropertyAccessExpression,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val initializer = expression.resolvedType
         context.sessionContext {
@@ -253,7 +231,7 @@ fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {
 }
 
 inline fun <reified P : PsiElement, A> info1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT,
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }

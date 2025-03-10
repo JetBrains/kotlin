@@ -32,14 +32,14 @@ class DataRowSchemaSupertype(session: FirSession) : FirSupertypeGenerationExtens
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
         return declaration is FirRegularClass
-            && declaration.classKind == ClassKind.CLASS
-            && session.predicateBasedProvider.matches(PREDICATE, declaration)
+                && declaration.classKind == ClassKind.CLASS
+                && session.predicateBasedProvider.matches(PREDICATE, declaration)
     }
 
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
-        typeResolver: TypeResolveService
+        typeResolver: TypeResolveService,
     ): List<ConeKotlinType> {
         if (resolvedSupertypes.any { it.toClassLikeSymbol(session)?.classId == dataRowSchema }) return emptyList()
         return listOf(dataRowSchema.constructClassLikeType(emptyArray()))

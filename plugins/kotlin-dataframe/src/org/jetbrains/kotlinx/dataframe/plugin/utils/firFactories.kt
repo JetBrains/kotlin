@@ -13,12 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagWithFixedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -33,7 +28,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     returnTypeRef: FirResolvedTypeRef,
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
-    source: KtSourceElement?
+    source: KtSourceElement?,
 ): FirProperty {
     val firPropertySymbol = FirPropertySymbol(callableId)
     return buildProperty {
@@ -45,9 +40,9 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
         status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                effectiveVisibility
+            Visibilities.Public,
+            Modality.FINAL,
+            effectiveVisibility
         )
         this.returnTypeRef = returnTypeRef
         receiverParameter = buildReceiverParameter {
@@ -84,9 +79,9 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             propertySymbol = firPropertySymbol
             isGetter = true
             status = FirResolvedDeclarationStatusImpl(
-                    Visibilities.Public,
-                    Modality.FINAL,
-                    effectiveVisibility
+                Visibilities.Public,
+                Modality.FINAL,
+                effectiveVisibility
             )
         }
         name = propertyName.identifier

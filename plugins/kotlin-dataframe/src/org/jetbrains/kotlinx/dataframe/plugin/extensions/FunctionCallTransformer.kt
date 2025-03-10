@@ -110,7 +110,7 @@ class FunctionCallTransformer(
         val noRefineAnnotation =
             symbol.annotations.none { it.fqName(session)?.shortName()?.equals(Name.identifier("Refine")) == true }
         val optIn = symbol.annotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("OptInRefine")) == true } &&
-            callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("Import")) == true }
+                callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("Import")) == true }
         if (noRefineAnnotation && !optIn) {
             return null
         }
@@ -197,7 +197,7 @@ class FunctionCallTransformer(
         override fun interceptOrNull(
             callInfo: CallInfo,
             symbol: FirNamedFunctionSymbol,
-            hash: String
+            hash: String,
         ): CallReturnType? {
             if (symbol.resolvedReturnType.fullyExpandedClassId(session) != Names.GROUP_BY_CLASS_ID) return null
             val keys = buildNewTypeArgument(null, Name.identifier("Key"), hash)
@@ -308,7 +308,7 @@ class FunctionCallTransformer(
         call: FirFunctionCall,
         originalSymbol: FirNamedFunctionSymbol,
         dataSchemaApis: List<DataSchemaApi>,
-        additionalDeclarations: List<FirClass>
+        additionalDeclarations: List<FirClass>,
     ): FirFunctionCall {
 
         val explicitReceiver = call.explicitReceiver
@@ -463,14 +463,14 @@ class FunctionCallTransformer(
         call: FirFunctionCall,
         firstSchema: FirRegularClass,
         prefix: String = "",
-        i: Int = 0
+        i: Int = 0,
     ): List<DataSchemaApi> {
         var i = i
         val dataSchemaApis = mutableListOf<DataSchemaApi>()
         val usedNames = mutableMapOf<String, Int>()
         fun PluginDataFrameSchema.materialize(
             schema: FirRegularClass? = null,
-            suggestedName: String? = null
+            suggestedName: String? = null,
         ): DataSchemaApi {
             val schema = if (schema != null) {
                 schema
@@ -585,7 +585,8 @@ class FunctionCallTransformer(
     }
 
     private fun findRun(): FirFunctionSymbol<*> {
-        return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("run")).single { it.typeParameterSymbols.size == 1 }
+        return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("run"))
+            .single { it.typeParameterSymbols.size == 1 }
     }
 
     private fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }

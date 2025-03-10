@@ -18,7 +18,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 internal inline fun <reified T> KotlinTypeFacade.analyzeRefinedCallShape(
     call: FirFunctionCall,
     expectedReturnType: ClassId,
-    reporter: InterpretationErrorReporter
+    reporter: InterpretationErrorReporter,
 ): CallResult<T>? {
     val callReturnType = call.resolvedType
     if (callReturnType.classId != expectedReturnType) return null

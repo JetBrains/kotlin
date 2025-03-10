@@ -3,20 +3,9 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import org.jetbrains.kotlinx.dataframe.ColumnsSelector
 import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.getColumnsWithPaths
-import org.jetbrains.kotlinx.dataframe.columns.ColumnReference
-import org.jetbrains.kotlinx.dataframe.columns.ColumnResolutionContext
-import org.jetbrains.kotlinx.dataframe.columns.ColumnWithPath
-import org.jetbrains.kotlinx.dataframe.columns.SingleColumn
-import org.jetbrains.kotlinx.dataframe.columns.UnresolvedColumnsPolicy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ConeTypesAdapter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asSimpleColumn
+import org.jetbrains.kotlinx.dataframe.columns.*
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
 
 internal class And10 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.other: ColumnsResolver by arg()
@@ -54,7 +43,7 @@ class SingleColumnApproximation(val col: ColumnWithPathApproximation) : ColumnsR
     }
 }
 
-interface ColumnsResolver : org.jetbrains.kotlinx.dataframe.columns.ColumnSet<Any?> {
+interface ColumnsResolver : ColumnSet<Any?> {
     fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation>
 
     override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
@@ -63,7 +52,7 @@ interface ColumnsResolver : org.jetbrains.kotlinx.dataframe.columns.ColumnSet<An
     }
 }
 
-abstract class ColumnsResolverAdapter : org.jetbrains.kotlinx.dataframe.columns.ColumnSet<Any?>, ColumnsResolver {
+abstract class ColumnsResolverAdapter : ColumnSet<Any?>, ColumnsResolver {
     override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
         return resolve(ColumnResolutionContext(df.asDataFrame(), UnresolvedColumnsPolicy.Skip))
             .map { ColumnWithPathApproximation(it.path, it.data.asSimpleColumn()) }
