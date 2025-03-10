@@ -34,8 +34,28 @@ public interface CompilationService {
      *
      * @param classpathEntry path to existent classpath entry
      * @param granularity determines granularity of tracking.
+     * @param parseInlinedLocalClasses enables an experimental snapshotting mode for inline methods and accessors
      */
-    public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        parseInlinedLocalClasses: Boolean
+    ): ClasspathEntrySnapshot
+
+    /**
+     * Calculates JVM classpath snapshot for [classpathEntry] used for detecting changes in incremental compilation with specified [granularity].
+     *
+     * The [ClassSnapshotGranularity.CLASS_LEVEL] granularity should be preferred for rarely changing dependencies as more lightweight in terms of the resulting snapshot size.
+     *
+     * @param classpathEntry path to existent classpath entry
+     * @param granularity determines granularity of tracking.
+     *
+     * This version of [calculateClasspathSnapshot] would not do any extra work to snapshot local classes used inside inline functions.
+     */
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity
+    ): ClasspathEntrySnapshot
 
     /**
      * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.
