@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|Anno|()  Foo| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<<implicit>>
         }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|Anno|()  Foo| {
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithArgumentInsideSuperTypeCall.kt
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|Anno|()  Foo| {
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }

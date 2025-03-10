@@ -101,7 +101,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): R|kotlin/String| {
     }
-    .R|kotlin/invoke<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/invoke>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    .<Unresolved name: invoke>#()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -112,7 +112,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): R|kotlin/String| {
     }
-    .R|kotlin/invoke<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/invoke>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+    .<Unresolved name: invoke>#()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()
         }
@@ -123,7 +123,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithNamedFunctionArgument.kt
     @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): R|kotlin/String| {
     }
-    .R|kotlin/invoke<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/invoke>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+    .<Unresolved name: invoke>#()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()
         }
