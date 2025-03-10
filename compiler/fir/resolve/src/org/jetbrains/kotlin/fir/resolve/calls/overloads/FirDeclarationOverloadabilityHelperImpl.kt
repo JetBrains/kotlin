@@ -41,10 +41,10 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
             typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
             valueParameterTypes = buildList<KotlinTypeMarker> {
                 declaration.resolvedContextParameters.mapTo(this) { it.returnTypeRef.coneType }
-                declaration.receiverParameter?.let { add(it.typeRef.coneType) }
+                declaration.resolvedReceiverType?.let { add(it) }
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
-            hasExtensionReceiver = declaration.receiverParameter != null,
+            hasExtensionReceiver = declaration.receiverParameterSymbol != null,
             contextReceiverCount = declaration.resolvedContextParameters.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,

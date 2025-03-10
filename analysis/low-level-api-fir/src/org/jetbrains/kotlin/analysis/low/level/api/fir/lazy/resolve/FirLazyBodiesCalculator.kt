@@ -387,7 +387,7 @@ private fun rebindThisRef(
     }
 
     expression.replaceCalleeReference(buildImplicitThisReference {
-        this.boundSymbol = newTarget.receiverParameter!!.symbol
+        this.boundSymbol = newTarget.receiverParameterSymbol!!
     })
 }
 

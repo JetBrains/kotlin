@@ -161,7 +161,7 @@ val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
 
 val FirCallableSymbol<*>.isInlineClassProperty: Boolean
     get() {
-        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameter != null || resolvedContextParameters.isNotEmpty()) return false
+        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || resolvedContextParameters.isNotEmpty()) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
         val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name

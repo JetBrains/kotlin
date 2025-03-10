@@ -484,7 +484,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
-        val receiverType = dispatchReceiverType ?: receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
+        val receiverType = dispatchReceiverType ?: resolvedReceiverTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
         val receiverClassId = receiverType.fullyExpandedType(session).classId ?: return false
         return when (name.asString()) {
             "length" -> receiverClassId == StandardClassIds.String

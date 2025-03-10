@@ -34,7 +34,7 @@ object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Pla
             // NB: This case with receiver is not covered with tests
             // and was replicated, because it's present in the original
             // checker.
-            val hasBadReceiverType = symbol.resolvedReceiverTypeRef?.coneType?.contains(::containsFunctionN) == true
+            val hasBadReceiverType = symbol.resolvedReceiverType?.contains(::containsFunctionN) == true
             val hasBadValueParameter = symbol is FirFunctionSymbol<*> && symbol.valueParameterSymbols.any { valueParameter ->
                 valueParameter.resolvedReturnType.contains(::containsFunctionN)
             }

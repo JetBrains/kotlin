@@ -287,7 +287,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun getParameterType(index: Int): ConeKotlinType =
             when (index) {
-                -1 -> declaration.symbol.resolvedReceiverTypeRef?.coneType
+                -1 -> declaration.symbol.resolvedReceiverType
                     ?: declaration.symbol.dispatchReceiverType
                     ?: error("Contract references non-existent receiver")
                 in declaration.valueParameters.indices -> declaration.valueParameters[index].returnTypeRef.coneType

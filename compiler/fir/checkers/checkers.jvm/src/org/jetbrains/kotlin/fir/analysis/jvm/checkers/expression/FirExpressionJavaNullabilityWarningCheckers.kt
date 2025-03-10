@@ -41,7 +41,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             )
         }
 
-        val receiverType = symbol.receiverParameter?.typeRef?.coneType
+        val receiverType = symbol.resolvedReceiverType
         expression.extensionReceiver?.checkExpressionForEnhancedTypeMismatch(
             expectedType = receiverType?.let(substitutor::substituteOrSelf),
             reporter,

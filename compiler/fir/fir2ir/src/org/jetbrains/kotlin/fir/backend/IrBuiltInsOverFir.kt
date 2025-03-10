@@ -278,7 +278,7 @@ class IrBuiltInsOverFir(
 
     override val extensionToString: IrSimpleFunctionSymbol by lazy {
         val firFunctionSymbol = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.TO_STRING).single {
-            it.receiverParameter?.typeRef?.coneType?.isNullableAny == true
+            it.resolvedReceiverType?.isNullableAny == true
         }
         fir2irBuiltins.findFunction(firFunctionSymbol)
     }
@@ -292,7 +292,7 @@ class IrBuiltInsOverFir(
 
     override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
         val firFunction = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.PLUS).single { symbol ->
-            val isStringExtension = symbol.resolvedReceiverTypeRef?.coneType?.isNullableString == true
+            val isStringExtension = symbol.resolvedReceiverType?.isNullableString == true
             isStringExtension && symbol.valueParameterSymbols.singleOrNull { it.resolvedReturnType.isNullableAny } != null
         }
         fir2irBuiltins.findFunction(firFunction)

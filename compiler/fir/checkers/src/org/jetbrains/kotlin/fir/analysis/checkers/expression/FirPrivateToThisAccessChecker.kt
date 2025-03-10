@@ -77,7 +77,7 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
         // We have to explicitly exclude data class copy because a general case isn't yet supported KT-35396
         if (symbol.isDataClassCopy(containingClassSymbol, session)) return false
 
-        if (symbol.receiverParameter?.typeRef?.coneType?.contradictsWith(Variance.IN_VARIANCE, session) == true) {
+        if (symbol.resolvedReceiverType?.contradictsWith(Variance.IN_VARIANCE, session) == true) {
             return true
         }
         if (symbol.resolvedReturnType.contradictsWith(

@@ -49,7 +49,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
 
     override val firSymbol: FirReceiverParameterSymbol
         get() = owningKaSymbol.firSymbol.let { owningFirSymbol ->
-            owningFirSymbol.receiverParameter?.symbol ?: errorWithAttachment("Receiver parameter is not found") {
+            owningFirSymbol.receiverParameterSymbol ?: errorWithAttachment("Receiver parameter is not found") {
                 withFirSymbolEntry("callableSymbol", owningFirSymbol)
             }
         }

@@ -37,24 +37,13 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
         get() = resolvedReturnTypeRef.coneType
 
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
-        get() = calculateReceiverTypeRef()
+        get() = receiverParameterSymbol?.calculateResolvedTypeRef()
 
-    private fun calculateReceiverTypeRef(): FirResolvedTypeRef? {
-        val receiverParameter = fir.receiverParameter ?: return null
-        ensureType(receiverParameter.typeRef)
-        val receiverTypeRef = receiverParameter.typeRef
-        if (receiverTypeRef !is FirResolvedTypeRef) {
-            errorInLazyResolve("receiverTypeRef", receiverTypeRef::class, FirResolvedTypeRef::class)
-        }
+    val resolvedReceiverType: ConeKotlinType?
+        get() = resolvedReceiverTypeRef?.coneType
 
-        return receiverTypeRef
-    }
-
-    val receiverParameter: FirReceiverParameter?
-        get() {
-            calculateReceiverTypeRef()
-            return fir.receiverParameter
-        }
+    val receiverParameterSymbol: FirReceiverParameterSymbol?
+        get() = fir.receiverParameter?.symbol
 
     val resolvedContextParameters: List<FirValueParameter>
         get() {

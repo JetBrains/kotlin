@@ -79,7 +79,7 @@ fun FirBasedSymbol<*>.asMemberDeclarationResolvedTo(phase: FirResolvePhase): Fir
 
 val FirNamedFunctionSymbol.isMethodOfAny: Boolean
     get() {
-        if (receiverParameter != null) return false
+        if (receiverParameterSymbol != null) return false
         if (resolvedContextParameters.isNotEmpty()) return false
         return when (name) {
             OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
