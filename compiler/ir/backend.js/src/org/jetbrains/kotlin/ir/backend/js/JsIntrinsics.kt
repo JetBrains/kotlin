@@ -417,8 +417,15 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     private fun getCoroutineIntrinsic(name: String): Iterable<IrSimpleFunctionSymbol> =
         symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_COROUTINES_INTRINSICS_PACKAGE)
 
+    // JS stdlib compilation needs `filterNot { it.owner.isExpect }` as a workaround:
+    //   - Expect declarations like `fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>` are removed from IR by Actualizer
+    //   - However, they are not removed from FIR.
+    //   - Intrinsics are needed for JsOutlineLowering, so they are initialized during pre-serialization
+    //   - SymbolFinder finds in FIR both expect and actual for `enumEntriesIntrinsic`
     private fun getFunctionInEnumPackage(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE)
+            .filterNot { it.isBound && it.owner.isExpect }
+            .single()
 
     private fun getFunctionInKotlinPackage(name: String): IrSimpleFunctionSymbol =
         symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE).single()
