@@ -1804,6 +1804,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("superCallsWithDefaultArguments.kt")
+    public void testSuperCallsWithDefaultArguments() {
+      runTest("compiler/testData/diagnostics/tests/superCallsWithDefaultArguments.kt");
+    }
+
+    @Test
     @TestMetadata("superQualifierTypeArgsInDelegatedConstructorCall.kt")
     public void testSuperQualifierTypeArgsInDelegatedConstructorCall() {
       runTest("compiler/testData/diagnostics/tests/superQualifierTypeArgsInDelegatedConstructorCall.kt");
