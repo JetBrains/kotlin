@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -29,6 +31,7 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
     protected abstract val frontendFacade: Constructor<FrontendFacade<F>>
     protected abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
     protected abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+    protected abstract val suppressDirective: SimpleDirective
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         commonConfigurationForJvmTest(frontendKind, frontendFacade, frontendToBackendConverter, backendFacade)
@@ -43,7 +46,9 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
             }
         }
 
-        useAfterAnalysisCheckers(::FirMetadataLoadingTestSuppressor)
+        useAfterAnalysisCheckers(
+            { testServices -> FirMetadataLoadingTestSuppressor(testServices, suppressDirective) }
+        )
     }
 }
 
@@ -56,6 +61,8 @@ open class AbstractFirLoadK1CompiledJvmKotlinTest : AbstractFirLoadCompiledJvmKo
         get() = ::ClassicFrontend2IrConverter
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
+    override val suppressDirective: SimpleDirective
+        get() = CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K1
 }
 
 open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractFirLoadCompiledJvmKotlinTestBase<FirOutputArtifact>() {
@@ -67,10 +74,11 @@ open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractFirLoadCompiledJvmKo
         get() = ::Fir2IrCliJvmFacade
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::BackendCliJvmFacade
+    override val suppressDirective: SimpleDirective
+        get() = CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureFirParser(FirParser.LightTree)
     }
 }
-
