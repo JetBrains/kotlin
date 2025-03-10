@@ -2,6 +2,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.nio.file.Files
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -23,6 +24,29 @@ class Test {
             fun main() {
                 outer([""])
                 outer([id("")])
+            }
+        """.trimIndent()
+    }
+
+    // @Test
+    // fun unresolvedTypeDotOfOperator() = doTest { // todo crashes the compiler
+    //     mainKt = """
+    //         class Foo
+    //         fun main() {
+    //             val foo: Foo = [1, 2]
+    //         }
+    //     """.trimIndent()
+    // }
+
+    @Test
+    fun whenBranch() = doTest { // todo fix me
+        mainKt = """
+            fun main() {
+                val set: Set<Int> = [1, 2, 3]
+                when (set) {
+                    [1, 2, 3] -> Unit
+                    else -> error("when branch is a position with expected type")
+                }
             }
         """.trimIndent()
     }
@@ -80,16 +104,91 @@ class Test {
     fun passCollectionLiteralToGeneric_red_wip() = doTest { // todo fix
         mainKt = """
             fun <T> outer(t: T) = Unit
-            fun main() = outer([1])
+            fun main() {
+                outer([1])
+            }
+        """.trimIndent()
+    }
+
+    @Test
+    fun sandbox2() = doTest {
+        mainKt = """
+            fun <T : (Nothing) -> Unit> outer(t: T) = Unit
+            fun foo(x: Int) = Unit
+            fun <T> foo(t: T) = 1
+            fun main() {
+                outer(::foo)
+            }
+        """.trimIndent()
+    }
+
+    @Test
+    fun overloadResolutionByLambdaReturnType_featureInteraction() = doTest {
+        mainKt = """
+            @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+            @OverloadResolutionByLambdaReturnType
+            @JvmName("mySumOf1") fun mySumOf(body: List<() -> Long>) = Unit // (1)
+
+            @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+            @OverloadResolutionByLambdaReturnType
+            @JvmName("mySumOf2") fun mySumOf(body: List<() -> String>) = Unit // (2)
+
+            fun main() {
+                mySumOf([{ 1L }])
+            }
+        """.trimIndent()
+        expectedCompilationError = """
+            main.kt:10:5: error: [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity between candidates:
+            fun mySumOf(body: List<Function0<Long>>): Unit
+            fun mySumOf(body: List<Function0<String>>): Unit
+                mySumOf([{ 1L }])
+                ^^^^^^^
+        """.trimIndent()
+    }
+
+    // @Test
+    // fun intersectionType_featureInteraction() = doTest { // todo fix test
+    //     mainKt = """
+    //         interface I
+    //         fun main() {
+    //             val intersection = listOf(1L)
+    //             intersection as I
+    //             intersection
+    //             val y = mutableListOf(intersection).add([1L]) // todo should be a compilation error
+    //         }
+    //     """.trimIndent()
+    // }
+
+    @Test
+    fun sandbox() = doTest {
+        mainKt = """
+            @JvmName("outer1") fun <T : Number> outer(a: Iterable<T>): Unit = Unit
+            @JvmName("outer2") fun <T : CharSequence> outer(a: Iterable<T>): Unit = null!!
+            fun main() {
+                outer([1])
+            }
+        """.trimIndent()
+    }
+
+    @Test
+    fun typeVariablesFixationOrder() = doTest {
+        mainKt = """
+            fun <A, B> outer(b: B, a: A, c: (A) -> B) = Unit
+            fun <T> materialize(): T = null!!
+            fun bar(a: Int): String = ""
+            fun main() {
+                outer([materialize()], [materialize()], { a: Int -> "" })
+                outer([materialize()], [materialize()], ::bar)
+            }
         """.trimIndent()
     }
 
     @Test
     fun passCollectionLiteralToGenericWithUpperBound_red() = doTest { // todo should be green
         mainKt = """
-            fun <T : List<Int>> outer(t: T) = Unit
+            fun <T : Set<Int>> outer(t: T) = Unit
             fun main() {
-                outer([1])
+                outer([1]) // since outer(materialize()) is green, this example should be green as well
             }
         """.trimIndent()
         expectedCompilationError = """
@@ -252,19 +351,6 @@ class Test {
     }
 
     @Test
-    fun sandbox() = doTest {
-        mainKt = """
-            fun outer(a: Set<Number>) = Unit
-            fun <R> materializeR(): R = 1 as R
-            fun <E> materializeE(): E = 1 as E
-            fun main() {
-                outer(setOf(materializeR(), materializeE()))
-                // outer([1, 2, materialize()]) // todo uncomment
-            }
-        """.trimIndent()
-    }
-
-    @Test
     fun materializeInnerUpperBound() = doTest {
         mainKt = """
             // Related: KT-69266
@@ -275,6 +361,28 @@ class Test {
             }
         """.trimIndent()
     }
+
+    // @Test
+    // fun overloadNullableAnyVsInt() = doTest { // todo it got broken in some version
+    //     mainKt = """
+    //         fun outer(a: Any?) = Unit
+    //         fun outer(a: Int) = Unit
+    //         fun main() {
+    //             outer([1])
+    //         }
+    //     """.trimIndent()
+    // }
+
+    // @Test
+    // fun overloadAnyVsInt() = doTest { // todo it got broken in some version
+    //     mainKt = """
+    //         fun outer(a: Any) = Unit
+    //         fun outer(a: Int) = Unit
+    //         fun main() {
+    //             outer([1])
+    //         }
+    //     """.trimIndent()
+    // }
 
     @Test
     fun basics() = doTest {
