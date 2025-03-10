@@ -51,6 +51,7 @@
 
 /build-common/ "Kotlin Build Tools"
 
+/compiler/arguments/ "Kotlin Frontend" "Kotlin Build Tools"
 /compiler/android-tests/ "Kotlin JVM"
 /compiler/backend/ "Kotlin JVM"
 /compiler/backend.common.jvm/ "Kotlin JVM"
