@@ -5,7 +5,7 @@ fun println(a: Any?) {}
 
 fun f() {
     val `_` = "one"
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = "two"
+    val _ = "two"
     println(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>)
     println(`_`)
 }
@@ -16,6 +16,6 @@ fun g() {
 }
 
 fun h() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = "three"
+    val _ = "three"
     println(`_`)
 }

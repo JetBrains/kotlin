@@ -18,7 +18,7 @@ fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: <!
     val q = fun(_: Int, <!UNDERSCORE_IS_RESERVED!>__<!>: Int) {}
     q(1, 2)
 
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = 56
+    val _ = 56
 
     fun localFun(<!UNDERSCORE_IS_RESERVED!>_<!>: String) = 1
 

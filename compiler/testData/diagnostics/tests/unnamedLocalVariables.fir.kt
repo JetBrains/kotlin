@@ -5,20 +5,20 @@
 fun writeTo(): Boolean = false
 
 fun foo() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()
+    val _ = writeTo()
     val (a, _) = 1 to 2
     val (_) = 'a' to 'b'
 
     (<!SYNTAX!><!>val f = <!UNRESOLVED_REFERENCE!>first<!><!SYNTAX!>, val _ = second) = "first" to "second"<!>
 
-    when(val <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()) {
+    when(val _ = writeTo()) {
         true -> {}
         false -> {}
     }
 
-    for (<!UNDERSCORE_IS_RESERVED!>_<!> in 1..10) {}
+    for (_ in 1..10) {}
 
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = object {
+    val _ = object {
         val <!UNDERSCORE_IS_RESERVED!>_<!> = <!UNRESOLVED_REFERENCE!>call<!>()
     }
 }
@@ -29,6 +29,6 @@ class Foo() {
 
 class Foo2() {
     init {
-        val <!UNDERSCORE_IS_RESERVED!>_<!> = <!UNRESOLVED_REFERENCE!>initMe<!>()
+        val _ = <!UNRESOLVED_REFERENCE!>initMe<!>()
     }
 }
