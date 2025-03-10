@@ -30,6 +30,12 @@ import kotlin.test.assertEquals
  */
 class JsContinuousBuildIT : KGPDaemonsBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            // Continuous build requires file watching is enabled.
+            fileSystemWatchEnabled = true,
+        )
+
     @GradleTest
     @TestMetadata("js-run-continuous")
     @Timeout(value = 2, unit = TimeUnit.MINUTES)

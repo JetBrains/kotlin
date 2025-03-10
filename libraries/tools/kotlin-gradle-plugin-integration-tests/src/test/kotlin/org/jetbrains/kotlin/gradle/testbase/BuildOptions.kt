@@ -38,7 +38,13 @@ data class BuildOptions(
     val incremental: Boolean? = null,
     val useGradleClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
-    // On Windows OS enabling watch-fs prevents deleting temp directory, which fails the tests
+    /**
+     * Enable File System Watching
+     *
+     * Disabled by default on Windows OS because  enabling watch-fs prevents deleting temp directory, which fails the tests.
+     *
+     * See https://docs.gradle.org/current/userguide/file_system_watching.html
+     */
     val fileSystemWatchEnabled: Boolean = !OS.WINDOWS.isCurrentOs,
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
