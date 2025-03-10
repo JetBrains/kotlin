@@ -126,6 +126,30 @@ public class ModuleStateModificationLLFirSessionInvalidationTestGenerated extend
   }
 
   @Test
+  @TestMetadata("fallbackDependenciesInvalidateLibrary1.kt")
+  public void testFallbackDependenciesInvalidateLibrary1() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1.kt");
+  }
+
+  @Test
+  @TestMetadata("fallbackDependenciesInvalidateLibrarySource.kt")
+  public void testFallbackDependenciesInvalidateLibrarySource() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrarySource.kt");
+  }
+
+  @Test
+  @TestMetadata("fallbackDependenciesInvalidateSourceModule.kt")
+  public void testFallbackDependenciesInvalidateSourceModule() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("fallbackDependenciesInvalidateUnrelatedLibrary.kt")
+  public void testFallbackDependenciesInvalidateUnrelatedLibrary() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateUnrelatedLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("linearInvalidateC.kt")
   public void testLinearInvalidateC() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateC.kt");

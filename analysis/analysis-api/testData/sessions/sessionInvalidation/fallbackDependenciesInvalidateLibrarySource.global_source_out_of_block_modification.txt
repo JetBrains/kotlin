@@ -1,0 +1,3 @@
+Invalidated sessions:
+sourceModule
+unrelatedSourceModule
