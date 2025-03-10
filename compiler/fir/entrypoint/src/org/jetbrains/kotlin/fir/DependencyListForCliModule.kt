@@ -115,8 +115,18 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
             val pathFiltersMap: MutableMap<FirModuleData, LibraryPathFilter> = filtersMap
                 .filterValues { it.isNotEmpty() }
                 .mapValues { LibraryPathFilter.LibraryList(it.value) }
-                // we need to put dependsOn and friend filters on top, as they are usually
-                // duplicated in regular dependencies
+                /*
+                 * We need to put dependsOn and friend filters on top, as they are usually
+                 * duplicated in regular dependencies.
+                 *
+                 * This is because how our `-Xfriend-path` argument works: it is a subset of -cp argument:
+                 *
+                 *     -cp lib1.jar lib2.jar
+                 *     -Xfriend-path lib2.jar
+                 *
+                 * So here we pass both `lib1.jar` and `lib2.jar` as paths of regular dependencies (because they are just plain
+                 * content roots) and additionally register lib2.jar path as friend root.
+                 */
                 .entries.sortedBy {
                     when (it.key) {
                         in allDependsOnDependencies -> 1
