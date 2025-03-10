@@ -42,7 +42,7 @@ internal fun buildSirSession(
     unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
     moduleForPackageEnums = buildModule { name = config.moduleForPackagesName },
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
-    moduleProvider = SirOneToOneModuleProvider(kaModules.dependencies.platform),
+    moduleProvider = SirOneToOneModuleProvider(kaModules.dependencies?.platform ?: emptyList()),
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler
 )
@@ -87,29 +87,29 @@ private fun extractAllTransitively(
 internal class KaModules(
     val useSiteModule: KaModule,
     val mainModule: KaLibraryModule,
-    val dependencies: SwiftExportDependencies<KaLibraryModule>,
+    val dependencies: SwiftExportDependencies<KaLibraryModule>?,
 )
 
 internal fun createKaModulesForStandaloneAnalysis(
     input: InputModule,
     targetPlatform: TargetPlatform,
-    dependencies: SwiftExportDependencies<InputModule>,
+    dependencies: SwiftExportDependencies<InputModule>?,
 ): KaModules {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
-    lateinit var resultedDependencies: SwiftExportDependencies<KaLibraryModule>
+    var resultedDependencies: SwiftExportDependencies<KaLibraryModule>? = null
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = targetPlatform
             binaryModule = inputModuleIntoKaLibraryModule(input, targetPlatform)
-            resultedDependencies = dependencies.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
+            resultedDependencies = dependencies?.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
                     platform = targetPlatform
                     moduleName = "fakeSourceModule"
                     addRegularDependency(binaryModule)
-                    resultedDependencies.forEach(::addRegularDependency)
+                    resultedDependencies?.forEach(::addRegularDependency)
                 }
             )
         }
