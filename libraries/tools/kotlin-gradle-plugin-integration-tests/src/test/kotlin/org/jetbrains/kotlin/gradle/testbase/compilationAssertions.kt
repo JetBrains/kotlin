@@ -13,7 +13,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.asserter
 
-private val kotlinSrcRegex by lazy { Regex("\\[KOTLIN] compile iteration: ([^\\r\\n]*)") }
+private val kotlinSrcRegex by lazy { Regex("\\[KOTLIN] (v: )?compile iteration: ([^\\r\\n]*)") }
 
 private val javaSrcRegex by lazy { Regex("\\[DEBUG] \\[[^]]*JavaCompiler] Compiler arguments: ([^\\r\\n]*)") }
 
@@ -26,7 +26,7 @@ private val javaSrcRegex by lazy { Regex("\\[DEBUG] \\[[^]]*JavaCompiler] Compil
  */
 fun extractCompiledKotlinFiles(output: String): List<Path> {
     return kotlinSrcRegex.findAll(output).asIterable()
-        .flatMap { matchResult -> matchResult.groups[1]!!.value.split(", ") }
+        .flatMap { matchResult -> matchResult.groups[2]!!.value.split(", ") }
         .toPaths()
 }
 
@@ -37,9 +37,9 @@ fun extractCompiledKotlinFiles(output: String): List<Path> {
  *
  * Note: Log level of output must be set to [LogLevel.DEBUG].
  */
-fun extractAllKotlinCompileIterations(output: String) : List<List<Path>> {
+fun extractAllKotlinCompileIterations(output: String): List<List<Path>> {
     return kotlinSrcRegex.findAll(output).asIterable()
-        .map { matchResult -> matchResult.groups[1]!!.value.split(", ").toPaths() }
+        .map { matchResult -> matchResult.groups[2]!!.value.split(", ").toPaths() }
 }
 
 /**
