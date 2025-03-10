@@ -91,7 +91,7 @@ class LightTreeRawFirExpressionBuilder(
                 )
             }
             else -> buildErrorExpression(
-                converted?.source?.realElement() ?: expression?.toFirSourceElement(),
+                converted?.source?.realElement() ?: expression?.toFirSourceElement() ?: sourceWhenInvalidExpression?.toFirSourceElement(),
                 if (expression == null) ConeSyntaxDiagnostic(errorReason)
                 else ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
                 converted,
@@ -145,7 +145,7 @@ class LightTreeRawFirExpressionBuilder(
             PARENTHESIZED -> {
                 val content = expression.getExpressionInParentheses()
                 context.forwardLabelUsagePermission(expression, content)
-                getAsFirExpression(content, "Empty parentheses")
+                getAsFirExpression(content, "Empty parentheses", sourceWhenInvalidExpression = expression)
             }
             PROPERTY_DELEGATE, INDICES, CONDITION, LOOP_RANGE ->
                 getAsFirExpression(expression.getChildExpression(), errorReason)
