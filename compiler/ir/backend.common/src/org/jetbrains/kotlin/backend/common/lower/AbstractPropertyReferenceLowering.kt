@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -55,7 +56,9 @@ abstract class AbstractPropertyReferenceLowering<C: CommonBackendContext>(val co
                         reflectionTarget = originalPropertySymbol.owner.getter!!.symbol,
                         captures = expression.boundValues,
                         origin = expression.origin
-                    )
+                    ).apply {
+                        reflectionTargetLinkageError = expression.reflectionTargetLinkageError
+                    }
                     val setterReference = expression.setterFunction?.let { setterFunction ->
                         // we need to avoid calculation of bound values twice, so store them to temp variables
                         val tempVars = getterReference.boundValues.map {
@@ -64,17 +67,19 @@ abstract class AbstractPropertyReferenceLowering<C: CommonBackendContext>(val co
                         getterReference.boundValues.clear()
                         getterReference.boundValues += tempVars.map { irGet(it) }
                         irRichFunctionReference(
-                                function = setterFunction,
-                                superType = functionReferenceClass(typeArguments.size).typeWith(typeArguments + irBuiltIns.unitType),
-                                reflectionTarget = originalPropertySymbol.owner.setter!!.symbol,
-                                captures = tempVars.map { irGet(it) },
-                                origin = expression.origin
-                        )
+                            function = setterFunction,
+                            superType = functionReferenceClass(typeArguments.size).typeWith(typeArguments + irBuiltIns.unitType),
+                            reflectionTarget = originalPropertySymbol.owner.setter!!.symbol,
+                            captures = tempVars.map { irGet(it) },
+                            origin = expression.origin
+                        ).apply {
+                            reflectionTargetLinkageError = expression.reflectionTargetLinkageError
+                        }
                     }
                     +createKProperty(
-                            expression, typeArguments,
-                            originalPropertySymbol.owner.name.asString(),
-                            getterReference, setterReference
+                        expression, typeArguments,
+                        if (expression.reflectionTargetLinkageError == null) originalPropertySymbol.owner.name.asString() else null,
+                        getterReference, setterReference
                     )
                 }
                 if (expression.boundValues.isEmpty()) {
@@ -113,7 +118,7 @@ abstract class AbstractPropertyReferenceLowering<C: CommonBackendContext>(val co
     abstract fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
         typeArguments: List<IrType>,
-        name: String,
+        name: String?,
         getterReference: IrRichFunctionReference,
         setterReference: IrRichFunctionReference?
     ): IrExpression
