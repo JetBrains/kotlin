@@ -106,19 +106,34 @@ class KotlinClassInfo(
     }
 
     companion object {
-
+        /**
+         * Compatibility note: used by JPS plugin
+         *
+         * Note #2: this form of KotlinClassInfo is also used by all IC Runners for populating in-module cache
+         */
         fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
             return createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
         }
 
         fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
+            return createFrom(
+                classId,
+                classHeader,
+                extraInfo = ExtraClassInfoGenerator().getExtraInfo(classHeader, classContents),
+            )
+        }
+
+        /**
+         * Allows callers to customize [ExtraInfo] computation.
+         */
+        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, extraInfo: ExtraInfo): KotlinClassInfo {
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
                 classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
-                extraInfo = ExtraClassInfoGenerator.getExtraInfo(classHeader, classContents)
+                extraInfo = extraInfo
             )
         }
     }

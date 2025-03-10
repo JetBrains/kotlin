@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.BasicClassInfo
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils

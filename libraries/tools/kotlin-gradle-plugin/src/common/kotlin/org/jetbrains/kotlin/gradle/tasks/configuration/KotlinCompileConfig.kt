@@ -148,7 +148,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         classpath: Provider<out Configuration>,
         jvmToolchain: Provider<DefaultKotlinJavaToolchain>,
         runKotlinCompilerViaBuildToolsApi: Provider<Boolean>,
-        suppressVersionInconsistencyChecks: Boolean,
     ) {
         parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
         val roDepCachePath = System.getenv(READONLY_CACHE_ENV_VAR)
@@ -166,10 +165,13 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             }
         })
         parameters.compilationViaBuildToolsApi.set(runKotlinCompilerViaBuildToolsApi)
+        parameters.kgpVersion.set(kgpVersion)
+        parameters.parseInlinedLocalClasses.set(project.kotlinPropertiesProvider.parseInlinedLocalClasses)
+
+        val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         if (!suppressVersionInconsistencyChecks) {
             parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
         }
-        parameters.kgpVersion.set(kgpVersion)
         parameters.suppressVersionInconsistencyChecks.set(suppressVersionInconsistencyChecks)
     }
 
@@ -188,7 +190,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         val classpath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
         val kgpVersion = project.getKotlinPluginVersion()
-        val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
             it.from.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
             it.to.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
@@ -198,7 +199,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 classpath,
                 jvmToolchain,
                 runKotlinCompilerViaBuildToolsApi,
-                suppressVersionInconsistencyChecks
             )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
@@ -211,10 +211,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 classpath,
                 jvmToolchain,
                 runKotlinCompilerViaBuildToolsApi,
-                suppressVersionInconsistencyChecks
             )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
     }
-
 }

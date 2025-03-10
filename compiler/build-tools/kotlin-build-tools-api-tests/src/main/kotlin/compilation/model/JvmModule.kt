@@ -75,7 +75,7 @@ class JvmModule(
         val snapshot = BaseTest.compilationService.calculateClasspathSnapshot(
             dependency.location.toFile(),
             snapshotConfig.granularity,
-            //snapshotConfig.useInlineLambdaSnapshotting, //TODO(KT-62555)
+            snapshotConfig.useInlineLambdaSnapshotting,
         )
         val hash = snapshot.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()
