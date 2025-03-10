@@ -132,7 +132,7 @@ internal fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackT
     }
 
     return KotlinNativeStackTrace(
-        message.toString().trim().let { if (it.isEmpty()) null else it },
-        if (stack.isEmpty()) null else stack
+        message.toString().trim().ifEmpty { null },
+        stack.ifEmpty { null },
     )
 }

@@ -124,8 +124,8 @@ internal fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
     }
 
     return NodeJsStackTrace(
-        message.toString().trim().let { if (it.isEmpty()) null else it },
-        if (stack.isEmpty()) null else stack
+        message.toString().trim().ifEmpty { null },
+        stack.ifEmpty { null },
     )
 }
 
