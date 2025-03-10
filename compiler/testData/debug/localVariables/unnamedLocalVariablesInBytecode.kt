@@ -13,7 +13,7 @@ fun box() {
         false -> {}
     }
 
-//    for (_ in 1..10) {} - IllegalStateException: No 'next' statement in for-loop
+    for (_ in 1..10) {}
 }
 
 // EXPECTATIONS FIR JVM_IR
@@ -22,4 +22,5 @@ fun box() {
 // test.kt:11 box:
 // test.kt:12 box:
 // test.kt:13 box:
+// test.kt:16 box:
 // test.kt:17 box:
