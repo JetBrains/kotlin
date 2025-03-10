@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import javax.inject.Inject
@@ -41,13 +41,14 @@ internal constructor(
     RequiresNpmDependencies {
 
     @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("DEPRECATION")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
         compilation = compilation,
         objects = compilation.target.project.objects,
         providers = compilation.target.project.providers,
-        execOps = (compilation.target.project as ProjectInternal).services.get(ExecOperations::class.java),
+        execOps = compilation.target.project.getExecOperations(),
     )
 
     @Input

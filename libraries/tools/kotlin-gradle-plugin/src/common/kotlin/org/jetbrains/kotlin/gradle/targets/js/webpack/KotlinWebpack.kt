@@ -9,7 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Incubating
 import org.gradle.api.file.*
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -52,12 +51,13 @@ internal constructor(
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
 
     @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("DEPRECATION")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
         compilation = compilation,
         objects = compilation.project.objects,
-        execOps = (compilation.project as ProjectInternal).services.get(ExecOperations::class.java),
+        execOps = compilation.project.getExecOperations(),
     )
 
     @get:Internal

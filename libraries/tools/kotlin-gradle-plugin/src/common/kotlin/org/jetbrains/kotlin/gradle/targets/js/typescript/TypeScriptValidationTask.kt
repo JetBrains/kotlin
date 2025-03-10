@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.typescript
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -37,12 +37,13 @@ internal constructor(
 ) : DefaultTask(), RequiresNpmDependencies {
 
     @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("DEPRECATION")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
         compilation = compilation,
         objects = compilation.project.objects,
-        execOps = (compilation.project as ProjectInternal).services.get(ExecOperations::class.java),
+        execOps = compilation.project.getExecOperations(),
     )
 
     private val npmProject: NpmProject = compilation.npmProject
