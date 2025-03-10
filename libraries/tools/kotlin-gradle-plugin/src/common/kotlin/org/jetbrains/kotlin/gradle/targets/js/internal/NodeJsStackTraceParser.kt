@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 
 data class NodeJsStackTrace(
     val message: String?,
-    val stackTrace: List<NodeJsStackTraceElement>?
+    val stackTrace: List<NodeJsStackTraceElement>?,
 ) {
     fun toJvm() = ParsedStackTrace(
         message,
@@ -28,7 +28,7 @@ data class NodeJsStackTraceElement(
     val methodName: String? = null,
     val fileName: String? = null,
     val lineNumber: Int = -1,
-    val colNumber: Int = -1
+    val colNumber: Int = -1,
 ) {
     fun toJvmStackTraceElement() = StackTraceElement(
         className ?: "<global>",
@@ -125,8 +125,8 @@ fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
     }
 
     return NodeJsStackTrace(
-        message.toString().trim().let { if (it.isEmpty()) null else it },
-        if (stack.isEmpty()) null else stack
+        message.toString().trim().ifEmpty { null },
+        stack.ifEmpty { null },
     )
 }
 

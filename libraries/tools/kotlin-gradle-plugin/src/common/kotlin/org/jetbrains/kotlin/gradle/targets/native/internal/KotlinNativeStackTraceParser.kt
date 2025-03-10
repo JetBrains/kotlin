@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 
 data class KotlinNativeStackTrace(
     val message: String?,
-    val stackTrace: List<KotlinNativeStackTraceElement>?
+    val stackTrace: List<KotlinNativeStackTraceElement>?,
 ) {
     fun toJvm() = ParsedStackTrace(
         message,
@@ -32,7 +32,7 @@ data class KotlinNativeStackTraceElement(
     val offset: Int = -1,
     val fileName: String?,
     val lineNumber: Int = -1,
-    val columnNumber: Int = -1
+    val columnNumber: Int = -1,
 ) {
     fun toJvmStackTraceElement() = StackTraceElement(
         className ?: "<global>",
@@ -132,7 +132,7 @@ fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackTrace {
     }
 
     return KotlinNativeStackTrace(
-        message.toString().trim().let { if (it.isEmpty()) null else it },
-        if (stack.isEmpty()) null else stack
+        message.toString().trim().ifEmpty { null },
+        stack.ifEmpty { null },
     )
 }
