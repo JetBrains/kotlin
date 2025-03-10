@@ -2,6 +2,7 @@ OUT:
 Buildfile: [TestData]/build.xml
 
 build:
+  [kotlinc] Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. If you're interested in taking on the role of an external maintainer, please contact us via https://kotl.in/ant-deprecation.
   [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/hello.jar]
   [kotlinc] warning: language version 1.7 is deprecated and its support will be removed in a future version of Kotlin
   [kotlinc] [TestData]/main.kt:2:34: error: the feature "generic inline class parameter" is only available since language version 1.8

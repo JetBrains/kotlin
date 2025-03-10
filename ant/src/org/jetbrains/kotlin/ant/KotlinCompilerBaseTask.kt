@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ant
 
 import org.apache.tools.ant.BuildException
+import org.apache.tools.ant.Project
 import org.apache.tools.ant.Task
 import org.apache.tools.ant.types.Commandline
 import org.apache.tools.ant.types.Path
@@ -80,7 +81,17 @@ abstract class KotlinCompilerBaseTask : Task() {
         fillSpecificArguments()
     }
 
+    internal fun warnAntDeprecation() {
+        log(
+            "Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. " +
+                    "If you're interested in taking on the role of an external maintainer, " +
+                    "please contact us via https://kotl.in/ant-deprecation.",
+            Project.MSG_WARN
+        )
+    }
+
     override fun execute() {
+        warnAntDeprecation()
         fillArguments()
 
         val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader().loadClass(compilerFqName)
