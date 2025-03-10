@@ -930,6 +930,7 @@ tasks {
         dependsOn("jvmCompilerIntegrationTest")
         dependsOn("compilerPluginTest")
         dependsOn(":kotlin-daemon-tests:test")
+        dependsOn(":compiler:arguments:test")
     }
 
     register("miscTest") {

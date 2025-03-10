@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.arguments.dsl.types
 
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 
-sealed interface KotlinArgumentValueType<T : Any> {
+// TODO: make it sealed and update KotlinCompilerArgumentsLevelTest once types will appear
+interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
     val defaultValue: ReleaseDependent<T?>
 }
