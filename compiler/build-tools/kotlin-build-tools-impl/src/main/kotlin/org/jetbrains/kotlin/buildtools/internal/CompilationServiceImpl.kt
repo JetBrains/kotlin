@@ -164,7 +164,6 @@ internal object CompilationServiceImpl : CompilationService {
         validateArguments(parsedArguments.errors)?.let {
             throw CompilerArgumentsParseException(it)
         }
-        loggerAdapter.report(CompilerMessageSeverity.INFO, arguments.toString())
         val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl -> {
