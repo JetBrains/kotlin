@@ -31,4 +31,10 @@ class IrGetFieldImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override var receiver: IrExpression? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 }

@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -26,5 +27,5 @@ class IrWhenImpl internal constructor(
 ) : IrWhen() {
     override var attributeOwnerId: IrElement = this
 
-    override val branches: MutableList<IrBranch> = ArrayList(2)
+    override val branches: MutableList<IrBranch> = IrChildElementList(this)
 }

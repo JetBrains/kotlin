@@ -22,7 +22,19 @@ class IrDynamicMemberExpressionImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var memberName: String,
-    override var receiver: IrExpression,
+    receiver: IrExpression,
 ) : IrDynamicMemberExpression() {
     override var attributeOwnerId: IrElement = this
+
+    override var receiver: IrExpression = receiver
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(receiver)
+    }
 }

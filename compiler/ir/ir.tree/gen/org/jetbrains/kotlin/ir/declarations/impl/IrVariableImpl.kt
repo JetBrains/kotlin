@@ -47,6 +47,12 @@ class IrVariableImpl internal constructor(
         get() = symbol.descriptor
 
     override var initializer: IrExpression? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     init {
         symbol.bind(this)

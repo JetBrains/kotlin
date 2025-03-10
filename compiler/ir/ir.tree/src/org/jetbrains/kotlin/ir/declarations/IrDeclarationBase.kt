@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.util.render
 
 /**
@@ -16,7 +18,18 @@ import org.jetbrains.kotlin.ir.util.render
  */
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration {
     internal var parentOrNull: IrDeclarationParent? = null
-        private set
+        get() {
+            val oldApi = field
+            if (containingDatabase?.useStructuralParent == true) {
+                if (this !is IrLazyDeclarationBase) {
+                    val newApi = structuralDeclarationParent
+                    if (oldApi !== newApi) {
+                        print("")
+                    }
+                }
+            }
+            return oldApi
+        }
 
     final override var parent: IrDeclarationParent
         get() = parentOrNull ?: error(
@@ -25,5 +38,15 @@ abstract class IrDeclarationBase : IrElementBase(), IrDeclaration {
         )
         set(value) {
             parentOrNull = value
+        }
+
+    private val structuralDeclarationParent: IrDeclarationParent?
+        get() {
+            var current = structuralParent
+            while (current != null) {
+                if (current is IrDeclarationParent) return current
+                current = current.structuralParent
+            }
+            return null
         }
 }

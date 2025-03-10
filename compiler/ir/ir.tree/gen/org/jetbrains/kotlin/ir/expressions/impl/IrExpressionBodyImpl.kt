@@ -19,7 +19,19 @@ class IrExpressionBodyImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var expression: IrExpression,
+    expression: IrExpression,
 ) : IrExpressionBody() {
     override var attributeOwnerId: IrElement = this
+
+    override var expression: IrExpression = expression
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(expression)
+    }
 }

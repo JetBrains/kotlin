@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, Field>(element, name) {
-    override val allFields: List<Field> = element.allFields.map { it.copy() }
+    override val allFields: MutableList<Field> = element.allFields.map {
+        it.copy().apply {
+            isOverride = true
+        }
+    }.toMutableList()
 
     override var kind: ImplementationKind? = ImplementationKind.FinalClass
 

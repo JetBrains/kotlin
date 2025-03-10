@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrConstantArray
 import org.jetbrains.kotlin.ir.expressions.IrConstantValue
@@ -25,5 +26,5 @@ class IrConstantArrayImpl internal constructor(
 ) : IrConstantArray() {
     override var attributeOwnerId: IrElement = this
 
-    override val elements: MutableList<IrConstantValue> = SmartList()
+    override val elements: MutableList<IrConstantValue> = IrChildElementList(this)
 }

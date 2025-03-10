@@ -23,8 +23,20 @@ class IrTypeOperatorCallImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var operator: IrTypeOperator,
-    override var argument: IrExpression,
+    argument: IrExpression,
     override var typeOperand: IrType,
 ) : IrTypeOperatorCall() {
     override var attributeOwnerId: IrElement = this
+
+    override var argument: IrExpression = argument
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(argument)
+    }
 }

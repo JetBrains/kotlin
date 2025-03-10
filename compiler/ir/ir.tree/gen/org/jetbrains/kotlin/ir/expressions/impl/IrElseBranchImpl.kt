@@ -19,8 +19,29 @@ class IrElseBranchImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var condition: IrExpression,
-    override var result: IrExpression,
+    condition: IrExpression,
+    result: IrExpression,
 ) : IrElseBranch() {
     override var attributeOwnerId: IrElement = this
+
+    override var condition: IrExpression = condition
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    override var result: IrExpression = result
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(condition)
+        childInitialized(result)
+    }
 }

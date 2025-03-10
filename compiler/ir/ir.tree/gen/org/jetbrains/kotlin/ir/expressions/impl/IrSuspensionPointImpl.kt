@@ -22,9 +22,39 @@ class IrSuspensionPointImpl internal constructor(
     override var startOffset: Int,
     override var endOffset: Int,
     override var type: IrType,
-    override var suspensionPointIdParameter: IrVariable,
-    override var result: IrExpression,
-    override var resumeResult: IrExpression,
+    suspensionPointIdParameter: IrVariable,
+    result: IrExpression,
+    resumeResult: IrExpression,
 ) : IrSuspensionPoint() {
     override var attributeOwnerId: IrElement = this
+
+    override var suspensionPointIdParameter: IrVariable = suspensionPointIdParameter
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    override var result: IrExpression = result
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    override var resumeResult: IrExpression = resumeResult
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(suspensionPointIdParameter)
+        childInitialized(result)
+        childInitialized(resumeResult)
+    }
 }

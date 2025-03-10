@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -22,5 +23,5 @@ class IrBlockBodyImpl internal constructor(
 ) : IrBlockBody() {
     override var attributeOwnerId: IrElement = this
 
-    override val statements: MutableList<IrStatement> = ArrayList(2)
+    override val statements: MutableList<IrStatement> = IrChildElementList(this)
 }

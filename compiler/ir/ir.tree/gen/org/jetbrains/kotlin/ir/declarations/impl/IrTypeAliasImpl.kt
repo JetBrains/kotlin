@@ -37,6 +37,10 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
+        set(value) {
+            childrenListReplaced(field, value)
+            field = value
+        }
 
     override var metadata: MetadataSource? = null
 

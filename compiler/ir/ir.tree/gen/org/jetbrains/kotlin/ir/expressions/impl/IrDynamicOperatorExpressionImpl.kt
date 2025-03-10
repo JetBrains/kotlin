@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 import org.jetbrains.kotlin.ir.expressions.IrDynamicOperatorExpression
@@ -27,7 +28,16 @@ class IrDynamicOperatorExpressionImpl internal constructor(
 ) : IrDynamicOperatorExpression() {
     override var attributeOwnerId: IrElement = this
 
-    override lateinit var receiver: IrExpression
+    override var receiver: IrExpression
+        get() = _receiver
+        set(value) {
+            if (!::_receiver.isInitialized || _receiver !== value) {
+                childReplaced(_receiver, value)
+                _receiver = value
+            }
+        }
 
-    override val arguments: MutableList<IrExpression> = SmartList()
+    override val arguments: MutableList<IrExpression> = IrChildElementList(this)
+
+    lateinit var _receiver: IrExpression
 }

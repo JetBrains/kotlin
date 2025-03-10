@@ -49,12 +49,22 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
+        set(value) {
+            childrenListReplaced(field, value)
+            field = value
+        }
 
     override var metadata: MetadataSource? = null
 
     override lateinit var returnType: IrType
 
     override var body: IrBody? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor

@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -41,7 +42,7 @@ class IrFileImpl(
     override var attributeOwnerId: IrElement = this
 
     @UnsafeDuringIrConstructionAPI
-    override val declarations: MutableList<IrDeclaration> = ArrayList()
+    override val declarations: MutableList<IrDeclaration> = IrChildElementList(this)
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

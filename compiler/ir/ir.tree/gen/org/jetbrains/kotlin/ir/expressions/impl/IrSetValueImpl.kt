@@ -25,7 +25,19 @@ class IrSetValueImpl internal constructor(
     override var type: IrType,
     override var symbol: IrValueSymbol,
     override var origin: IrStatementOrigin?,
-    override var value: IrExpression,
+    value: IrExpression,
 ) : IrSetValue() {
     override var attributeOwnerId: IrElement = this
+
+    override var value: IrExpression = value
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(value)
+    }
 }

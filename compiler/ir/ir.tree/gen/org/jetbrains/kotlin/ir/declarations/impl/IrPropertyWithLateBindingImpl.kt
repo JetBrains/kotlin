@@ -58,10 +58,28 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
 
     override var backingField: IrField? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var getter: IrSimpleFunction? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var setter: IrSimpleFunction? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override val isBound: Boolean
         get() = _symbol != null

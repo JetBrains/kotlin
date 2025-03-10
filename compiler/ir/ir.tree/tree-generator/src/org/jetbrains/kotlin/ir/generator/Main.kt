@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.ir.generator
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.AbstractField.ImplementationDefaultStrategy.*
 import org.jetbrains.kotlin.generators.tree.Model
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
+import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolField
 import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolImplementation
@@ -41,6 +46,7 @@ private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: Fil
     InterfaceAndAbstractClassConfigurator((model.elements + implementations))
         .configureInterfacesAndAbstractClasses()
     model.addPureAbstractElement(elementBaseType)
+    adjustModelForParentTracking(model)
 
     printElements(model, ::ElementPrinter)
     printElementImplementations(implementations, ::ImplementationPrinter)
@@ -112,5 +118,63 @@ private fun TreeGenerator.printIrSymbolTree(generationPath: File, model: Model<E
         generatedFiles += printGeneratedType(generationPath, treeGeneratorReadme, type.packageName, type.simpleName) {
             makePrinter(this, model.elements, type).printSymbolVisitor()
         }
+    }
+}
+
+private fun adjustModelForParentTracking(model: Model<Element>) {
+    val implementations = model.elements.flatMap { it.implementations }
+    for (implementation in implementations) {
+        val newFields = mutableListOf<Field>()
+        for (field in implementation.allFields) {
+            if (field.containsElement && field.isChild) {
+                when (field) {
+                    is ListField if (field.mutability == ListField.Mutability.MutableList) -> {
+                        implementation.additionalImports += ArbitraryImportable("org.jetbrains.kotlin.ir", "IrChildElementList")
+                        field.implementationDefaultStrategy =
+                            DefaultValue("IrChildElementList(this)", false)
+                    }
+                    else -> {
+                        if (!field.isMutable) continue
+
+                        var backingField: Field? = null
+                        if (field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit) {
+                            val name = "_" + field.name
+                            backingField = when(field) {
+                                is SimpleField -> SimpleField(name, field.typeRef, field.isMutable, field.isChild)
+                                is ListField -> ListField(name, field.baseType, false, field.mutability, field.isChild)
+                            }
+                            backingField.implementationDefaultStrategy = AbstractField.ImplementationDefaultStrategy.Lateinit
+                            backingField.isOverride = false
+                            backingField.deepCopyExcludeFromApply = true
+                            backingField.deepCopyExcludeFromConstructor = true
+
+                            newFields += backingField
+                            field.implementationDefaultStrategy =
+                                AbstractField.ImplementationDefaultStrategy.DefaultValue(backingField.name, true)
+                        }
+
+                        val backingFieldVar = backingField?.name ?: "field"
+                        field.customSetter = buildString {
+                            when (field) {
+                                is SimpleField -> {
+                                    append("if (")
+                                    if (backingField != null) append("!::${backingFieldVar}.isInitialized || ")
+                                    appendLine("$backingFieldVar !== value) {")
+                                    appendLine("    childReplaced($backingFieldVar, value)")
+                                    appendLine(field.customSetter?.prependIndent("\t") ?: "    $backingFieldVar = value")
+                                    appendLine("}")
+                                }
+                                is ListField -> {
+                                    appendLine("childrenListReplaced($backingFieldVar, value)")
+                                    appendLine(field.customSetter ?: "$backingFieldVar = value")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        implementation.allFields.addAll(newFields)
     }
 }

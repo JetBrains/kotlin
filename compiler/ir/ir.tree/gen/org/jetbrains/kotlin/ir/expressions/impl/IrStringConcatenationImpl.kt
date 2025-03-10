@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
@@ -24,5 +25,5 @@ class IrStringConcatenationImpl internal constructor(
 ) : IrStringConcatenation() {
     override var attributeOwnerId: IrElement = this
 
-    override val arguments: MutableList<IrExpression> = ArrayList(2)
+    override val arguments: MutableList<IrExpression> = IrChildElementList(this)
 }

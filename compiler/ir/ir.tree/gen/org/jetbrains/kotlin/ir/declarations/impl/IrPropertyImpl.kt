@@ -53,10 +53,28 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
 
     override var backingField: IrField? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var getter: IrSimpleFunction? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var setter: IrSimpleFunction? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     init {
         symbol.bind(this)

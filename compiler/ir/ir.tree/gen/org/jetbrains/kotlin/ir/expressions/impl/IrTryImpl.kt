@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -26,9 +27,24 @@ class IrTryImpl internal constructor(
 ) : IrTry() {
     override var attributeOwnerId: IrElement = this
 
-    override lateinit var tryResult: IrExpression
+    override var tryResult: IrExpression
+        get() = _tryResult
+        set(value) {
+            if (!::_tryResult.isInitialized || _tryResult !== value) {
+                childReplaced(_tryResult, value)
+                _tryResult = value
+            }
+        }
 
-    override val catches: MutableList<IrCatch> = SmartList()
+    override val catches: MutableList<IrCatch> = IrChildElementList(this)
 
     override var finallyExpression: IrExpression? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    lateinit var _tryResult: IrExpression
 }

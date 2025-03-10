@@ -21,7 +21,19 @@ class IrConstantPrimitiveImpl internal constructor(
     override var startOffset: Int,
     override var endOffset: Int,
     override var type: IrType,
-    override var value: IrConst,
+    value: IrConst,
 ) : IrConstantPrimitive() {
     override var attributeOwnerId: IrElement = this
+
+    override var value: IrConst = value
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(value)
+    }
 }

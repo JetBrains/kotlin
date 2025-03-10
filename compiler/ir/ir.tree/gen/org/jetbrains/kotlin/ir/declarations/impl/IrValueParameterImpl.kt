@@ -46,6 +46,12 @@ class IrValueParameterImpl @IrImplementationDetail constructor(
         get() = symbol.descriptor
 
     override var defaultValue: IrExpressionBody? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     init {
         symbol.bind(this)

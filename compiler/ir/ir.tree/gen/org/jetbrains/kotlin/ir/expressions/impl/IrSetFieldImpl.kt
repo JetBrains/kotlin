@@ -31,6 +31,21 @@ class IrSetFieldImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override var receiver: IrExpression? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
-    override lateinit var value: IrExpression
+    override var value: IrExpression
+        get() = _value
+        set(value) {
+            if (!::_value.isInitialized || _value !== value) {
+                childReplaced(_value, value)
+                _value = value
+            }
+        }
+
+    lateinit var _value: IrExpression
 }
