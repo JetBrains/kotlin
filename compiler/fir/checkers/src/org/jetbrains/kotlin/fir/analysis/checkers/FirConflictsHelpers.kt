@@ -518,24 +518,11 @@ fun checkForLocalRedeclarations(elements: List<FirElement>, context: CheckerCont
     val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
 
     for (element in elements) {
-        val name: Name?
-        val symbol: FirBasedSymbol<*>?
-        when (element) {
-            is FirVariable -> {
-                symbol = element.symbol
-                name = element.name
-            }
-            is FirOuterClassTypeParameterRef -> {
-                continue
-            }
-            is FirTypeParameterRef -> {
-                symbol = element.symbol
-                name = symbol.name
-            }
-            else -> {
-                symbol = null
-                name = null
-            }
+        val (symbol, name) = when (element) {
+            is FirVariable -> element.symbol to element.name
+            is FirOuterClassTypeParameterRef -> continue
+            is FirTypeParameterRef -> element.symbol.let { it to it.name }
+            else -> null to null
         }
         if (name?.isSpecial == false) {
             multimap.put(name, symbol!!)
