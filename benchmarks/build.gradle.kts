@@ -21,6 +21,9 @@ dependencies {
     api(project(":compiler:frontend"))
     api(projectTests(":compiler:tests-common"))
     api(project(":compiler:cli"))
+    api(project(":compiler:incremental-compilation-impl"))
+    api(project(":compiler:build-tools:kotlin-build-tools-api"))
+    api(project(":compiler:build-tools:kotlin-build-statistics"))
     api(intellijCore())
     api(jpsModel())
     api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
@@ -38,6 +41,14 @@ benchmark {
             iterationTime = 1
             iterationTimeUnit = "sec"
             param("size", 1000)
+        }
+
+        register("classpath") {
+            warmups = 10
+            iterations = 200
+            iterationTime = 1
+            iterationTimeUnit = "sec"
+            include("ClasspathEntrySnapshotterBenchmark")
         }
 
         register("fir") {
