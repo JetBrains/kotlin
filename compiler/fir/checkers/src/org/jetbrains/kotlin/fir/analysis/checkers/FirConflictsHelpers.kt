@@ -535,7 +535,10 @@ fun checkForLocalRedeclarations(elements: List<FirElement>, context: CheckerCont
             is FirTypeParameterRef -> element.symbol.let { it to it.name }
             else -> null to null
         }
-        if (name?.isSpecial == false) {
+        val isUnnamedLocalVariable = with(SourceNavigator.forElement(element)) {
+            element is FirVariable && element.getRawName()?.isUnderscore == true
+        }
+        if (name?.isSpecial == false && !isUnnamedLocalVariable) {
             multimap.put(name, symbol!!)
         }
     }
