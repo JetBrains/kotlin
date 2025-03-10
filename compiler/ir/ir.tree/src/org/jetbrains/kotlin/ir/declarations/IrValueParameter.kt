@@ -82,7 +82,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
             // a receiver will make it not appear in valueParameters anymore, so it and subsequent parameters
             // will have different index in that list. We try to update it.
             // This only affects old-API index, new API is alright.
-            (_parent as? IrFunction)?.reindexValueParameters()
+            (parentOrNull as? IrFunction)?.reindexValueParameters()
         }
 
     abstract var varargElementType: IrType?
