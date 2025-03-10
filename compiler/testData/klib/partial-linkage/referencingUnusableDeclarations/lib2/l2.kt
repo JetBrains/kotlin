@@ -65,6 +65,10 @@ fun referenceNestedToInnerConstructorWithoutDispatchReceiver(): String = ClassWi
 fun referenceInnerToNestedConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::InnerToNested.name
 fun referenceInnerToNestedConstructorWithDispatchReceiver(obj: ClassWithChangedMembers): String = obj::InnerToNested.name
 
+fun invokeNestedToInnerConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::NestedToInner.invoke(123).toString()
+fun invokeInnerToNestedConstructorWithoutDispatchReceiver(obj: ClassWithChangedMembers): String = ClassWithChangedMembers::InnerToNested.invoke(obj, 123).toString()
+fun invokeInnerToNestedConstructorWithDispatchReceiver(obj: ClassWithChangedMembers): String = obj::InnerToNested.invoke(123).toString()
+
 fun referenceFunctionWithUnlinkedParameter(): String = ::functionWithUnlinkedParameter.name
 fun referenceFunctionWithUnlinkedReturnValue(): String = ::functionWithUnlinkedReturnValue.name
 fun referenceFunctionWithRemovedTypeParameter(): String {
