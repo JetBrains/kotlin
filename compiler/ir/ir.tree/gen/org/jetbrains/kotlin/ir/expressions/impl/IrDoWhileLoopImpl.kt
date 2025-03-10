@@ -27,8 +27,23 @@ class IrDoWhileLoopImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override var body: IrExpression? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
-    override lateinit var condition: IrExpression
+    override var condition: IrExpression
+        get() = _condition
+        set(value) {
+            if (!::_condition.isInitialized || _condition !== value) {
+                childReplaced(_condition, value)
+                _condition = value
+            }
+        }
 
     override var label: String? = null
+
+    lateinit var _condition: IrExpression
 }

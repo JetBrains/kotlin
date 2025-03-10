@@ -50,6 +50,12 @@ class IrFieldImpl @IrImplementationDetail constructor(
         get() = symbol.descriptor
 
     override var initializer: IrExpressionBody? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 

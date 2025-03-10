@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -30,7 +31,7 @@ class IrReturnableBlockImpl internal constructor(
 ) : IrReturnableBlock() {
     override var attributeOwnerId: IrElement = this
 
-    override val statements: MutableList<IrStatement> = ArrayList(2)
+    override val statements: MutableList<IrStatement> = IrChildElementList(this)
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor

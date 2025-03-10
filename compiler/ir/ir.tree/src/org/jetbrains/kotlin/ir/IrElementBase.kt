@@ -16,11 +16,20 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import java.util.IdentityHashMap
 
 abstract class IrElementBase : IrElement {
+    protected var containingDatabase: IrDatabase? = null
+        private set
+    internal var structuralParent: IrElementBase? = null
+        private set
+
     /**
      * The array stores dense pairs of keys and values, followed by remaining nulls.
      * This is, the layout may look like this: `[key, value, key, value, null, null, null, ...]`
@@ -40,6 +49,57 @@ abstract class IrElementBase : IrElement {
         // No children by default
     }
 
+
+    protected fun childInitialized(new: IrElement?) = childReplaced(null, new)
+
+    protected fun childrenListInitialized(new: List<IrElement>): Unit = TODO()
+
+    internal fun childReplaced(old: IrElement?, new: IrElement?) {
+        if (old === new) {
+            return
+        }
+
+        old as IrElementBase?
+        new as IrElementBase?
+
+        if (old != null) {
+            if (old.structuralParent === this) {
+                old.structuralParent = null
+                old.containingDatabase = null
+                structuralParentUpdated()
+            }
+        }
+        if (new != null) {
+            if (this is IrProperty && new.structuralParent != null) {
+                return
+            }
+
+            new.structuralParent = this
+            if (new.containingDatabase == null) {
+                new.containingDatabase = containingDatabase
+            }
+            structuralParentUpdated()
+        }
+    }
+
+    protected fun childrenListReplaced(old: List<IrElement?>, new: List<IrElement?>) {
+        old.forEach { childReplaced(it, null) }
+        new.forEach { childReplaced(null, it) }
+    }
+
+    protected open fun structuralParentUpdated() {}
+
+    fun initializeDatabase(database: IrDatabase) {
+        acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                (element as IrElementBase).containingDatabase = database
+                /*if (element is IrDeclaration) {
+                    element.parent
+                }*/
+                element.acceptChildrenVoid(this)
+            }
+        })
+    }
 
     /**
      * Returns a snapshot of all attributes held by this element.

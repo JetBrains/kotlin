@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDatabase
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
@@ -356,6 +358,10 @@ class JvmIrCodegenFactory(
 
         val allBuiltins = irModuleFragment.files.filter { it.isJvmBuiltin }
         irModuleFragment.files.removeIf { it.isBytecodeGenerationSuppressed }
+
+        val irDatabase = IrDatabase()
+        irDatabase.useStructuralParent = true
+        (irModuleFragment as IrElementBase).initializeDatabase(irDatabase)
 
         val engine = PhaseEngine(state.configuration.phaseConfig ?: PhaseConfig(), PhaserState(), context)
         for (phase in jvmLoweringPhases) {

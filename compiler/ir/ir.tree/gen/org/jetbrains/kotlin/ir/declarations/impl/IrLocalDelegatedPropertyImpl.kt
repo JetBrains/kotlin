@@ -40,11 +40,35 @@ class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override val descriptor: VariableDescriptorWithAccessors
         get() = symbol.descriptor
 
-    override lateinit var delegate: IrVariable
+    override var delegate: IrVariable
+        get() = _delegate
+        set(value) {
+            if (!::_delegate.isInitialized || _delegate !== value) {
+                childReplaced(_delegate, value)
+                _delegate = value
+            }
+        }
 
-    override lateinit var getter: IrSimpleFunction
+    override var getter: IrSimpleFunction
+        get() = _getter
+        set(value) {
+            if (!::_getter.isInitialized || _getter !== value) {
+                childReplaced(_getter, value)
+                _getter = value
+            }
+        }
 
     override var setter: IrSimpleFunction? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    lateinit var _delegate: IrVariable
+
+    lateinit var _getter: IrSimpleFunction
 
     init {
         symbol.bind(this)

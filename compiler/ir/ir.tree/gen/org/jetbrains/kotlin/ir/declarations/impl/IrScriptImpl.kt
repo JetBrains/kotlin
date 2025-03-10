@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -35,7 +36,7 @@ class IrScriptImpl(
 
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
 
-    override val statements: MutableList<IrStatement> = ArrayList(2)
+    override val statements: MutableList<IrStatement> = IrChildElementList(this)
 
     override var metadata: MetadataSource? = null
 
@@ -44,20 +45,47 @@ class IrScriptImpl(
         get() = symbol.descriptor
 
     override var thisReceiver: IrValueParameter? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var baseClass: IrType? = null
 
-    override lateinit var explicitCallParameters: List<IrVariable>
+    override var explicitCallParameters: List<IrVariable>
+        get() = _explicitCallParameters
+        set(value) {
+            childrenListReplaced(_explicitCallParameters, value)
+            _explicitCallParameters = value
+        }
 
-    override lateinit var implicitReceiversParameters: List<IrValueParameter>
+    override var implicitReceiversParameters: List<IrValueParameter>
+        get() = _implicitReceiversParameters
+        set(value) {
+            childrenListReplaced(_implicitReceiversParameters, value)
+            _implicitReceiversParameters = value
+        }
 
     override lateinit var providedProperties: List<IrPropertySymbol>
 
-    override lateinit var providedPropertiesParameters: List<IrValueParameter>
+    override var providedPropertiesParameters: List<IrValueParameter>
+        get() = _providedPropertiesParameters
+        set(value) {
+            childrenListReplaced(_providedPropertiesParameters, value)
+            _providedPropertiesParameters = value
+        }
 
     override var resultProperty: IrPropertySymbol? = null
 
     override var earlierScriptsParameter: IrValueParameter? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var importedScripts: List<IrScriptSymbol>? = null
 
@@ -66,6 +94,12 @@ class IrScriptImpl(
     override var targetClass: IrClassSymbol? = null
 
     override var constructor: IrConstructor? = null
+
+    lateinit var _explicitCallParameters: List<IrVariable>
+
+    lateinit var _implicitReceiversParameters: List<IrValueParameter>
+
+    lateinit var _providedPropertiesParameters: List<IrValueParameter>
 
     init {
         symbol.bind(this)

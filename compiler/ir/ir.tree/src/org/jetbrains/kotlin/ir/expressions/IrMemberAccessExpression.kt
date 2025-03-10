@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
+import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -40,7 +42,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * It corresponds 1 to 1 with [IrFunction.parameters], and therefore should have the same size.
      * `null` value usually means that the default value of the corresponding parameter will be used.
      */
-    val arguments: ValueArgumentsList = ValueArgumentsList()
+    val arguments: ValueArgumentsList = ValueArgumentsList(this)
 
     // Those properties indicate the shape of `this.symbol.owner`. They are filled
     // when the element is created, and whenever `symbol` changes. They are used
@@ -521,7 +523,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
 
-    inner class ValueArgumentsList : ArrayList<IrExpression?>() {
+    class ValueArgumentsList(parent: IrElementBase) : IrChildElementList<IrExpression?>(parent) {
         operator fun get(parameter: IrValueParameter): IrExpression? {
             checkIndexingByParameter(parameter)
             return this[parameter.indexInParameters]
@@ -533,9 +535,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
 
         private fun checkIndexingByParameter(parameter: IrValueParameter) {
-            require(parameter.parent == symbol.owner) {
+            val parent = parent as IrMemberAccessExpression<*>
+            require(parameter.parent == parent.symbol.owner) {
                 "Attempting to access argument corresponding to a parameter of different function.\n" +
-                        "This IR element references ${symbol.owner.render()}, while asking about a parameter of ${parameter.parent.render()}"
+                        "This IR element references ${parent.symbol.owner.render()}, while asking about a parameter of ${parameter.parent.render()}"
             }
         }
     }

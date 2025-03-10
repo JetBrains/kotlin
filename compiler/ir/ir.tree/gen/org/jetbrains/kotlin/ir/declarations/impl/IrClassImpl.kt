@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -41,9 +42,13 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var isExternal: Boolean = false
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
+        set(value) {
+            childrenListReplaced(field, value)
+            field = value
+        }
 
     @UnsafeDuringIrConstructionAPI
-    override val declarations: MutableList<IrDeclaration> = ArrayList()
+    override val declarations: MutableList<IrDeclaration> = IrChildElementList(this)
 
     override var metadata: MetadataSource? = null
 
@@ -69,8 +74,11 @@ class IrClassImpl @IrImplementationDetail constructor(
 
     override var thisReceiver: IrValueParameter? = null
         set(value) {
-            field = value
-            value?.kind = IrParameterKind.DispatchReceiver
+            if (field !== value) {
+                childReplaced(field, value)
+            	field = value
+            	value?.kind = IrParameterKind.DispatchReceiver
+            }
         }
 
     override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>? = null

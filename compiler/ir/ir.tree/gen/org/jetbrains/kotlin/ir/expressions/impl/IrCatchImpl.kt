@@ -21,10 +21,31 @@ class IrCatchImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var catchParameter: IrVariable,
+    catchParameter: IrVariable,
     override var origin: IrStatementOrigin?,
 ) : IrCatch() {
     override var attributeOwnerId: IrElement = this
 
-    override lateinit var result: IrExpression
+    override var catchParameter: IrVariable = catchParameter
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    override var result: IrExpression
+        get() = _result
+        set(value) {
+            if (!::_result.isInitialized || _result !== value) {
+                childReplaced(_result, value)
+                _result = value
+            }
+        }
+
+    lateinit var _result: IrExpression
+
+    init {
+        childInitialized(catchParameter)
+    }
 }

@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -40,19 +41,35 @@ class IrReplSnippetImpl(
 
     override var metadata: MetadataSource? = null
 
-    override lateinit var receiverParameters: List<IrValueParameter>
+    override var receiverParameters: List<IrValueParameter>
+        get() = _receiverParameters
+        set(value) {
+            childrenListReplaced(_receiverParameters, value)
+            _receiverParameters = value
+        }
 
-    override val variablesFromOtherSnippets: MutableList<IrVariable> = ArrayList()
+    override val variablesFromOtherSnippets: MutableList<IrVariable> = IrChildElementList(this)
 
-    override val declarationsFromOtherSnippets: MutableList<IrDeclaration> = ArrayList()
+    override val declarationsFromOtherSnippets: MutableList<IrDeclaration> = IrChildElementList(this)
 
     override var stateObject: IrClassSymbol? = null
 
-    override lateinit var body: IrBody
+    override var body: IrBody
+        get() = _body
+        set(value) {
+            if (!::_body.isInitialized || _body !== value) {
+                childReplaced(_body, value)
+                _body = value
+            }
+        }
 
     override var returnType: IrType? = null
 
     override var targetClass: IrClassSymbol? = null
+
+    lateinit var _receiverParameters: List<IrValueParameter>
+
+    lateinit var _body: IrBody
 
     init {
         symbol.bind(this)

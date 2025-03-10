@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -37,5 +38,5 @@ class IrModuleFragmentImpl(
     override val name: Name
         get() = descriptor.name
 
-    override val files: MutableList<IrFile> = ArrayList()
+    override val files: MutableList<IrFile> = IrChildElementList(this)
 }

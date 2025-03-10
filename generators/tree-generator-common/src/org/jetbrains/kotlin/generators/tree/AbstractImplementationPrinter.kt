@@ -98,7 +98,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
                                 print(field.name, ": ", field.typeRef.render())
                                 println(",")
                             } else if (!field.isFinal) {
-                                fieldPrinter.printField(field, inImplementation = true, override = true, inConstructor = true)
+                                fieldPrinter.printField(field, inImplementation = true, override = field.isOverride, inConstructor = true)
                             }
                         }
                 }
@@ -121,7 +121,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
                         bodyFieldPrinter.printField(
                             field,
                             inImplementation = true,
-                            override = true,
+                            override = field.isOverride,
                             modality = Modality.ABSTRACT.takeIf { isAbstract },
                         )
                     }

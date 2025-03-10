@@ -22,10 +22,18 @@ class IrReturnImpl internal constructor(
     override var startOffset: Int,
     override var endOffset: Int,
     override var type: IrType,
-    override var value: IrExpression,
+    value: IrExpression,
     override var returnTargetSymbol: IrReturnTargetSymbol,
 ) : IrReturn() {
     override var attributeOwnerId: IrElement = this
+
+    override var value: IrExpression = value
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     // A temporary API for compatibility with Flysto user project, see KQA-1254
     constructor(
@@ -42,4 +50,8 @@ class IrReturnImpl internal constructor(
         returnTargetSymbol = returnTargetSymbol,
         value = value,
     )
+
+    init {
+        childInitialized(value)
+    }
 }

@@ -40,8 +40,20 @@ class IrEnumEntryImpl @IrImplementationDetail constructor(
         get() = symbol.descriptor
 
     override var initializerExpression: IrExpressionBody? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     override var correspondingClass: IrClass? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
     init {
         symbol.bind(this)

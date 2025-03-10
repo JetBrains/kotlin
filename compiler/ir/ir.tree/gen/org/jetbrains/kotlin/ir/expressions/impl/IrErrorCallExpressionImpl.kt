@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -27,6 +28,12 @@ class IrErrorCallExpressionImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override var explicitReceiver: IrExpression? = null
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
 
-    override val arguments: MutableList<IrExpression> = SmartList()
+    override val arguments: MutableList<IrExpression> = IrChildElementList(this)
 }

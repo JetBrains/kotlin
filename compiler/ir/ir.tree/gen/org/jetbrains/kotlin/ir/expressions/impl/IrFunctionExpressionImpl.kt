@@ -23,7 +23,19 @@ class IrFunctionExpressionImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin,
-    override var function: IrSimpleFunction,
+    function: IrSimpleFunction,
 ) : IrFunctionExpression() {
     override var attributeOwnerId: IrElement = this
+
+    override var function: IrSimpleFunction = function
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(function)
+    }
 }

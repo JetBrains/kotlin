@@ -8,5 +8,9 @@ package org.jetbrains.kotlin.sir.tree.generator.model
 import org.jetbrains.kotlin.generators.tree.AbstractImplementation
 
 class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, Field>(element, name) {
-    override val allFields: List<Field> = element.allFields.map { it.copy() }
+    override val allFields: List<Field> = element.allFields.map {
+        it.copy().apply {
+            isOverride = true
+        }
+    }
 }

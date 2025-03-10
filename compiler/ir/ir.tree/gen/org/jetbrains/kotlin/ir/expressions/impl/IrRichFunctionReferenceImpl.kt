@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrChildElementList
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -28,7 +29,7 @@ class IrRichFunctionReferenceImpl internal constructor(
     override var reflectionTargetSymbol: IrFunctionSymbol?,
     override var origin: IrStatementOrigin?,
     override var overriddenFunctionSymbol: IrSimpleFunctionSymbol,
-    override var invokeFunction: IrSimpleFunction,
+    invokeFunction: IrSimpleFunction,
     override var hasUnitConversion: Boolean,
     override var hasSuspendConversion: Boolean,
     override var hasVarargConversion: Boolean,
@@ -36,5 +37,17 @@ class IrRichFunctionReferenceImpl internal constructor(
 ) : IrRichFunctionReference() {
     override var attributeOwnerId: IrElement = this
 
-    override val boundValues: MutableList<IrExpression> = ArrayList()
+    override val boundValues: MutableList<IrExpression> = IrChildElementList(this)
+
+    override var invokeFunction: IrSimpleFunction = invokeFunction
+        set(value) {
+            if (field !== value) {
+                childReplaced(field, value)
+                field = value
+            }
+        }
+
+    init {
+        childInitialized(invokeFunction)
+    }
 }
