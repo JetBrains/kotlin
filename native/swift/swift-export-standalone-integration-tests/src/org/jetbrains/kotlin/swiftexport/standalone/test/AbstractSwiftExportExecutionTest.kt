@@ -84,7 +84,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         } + listOf(
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
-            "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}",
+            "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.removePrefix("lib")}",
 
             "-F", testRunSettings.systemFrameworksPath,
             "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
