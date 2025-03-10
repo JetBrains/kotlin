@@ -233,6 +233,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
     runTest("compiler/testData/debug/localVariables/underscoreNames.kt");
   }
 
+  @Test
+  @TestMetadata("unnamedLocalVariablesInBytecode.kt")
+  public void testUnnamedLocalVariablesInBytecode() {
+    runTest("compiler/testData/debug/localVariables/unnamedLocalVariablesInBytecode.kt");
+  }
+
   @Nested
   @TestMetadata("compiler/testData/debug/localVariables/constructors")
   @TestDataPath("$PROJECT_ROOT")
