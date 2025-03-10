@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.Pair;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.compiler.CompilerMessage;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.com.intellij.openapi.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jetbrains.kotlin.com.google.common.base.Preconditions.checkNotNull;
 
 public class MavenPluginLogMessageCollector implements MessageCollector {
     private final Log log;
