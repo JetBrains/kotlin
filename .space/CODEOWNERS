@@ -381,6 +381,7 @@
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
 /libraries/tools/script-runtime/ "Kotlin Frontend"
 /libraries/tools/required-reason-finder/ "Kotlin Build Tools"
+/libraries/tools/kotlin-dataframe/ "Kotlin Build Tools" Nikita.Klimenko
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
 /libraries/pom.xml "Kotlin Build Infrastructure"
@@ -427,7 +428,7 @@
 /plugins/sam-with-receiver/ "Kotlin Frontend"
 /plugins/scripting/ "Kotlin Frontend"
 /plugins/plugins-interactions-testing/ "Kotlin Frontend"
-
+/plugins/kotlin-dataframe/ Nikita.Klimenko
 
 /prepare/ "Kotlin Build Infrastructure"
 
