@@ -3,6 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
     [javac] Compiling 2 source files to [Temp]
+    [javac] Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. If you're interested in taking on the role of an external maintainer, please contact us via https://kotl.in/ant-deprecation.
     [javac] Compiling [[TestData]] => [[Temp]]
     [javac] [TestData]/incorrectKotlinCode.kt:3:1: error: function 'main' must have a body.
     [javac] fun main(
@@ -19,6 +20,7 @@ build:
     [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: an explicit type is required on a value parameter.
     [javac] 
     [javac] ^
+  [kotlinc] Support for the Ant build system is currently deprecated and planned for removal in the Kotlin 2.3.0 release. If you're interested in taking on the role of an external maintainer, please contact us via https://kotl.in/ant-deprecation.
   [kotlinc] Compiling [[TestData]] => [[Temp]]
   [kotlinc] [TestData]/incorrectKotlinCode.kt:3:1: error: function 'main' must have a body.
   [kotlinc] fun main(
