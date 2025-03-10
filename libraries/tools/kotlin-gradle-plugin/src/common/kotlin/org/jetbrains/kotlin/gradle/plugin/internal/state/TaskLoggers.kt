@@ -31,13 +31,13 @@ internal object TaskLoggers {
     }
 }
 
-internal fun getTaskLogger(taskPath: String, prefix: String?, fallbackLoggerName: String) =
-    TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it, prefix).apply { debug("Using '$taskPath' logger") } }
+internal fun getTaskLogger(taskPath: String, prefix: String?, fallbackLoggerName: String, addLevelAsPrefix: Boolean) =
+    TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it, prefix, addLevelAsPrefix).apply { debug("Using '$taskPath' logger") } }
         ?: run {
             val logger = LoggerFactory.getLogger(fallbackLoggerName)
             val kotlinLogger = if (logger is Logger) {
-                GradleKotlinLogger(logger, prefix)
-            } else SL4JKotlinLogger(logger, prefix)
+                GradleKotlinLogger(logger, prefix, addLevelAsPrefix)
+            } else SL4JKotlinLogger(logger, prefix, addLevelAsPrefix)
 
             kotlinLogger.apply {
                 debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")

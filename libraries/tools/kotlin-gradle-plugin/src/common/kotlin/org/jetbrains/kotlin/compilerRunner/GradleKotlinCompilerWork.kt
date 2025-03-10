@@ -93,7 +93,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     }
     private var icLogLines: List<String> = emptyList()
 
-    private val log: KotlinLogger = getTaskLogger(config.taskPath, null, "GradleKotlinCompilerWork")
+    private val log: KotlinLogger = getTaskLogger(config.taskPath, null, "GradleKotlinCompilerWork", false)
 
     private val isIncremental: Boolean
         get() = config.incrementalCompilationEnvironment != null

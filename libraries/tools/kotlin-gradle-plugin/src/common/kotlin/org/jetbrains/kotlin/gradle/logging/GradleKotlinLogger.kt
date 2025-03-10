@@ -8,26 +8,34 @@ package org.jetbrains.kotlin.gradle.logging
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
-internal class GradleKotlinLogger(private val log: Logger, private val prefix: String? = null) : KotlinLogger {
+internal class GradleKotlinLogger(
+    private val log: Logger,
+    private val prefix: String? = null,
+    private val addLevelAsPrefix: Boolean = false,
+) : KotlinLogger {
     private fun transformMessage(msg: String): String {
         if (prefix.isNullOrBlank()) return msg
         return prefix + msg
     }
 
     override fun debug(msg: String) {
-        log.debug(transformMessage(msg))
+        val payload = if (addLevelAsPrefix) "v: $msg" else msg
+        log.debug(transformMessage(payload))
     }
 
     override fun error(msg: String, throwable: Throwable?) {
-        log.error(transformMessage(msg), throwable)
+        val payload = if (addLevelAsPrefix) "e: $msg" else msg
+        log.error(transformMessage(payload), throwable)
     }
 
     override fun info(msg: String) {
-        log.info(transformMessage(msg))
+        val payload = if (addLevelAsPrefix) "i: $msg" else msg
+        log.info(transformMessage(payload))
     }
 
     override fun warn(msg: String, throwable: Throwable?) {
-        log.warn(transformMessage(msg), throwable)
+        val payload = if (addLevelAsPrefix) "w: $msg" else msg
+        log.warn(transformMessage(payload), throwable)
     }
 
     override fun lifecycle(msg: String) {
