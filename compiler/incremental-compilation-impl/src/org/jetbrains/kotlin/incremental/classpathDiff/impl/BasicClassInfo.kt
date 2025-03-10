@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.incremental.classpathDiff
+package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -18,7 +18,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 /** Basic information about a class (e.g., [classId], [kotlinClassHeader] and [supertypes]). */
-class BasicClassInfo(
+internal class BasicClassInfo(
     val classId: ClassId,
     val kotlinClassHeader: KotlinClassHeader?, // null if this is not a Kotlin class
     val supertypes: List<JvmClassName>,

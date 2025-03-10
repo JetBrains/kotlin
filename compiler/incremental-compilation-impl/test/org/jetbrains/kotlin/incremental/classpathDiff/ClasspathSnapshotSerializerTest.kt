@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
 
-abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
+internal abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
 
     companion object {
         val testDataDir =
@@ -32,7 +33,7 @@ abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
     }
 }
 
-class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
+internal class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
     override val sourceFile = TestSourceFile(
         KotlinSourceFile(
@@ -42,7 +43,7 @@ class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializer
     )
 }
 
-class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
+internal class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
     override val sourceFile = TestSourceFile(
         JavaSourceFile(

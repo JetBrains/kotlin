@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName
 
 // When adding or changing tests, make sure that test sources don't have unintended changes in whitespace, copyright notices and similar things:
 // debug info is sensitive to changes in line numbers, and it's part of default inline function abiHash
-@Disabled("KT-62555")
 class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("When inlined lambda's body changes, its call site is recompiled")
@@ -253,7 +252,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Recompilation of call site affected by a anonymous object - basic")
+    @DisplayName("Recompilation of call site affected by an anonymous object - basic")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object/lib")
     fun testAnonymousObjectBaseTypeChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
@@ -274,9 +273,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
-    @Disabled("broken! other snapshotting strategies might work better here")
+    @Disabled("should be fixed if we start snapshotting bytecode")
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Recompilation of call site affected by a anonymous object - slightly evil")
+    @DisplayName("Recompilation of call site affected by an anonymous object - slightly evil")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
     fun testAnonymousObjectBaseTypeChangeWithOverloads(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
 
-object ClasspathSnapshotShrinker {
+internal object ClasspathSnapshotShrinker {
 
     /**
      * Shrinks the given classes by retaining only classes that are referenced by the lookup symbols stored in the given [LookupStorage].
