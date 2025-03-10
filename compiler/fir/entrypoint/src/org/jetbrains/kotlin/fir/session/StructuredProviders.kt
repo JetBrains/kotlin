@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 class StructuredProviders(
     // source, generated, IC
     val sourceProviders: List<FirSymbolProvider>,
-    // klib/jar deserialized providers
+    // klib/jar deserialized providers, source providers of dependency source modules
     val librariesProviders: List<FirSymbolProvider>,
     // buitlins, etc
     val sharedProvider: FirSymbolProvider
