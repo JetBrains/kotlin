@@ -110,6 +110,12 @@
         <option value="$PROJECT_DIR$/native/native.tests/cli-tests/testData" />
       </array>
     </option>
+    <option name="testDataDirectories">
+      <array>
+        <option value="$PROJECT_DIR$/jps/jps-plugin/testData" />
+        <option value="$PROJECT_DIR$/compiler/testData/integration/ant" />
+      </array>
+    </option>
     <option name="testTags">
       <map>
         <entry key="ClassicJsIrText.*">
