@@ -1543,7 +1543,16 @@ class Fir2IrVisitor(
                                 ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")
 
                             val irStatements = buildList {
-                                addIfNotNull(firLoopVarStmt.toIrStatement())
+                                val isUnnamedLocalVar = firLoopVarStmt is FirProperty
+                                        && firLoopVarStmt.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                                val convertedForLoopVar = when {
+                                    isUnnamedLocalVar -> conversionScope.scope().createTemporaryVariable(
+                                        convertToIrExpression(firLoopVarStmt.initializer!!),
+                                        nameHint = "forLoopVariable",
+                                    )
+                                    else -> firLoopVarStmt.toIrStatement()
+                                }
+                                addIfNotNull(convertedForLoopVar)
                                 destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
                                 if (firExpression !is FirEmptyExpressionBlock) {
                                     add(convertToIrExpression(firExpression))
