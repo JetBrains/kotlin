@@ -47,7 +47,6 @@ abstract class AbstractSwiftExportTest {
     protected val targets: KotlinNativeTargets get() = testRunSettings.get()
     protected val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
-    private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
     protected abstract fun runCompiledTest(
         testPathFull: File,
@@ -71,7 +70,7 @@ abstract class AbstractSwiftExportTest {
         val modulesToExport = rootModules + modulesMarkedForExport
 
         val config = SwiftExportConfig(
-            outputPath = tmpdir.toPath().resolve(testDir),
+            outputPath = buildDir(testPathFull.name).resolve(testDir).toPath(),
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
