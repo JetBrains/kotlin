@@ -1,0 +1,9 @@
+java.lang.IllegalArgumentException: source must not be null
+	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:68)
+	at org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnosticToFirDiagnosticKt.createOn(coneDiagnosticToFirDiagnostic.kt:918)
+	at org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnosticToFirDiagnosticKt.mapInapplicableCandidateError(coneDiagnosticToFirDiagnostic.kt:349)
+	at org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnosticToFirDiagnosticKt.toFirDiagnostics(coneDiagnosticToFirDiagnostic.kt:267)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent$Companion.reportFirDiagnostic$checkers(ErrorNodeDiagnosticCollectorComponent.kt:224)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent.reportFirDiagnostic(ErrorNodeDiagnosticCollectorComponent.kt:190)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent.processErrorReference(ErrorNodeDiagnosticCollectorComponent.kt:121)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent.visitResolvedErrorReference(ErrorNodeDiagnosticCollectorComponent.kt:91)

@@ -520,6 +520,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("emptyParanthesesAsArgument.kt")
+    public void testEmptyParanthesesAsArgument() {
+      runTest("compiler/testData/diagnostics/tests/emptyParanthesesAsArgument.kt");
+    }
+
+    @Test
     @TestMetadata("EmptyThrow.kt")
     public void testEmptyThrow() {
       runTest("compiler/testData/diagnostics/tests/EmptyThrow.kt");
