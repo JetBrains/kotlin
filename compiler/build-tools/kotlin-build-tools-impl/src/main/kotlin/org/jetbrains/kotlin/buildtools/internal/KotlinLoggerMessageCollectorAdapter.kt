@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 
 internal class KotlinLoggerMessageCollectorAdapter(internal val kotlinLogger: KotlinLogger) : MessageCollector {
-    private val messageRenderer = MessageRenderer.GRADLE_STYLE
-
     override fun clear() {}
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        val renderedMessage = messageRenderer.render(severity, message, location) // TODO: move rendering to the KotlinLogger side
+        val renderedMessage = KotlinMessageRenderer.render(severity, message, location)
         when (severity) {
             CompilerMessageSeverity.EXCEPTION, CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
             CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(renderedMessage)
