@@ -8,6 +8,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.backend.native"))
     compileOnly(project(":compiler:ir.serialization.common"))
+    compileOnly(project(":compiler:ir.serialization.native"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
