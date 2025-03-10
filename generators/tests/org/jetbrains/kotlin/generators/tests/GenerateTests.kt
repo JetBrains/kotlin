@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodege
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginInteractionFirBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
@@ -426,6 +428,16 @@ fun main(args: Array<String>) {
         testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
             testClass<AbstractPluginInteractionFirBlackBoxCodegenTest> {
                 model("box", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/kotlin-dataframe/tests-gen", "plugins/kotlin-dataframe/testData") {
+            testClass<AbstractDataFrameDiagnosticTest> {
+                model("diagnostics")
+            }
+
+            testClass<AbstractDataFrameBlackBoxCodegenTest> {
+                model("box")
             }
         }
     }

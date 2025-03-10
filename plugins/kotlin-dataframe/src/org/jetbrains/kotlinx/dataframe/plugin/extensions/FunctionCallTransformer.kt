@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import org.jetbrains.kotlin.cli.common.repl.replEscapeLineBreaks
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -501,7 +500,7 @@ class FunctionCallTransformer(
                 fun PluginDataFrameSchema.materialize(column: SimpleCol): DataSchemaApi {
                     val text = call.source?.text ?: call.calleeReference.name
                     val name =
-                        "${column.name.titleCase().replEscapeLineBreaks()}_${hashToTwoCharString(abs(text.hashCode()))}"
+                        "${column.name.titleCase()}_${hashToTwoCharString(abs(text.hashCode()))}"
                     return materialize(suggestedName = "$prefix$name")
                 }
 

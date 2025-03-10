@@ -58,6 +58,7 @@ json = "20231013"
 dataframe = "0.14.1"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
+dataframe-dev = "0.16.0-dev-6330"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -80,6 +81,9 @@ proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.re
 node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }
 woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
 dataframe = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
+dataframe-compiler-plugin-core = { module = "org.jetbrains.kotlinx.dataframe:dataframe-compiler-plugin-core", version.ref = "dataframe-dev" }
+dataframe-core-dev = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe-dev" }
+dataframe-csv-dev = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe-dev" }
 
 apache-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 apache-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }

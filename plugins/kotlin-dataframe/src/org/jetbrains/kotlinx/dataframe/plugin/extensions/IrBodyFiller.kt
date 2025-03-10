@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -150,7 +149,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
             val thisSymbol: IrValueSymbol = getter.extensionReceiverParameter?.symbol!!
             it.dispatchReceiver = IrGetValueImpl(-1, -1, thisSymbol)
             val annotation = declaration.annotations.findAnnotation(Names.COLUMN_NAME_ANNOTATION.asSingleFqName())
-            val columnName = (annotation?.valueArguments?.get(0) as? IrConst)?.value as? String
+            val columnName = (annotation?.arguments?.get(0) as? IrConst)?.value as? String
             val columName = columnName ?: declaration.name.identifier
             it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName))
         }
