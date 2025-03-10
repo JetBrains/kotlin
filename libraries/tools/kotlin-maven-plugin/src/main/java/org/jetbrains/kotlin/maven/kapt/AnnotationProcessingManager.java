@@ -64,7 +64,7 @@ public class AnnotationProcessingManager {
 
     static {
         KAPT_DEPENDENCY.setGroupId("org.jetbrains.kotlin");
-        KAPT_DEPENDENCY.setArtifactId("kotlin-annotation-processing");
+        KAPT_DEPENDENCY.setArtifactId("kotlin-annotation-processing-embeddable");
         try {
             KAPT_DEPENDENCY.setVersion(getMavenPluginVersion());
         }

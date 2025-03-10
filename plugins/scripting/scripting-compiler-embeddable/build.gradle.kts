@@ -1,12 +1,14 @@
 description = "Kotlin Scripting Compiler Plugin for embeddable compiler"
 
 plugins {
-    java
+    `java-library`
 }
 
 dependencies {
     embedded(project(":kotlin-scripting-compiler")) { isTransitive = false }
-    runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
+    api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-jvm"))
+    api(project(":kotlin-scripting-compiler-impl-embeddable"))
     runtimeOnly(kotlinStdlib())
 }
 

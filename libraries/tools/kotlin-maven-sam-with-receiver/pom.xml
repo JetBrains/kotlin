@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-sam-with-receiver-compiler-plugin</artifactId>
+            <artifactId>kotlin-sam-with-receiver-compiler-plugin-embeddable</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

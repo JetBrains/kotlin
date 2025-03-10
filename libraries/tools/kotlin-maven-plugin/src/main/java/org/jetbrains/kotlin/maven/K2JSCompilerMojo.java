@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -15,6 +14,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.kotlin.utils.JsLibraryUtils;
 
 import java.io.File;

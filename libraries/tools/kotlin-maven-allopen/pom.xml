@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-allopen-compiler-plugin</artifactId>
+            <artifactId>kotlin-allopen-compiler-plugin-embeddable</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

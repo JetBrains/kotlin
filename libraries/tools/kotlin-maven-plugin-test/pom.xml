@@ -117,7 +117,7 @@
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
                             <extraArtifacts>
-                                <artifact>org.jetbrains.kotlin:kotlin-annotation-processing:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-annotation-processing-embeddable:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-allopen:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>

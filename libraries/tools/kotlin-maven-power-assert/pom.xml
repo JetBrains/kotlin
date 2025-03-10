@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-power-assert-compiler-plugin</artifactId>
+            <artifactId>kotlin-power-assert-compiler-plugin-embeddable</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

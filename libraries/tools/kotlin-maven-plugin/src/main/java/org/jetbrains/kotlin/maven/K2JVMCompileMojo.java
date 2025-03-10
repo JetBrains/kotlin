@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiJavaModule;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -36,6 +34,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.kotlin.com.intellij.psi.PsiJavaModule;
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.maven.incremental.FileCopier;
@@ -50,7 +50,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.intellij.openapi.util.text.StringUtil.join;
+import static org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
 
 /**
