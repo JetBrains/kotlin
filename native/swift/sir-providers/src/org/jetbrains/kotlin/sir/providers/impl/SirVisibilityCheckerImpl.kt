@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -69,7 +69,7 @@ public class SirVisibilityCheckerImpl(
                 true
             }
             is KaNamedFunctionSymbol -> {
-                ktSymbol.isExported(ktSymbol.containingSymbol as? KaClassSymbol)
+                ktSymbol.isExported(ktAnalysisSession)
             }
             is KaVariableSymbol -> {
                 !ktSymbol.hasHiddenAccessors
@@ -82,8 +82,8 @@ public class SirVisibilityCheckerImpl(
         return if (isExported) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
-    private fun KaNamedFunctionSymbol.isExported(parent: KaClassSymbol?): Boolean {
-        if (isStatic && parent?.let { isValueOfOnEnum(it) } != true) {
+    private fun KaNamedFunctionSymbol.isExported(kaSession: KaSession): Boolean = with(kaSession) {
+        if (isStatic && !isValueOfOnEnum(this@isExported)) {
             unsupportedDeclarationReporter.report(this@isExported, "static functions are not supported yet.")
             return false
         }
@@ -101,6 +101,10 @@ public class SirVisibilityCheckerImpl(
         }
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline functions are not supported yet.")
+            return false
+        }
+        if (isClone(this@isExported)) {
+            // Cloneable (and its method `clone`) are synthetic on Native, and we don't care about them atm.
             return false
         }
         return true
@@ -153,8 +157,11 @@ public class SirVisibilityCheckerImpl(
         }
     }
 
-    private fun KaNamedFunctionSymbol.isValueOfOnEnum(parent: KaClassSymbol): Boolean {
-        return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
+    private fun KaSession.isValueOfOnEnum(function: KaNamedFunctionSymbol): Boolean {
+        with (function) {
+            val parent = containingSymbol as? KaClassSymbol ?: return false
+            return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
+        }
     }
 }
 

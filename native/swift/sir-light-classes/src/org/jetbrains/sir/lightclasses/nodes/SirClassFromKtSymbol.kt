@@ -6,6 +6,7 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.export.utilities.isCloneable
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -187,9 +188,11 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     private val translatedProtocols: List<SirProtocol> by lazyWithSessions {
         ktSymbol.superTypes
-            .filterIsInstance<KaClassType>().mapNotNull { it.expandedSymbol }.filter {
-                it.classKind == KaClassKind.INTERFACE
-            }.flatMap {
+            .filterIsInstance<KaClassType>()
+            .mapNotNull { it.expandedSymbol }
+            .filter { it.classKind == KaClassKind.INTERFACE }
+            .filterNot { it.isCloneable }
+            .flatMap {
                 it.toSir().allDeclarations.filterIsInstance<SirProtocol>().also {
                     it.forEach {
                         ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
