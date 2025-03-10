@@ -7,10 +7,15 @@ package org.jetbrains.kotlin.analysis.test.framework.directives
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.modification.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 /**
@@ -29,15 +34,46 @@ object ModificationEventDirectives : SimpleDirectivesContainer() {
         description = """
             Specifies that a modification event should be raised for the module or globally, but the test has to specify the modification 
             event kind itself. This allows generating multiple tests which raise different modification events over the same test data.
-        """.trimIndent()
+        """.trimIndent(),
     )
+
+    val MODIFICATION_EVENT_TARGET by enumDirective<ModificationEventDirectiveTarget>(
+        description = """
+            Specifies the module for which the modification event should be published. Only has an effect for module-level modification 
+            events.
+        """.trimIndent(),
+        applicability = DirectiveApplicability.Module,
+    )
+}
+
+/**
+ * Specifies the module for which the modification event should be published. Only has an effect for module-level modification events.
+ *
+ * @see ModificationEventDirectives.MODIFICATION_EVENT_TARGET
+ */
+enum class ModificationEventDirectiveTarget {
+    /**
+     * The target of the modification event is the test module itself.
+     *
+     * This is equivalent to not specifying the [ModificationEventDirectives.MODIFICATION_EVENT_TARGET] directive at all.
+     */
+    SELF,
+
+    /**
+     * The target of the modification event is the fallback dependencies module of the test module. This target is only applicable to a
+     * library (source) module with fallback dependencies.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+     */
+    FALLBACK_DEPENDENCIES,
 }
 
 /**
  * Publishes a [KotlinModificationEvent] based on the [ModificationEventDirectives.MODIFICATION_EVENT] directive present in the test module
  * in a write action.
  *
- * Module-level modification events will be published for the [KtTestModule]'s [KaModule].
+ * Module-level modification events will be published for the [KtTestModule]'s [KaModule], or another module depending on
+ * [ModificationEventDirectives.MODIFICATION_EVENT_TARGET].
  *
  * The function expects exactly one `MODIFICATION_EVENT` directive to be present, unless [isOptional] is `true`.
  */
@@ -51,20 +87,20 @@ fun KtTestModule.publishModificationEventByDirective(isOptional: Boolean = false
         1 -> modificationEventKinds.single()
         else -> error("The test module `$this` must not specify multiple modification events.")
     }
-    publishModificationEvent(modificationEventKind, ktModule)
+    publishModificationEvent(modificationEventKind)
 }
 
 /**
  * If the given test module contains a [ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT] directive, publishes a
  * [KotlinModificationEvent] based on the given [modificationEventKind] in a write action.
  *
- * Module-level modification events will be published for the [KtTestModule]'s [KaModule].
+ * Module-level modification events will be published for the [KtTestModule]'s [KaModule], or another module depending on
+ * [ModificationEventDirectives.MODIFICATION_EVENT_TARGET].
  */
 fun KtTestModule.publishWildcardModificationEventByDirectiveIfPresent(modificationEventKind: KotlinModificationEventKind) {
-    if (ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT !in testModule.directives) {
-        return
+    if (ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT in testModule.directives) {
+        publishModificationEvent(modificationEventKind)
     }
-    publishModificationEvent(modificationEventKind, ktModule)
 }
 
 /**
@@ -88,8 +124,26 @@ fun KtTestModuleStructure.publishWildcardModificationEventsByDirective(modificat
     }
 }
 
-private fun publishModificationEvent(modificationEventKind: KotlinModificationEventKind, ktModule: KaModule) {
-    publishModificationEventByKind(modificationEventKind, ktModule.project, ktModule)
+private fun KtTestModule.publishModificationEvent(modificationEventKind: KotlinModificationEventKind) {
+    val targetModule = when (modificationEventDirectiveTarget) {
+        ModificationEventDirectiveTarget.SELF -> ktModule
+        ModificationEventDirectiveTarget.FALLBACK_DEPENDENCIES -> ktModule.getFallbackDependenciesModule()
+    }
+    publishModificationEventByKind(modificationEventKind, targetModule.project, targetModule)
+}
+
+private val KtTestModule.modificationEventDirectiveTarget: ModificationEventDirectiveTarget
+    get() = testModule.directives.singleOrZeroValue(ModificationEventDirectives.MODIFICATION_EVENT_TARGET)
+        ?: ModificationEventDirectiveTarget.SELF
+
+private fun KaModule.getFallbackDependenciesModule(): KaModule {
+    require(this is KaLibraryModule || this is KaLibrarySourceModule) {
+        "The MODIFICATION_EVENT_TARGET=${ModificationEventDirectiveTarget.FALLBACK_DEPENDENCIES.name} directive can only be applied to a" +
+                " library module or library source module, but the module '${this}' is of type `${this::class.simpleName}`."
+    }
+
+    return directRegularDependencies.singleOrNull { it is KaLibraryFallbackDependenciesModule }
+        ?: error("Expected a single fallback dependencies module for the module '${this}'.")
 }
 
 private fun publishGlobalModificationEvent(modificationEventKind: KotlinModificationEventKind, project: Project) {
