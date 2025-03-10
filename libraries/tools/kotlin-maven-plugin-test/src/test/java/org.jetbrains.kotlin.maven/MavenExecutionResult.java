@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
 import org.junit.Assert;
 
 import java.io.File;
