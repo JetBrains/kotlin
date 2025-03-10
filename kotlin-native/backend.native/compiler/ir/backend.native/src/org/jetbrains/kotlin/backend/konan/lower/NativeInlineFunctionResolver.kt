@@ -50,8 +50,6 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction) {
         val body = function.body ?: return
 
-        InteropLowering(generationState).lower(body, function)
-
         UpgradeCallableReferences(context).lower(function)
 
         NativeAssertionWrapperLowering(context).lower(function)
