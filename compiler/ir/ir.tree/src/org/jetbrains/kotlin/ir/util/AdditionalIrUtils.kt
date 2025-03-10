@@ -154,7 +154,7 @@ fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
     }
 }
 
-fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
+private fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
     return with(signature as? IdSignature.CommonSignature ?: return false) {
         // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
         packageFqName == packageName && declarationFqName == declarationName

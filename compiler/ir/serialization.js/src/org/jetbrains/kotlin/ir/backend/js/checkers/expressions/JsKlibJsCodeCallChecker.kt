@@ -29,7 +29,11 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
     private val jsCodeFqName = JsStandardClassIds.Callables.JsCode.asSingleFqName()
 
     private fun IrCall.isJsFunCall(): Boolean {
-        return symbol.hasEqualFqName(jsCodeFqName)
+        return if (this.symbol.isBound) {
+            symbol.owner.hasEqualFqName(jsCodeFqName)
+        } else {
+            symbol.hasEqualFqName(jsCodeFqName)
+        }
     }
 
     override fun check(expression: IrCall, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter) {

@@ -474,20 +474,24 @@ private class CallInlining(
             return false
         }
 
-        fun IrSymbol.isFunctionOrKFunction(): Boolean {
-            return hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "Function") ||
-                    hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "KFunction")
+        fun IdSignature.isFunctionOrKFunction(): Boolean {
+            return with(this as? IdSignature.CommonSignature ?: return false) {
+                packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() &&
+                        (declarationFqName == "Function" || declarationFqName == "KFunction")
+            }
         }
 
-        fun IrSymbol.isSuspendFunctionOrKFunction(): Boolean {
-            return hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "SuspendFunction") ||
-                    hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "KSuspendFunction")
+        fun IdSignature.isSuspendFunctionOrKFunction(): Boolean {
+            return with(this as? IdSignature.CommonSignature ?: return false) {
+                packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() &&
+                        (declarationFqName == "Function" || declarationFqName == "KFunction")
+            }
         }
 
         val signature = symbol.signature?.asPublic() ?: return false
         return signature.shortName == OperatorNameConventions.INVOKE.asString() &&
-                (symbol.isFunctionOrKFunction() || symbol.isSuspendFunctionOrKFunction())
-                && hasDispatchGetValueReceiver()
+                with(signature.topLevelSignature()) { isFunctionOrKFunction() || isSuspendFunctionOrKFunction() } &&
+                hasDispatchGetValueReceiver()
     }
 
     private inner class ParameterToArgument(
