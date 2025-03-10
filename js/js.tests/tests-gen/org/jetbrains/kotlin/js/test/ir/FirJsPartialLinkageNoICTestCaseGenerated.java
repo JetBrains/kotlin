@@ -37,6 +37,12 @@ public class FirJsPartialLinkageNoICTestCaseGenerated extends AbstractFirJsParti
   }
 
   @Test
+  @TestMetadata("callableReferenceOperations")
+  public void testCallableReferenceOperations() {
+    runTest("compiler/testData/klib/partial-linkage/callableReferenceOperations/");
+  }
+
+  @Test
   @TestMetadata("changeClassVisibility")
   public void testChangeClassVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeClassVisibility/");
@@ -118,6 +124,12 @@ public class FirJsPartialLinkageNoICTestCaseGenerated extends AbstractFirJsParti
   @TestMetadata("referencingUnusableDeclarations")
   public void testReferencingUnusableDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/");
+  }
+
+  @Test
+  @TestMetadata("referencingUnusableDeclarationsWithRichReferences")
+  public void testReferencingUnusableDeclarationsWithRichReferences() {
+    runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarationsWithRichReferences/");
   }
 
   @Test
