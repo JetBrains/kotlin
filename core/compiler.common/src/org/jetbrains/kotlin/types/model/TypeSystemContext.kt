@@ -358,7 +358,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     val isK2: Boolean
 
-    val overloadResolutionMode: Boolean get() = false
+    val allowSemiFixationToOtherTypeVariables: Boolean get() = false
 }
 
 

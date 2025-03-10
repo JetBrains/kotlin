@@ -126,6 +126,6 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
      */
     @K2Only
     abstract fun <R> withTypeVariablesThatAreCountedAsProperTypes(
-        typeVariables: Set<TypeConstructorMarker>, overloadResolutionMode: Boolean = false, block: () -> R
+        typeVariables: Set<TypeConstructorMarker>, allowSemiFixationToOtherTypeVariables: Boolean = false, block: () -> R
     ): R
 }
