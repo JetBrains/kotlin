@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
  * Translates the whole public API surface of the given [module] to [SirModule] and generates compiler bridges between them.
@@ -35,12 +37,19 @@ internal fun translateModulePublicApi(
     config: SwiftExportConfig
 ): TranslationResult {
     val kaModules = createKaModulesForStandaloneAnalysis(module, config.targetPlatform, dependencies)
+    val referencedStdlibTypes = mutableSetOf<FqName>()
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(kaModules.useSiteModule) {
-        val sirSession = buildSirSession(kaModules, config, module.config)
+        val stdlib = kaModules.dependencies.stdlib
+        val stdlibReferenceHandler = SirKaClassReferenceHandler { symbol ->
+            if (symbol.containingModule == stdlib) {
+                referencedStdlibTypes.addIfNotNull(symbol.classId?.outermostClassId?.asSingleFqName())
+            }
+        }
+        val sirSession = buildSirSession(kaModules, config, module.config, stdlibReferenceHandler)
         translateModule(sirSession, kaModules.mainModule)
-        createTranslationResult(sirSession, config, module.config, kaModules)
+        createTranslationResult(sirSession, config, module.config, kaModules, referencedStdlibTypes.toSet())
     }
 }
 
@@ -49,6 +58,7 @@ private fun KaSession.createTranslationResult(
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
     kaModules: KaModules,
+    referencedStdlibTypes: Set<FqName>,
 ): TranslationResult {
     val sirModule = with(sirSession) { kaModules.mainModule.sirModule() }
     // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
@@ -63,6 +73,7 @@ private fun KaSession.createTranslationResult(
         bridgeSources = bridges,
         moduleConfig = moduleConfig,
         bridgesModuleName = bridgesName,
+        referencedStdlibTypes = referencedStdlibTypes,
     )
 }
 
@@ -85,13 +96,11 @@ private fun KaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleNa
     return generateBridgeSources(bridgeGenerator, bridgeRequests, true)
 }
 
-private val InputModule.bridgesModuleName: String
-    get() = "${config.bridgeModuleName}_${name}"
-
 internal class TranslationResult(
     val sirModule: SirModule,
     val packages: Set<FqName>,
     val bridgeSources: BridgeSources,
     val moduleConfig: SwiftModuleConfig,
     val bridgesModuleName: String,
+    val referencedStdlibTypes: Set<FqName>,
 )
