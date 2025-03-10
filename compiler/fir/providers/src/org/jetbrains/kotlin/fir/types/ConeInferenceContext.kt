@@ -59,7 +59,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(lowerBound is ConeRigidType)
         require(upperBound is ConeRigidType)
 
-        return coneFlexibleOrSimpleType(this, lowerBound, upperBound)
+        return coneFlexibleOrSimpleType(this, lowerBound, upperBound, isTrivial = false)
     }
 
     override fun createTrivialFlexibleTypeOrSelf(lowerBound: KotlinTypeMarker): KotlinTypeMarker {

@@ -73,7 +73,12 @@ class EnhancedForWarningConeSubstitutor(
                 return null
             }
 
-            return coneFlexibleOrSimpleType(typeContext, lowerSubstituted ?: type.lowerBound, upperSubstituted ?: type.upperBound)
+            return coneFlexibleOrSimpleType(
+                typeContext,
+                lowerSubstituted ?: type.lowerBound,
+                upperSubstituted ?: type.upperBound,
+                isTrivial = false
+            )
         }
 
         // If the top-level type can be enhanced, this will only enhance the top-level type but not its arguments: Foo<Bar!>! -> Foo<Bar!>?

@@ -256,7 +256,8 @@ fun <T : ConeKotlinType> T.withNullability(
                 coneFlexibleOrSimpleType(
                     typeContext,
                     lowerBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
-                    upperBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes)
+                    upperBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
+                    isTrivial = false
                 )
             }
         }
@@ -319,7 +320,8 @@ inline fun ConeFlexibleType.mapTypesOrNull(
                 this !is ConeRawType -> coneFlexibleOrSimpleType(
                     typeContext,
                     mappedLowerBound ?: lowerBound,
-                    mappedUpperBound ?: upperBound
+                    mappedUpperBound ?: upperBound,
+                    isTrivial = false
                 )
                 else -> ConeRawType.create(
                     mappedLowerBound?.lowerBoundIfFlexible() ?: this.lowerBound,
@@ -348,12 +350,12 @@ fun coneFlexibleOrSimpleType(
     typeContext: ConeTypeContext,
     lowerBound: ConeKotlinType,
     upperBound: ConeKotlinType,
-    isTrivial: Boolean = false,
+    isTrivial: Boolean,
 ): ConeKotlinType {
     return when (lowerBound) {
-        is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
+        is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound, isTrivial)
         is ConeRigidType -> when (upperBound) {
-            is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
+            is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound, isTrivial)
             is ConeRigidType -> {
                 val areBoundsEqual = if (isTrivial) {
                     lowerBound == upperBound
@@ -906,7 +908,8 @@ private fun ConeKotlinType.eraseAsUpperBound(
             coneFlexibleOrSimpleType(
                 session.typeContext,
                 lowerBound.eraseAsUpperBound(session, cache, mode),
-                upperBound.eraseAsUpperBound(session, cache, mode)
+                upperBound.eraseAsUpperBound(session, cache, mode),
+                isTrivial = false
             )
 
         is ConeTypeParameterType ->
