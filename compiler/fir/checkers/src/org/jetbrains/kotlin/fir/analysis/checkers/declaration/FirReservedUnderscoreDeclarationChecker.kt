@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirProperty && declaration.isCatchParameter != true) {
-            reportIfUnderscore(declaration, context, reporter, isSingleUnderscoreAllowed = declaration.isLocal)
-        } else if (
+        if (
             declaration is FirRegularClass ||
+            declaration is FirProperty && declaration.isCatchParameter != true ||
             declaration is FirTypeAlias
         ) {
             reportIfUnderscore(declaration, context, reporter)

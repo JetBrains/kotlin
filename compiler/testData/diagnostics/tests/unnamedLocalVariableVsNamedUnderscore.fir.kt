@@ -17,5 +17,5 @@ fun g() {
 
 fun h() {
     val _ = "three"
-    println(`_`)
+    println(<!UNRESOLVED_REFERENCE!>`_`<!>)
 }

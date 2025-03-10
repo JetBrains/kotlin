@@ -1301,10 +1301,15 @@ class LightTreeRawFirExpressionBuilder(
                     source = blockNode?.toFirSourceElement()
                     val valueParameter = parameter ?: return@block
                     val multiDeclaration = valueParameter.destructuringDeclaration
+                    val quotedName = valueParameter.source.lighterASTNode.getChildNodeByType(IDENTIFIER)?.asText
                     val firLoopParameter = generateTemporaryVariable(
                         baseModuleData,
                         valueParameter.source,
-                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
+                        name = when {
+                            multiDeclaration != null -> SpecialNames.DESTRUCT
+                            quotedName == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                            else -> valueParameter.name
+                        },
                         buildFunctionCall {
                             source = rangeSource
                             calleeReference = buildSimpleNamedReference {

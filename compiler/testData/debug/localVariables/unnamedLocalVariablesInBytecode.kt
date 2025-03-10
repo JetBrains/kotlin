@@ -13,20 +13,13 @@ fun box() {
         false -> {}
     }
 
-    for (_ in 1..10) {}
+//    for (_ in 1..10) {} - IllegalStateException: No 'next' statement in for-loop
 }
 
 // EXPECTATIONS FIR JVM_IR
-// test.kt:8 box:
+// test.kt:11 box:
 // test.kt:4 writeFalse:
-// test.kt:8 box:
-// test.kt:9 box: _:boolean=false:boolean
-// test.kt:5 writeTrue:
-// test.kt:9 box: _:boolean=false:boolean
-// test.kt:11 box: _:boolean=true:boolean
-// test.kt:4 writeFalse:
-// test.kt:11 box: _:boolean=true:boolean
-// test.kt:12 box: _:boolean=false:boolean
-// test.kt:13 box: _:boolean=false:boolean
-// test.kt:16 box: _:boolean=true:boolean
-// test.kt:17 box: _:boolean=true:boolean
+// test.kt:11 box:
+// test.kt:12 box:
+// test.kt:13 box:
+// test.kt:17 box:
