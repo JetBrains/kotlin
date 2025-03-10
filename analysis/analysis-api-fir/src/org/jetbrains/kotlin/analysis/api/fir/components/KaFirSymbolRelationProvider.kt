@@ -407,7 +407,7 @@ internal class KaFirSymbolRelationProvider(
                 .filterIsInstance<FirCallableSymbol<*>>()
                 // TODO: KT-73050. This code in fact does nothing
                 .mapNotNull { callableSymbol ->
-                    callableSymbol.receiverParameter?.symbol?.let {
+                    callableSymbol.receiverParameterSymbol?.let {
                         analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)
                     }
                 }

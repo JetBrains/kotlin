@@ -72,8 +72,8 @@ internal class KaFirVariableSubstitutorBasedSignature<out S : KaVariableSymbol>(
     }
 
     override val receiverType: KaType? by cached {
-        firSymbol.resolvedReceiverTypeRef?.let { typeRef ->
-            firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(typeRef.coneType))
+        firSymbol.resolvedReceiverType?.let { type ->
+            firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(type))
         }
     }
 

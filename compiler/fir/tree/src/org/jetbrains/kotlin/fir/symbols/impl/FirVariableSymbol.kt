@@ -176,7 +176,7 @@ class FirReceiverParameterSymbol : FirBasedSymbol<FirReceiverParameter>(), FirTh
         return fir.typeRef
     }
 
-    private fun calculateResolvedTypeRef(): FirResolvedTypeRef {
+    fun calculateResolvedTypeRef(): FirResolvedTypeRef {
         val receiverTypeRef = receiverTypeRef()
         if (receiverTypeRef is FirResolvedTypeRef) {
             return receiverTypeRef

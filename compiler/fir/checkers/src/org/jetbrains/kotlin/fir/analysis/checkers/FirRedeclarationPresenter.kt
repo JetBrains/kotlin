@@ -50,7 +50,7 @@ internal object FirRedeclarationPresenter {
         }
         append('>')
         append('[')
-        it.receiverParameter?.typeRef?.let {
+        it.receiverParameterSymbol?.let {
             append(',')
         }
         append(']')

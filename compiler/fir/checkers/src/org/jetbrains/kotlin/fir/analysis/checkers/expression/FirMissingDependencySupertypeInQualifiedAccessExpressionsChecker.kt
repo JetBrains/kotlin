@@ -41,7 +41,7 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
             symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context, isEagerCheck
         )
         checkMissingDependencySuperTypes(
-            symbol.resolvedReceiverTypeRef?.coneType?.toSymbol(context.session), source, reporter, context, isEagerCheck
+            symbol.resolvedReceiverType?.toSymbol(context.session), source, reporter, context, isEagerCheck
         )
     }
 }

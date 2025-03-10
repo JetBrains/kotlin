@@ -1396,7 +1396,7 @@ class CallAndReferenceGenerator(
                     // They should work as real constructors with initialized `dispatchReceiver` instead of `extensionReceiver` on IR level.
                     val isConstructorOnTypealiasWithInnerRhs =
                         (statement.calleeReference.symbol as? FirConstructorSymbol)?.let {
-                            it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameter != null
+                            it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
                         } == true
                     val baseDispatchReceiver = if (!isConstructorOnTypealiasWithInnerRhs) {
                         statement.findIrDispatchReceiver(explicitReceiverExpression)
@@ -1427,7 +1427,7 @@ class CallAndReferenceGenerator(
                 }
                 // constructors don't have extension receiver (except a case with type alias and inner RHS that is handled above),
                 // but may have receiver parameter in case of inner classes
-                if (declarationSiteSymbol?.receiverParameter != null && declarationSiteSymbol !is FirConstructorSymbol) {
+                if (declarationSiteSymbol?.receiverParameterSymbol != null && declarationSiteSymbol !is FirConstructorSymbol) {
                     val contextArgumentCount = (statement as? FirContextArgumentListOwner)?.contextArguments?.size ?: 0
                     val extensionReceiverIndex = (if (hasDispatchReceiver) 1 else 0) + contextArgumentCount
                     arguments[extensionReceiverIndex] =

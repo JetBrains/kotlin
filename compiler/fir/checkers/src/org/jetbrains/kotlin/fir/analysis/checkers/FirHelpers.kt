@@ -458,7 +458,7 @@ private fun List<FirCallableSymbol<*>>.subjectToManyNotImplemented(): Boolean {
 private val FirNamedFunctionSymbol.matchesDataClassSyntheticMemberSignatures: Boolean
     get() {
         val name = callableId.callableName
-        return receiverParameter == null &&
+        return receiverParameterSymbol == null &&
                 resolvedContextParameters.isEmpty() &&
                 (name == OperatorNameConventions.EQUALS && matchesEqualsSignature) ||
                 (name == HASHCODE_NAME && matchesHashCodeSignature) ||

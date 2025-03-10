@@ -32,7 +32,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         // An optimization
         if (resolvedSymbol.name.identifierOrNullIfSpecial != "isInitialized") return
 
-        val receiverParameter = resolvedSymbol.receiverParameter ?: return
+        val receiverParameter = resolvedSymbol.receiverParameterSymbol ?: return
 
         if (!receiverParameter.hasAnnotation(Annotations.AccessibleLateinitPropertyLiteral, context.session)) return
 

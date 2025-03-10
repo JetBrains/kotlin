@@ -304,7 +304,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         val sameArgumentGroups = allCallables.groupBy { callable ->
             GroupingKey(
                 contextParamets = callable.resolvedContextParameters.map { it.returnTypeRef.coneType },
-                extensionReceiver = callable.resolvedReceiverTypeRef?.coneType,
+                extensionReceiver = callable.resolvedReceiverType,
                 valueParameters = (callable as? FirNamedFunctionSymbol)?.valueParameterSymbols?.map { it.resolvedReturnTypeRef.coneType },
             )
         }.values

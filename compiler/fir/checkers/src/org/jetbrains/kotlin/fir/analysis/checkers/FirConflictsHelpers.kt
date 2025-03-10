@@ -58,7 +58,7 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
         if (this is FirErrorCallableSymbol<*>) return false
         if (resolvedContextParameters.any { it.returnTypeRef.coneType.hasError() }) return false
         if (typeParameterSymbols.any { it.toConeType().hasError() }) return false
-        if (receiverParameter?.typeRef?.coneType?.hasError() == true) return false
+        if (resolvedReceiverType?.hasError() == true) return false
         if (this is FirFunctionSymbol<*> && valueParameterSymbols.any { it.resolvedReturnType.hasError() }) return false
         @OptIn(SymbolInternals::class)
         if (fir.isHiddenToOvercomeSignatureClash == true) return false
@@ -462,7 +462,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
 
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
     if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
-    if (receiverParameter != null || typeParameterSymbols.isNotEmpty() || resolvedContextParameters.isNotEmpty()) return false
+    if (receiverParameterSymbol != null || typeParameterSymbols.isNotEmpty() || resolvedContextParameters.isNotEmpty()) return false
     val returnType = resolvedReturnType.fullyExpandedType(session)
     if (!returnType.isUnit) return false
     if (valueParameterSymbols.isEmpty()) return true

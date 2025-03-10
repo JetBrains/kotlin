@@ -927,7 +927,7 @@ internal object ProcessDynamicExtensionAnnotation : ResolutionStage() {
         if (candidate.symbol.origin === FirDeclarationOrigin.DynamicScope) return
         val extensionReceiver = candidate.chosenExtensionReceiver?.expression ?: return
         val argumentIsDynamic = extensionReceiver.resolvedType is ConeDynamicType
-        val parameterIsDynamic = (candidate.symbol as? FirCallableSymbol)?.resolvedReceiverTypeRef?.coneType is ConeDynamicType
+        val parameterIsDynamic = (candidate.symbol as? FirCallableSymbol)?.resolvedReceiverType is ConeDynamicType
         if (parameterIsDynamic != argumentIsDynamic ||
             parameterIsDynamic && !candidate.symbol.hasAnnotation(DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID, context.session)
         ) {

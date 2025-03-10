@@ -418,7 +418,7 @@ internal class ScopeBasedTowerLevel(
         // Pre-check explicit extension receiver for default package top-level members
         if (scope !is FirDefaultStarImportingScope || !areThereExtensionReceiverOptions()) return false
 
-        val declarationReceiverType = candidate.resolvedReceiverTypeRef?.coneType as? ConeClassLikeType ?: return false
+        val declarationReceiverType = candidate.resolvedReceiverType as? ConeClassLikeType ?: return false
         val startProjectedDeclarationReceiverType = declarationReceiverType.lookupTag.constructClassType(
             declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
             isMarkedNullable = true

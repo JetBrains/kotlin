@@ -59,7 +59,7 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
 
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return
         considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes, context)
-        symbol.resolvedReceiverTypeRef?.coneType?.let { type ->
+        symbol.resolvedReceiverType?.let { type ->
             considerType(type, missingTypes, context)
             type.forEachType {
                 considerType(it, missingTypesFromExpression, context)

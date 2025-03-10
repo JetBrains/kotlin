@@ -319,7 +319,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         return Triple(
             dispatchReceiver,
             extensionReceiver,
-            calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType,
+            calledDeclarationSymbol.resolvedReceiverType,
         )
     }
 
