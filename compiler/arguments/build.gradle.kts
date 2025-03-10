@@ -5,6 +5,9 @@ plugins {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("../builtins-serializer/src")
     }
+}
+
+dependencies {
+    api(kotlinStdlib())
 }
