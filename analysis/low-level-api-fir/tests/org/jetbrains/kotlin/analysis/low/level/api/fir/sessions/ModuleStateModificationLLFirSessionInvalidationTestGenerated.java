@@ -132,6 +132,12 @@ public class ModuleStateModificationLLFirSessionInvalidationTestGenerated extend
   }
 
   @Test
+  @TestMetadata("fallbackDependenciesInvalidateLibrary1FallbackDependencies.kt")
+  public void testFallbackDependenciesInvalidateLibrary1FallbackDependencies() {
+    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1FallbackDependencies.kt");
+  }
+
+  @Test
   @TestMetadata("fallbackDependenciesInvalidateLibrarySource.kt")
   public void testFallbackDependenciesInvalidateLibrarySource() {
     runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrarySource.kt");
