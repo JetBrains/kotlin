@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.translation
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
@@ -27,29 +30,62 @@ import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
 import org.jetbrains.kotlin.utils.addIfNotNull
+import kotlin.collections.contains
 
 /**
  * Translates the whole public API surface of the given [module] to [SirModule] and generates compiler bridges between them.
  */
+@OptIn(KaExperimentalApi::class)
 internal fun translateModulePublicApi(
     module: InputModule,
     dependencies: SwiftExportDependencies<InputModule>,
     config: SwiftExportConfig
 ): TranslationResult {
     val kaModules = createKaModulesForStandaloneAnalysis(module, config.targetPlatform, dependencies)
-    val referencedStdlibTypes = mutableSetOf<FqName>()
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(kaModules.useSiteModule) {
-        val stdlib = kaModules.dependencies.stdlib
+        val referencedStdlibTypes = mutableSetOf<FqName>()
         val stdlibReferenceHandler = SirKaClassReferenceHandler { symbol ->
-            if (symbol.containingModule == stdlib) {
+            val symbolContainingModule = symbol.containingModule as? KaLibraryModule
+            if (symbolContainingModule?.libraryName == "stdlib") {
                 referencedStdlibTypes.addIfNotNull(symbol.classId?.outermostClassId?.asSingleFqName())
             }
         }
         val sirSession = buildSirSession(kaModules, config, module.config, stdlibReferenceHandler)
         translateModule(sirSession, kaModules.mainModule)
         createTranslationResult(sirSession, config, module.config, kaModules, referencedStdlibTypes.toSet())
+    }
+}
+
+internal fun translateModuleTransitiveClosure(module: InputModule, config: SwiftExportConfig, names: Set<FqName>): TranslationResult {
+    val kaModules = createKaModulesForStandaloneAnalysis(module, config.targetPlatform, null)
+    return analyze(kaModules.useSiteModule) {
+        // Accumulates all referenced stdlib types.
+        val referencedStdlibTypes = names.toMutableSet()
+        val newlyReferencedTypes = mutableSetOf<FqName>()
+        val stdlibReferenceHandler = SirKaClassReferenceHandler { symbol ->
+            val classId = symbol.classId?.asSingleFqName()
+            if (classId != null) {
+                // This check might be slow as the number of referenced types could grow significantly.
+                if (classId !in referencedStdlibTypes) {
+                    referencedStdlibTypes += classId
+                    newlyReferencedTypes += classId
+                }
+            }
+        }
+        val sirSession = buildSirSession(kaModules, config, module.config, stdlibReferenceHandler)
+        var inputQueue = names
+        do {
+            translateModule(sirSession, kaModules.mainModule) { scope ->
+                scope.classifiers
+                    .filterIsInstance<KaClassLikeSymbol>()
+                    .filter { it.classId?.asSingleFqName() in inputQueue }
+            }
+            inputQueue = newlyReferencedTypes.toSet()
+            newlyReferencedTypes.clear()
+        } while (inputQueue.isNotEmpty())
+        createTranslationResult(sirSession, config, module.config, kaModules, emptySet())
     }
 }
 
