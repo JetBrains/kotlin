@@ -670,7 +670,7 @@ private fun IrValueParameter.renderValueParameterType(options: DumpIrTreeOptions
 internal fun IrValueParameter.renderValueParameterName(options: DumpIrTreeOptions, disambiguate: Boolean = false): String {
     val name = runIf(name == IMPLICIT_SET_PARAMETER) { options.replaceImplicitSetterParameterNameWith?.asString() } ?: name.asString()
     if (disambiguate) {
-        val parent = _parent
+        val parent = parentOrNull
         if (parent is IrFunction) {
             if (parent.parameters.any { it !== this && it.renderValueParameterName(options) == name }) {
                 return "$name(index:${indexInParameters})"

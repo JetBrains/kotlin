@@ -143,7 +143,7 @@ open class IrBasedValueParameterDescriptor(owner: IrValueParameter) : ValueParam
         get() {
             if (owner.indexInParameters == -1)
                 return -1
-            val function = owner._parent as? IrFunction
+            val function = owner.parentOrNull as? IrFunction
                 ?: return -1
 
             // Find index in imaginary list that contains only Regular and Context parameters.
