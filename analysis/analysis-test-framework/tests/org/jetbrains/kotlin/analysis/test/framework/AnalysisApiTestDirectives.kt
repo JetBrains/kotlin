@@ -53,6 +53,14 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
     /**
      * When applied to a library module, specifies that the library module should depend on a [KaLibraryFallbackDependenciesModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule]
      * instead of the regular dependencies set by the test infrastructure.
+     *
+     * Library fallback dependencies aren't materialized as test modules by design, for the following reasons:
+     *
+     * 1. We cannot create a fallback dependencies module on its own, since it needs to be tied to its `dependentLibrary` immediately. A
+     *    test module should ideally be able to exist on its own.
+     * 2. Only one library module should depend on the fallback dependencies, but any number of modules can depend on a test module.
+     * 3. Fallback dependencies are not resolvable, so we cannot create analysis sessions for them. This might be unexpected for a test
+     *    module.
      */
     val FALLBACK_DEPENDENCIES by directive(
         description = "Specifies that the library module should depend on a fallback dependencies module instead of the regular dependencies set by the test infrastructure.",

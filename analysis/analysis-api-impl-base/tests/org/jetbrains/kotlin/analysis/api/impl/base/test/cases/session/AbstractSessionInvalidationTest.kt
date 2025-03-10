@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -48,6 +53,7 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
         val ktTestModules = testServices.ktTestModuleStructure.mainModules
 
         val sessionsBeforeModification = getAllSessions(ktTestModules)
+        ensureLibraryFallbackDependenciesSessionsExist(ktTestModules)
         checkSessionValidityBeforeModification(sessionsBeforeModification, testServices)
 
         testServices.ktTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
@@ -66,6 +72,28 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
     }
 
     private fun getAllSessions(modules: List<KtTestModule>): List<TestSession<S>> = modules.flatMap(::getSessions)
+
+    /**
+     * We have to ensure manually that fallback dependencies sessions exist so that they can be properly tested for invalidation. This is
+     * because [KaLibraryFallbackDependenciesModule]s aren't materialized as test modules (see [AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES][org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES]),
+     * and [getAllSessions] only creates sessions for test modules. So unless we grab the session explicitly, it might not be created on its
+     * own.
+     *
+     * This is also relevant for analysis session invalidation because it depends on LL FIR session invalidation.
+     */
+    private fun ensureLibraryFallbackDependenciesSessionsExist(ktTestModules: List<KtTestModule>) {
+        ktTestModules.forEach { ktTestModule ->
+            val kaModule = ktTestModule.ktModule
+            if (kaModule.directRegularDependencies.none { it is KaLibraryFallbackDependenciesModule }) {
+                return@forEach
+            }
+
+            // This triggers dependency session creation through symbol providers without depending on `low-level-api-fir`.
+            analyze(kaModule) {
+                findClass(ClassId(FqName.ROOT, Name.identifier("IDontExistAtAll")))
+            }
+        }
+    }
 
     private fun checkInvalidatedModules(
         invalidatedSessions: Set<TestSession<S>>,
