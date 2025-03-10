@@ -270,13 +270,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(ALLOCATION_MODE, when (arguments.allocator) {
         null -> null
         "std" -> AllocationMode.STD
-        "mimalloc" -> {
-            report(STRONG_WARNING, "Usage of mimalloc in Kotlin/Native compiler is deprecated. Please remove -Xallocator=mimalloc compiler flag.")
-            AllocationMode.MIMALLOC
-        }
         "custom" -> AllocationMode.CUSTOM
         else -> {
-            report(ERROR, "Expected 'std', 'mimalloc', or 'custom' for allocator")
+            report(ERROR, "Expected 'std', or 'custom' for allocator")
             AllocationMode.STD
         }
     })

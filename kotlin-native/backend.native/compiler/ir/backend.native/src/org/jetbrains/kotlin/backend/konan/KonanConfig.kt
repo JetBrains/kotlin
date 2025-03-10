@@ -231,16 +231,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
     }
 
-
-    val mimallocUseDefaultOptions: Boolean by lazy {
-        configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
-    }
-
-    val mimallocUseCompaction: Boolean by lazy {
-        // Turned off by default, because it slows down allocation.
-        configuration.get(BinaryOptions.mimallocUseCompaction) ?: false
-    }
-
     val objcDisposeOnMain: Boolean by lazy {
         configuration.get(BinaryOptions.objcDisposeOnMain) ?: true
     }
@@ -380,18 +370,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         when (configuration.get(KonanConfigKeys.ALLOCATION_MODE)) {
             null -> defaultAllocationMode
             AllocationMode.STD -> AllocationMode.STD
-            AllocationMode.MIMALLOC -> {
-                if (sanitizer != null) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are useful only with the std allocator")
-                }
-                if (target.supportsMimallocAllocator()) {
-                    AllocationMode.MIMALLOC
-                } else {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Mimalloc allocator isn't supported on target ${target.name}. Used standard mode.")
-                    AllocationMode.STD
-                }
-            }
             AllocationMode.CUSTOM -> {
                 if (sanitizer != null) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are useful only with the std allocator")
@@ -445,11 +423,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             add("libbacktrace.bc")
         }
         when (allocationMode) {
-            AllocationMode.MIMALLOC -> {
-                add("legacy_alloc.bc")
-                add("mimalloc_alloc.bc")
-                add("mimalloc.bc")
-            }
             AllocationMode.STD -> {
                 add("legacy_alloc.bc")
                 add("std_alloc.bc")

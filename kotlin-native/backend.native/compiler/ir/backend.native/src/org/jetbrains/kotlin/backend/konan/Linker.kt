@@ -146,7 +146,6 @@ internal class Linker(
                     debug = debug,
                     kind = linkerOutput,
                     outputDsymBundle = outputFiles.symbolicInfoFile,
-                    mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
                     sanitizer = config.sanitizer,
             ).finalLinkCommands()
         }

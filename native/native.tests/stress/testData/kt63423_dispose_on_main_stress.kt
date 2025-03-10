@@ -15,7 +15,6 @@
 // DISABLE_NATIVE: useThreadStateChecker=ENABLED
 // KT-75321: legacy allocators allocates extra ~10MiB during finalization
 // DISABLE_NATIVE: alloc=STD
-// DISABLE_NATIVE: alloc=MIMALLOC
 
 // Do not use mmap for allocations to hopefully better track RSS usage.
 // FREE_COMPILER_ARGS: -Xbinary=gcSchedulerType=manual -Xbinary=disableMmap=true -opt-in=kotlin.native.internal.InternalForKotlinNative

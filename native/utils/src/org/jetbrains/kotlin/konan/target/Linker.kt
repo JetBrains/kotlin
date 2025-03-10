@@ -70,7 +70,6 @@ class LinkerArguments(
     val debug: Boolean,
     val kind: LinkerOutputKind,
     val outputDsymBundle: String,
-    val mimallocEnabled: Boolean,
     val sanitizer: SanitizerKind? = null,
 )
 
@@ -81,12 +80,11 @@ fun LinkerFlags.finalLinkCommands(
     libraries: List<String>, linkerArgs: List<String>,
     optimize: Boolean, debug: Boolean,
     kind: LinkerOutputKind, outputDsymBundle: String,
-    mimallocEnabled: Boolean,
     sanitizer: SanitizerKind? = null,
 ): List<Command> = with(this) {
     LinkerArguments(
         TempFiles(),
-        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle, mimallocEnabled, sanitizer
+        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle, sanitizer
     ).finalLinkCommands()
 }
 

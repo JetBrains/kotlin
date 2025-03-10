@@ -28,26 +28,6 @@ fun KonanTarget.pointerBits() = when (architecture) {
     Architecture.ARM32 -> 32
 }
 
-fun KonanTarget.supportsMimallocAllocator(): Boolean =
-     when(this) {
-        is KonanTarget.LINUX_X64 -> true
-        is KonanTarget.MINGW_X64 -> true
-        is KonanTarget.MACOS_X64 -> true
-        is KonanTarget.MACOS_ARM64 -> true
-        is KonanTarget.LINUX_ARM64 -> true
-        is KonanTarget.LINUX_ARM32_HFP -> true
-        is KonanTarget.ANDROID_X64 -> true
-        is KonanTarget.ANDROID_ARM64 -> true
-        is KonanTarget.IOS_ARM64 -> true
-        is KonanTarget.IOS_X64 -> true
-        is KonanTarget.IOS_SIMULATOR_ARM64 -> true
-        is KonanTarget.WATCHOS_ARM32, is KonanTarget.WATCHOS_ARM64,
-        is KonanTarget.WATCHOS_SIMULATOR_ARM64, is KonanTarget.WATCHOS_X64,
-        is KonanTarget.TVOS_ARM64, is KonanTarget.TVOS_SIMULATOR_ARM64, is KonanTarget.TVOS_X64,
-        is KonanTarget.ANDROID_X86, is KonanTarget.ANDROID_ARM32 -> false // aren't tested.
-        else -> false
-    }
-
 fun KonanTarget.supportsLibBacktrace(): Boolean =
         this.family.isAppleFamily ||
                 this.family == Family.LINUX ||
