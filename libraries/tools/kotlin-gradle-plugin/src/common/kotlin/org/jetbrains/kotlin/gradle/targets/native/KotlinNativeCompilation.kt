@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
-import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesFor
 import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import javax.inject.Inject

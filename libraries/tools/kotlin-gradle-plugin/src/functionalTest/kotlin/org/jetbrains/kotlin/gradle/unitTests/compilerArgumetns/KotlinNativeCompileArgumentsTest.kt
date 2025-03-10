@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.mockXcodeVersion
-import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import kotlin.test.*
 

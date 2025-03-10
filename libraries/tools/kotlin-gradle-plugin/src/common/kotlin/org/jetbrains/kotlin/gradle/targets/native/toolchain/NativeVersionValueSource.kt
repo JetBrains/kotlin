@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.native.toolchain
 import org.apache.commons.io.file.FilesUncheck.copy
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import java.io.File
-import javax.inject.Inject
 
 internal abstract class NativeVersionValueSource :
     ValueSource<String, NativeVersionValueSource.Params> {

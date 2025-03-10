@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.LIGHT
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.PREBUILT
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -20,13 +16,13 @@ internal enum class NativeDistributionType(val suffix: String?, val mustGenerate
 
 internal class NativeDistributionTypeProvider(private val nativeDistributionType: String?) {
     fun getDistributionType(): NativeDistributionType {
-//        return when (val type = propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()) {
-        return when (nativeDistributionType?.toLowerCaseAsciiOnly()) {
+        return when (val type = nativeDistributionType?.toLowerCaseAsciiOnly()) {
             null -> PREBUILT
             "prebuilt" -> PREBUILT
             "light" -> LIGHT
             else -> {
                 //TODO
+                println("Unknown Kotlin/Native distribution type $type, defaulting to $PREBUILT")
 //                project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.UnrecognizedKotlinNativeDistributionType(type))
                 PREBUILT
             }
