@@ -12,7 +12,7 @@ open class Base {
 }
 
 class Derived : Base() {
-    context(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>x<!>: A)
+    context(x: A)
     override fun foo() {}
 
     context(x: A)
