@@ -76,6 +76,7 @@ object FirJvmErrors {
     val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> = KtDiagnosticFactory3("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val JAVA_CLASS_ON_COMPANION: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("JAVA_CLASS_ON_COMPANION", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class)
+    val PLATFORM_TYPE_ASSIGNMENT_TO_LATEINIT: KtDiagnosticFactory2<ConeKotlinType, FirCallableSymbol<*>> = KtDiagnosticFactory2("PLATFORM_TYPE_ASSIGNMENT_TO_LATEINIT", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY: KtDiagnosticFactory0 = KtDiagnosticFactory0("UPPER_BOUND_CANNOT_BE_ARRAY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

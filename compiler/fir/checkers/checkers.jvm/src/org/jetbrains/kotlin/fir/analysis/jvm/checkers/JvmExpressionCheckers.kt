@@ -81,6 +81,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
         get() = setOf(
             FirAssignmentJavaNullabilityWarningChecker,
+            FirFlexibleAssignmentToLateinitChecker,
         )
 
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>

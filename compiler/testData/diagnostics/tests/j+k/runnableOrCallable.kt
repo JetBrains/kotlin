@@ -11,6 +11,6 @@ abstract class Logger(val service: ScheduledExecutorService) {
     abstract fun flush(): CompletableFuture<Void>
 
     fun init() {
-        future = service.schedule(this::flush, 0L, TimeUnit.MILLISECONDS)
+        <!PLATFORM_TYPE_ASSIGNMENT_TO_LATEINIT!>future = service.schedule(this::flush, 0L, TimeUnit.MILLISECONDS)<!>
     }
 }

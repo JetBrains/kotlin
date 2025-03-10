@@ -81,6 +81,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_PRIVATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.PLATFORM_TYPE_ASSIGNMENT_TO_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
@@ -150,6 +151,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
             "Override ''{0}'' has incorrect nullability in its signature compared to the overridden declaration ''{1}''.",
             SYMBOL,
+            SYMBOL,
+        )
+        map.put(
+            PLATFORM_TYPE_ASSIGNMENT_TO_LATEINIT,
+            "Assigning an expression of type ''{0}'' to ''{1}'' leads to a runtime crash if the value is ''null''.",
+            RENDER_TYPE,
             SYMBOL,
         )
 

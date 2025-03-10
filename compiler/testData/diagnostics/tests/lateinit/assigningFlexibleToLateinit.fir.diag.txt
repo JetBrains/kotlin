@@ -1,0 +1,1 @@
+/1.kt:(70,81): warning: Assigning an expression of type 'Any!' to 'lateinit var x: Any' leads to a runtime crash if the value is 'null'.

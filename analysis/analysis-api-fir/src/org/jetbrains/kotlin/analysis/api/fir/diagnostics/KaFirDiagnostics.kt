@@ -4030,6 +4030,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val expectedType: KaType
     }
 
+    interface PlatformTypeAssignmentToLateinit : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PlatformTypeAssignmentToLateinit::class
+        val type: KaType
+        val symbol: KaCallableSymbol
+    }
+
     interface UpperBoundCannotBeArray : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UpperBoundCannotBeArray::class
     }

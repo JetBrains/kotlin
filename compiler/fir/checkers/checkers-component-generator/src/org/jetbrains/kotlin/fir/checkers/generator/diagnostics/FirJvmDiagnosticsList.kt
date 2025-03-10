@@ -93,6 +93,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
         }
+
+        val PLATFORM_TYPE_ASSIGNMENT_TO_LATEINIT by warning<PsiElement> {
+            parameter<ConeKotlinType>("type")
+            parameter<FirCallableSymbol<*>>("symbol")
+        }
     }
 
     val TYPE_PARAMETERS by object : DiagnosticGroup("Type parameters") {

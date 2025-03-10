@@ -26799,6 +26799,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("assigningFlexibleToLateinit.kt")
+      public void testAssigningFlexibleToLateinit() {
+        runTest("compiler/testData/diagnostics/tests/lateinit/assigningFlexibleToLateinit.kt");
+      }
+
+      @Test
       @TestMetadata("modifierApplicability_lv12.kt")
       public void testModifierApplicability_lv12() {
         runTest("compiler/testData/diagnostics/tests/lateinit/modifierApplicability_lv12.kt");

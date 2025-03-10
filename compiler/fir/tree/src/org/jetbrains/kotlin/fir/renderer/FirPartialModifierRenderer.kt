@@ -41,6 +41,9 @@ class FirPartialModifierRenderer : FirModifierRenderer() {
         if (memberDeclaration.isSuspend) {
             renderModifier("suspend")
         }
+        if (memberDeclaration.isLateInit) {
+            renderModifier("lateinit")
+        }
     }
 
     override fun renderModifiers(backingField: FirBackingField) {
