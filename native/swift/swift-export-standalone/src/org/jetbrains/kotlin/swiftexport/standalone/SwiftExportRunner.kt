@@ -208,31 +208,18 @@ private fun writeRuntimeSupportModule(
 }
 
 private fun TranslationResult.writeModule(config: SwiftExportConfig): SwiftExportModule {
-    val swiftSources = sequenceOf(
-        SirAsSwiftSourcesPrinter.print(
-            sirModule,
-            config.stableDeclarationsOrder,
-            config.renderDocComments,
-        )
-    ) + moduleConfig.unsupportedDeclarationReporter.messages.map { "// $it" }
-
+    val swiftSources = sequenceOf(swiftModuleSources) + moduleConfig.unsupportedDeclarationReporter.messages.map { "// $it" }
+    val modulePath = config.outputPath / swiftModuleName
     val outputFiles = SwiftExportFiles(
-        swiftApi = (config.outputPath / sirModule.name / "${sirModule.name}.swift"),
-        kotlinBridges = (config.outputPath / sirModule.name / "${sirModule.name}.kt"),
-        cHeaderBridges = (config.outputPath / sirModule.name / "${sirModule.name}.h")
+        swiftApi = (modulePath / "$swiftModuleName.swift"),
+        kotlinBridges = (modulePath / "$swiftModuleName.kt"),
+        cHeaderBridges = (modulePath / "$swiftModuleName.h")
     )
-
-    dumpTextAtPath(
-        swiftSources,
-        bridgeSources,
-        outputFiles
-    )
+    dumpTextAtPath(swiftSources, bridgeSources, outputFiles)
 
     return SwiftExportModule.BridgesToKotlin(
-        name = sirModule.name,
-        dependencies = sirModule.imports
-            .filter { it.moduleName !in setOf(KotlinRuntimeModule.name, bridgesModuleName) + config.platformLibsInputModule.map { it.name } }
-            .map { SwiftExportModule.Reference(it.moduleName) },
+        name = swiftModuleName,
+        dependencies = referencedSwiftModules,
         bridgeName = bridgesModuleName,
         files = outputFiles
     )
