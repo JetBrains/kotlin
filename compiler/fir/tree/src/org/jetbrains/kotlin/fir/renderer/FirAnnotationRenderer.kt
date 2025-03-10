@@ -40,7 +40,9 @@ open class FirAnnotationRenderer {
         when (annotation) {
             is FirAnnotationCall -> {
                 components.resolvePhaseRenderer?.render(annotation)
-                if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
+                if (annotation.argumentMapping.mapping.isNotEmpty() &&
+                    annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }
+                ) {
                     callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
                 } else {
                     visitor.visitCall(annotation)

@@ -23,7 +23,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     typeArguments: []
-    type: @R|Anno|()  kotlin/String
+    type: @R|Anno|(<strcat>(String(1), String(2)))  kotlin/String
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(annotatedContextParameterOnProperty2.kt)
   getContainingJvmClassName: AnnotatedContextParameterOnProperty2Kt

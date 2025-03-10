@@ -55,15 +55,15 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>
-        public [ResolvedTo(BODY_RESOLVE)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>
+    public final [ResolvedTo(BODY_RESOLVE)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(BODY_RESOLVE)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] unresolvedAnnotationOnPropertyType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>
-        public [ResolvedTo(BODY_RESOLVE)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>
+    public final [ResolvedTo(BODY_RESOLVE)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(BODY_RESOLVE)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>

@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: UnresolvedClass>#) <ERROR TYPE REF: Symbol not found for Foo> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<<implicit>>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: UnresolvedClass>#) <ERROR TYPE REF: Symbol not found for Foo> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: UnresolvedClass>#) <ERROR TYPE REF: Symbol not found for Foo> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }

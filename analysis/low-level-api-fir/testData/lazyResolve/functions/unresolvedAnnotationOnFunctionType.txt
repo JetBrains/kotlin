@@ -44,14 +44,14 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo> {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types](<Unresolved name: Foo>#) <ERROR TYPE REF: Symbol not found for Foo> {
     }

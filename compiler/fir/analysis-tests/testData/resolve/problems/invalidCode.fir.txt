@@ -1,7 +1,7 @@
 FILE: a.kt
     package a
 
-    @R|kotlin/Suppress|() <DANGLING MODIFIER: Top level declaration expected>FILE: b.kt
+    @R|kotlin/Suppress|(<Unresolved name: iterator>#) <DANGLING MODIFIER: Top level declaration expected>FILE: b.kt
     package b
 
     public abstract interface I : R|kotlin/Any| {
