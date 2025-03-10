@@ -106,7 +106,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     val newExpression = callResolver.resolveVariableAccessAndSelectCandidate(
         newAccess,
         isUsedAsReceiver = false, isUsedAsGetClassReceiver = false,
-        callSite = originalExpression,
+        callSite = newAccess,
         ResolutionMode.ContextIndependent,
     )
 

@@ -488,14 +488,12 @@ class FirCallCompletionResultsWriterTransformer(
                 }
 
                 // Once we encounter the first "real" expression, we delegate to the outer transformer.
-                val transformed = element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping)
-
-                if (transformed is FirExpression) {
-                    candidate?.getUpdatedArgumentFromContextSensitiveResolution(transformed)?.let {
-                        @Suppress("UNCHECKED_CAST")
-                        return it as E
+                val transformed =
+                    element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping).let {
+                        candidate?.getUpdatedArgumentFromContextSensitiveResolution(it) ?: it
                     }
 
+                if (transformed is FirExpression) {
                     // Finally, the result can be wrapped in a SAM conversion if necessary.
                     val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
                     expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
@@ -507,7 +505,8 @@ class FirCallCompletionResultsWriterTransformer(
                     }
                 }
 
-                return transformed
+                @Suppress("UNCHECKED_CAST")
+                return transformed as E
             }
 
             override fun transformNamedArgumentExpression(
