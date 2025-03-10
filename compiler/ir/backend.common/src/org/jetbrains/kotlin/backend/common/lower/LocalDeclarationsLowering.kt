@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -63,6 +62,9 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  * Prepares local declarations like classes and functions for being lifted into the nearest declaration container, adding explicit
  * type and value parameters if the local declaration captures a type parameter or a value from the outer scope.
  *
+ * (Note: in the JVM backend, we don't remap captured type parameters inside local declarations for reasons described
+ * in [this commit](https://github.com/JetBrains/kotlin/commit/9ce6fd9a15618b856b64efd449799f2b5c379eb5).)
+ *
  * For functions, also does the actual lifting.
  *
  * For classes, the lifting is done in a separate lowering [LocalClassPopupLowering].
@@ -71,8 +73,8 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  * ```kotlin
  * fun <T> foo(t: T, i: Int) {
  *   class Local<S> {
- *     private /*field*/ val t: T
- *     private /*field*/ val s: S
+ *     private val t: T
+ *     private val s: S
  *     constructor(t: T, s: S) {
  *       this.t = t
  *       this.s = s
@@ -86,16 +88,16 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  *     return s.toString() + t.toString() + i.toString()
  *   }
  *
- *   println(Local(t, "hello").getI())
- *   println(bar("hello"))
+ *   println(Local<String>(t, "hello").getI())
+ *   println(bar<String>("hello"))
  * }
  * ```
  * into this:
  * ```kotlin
  * fun <T> foo(t: T, i: Int) {
  *   class Local<S, T1> {
- *     private /*field*/ val t: T1
- *     private /*field*/ val s: S
+ *     private val t: T1
+ *     private val s: S
  *     private /*field*/ val i$0: Int
  *     constructor(t: T1, s: S, i$0: Int) {
  *       this.t = t
@@ -107,7 +109,7 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  *     }
  *   }
  *   println(Local<String, T>(t, "hello", i).getI())
- *   println(bar("hello"))
+ *   println(bar<T, String>("hello"))
  * }
  *
  * fun bar<T1, S>(s: S, t$0: T1, i$0: Int): String {
@@ -624,6 +626,39 @@ open class LocalDeclarationsLowering(
             }
         }
 
+        private inner class LocalClassTypeParameterRemapper(currentLocalClass: LocalClassContext?) : IrTypeParameterRemapper(
+            currentLocalClass?.capturedTypeParameterToTypeParameter ?: emptyMap()
+        ) {
+            override fun remapType(type: IrType): IrType {
+                if (type !is IrSimpleType) return super.remapType(type)
+                val referencedLocalClass = localClasses[type.classifier.owner]
+                    ?: return super.remapType(type)
+                val capturedTypeParameters = referencedLocalClass.closure.capturedTypeParameters
+
+                // Normally, types with local class classifiers produced by the frontend already include the enclosing
+                // type parameters as type arguments, so we don't have to override `remapType` here.
+                //
+                // (As a side note: yes, this means that the number of type arguments may be greater
+                // than the number of a class's type parameters, and it's completely normal.)
+                //
+                // However, there is a bug in the K1 frontend (KT-57094) when there may be types where it is not
+                // the case, and types with local class classifiers only contain arguments for the class's own type
+                // parameters.
+                // We should be able to consume KLIBs produced by K1, so we have to handle this here,
+                // correcting the K1's mistake.
+                val newTypeArguments = type.arguments.take(referencedLocalClass.numberOfOwnTypeParameters) +
+                        capturedTypeParameters.map { it.defaultType }
+                val correctedType = IrSimpleTypeImpl(
+                    type.classifier,
+                    type.nullability,
+                    newTypeArguments,
+                    type.annotations,
+                    type.abbreviation,
+                )
+                return super.remapType(correctedType)
+            }
+        }
+
         private fun rewriteFunctionBody(irDeclaration: IrElement, localContext: LocalContext?) {
             irDeclaration.transformChildrenVoid(FunctionBodiesRewriter(localContext))
         }
@@ -692,44 +727,10 @@ open class LocalDeclarationsLowering(
                 rewriteClassMembers(it.declaration, it)
             }
 
-            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
             if (remapTypesInExtractedLocalDeclarations && localClasses.values.any { it.closure.capturedTypeParameters.isNotEmpty() }) {
                 // Inside local classes, remap captured type parameters to their newly introduced explicit type parameters
-                val remapper = object : AbstractIrTypeParameterRemapper<LocalClassContext?>() {
-                    override fun remapTypeParameter(
-                        typeParameter: IrTypeParameter,
-                        currentLocalClass: LocalClassContext?,
-                    ): IrTypeParameterSymbol? =
-                        currentLocalClass?.capturedTypeParameterToTypeParameter?.get(typeParameter)?.let { return it.symbol }
-
-                    override fun remapType(type: IrType, currentLocalClass: LocalClassContext?): IrType {
-                        if (type !is IrSimpleType) return super.remapType(type, currentLocalClass)
-                        val referencedLocalClass = localClasses[type.classifier.owner]
-                            ?: return super.remapType(type, currentLocalClass)
-                        val capturedTypeParameters = referencedLocalClass.closure.capturedTypeParameters
-
-                        // Normally, types with local class classifiers produced by the frontend already include the enclosing
-                        // type parameters as type arguments, so we don't have to override `remapType` here.
-                        //
-                        // (As a side note: yes, this means that the number of type arguments may be greater
-                        // than the number of a class's type parameters, and it's completely normal.)
-                        //
-                        // However, there is a bug in the K1 frontend (KT-57094) when there may be types where it is not the case,
-                        // and types with local class classifiers only contain arguments for the class's own type parameters.
-                        // We should be able to consume KLIBs produced by K1, so we have to handle this here, correcting the K1's mistake.
-                        val newTypeArguments =
-                            type.arguments.take(referencedLocalClass.numberOfOwnTypeParameters) + capturedTypeParameters.map { it.defaultType }
-                        val correctedType = IrSimpleTypeImpl(
-                            type.classifier,
-                            type.nullability,
-                            newTypeArguments,
-                            type.annotations,
-                            type.abbreviation,
-                        )
-                        return super.remapType(correctedType, currentLocalClass)
-                    }
-                }
                 irElement.accept(
+                    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
                     object : IrTypeTransformer<Unit, LocalClassContext?>() {
                         override fun visitElement(element: IrElement, currentLocalClass: LocalClassContext?) {
                             element.acceptChildren(this, currentLocalClass)
@@ -750,7 +751,7 @@ open class LocalDeclarationsLowering(
                             currentLocalClass: LocalClassContext?,
                         ): Type {
                             @Suppress("UNCHECKED_CAST")
-                            return type?.let { remapper.remapType(it, currentLocalClass) } as Type
+                            return type?.let { LocalClassTypeParameterRemapper(currentLocalClass).remapType(it) } as Type
                         }
                     },
                     null,

@@ -648,7 +648,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
         val factoryTypeParameters = factoryDeclaration.copyTypeParametersFrom(lambdaInfo.lambdaClass)
         val oldToNewTypeParameterMapping = lambdaInfo.lambdaClass.typeParameters.zip(factoryTypeParameters).toMap()
-        val typeRemapper = MapBasedIrTypeParameterRemapper(oldToNewTypeParameterMapping)
+        val typeRemapper = IrTypeParameterRemapper(oldToNewTypeParameterMapping)
         factoryDeclaration.parameters = constructor.parameters.memoryOptimizedMap {
             it.copyTo(factoryDeclaration, remapTypeMap = oldToNewTypeParameterMapping)
         }
