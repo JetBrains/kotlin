@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
+import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
@@ -34,24 +36,30 @@ internal class SwiftModuleBuildResults(
     val packages: Set<FqName>,
 )
 
+internal fun buildSirSession(
+    kaModules: KaModules,
+    config: SwiftExportConfig,
+    moduleConfig: SwiftModuleConfig,
+    referenceHandler: SirKaClassReferenceHandler? = null,
+): SirSession = StandaloneSirSession(
+    useSiteModule = kaModules.useSiteModule,
+    moduleToTranslate = kaModules.mainModule,
+    errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
+    unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
+    moduleForPackageEnums = buildModule { name = config.moduleForPackagesName },
+    unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
+    moduleProvider = SirOneToOneModuleProvider(kaModules.dependencies.platform),
+    targetPackageFqName = moduleConfig.targetPackageFqName,
+    referencedTypeHandler = referenceHandler
+)
+
 internal fun KaSession.initializeSirModule(
     moduleWithScope: KaModules,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
     moduleProvider: SirModuleProvider,
 ): SwiftModuleBuildResults {
-    val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
-    val sirSession = StandaloneSirSession(
-        useSiteModule = moduleWithScope.useSiteModule,
-        moduleToTranslate = moduleWithScope.mainModule,
-        errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
-        unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
-        moduleForPackageEnums = moduleForPackageEnums,
-        unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
-        moduleProvider = moduleProvider,
-        targetPackageFqName = moduleConfig.targetPackageFqName,
-    )
-
+    val sirSession = buildSirSession(moduleWithScope, config, moduleConfig)
     // this lines produce critical side effect
     // This will traverse every top level declaration of a given provider
     // This in turn inits every root declaration that will be consumed down the pipe by swift export
@@ -66,7 +74,7 @@ internal fun KaSession.initializeSirModule(
 }
 
 private fun KaSession.traverseTopLevelDeclarationsInScopes(
-    sirSession: StandaloneSirSession,
+    sirSession: SirSession,
     module: KaLibraryModule,
 ) {
     KlibScope(module, useSiteSession).allDeclarations(sirSession, useSiteSession)
@@ -81,7 +89,7 @@ private fun KaSession.traverseTopLevelDeclarationsInScopes(
         }
 }
 
-private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession: KaSession): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> =
+private fun KaScope.allDeclarations(sirSession: SirSession, kaSession: KaSession): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> =
     with(sirSession) {
         generateSequence<List<Pair<SirDeclarationParent, List<SirDeclaration>>>>(this@allDeclarations.extractDeclarations(kaSession).groupBy { it.parent }.toList()) {
             it.flatMap { (_, children) ->
