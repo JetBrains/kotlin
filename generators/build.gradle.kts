@@ -69,6 +69,7 @@ dependencies {
     testApi(projectTests(":kotlin-assignment-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
     testApi(projectTests(":kotlin-atomicfu-compiler-plugin"))
+    testApi(projectTests(":kotlin-dataframe-compiler-plugin"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testApi(projectTests(":plugins:plugin-sandbox"))
