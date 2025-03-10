@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
 private val lateinitPhase = makeIrModulePhase(
     ::LateinitLowering,
@@ -108,22 +109,23 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
-///**
-// * The second phase of inlining (inline all functions).
-// */
-//private val inlineAllFunctionsPhase = makeIrModulePhase(
-//    { context: LoweringContext ->
-//        FunctionInlining(
-//            context,
-//            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler = TODO()),
-//            produceOuterThisFields = false,
-//        )
-//    },
-//    name = "InlineAllFunctions",
-//    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
-//)
+@Suppress("unused")
+private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
+    { context: LoweringContext ->
+        FunctionInlining(
+            context,
+            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),
+            produceOuterThisFields = false,
+        )
+    },
+    name = "InlineAllFunctions",
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
+)
 
-val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
+@Suppress("UNUSED_PARAMETER")
+fun loweringsOfTheFirstPhase(
+    irMangler: IrMangler,
+): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
@@ -135,7 +137,6 @@ val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringCo
     outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
     validateIrAfterInliningOnlyPrivateFunctions,
-//         TODO KT-72441 add public inlining to this list
-//        inlineAllFunctionsPhase,
+//    inlineAllFunctionsPhase(irMangler),
 //        validateIrAfterInliningAllFunctions
 )
