@@ -155,7 +155,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: A) {
-        if (testServices.loadedMetadataSuppressionDirective in module.directives) return
         val languageVersion = module.directives.singleOrZeroValue(LANGUAGE_VERSION)
         val languageVersionSettings = if (languageVersion != null) {
             LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(languageVersion))

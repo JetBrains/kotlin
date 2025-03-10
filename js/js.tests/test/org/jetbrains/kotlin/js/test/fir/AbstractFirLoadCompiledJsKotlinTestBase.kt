@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -37,7 +38,9 @@ abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.Fro
             useHandlers(::KlibLoadedMetadataDumpHandler)
         }
 
-        useAfterAnalysisCheckers(::FirMetadataLoadingTestSuppressor)
+        useAfterAnalysisCheckers(
+            { testServices -> FirMetadataLoadingTestSuppressor(testServices, CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2) }
+        )
     }
 }
 
