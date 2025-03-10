@@ -129,17 +129,23 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
 fun FirPropertyAccessExpression.shouldBeResolvedInContextSensitiveMode(session: FirSession): Boolean {
     if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) return false
 
+    val diagnostic = getDiagnosticForPotentialCandidateForContextSensitiveResolution() ?: return false
+
+    return diagnostic.meansNoAvailableCandidate()
+}
+
+fun FirPropertyAccessExpression.getDiagnosticForPotentialCandidateForContextSensitiveResolution(): ConeDiagnostic? {
+    // Only simple name expressions are supported
+    if (explicitReceiver != null) return null
+
     val diagnostic = when (val calleeReference = calleeReference) {
         is FirErrorNamedReference -> calleeReference.diagnostic
         is FirErrorReferenceWithCandidate -> calleeReference.diagnostic
         is FirResolvedErrorReference -> calleeReference.diagnostic
-        else -> return false
+        else -> return null
     }
 
-    // Only simple name expressions are supported
-    if (explicitReceiver != null) return false
-
-    return diagnostic.meansNoAvailableCandidate()
+    return diagnostic
 }
 
 private fun ConeDiagnostic.meansNoAvailableCandidate(): Boolean =

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableReference
+import org.jetbrains.kotlin.fir.resolve.getDiagnosticForPotentialCandidateForContextSensitiveResolution
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -129,9 +130,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
          * and all other parts should work in the same way.
          */
         private fun FirPropertyAccessExpression.mightBeResolvedInContextSensitiveMode(): Boolean {
-            if (explicitReceiver != null) return false
-            val reference = calleeReference
-            return reference is FirErrorNamedReference || reference is FirErrorReferenceWithCandidate || reference is FirResolvedErrorReference
+            return getDiagnosticForPotentialCandidateForContextSensitiveResolution() != null
         }
     }
 }
