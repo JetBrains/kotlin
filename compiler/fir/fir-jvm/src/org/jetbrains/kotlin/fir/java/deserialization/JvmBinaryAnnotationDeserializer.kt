@@ -76,11 +76,12 @@ class JvmBinaryAnnotationDeserializer(
     private fun loadAnnotationsFromMetadata(
         flags: Int, annotations: List<ProtoBuf.Annotation>, nameResolver: NameResolver, useSiteTarget: AnnotationUseSiteTarget? = null,
     ): List<FirAnnotation>? =
-        if (!Flags.HAS_ANNOTATIONS.get(flags)) {
-            emptyList()
-        } else if (session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationsInMetadata) && annotations.isNotEmpty()) {
-            annotations.map { deserializeAnnotation(it, nameResolver, useSiteTarget) }
-        } else null
+        when {
+            !Flags.HAS_ANNOTATIONS.get(flags) -> emptyList()
+            session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationsInMetadata) && annotations.isNotEmpty() ->
+                annotations.map { deserializeAnnotation(it, nameResolver, useSiteTarget) }
+            else -> null
+        }
 
     override fun loadConstructorAnnotations(
         containerSource: DeserializedContainerSource?,
