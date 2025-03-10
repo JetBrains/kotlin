@@ -62,13 +62,15 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return coneFlexibleOrSimpleType(this, lowerBound, upperBound)
     }
 
-    override fun createTrivialFlexibleType(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
+    override fun createTrivialFlexibleTypeOrSelf(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
         require(lowerBound is ConeKotlinType)
-        return when (lowerBound) {
-            is ConeFlexibleType -> lowerBound
-            // We can't use toTrivialFlexibleType here because inference sometimes passes error types here,
-            // and we mustn't create flexible error types.
-            is ConeRigidType -> coneFlexibleOrSimpleType(this, lowerBound, lowerBound.withNullability(true, this), isTrivial = true)
+
+        // We need to ensure that the returned type is not a flexible type with two equal bounds.
+        // This can happen if the given type is marked nullable or if it's an error type.
+        return if (lowerBound is ConeRigidType && !lowerBound.isMarkedNullable && lowerBound !is ConeErrorType) {
+            lowerBound.toTrivialFlexibleType(this)
+        } else {
+            lowerBound
         }
     }
 

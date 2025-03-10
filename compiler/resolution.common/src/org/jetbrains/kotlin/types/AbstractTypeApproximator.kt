@@ -150,7 +150,7 @@ abstract class AbstractTypeApproximator(
 
                     if (isTriviallyFlexible(type)) {
                         return lowerResult?.let {
-                            createTrivialFlexibleType(it)
+                            createTrivialFlexibleTypeOrSelf(it)
                         }
                     }
 

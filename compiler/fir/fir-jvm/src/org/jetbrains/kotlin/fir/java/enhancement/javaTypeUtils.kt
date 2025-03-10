@@ -233,7 +233,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
 
 private fun contentIdentityEqual(a: Array<out ConeTypeProjection>, b: Array<out ConeTypeProjection>): Boolean {
     var i = 0
-    return a.size == b.size && a.all { it == b[i++] }
+    return a === b || a.size == b.size && a.all { it === b[i++] }
 }
 
 private fun ConeClassifierLookupTag.enhanceMutability(

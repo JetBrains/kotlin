@@ -320,12 +320,12 @@ abstract class TypeCheckerStateForConstraintSystem(
                         when {
                             useRefinedBoundsForTypeVariableInFlexiblePosition() ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
-                                createTrivialFlexibleType(
+                                createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
                                 )
                             // In K1 (FE1.0), there is an obsolete behavior
                             subType.isMarkedNullable() -> subType
-                            else -> createTrivialFlexibleType(subType)
+                            else -> createTrivialFlexibleTypeOrSelf(subType)
                         }
 
                     is FlexibleTypeMarker ->
@@ -436,7 +436,7 @@ abstract class TypeCheckerStateForConstraintSystem(
             }
 
             typeVariable.isFlexible() && superType is RigidTypeMarker ->
-                createTrivialFlexibleType(superType)
+                createTrivialFlexibleTypeOrSelf(superType)
 
             else -> superType
         }

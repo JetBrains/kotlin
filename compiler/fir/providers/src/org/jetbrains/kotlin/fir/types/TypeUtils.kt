@@ -300,7 +300,7 @@ inline fun ConeFlexibleType.mapTypesOrNull(
 ): ConeKotlinType? {
     return when {
         isTrivial -> {
-            when (val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it != lowerBound }) {
+            when (val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it !== lowerBound }) {
                 null -> null
                 is ConeRigidType -> coneFlexibleOrSimpleType(
                     typeContext,
@@ -312,8 +312,8 @@ inline fun ConeFlexibleType.mapTypesOrNull(
             }
         }
         else -> {
-            val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it != lowerBound }
-            val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it != upperBound }
+            val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it !== lowerBound }
+            val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it !== upperBound }
             when {
                 mappedLowerBound == null && mappedUpperBound == null -> null
                 this !is ConeRawType -> coneFlexibleOrSimpleType(
@@ -371,6 +371,11 @@ fun coneFlexibleOrSimpleType(
     }
 }
 
+/**
+ * This method doesn't guarantee that the created flexible type has different bounds.
+ *
+ * It is expected that the caller verifies that the receiver is a not null-marked, not-error type.
+ */
 fun ConeRigidType.toTrivialFlexibleType(typeContext: ConeTypeContext): ConeFlexibleType {
     return ConeFlexibleType(this, this.withNullability(true, typeContext), isTrivial = true)
 }

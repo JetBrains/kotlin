@@ -80,7 +80,7 @@ interface TypeSystemBuiltInsContext {
 interface TypeSystemTypeFactoryContext : TypeSystemContext, TypeSystemBuiltInsContext {
     fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): KotlinTypeMarker
 
-    fun createTrivialFlexibleType(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
+    fun createTrivialFlexibleTypeOrSelf(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
         if (lowerBound.isFlexible()) return lowerBound
         return createFlexibleType(lowerBound.lowerBoundIfFlexible(), lowerBound.lowerBoundIfFlexible().withNullability(true))
     }
