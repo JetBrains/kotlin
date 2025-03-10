@@ -1,0 +1,60 @@
+#include <Foundation/Foundation.h>
+#include <stdint.h>
+
+int32_t kotlin_ByteArray_size_get(uintptr_t self);
+
+uintptr_t kotlin_Exception_init_allocate();
+
+void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String___(uintptr_t __kt, NSString * message);
+
+void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, NSString * message, uintptr_t cause);
+
+void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, uintptr_t cause);
+
+uintptr_t kotlin_IllegalArgumentException_init_allocate();
+
+void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String___(uintptr_t __kt, NSString * message);
+
+void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, NSString * message, uintptr_t cause);
+
+void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, uintptr_t cause);
+
+int32_t kotlin_IntArray_size_get(uintptr_t self);
+
+uintptr_t kotlin_RuntimeException_init_allocate();
+
+void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String___(uintptr_t __kt, NSString * message);
+
+void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, NSString * message, uintptr_t cause);
+
+void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, uintptr_t cause);
+
+uintptr_t kotlin_Throwable_cause_get(uintptr_t self);
+
+uintptr_t kotlin_Throwable_init_allocate();
+
+void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, NSString * message, uintptr_t cause);
+
+void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String___(uintptr_t __kt, NSString * message);
+
+void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(uintptr_t __kt, uintptr_t cause);
+
+void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+NSString * kotlin_Throwable_message_get(uintptr_t self);
+
+void kotlin_Throwable_printStackTrace(uintptr_t self);
+
+NSString * kotlin_Throwable_toString(uintptr_t self);
+
+NSArray<id> * kotlin_reflect_KType_arguments_get(uintptr_t self);
+
+uintptr_t kotlin_reflect_KType_classifier_get(uintptr_t self);
+
+_Bool kotlin_reflect_KType_isMarkedNullable_get(uintptr_t self);
