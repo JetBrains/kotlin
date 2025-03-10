@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
@@ -56,7 +57,7 @@ private val CallableId.isTopLevel get() = className == null
 private fun FirBasedSymbol<*>.isCollectable(): Boolean {
     if (this is FirCallableSymbol<*>) {
         if (this is FirErrorCallableSymbol<*>) return false
-        if (resolvedContextParameters.any { it.returnTypeRef.coneType.hasError() }) return false
+        if (contextParameterSymbols.any { it.resolvedReturnType.hasError() }) return false
         if (typeParameterSymbols.any { it.toConeType().hasError() }) return false
         if (resolvedReceiverType?.hasError() == true) return false
         if (this is FirFunctionSymbol<*> && valueParameterSymbols.any { it.resolvedReturnType.hasError() }) return false
@@ -462,7 +463,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
 
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
     if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
-    if (receiverParameterSymbol != null || typeParameterSymbols.isNotEmpty() || resolvedContextParameters.isNotEmpty()) return false
+    if (receiverParameterSymbol != null || typeParameterSymbols.isNotEmpty() || hasContextParameters) return false
     val returnType = resolvedReturnType.fullyExpandedType(session)
     if (!returnType.isUnit) return false
     if (valueParameterSymbols.isEmpty()) return true

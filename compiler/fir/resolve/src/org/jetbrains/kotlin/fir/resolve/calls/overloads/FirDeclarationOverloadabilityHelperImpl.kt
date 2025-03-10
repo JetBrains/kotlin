@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
@@ -40,12 +39,12 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
             origin = declaration,
             typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
             valueParameterTypes = buildList<KotlinTypeMarker> {
-                declaration.resolvedContextParameters.mapTo(this) { it.returnTypeRef.coneType }
+                declaration.contextParameterSymbols.mapTo(this) { it.resolvedReturnType }
                 declaration.resolvedReceiverType?.let { add(it) }
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
             hasExtensionReceiver = declaration.receiverParameterSymbol != null,
-            contextReceiverCount = declaration.resolvedContextParameters.size,
+            contextReceiverCount = declaration.contextParameterSymbols.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,
@@ -63,11 +62,11 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
             origin = declaration,
             typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
             valueParameterTypes = buildList<KotlinTypeMarker> {
-                declaration.resolvedContextParameters.mapTo(this) { it.returnTypeRef.coneType }
+                declaration.contextParameterSymbols.mapTo(this) { it.resolvedReturnType }
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
             hasExtensionReceiver = false,
-            contextReceiverCount = declaration.resolvedContextParameters.size,
+            contextReceiverCount = declaration.contextParameterSymbols.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = valueParameters.count { it.hasDefaultValue },
             isExpect = declaration.isExpect,

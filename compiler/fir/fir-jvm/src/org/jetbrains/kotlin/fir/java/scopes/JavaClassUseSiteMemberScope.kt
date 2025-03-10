@@ -173,7 +173,7 @@ class JavaClassUseSiteMemberScope(
             val key = SyntheticPropertiesCacheKey(
                 name,
                 overriddenProperty.chosenSymbol.resolvedReceiverType,
-                overriddenProperty.chosenSymbol.resolvedContextParameters.ifNotEmpty { map { it.returnTypeRef.coneType } } ?: emptyList()
+                overriddenProperty.chosenSymbol.contextParameterSymbols.ifNotEmpty { map { it.resolvedReturnType } } ?: emptyList()
             )
             val overrideInClass = syntheticPropertyCache.getValue(key, this to overriddenProperty)
 
@@ -229,7 +229,7 @@ class JavaClassUseSiteMemberScope(
     ): FirNamedFunctionSymbol? {
         val propertyFromSupertype = fir
         val expectedReturnType = propertyFromSupertype.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        val receiverCount = (if (receiverParameterSymbol != null) 1 else 0) + resolvedContextParameters.size
+        val receiverCount = (if (receiverParameterSymbol != null) 1 else 0) + contextParameterSymbols.size
         return scope.getFunctions(Name.identifier(getterName)).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
             if (candidate.valueParameters.size != receiverCount) return@factory null
@@ -255,7 +255,7 @@ class JavaClassUseSiteMemberScope(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
         val propertyType = fir.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return null
-        val receiverCount = (if (receiverParameterSymbol != null) 1 else 0) + resolvedContextParameters.size
+        val receiverCount = (if (receiverParameterSymbol != null) 1 else 0) + contextParameterSymbols.size
 
         return scope.getFunctions(Name.identifier(JvmAbi.setterName(fir.name.asString()))).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
@@ -283,8 +283,8 @@ class JavaClassUseSiteMemberScope(
         var parameterIndex = 0
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
 
-        for (contextParameter in this.resolvedContextParameters) {
-            if (contextParameter.returnTypeRef.coneType.computeJvmDescriptorRepresentation() !=
+        for (contextParameter in this.contextParameterSymbols) {
+            if (contextParameter.resolvedReturnType.computeJvmDescriptorRepresentation() !=
                 candidate.valueParameters[parameterIndex++].returnTypeRef
                     .toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
                     .computeJvmDescriptorRepresentation()

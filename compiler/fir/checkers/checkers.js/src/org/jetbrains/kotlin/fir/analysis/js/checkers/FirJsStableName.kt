@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 
 internal data class FirJsStableName(
     val name: String,
@@ -82,8 +83,8 @@ internal data class FirJsStableName(
 
     private fun FirBasedSymbol<*>.doesJSManglingChangeName(): Boolean {
         return when (this) {
-            is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || resolvedContextParameters.isNotEmpty() || typeParameterSymbols.isNotEmpty()
-            is FirPropertySymbol -> isExtension || resolvedContextParameters.isNotEmpty()
+            is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || hasContextParameters || typeParameterSymbols.isNotEmpty()
+            is FirPropertySymbol -> isExtension || hasContextParameters
             else -> false
         }
     }

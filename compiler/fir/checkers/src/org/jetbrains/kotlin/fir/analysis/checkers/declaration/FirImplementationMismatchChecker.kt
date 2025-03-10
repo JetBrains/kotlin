@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
@@ -303,7 +302,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
 
         val sameArgumentGroups = allCallables.groupBy { callable ->
             GroupingKey(
-                contextParamets = callable.resolvedContextParameters.map { it.returnTypeRef.coneType },
+                contextParamets = callable.contextParameterSymbols.map { it.resolvedReturnType },
                 extensionReceiver = callable.resolvedReceiverType,
                 valueParameters = (callable as? FirNamedFunctionSymbol)?.valueParameterSymbols?.map { it.resolvedReturnTypeRef.coneType },
             )

@@ -157,7 +157,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             hasBodyContract: Boolean
         ): T {
             val valueAndContextParameters = when (owner) {
-                is FirPropertyAccessor -> owner.valueParameters + owner.propertySymbol.resolvedContextParameters
+                is FirPropertyAccessor -> owner.valueParameters + owner.propertySymbol.fir.contextParameters
                 is FirFunction -> owner.valueParameters + owner.contextParameters
             }
 

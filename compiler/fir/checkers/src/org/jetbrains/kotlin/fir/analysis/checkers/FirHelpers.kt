@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
@@ -459,7 +460,7 @@ private val FirNamedFunctionSymbol.matchesDataClassSyntheticMemberSignatures: Bo
     get() {
         val name = callableId.callableName
         return receiverParameterSymbol == null &&
-                resolvedContextParameters.isEmpty() &&
+                !hasContextParameters &&
                 (name == OperatorNameConventions.EQUALS && matchesEqualsSignature) ||
                 (name == HASHCODE_NAME && matchesHashCodeSignature) ||
                 (name == OperatorNameConventions.TO_STRING && matchesToStringSignature)
@@ -700,7 +701,7 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
     return valueParameterSymbols.none { it.resolvedReturnTypeRef.isBadType() }
             && resolvedReceiverTypeRef?.isBadType() != true
-            && resolvedContextParameters.none { it.returnTypeRef.isBadType() }
+            && contextParameterSymbols.none { it.resolvedReturnTypeRef.isBadType() }
 }
 
 private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
