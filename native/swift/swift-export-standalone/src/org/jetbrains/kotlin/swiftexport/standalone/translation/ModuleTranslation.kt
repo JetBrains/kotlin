@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
-import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
+import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.SwiftExportDependencies
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
+import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
 import org.jetbrains.kotlin.swiftexport.standalone.builders.createKaModulesForStandaloneAnalysis
-import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
+import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
@@ -32,29 +34,36 @@ internal fun translateModulePublicApi(
     dependencies: SwiftExportDependencies<InputModule>,
     config: SwiftExportConfig
 ): TranslationResult {
-    val moduleWithScopeProvider = createKaModulesForStandaloneAnalysis(module, config.targetPlatform, dependencies)
+    val kaModules = createKaModulesForStandaloneAnalysis(module, config.targetPlatform, dependencies)
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
-    return analyze(moduleWithScopeProvider.useSiteModule) {
-        val buildResult = initializeSirModule(
-            moduleWithScopeProvider,
-            config,
-            module.config,
-            SirOneToOneModuleProvider(moduleWithScopeProvider.dependencies.platform)
-        )
-        // Assume that parts of the KotlinRuntimeSupport module are used.
-        // It might not be the case, but precise tracking seems like an overkill at the moment.
-        buildResult.module.updateImport(SirImport(config.runtimeSupportModuleName))
-        buildResult.module.updateImport(SirImport(config.runtimeModuleName))
-        val bridges = generateModuleBridges(buildResult.module, module.bridgesModuleName)
-        TranslationResult(
-            packages = buildResult.packages,
-            sirModule = buildResult.module,
-            bridgeSources = bridges,
-            moduleConfig = module.config,
-            bridgesModuleName = module.bridgesModuleName,
-        )
+    return analyze(kaModules.useSiteModule) {
+        val sirSession = buildSirSession(kaModules, config, module.config)
+        translateModule(sirSession, kaModules.mainModule)
+        createTranslationResult(sirSession, config, module.config, kaModules)
     }
+}
+
+private fun KaSession.createTranslationResult(
+    sirSession: SirSession,
+    config: SwiftExportConfig,
+    moduleConfig: SwiftModuleConfig,
+    kaModules: KaModules,
+): TranslationResult {
+    val sirModule = with(sirSession) { kaModules.mainModule.sirModule() }
+    // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
+    // It might not be the case, but precise tracking seems like an overkill at the moment.
+    sirModule.updateImport(SirImport(config.runtimeSupportModuleName))
+    sirModule.updateImport(SirImport(config.runtimeModuleName))
+    val bridgesName = "${moduleConfig.bridgeModuleName}_${sirModule.name}"
+    val bridges = generateModuleBridges(sirModule, bridgesName)
+    return TranslationResult(
+        packages = sirSession.enumGenerator.collectedPackages,
+        sirModule = sirModule,
+        bridgeSources = bridges,
+        moduleConfig = moduleConfig,
+        bridgesModuleName = bridgesName,
+    )
 }
 
 /**
