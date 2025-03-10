@@ -1,0 +1,1 @@
+This is the copy of referencingUnusableDeclarations test, but testing the new implementation of callable references (IrRichCallableReference).
