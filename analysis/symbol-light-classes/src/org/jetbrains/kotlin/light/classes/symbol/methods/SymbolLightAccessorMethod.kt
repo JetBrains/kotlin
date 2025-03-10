@@ -371,7 +371,7 @@ internal class SymbolLightAccessorMethod private constructor(
         return lightMemberOrigin?.auxiliaryOriginalElement?.textOffset ?: super.getTextOffset()
     }
 
-    override fun getTextRange(): TextRange {
+    override fun getTextRange(): TextRange? {
         return lightMemberOrigin?.auxiliaryOriginalElement?.textRange ?: super.getTextRange()
     }
 
