@@ -14,6 +14,7 @@ dependencies {
 
     api(project(":native:swift:sir"))
     api(project(":native:swift:sir-providers"))
+    implementation(project(":native:analysis-api-based-export-common"))
 
     api(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
