@@ -70,7 +70,6 @@ private abstract class BaseInteropIrTransformer(
 ) : IrBuildingTransformer(generationState.context) {
     protected val context = generationState.context
     protected val symbols = context.symbols
-    protected val irBuiltIns = context.irBuiltIns
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
             owner: IrDeclarationContainer,
@@ -169,127 +168,6 @@ private abstract class BaseInteropIrTransformer(
 
     protected fun renderCompilerError(element: IrElement?, message: String = "Failed requirement") =
             renderCompilerError(irFile, element, message)
-
-    // The trick here is to try building a trampoline to the referenced function and see if it gets lowered:
-    // if it doesn't, then no trampoline is needed and the reference can be left as is; otherwise, the trampoline
-    // is indeed needed and the original reference is replaced to a reference to the trampoline (already lowered).
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        expression.transformChildrenVoid()
-
-        val callee = expression.symbol.owner
-        val functionType = expression.type as? IrSimpleType
-        var indexInTypeArguments = 0
-        val parameterTypes = callee.parameters.mapIndexed { index, parameter ->
-            expression.arguments[index]?.type
-            // Circumvent bugs in compiler plugins (function reference types might be wrong).
-                    ?: functionType?.arguments?.getOrNull(indexInTypeArguments++)?.typeOrNull
-                    ?: parameter.type.erasedUpperBound.defaultType
-        }
-        val returnType = functionType?.arguments?.getOrNull(indexInTypeArguments)?.typeOrNull
-                ?: callee.returnType.erasedUpperBound.defaultType
-
-        builder.at(expression)
-        val trampoline = tryBuildTrampoline(callee, parameterTypes, returnType, expression)
-        return if (trampoline == null)
-            expression
-        else builder.irBlock {
-            +trampoline
-            +irFunctionReference(expression.type, trampoline.symbol, expression.reflectionTarget).apply {
-                expression.arguments.forEachIndexed { index, argument ->
-                    this.arguments[index] = argument
-                }
-            }
-        }
-    }
-
-    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-        expression.transformChildrenVoid()
-
-        val getter = expression.getter?.owner
-        val setter = expression.setter?.owner
-        val calleeParameters = getter?.parameters
-                ?: setter?.parameters?.dropLast(1) // Skip value, it will be added explicitly.
-                ?: return expression // No accessors - nothing to change.
-        val functionType = expression.type as? IrSimpleType
-        var indexInTypeArguments = 0
-        val parameterTypes = calleeParameters.mapIndexed { index, parameter ->
-            expression.arguments[index]?.type
-            // Circumvent bugs in compiler plugins (property types might be wrong).
-                    ?: functionType?.arguments?.getOrNull(indexInTypeArguments++)?.typeOrNull
-                    ?: parameter.type.erasedUpperBound.defaultType
-        }
-        val propertyType = functionType?.arguments?.getOrNull(indexInTypeArguments)?.typeOrNull
-                ?: (getter?.returnType ?: setter!!.parameters.last().type).erasedUpperBound.defaultType
-
-        builder.at(expression)
-        val getterTrampoline = expression.getter?.let {
-            tryBuildTrampoline(it.owner, parameterTypes, propertyType, expression)
-        }
-        val setterTrampoline = expression.setter?.let {
-            tryBuildTrampoline(it.owner, parameterTypes + listOf(propertyType), irBuiltIns.unitType, expression)
-        }
-        return if (getterTrampoline == null && setterTrampoline == null)
-            expression
-        else builder.irBlock {
-            expression.typeArguments.apply {
-                // Erase the type arguments.
-                indices.forEach { this[it] = null }
-            }
-            if (getterTrampoline != null) {
-                expression.getter = getterTrampoline.symbol
-                +getterTrampoline
-            }
-            if (setterTrampoline != null) {
-                expression.setter = setterTrampoline.symbol
-                +setterTrampoline
-            }
-            +expression
-        }
-    }
-
-    private fun tryBuildTrampoline(
-            callee: IrFunction,
-            parameterTypes: List<IrType>,
-            returnType: IrType,
-            expression: IrMemberAccessExpression<*>,
-    ): IrSimpleFunction? {
-        val trampoline = context.irFactory.buildFun {
-            startOffset = builder.startOffset
-            endOffset = builder.endOffset
-            name = callee.name
-            visibility = DescriptorVisibilities.LOCAL
-        }
-        trampoline.parent = builder.parent
-        trampoline.returnType = returnType
-        trampoline.parameters = callee.parameters.mapIndexed { index, parameter ->
-            parameter.copyTo(trampoline, origin = IrDeclarationOrigin.DEFINED, kind = IrParameterKind.Regular, type = parameterTypes[index])
-        }
-
-        // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
-        // we already have such klib, so need to handle it. We just ignore extra type parameters
-        val typeParameters = (callee as? IrConstructor)?.parentAsClass?.typeParameters ?: (callee as IrSimpleFunction).typeParameters
-        val cleanedTypeArgumentCount = minOf(expression.typeArguments.size, typeParameters.size)
-        val localBuilder = context.createIrBuilder(trampoline.symbol, trampoline.startOffset, trampoline.endOffset)
-        val body = context.irFactory.createExpressionBody(
-                when (callee) {
-                    is IrConstructor -> localBuilder.irCallConstructor(
-                            callee.symbol, typeArguments = expression.typeArguments.filterNotNull().take(cleanedTypeArgumentCount)
-                    )
-                    is IrSimpleFunction -> localBuilder.irCall(callee).apply {
-                        (0..<cleanedTypeArgumentCount).forEach { typeArguments[it] = expression.typeArguments[it] }
-                    }
-                }.apply {
-                    trampoline.parameters.forEachIndexed { index, parameter ->
-                        arguments[index] = localBuilder.irGet(parameter)
-                    }
-                }
-        )
-        trampoline.body = body
-
-        val delegatingCall = body.expression
-        trampoline.transform(this, null)
-        return trampoline.takeUnless { body.expression == delegatingCall }
-    }
 }
 
 private class InteropLoweringPart1(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
@@ -1192,27 +1070,11 @@ private class InteropTransformerPart2(
 
     private class StaticFunctionArgument(val function: IrFunction, val defined: Boolean)
 
-    private fun unwrapStaticFunctionArgument(argument: IrExpression) = when (argument) {
-        is IrFunctionReference -> {
-            require(argument.arguments.all { it == null }) {
-                renderCompilerError(argument, "Interop static function argument should not capture any values")
+    private fun unwrapStaticFunctionArgument(argument: IrExpression) =
+            (argument as? IrRichFunctionReference)?.invokeFunction?.let { invokeFunction ->
+                invokeFunction.transform(this, data = null)
+                StaticFunctionArgument(invokeFunction, defined = true)
             }
-            StaticFunctionArgument(argument.symbol.owner, defined = false)
-        }
-        is IrRichFunctionReference -> {
-            argument.invokeFunction.transform(this, null)
-            StaticFunctionArgument(argument.invokeFunction, defined = true)
-        }
-        is IrFunctionExpression -> {
-            if (argument.origin != IrStatementOrigin.LAMBDA && argument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)
-                null
-            else {
-                argument.function.transform(this, null)
-                StaticFunctionArgument(argument.function, defined = true)
-            }
-        }
-        else -> null
-    }
 
     val IrValueParameter.isDispatchReceiver: Boolean
         get() = when(val parent = this.parent) {

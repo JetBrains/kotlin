@@ -549,7 +549,6 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-        interopPhase,
         testProcessorPhase,
         upgradeCallableReferencesPhase,
         assertionWrapperPhase,
@@ -563,6 +562,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        interopPhase,
         specialInteropIntrinsicsPhase,
         dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,
