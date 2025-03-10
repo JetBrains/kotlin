@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
@@ -47,27 +48,30 @@ internal fun SirVariable.constructFunctionBridgeRequests(generator: BridgeGenera
     return res.toList()
 }
 
-internal fun SirInit.constructFunctionBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
-    if (origin is SirOrigin.KotlinBaseInitOverride) {
-        val names = parameters.map { it.argumentName!! }
-        body = SirFunctionBody(buildList {
+internal fun KaSession.constructFunctionBridgeRequests(init: SirInit, generator: BridgeGenerator): List<FunctionBridgeRequest> {
+    if (init.origin is SirOrigin.KotlinBaseInitOverride) {
+        val names = init.parameters.map { it.argumentName!! }
+        init.body = SirFunctionBody(buildList {
             add("super.init(${names.joinToString(separator = ", ") { "$it: $it" }})")
         })
         return emptyList()
     }
 
-    val constructedClassSymbol = (this.parent as SirClass).kaSymbolOrNull<KaClassSymbol>()
+    val constructedClassSymbol = (init.parent as SirClass).kaSymbolOrNull<KaClassSymbol>()
     if (constructedClassSymbol?.modality?.isAbstract() != false) {
         return emptyList()
     }
-
-    val fqName = kaSymbolOrNull<KaConstructorSymbol>()
+    // Array constructors are not supported by bridge generator for now.
+    if (constructedClassSymbol.defaultType.isArrayOrPrimitiveArray) {
+        return emptyList()
+    }
+    val fqName = init.kaSymbolOrNull<KaConstructorSymbol>()
         ?.containingClassId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
         ?: return emptyList()
 
     return listOfNotNull(
-        patchCallableBodyAndGenerateRequest(generator, fqName)
+        init.patchCallableBodyAndGenerateRequest(generator, fqName)
     )
 }
 
