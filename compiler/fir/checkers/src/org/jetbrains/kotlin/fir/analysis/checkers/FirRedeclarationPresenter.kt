@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -41,7 +40,7 @@ internal object FirRedeclarationPresenter {
     }
 
     private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableSymbol<*>) {
-        repeat(it.resolvedContextParameters.size) {
+        repeat(it.contextParameterSymbols.size) {
             append(',')
         }
         append('<')
@@ -101,7 +100,7 @@ internal object FirRedeclarationPresenter {
     }
 
     fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = buildString {
-        repeat(it.resolvedContextParameters.size) {
+        repeat(it.contextParameterSymbols.size) {
             append(',')
         }
         append('<')

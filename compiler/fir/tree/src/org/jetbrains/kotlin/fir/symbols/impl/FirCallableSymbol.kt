@@ -45,12 +45,8 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val receiverParameterSymbol: FirReceiverParameterSymbol?
         get() = fir.receiverParameter?.symbol
 
-    val resolvedContextParameters: List<FirValueParameter>
-        get() {
-            if (fir.contextParameters.isEmpty()) return emptyList()
-            lazyResolveToPhase(FirResolvePhase.TYPES)
-            return fir.contextParameters
-        }
+    val contextParameterSymbols: List<FirValueParameterSymbol>
+        get() = fir.contextParameters.map { it.symbol }
 
     val resolvedStatus: FirResolvedDeclarationStatus
         get() = fir.resolvedStatus()
@@ -134,3 +130,6 @@ val FirCallableSymbol<*>.isExtension: Boolean
         is FirProperty -> fir.receiverParameter != null
         is FirVariable -> false
     }
+
+val FirCallableSymbol<*>.hasContextParameters: Boolean
+    get() = fir.contextParameters.isNotEmpty()

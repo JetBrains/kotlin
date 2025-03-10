@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
@@ -262,7 +263,7 @@ class FirPCLAInferenceSession(
         // At the step of candidate's system creation, there are no chosen context receiver values, yet
         // (see org.jetbrains.kotlin.fir.resolve.calls.CheckContextArguments)
         // Thus, we just postpone everything with symbols requiring some context receivers
-        if ((symbol as? FirCallableSymbol)?.resolvedContextParameters?.isNotEmpty() == true) return false
+        if ((symbol as? FirCallableSymbol)?.hasContextParameters == true) return false
 
         // Accesses to local variables or local functions which return types contain not fixed TVs
         val returnType = (symbol as? FirCallableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)

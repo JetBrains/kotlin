@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -78,7 +79,7 @@ internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbo
                 dispatchReceiverType?.classId == containingClass.classId &&
                 resolvedReturnType.classId == containingClass.classId &&
                 constructor != null &&
-                resolvedContextParameters.isEmpty() &&
+                !hasContextParameters &&
                 typeParameterSymbols.isEmpty() &&
                 receiverParameterSymbol == null &&
                 valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }

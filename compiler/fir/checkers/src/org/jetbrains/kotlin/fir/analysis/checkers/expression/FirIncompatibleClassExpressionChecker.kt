@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -27,8 +26,8 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 
         checkType(symbol.resolvedReturnType, expression, context, reporter)
-        for (parameter in symbol.resolvedContextParameters) {
-            checkType(parameter.returnTypeRef.coneType, expression, context, reporter)
+        for (parameter in symbol.contextParameterSymbols) {
+            checkType(parameter.resolvedReturnType, expression, context, reporter)
         }
         checkType(symbol.resolvedReceiverType, expression, context, reporter)
         if (symbol is FirFunctionSymbol) {

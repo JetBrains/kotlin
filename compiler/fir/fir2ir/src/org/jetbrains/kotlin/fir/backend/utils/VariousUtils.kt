@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -161,7 +162,7 @@ val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
 
 val FirCallableSymbol<*>.isInlineClassProperty: Boolean
     get() {
-        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || resolvedContextParameters.isNotEmpty()) return false
+        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
         val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name

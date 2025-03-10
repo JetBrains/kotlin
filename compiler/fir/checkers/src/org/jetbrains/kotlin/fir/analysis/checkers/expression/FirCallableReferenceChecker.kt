@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 
 object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -62,7 +63,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
                 reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
             }
 
-            if (referredSymbol.resolvedContextParameters.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (referredSymbol.hasContextParameters && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
                 reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol, context)
             }
         }

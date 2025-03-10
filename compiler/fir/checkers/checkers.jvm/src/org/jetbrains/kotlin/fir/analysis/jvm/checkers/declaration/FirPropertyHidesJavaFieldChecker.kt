@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platform) {
@@ -33,7 +34,7 @@ object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platfor
             if (propertySymbol.getContainingClassSymbol() != declaration.symbol) return@processAllProperties
             if (propertySymbol.origin != FirDeclarationOrigin.Source) return@processAllProperties
             if (propertySymbol.receiverParameterSymbol != null) return@processAllProperties
-            if (propertySymbol.resolvedContextParameters.isNotEmpty()) return@processAllProperties
+            if (propertySymbol.hasContextParameters) return@processAllProperties
             if (propertySymbol.isDeprecationLevelHidden(context.session)) return@processAllProperties
             var warningReported = false
             scope.processPropertiesByName(propertySymbol.name) { fieldSymbol ->
