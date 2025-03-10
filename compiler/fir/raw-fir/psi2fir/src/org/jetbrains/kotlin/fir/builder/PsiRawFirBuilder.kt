@@ -298,7 +298,10 @@ open class PsiRawFirBuilder(
         private fun KtElement?.toFirExpression(
             errorReason: String,
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected,
-        ): FirExpression = toFirExpression { ConeSimpleDiagnostic(errorReason, kind) }
+            sourceWhenThisIsNull: KtElement? = this,
+        ): FirExpression {
+            return toFirExpression(sourceWhenThisIsNull = sourceWhenThisIsNull) { ConeSimpleDiagnostic(errorReason, kind) }
+        }
 
         private inline fun KtElement?.toFirExpression(
             sourceWhenThisIsNull: KtElement? = null,
@@ -3440,7 +3443,7 @@ open class PsiRawFirBuilder(
 
         override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: FirElement?): FirElement {
             context.forwardLabelUsagePermission(expression, expression.expression)
-            return expression.expression.toFirExpression("Empty parentheses")
+            return expression.expression.toFirExpression("Empty parentheses", sourceWhenThisIsNull = expression)
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: FirElement?): FirElement {
