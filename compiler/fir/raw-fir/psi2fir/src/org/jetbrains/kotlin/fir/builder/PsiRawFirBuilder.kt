@@ -2298,7 +2298,10 @@ open class PsiRawFirBuilder(
             context: Context<T>,
             forceLocal: Boolean = false,
         ): FirProperty {
-            val propertyName = nameAsSafeName
+            val propertyName = when {
+                isLocal && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                else -> nameAsSafeName
+            }
             val propertySymbol = if (isLocal) {
                 FirPropertySymbol(propertyName)
             } else {
@@ -2863,7 +2866,10 @@ open class PsiRawFirBuilder(
             }?.toFirExpression("Incorrect when subject expression: ${ktSubjectExpression?.text}")
             var subjectVariable = when (ktSubjectExpression) {
                 is KtVariableDeclaration -> {
-                    val name = ktSubjectExpression.nameAsSafeName
+                    val name = when {
+                        ktSubjectExpression.nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                        else -> ktSubjectExpression.nameAsSafeName
+                    }
                     buildProperty {
                         source = ktSubjectExpression.toFirSourceElement()
                         moduleData = baseModuleData
@@ -3076,7 +3082,11 @@ open class PsiRawFirBuilder(
                         val firLoopParameter = generateTemporaryVariable(
                             moduleData = baseModuleData,
                             source = ktParameter.toFirSourceElement(),
-                            name = if (multiDeclaration != null) SpecialNames.DESTRUCT else ktParameter.nameAsSafeName,
+                            name = when {
+                                multiDeclaration != null -> SpecialNames.DESTRUCT
+                                ktParameter.nameIdentifier?.asText == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                                else -> ktParameter.nameAsSafeName
+                            },
                             initializer = buildFunctionCall {
                                 source = rangeSource
                                 calleeReference = buildSimpleNamedReference {

@@ -4,8 +4,8 @@
 fun println(a: Any?) {}
 
 fun f() {
-    val <!REDECLARATION!>`_`<!> = "one"
-    val <!REDECLARATION, UNDERSCORE_IS_RESERVED!>_<!> = "two"
+    val `_` = "one"
+    val _ = "two"
     println(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>)
     println(`_`)
 }
@@ -16,6 +16,6 @@ fun g() {
 }
 
 fun h() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = "three"
-    println(`_`)
+    val _ = "three"
+    println(<!UNRESOLVED_REFERENCE!>`_`<!>)
 }
