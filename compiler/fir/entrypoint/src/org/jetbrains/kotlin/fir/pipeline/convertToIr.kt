@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -373,7 +374,7 @@ private class Fir2IrPipeline(
                 try {
                     file.acceptVoid(ClassVisitor())
                 } catch (e: Throwable) {
-                    CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
+                    BackendException.report(e, "IR fake override builder", file.fileEntry.name) { offset ->
                         file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
                             val (line, column) = it.getLineAndColumnNumbers(offset)
                             line to column
