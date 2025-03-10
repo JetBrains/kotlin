@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import javax.inject.Inject
 
 open class YarnRootExtension
@@ -39,7 +39,7 @@ internal constructor(
         nodeJsRoot = nodeJsRoot,
         yarnSpec = yarnSpec,
         objects = project.objects,
-        execOps = (project as ProjectInternal).services.get(ExecOperations::class.java),
+        execOps = @Suppress("DEPRECATION") project.getExecOperations(),
     )
 
     companion object {

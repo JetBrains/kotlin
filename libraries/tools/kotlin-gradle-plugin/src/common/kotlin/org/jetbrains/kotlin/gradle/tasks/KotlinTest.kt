@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.Input
@@ -17,6 +16,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ internal constructor(
 
     // TODO KT-75294 When the deprecated secondary constructor is removed, move execOps to a non-null constructor property.
     private val execOps: ExecOperations =
-        execOps ?: (project as ProjectInternal).services.get(ExecOperations::class.java)
+        execOps ?: @Suppress("DEPRECATION") project.getExecOperations()
 
     @Input
     @Optional
