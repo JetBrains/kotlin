@@ -106,7 +106,7 @@ class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSess
                     serializeClasses(nestedClasses, nestedSerializer)
                 }
 
-                val file = session.firProvider.getFirClassifierContainerFile(klass.symbol)
+                val file = session.firProvider.getFirClassifierContainerFileIfAny(klass.symbol)
                 val classProto = parentSerializer.classProto(klass, file)
                 proto.addClass_(classProto.build())
             }
