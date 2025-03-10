@@ -165,9 +165,8 @@ open class FirDeclarationsResolveTransformer(
             }
         }
 
-        val returnTypeRefBeforeResolve = property.returnTypeRef
         val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
-        if (!property.isConst && implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
+        if (!property.isConst && implicitTypeOnly && property.returnTypeRef !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
             return property
         }
 
@@ -190,7 +189,7 @@ open class FirDeclarationsResolveTransformer(
 
                 context.forPropertyInitializer {
                     if (!initializerIsAlreadyResolved) {
-                        val resolutionMode = withExpectedType(returnTypeRefBeforeResolve)
+                        val resolutionMode = withExpectedType(property.returnTypeRef)
                         property
                             .transformInitializer(transformer, resolutionMode)
                             .replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
