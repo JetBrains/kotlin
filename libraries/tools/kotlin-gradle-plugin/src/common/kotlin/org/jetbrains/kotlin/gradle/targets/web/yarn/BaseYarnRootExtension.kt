@@ -51,7 +51,7 @@ abstract class BaseYarnRootExtension internal constructor(
     }
 
     override val additionalInstallOutput: FileCollection = project.objects.fileCollection().from(
-        nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.Companion.YARN_LOCK) }
+        nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
     )
 
     override val preInstallTasks: ListProperty<TaskProvider<*>> = project.objects.listProperty(TaskProvider::class.java)
@@ -74,8 +74,8 @@ abstract class BaseYarnRootExtension internal constructor(
     override val downloadProperty: org.gradle.api.provider.Property<Boolean> = project.objects.property<Boolean>()
         .convention(true)
 
-    var lockFileName by Property(LockCopyTask.Companion.YARN_LOCK)
-    var lockFileDirectory: File by Property(project.rootDir.resolve(LockCopyTask.Companion.KOTLIN_JS_STORE))
+    var lockFileName by Property(LockCopyTask.YARN_LOCK)
+    var lockFileDirectory: File by Property(project.rootDir.resolve(LockCopyTask.KOTLIN_JS_STORE))
 
     var ignoreScripts by Property(true)
 
@@ -88,7 +88,7 @@ abstract class BaseYarnRootExtension internal constructor(
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
             .withType(YarnSetupTask::class.java)
-            .named(nodeJsRoot.extensionName(YarnSetupTask.Companion.NAME))
+            .named(nodeJsRoot.extensionName(YarnSetupTask.NAME))
 
     internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property(Platform::class.java)
 
@@ -115,9 +115,9 @@ abstract class BaseYarnRootExtension internal constructor(
 
     val restoreYarnLockTaskProvider: TaskProvider<YarnLockCopyTask>
         get() = project.tasks.withType(YarnLockCopyTask::class.java)
-            .named(nodeJsRoot.extensionName(YarnPlugin.Companion.RESTORE_YARN_LOCK_NAME))
+            .named(nodeJsRoot.extensionName(YarnPlugin.RESTORE_YARN_LOCK_NAME))
 
     val storeYarnLockTaskProvider: TaskProvider<YarnLockStoreTask>
         get() = project.tasks.withType(YarnLockStoreTask::class.java)
-            .named(nodeJsRoot.extensionName(YarnPlugin.Companion.STORE_YARN_LOCK_NAME))
+            .named(nodeJsRoot.extensionName(YarnPlugin.STORE_YARN_LOCK_NAME))
 }

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnv
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenSetupTask
 import org.jetbrains.kotlin.gradle.utils.property
 
@@ -51,7 +51,7 @@ open class BinaryenExtension(
         .convention("wasm-opt")
 
     val setupTaskProvider: TaskProvider<BinaryenSetupTask>
-        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.Companion.NAME)
+        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
 
     internal val platform: org.gradle.api.provider.Property<BinaryenPlatform> = rootProject.objects.property<BinaryenPlatform>()
 
