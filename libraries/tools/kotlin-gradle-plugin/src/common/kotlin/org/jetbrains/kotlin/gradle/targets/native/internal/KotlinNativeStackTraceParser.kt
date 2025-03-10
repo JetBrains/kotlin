@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.jetbrains.kotlin.gradle.internal.testing.ParsedStackTrace
 import org.jetbrains.kotlin.gradle.utils.appendLine
 
-data class KotlinNativeStackTrace(
+internal data class KotlinNativeStackTrace(
     val message: String?,
-    val stackTrace: List<KotlinNativeStackTraceElement>?
+    val stackTrace: List<KotlinNativeStackTraceElement>?,
 ) {
     fun toJvm() = ParsedStackTrace(
         message,
@@ -23,7 +23,7 @@ data class KotlinNativeStackTrace(
     }
 }
 
-data class KotlinNativeStackTraceElement(
+internal data class KotlinNativeStackTraceElement(
     val bin: String?,
     val address: String?,
     val className: String?,
@@ -32,7 +32,7 @@ data class KotlinNativeStackTraceElement(
     val offset: Int = -1,
     val fileName: String?,
     val lineNumber: Int = -1,
-    val columnNumber: Int = -1
+    val columnNumber: Int = -1,
 ) {
     fun toJvmStackTraceElement() = StackTraceElement(
         className ?: "<global>",
@@ -42,10 +42,10 @@ data class KotlinNativeStackTraceElement(
     )
 }
 
-fun parseKotlinNativeStackTraceAsJvm(stackTrace: String): ParsedStackTrace? =
+internal fun parseKotlinNativeStackTraceAsJvm(stackTrace: String): ParsedStackTrace? =
     parseKotlinNativeStackTrace(stackTrace).toJvm()
 
-fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackTrace {
+internal fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackTrace {
     val message = StringBuilder()
     var firstLines = true
     val stack = mutableListOf<KotlinNativeStackTraceElement>()

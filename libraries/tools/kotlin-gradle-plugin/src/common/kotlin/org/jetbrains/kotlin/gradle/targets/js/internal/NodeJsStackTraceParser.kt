@@ -8,27 +8,26 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 import org.jetbrains.kotlin.gradle.internal.testing.ParsedStackTrace
 import org.jetbrains.kotlin.gradle.utils.appendLine
 
-data class NodeJsStackTrace(
+internal data class NodeJsStackTrace(
     val message: String?,
-    val stackTrace: List<NodeJsStackTraceElement>?
+    val stackTrace: List<NodeJsStackTraceElement>?,
 ) {
-    fun toJvm() = ParsedStackTrace(
+    fun toJvm(): ParsedStackTrace = ParsedStackTrace(
         message,
         stackTrace?.map { it.toJvmStackTraceElement() }
     )
-
 
     override fun toString(): String {
         return "NodeJsStackTrace(\nmessage=\"$message\",\nstacktrace=[\n${stackTrace?.joinToString("\n")}\n])"
     }
 }
 
-data class NodeJsStackTraceElement(
+internal data class NodeJsStackTraceElement(
     val className: String? = null,
     val methodName: String? = null,
     val fileName: String? = null,
     val lineNumber: Int = -1,
-    val colNumber: Int = -1
+    val colNumber: Int = -1,
 ) {
     fun toJvmStackTraceElement() = StackTraceElement(
         className ?: "<global>",
@@ -38,10 +37,10 @@ data class NodeJsStackTraceElement(
     )
 }
 
-fun parseNodeJsStackTraceAsJvm(stackTrace: String): ParsedStackTrace? =
+internal fun parseNodeJsStackTraceAsJvm(stackTrace: String): ParsedStackTrace =
     parseNodeJsStackTrace(stackTrace).toJvm()
 
-fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
+internal fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
     val message = StringBuilder()
     var firstLines = true
     val stack = mutableListOf<NodeJsStackTraceElement>()
@@ -130,7 +129,7 @@ fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
     )
 }
 
-fun filterClassName(className: String): String =
+private fun filterClassName(className: String): String =
     className.substringAfterLast('$')
 
 private fun filterMethodName(name: String): String =
