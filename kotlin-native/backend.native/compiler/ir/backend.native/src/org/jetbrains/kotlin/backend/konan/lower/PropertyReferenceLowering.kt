@@ -11,14 +11,16 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
 
 internal class PropertyReferencesConstructorsSet(
-    val local: IrConstructorSymbol,
-    val byRecieversCount: List<IrConstructorSymbol>
+        val local: IrConstructorSymbol,
+        val byRecieversCount: List<IrConstructorSymbol>
 ) {
     constructor(local: IrClassSymbol, byRecieversCount: List<IrClassSymbol>) : this(
             local.constructors.single(),
@@ -28,8 +30,8 @@ internal class PropertyReferencesConstructorsSet(
 
 internal val KonanSymbols.immutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
-        kLocalDelegatedPropertyImpl,
-        listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
+            kLocalDelegatedPropertyImpl,
+            listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
     )
 
 internal val KonanSymbols.mutablePropertiesConstructors
@@ -50,19 +52,27 @@ internal class PropertyReferenceLowering(generationState: NativeGenerationState)
     override fun IrBuilderWithScope.createKProperty(
             reference: IrRichPropertyReference,
             typeArguments: List<IrType>,
-            name: String,
+            name: String?,
             getterReference: IrRichFunctionReference,
-            setterReference: IrRichFunctionReference?
-    ) : IrExpression {
+            setterReference: IrRichFunctionReference?,
+    ): IrExpression {
         val constructor = if (setterReference != null) {
             mutableSymbols
         } else {
             immutableSymbols
         }.byRecieversCount[typeArguments.size - 1]
         return irCall(constructor, reference.type, typeArguments).apply {
-            arguments[0] = irString(name)
-            arguments[1] = getterReference
-            setterReference?.let { arguments[2] = it }
+            arguments[0] = name?.let(::irString) ?: irNull()
+            arguments[1] = reference.reflectionTargetLinkageError?.let {
+                this@PropertyReferenceLowering.context.partialLinkageSupport.prepareLinkageError(
+                        doNotLog = false,
+                        it,
+                        reference,
+                        PLFile.determineFileFor(reference.getterFunction),
+                )
+            }?.let(::irString) ?: irNull()
+            arguments[2] = getterReference
+            setterReference?.let { arguments[3] = it }
         }
     }
 
