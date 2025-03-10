@@ -25,6 +25,7 @@
 # OWNER_LIST: Brian.Norman
 # OWNER_LIST: Ilya.Chernikov Alejandro.Serrano.Mena
 # OWNER_LIST: Sergej.Jaskiewicz
+# OWNER_LIST: "Kotlin for Data Science"
 # Kotlin Libraries
 # OWNER_LIST: Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
@@ -426,7 +427,7 @@
 /plugins/sam-with-receiver/ "Kotlin Frontend"
 /plugins/scripting/ "Kotlin Frontend"
 /plugins/plugins-interactions-testing/ "Kotlin Frontend"
-
+/plugins/kotlin-dataframe/ "Kotlin for Data Science"
 
 /prepare/ "Kotlin Build Infrastructure"
 
