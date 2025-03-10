@@ -1,6 +1,12 @@
 import abitestutils.abiTest
 
 fun box() = abiTest {
+    // IrRichCallableReferences are so far supported only on Native
+    if (!testMode.isNative) {
+        expectSuccess("OK") { "OK" }
+        return@abiTest
+    }
+
     val stableClass = StableClass()
     val stableClassInner = stableClass.Inner()
     val sfh = StableFunctionsHolder()
