@@ -46,7 +46,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         { project.rootProject.wasmKotlinNodeJsRootExtension },
     )
 
-    internal val toolingExtracted: Boolean = subTarget.target.webTargetVariant(
+    internal val isWasm: Boolean = subTarget.target.webTargetVariant(
         jsVariant = false,
         wasmVariant = true,
     )
@@ -247,11 +247,11 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
             .value(npmToolingDir)
             .disallowChanges()
 
-        val toolingExtractedValue = this@WebpackConfigurator.toolingExtracted
+        val isWasm = this@WebpackConfigurator.isWasm
 
-        this.toolingExtracted.value(toolingExtractedValue).disallowChanges()
+        this.getIsWasm.value(isWasm).disallowChanges()
 
-        if (toolingExtractedValue) {
+        if (isWasm) {
             dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
         }
 

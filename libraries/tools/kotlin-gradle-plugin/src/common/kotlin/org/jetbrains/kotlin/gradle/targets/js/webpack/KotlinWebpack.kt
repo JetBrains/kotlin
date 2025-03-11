@@ -87,7 +87,7 @@ constructor(
     var mode: Mode = Mode.DEVELOPMENT
 
     @get:Internal
-    internal abstract val toolingExtracted: Property<Boolean>
+    internal abstract val getIsWasm: Property<Boolean>
 
     @get:Internal
     internal abstract val npmToolingEnvDir: DirectoryProperty
@@ -272,7 +272,7 @@ constructor(
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
-        resolveLoadersFromKotlinToolingDir = toolingExtracted.get()
+        resolveLoadersFromKotlinToolingDir = getIsWasm.get()
     )
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -305,7 +305,7 @@ constructor(
             objects = objects,
             execOps = execOps,
             npmToolingEnvDir = npmToolingEnvDir.getFile(),
-            toolingExtracted = toolingExtracted.get(),
+            resolveModulesFromKotlinToolingDir = getIsWasm.get(),
         )
     }
 
