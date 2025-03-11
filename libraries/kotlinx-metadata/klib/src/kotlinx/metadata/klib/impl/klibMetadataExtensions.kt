@@ -37,13 +37,6 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         proto.getExtensionOrNull(KlibMetadataProtoBuf.classFile)?.let {
             extension.file = c.getSourceFile(it)
         }
-        for (entryProto in proto.enumEntryList) {
-            val ordinal = entryProto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryOrdinal)
-            val name = c[entryProto.name]
-            val uniqId = entryProto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryUniqId)?.readUniqId()
-            val annotations = entryProto.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation).map { it.readAnnotation(c.strings) }
-            extension.enumEntries.add(KlibEnumEntry(name, uniqId, ordinal, annotations.toMutableList()))
-        }
     }
 
     override fun readPackageExtensions(kmPackage: KmPackage, proto: ProtoBuf.Package, c: ReadContext) {
@@ -131,6 +124,16 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext) {
+        val extension = kmEnumEntry.klibExtensions
+
+        extension.ordinal = proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryOrdinal)
+        extension.uniqId = proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryUniqId)?.readUniqId()
+        for (annotation in proto.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation)) {
+            extension.annotations.add(annotation.readAnnotation(c.strings))
+        }
+    }
+
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
         val extension = kmType.klibExtensions
 
@@ -156,25 +159,6 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) {
         for (annotation in kmClass.annotations) {
             proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotation.writeAnnotation(c.strings).build())
-        }
-
-        for (entry in kmClass.klibEnumEntries) {
-            val entryIndex = proto.enumEntryList.indexOfFirst { it.name == c[entry.name] }
-            val entryAnnotationsProto = entry.annotations.map { it.writeAnnotation(c.strings).build() }
-            val entryProto = ProtoBuf.EnumEntry.newBuilder()
-                .setName(c[entry.name])
-                .setExtension(KlibMetadataProtoBuf.enumEntryAnnotation, entryAnnotationsProto)
-            entry.uniqId?.let { uniqId ->
-                entryProto.setExtension(KlibMetadataProtoBuf.enumEntryUniqId, uniqId.writeUniqId().build())
-            }
-            entry.ordinal?.let { ordinal ->
-                entryProto.setExtension(KlibMetadataProtoBuf.enumEntryOrdinal, ordinal)
-            }
-            if (entryIndex == -1) {
-                proto.addEnumEntry(entryProto.build())
-            } else {
-                proto.setEnumEntry(entryIndex, entryProto.build())
-            }
         }
 
         kmClass.uniqId?.let { uniqId ->
@@ -267,6 +251,18 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun writeEnumEntryExtensions(enumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry.Builder, c: WriteContext) {
+        enumEntry.ordinal?.let { ordinal ->
+            proto.setExtension(KlibMetadataProtoBuf.enumEntryOrdinal, ordinal)
+        }
+        enumEntry.uniqId?.let { uniqId ->
+            proto.setExtension(KlibMetadataProtoBuf.enumEntryUniqId, uniqId.writeUniqId().build())
+        }
+        for (annotation in enumEntry.annotations) {
+            proto.addExtension(KlibMetadataProtoBuf.enumEntryAnnotation, annotation.writeAnnotation(c.strings).build())
+        }
+    }
+
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) {
         for (annotation in type.annotations) {
             proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotation.writeAnnotation(c.strings).build())
@@ -305,6 +301,9 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
     override fun createTypeParameterExtension(): KmTypeParameterExtension =
         KlibTypeParameterExtension()
+
+    override fun createEnumEntryExtension(): KlibEnumEntryExtension? =
+        KlibEnumEntryExtension()
 
     override fun createTypeExtension(): KmTypeExtension =
         KlibTypeExtension()

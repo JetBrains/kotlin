@@ -183,9 +183,9 @@ class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
     }
 
     override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.enumEntries.forEach { enumEntry ->
+        clazz.kmEnumEntries.forEach { enumEntry ->
             appendLine()
-            appendLine(enumEntry, ",")
+            appendLine(enumEntry.name, ",")
         }
     }
 

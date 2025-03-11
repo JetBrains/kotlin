@@ -61,7 +61,7 @@ class KlibKotlinp(
     }
 
     override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.klibEnumEntries.forEach { enumEntry ->
+        clazz.kmEnumEntries.forEach { enumEntry ->
             appendLine()
             appendSignature { enumEntrySignature(enumEntry) }
             appendAnnotations(enumEntry.annotations)

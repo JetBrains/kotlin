@@ -67,6 +67,10 @@ public interface KmTypeParameterExtension : KmExtension
 
 public fun KmTypeParameter.getExtension(type: KmExtensionType): KmTypeParameterExtension = extensions.singleOfType(type)
 
+public interface KmEnumEntryExtension : KmExtension
+
+public fun KmEnumEntry.getExtension(type: KmExtensionType): KmEnumEntryExtension = extensions.singleOfType(type)
+
 public interface KmTypeExtension : KmExtension {
     /**
      * Has to be implemented for [KmType.equals] to work.

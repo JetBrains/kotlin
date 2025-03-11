@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.kotlinp.klib
 
-import kotlin.metadata.*
-import kotlinx.metadata.klib.KlibEnumEntry
 import org.jetbrains.kotlin.kotlinp.klib.TypeArgumentId.VarianceId
+import kotlin.metadata.*
 
 private fun KmClassifier.classifierId(): ClassifierId = when (this) {
     is KmClassifier.Class -> ClassOrTypeAliasId(name)
@@ -35,7 +34,7 @@ private fun KmType.typeId(): TypeId = TypeId(classifier.classifierId(), argument
 private fun KmValueParameter.valueParameterId(): ParameterId = ParameterId(name, type.typeId(), varargElementType != null)
 
 internal fun KmClass.classId(): ClassOrTypeAliasId = ClassOrTypeAliasId(name)
-internal fun KmClass.enumEntryId(enumEntry: KlibEnumEntry): ClassOrTypeAliasId = ClassOrTypeAliasId("$name.${enumEntry.name}")
+internal fun KmClass.enumEntryId(enumEntry: KmEnumEntry): ClassOrTypeAliasId = ClassOrTypeAliasId("$name.${enumEntry.name}")
 internal fun KmTypeAlias.typeAliasId(containerNamePrefix: String): ClassOrTypeAliasId = ClassOrTypeAliasId("$containerNamePrefix$name")
 
 @OptIn(ExperimentalContextReceivers::class)

@@ -90,8 +90,9 @@ internal fun CirClass.serializeClass(
         val shortClassName = directNestedClass.name.substringAfterLast('.')
 
         if (directNestedClass.kind == ClassKind.ENUM_ENTRY) {
-            clazz.enumEntries += shortClassName
-            clazz.klibEnumEntries += KlibEnumEntry(name = shortClassName, annotations = directNestedClass.annotations)
+            clazz.kmEnumEntries += KmEnumEntry(shortClassName).apply {
+                annotations.addAll(directNestedClass.annotations)
+            }
         } else {
             clazz.nestedClasses += shortClassName
         }

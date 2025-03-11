@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.kotlinp.klib
 
-import kotlin.metadata.*
-import kotlinx.metadata.klib.KlibEnumEntry
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
-import kotlinx.metadata.klib.klibEnumEntries
-import java.util.IdentityHashMap
+import java.util.*
+import kotlin.metadata.*
 
 /**
  * An auxiliary tool that allows computing and caching IR signatures for the metadata declarations rendered
@@ -53,7 +51,7 @@ class ExternalSignatureComputer(module: KlibModuleMetadata, getExternallyCompute
                     signatures[constructor] = getExternallyComputedSignature(constructor.constructorId(classNamePrefix))
                 }
                 visitDeclarationContainer(classNamePrefix, clazz)
-                clazz.klibEnumEntries.forEach { enumEntry ->
+                clazz.kmEnumEntries.forEach { enumEntry ->
                     signatures[enumEntry] = getExternallyComputedSignature(clazz.enumEntryId(enumEntry))
                 }
             }
@@ -65,7 +63,7 @@ class ExternalSignatureComputer(module: KlibModuleMetadata, getExternallyCompute
     }
 
     fun classSignature(clazz: KmClass): String? = signatures[clazz]
-    fun enumEntrySignature(enumEntry: KlibEnumEntry): String? = signatures[enumEntry]
+    fun enumEntrySignature(enumEntry: KmEnumEntry): String? = signatures[enumEntry]
     fun constructorSignature(constructor: KmConstructor): String? = signatures[constructor]
     fun functionSignature(function: KmFunction): String? = signatures[function]
     fun propertySignature(property: KmProperty): String? = signatures[property]

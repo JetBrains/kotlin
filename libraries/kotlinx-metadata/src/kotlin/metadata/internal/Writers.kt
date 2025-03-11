@@ -244,6 +244,16 @@ private fun WriteContext.writeVersionRequirement(kmVersionRequirement: KmVersion
     return this.versionRequirements[t]
 }
 
+private fun WriteContext.writeEnumEntry(kmEnumEntry: KmEnumEntry): ProtoBuf.EnumEntry.Builder {
+    val t = ProtoBuf.EnumEntry.newBuilder()
+
+    t.name = this[kmEnumEntry.name]
+
+    extensions.forEach { it.writeEnumEntryExtensions(kmEnumEntry, t, this) }
+
+    return t
+}
+
 @ExperimentalContracts
 private fun WriteContext.writeContract(contract: KmContract): ProtoBuf.Contract {
     val t = ProtoBuf.Contract.newBuilder()
@@ -318,10 +328,17 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
         kmClass.companionObject?.let { t.companionObjectName = c[it] }
         kmClass.nestedClasses.forEach { t.addNestedClassName(c[it]) }
 
-        kmClass.enumEntries.forEach { name ->
-            t.addEnumEntry(ProtoBuf.EnumEntry.newBuilder().also { enumEntry ->
-                enumEntry.name = c[name]
-            })
+        if (kmClass.kmEnumEntries.isNotEmpty()) {
+            kmClass.kmEnumEntries.forEach { entry ->
+                t.addEnumEntry(c.writeEnumEntry(entry).build())
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            kmClass.enumEntries.forEach { name ->
+                t.addEnumEntry(ProtoBuf.EnumEntry.newBuilder().also { enumEntry ->
+                    enumEntry.name = c[name]
+                })
+            }
         }
 
         t.addAllSealedSubclassFqName(kmClass.sealedSubclasses.map { c.getClassName(it) })

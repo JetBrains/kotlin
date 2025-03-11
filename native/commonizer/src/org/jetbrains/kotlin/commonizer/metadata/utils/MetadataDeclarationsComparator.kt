@@ -122,7 +122,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             override fun toString() = "TypeFlexibleUpperBound"
         }
 
-        class EnumEntry(val entryA: KlibEnumEntry, val entryB: KlibEnumEntry) : PathElement {
+        class EnumEntry(val entryA: KmEnumEntry, val entryB: KmEnumEntry) : PathElement {
             override fun toString() = "EnumEntry '${entryA.name}'"
         }
 
@@ -176,7 +176,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                     val optionalIndex = entityKey?.toInt()
                     EffectExpression(entityA, entityB, optionalIndex)
                 }
-                entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
+                entityA is KmEnumEntry && entityB is KmEnumEntry -> EnumEntry(entityA, entityB)
                 entityA is KmFlexibleTypeUpperBound && entityB is KmFlexibleTypeUpperBound -> FlexibleTypeUpperBound(entityA, entityB)
                 else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
             }
@@ -526,6 +526,21 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    private fun compareEnumEntryLists(
+        containerContext: Context,
+        enumEntryListA: List<KmEnumEntry>,
+        enumEntryListB: List<KmEnumEntry>
+    ) {
+        compareUniqueEntityLists(
+            containerContext = containerContext,
+            entityListA = enumEntryListA,
+            entityListB = enumEntryListB,
+            entityKind = EntityKind.EnumEntry,
+            groupingKeySelector = { _, enumEntry -> enumEntry.dumpToString() },
+            entitiesComparator = ::compareEnumEntries
+        )
+    }
+
     private fun compareOrderInsensitiveTypeLists(
         containerContext: Context,
         typeListA: List<KmType>,
@@ -622,22 +637,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareTypeAliasLists(classContext, classA.typeAliases, classB.typeAliases)
         comparePropertyLists(classContext, classA.properties, classB.properties)
         compareFunctionLists(classContext, classA.functions, classB.functions)
+        compareEnumEntryLists(classContext, classA.kmEnumEntries, classB.kmEnumEntries)
 
         compareNullableValues(classContext, classA.companionObject, classB.companionObject, EntityKind.CompanionObject)
         compareValueLists(classContext, classA.nestedClasses, classB.nestedClasses, EntityKind.NestedClass)
         compareValueLists(classContext, classA.sealedSubclasses, classB.sealedSubclasses, EntityKind.SealedSubclass)
-        compareValueLists(classContext, classA.enumEntries, classB.enumEntries, EntityKind.EnumEntry)
-
-        compareUniqueEntityLists(
-            containerContext = classContext,
-            entityListA = classA.klibEnumEntries,
-            entityListB = classB.klibEnumEntries,
-            entityKind = EntityKind.EnumEntryInKlib,
-            groupingKeySelector = { _, enumEntry -> enumEntry.name }
-        ) { klibEnumEntryContext, entryA, entryB ->
-            compareAnnotationLists(klibEnumEntryContext, entryA.annotations, entryB.annotations)
-            compareNullableValues(klibEnumEntryContext, entryA.ordinal, entryB.ordinal, EntityKind.EnumEntryInKlibOrdinal)
-        }
     }
 
     private fun compareTypeAliases(
@@ -906,6 +910,16 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
         compareValues(typeParameterContext, typeParameterA.variance, typeParameterB.variance, EntityKind.TypeParameterVariance)
         compareOrderInsensitiveTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
+    }
+
+    private fun compareEnumEntries(
+        enumEntryContext: Context,
+        enumEntryA: KmEnumEntry,
+        enumEntryB: KmEnumEntry,
+    ) {
+        compareValues(enumEntryContext, enumEntryA.name, enumEntryB.name, EntityKind.EnumEntry)
+        compareAnnotationLists(enumEntryContext, enumEntryA.annotations, enumEntryB.annotations)
+        compareNullableValues(enumEntryContext, enumEntryA.ordinal, enumEntryB.ordinal, EntityKind.EnumEntryInKlibOrdinal)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -1262,6 +1276,9 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                 }
             }
         }
+
+        private fun KmEnumEntry.dumpToString(): String =
+            "$name(#$ordinal)"
 
         private inline fun <T, K> Iterable<T>.groupByIndexed(keySelector: (Int, T) -> K): Map<K, List<T>> {
             return mutableMapOf<K, MutableList<T>>().apply {

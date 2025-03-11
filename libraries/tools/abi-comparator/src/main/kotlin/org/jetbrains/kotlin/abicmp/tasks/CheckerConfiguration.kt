@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.abicmp.tasks
 
-import kotlin.metadata.*
-import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.abicmp.*
 import org.jetbrains.kotlin.abicmp.checkers.*
-import org.jetbrains.kotlin.kotlinp.*
+import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
+import org.jetbrains.kotlin.kotlinp.printString
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.contracts.ExperimentalContracts
+import kotlin.metadata.*
+import kotlin.metadata.jvm.*
 
 private val allClassCheckers = listOf(
     classPropertyChecker(ClassNode::version),
@@ -126,7 +127,7 @@ private val allClassMetadataCheckers = listOf(
     classMetadataListChecker("properties") { loadProperties(it.kmClass).keys.toList() },
     classMetadataListChecker("typeAliases") { it.kmClass.typeAliases.map { typeAlias -> typeAlias.name } },
     classMetadataListChecker("nestedClasses") { it.kmClass.nestedClasses },
-    classMetadataListChecker("enumEntries") { it.kmClass.enumEntries },
+    classMetadataListChecker("enumEntries") { it.kmClass.kmEnumEntries.map { entry -> entry.name } },
     classMetadataListChecker("sealedSubclasses") { it.kmClass.sealedSubclasses },
     classMetadataListChecker("localDelegatedProperties") { loadLocalDelegatedProperties(it).keys.toList() },
 

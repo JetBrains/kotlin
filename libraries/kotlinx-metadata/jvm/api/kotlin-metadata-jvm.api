@@ -364,6 +364,7 @@ public final class kotlin/metadata/KmClass : kotlin/metadata/KmDeclarationContai
 	public fun getFunctions ()Ljava/util/List;
 	public final fun getInlineClassUnderlyingPropertyName ()Ljava/lang/String;
 	public final fun getInlineClassUnderlyingType ()Lkotlin/metadata/KmType;
+	public final fun getKmEnumEntries ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getNestedClasses ()Ljava/util/List;
 	public fun getProperties ()Ljava/util/List;
@@ -482,6 +483,13 @@ public final class kotlin/metadata/KmEffectType : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmEffectType;
 	public static fun values ()[Lkotlin/metadata/KmEffectType;
+}
+
+public final class kotlin/metadata/KmEnumEntry {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun setName (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlin/metadata/KmFlexibleTypeUpperBound {

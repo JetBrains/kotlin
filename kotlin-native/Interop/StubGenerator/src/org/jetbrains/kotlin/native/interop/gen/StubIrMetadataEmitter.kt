@@ -4,13 +4,11 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
-import kotlinx.metadata.klib.KlibEnumEntry
-import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlin.metadata.*
 import kotlinx.metadata.klib.*
-import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.utils.addIfNotNull
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 
 class StubIrMetadataEmitter(
         private val context: StubIrContext,
@@ -132,7 +130,7 @@ internal class ModuleMetadataEmitter(
                     km.constructors += elements.constructors.toList()
                     km.companionObject = element.companion?.nestedName()
                     if (element is ClassStub.Enum) {
-                        element.entries.mapTo(km.klibEnumEntries) { mapEnumEntry(it, classVisitingContext) }
+                        km.kmEnumEntries += element.entries.map { mapEnumEntry(it, classVisitingContext) }
                     }
                 }
             }
@@ -222,13 +220,12 @@ internal class ModuleMetadataEmitter(
                 simpleStubContainer.children.mapNotNull { it.accept(this, data) } +
                         simpleStubContainer.simpleContainers.flatMap { visitSimpleStubContainer(it, data) }
 
-        private fun mapEnumEntry(enumEntry: EnumEntryStub, data: VisitingContext): KlibEnumEntry =
+        private fun mapEnumEntry(enumEntry: EnumEntryStub, data: VisitingContext): KmEnumEntry =
                 data.withMappingExtensions {
-                    KlibEnumEntry(
-                            name = enumEntry.name,
-                            ordinal = enumEntry.ordinal,
-                            annotations = mutableListOf(enumEntry.constant.mapToConstantAnnotation())
-                    )
+                    KmEnumEntry(enumEntry.name).apply {
+                        ordinal = enumEntry.ordinal
+                        annotations.add(enumEntry.constant.mapToConstantAnnotation())
+                    }
                 }
     }
 }
