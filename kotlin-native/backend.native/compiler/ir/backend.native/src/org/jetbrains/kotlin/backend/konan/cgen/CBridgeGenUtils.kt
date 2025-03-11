@@ -87,6 +87,7 @@ internal class KotlinBridgeBuilder(
                 startOffset = bridge.startOffset,
                 endOffset = bridge.endOffset,
                 origin = bridge.origin,
+                kind = IrParameterKind.Regular,
                 name = Name.identifier("p$index"),
                 type = type,
                 isAssignable = false,
@@ -97,7 +98,7 @@ internal class KotlinBridgeBuilder(
                 isHidden = false,
         ).apply {
             parent = bridge
-            bridge.valueParameters += this
+            bridge.parameters += listOf(this)
         }
     }
 
@@ -209,14 +210,7 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
         val arguments = this.arguments.toMutableList()
 
         val kotlinCall = irBuilder.irCall(function).run {
-            if (function.dispatchReceiverParameter != null) {
-                dispatchReceiver = arguments.removeAt(0)
-            }
-            if (function.extensionReceiverParameter != null) {
-                extensionReceiver = arguments.removeAt(0)
-            }
-            assert(arguments.size == function.valueParameters.size)
-            arguments.forEachIndexed { index, it -> putValueArgument(index, it) }
+            arguments.forEachIndexed { idx, arg -> this.arguments[idx] = arg }
 
             transformCall(this)
         }
