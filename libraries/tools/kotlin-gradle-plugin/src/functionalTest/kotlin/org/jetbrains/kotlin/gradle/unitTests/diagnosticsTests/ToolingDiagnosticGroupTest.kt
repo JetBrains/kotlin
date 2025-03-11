@@ -7,18 +7,18 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroups
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import kotlin.test.*
 
 class ToolingDiagnosticGroupTest {
 
     @Test
     fun `kgp groups should have correct group paths`() {
-        val expectedPaths = mapOf(
-            DiagnosticGroups.KGP.Default to "kotlin:kgp",
-            DiagnosticGroups.KGP.Deprecation to "kotlin:kgp:deprecation",
-            DiagnosticGroups.KGP.Misconfiguration to "kotlin:kgp:misconfiguration",
-            DiagnosticGroups.KGP.Experimental to "kotlin:kgp:experimental"
+        val expectedPaths: Map<DiagnosticGroup, String> = mapOf(
+            DiagnosticGroup.Kgp.Default to "kotlin:kgp",
+            DiagnosticGroup.Kgp.Deprecation to "kotlin:kgp:deprecation",
+            DiagnosticGroup.Kgp.Misconfiguration to "kotlin:kgp:misconfiguration",
+            DiagnosticGroup.Kgp.Experimental to "kotlin:kgp:experimental"
         )
 
         expectedPaths.forEach { (group, expectedPath) ->
@@ -30,11 +30,11 @@ class ToolingDiagnosticGroupTest {
 
     @Test
     fun `kgp groups should have correct display names`() {
-        val expectedDisplayNames = mapOf(
-            DiagnosticGroups.KGP.Default to "Kotlin Gradle Plugin",
-            DiagnosticGroups.KGP.Deprecation to "Kotlin Gradle Plugin Deprecation",
-            DiagnosticGroups.KGP.Misconfiguration to "Kotlin Gradle Plugin Misconfiguration",
-            DiagnosticGroups.KGP.Experimental to "Kotlin Gradle Plugin Experimental Feature"
+        val expectedDisplayNames: Map<DiagnosticGroup, String> = mapOf(
+            DiagnosticGroup.Kgp.Default to "Kotlin Gradle Plugin",
+            DiagnosticGroup.Kgp.Deprecation to "Kotlin Gradle Plugin Deprecation",
+            DiagnosticGroup.Kgp.Misconfiguration to "Kotlin Gradle Plugin Misconfiguration",
+            DiagnosticGroup.Kgp.Experimental to "Kotlin Gradle Plugin Experimental Feature"
         )
 
         expectedDisplayNames.forEach { (group, expectedDisplayName) ->
@@ -46,11 +46,11 @@ class ToolingDiagnosticGroupTest {
 
     @Test
     fun `kgp groups should have parent references`() {
-        val expectedParents = mapOf(
-            DiagnosticGroups.KGP.Default to DiagnosticGroups.Kotlin,
-            DiagnosticGroups.KGP.Deprecation to DiagnosticGroups.Kotlin,
-            DiagnosticGroups.KGP.Misconfiguration to DiagnosticGroups.Kotlin,
-            DiagnosticGroups.KGP.Experimental to DiagnosticGroups.Kotlin
+        val expectedParents: Map<DiagnosticGroup, DiagnosticGroup> = mapOf(
+            DiagnosticGroup.Kgp.Default to DiagnosticGroup.KotlinDiagnosticGroup,
+            DiagnosticGroup.Kgp.Deprecation to DiagnosticGroup.KotlinDiagnosticGroup,
+            DiagnosticGroup.Kgp.Misconfiguration to DiagnosticGroup.KotlinDiagnosticGroup,
+            DiagnosticGroup.Kgp.Experimental to DiagnosticGroup.KotlinDiagnosticGroup
         )
 
         expectedParents.forEach { (group, expectedParent) ->
@@ -63,10 +63,10 @@ class ToolingDiagnosticGroupTest {
     @Test
     fun `kgp groups should have unique group ids`() {
         val groupIds = listOf(
-            DiagnosticGroups.KGP.Default.groupId,
-            DiagnosticGroups.KGP.Deprecation.groupId,
-            DiagnosticGroups.KGP.Misconfiguration.groupId,
-            DiagnosticGroups.KGP.Experimental.groupId
+            DiagnosticGroup.Kgp.Default.groupId,
+            DiagnosticGroup.Kgp.Deprecation.groupId,
+            DiagnosticGroup.Kgp.Misconfiguration.groupId,
+            DiagnosticGroup.Kgp.Experimental.groupId
         )
 
         assert(groupIds.toSet().size == groupIds.size) {

@@ -7,17 +7,17 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroups
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import kotlin.test.*
 
 class ToolingDiagnosticGroupEqualTest {
 
     @Test
     fun `kgp groups with different categories are not equal`() {
-        val defaultGroup = DiagnosticGroups.KGP.Default
-        val misconfigurationGroup = DiagnosticGroups.KGP.Misconfiguration
-        val deprecationGroup = DiagnosticGroups.KGP.Deprecation
-        val experimentalGroup = DiagnosticGroups.KGP.Experimental
+        val defaultGroup: DiagnosticGroup = DiagnosticGroup.Kgp.Default
+        val misconfigurationGroup: DiagnosticGroup = DiagnosticGroup.Kgp.Misconfiguration
+        val deprecationGroup: DiagnosticGroup = DiagnosticGroup.Kgp.Deprecation
+        val experimentalGroup: DiagnosticGroup = DiagnosticGroup.Kgp.Experimental
 
         assert(defaultGroup != misconfigurationGroup) { "Default group should not be equal to Misconfiguration group" }
         assert(defaultGroup != deprecationGroup) { "Default group should not be equal to Deprecation group" }
@@ -31,11 +31,11 @@ class ToolingDiagnosticGroupEqualTest {
 
     @Test
     fun `kgp groups should be equal to themselves`() {
-        val groups = listOf(
-            DiagnosticGroups.KGP.Default to DiagnosticGroups.KGP.Default,
-            DiagnosticGroups.KGP.Misconfiguration to DiagnosticGroups.KGP.Misconfiguration,
-            DiagnosticGroups.KGP.Deprecation to DiagnosticGroups.KGP.Deprecation,
-            DiagnosticGroups.KGP.Experimental to DiagnosticGroups.KGP.Experimental
+        val groups: List<Pair<DiagnosticGroup, DiagnosticGroup>> = listOf(
+            DiagnosticGroup.Kgp.Default to DiagnosticGroup.Kgp.Default,
+            DiagnosticGroup.Kgp.Misconfiguration to DiagnosticGroup.Kgp.Misconfiguration,
+            DiagnosticGroup.Kgp.Deprecation to DiagnosticGroup.Kgp.Deprecation,
+            DiagnosticGroup.Kgp.Experimental to DiagnosticGroup.Kgp.Experimental
         )
 
         groups.forEach { (group1, group2) ->
@@ -45,20 +45,20 @@ class ToolingDiagnosticGroupEqualTest {
 
     @Test
     fun `kgp groups should be consistent with hashCode`() {
-        val groups = listOf(
-            DiagnosticGroups.KGP.Default to DiagnosticGroups.KGP.Default,
-            DiagnosticGroups.KGP.Misconfiguration to DiagnosticGroups.KGP.Misconfiguration,
-            DiagnosticGroups.KGP.Deprecation to DiagnosticGroups.KGP.Deprecation,
-            DiagnosticGroups.KGP.Experimental to DiagnosticGroups.KGP.Experimental
+        val groups: List<Pair<DiagnosticGroup, DiagnosticGroup>> = listOf(
+            DiagnosticGroup.Kgp.Default to DiagnosticGroup.Kgp.Default,
+            DiagnosticGroup.Kgp.Misconfiguration to DiagnosticGroup.Kgp.Misconfiguration,
+            DiagnosticGroup.Kgp.Deprecation to DiagnosticGroup.Kgp.Deprecation,
+            DiagnosticGroup.Kgp.Experimental to DiagnosticGroup.Kgp.Experimental
         )
 
-        val distinctGroups = listOf(
-            DiagnosticGroups.KGP.Default to DiagnosticGroups.KGP.Misconfiguration,
-            DiagnosticGroups.KGP.Default to DiagnosticGroups.KGP.Deprecation,
-            DiagnosticGroups.KGP.Default to DiagnosticGroups.KGP.Experimental,
-            DiagnosticGroups.KGP.Misconfiguration to DiagnosticGroups.KGP.Deprecation,
-            DiagnosticGroups.KGP.Misconfiguration to DiagnosticGroups.KGP.Experimental,
-            DiagnosticGroups.KGP.Deprecation to DiagnosticGroups.KGP.Experimental
+        val distinctGroups: List<Pair<DiagnosticGroup, DiagnosticGroup>> = listOf(
+            DiagnosticGroup.Kgp.Default to DiagnosticGroup.Kgp.Misconfiguration,
+            DiagnosticGroup.Kgp.Default to DiagnosticGroup.Kgp.Deprecation,
+            DiagnosticGroup.Kgp.Default to DiagnosticGroup.Kgp.Experimental,
+            DiagnosticGroup.Kgp.Misconfiguration to DiagnosticGroup.Kgp.Deprecation,
+            DiagnosticGroup.Kgp.Misconfiguration to DiagnosticGroup.Kgp.Experimental,
+            DiagnosticGroup.Kgp.Deprecation to DiagnosticGroup.Kgp.Experimental
         )
 
         // Same groups should have same hashCode
