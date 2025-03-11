@@ -48,7 +48,7 @@ dependencies {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        apiVersion = "1.7"
+        apiVersion = "1.8"
         freeCompilerArgs += "-Xsuppress-version-warnings"
     }
 }
