@@ -21,7 +21,7 @@ internal data class ModuleCoordinates(
 
 internal abstract class PomDependenciesRewriter {
 
-    open val taskDependencies: Any? get() = null
+    open val taskDependencies: Provider<Any>? get() = null
 
     abstract fun createDependenciesMappingForEachUsageContext(): List<Map<ModuleCoordinates, ModuleCoordinates>>
 

@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentSelector
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
@@ -25,13 +26,14 @@ internal fun Project.createDefaultPomDependenciesRewriterForTargetComponent(
 }
 
 internal class DefaultPomDependenciesRewriter(
-    private val projectCoordinatesProviders: List<KotlinProjectSharedDataProvider<TargetPublicationCoordinates>>,
+    private val projectCoordinatesProviders: Provider<List<KotlinProjectSharedDataProvider<TargetPublicationCoordinates>>>,
 ) : PomDependenciesRewriter() {
-    override val taskDependencies: Any?
-        get() = projectCoordinatesProviders.map { it.files }.takeIf { it.isNotEmpty() }
+    override val taskDependencies: Provider<Any> = projectCoordinatesProviders.map { providers ->
+        providers.map { it.files }.takeIf { it.isNotEmpty() } as Any
+    }
 
     override fun createDependenciesMappingForEachUsageContext(): List<Map<ModuleCoordinates, ModuleCoordinates>> {
-        return projectCoordinatesProviders.map {
+        return projectCoordinatesProviders.get().map {
             associateDependenciesWithActualModuleDependencies(it)
                 .filter { (from, to) -> from != to }
         }
@@ -88,29 +90,31 @@ private val TargetPublicationCoordinates.GAV.moduleCoordinates
 private fun collectProjectsPublicationCoordinatesFromDependencies(
     project: Project,
     component: KotlinTargetComponent,
-): List<KotlinProjectSharedDataProvider<TargetPublicationCoordinates>> {
+): Provider<List<KotlinProjectSharedDataProvider<TargetPublicationCoordinates>>> {
     val projectDataSharingService = project.kotlinSecondaryVariantsDataSharing
 
-    return component.internal.usages.mapNotNull { usage ->
-        val mavenScope = usage.mavenScope ?: return@mapNotNull null
-        val compilation = usage.compilation
-        val dependenciesConfiguration = project.configurations.getByName(
-            when (compilation) {
-                is KotlinJvmAndroidCompilation -> {
-                    // TODO handle Android configuration names in a general way once we drop AGP < 3.0.0
-                    val variantName = compilation.name
-                    when (mavenScope) {
-                        MavenScope.COMPILE -> variantName + "CompileClasspath"
-                        MavenScope.RUNTIME -> variantName + "RuntimeClasspath"
+    return project.provider {
+        component.internal.usages.mapNotNull { usage ->
+            val mavenScope = usage.mavenScope ?: return@mapNotNull null
+            val compilation = usage.compilation
+            val dependenciesConfiguration = project.configurations.getByName(
+                when (compilation) {
+                    is KotlinJvmAndroidCompilation -> {
+                        // TODO handle Android configuration names in a general way once we drop AGP < 3.0.0
+                        val variantName = compilation.name
+                        when (mavenScope) {
+                            MavenScope.COMPILE -> variantName + "CompileClasspath"
+                            MavenScope.RUNTIME -> variantName + "RuntimeClasspath"
+                        }
+                    }
+                    else -> when (mavenScope) {
+                        MavenScope.COMPILE -> compilation.compileDependencyConfigurationName
+                        MavenScope.RUNTIME -> compilation.runtimeDependencyConfigurationName ?: return@mapNotNull null
                     }
                 }
-                else -> when (mavenScope) {
-                    MavenScope.COMPILE -> compilation.compileDependencyConfigurationName
-                    MavenScope.RUNTIME -> compilation.runtimeDependencyConfigurationName ?: return@mapNotNull null
-                }
-            }
-        )
+            )
 
-        return@mapNotNull projectDataSharingService.consumeTargetPublicationCoordinates(dependenciesConfiguration)
+            projectDataSharingService.consumeTargetPublicationCoordinates(dependenciesConfiguration)
+        }
     }
 }

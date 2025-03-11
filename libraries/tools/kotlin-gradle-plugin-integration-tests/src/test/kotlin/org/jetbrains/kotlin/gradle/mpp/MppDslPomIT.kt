@@ -154,7 +154,6 @@ class MppDslPomIT : KGPBaseTest() {
             }
 
             build(*tasks) {
-                println(projectPath)
                 assertTasksExecuted(*tasks)
                 assertTargetPublicationPomIsCorrect("jvm")
                 assertTargetPublicationPomIsCorrect("linuxX64")
