@@ -27,6 +27,9 @@ class KtTestModule(
     val ktModule: KaModule,
     val psiFiles: List<PsiFile>,
 ) {
+    val name: String
+        get() = testModule.name
+
     val testFiles: List<KtTestFile<PsiFile>>
         get() = testModule.files.map { testFile ->
             val psiFile = psiFiles.firstOrNull { it.name == testFile.name }
