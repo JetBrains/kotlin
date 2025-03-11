@@ -265,7 +265,9 @@ private class CallInlining(
             if (!isLambdaCall(expression))
                 return super.visitCall(expression)
 
-            val dispatchReceiver = expression.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() as IrGetValue
+            // Here `isLambdaCall` guarantees that `expression` is call of `Function.invoke`.
+            // So `expression.arguments.first()` is exactly dispatch receiver and not some other parameter.
+            val dispatchReceiver = expression.arguments.first()?.unwrapAdditionalImplicitCastsIfNeeded() as IrGetValue
             val functionArgument = substituteMap[dispatchReceiver.symbol.owner] ?: return super.visitCall(expression)
             if ((dispatchReceiver.symbol.owner as? IrValueParameter)?.isNoinline == true) return super.visitCall(expression)
 
@@ -468,13 +470,9 @@ private class CallInlining(
         }
 
         fun hasDispatchGetValueReceiver(): Boolean {
-            for (argument in irCall.arguments) {
-                val unwrapped = argument?.unwrapAdditionalImplicitCastsIfNeeded() as? IrGetValue ?: continue
-                val valueParameter = unwrapped.symbol.owner as? IrValueParameter ?: continue
-                if (valueParameter.kind == IrParameterKind.DispatchReceiver) return true
-            }
-
-            return false
+            val firstArgument = irCall.arguments.first()
+            val unwrapped = firstArgument?.unwrapAdditionalImplicitCastsIfNeeded() as? IrGetValue ?: return false
+            return unwrapped.symbol.owner is IrValueParameter
         }
 
         fun IdSignature.isFunctionOrKFunction(): Boolean {
