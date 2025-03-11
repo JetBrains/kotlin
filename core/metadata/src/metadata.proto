@@ -350,6 +350,7 @@ message Function {
   repeated CompilerPluginData compiler_plugin_data = 33;
 
   repeated Annotation annotation = 12;
+  repeated Annotation extension_receiver_annotation = 34;
 
   extensions 100 to 18999;
 }
@@ -412,6 +413,9 @@ message Property {
   repeated Annotation annotation = 14;
   repeated Annotation getter_annotation = 15;
   repeated Annotation setter_annotation = 16;
+  repeated Annotation extension_receiver_annotation = 33;
+  repeated Annotation backing_field_annotation = 34;
+  repeated Annotation delegate_field_annotation = 35;
 
   extensions 100 to 18999;
 }
@@ -466,6 +470,8 @@ message TypeAlias {
 
 message EnumEntry {
   optional int32 name = 1 [(name_id_in_table) = true];
+
+  repeated Annotation annotation = 2;
 
   extensions 100 to 199;
 }

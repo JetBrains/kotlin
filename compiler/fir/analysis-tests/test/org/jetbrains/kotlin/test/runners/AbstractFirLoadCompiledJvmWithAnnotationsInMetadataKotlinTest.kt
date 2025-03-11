@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -64,26 +65,9 @@ private class RemoveAnnotationsExtension : IrGenerationExtension {
     private class Visitor : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            declaration.annotations = emptyList()
-            super.visitClass(declaration)
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            declaration.annotations = emptyList()
-            super.visitFunction(declaration)
-        }
-
-        override fun visitProperty(declaration: IrProperty) {
-            declaration.annotations = emptyList()
-            super.visitProperty(declaration)
-        }
-
-        override fun visitValueParameter(declaration: IrValueParameter) {
-            declaration.annotations = emptyList()
-            super.visitValueParameter(declaration)
+            if (element is IrDeclaration) {
+                element.annotations = emptyList()
+            }
         }
     }
 }

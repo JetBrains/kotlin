@@ -173,6 +173,11 @@ class JvmBinaryAnnotationDeserializer(
         if (signature.isDelegated) {
             return emptyList()
         }
+
+        loadAnnotationsFromMetadata(
+            propertyProto.flags, propertyProto.backingFieldAnnotationList, nameResolver, AnnotationUseSiteTarget.FIELD,
+        )?.let { return it }
+
         return findJvmBinaryClassAndLoadMemberAnnotations(signature).map {
             buildAnnotation {
                 annotationTypeRef = it.annotationTypeRef
@@ -192,6 +197,11 @@ class JvmBinaryAnnotationDeserializer(
         if (!signature.isDelegated) {
             return emptyList()
         }
+
+        loadAnnotationsFromMetadata(
+            propertyProto.flags, propertyProto.delegateFieldAnnotationList, nameResolver, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
+        )?.let { return it }
+
         return findJvmBinaryClassAndLoadMemberAnnotations(signature).map {
             buildAnnotation {
                 annotationTypeRef = it.annotationTypeRef
@@ -250,6 +260,8 @@ class JvmBinaryAnnotationDeserializer(
         enumEntryProto: ProtoBuf.EnumEntry,
         nameResolver: NameResolver,
     ): List<FirAnnotation> {
+        loadAnnotationsFromMetadata(flags = null, enumEntryProto.annotationList, nameResolver)?.let { return it }
+
         val signature = MemberSignature.fromFieldNameAndDesc(
             nameResolver.getString(enumEntryProto.name),
             ClassMapperLite.mapClass(classId.asString())
@@ -264,6 +276,14 @@ class JvmBinaryAnnotationDeserializer(
         typeTable: TypeTable,
         kind: CallableKind
     ): List<FirAnnotation> {
+        when (callableProto) {
+            is ProtoBuf.Function ->
+                loadAnnotationsFromMetadata(flags = null, callableProto.extensionReceiverAnnotationList, nameResolver)
+                    ?.let { return it }
+            is ProtoBuf.Property ->
+                loadAnnotationsFromMetadata(flags = null, callableProto.extensionReceiverAnnotationList, nameResolver)
+                    ?.let { return it }
+        }
         val methodSignature = getCallableSignature(callableProto, nameResolver, typeTable, kind) ?: return emptyList()
         val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
         return findJvmBinaryClassAndLoadMemberAnnotations(paramSignature)
