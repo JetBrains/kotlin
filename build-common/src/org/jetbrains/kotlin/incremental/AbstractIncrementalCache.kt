@@ -35,6 +35,7 @@ interface IncrementalCacheCommon {
     fun getSubtypesOf(className: FqName): Sequence<FqName>
     fun getSupertypesOf(className: FqName): Sequence<FqName>
     fun getSourceFileIfClass(fqName: FqName): File?
+    fun getSourceFilesIfTypealias(fqName: FqName): Collection<File>
     fun markDirty(removedAndCompiledSources: Collection<File>)
     fun clearCacheForRemovedClasses(changesCollector: ChangesCollector)
     fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File>
@@ -56,6 +57,8 @@ abstract class AbstractIncrementalCache<ClassName>(
         private const val SUBTYPES = "subtypes"
         private const val SUPERTYPES = "supertypes"
         private const val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
+        private const val SOURCE_TO_TYPEALIAS_FQ_NAME = "source-to-typealias-fq-name"
+        private const val TYPEALIAS_FQ_NAME_TO_SOURCE = "typealias-fq-name-to-source"
         private const val COMPLEMENTARY_FILES = "complementary-files"
 
         @JvmStatic
@@ -80,6 +83,13 @@ abstract class AbstractIncrementalCache<ClassName>(
     private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile, icContext))
     private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile, icContext))
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, icContext))
+    protected val sourceToTypealiasFqNameTwoWayMap = registerMap(
+        SourceToTypealiasFqNameTwoWayMap(
+            SOURCE_TO_TYPEALIAS_FQ_NAME.storageFile,
+            TYPEALIAS_FQ_NAME_TO_SOURCE.storageFile,
+            icContext
+        )
+    )
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
 
@@ -107,6 +117,9 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     override fun getSourceFileIfClass(fqName: FqName): File? =
         classFqNameToSourceMap[fqName]
+
+    override fun getSourceFilesIfTypealias(fqName: FqName): Collection<File> =
+        sourceToTypealiasFqNameTwoWayMap.getSourceByFqName(fqName)
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
@@ -201,6 +214,90 @@ abstract class AbstractIncrementalCache<ClassName>(
         icContext
     )
 
+
+    /**
+     * Provides fast access to available type aliases both by source file and by `FqName`.
+     * The `getSourceByFqName` is used for fast checking
+     */
+    protected class SourceToTypealiasFqNameTwoWayMap(
+        sourceToTypeAliasStorageFile: File,
+        typeAliasToSourceStorageFile: File,
+        icContext: IncrementalCompilationContext,
+    ) : PersistentStorage<File, Set<FqName>>, BasicMap<File, Set<FqName>> {
+        private val storage = createAppendablePersistentStorage(
+            sourceToTypeAliasStorageFile,
+            icContext.fileDescriptorForSourceFiles,
+            FqNameExternalizer.toDescriptor(),
+            icContext
+        )
+
+        private val fqNameToSourceStorage = createAppendablePersistentStorage(
+            typeAliasToSourceStorageFile,
+            FqNameExternalizer.toDescriptor(),
+            icContext.fileDescriptorForSourceFiles,
+            icContext
+        )
+
+        override val storageFile: File = storage.storageFile
+
+        @get:Synchronized
+        override val keys: Set<File>
+            get() = storage.keys
+
+        @Synchronized
+        override fun contains(key: File): Boolean =
+            storage.contains(key)
+
+        @Synchronized
+        override fun get(key: File): Set<FqName>? {
+            return storage[key]?.toSet()
+        }
+
+        @Synchronized
+        override fun set(key: File, value: Set<FqName>) {
+            storage[key] = value
+            value.forEach { fqNameToSourceStorage.append(it, key) }
+        }
+
+        @Synchronized
+        override fun remove(key: File) {
+            val elements = storage[key]
+            if (elements != null) {
+                storage.remove(key)
+                for (element in elements) {
+                    val originalFiles = fqNameToSourceStorage[element] ?: emptyList()
+                    val newFiles = originalFiles.filterNot { it == key }
+                    if (newFiles.isEmpty()) {
+                        fqNameToSourceStorage.remove(element)
+                    } else if (newFiles.size != originalFiles.size) {
+                        fqNameToSourceStorage[element] = newFiles
+                    }
+                }
+            }
+        }
+
+        @Synchronized
+        override fun flush() {
+            storage.flush()
+            fqNameToSourceStorage.flush()
+        }
+
+        @Synchronized
+        override fun close() {
+            storage.close()
+            fqNameToSourceStorage.close()
+        }
+
+        @Synchronized
+        override fun clean() {
+            storage.clean()
+            fqNameToSourceStorage.clean()
+        }
+
+        @Synchronized
+        fun getSourceByFqName(fqName: FqName): Collection<File> = fqNameToSourceStorage[fqName] ?: emptyList()
+    }
+
     override fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File> {
         val complementaryFiles = HashSet<File>()
         val filesQueue = ArrayDeque(dirtyFiles)
@@ -228,8 +325,6 @@ abstract class AbstractIncrementalCache<ClassName>(
                 val files2add = allSubtypes.mapNotNull { classFqNameToSourceMap[it] }.filter { !processedFiles.contains(it) }
                 filesQueue.addAll(files2add)
             }
-
-
         }
         complementaryFiles.addAll(processedFiles)
         complementaryFiles.removeAll(dirtyFiles)

@@ -432,6 +432,10 @@ class DifferenceCalculatorForPackageFacade(
                 membersResolver(proto).filterNot { it.isPrivate }.names(nameResolver)
             }
         }
+
+        fun PackagePartProtoData.getVisibleTypeAliasFqNames(): List<FqName> {
+            return proto.typeAliasList.filterNot { it.isPrivate }.map { nameResolver.getClassId(it.name).asSingleFqName() }
+        }
     }
 }
 

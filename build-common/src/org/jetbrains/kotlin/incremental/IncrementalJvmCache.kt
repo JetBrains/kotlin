@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.io.BooleanDataDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunction
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
@@ -150,6 +151,16 @@ open class IncrementalJvmCache(
 
                 protoMap.process(kotlinClassInfo, changesCollector)
                 if (!icContext.useCompilerMapsOnly) {
+                    val singleSourceFile = sourceFiles?.singleOrNull()
+                    if (singleSourceFile != null) {
+                        val packagePartProtoData = kotlinClassInfo.protoData as PackagePartProtoData
+                        val visibleTypeAliasFqNames = packagePartProtoData.getVisibleTypeAliasFqNames()
+                        if (visibleTypeAliasFqNames.isNotEmpty()) {
+                            sourceToTypealiasFqNameTwoWayMap[singleSourceFile] = visibleTypeAliasFqNames.toSet()
+                        } else {
+                            sourceToTypealiasFqNameTwoWayMap.remove(singleSourceFile)
+                        }
+                    }
                     constantsMap.process(kotlinClassInfo, changesCollector)
                     inlineFunctionsMap.process(kotlinClassInfo, changesCollector)
                 }
