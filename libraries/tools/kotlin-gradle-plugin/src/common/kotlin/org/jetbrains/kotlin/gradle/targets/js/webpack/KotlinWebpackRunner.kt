@@ -33,7 +33,7 @@ internal data class KotlinWebpackRunner(
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
     private val npmToolingEnvDir: File,
-    private val toolingExtracted: Boolean,
+    private val resolveModulesFromKotlinToolingDir: Boolean,
 ) {
 
     fun execute(): ExecResult {
@@ -121,7 +121,7 @@ internal data class KotlinWebpackRunner(
         val modules = NpmProjectModules(npmToolingEnvDir)
         execSpec.workingDir(npmProject.dir)
         execSpec.executable(npmProject.nodeExecutable)
-        if (toolingExtracted) {
+        if (resolveModulesFromKotlinToolingDir) {
             execSpec.environment("NODE_PATH", npmToolingEnvDir.resolve("node_modules"))
             execSpec.environment("KOTLIN_TOOLING_DIR", npmToolingEnvDir.resolve("node_modules"))
         }
