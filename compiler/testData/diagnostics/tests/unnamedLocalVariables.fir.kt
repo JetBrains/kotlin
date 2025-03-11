@@ -22,8 +22,8 @@ fun foo() {
         val <!UNDERSCORE_IS_RESERVED!>_<!> = <!UNRESOLVED_REFERENCE!>call<!>()
     }
 
-    val _ by lazy { 10 }
-    var _ = writeTo()
+    val _ <!UNNAMED_DELEGATED_PROPERTY!>by<!> lazy { 10 }
+    <!UNNAMED_VAR_PROPERTY!>var<!> _ = writeTo()
 }
 
 class Foo() {

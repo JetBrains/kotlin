@@ -2909,6 +2909,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = LocalExtensionProperty::class
     }
 
+    interface UnnamedVarProperty : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnnamedVarProperty::class
+    }
+
+    interface UnnamedDelegatedProperty : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnnamedDelegatedProperty::class
+    }
+
     interface ExpectedDeclarationWithBody : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }

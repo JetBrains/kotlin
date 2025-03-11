@@ -93,6 +93,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             ContractSyntaxV2PropertyChecker,
             FirVolatileAnnotationChecker,
             FirInlinePropertyChecker,
+            FirUnnamedPropertyChecker,
             FirContextualPropertyWithBackingFieldChecker
         )
 
