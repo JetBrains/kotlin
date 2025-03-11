@@ -6,7 +6,9 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
@@ -135,6 +137,26 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
             app.compile(expectedDirtySet = setOf("callSite.kt"))
             app.execute(mainClass = "CallSiteKt", exactOutput = NEW_LAMBDA_BODY_WITH_DUPLICATED_LAMBDA_USAGE)
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in inlined named class")
+    @TestMetadata("ic-scenarios/inline-local-class/local-named/lib")
+    fun testLocalNamedClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/local-named/lib")
+            val app = module(
+                "ic-scenarios/inline-local-class/local-named/app",
+                dependencies = listOf(lib),
+                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+            )
+            lib.replaceFileWithVersion("inlinedLocalClass.kt", "addNamedClass")
+            lib.compile { module, scenarioModule ->
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*Local classes are not yet supported in inline functions.*".toRegex())
+            }
+            // if at any point local named classes become supported, test the scenario as usual
         }
     }
 
@@ -273,7 +295,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
-    @Disabled("should be fixed if we start snapshotting bytecode")
+    @Disabled("KT-75883 - here callable's code creates a new object so there's no INSTANCE")
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by an anonymous object - slightly evil")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
