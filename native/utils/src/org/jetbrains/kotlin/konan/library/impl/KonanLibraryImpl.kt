@@ -97,7 +97,7 @@ fun createKonanLibrary(
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val targeted = TargetedLibraryImpl(targetedAccess, base)
     val metadata = MetadataLibraryImpl(metadataAccess)
-    val ir = IrMonoliticLibraryImpl(irAccess)
+    val ir = IrLibraryImpl(irAccess)
     val bitcode = BitcodeLibraryImpl(bitcodeAccess, targeted)
 
     return KonanLibraryImpl(targeted, metadata, ir, bitcode)

@@ -84,22 +84,19 @@ class MetadataLibraryImpl(
         }
 }
 
-abstract class IrLibraryImpl(
-    val access: IrLibraryAccess<IrKotlinLibraryLayout>
-) : IrLibrary {
+class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibrary {
     override val hasIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
             it.irDir.exists
         }
     }
+
     override val hasFileEntriesTable: Boolean by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
             it.irFileEntries.exists
         }
     }
-}
 
-class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibraryImpl(_access) {
     override fun fileCount(): Int = files.entryCount()
 
     override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)
@@ -230,7 +227,7 @@ fun createKotlinLibrary(
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val metadata = MetadataLibraryImpl(metadataAccess)
-    val ir = IrMonoliticLibraryImpl(irAccess)
+    val ir = IrLibraryImpl(irAccess)
 
     return KotlinLibraryImpl(base, metadata, ir)
 }
