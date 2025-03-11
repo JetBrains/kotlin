@@ -4110,6 +4110,28 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
     public void testTopLevelFunctionCall() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/topLevelFunctionCall.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FallbackDependencies {
+      @Test
+      public void testAllFilesPresentInFallbackDependencies() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "globallyDuplicateLibraries");
+      }
+
+      @Test
+      @TestMetadata("memberFunctionCall.kt")
+      public void testMemberFunctionCall() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies/memberFunctionCall.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunctionCall.kt")
+      public void testTopLevelFunctionCall() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency/fallbackDependencies/topLevelFunctionCall.kt");
+      }
+    }
   }
 
   @Nested
