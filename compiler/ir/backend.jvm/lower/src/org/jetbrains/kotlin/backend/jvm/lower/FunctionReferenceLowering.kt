@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ir.getAnnotationTargets
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -118,6 +120,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         val indySamConversion = wrapWithIndySamConversion(reference.type, lambdaMetafactoryArguments)
         expression.statements[expression.statements.size - 1] = indySamConversion
         expression.type = indySamConversion.type
+        reference.symbol.owner.annotations = reference.symbol.owner.annotations.filter { annotation ->
+            annotation.symbol.owner.returnType.classOrNull?.owner?.getAnnotationTargets().orEmpty().any { it == KotlinTarget.EXPRESSION }
+        }
         return expression
     }
 

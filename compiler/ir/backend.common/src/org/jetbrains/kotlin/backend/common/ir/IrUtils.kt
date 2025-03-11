@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -19,7 +21,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
@@ -70,7 +75,7 @@ fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclaration
 fun IrExpression?.isPure(
     anyVariable: Boolean,
     checkFields: Boolean = true,
-    symbols: Symbols? = null
+    symbols: Symbols? = null,
 ): Boolean {
     if (this == null) return true
 
@@ -115,7 +120,7 @@ fun IrExpression?.isPure(
 fun CommonBackendContext.createArrayOfExpression(
     startOffset: Int, endOffset: Int,
     arrayElementType: IrType,
-    arrayElements: List<IrExpression>
+    arrayElements: List<IrExpression>,
 ): IrExpression {
 
     val arrayType = symbols.array.typeWith(arrayElementType)
@@ -143,3 +148,24 @@ fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
 val IrFile.isJvmBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotations.JvmBuiltin)
 
 val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)
+
+/**
+ * @return null - if [this] class is not an annotation class ([isAnnotationClass])
+ * set of [KotlinTarget] representing the annotation targets of the annotation
+ * ```
+ * @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
+ * annotation class Foo
+ * ```
+ *
+ * shall return Class, Function, Property & Constructor
+ */
+fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
+    if (!this.isAnnotationClass) return null
+
+    val valueArgument = getAnnotation(StandardNames.FqNames.target)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
+        ?: return KotlinTarget.DEFAULT_TARGET_SET
+    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
+        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
+    }.toSet()
+}

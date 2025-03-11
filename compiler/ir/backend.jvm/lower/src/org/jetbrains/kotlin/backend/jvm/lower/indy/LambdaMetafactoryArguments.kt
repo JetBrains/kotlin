@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.indyAllowAnnotatedLambdas
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -72,13 +73,13 @@ internal class LambdaMetafactoryArguments(
     val fakeInstanceMethod: IrSimpleFunction,
     val implMethodReference: IrFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>,
-    val shouldBeSerializable: Boolean
+    val shouldBeSerializable: Boolean,
 ) : MetafactoryArgumentsResult.Success()
 
 
 internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
-    private val crossinlineLambdas: Set<IrSimpleFunction>
+    private val crossinlineLambdas: Set<IrSimpleFunction>,
 ) {
     private val isJavaSamConversionWithEqualsHashCode =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
@@ -90,7 +91,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         reference: IrFunctionReference,
         samType: IrType,
         plainLambda: Boolean,
-        forceSerializability: Boolean
+        forceSerializability: Boolean,
     ): MetafactoryArgumentsResult {
         val samClass = samType.getClass()
             ?: throw AssertionError("SAM type is not a class: ${samType.render()}")
@@ -167,11 +168,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
             functionHazard = true
         }
 
+        // Previously instances of lambdas retained annotations:
         // Can't use JDK LambdaMetafactory for annotated lambdas.
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
-        // TODO relaxed mode?
-        if (reference.origin.isLambda && implFun.annotations.isNotEmpty()) {
+        // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
+        if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.isNotEmpty()) {
             abiHazard = true
         }
 
@@ -250,7 +252,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         samMethod: IrSimpleFunction,
         samType: IrType,
         implFun: IrFunction,
-        shouldBeSerializable: Boolean
+        shouldBeSerializable: Boolean,
     ): LambdaMetafactoryArguments? {
         val nonFakeOverriddenFuns = samMethod.allOverridden().filterNot { it.isFakeOverride }
         val relevantOverriddenFuns = if (samMethod.isFakeOverride) nonFakeOverriddenFuns else nonFakeOverriddenFuns + samMethod
@@ -355,7 +357,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         implFun: IrFunction,
         fakeInstanceMethod: IrSimpleFunction,
         constraints: SignatureAdaptationConstraints,
-        reference: IrFunctionReference
+        reference: IrFunctionReference,
     ): Boolean {
         val implParameters = collectValueParameters(
             implFun,
@@ -389,7 +391,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         when (origin) {
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
             JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY,
-            JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY -> true
+            JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY,
+                -> true
             IrDeclarationOrigin.LOCAL_FUNCTION -> isAnonymousFunction
             else -> false
         }
@@ -397,7 +400,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private fun adaptLambdaSignature(
         implFun: IrSimpleFunction,
         fakeInstanceMethod: IrSimpleFunction,
-        constraints: SignatureAdaptationConstraints
+        constraints: SignatureAdaptationConstraints,
     ) {
         if (!implFun.isAdaptable()) {
             throw AssertionError("Function origin should be adaptable: ${implFun.dump()}")
@@ -439,7 +442,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         implParameters: List<IrValueParameter>,
         methodParameters: List<IrValueParameter>,
         implFun: IrFunction,
-        fakeInstanceMethod: IrSimpleFunction
+        fakeInstanceMethod: IrSimpleFunction,
     ) {
         if (implParameters.size != methodParameters.size)
             throw AssertionError(
@@ -497,7 +500,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private class SignatureAdaptationConstraints(
         val valueParameters: Map<IrValueParameter, TypeAdaptationConstraint>,
-        val returnType: TypeAdaptationConstraint?
+        val returnType: TypeAdaptationConstraint?,
     ) {
         fun hasConflicts() =
             returnType == TypeAdaptationConstraint.CONFLICT ||
@@ -506,7 +509,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun computeSignatureAdaptationConstraints(
         adapteeFun: IrSimpleFunction,
-        expectedFun: IrSimpleFunction
+        expectedFun: IrSimpleFunction,
     ): SignatureAdaptationConstraints? {
         val returnTypeConstraint = computeReturnTypeAdaptationConstraint(adapteeFun, expectedFun)
         if (returnTypeConstraint == TypeAdaptationConstraint.CONFLICT)
@@ -605,7 +608,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun computeReturnTypeAdaptationConstraint(
         adapteeFun: IrSimpleFunction,
-        expectedFun: IrSimpleFunction
+        expectedFun: IrSimpleFunction,
     ): TypeAdaptationConstraint? {
         val adapteeReturnType = adapteeFun.returnType
         if (adapteeReturnType.isUnit()) {
@@ -623,7 +626,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun joinSignatureAdaptationConstraints(
         sig1: SignatureAdaptationConstraints,
-        sig2: SignatureAdaptationConstraints
+        sig2: SignatureAdaptationConstraints,
     ): SignatureAdaptationConstraints? {
         val newReturnTypeConstraint = composeTypeAdaptationConstraints(sig1.returnType, sig2.returnType)
         if (newReturnTypeConstraint == TypeAdaptationConstraint.CONFLICT)
@@ -668,7 +671,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     fun collectValueParameters(
         irFun: IrFunction,
         withDispatchReceiver: Boolean = false,
-        withExtensionReceiver: Boolean = true
+        withExtensionReceiver: Boolean = true,
     ): List<IrValueParameter> {
         if ((!withDispatchReceiver || irFun.dispatchReceiverParameter == null) &&
             (!withExtensionReceiver || irFun.extensionReceiverParameter == null)

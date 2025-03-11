@@ -33428,6 +33428,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("lambdaWithAnnotations.kt")
+      public void testLambdaWithAnnotations() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaWithAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaWithAnnotations_target_expression_target.kt")
+      public void testLambdaWithAnnotations_target_expression_target() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaWithAnnotations_target_expression_target.kt");
+      }
+
+      @Test
       @TestMetadata("nestedIndyLambdas.kt")
       public void testNestedIndyLambdas() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nestedIndyLambdas.kt");

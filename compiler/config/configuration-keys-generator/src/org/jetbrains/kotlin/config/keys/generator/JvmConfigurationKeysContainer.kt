@@ -62,6 +62,8 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
 
     val LAMBDAS by key<JvmClosureGenerationScheme>("Lambdas code generation scheme")
 
+    val INDY_ALLOW_ANNOTATED_LAMBDAS by key<Boolean>("Allow using indy for lambdas with annotations")
+
     val KLIB_PATHS by key<List<String>>("Paths to .klib libraries")
 
     val ABI_STABILITY by key<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR")
