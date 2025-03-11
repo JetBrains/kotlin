@@ -279,7 +279,7 @@ internal abstract class ScriptLikeToClassTransformer(
         declaration.apply {
             if (declaration in capturingClassesConstructors) {
                 declaration.dispatchReceiverParameter =
-                    declaration.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, targetClassReceiver.type)
+                    declaration.createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, targetClassReceiver.type)
             }
             transformParent()
             transformFunctionChildren(data)
