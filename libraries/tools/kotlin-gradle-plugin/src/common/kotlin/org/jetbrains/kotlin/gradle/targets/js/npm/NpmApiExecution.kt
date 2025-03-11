@@ -39,21 +39,6 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
 
     fun prepareTooling(dir: File)
 
-    @Deprecated(
-        "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
-        ReplaceWith("packageManagerExec(logger, nodeJs, environment, dir, description, args)"),
-    )
-    @Suppress("unused")
-    fun packageManagerExec(
-        services: ServiceRegistry,
-        logger: Logger,
-        nodeJs: NodeJsEnvironment,
-        environment: @UnsafeVariance T,
-        dir: File,
-        description: String,
-        args: List<String>,
-    )
-
     fun packageManagerExec(
         logger: Logger,
         nodeJs: NodeJsEnvironment,

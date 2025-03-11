@@ -27,12 +27,12 @@ abstract class YarnBasics internal constructor(
         ReplaceWith("packageManagerExec(logger, nodeJs, yarn, dir, description, args)")
     )
     @Suppress("unused")
-    override fun packageManagerExec(
+    fun yarnExec(
         @Suppress("UNUSED_PARAMETER")
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        environment: YarnEnvironment,
+        yarn: YarnEnvironment,
         dir: File,
         description: String,
         args: List<String>,
@@ -40,7 +40,7 @@ abstract class YarnBasics internal constructor(
         packageManagerExec(
             logger = logger,
             nodeJs = nodeJs,
-            environment = environment,
+            environment = yarn,
             dir = objects.property<File>().value(dir),
             description = description,
             args = args,
