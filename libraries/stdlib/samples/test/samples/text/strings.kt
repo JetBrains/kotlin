@@ -465,8 +465,10 @@ class Strings {
         assertTrue("K" in string)
         assertFalse("k" in string)
 
-        assertTrue("1.4" in string)
-        assertFalse("Z" in string)
+        assertTrue("" in string)
+        assertTrue(string in string)
+        assertTrue("" in "")
+        assertFalse(string in "Kotlin")
 
         assertTrue(string.contains("k", ignoreCase = true))
     }
