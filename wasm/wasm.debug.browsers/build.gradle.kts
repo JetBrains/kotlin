@@ -1,4 +1,5 @@
 import com.github.gradle.node.npm.task.NpxTask
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 
 description = "Simple Kotlin/Wasm devtools formatters"
 
@@ -39,12 +40,22 @@ val npmBuild by tasks.registering(NpxTask::class) {
 
     dependsOn(tasks.npmInstall)
 
-    command.set("rollup")
-    workingDir.set(projectDir)
-    args.set(listOf("-c", "rollup.config.mjs", "--silent"))
-    environment.set(mapOf("NODE_OPTIONS" to "--disable-warning=ExperimentalWarning"))
+    val rollupConfigMjsFile = file("rollup.config.mjs")
+    inputs.file(rollupConfigMjsFile)
+        .withPropertyName("rollupConfigMjsFile")
+        .normalizeLineEndings()
+        .withPathSensitivity(RELATIVE)
 
     inputs.dir("src")
+        .withPropertyName("src")
+        .normalizeLineEndings()
+        .withPathSensitivity(RELATIVE)
+
+    command.set("rollup")
+    workingDir.set(projectDir)
+    args.set(listOf("-c", rollupConfigMjsFile.name, "--silent"))
+    environment.set(mapOf("NODE_OPTIONS" to "--disable-warning=ExperimentalWarning"))
+
     outputs.file("build/out/custom-formatters.js")
 }
 
