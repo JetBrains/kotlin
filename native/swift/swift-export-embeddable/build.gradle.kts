@@ -18,6 +18,7 @@ dependencies {
     embedded(project(":native:swift:sir-providers")) { isTransitive = false }
     embedded(project(":native:swift:swift-export-standalone")) { isTransitive = false }
     embedded(project(":native:analysis-api-klib-reader")) { isTransitive = false }
+    embedded(project(":native:analysis-api-based-export-common")) { isTransitive = false }
 
     // FIXME: Stop embedding Analysis API after KT-61404
     val lowLevelApiFir = ":analysis:low-level-api-fir"
