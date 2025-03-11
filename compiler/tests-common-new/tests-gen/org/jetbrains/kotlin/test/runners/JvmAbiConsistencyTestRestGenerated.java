@@ -16096,6 +16096,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("classInheritorCapturesProperty.kts")
+      public void testClassInheritorCapturesProperty() {
+        runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classInheritorCapturesProperty.kts");
+      }
+
+      @Test
       @TestMetadata("companionCapturesProperty.kts")
       public void testCompanionCapturesProperty() {
         runTest("compiler/testData/codegen/script/scriptInstanceCapturing/companionCapturesProperty.kts");
