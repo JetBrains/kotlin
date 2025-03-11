@@ -50,5 +50,11 @@
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>analysis-api-based-export-common</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 </project>
