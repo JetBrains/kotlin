@@ -21,6 +21,9 @@ kotlin {
         browser()
 
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin) {
+            def nodeJsExecutable = rootProject.extensions.findByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec)
+            .executable
+
             def mainCompilation = compilations["main"]
 
             tasks.register("runWebpack", Exec) {
@@ -33,7 +36,7 @@ kotlin {
                 doFirst {
                     def modules = new NpmProjectModules(npmProject.dir.get().getAsFile(), [], [], [])
                     it.workingDir(npmProject.dir)
-                    it.executable(npmProject.nodeExecutable)
+                    it.executable(nodeJsExecutable.get())
                     it.args = [modules.require("webpack/bin/webpack.js")]
                 }
             }

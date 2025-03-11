@@ -63,11 +63,12 @@ kotlin {
 
                 val workDir = webpackTask.flatMap { it.outputDirectory.asFile }
 
-                val npmProject = mainCompilation.npmProject
+                val nodeJsExecutable = rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>()
+                    .executable
                 val projectName = project.name
                 doFirst {
                     this as Exec
-                    this.executable(npmProject.nodeExecutable)
+                    this.executable(nodeJsExecutable.get())
                     this.args = listOf("./$projectName.js")
                     workingDir(workDir)
                 }
