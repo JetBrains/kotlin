@@ -33398,6 +33398,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("jvmSerializableLambda_indyAllowAnnotatedLambdas.kt")
+      public void testJvmSerializableLambda_indyAllowAnnotatedLambdas() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/jvmSerializableLambda_indyAllowAnnotatedLambdas.kt");
+      }
+
+      @Test
       @TestMetadata("kt52875.kt")
       public void testKt52875() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
@@ -33425,6 +33431,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("lambdaToSting.kt")
       public void testLambdaToSting() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaToSting.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaWithAnnotations.kt")
+      public void testLambdaWithAnnotations() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaWithAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaWithAnnotations_target_expression_target.kt")
+      public void testLambdaWithAnnotations_target_expression_target() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaWithAnnotations_target_expression_target.kt");
       }
 
       @Test

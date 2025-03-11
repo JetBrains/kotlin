@@ -111,6 +111,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
+    put(JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS, arguments.indyAllowAnnotatedLambdas ?: false)
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
@@ -200,7 +201,7 @@ fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
     stdlibPath: (PathProvider) -> File,
     scriptRuntimePath: (PathProvider) -> File,
     reflectPath: (PathProvider) -> File,
-    arguments: K2JVMCompilerArguments
+    arguments: K2JVMCompilerArguments,
 ) {
     val jdkRelease = get(JVMConfigurationKeys.JDK_RELEASE)
     val isModularJava = isModularJava() && (jdkRelease == null || jdkRelease >= 9)
@@ -242,7 +243,7 @@ fun CompilerConfiguration.addModularRootIfNotNull(isModularJava: Boolean, module
 }
 
 fun KotlinCoreEnvironment.registerJavacIfNeeded(
-    arguments: K2JVMCompilerArguments
+    arguments: K2JVMCompilerArguments,
 ): Boolean {
     if (arguments.useJavac) {
         configuration.put(JVMConfigurationKeys.USE_JAVAC, true)

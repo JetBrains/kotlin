@@ -32,6 +32,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.expression = from.expression
     to.friendPaths = from.friendPaths?.copyOf()
     to.includeRuntime = from.includeRuntime
+    to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas
     to.inheritMultifileParts = from.inheritMultifileParts
     to.javaModulePath = from.javaModulePath
     to.javaPackagePrefix = from.javaPackagePrefix

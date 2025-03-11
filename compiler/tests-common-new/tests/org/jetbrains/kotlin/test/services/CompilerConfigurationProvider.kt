@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
-import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 import java.io.File
 
 abstract class CompilerConfigurationProvider(val testServices: TestServices) : TestService {
@@ -70,7 +70,7 @@ val TestServices.compilerConfigurationProvider: CompilerConfigurationProvider by
 open class CompilerConfigurationProviderImpl(
     testServices: TestServices,
     override val testRootDisposable: Disposable,
-    override val configurators: List<AbstractEnvironmentConfigurator>
+    override val configurators: List<AbstractEnvironmentConfigurator>,
 ) : CompilerConfigurationProvider(testServices) {
     private val environmentCache: MutableMap<TestModule, KotlinCoreEnvironment> = mutableMapOf()
     private val configurationCache: MutableMap<TestModule, CompilerConfiguration> = mutableMapOf()
@@ -169,6 +169,11 @@ fun createCompilerConfiguration(
     configuration.languageVersionSettings = module.languageVersionSettings
 
     configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module) }
+
+    configuration.put(
+        JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS,
+        CodegenTestDirectives.JVM_INDY_ALLOW_ANNOTATED_LAMBDAS in module.directives
+    )
 
     return configuration
 }
