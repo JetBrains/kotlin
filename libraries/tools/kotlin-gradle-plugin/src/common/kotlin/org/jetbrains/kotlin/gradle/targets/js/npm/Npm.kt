@@ -122,7 +122,7 @@ class Npm internal constructor(
         ReplaceWith("packageManagerExec(logger, nodeJs, environment, dir, description, args)"),
     )
     @Suppress("unused")
-    override fun packageManagerExec(
+    fun npmExec(
         @Suppress("UNUSED_PARAMETER")
         services: ServiceRegistry,
         logger: Logger,

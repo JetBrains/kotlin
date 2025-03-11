@@ -15,15 +15,7 @@ class Yarn internal constructor(
 ) : NpmApiExecution<YarnEnvironment> by YarnWorkspaces(
     execOps,
     objects,
-)
-
-/*
-
-class Yarn internal constructor(
-    execOps: ExecOperations,
-    objects: ObjectFactory,
-) : NpmApiExecution<YarnEnvironment> {
-
+) {
     /**
      * Manually creating new instances of this class is deprecated.
      *
@@ -46,45 +38,4 @@ class Yarn internal constructor(
         execOps = error("Cannot create instance of Npm. Constructor is deprecated."),
         objects = error("Cannot create instance of Npm. Constructor is deprecated."),
     )
-
-    private val yarnWorkspaces = YarnWorkspaces(
-        execOps = execOps,
-        objects = objects,
-    )
-
-    override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> =
-        yarnWorkspaces.preparedFiles(nodeJs)
-
-    override fun prepareRootProject(
-        nodeJs: NodeJsEnvironment,
-        packageManagerEnvironment: YarnEnvironment,
-        rootProjectName: String,
-        rootProjectVersion: String,
-        subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-    ) = yarnWorkspaces
-        .prepareRootProject(
-            nodeJs,
-            packageManagerEnvironment,
-            rootProjectName,
-            rootProjectVersion,
-            subProjects,
-        )
-
-    override fun resolveRootProject(
-        services: ServiceRegistry,
-        logger: Logger,
-        nodeJs: NodeJsEnvironment,
-        packageManagerEnvironment: YarnEnvironment,
-        cliArgs: List<String>,
-    ) {
-        yarnWorkspaces
-            .resolveRootProject(
-                services,
-                logger,
-                nodeJs,
-                packageManagerEnvironment,
-                cliArgs
-            )
-    }
 }
- */
