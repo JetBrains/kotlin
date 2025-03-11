@@ -112,8 +112,13 @@ class TestRunProvider(
         fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+            TestKind.STANDALONE_NO_TR -> {
                 val testRunName = (testCase.extras<NoTestRunnerExtras>().entryPoint ?: "main").substringAfterLast('.')
+                val testRun = createTestRun(testRunName, testName = null)
+                TreeNode.oneLevel(testRun)
+            }
+            TestKind.STANDALONE_LLDB -> {
+                val testRunName = (testCase.extras<TestCase.WithLLDBExtras>().entryPoint ?: "main").substringAfterLast('.')
                 val testRun = createTestRun(testRunName, testName = null)
                 TreeNode.oneLevel(testRun)
             }

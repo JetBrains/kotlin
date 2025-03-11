@@ -303,6 +303,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         )
         val spec = LLDBSessionSpec.parse(lldbSpec)
         val moduleForTestCase = TestModule.Exclusive(testName, emptySet(), emptySet(), emptySet())
+        val lldb = testRunSettings.get<LLDB>()
         val testCase = TestCase(
             id = TestCaseId.Named(testName),
             kind = TestKind.STANDALONE_LLDB,
@@ -312,9 +313,9 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
                 outputMatcher = spec.let { TestRunCheck.OutputMatcher { output -> spec.checkLLDBOutput(output, testRunSettings.get()) } }
             ),
-            extras = TestCase.NoTestRunnerExtras(
-                "main",
-                arguments = spec.generateCLIArguments(testRunSettings.get<LLDB>().prettyPrinters)
+            extras = TestCase.WithLLDBExtras(
+                lldb = lldb.executable,
+                arguments = spec.generateCLIArguments(lldb.prettyPrinters)
             )
         ).apply { initialize(null, null) }
 

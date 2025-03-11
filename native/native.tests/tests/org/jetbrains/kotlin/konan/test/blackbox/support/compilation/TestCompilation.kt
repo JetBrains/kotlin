@@ -655,6 +655,9 @@ class ExecutableCompilation(
             is NoTestRunnerExtras -> extras.entryPoint?.let {
                 add("-entry", it)
             }
+            is WithLLDBExtras -> extras.entryPoint?.let {
+                add("-entry", it)
+            }
             is WithTestRunnerExtras -> {
                 val testDumpFile: File? = if (sourceModules.isEmpty()
                     && dependencies.includedLibraries.isNotEmpty()
@@ -833,7 +836,7 @@ internal class TestBundleCompilation(
             "-Xbinary=bundleId=com.jetbrains.kotlin.${expectedArtifact.bundleDir.nameWithoutExtension}"
         )
         when (extras) {
-            is NoTestRunnerExtras -> error("XCTest supports only TestRunner extras")
+            is NoTestRunnerExtras, is WithLLDBExtras -> error("XCTest supports only TestRunner extras")
             is WithTestRunnerExtras -> {
                 val testDumpFile: File? = if (sourceModules.isEmpty()
                     && dependencies.includedLibraries.isNotEmpty()

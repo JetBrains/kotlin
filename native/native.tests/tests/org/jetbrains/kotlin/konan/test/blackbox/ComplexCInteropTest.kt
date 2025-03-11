@@ -430,6 +430,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val testKind = when (extras) {
             is TestCase.NoTestRunnerExtras -> TestKind.STANDALONE_NO_TR
             is TestCase.WithTestRunnerExtras -> TestKind.STANDALONE
+            is TestCase.WithLLDBExtras -> error("lldb tests are not supported here")
         }
         val testCase = TestCase(
             id = TestCaseId.Named(testName),

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithLLDBExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
@@ -33,9 +34,10 @@ open class BaseTestRunProvider {
         when (testCase.kind) {
             TestKind.STANDALONE_LLDB -> {
                 assertTrue(testName == null)
+                val extras = testCase.extras<WithLLDBExtras>()
                 // Note: TestRunParameter.WithLLDB adds program arguments and would therefore conflict
                 // with other TestRunParameters that do the same (such as WithTCTestLogger).
-                add(TestRunParameter.WithLLDB(testCase.extras<NoTestRunnerExtras>().arguments))
+                add(TestRunParameter.WithLLDB(extras.lldb, extras.arguments))
             }
             TestKind.STANDALONE_NO_TR -> {
                 assertTrue(testName == null)

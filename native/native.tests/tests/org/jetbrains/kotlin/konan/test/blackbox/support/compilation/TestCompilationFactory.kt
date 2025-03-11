@@ -80,7 +80,7 @@ class TestCompilationFactory {
                     No
                 else
                     when (extras) {
-                        is NoTestRunnerExtras -> Yes.Regular
+                        is NoTestRunnerExtras, is WithLLDBExtras -> Yes.Regular
                         is WithTestRunnerExtras -> Yes.ForIncludedKlibWithTests(
                             StaticCacheCompilation.Options.ForIncludedLibraryWithTests(expectedExecutableArtifact, extras)
                         )

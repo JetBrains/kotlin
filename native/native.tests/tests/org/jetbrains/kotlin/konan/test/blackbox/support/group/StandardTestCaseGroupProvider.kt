@@ -254,7 +254,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                     WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
                 }
                 TestKind.STANDALONE_LLDB -> {
-                    NoTestRunnerExtras(
+                    val lldb = settings.get<LLDB>()
+                    TestCase.WithLLDBExtras(
+                        lldb = lldb.executable,
                         entryPoint = parseEntryPoint(registeredDirectives, location),
                         arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
                     )

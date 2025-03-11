@@ -101,7 +101,6 @@ object NativeTestSupport {
                 nativeHome,
                 RegularKotlinNativeClassLoader.kotlinNativeClassLoader,
                 computeBaseDirs(),
-                LLDB(nativeHome),
                 computeReleasedCompiler()
             )
         } as TestProcessSettings
@@ -242,6 +241,7 @@ object NativeTestSupport {
         output += computeCInterfaceMode(enforcedProperties)
         output += computeXCTestRunner(enforcedProperties, nativeTargets)
         output += computeKlibIrInlinerMode(tags)
+        output += LLDB(nativeHome, nativeTargets)
 
         // Compute tests timeouts with regard to already calculated properties that may affect execution time
         output += computeTimeouts(enforcedProperties, output)

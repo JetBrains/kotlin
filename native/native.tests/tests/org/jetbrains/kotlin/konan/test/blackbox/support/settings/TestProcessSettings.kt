@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildConfigurables
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -42,12 +44,21 @@ class KotlinNativeHome(val dir: File) {
     }
 }
 
-internal class LLDB(nativeHome: KotlinNativeHome) {
+internal class LLDB(nativeHome: KotlinNativeHome, nativeTargets: KotlinNativeTargets) {
+    val executable: String = buildConfigurables(nativeHome, nativeTargets).let { configurables ->
+        val root = if (configurables is AppleConfigurables) {
+            configurables.absoluteAdditionalToolsDir
+        } else {
+            configurables.absoluteLlvmHome
+        }
+        "$root/bin/lldb"
+    }
+
     val prettyPrinters: File = nativeHome.dir.resolve("tools/konan_lldb.py")
 
     val isAvailable: Boolean by lazy {
         try {
-            val exitCode = ProcessBuilder("lldb", "-version").start().waitFor()
+            val exitCode = ProcessBuilder(executable, "-version").start().waitFor()
             exitCode == 0
         } catch (e: IOException) {
             false

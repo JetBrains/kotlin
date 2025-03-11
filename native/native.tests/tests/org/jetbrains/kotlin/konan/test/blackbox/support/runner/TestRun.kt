@@ -120,9 +120,9 @@ sealed interface TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
     }
 
-    class WithLLDB(val commands: List<String>) : TestRunParameter {
+    class WithLLDB(val lldb: String, val commands: List<String>) : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) {
-            programArgs.add(0, "lldb")
+            programArgs.add(0, lldb)
             programArgs.addAll(commands)
         }
     }

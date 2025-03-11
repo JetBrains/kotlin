@@ -236,11 +236,13 @@ class TestCase(
     sealed interface Extras
     class NoTestRunnerExtras(val entryPoint: String? = null, val inputDataFile: File? = null, val arguments: List<String> = emptyList()) : Extras
     class WithTestRunnerExtras(val runnerType: TestRunnerType, val ignoredTests: Set<String> = emptySet()) : Extras
+    class WithLLDBExtras(val lldb: String, val entryPoint: String? = null, val arguments: List<String> = emptyList()) : Extras
 
     init {
         when (kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> assertTrue(extras is NoTestRunnerExtras)
+            TestKind.STANDALONE_NO_TR -> assertTrue(extras is NoTestRunnerExtras)
             TestKind.REGULAR, TestKind.STANDALONE -> assertTrue(extras is WithTestRunnerExtras)
+            TestKind.STANDALONE_LLDB -> assertTrue(extras is WithLLDBExtras)
         }
     }
 
