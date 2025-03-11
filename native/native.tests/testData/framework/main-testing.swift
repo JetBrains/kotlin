@@ -41,14 +41,12 @@ struct TestHarness {
         }
 
         let swiftTestingMain = unsafeBitCast(swiftTestingMainGetter(), to: EntryPoint.self)
-        nonisolated(unsafe) let configuration: UnsafeRawBufferPointer? = nil
 
         // NOTE: we disable parallelization here since the current set of tests in /execution was written with no concurrency in mind
         let config = """
             {
                 "verbosity": 2,
-                "parallel": false,
-                "symbolicateBacktraces": true
+                "parallel": false
             }
             """.data(using: .utf8)!
 
