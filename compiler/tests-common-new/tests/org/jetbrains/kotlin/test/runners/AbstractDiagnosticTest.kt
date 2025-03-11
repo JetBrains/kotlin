@@ -109,6 +109,8 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/testData/diagnostics/tests/crv/*") {
             defaultDirectives {
                 RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.CHECKER
+                +WITH_EXTRA_CHECKERS
+                DIAGNOSTICS with "-UNUSED_VARIABLE"
             }
         }
 
