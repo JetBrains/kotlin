@@ -220,6 +220,11 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     public var receiverParameterType: KmType? = null
 
     /**
+     * Annotations on the extension receiver of the function, if this is an extension function.
+     */
+    public val extensionReceiverParameterAnnotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
      * Types of context receivers of the function.
      */
     @ExperimentalContextReceivers
@@ -325,6 +330,11 @@ public class KmProperty internal constructor(
     public var receiverParameterType: KmType? = null
 
     /**
+     * Annotations on the extension receiver of the property, if this is an extension property.
+     */
+    public val extensionReceiverParameterAnnotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
      * Types of context receivers of the property.
      */
     @ExperimentalContextReceivers
@@ -357,6 +367,16 @@ public class KmProperty internal constructor(
      * Annotations on the property.
      */
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
+     * Annotations on the property's backing field, or empty list if the property doesn't have one.
+     */
+    public val backingFieldAnnotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
+     * Annotations on the property's delegate field, or empty list if the property is not delegated.
+     */
+    public val delegateFieldAnnotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmPropertyExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPropertyExtension)

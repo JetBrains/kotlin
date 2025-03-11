@@ -64,9 +64,12 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    protected fun Printer.appendAnnotations(annotations: List<KmAnnotation>, onePerLine: Boolean = true) {
+    protected fun Printer.appendAnnotations(annotations: List<KmAnnotation>, onePerLine: Boolean = true, useSiteTarget: String? = null) {
         annotations.forEach { annotation ->
             append("@")
+            if (useSiteTarget != null) {
+                append(useSiteTarget).append(":")
+            }
             renderAnnotation(annotation, this)
             if (onePerLine) appendLine() else append(" ")
         }
@@ -159,6 +162,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendVersionRequirements(function.versionRequirements)
         appendSignatures(function)
         appendAnnotations(function.annotations)
+        appendAnnotations(function.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
         appendContextReceiverTypes(function.contextReceiverTypes)
         renderFunctionModifiers(function, printer)
         append("fun ")
@@ -293,6 +297,9 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendSignatures(property)
         appendCustomAttributes(property)
         appendAnnotations(property.annotations)
+        appendAnnotations(property.backingFieldAnnotations, useSiteTarget = "field")
+        appendAnnotations(property.delegateFieldAnnotations, useSiteTarget = "delegate")
+        appendAnnotations(property.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
         appendContextReceiverTypes(property.contextReceiverTypes)
         renderPropertyModifiers(property, printer)
         append(if (property.isVar) "var " else "val ")

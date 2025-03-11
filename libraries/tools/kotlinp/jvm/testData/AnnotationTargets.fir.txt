@@ -20,8 +20,19 @@ synthetic class
 // ------------------------------------------
 package {
 
+  // signature: ff(Ljava/lang/Object;)V
+  @receiver:A(s = "fun-receiver")
+  public final fun kotlin/Any.ff(): kotlin/Unit
+
   // signature: topLevel()V
   public final fun topLevel(): kotlin/Unit
+
+  // field: pp$delegate:Lkotlin/Lazy;
+  // getter: getPp(Ljava/lang/Object;)I
+  @delegate:A(s = "delegate")
+  @receiver:A(s = "property-receiver")
+  public final /* delegated */ val kotlin/Any.pp: kotlin/Int
+    public final /* non-default */ get
 
   @A(s = "typealias")
   public typealias Z = kotlin/String /* = kotlin/String */
@@ -63,6 +74,7 @@ public final class C<@A(s = "class-type-param") T#0 /* T */> : kotlin/Any {
   // setter: setQ(I)V
   // synthetic method for annotations: getQ$annotations()V
   @A(s = "property")
+  @field:A(s = "field")
   public final var q: kotlin/Int
     @A(s = "getter")
     public final /* non-default */ get

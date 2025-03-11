@@ -18,8 +18,16 @@ synthetic class
 // ------------------------------------------
 package {
 
+  // signature: ff(Ljava/lang/Object;)V
+  public final fun kotlin/Any.ff(): kotlin/Unit
+
   // signature: topLevel()V
   public final fun topLevel(): kotlin/Unit
+
+  // field: pp$delegate:Lkotlin/Lazy;
+  // getter: getPp(Ljava/lang/Object;)I
+  public final /* delegated */ val kotlin/Any.pp: kotlin/Int
+    public final /* non-default */ get
 
   @A(s = "typealias")
   public typealias Z = kotlin/String /* = kotlin/String */
