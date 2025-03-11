@@ -30,6 +30,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("class_inheritor_captures_property.repl.kts")
+  public void testClass_inheritor_captures_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_inheritor_captures_property.repl.kts");
+  }
+
+  @Test
   @TestMetadata("class_mutates_top_level_properties.repl.kts")
   public void testClass_mutates_top_level_properties_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_mutates_top_level_properties.repl.kts");
@@ -45,6 +51,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("class_uses_top_level_mutating_properties.repl.kts")
   public void testClass_uses_top_level_mutating_properties_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_uses_top_level_mutating_properties.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("class_with_companion.repl.kts")
+  public void testClass_with_companion_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_with_companion.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("custom_delegate.repl.kts")
+  public void testCustom_delegate_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/custom_delegate.repl.kts");
   }
 
   @Test
@@ -111,6 +129,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("property_with_lambda.repl.kts")
   public void testProperty_with_lambda_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_lambda.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("sealed_hierarchies.repl.kts")
+  public void testSealed_hierarchies_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/sealed_hierarchies.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("simple_data_class.repl.kts")
+  public void testSimple_data_class_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_data_class.repl.kts");
   }
 
   @Test

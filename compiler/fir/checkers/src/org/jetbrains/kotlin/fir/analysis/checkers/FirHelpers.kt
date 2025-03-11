@@ -721,7 +721,10 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
     return when (annotated) {
         is FirRegularClass -> {
             AnnotationTargetList(
-                KotlinTarget.classActualTargets(annotated.classKind, annotated.isInner, annotated.isCompanion, annotated.isLocal)
+                KotlinTarget.classActualTargets(
+                    annotated.classKind, annotated.isInner, annotated.isCompanion,
+                    isLocalClass = annotated.containingReplSymbolAttr == null && annotated.isLocal
+                )
             )
         }
         is FirEnumEntry -> AnnotationTargetList(

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.containingReplSymbolAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -66,7 +67,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 parent.classKind,
                 isInnerClass = (parent as? FirMemberDeclaration)?.isInner ?: false,
                 isCompanionObject = (parent as? FirRegularClass)?.isCompanion ?: false,
-                isLocalClass = parent.isLocal
+                isLocalClass = parent.isLocal && parent.containingReplSymbolAttr == null
             )
             is FirPropertyAccessor -> if (parent.isSetter) KotlinTarget.PROPERTY_SETTER_LIST else KotlinTarget.PROPERTY_GETTER_LIST
             is FirFunction -> KotlinTarget.FUNCTION_LIST

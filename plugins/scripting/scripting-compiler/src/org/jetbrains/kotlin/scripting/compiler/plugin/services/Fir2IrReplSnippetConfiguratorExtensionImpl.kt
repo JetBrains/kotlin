@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisitor
@@ -85,6 +86,13 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             classifierStorage.createAndCacheEarlierSnippetClass(it, packageFragment)
         }
 
+        // Classes should be created first to populate the cache before possible references
+        classesFromState.forEach { (classSymbol, snippetSymbol) ->
+            classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
+                createClassFromOtherSnippet(classSymbol, originalSnippet, irSnippet)
+            }
+        }
+
         propertiesFromState.forEach { (propertySymbol, snippetSymbol) ->
             classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
                 declarationStorage.createAndCacheIrVariable(
@@ -119,11 +127,6 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        classesFromState.forEach { (classSymbol, snippetSymbol) ->
-            classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
-                createClassFromOtherSnippet(classSymbol, originalSnippet, irSnippet)
-            }
-        }
         val stateObject =
             getStateObject(
                 irSnippet,
@@ -144,17 +147,14 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             else null
         } ?: parentClassOrSnippet
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class, DelicateDeclarationStorageApi::class)
     private fun Fir2IrComponents.createClassFromOtherSnippet(
         classSymbol: FirRegularClassSymbol,
         parentClassOrSnippet: IrClass,
         irSnippet: IrReplSnippet
     ): IrClass {
         val actualParent = getOrBuildActualParent(classSymbol, parentClassOrSnippet, irSnippet)
-        // relying on the classifierStorage's mechanics for generating lazy IR classes for such FIR
-        return classifierStorage.getIrClass(
-            classSymbol.fir
-        ).apply {
+        return classifierStorage.getFir2IrLazyClass(classSymbol.fir).apply {
             parent = actualParent
             origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
             irSnippet.declarationsFromOtherSnippets.add(this)
@@ -282,9 +282,7 @@ private class CollectAccessToOtherState(
 
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override fun visitElement(element: FirElement) {
-        (element as? FirExpression)?.coneTypeOrNull?.toRegularClassSymbol(session)?.let {
-            classSymbol -> storeAccessedSymbol(classSymbol)
-        }
+        (element as? FirExpression)?.coneTypeOrNull?.toClassSymbol(session)?.let { storeAccessedSymbol(it) }
 
         element.acceptChildren(this)
     }
@@ -294,6 +292,10 @@ private class CollectAccessToOtherState(
         val resolvedSymbol = resolvedNamedReference.resolvedSymbol
         val symbol = when (resolvedSymbol) {
             is FirConstructorSymbol -> (resolvedSymbol.fir.returnTypeRef as? FirResolvedTypeRef)?.coneType?.toSymbol(session)
+            is FirCallableSymbol<*> -> {
+                resolvedSymbol.resolvedReturnTypeRef.accept(this)
+                resolvedSymbol
+            }
             else -> null
         } ?: resolvedSymbol
 
@@ -301,7 +303,7 @@ private class CollectAccessToOtherState(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        val classSymbol = resolvedTypeRef.coneType.toRegularClassSymbol(session) ?: return
+        val classSymbol = resolvedTypeRef.coneType.toClassSymbol(session) ?: return
         storeAccessedSymbol(classSymbol)
     }
 }

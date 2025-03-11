@@ -425,6 +425,10 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
+    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Any?) {
+        visitDeclarationContent(replSnippet, data)
+    }
+
     /**
      * The function won't call supertypeRefs on classLikeDeclaration directly
      */

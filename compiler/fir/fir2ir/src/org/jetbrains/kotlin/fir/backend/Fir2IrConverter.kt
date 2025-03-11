@@ -488,9 +488,6 @@ class Fir2IrConverter(
                 val irSnippet = declarationStorage.createIrReplSnippet(declaration)
                 addDeclarationToParentIfNeeded(irSnippet)
                 irSnippet.parent = parent
-                this.declarationStorage.withScope(irSnippet.symbol) {
-                    processScriptLikeDeclaration(irSnippet, declaration.body.statements.filterIsInstance<FirDeclaration>())
-                }
             }
             is FirSimpleFunction -> {
                 declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)
@@ -579,10 +576,13 @@ class Fir2IrConverter(
             val needProcessMember = when (scriptDeclaration) {
                 is FirAnonymousInitializer -> false // processed later
                 is FirProperty -> {
-                    // '_' DD element
-                    scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
-                            scriptDeclaration.destructuringDeclarationContainerVariable == null
+                    !scriptDeclaration.isLocal &&
+                            // '_' DD element
+                            (scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
+                                    scriptDeclaration.destructuringDeclarationContainerVariable == null)
                 }
+                is FirClassLikeDeclaration -> !scriptDeclaration.isLocal
+                is FirSimpleFunction -> !scriptDeclaration.isLocal
                 else -> true
             }
             if (needProcessMember) {

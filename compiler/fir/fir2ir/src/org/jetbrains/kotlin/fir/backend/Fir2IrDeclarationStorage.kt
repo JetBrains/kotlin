@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
@@ -394,6 +395,7 @@ class Fir2IrDeclarationStorage(
             ?: error("IR class for $containingClassLookupTag not found")
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun cacheIrFunctionSymbol(
         function: FirFunction,
         irFunctionSymbol: IrSimpleFunctionSymbol,
@@ -422,8 +424,14 @@ class Fir2IrDeclarationStorage(
                  *
                  * In AA API mode the source-based data class may come as a dependency, which means that even for generated method we
                  *   will create a regular Fir2IrLazyFunction
+                 *
+                 * Additionally in case of pulling declarations from other snippets, they are
                  */
-                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY || configuration.allowNonCachedDeclarations) {
+                require(
+                    OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY ||
+                            configuration.allowNonCachedDeclarations ||
+                            (irFunctionSymbol.owner.parent as? Fir2IrLazyClass)?.origin == IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                ) {
                     "Only componentN functions should be cached this way, but got: $name"
                 }
                 functionCache[function] = irFunctionSymbol
