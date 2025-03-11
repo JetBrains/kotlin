@@ -58,7 +58,7 @@ public class IncrementalK1JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
     }
 
     public void testAllFilesPresentInPureKotlinAbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^sealed.*"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^sealed.*)|(.*SinceK2)"), false);
     }
 
     @TestMetadata("annotations")

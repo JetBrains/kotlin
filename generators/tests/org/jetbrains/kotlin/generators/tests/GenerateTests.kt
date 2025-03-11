@@ -115,7 +115,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
-                modelForDirectoryBasedTest("incremental", "pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
+                modelForDirectoryBasedTest("incremental", "pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
                 modelForDirectoryBasedTest("incremental", "classHierarchyAffected", extension = null, recursive = false)
                 modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
                 modelForDirectoryBasedTest("incremental", "scopeExpansion", extension = null, excludeParentDirs = true)
