@@ -54,19 +54,11 @@ class KlibKotlinp(
     override fun Printer.appendGetterSignatures(property: KmProperty) = appendSignature { propertyGetterSignature(property) }
     override fun Printer.appendSetterSignatures(property: KmProperty) = appendSignature { propertySetterSignature(property) }
     override fun Printer.appendSignatures(typeAlias: KmTypeAlias) = appendSignature { typeAliasSignature(typeAlias) }
+    override fun Printer.appendSignatures(enumEntry: KmEnumEntry) = appendSignature { enumEntrySignature(enumEntry) }
 
     private inline fun Printer.appendSignature(extractSignature: ExternalSignatureComputer.() -> String?) {
         val signature = signatureComputer?.let(extractSignature) ?: return
         appendCommentedLine("signature: ", signature)
-    }
-
-    override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.kmEnumEntries.forEach { enumEntry ->
-            appendLine()
-            appendSignature { enumEntrySignature(enumEntry) }
-            appendAnnotations(enumEntry.annotations)
-            appendLine(enumEntry.name, ",")
-        }
     }
 
     override fun Printer.appendCompileTimeConstant(property: KmProperty): Printer {

@@ -487,6 +487,7 @@ public final class kotlin/metadata/KmEffectType : java/lang/Enum {
 
 public final class kotlin/metadata/KmEnumEntry {
 	public fun <init> (Ljava/lang/String;)V
+	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun setName (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;

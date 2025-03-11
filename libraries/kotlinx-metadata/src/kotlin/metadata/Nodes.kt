@@ -497,6 +497,11 @@ public class KmTypeParameter internal constructor(
  * @property name the name of the enum entry
  */
 public class KmEnumEntry(public var name: String) {
+    /**
+     * Annotations on the enum entry.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmEnumEntryExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createEnumEntryExtension)
 

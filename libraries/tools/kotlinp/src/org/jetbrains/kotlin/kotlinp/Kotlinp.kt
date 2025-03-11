@@ -108,7 +108,12 @@ abstract class Kotlinp(protected val settings: Settings) {
                 appendLine()
                 appendCommentedLine("nested class: $it")
             }
-            appendEnumEntries(clazz)
+            clazz.kmEnumEntries.forEach { enumEntry ->
+                appendLine()
+                appendSignatures(enumEntry)
+                appendAnnotations(enumEntry.annotations)
+                appendLine(enumEntry.name, ",")
+            }
             clazz.sealedSubclasses.sortIfNeeded { it }.forEach {
                 appendLine()
                 appendCommentedLine("sealed subclass: $it")
@@ -548,11 +553,10 @@ abstract class Kotlinp(protected val settings: Settings) {
     protected open fun Printer.appendGetterSignatures(property: KmProperty) = Unit
     protected open fun Printer.appendSetterSignatures(property: KmProperty) = Unit
     protected open fun Printer.appendSignatures(typeAlias: KmTypeAlias) = Unit
+    protected open fun Printer.appendSignatures(enumEntry: KmEnumEntry) = Unit
 
     protected open fun Printer.appendOrigin(clazz: KmClass) = Unit
     protected open fun Printer.appendOrigin(function: KmFunction) = Unit
-
-    protected abstract fun Printer.appendEnumEntries(clazz: KmClass)
 
     protected open fun Printer.appendCustomAttributes(clazz: KmClass) = Unit
     protected open fun Printer.appendCustomAttributes(pkg: KmPackage) = Unit

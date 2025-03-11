@@ -110,6 +110,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     }
 
     override fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext) {
+        for (annotation in proto.annotationList) {
+            kmEnumEntry.annotations.add(annotation.readAnnotation(c.strings))
+        }
     }
 
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
@@ -236,6 +239,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeEnumEntryExtensions(enumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry.Builder, c: WriteContext) {
+        enumEntry.annotations.forEach { annotation ->
+            proto.addAnnotation(annotation.writeAnnotation(c.strings).build())
+        }
     }
 
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) =

@@ -40,13 +40,6 @@ class BuiltInsKotlinp(settings: Settings) : Kotlinp(settings) {
     override fun sortProperties(properties: List<KmProperty>): List<KmProperty> =
         properties.sortedBy { render(it, ::renderProperty) }
 
-    override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.kmEnumEntries.forEach { enumEntry ->
-            appendLine()
-            appendLine(enumEntry.name, ",")
-        }
-    }
-
     private inline fun <T> render(declaration: T, block: (T, Printer) -> Unit): String {
         val printer = StringBuilderPrinter()
         block(declaration, printer)

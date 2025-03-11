@@ -104,6 +104,3 @@ var KmEnumEntry.uniqId: UniqId?
     set(value) {
         klibExtensions.uniqId = value
     }
-
-val KmEnumEntry.annotations: MutableList<KmAnnotation>
-    get() = klibExtensions.annotations

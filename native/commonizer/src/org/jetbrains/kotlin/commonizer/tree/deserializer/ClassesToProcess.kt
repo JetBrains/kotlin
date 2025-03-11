@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import com.intellij.util.containers.FactoryMap
-import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.utils.NON_EXISTING_CLASSIFIER_ID

@@ -100,6 +100,20 @@ public final class C.Nested : kotlin/Any {
 
   // module name: test-module
 }
+// E.class
+// ------------------------------------------
+public final enum class E : kotlin/Enum<E> {
+
+  // signature: <init>(Ljava/lang/String;I)V
+  private constructor()
+
+  @A(s = "enum-entry")
+  ENTRY,
+
+  // module name: test-module
+
+  // has Enum.entries
+}
 // META-INF/test-module.kotlin_module
 // ------------------------------------------
 module {
