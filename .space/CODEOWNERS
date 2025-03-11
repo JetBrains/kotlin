@@ -421,7 +421,7 @@
 /plugins/noarg/ "Kotlin Frontend"
 /plugins/parcelize/ Parcelize
 /plugins/pill/ Yan.Zhulanow "Kotlin Build Infrastructure"
-/plugins/power-assert/ Brian.Norman "Kotlin Common Backend"
+/plugins/power-assert/ Brian.Norman "Kotlin Common Backend" Sergej.Jaskiewicz
 /plugins/sam-with-receiver/ "Kotlin Frontend"
 /plugins/scripting/ "Kotlin Frontend"
 /plugins/plugins-interactions-testing/ "Kotlin Frontend"
