@@ -35,11 +35,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -130,22 +130,22 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
 
 private class FirAdditionalAnnotationsPlacementTransformer(
     val session: FirSession,
-) : FirDefaultTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
-        return element // TODO: should likely be recursive for nested classes
+) : FirVisitorVoid() {
+    override fun visitElement(element: FirElement) {
+        // No-op for all children of FirFile/FirClass except other classes
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+    override fun visitFile(file: FirFile) {
         file.replaceAnnotations(file.symbol.addMustUseValueAnnotation(file.annotations))
-        return file
+        file.acceptChildren(this)
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+    override fun visitRegularClass(regularClass: FirRegularClass) {
         regularClass.replaceAnnotations(regularClass.symbol.addMustUseValueAnnotation(regularClass.annotations))
-        return regularClass
+        regularClass.acceptChildren(this)
     }
 
-    val mustUseReturnValueClassId = ClassId(FqName("kotlin"), FqName("MustUseReturnValue"), false)
+    val mustUseReturnValueClassId = StandardClassIds.Annotations.MustUseReturnValue
 
     private fun FirBasedSymbol<*>.addMustUseValueAnnotation(existingAnnotations: List<FirAnnotation>): List<FirAnnotation> {
         fun FirAnnotation.isMustUseReturnValue(): Boolean =
@@ -180,7 +180,7 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
 ) : FirAbstractPhaseTransformer<Nothing?>(COMPILER_REQUIRED_ANNOTATIONS) {
     abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
-    private val additionalAnnotationResolveTransformer = FirAdditionalAnnotationsPlacementTransformer(session)
+    private val additionalAnnotationPlacementTransformer = FirAdditionalAnnotationsPlacementTransformer(session)
 
     val extensionService: FirExtensionService = session.extensionService
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
@@ -192,16 +192,15 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
         withFileAnalysisExceptionWrapping(file) {
             checkSessionConsistency(file)
             file.resolveAnnotations()
-            file.acceptChildren(additionalAnnotationResolveTransformer, null)
-            additionalAnnotationResolveTransformer.transformFile(file, data)
+            file.accept(additionalAnnotationPlacementTransformer, null)
         }
         return file
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         val result = annotationTransformer.transformRegularClass(regularClass, null)
-        val regularClass1 = result as? FirRegularClass ?: return result
-        return additionalAnnotationResolveTransformer.transformRegularClass(regularClass1, null)
+        result.accept(additionalAnnotationPlacementTransformer)
+        return result
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirStatement {
