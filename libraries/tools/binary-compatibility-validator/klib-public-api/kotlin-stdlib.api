@@ -1265,13 +1265,13 @@ abstract class kotlin.time/AbstractLongTimeSource : kotlin.time/TimeSource.WithC
 abstract class kotlin/Number { // kotlin/Number|null[0]
     constructor <init>() // kotlin/Number.<init>|<init>(){}[0]
 
-    abstract fun toByte(): kotlin/Byte // kotlin/Number.toByte|toByte(){}[0]
     abstract fun toDouble(): kotlin/Double // kotlin/Number.toDouble|toDouble(){}[0]
     abstract fun toFloat(): kotlin/Float // kotlin/Number.toFloat|toFloat(){}[0]
     abstract fun toInt(): kotlin/Int // kotlin/Number.toInt|toInt(){}[0]
     abstract fun toLong(): kotlin/Long // kotlin/Number.toLong|toLong(){}[0]
-    abstract fun toShort(): kotlin/Short // kotlin/Number.toShort|toShort(){}[0]
+    open fun toByte(): kotlin/Byte // kotlin/Number.toByte|toByte(){}[0]
     open fun toChar(): kotlin/Char // kotlin/Number.toChar|toChar(){}[0]
+    open fun toShort(): kotlin/Short // kotlin/Number.toShort|toShort(){}[0]
 }
 
 final class <#A: in kotlin/Any?> kotlin.coroutines/SafeContinuation : kotlin.coroutines/Continuation<#A> { // kotlin.coroutines/SafeContinuation|null[0]

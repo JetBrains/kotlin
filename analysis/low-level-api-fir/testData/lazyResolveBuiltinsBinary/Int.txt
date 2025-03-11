@@ -3510,9 +3510,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short|
+        public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte|
+        public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        }
 
     }
     @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class OptIn : R|kotlin/Annotation|, R|kotlin/Annotation| {

@@ -320,7 +320,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     annotations:
       IntrinsicConstEvaluation
     overridden:
-      public abstract fun toByte (): kotlin.Byte declared in kotlin.Number
+      public open fun toByte (): kotlin.Byte declared in kotlin.Number
   FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN returnType:kotlin.Char
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
@@ -356,7 +356,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     annotations:
       IntrinsicConstEvaluation
     overridden:
-      public abstract fun toShort (): kotlin.Short declared in kotlin.Number
+      public open fun toShort (): kotlin.Short declared in kotlin.Number
   FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN returnType:kotlin.String
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:

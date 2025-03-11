@@ -904,9 +904,9 @@ public abstract class Number public constructor() {
 
     @kotlin.Deprecated @kotlin.DeprecatedSinceKotlin public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    public abstract fun toShort(): kotlin.Short
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    public abstract fun toByte(): kotlin.Byte
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 }
 
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {

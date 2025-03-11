@@ -13,10 +13,6 @@ public class FortyTwoExtractor {
 // FILE: FortyTwoExtractor.kt
 
 class FortyTwo : Number() {
-    override fun toByte() = 42.toByte()
-
-    override fun toShort() = 42.toShort()
-
     override fun toInt() = 42
 
     override fun toLong() = 42L

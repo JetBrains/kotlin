@@ -1115,9 +1115,9 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
 See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.9), errorSince = String(2.3)) public open fun toChar(): R|kotlin/Char|
 
-    public abstract fun toShort(): R|kotlin/Short|
+    public open fun toShort(): R|kotlin/Short|
 
-    public abstract fun toByte(): R|kotlin/Byte|
+    public open fun toByte(): R|kotlin/Byte|
 
     public constructor(): R|kotlin/Number|
 
