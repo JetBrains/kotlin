@@ -69,7 +69,7 @@ internal class JvmMappedMethodsDocumentableFilterTransformer(context: DokkaConte
     // this was made manually
     private val NOT_CONSIDER_METHOD_SIGNATURES: Set<String> = inJavaUtil(
         "Collection", "toArray(Ljava/util/function/IntFunction;)[Ljava/lang/Object;"
-    )
+    ) + inJavaLang("Enum", "describeConstable()Ljava/util/Optional")
 
 
     // copy-pasted from [here](https://github.com/JetBrains/kotlin/blob/0ef41d75b5901afea68a09cc3e762b52d8ce1e3c/core/compiler.common.jvm/src/org/jetbrains/kotlin/builtins/jvm/JvmBuiltInsSignatures.kt#L15)
