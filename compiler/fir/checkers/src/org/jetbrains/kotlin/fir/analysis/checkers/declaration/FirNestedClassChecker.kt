@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED_IN_LOCAL
+import org.jetbrains.kotlin.fir.containingReplSymbolAttr
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 // compiler/frontend/src/org/jetbrains/kotlin/resolve/ModifiersChecker.java:198
 object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.containingReplSymbolAttr != null) return
         // Local enums / objects / companion objects are handled with different diagnostic codes.
         // Exception is companion of local inner class.
         val isCompanion = declaration.isCompanion

@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
@@ -159,7 +161,11 @@ open class FirDeclarationsResolveTransformer(
                 if (returnTypeRequiresApproximation) {
                     replaceReturnTypeRef(
                         (returnTypeRef as FirResolvedTypeRef)
-                            .approximateDeclarationType(session, property.visibilityForApproximation(), false)
+                            .approximateDeclarationType(
+                                session,
+                                property.visibilityForApproximation().takeUnless { it == Visibilities.Local } ?: Visibilities.Public,
+                                isLocal = false
+                            )
                     )
                 }
             }
@@ -989,12 +995,21 @@ open class FirDeclarationsResolveTransformer(
                 ?: function.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
             val returnTypeRef = expressionType
                 ?.toFirResolvedTypeRef(newSource)
-                ?.approximateDeclarationType(
-                    session,
-                    simpleFunction?.visibilityForApproximation(),
-                    isLocal = simpleFunction?.isLocal == true,
-                    isInlineFunction = simpleFunction?.isInline == true
-                )
+                ?.run {
+                    if (context.containers.getOrNull(context.containers.size - 2) is FirReplSnippet)
+                        approximateDeclarationType(
+                            session,
+                            simpleFunction?.visibilityForApproximation().takeUnless { it == Visibilities.Local } ?: Visibilities.Public,
+                            isLocal = false, isInlineFunction = simpleFunction?.isInline == true
+                        )
+                    else
+                        approximateDeclarationType(
+                            session,
+                            simpleFunction?.visibilityForApproximation(),
+                            isLocal = simpleFunction?.isLocal == true,
+                            isInlineFunction = simpleFunction?.isInline == true
+                        )
+                }
                 ?: buildErrorTypeRef {
                     source = newSource
                     diagnostic = ConeSimpleDiagnostic("empty body", DiagnosticKind.Other)

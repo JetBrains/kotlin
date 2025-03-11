@@ -207,6 +207,19 @@ class Fir2IrClassifierStorage(
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
             return createAndCacheLocalIrClassOnTheFly(firClass)
         }
+        return createFir2IrLazyClass(firClass)
+    }
+
+    /**
+     * Function for directly generating or getting from cache the Fir2IrLazyClass.
+     * Should not be generally used outside the very special cases.
+     * Use [getIrClass] instead.
+     */
+    @DelicateDeclarationStorageApi
+    fun getFir2IrLazyClass(firClass: FirClass): Fir2IrLazyClass =
+        getCachedIrClass(firClass)?.let { it as Fir2IrLazyClass } ?: createFir2IrLazyClass(firClass)
+
+    private fun createFir2IrLazyClass(firClass: FirClass): Fir2IrLazyClass {
         require(firClass is FirRegularClass)
         val symbol = createClassSymbol()
         val classId = firClass.symbol.classId

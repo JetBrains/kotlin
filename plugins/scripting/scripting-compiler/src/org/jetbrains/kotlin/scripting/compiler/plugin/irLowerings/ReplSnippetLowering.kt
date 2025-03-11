@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -103,7 +104,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         irSnippetClass.declarations.add(createConstructor(irSnippetClass))
 
-        irSnippetClass.addFunction {
+        irSnippetClass.factory.buildFun {
             name = REPL_SNIPPET_EVAL_FUN_NAME
             startOffset = irSnippet.startOffset
             endOffset = irSnippet.endOffset
@@ -185,6 +186,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                     }
                     evalFun.returnType = lastExpressionVar?.type ?: context.irBuiltIns.unitType
                 }
+            irSnippetClass.declarations.add(evalFun)
             // required because some declarations deeper in the subtree may get a "wrong" parent on Fir2Ir
             // E.g. anonymous objects in a property initializer. (see KT-75301 for possible future directions).
             // Or lambda as in KT-74607
@@ -426,6 +428,31 @@ private class ReplSnippetToClassTransformer(
         } else {
             super.visitConstructorCall(expression, data)
         }
+    }
+
+    override fun visitClass(declaration: IrClass, data: ScriptLikeToClassTransformerContext): IrClass {
+        declaration.updateVisibilityToPublicIfNeeded()
+        return super.visitClass(declaration, data)
+    }
+
+    override fun visitFunction(declaration: IrFunction, data: ScriptLikeToClassTransformerContext): IrStatement {
+        declaration.updateVisibilityToPublicIfNeeded()
+        return super.visitFunction(declaration, data)
+    }
+
+    override fun visitProperty(declaration: IrProperty, data: ScriptLikeToClassTransformerContext): IrStatement {
+        declaration.updateVisibilityToPublicIfNeeded()
+        return super.visitProperty(declaration, data)
+    }
+}
+
+private fun IrDeclarationWithVisibility.updateVisibilityToPublicIfNeeded() {
+    // The snippet top-level classes visibilities are set to public, so this function is used to update
+    // visibilities of such class memebrs recursively, to avoid incorrect codegeneration
+    if (visibility == DescriptorVisibilities.LOCAL &&
+        parent.let { it is IrClass && it.visibility == DescriptorVisibilities.PUBLIC }
+    ) {
+        visibility = DescriptorVisibilities.PUBLIC
     }
 }
 
