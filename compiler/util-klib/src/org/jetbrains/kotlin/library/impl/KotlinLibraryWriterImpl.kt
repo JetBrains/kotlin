@@ -105,7 +105,7 @@ class KotlinLibraryWriterImpl(
     val layout: KotlinLibraryLayoutForWriter,
     val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
-    ir: IrWriter = IrMonoliticWriterImpl(layout)
+    ir: IrWriter = IrWriterImpl(layout)
 ) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
 
 fun buildKotlinLibrary(
@@ -124,7 +124,7 @@ fun buildKotlinLibrary(
     val klibFile = File(output)
     val unzippedKlibDir = if (nopack) klibFile.also { it.isDirectory } else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
     val layout = KotlinLibraryLayoutForWriter(klibFile, unzippedKlibDir)
-    val irWriter = IrMonoliticWriterImpl(layout)
+    val irWriter = IrWriterImpl(layout)
     val library = KotlinLibraryWriterImpl(
         moduleName,
         versions,
@@ -160,7 +160,7 @@ class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: Ko
         directory: File
     ): KotlinLibraryWriterImpl {
         val layout = KotlinLibraryLayoutForWriter(directory, directory)
-        val irWriter = IrMonoliticWriterImpl(layout)
+        val irWriter = IrWriterImpl(layout)
         return KotlinLibraryWriterImpl(moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
     }
 

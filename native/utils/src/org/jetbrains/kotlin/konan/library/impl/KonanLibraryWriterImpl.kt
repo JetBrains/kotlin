@@ -34,7 +34,7 @@ class KonanLibraryWriterImpl(
     base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
-    ir: IrWriter = IrMonoliticWriterImpl(layout),
+    ir: IrWriter = IrWriterImpl(layout),
 
     ) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, KonanLibraryWriter
 

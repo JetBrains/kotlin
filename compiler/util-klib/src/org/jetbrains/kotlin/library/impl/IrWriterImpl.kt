@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.IrWriter
 import org.jetbrains.kotlin.library.SerializedIrModule
 
-abstract class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter
-
-class IrMonoliticWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_irLayout) {
-
+class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
     override fun addIr(ir: SerializedIrModule) {
         irLayout.irDir.mkdirs()
 
