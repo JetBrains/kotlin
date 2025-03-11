@@ -592,6 +592,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns the value of this duration expressed as a [Long] number of the specified [unit].
      *
+     * The part of this duration that is smaller than the specified unit
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * If the result doesn't fit in the range of [Long] type, it is coerced into that range:
      * - [Long.MIN_VALUE] is returned if it's less than `Long.MIN_VALUE`,
      * - [Long.MAX_VALUE] is returned if it's greater than `Long.MAX_VALUE`.
@@ -609,6 +612,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns the value of this duration expressed as an [Int] number of the specified [unit].
      *
+     * The part of this duration that is smaller than the specified unit
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * If the result doesn't fit in the range of [Int] type, it is coerced into that range:
      * - [Int.MIN_VALUE] is returned if it's less than `Int.MIN_VALUE`,
      * - [Int.MAX_VALUE] is returned if it's greater than `Int.MAX_VALUE`.
@@ -622,6 +628,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of days.
      *
+     * The part of this duration that is smaller than a day
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
      */
     public val inWholeDays: Long
@@ -629,6 +638,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
     /**
      * The value of this duration expressed as a [Long] number of hours.
+     *
+     * The part of this duration that is smaller than an hour
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
      *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
      */
@@ -638,6 +650,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of minutes.
      *
+     * The part of this duration that is smaller than a minute
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
      */
     public val inWholeMinutes: Long
@@ -646,6 +661,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of seconds.
      *
+     * The part of this duration that is smaller than a second
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
      */
     public val inWholeSeconds: Long
@@ -653,6 +671,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
     /**
      * The value of this duration expressed as a [Long] number of milliseconds.
+     *
+     * The part of this duration that is smaller than a millisecond
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
      *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
      */
@@ -663,6 +684,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
     /**
      * The value of this duration expressed as a [Long] number of microseconds.
+     *
+     * The part of this duration that is smaller than a microsecond
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
      *
      * If the result doesn't fit in the range of [Long] type, it is coerced into that range:
      * - [Long.MIN_VALUE] is returned if it's less than `Long.MIN_VALUE`,
