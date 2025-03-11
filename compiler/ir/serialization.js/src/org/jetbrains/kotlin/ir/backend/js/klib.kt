@@ -121,7 +121,6 @@ fun generateKLib(
         irBuiltIns,
         icData,
         nopack,
-        perFile = false,
         depsDescriptors.jsFrontEndResult.hasErrors,
         abiVersion,
         jsOutputName,
@@ -566,7 +565,6 @@ fun serializeModuleIntoKlib(
     irBuiltIns: IrBuiltIns,
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
-    perFile: Boolean,
     containsErrorCode: Boolean = false,
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
@@ -681,7 +679,6 @@ fun serializeModuleIntoKlib(
         manifestProperties = properties,
         moduleName = moduleName,
         nopack = nopack,
-        perFile = perFile,
         output = klibPath,
         versions = versions,
         builtInsPlatform = builtInsPlatform

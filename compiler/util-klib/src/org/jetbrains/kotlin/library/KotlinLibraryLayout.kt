@@ -76,15 +76,6 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irFileEntries
         get() = File(irDir, IR_FILE_ENTRIES_FILE_NAME)
 
-    fun irDeclarations(file: File): File = File(file, IR_DECLARATIONS_FILE_NAME)
-    fun irTypes(file: File): File = File(file, IR_TYPES_FILE_NAME)
-    fun irSignatures(file: File): File = File(file, IR_SIGNATURES_FILE_NAME)
-    fun irStrings(file: File): File = File(file, IR_STRINGS_FILE_NAME)
-    fun irBodies(file: File): File = File(file, IR_BODIES_FILE_NAME)
-    fun irFile(file: File): File = File(file, IR_FILES_FILE_NAME)
-    fun irDebugInfo(file: File): File = File(file, IR_DEBUG_INFO_FILE_NAME)
-    fun irFileEntries(file: File): File = File(file, IR_FILE_ENTRIES_FILE_NAME)
-
     companion object {
         const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"
         const val IR_TYPES_FILE_NAME = "types.knt"

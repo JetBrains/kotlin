@@ -116,7 +116,6 @@ fun buildKotlinLibrary(
     output: String,
     moduleName: String,
     nopack: Boolean,
-    perFile: Boolean,
     manifestProperties: Properties?,
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String> = emptyList()
@@ -125,7 +124,7 @@ fun buildKotlinLibrary(
     val klibFile = File(output)
     val unzippedKlibDir = if (nopack) klibFile.also { it.isDirectory } else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
     val layout = KotlinLibraryLayoutForWriter(klibFile, unzippedKlibDir)
-    val irWriter = if (perFile) IrPerFileWriterImpl(layout) else IrMonoliticWriterImpl(layout)
+    val irWriter = IrMonoliticWriterImpl(layout)
     val library = KotlinLibraryWriterImpl(
         moduleName,
         versions,
@@ -149,12 +148,11 @@ fun buildKotlinLibrary(
     return library.layout
 }
 
-class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: KotlinLibraryVersioning, platform: BuiltInsPlatform, nativeTargets: List<String>, perFile: Boolean) {
+class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: KotlinLibraryVersioning, platform: BuiltInsPlatform, nativeTargets: List<String>) {
     val outputDir = File(output)
-    val library = createLibrary(perFile, moduleName, versions, platform, nativeTargets, outputDir)
+    val library = createLibrary(moduleName, versions, platform, nativeTargets, outputDir)
 
     private fun createLibrary(
-        perFile: Boolean,
         moduleName: String,
         versions: KotlinLibraryVersioning,
         platform: BuiltInsPlatform,
@@ -162,7 +160,7 @@ class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: Ko
         directory: File
     ): KotlinLibraryWriterImpl {
         val layout = KotlinLibraryLayoutForWriter(directory, directory)
-        val irWriter = if (perFile) IrPerFileWriterImpl(layout) else IrMonoliticWriterImpl(layout)
+        val irWriter = IrMonoliticWriterImpl(layout)
         return KotlinLibraryWriterImpl(moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
     }
 

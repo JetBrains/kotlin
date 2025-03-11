@@ -124,7 +124,6 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             fir2IrActualizedResult.irBuiltIns,
             cleanFiles = icData ?: emptyList(),
             nopack = nopack,
-            perFile = false,
             containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
             abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
             jsOutputName = jsOutputName,
