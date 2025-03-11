@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
@@ -130,17 +132,20 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
 
 private class FirAdditionalAnnotationsPlacementTransformer(
     val session: FirSession,
+    val isEnabled: Boolean,
 ) : FirVisitorVoid() {
     override fun visitElement(element: FirElement) {
         // No-op for all children of FirFile/FirClass except other classes
     }
 
     override fun visitFile(file: FirFile) {
+        if (!isEnabled) return
         file.replaceAnnotations(file.symbol.addMustUseValueAnnotation(file.annotations))
         file.acceptChildren(this)
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass) {
+        if (!isEnabled) return
         regularClass.replaceAnnotations(regularClass.symbol.addMustUseValueAnnotation(regularClass.annotations))
         regularClass.acceptChildren(this)
     }
@@ -180,7 +185,11 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
 ) : FirAbstractPhaseTransformer<Nothing?>(COMPILER_REQUIRED_ANNOTATIONS) {
     abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
-    private val additionalAnnotationPlacementTransformer = FirAdditionalAnnotationsPlacementTransformer(session)
+    private val additionalAnnotationPlacementTransformer = FirAdditionalAnnotationsPlacementTransformer(
+        session, session.languageVersionSettings.getFlag(
+            AnalysisFlags.returnValueCheckerMode
+        ) == ReturnValueCheckerMode.FULL
+    )
 
     val extensionService: FirExtensionService = session.extensionService
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
