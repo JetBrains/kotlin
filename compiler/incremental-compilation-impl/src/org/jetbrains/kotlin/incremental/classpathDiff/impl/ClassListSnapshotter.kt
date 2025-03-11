@@ -38,8 +38,11 @@ internal class PlainClassListSnapshotter(
     private val settings: ClasspathEntrySnapshotter.Settings,
     private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
 ) : ClassListSnapshotter {
-    private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
-    private val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
+    private val classNameToClassFileMap = classes.associateByTo(
+        unorderedMutableMapForClassCount<JvmClassName, ClassFileWithContentsProvider>()
+    ) { it.classFile.getClassName() }
+    private val classFileToSnapshotMap =
+        unorderedMutableMapForClassCount<ClassFileWithContentsProvider, ClassSnapshot>()
 
     private fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
         return classFileToSnapshotMap.getOrPut(classFile) {
@@ -75,6 +78,11 @@ internal class PlainClassListSnapshotter(
 
     override fun snapshot(): List<ClassSnapshot> {
         return classes.map { snapshotClass(it) }
+    }
+
+    private fun <K, V> unorderedMutableMapForClassCount(): MutableMap<K, V> {
+        val capacityForNoResizes = ceil(classes.count() / 0.75).toInt()
+        return HashMap<K, V>(capacityForNoResizes)
     }
 }
 

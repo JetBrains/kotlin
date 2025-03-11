@@ -45,7 +45,7 @@ benchmark {
 
         register("classpath") {
             warmups = 10
-            iterations = 200
+            iterations = 500
             iterationTime = 1
             iterationTimeUnit = "sec"
             include("ClasspathEntrySnapshotterBenchmark")
