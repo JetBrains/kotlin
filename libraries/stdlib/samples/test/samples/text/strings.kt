@@ -462,11 +462,11 @@ class Strings {
     @Sample
     fun contains() {
         val string = "Kotlin 1.4.0"
-        assertTrue(string.contains("K"))
-        assertFalse(string.contains("k"))
+        assertTrue("K" in string)
+        assertFalse("k" in string)
 
-        assertTrue(string.contains("1.4"))
-        assertFalse(string.contains("Z"))
+        assertTrue("1.4" in string)
+        assertFalse("Z" in string)
 
         assertTrue(string.contains("k", ignoreCase = true))
     }
