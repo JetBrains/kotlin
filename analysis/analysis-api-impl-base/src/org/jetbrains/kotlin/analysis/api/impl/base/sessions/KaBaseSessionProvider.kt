@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFa
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 @KaImplementationDetail
@@ -106,6 +109,15 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     private fun afterLeavingAnalysis(session: KaSession) {
         writeActionStartedChecker.afterLeavingAnalysis()
         lifetimeTracker.afterLeavingAnalysis(session)
+    }
+
+    protected fun checkModuleResolvability(useSiteModule: KaModule) {
+        requireWithAttachment(
+            useSiteModule.isResolvable,
+            { "`${useSiteModule::class.simpleName}` is not resolvable and thus cannot be a use-site module." },
+        ) {
+            withKaModuleEntry("useSiteModule", useSiteModule)
+        }
     }
 }
 

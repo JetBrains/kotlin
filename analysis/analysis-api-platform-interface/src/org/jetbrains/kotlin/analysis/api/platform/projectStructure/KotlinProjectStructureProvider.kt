@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 
 /**
  * [KotlinProjectStructureProvider] provides information about the project's structure as managed by the Analysis API platform.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
  */
 public interface KotlinProjectStructureProvider {
     /**

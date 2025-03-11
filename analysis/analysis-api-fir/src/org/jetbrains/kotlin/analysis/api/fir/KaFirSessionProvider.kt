@@ -74,7 +74,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     init {
         LowMemoryWatcher.register(::handleLowMemoryEvent, project)
         scheduledCacheMaintenance = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(
-            Runnable { performCacheMaintenance() },
+            { performCacheMaintenance() },
             10,
             10,
             TimeUnit.SECONDS,
@@ -93,6 +93,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        checkModuleResolvability(useSiteModule)
+
         ProgressManager.checkCanceled()
 
         // The cache cleaner must be called before we get a session.

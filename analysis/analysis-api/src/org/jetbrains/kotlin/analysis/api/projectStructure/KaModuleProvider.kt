@@ -13,6 +13,10 @@ public interface KaModuleProvider {
     /**
      * Returns a [KaModule] for a given [element] in the context of the [useSiteModule].
      *
+     * The resulting [KaModule] is guaranteed to be [resolvable][KaModule.isResolvable].
+     *
+     * ### Use-site Modules
+     *
      * The use-site module is the [KaModule] from which [getModule] is called. This concept is the same as the use-site module accepted by
      * [analyze][org.jetbrains.kotlin.analysis.api.analyze], and closely related to the concept of a use-site element. In essence, when we
      * are performing analysis, most of the time we do so from the point of view of a particular [KaModule] or [PsiElement]. If this module

@@ -45,7 +45,9 @@ class LLFirResolveSessionService(project: Project) {
             }
             is KaNotUnderContentRootModule -> LLSimpleResolutionStrategyProvider(module)
             else -> {
-                errorWithFirSpecificEntries("`${module::class.java}` is not resolvable and thus cannot be a use-site module.") {
+                errorWithFirSpecificEntries(
+                    "`${module::class.java}` does not have a corresponding resolution strategy (resolvable: ${module.isResolvable}).",
+                ) {
                     withEntry("module", module) { it.moduleDescription }
                 }
             }

@@ -125,6 +125,17 @@ public interface KaModule {
 }
 
 /**
+ * Whether the given [KaModule] can be the use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.analyze] call. A module which
+ * is not resolvable will be rejected by [analyze][org.jetbrains.kotlin.analysis.api.analyze] with an exception.
+ *
+ * All modules returned by [KaModuleProvider.getModule] are guaranteed to be resolvable. By extension, all possible use-site [PsiElement][com.intellij.psi.PsiElement]s
+ * are also part of resolvable modules. As such, module resolvability is normally not a concern of an Analysis API user.
+ */
+@KaPlatformInterface
+public val KaModule.isResolvable: Boolean
+    get() = this !is KaLibraryFallbackDependenciesModule
+
+/**
  * A [KaModule] representing a set of source declarations.
  *
  * A [KaSourceModule] does not necessarily have to correspond directly to an Analysis API platform's concept of a "module." For example, the
@@ -260,6 +271,9 @@ public interface KaLibrarySourceModule : KaModule {
  *
  * The fallback dependencies module's [baseContentScope] should be the scope of all libraries excluding [dependentLibrary]. It should have
  * the same [targetPlatform] as [dependentLibrary].
+ *
+ * [KaLibraryFallbackDependenciesModule] is not [resolvable][isResolvable] and thus cannot be a use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.analyze]
+ * call. It should not be returned by [KaModuleProvider.getModule].
  */
 @KaPlatformInterface
 public interface KaLibraryFallbackDependenciesModule : KaModule {
