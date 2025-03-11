@@ -601,6 +601,16 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         }
 
     @Argument(
+        value = "-Xindy-allow-annotated-lambdas",
+        description = "Allow using 'invokedynamic' for lambda expressions with annotations"
+    )
+    var indyAllowAnnotatedLambdas: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xklib",
         valueDescription = "<path>",
         description = "Paths to cross-platform libraries in the .klib format."

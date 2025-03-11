@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -57,7 +56,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     fun genAnnotations(annotated: IrDeclaration, annotations: List<IrConstructorCall> = annotated.annotations) {
         for (annotation in annotations) {
-            val applicableTargets = annotation.annotationClass.applicableTargetSet()
+            val applicableTargets = annotation.annotationClass.getAnnotationTargets().orEmpty()
             if (annotated is IrSimpleFunction &&
                 annotated.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
                 KotlinTarget.FUNCTION !in applicableTargets &&
@@ -377,15 +376,6 @@ internal sealed class TypeAnnotationPosition {
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
     return type.classifierOrNull?.owner is IrTypeParameter && !type.isMarkedNullable() && type.isNullable()
-}
-
-private fun IrClass.applicableTargetSet(): Set<KotlinTarget> {
-    val valueArgument = getAnnotation(StandardNames.FqNames.target)
-        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
-        ?: return KotlinTarget.DEFAULT_TARGET_SET
-    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
-        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
-    }.toSet()
 }
 
 internal fun IrClass.applicableJavaTargetSet(): Set<String>? {

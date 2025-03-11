@@ -37,6 +37,9 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
                 JvmClosureGenerationScheme.INDY
             else JvmClosureGenerationScheme.CLASS
 
+    val indyAllowAnnotatedLambdas: Boolean =
+        configuration.get(JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS) ?: false
+
     // In 1.6, `typeOf` became stable and started to rely on a few internal stdlib functions which were missing before 1.6.
     val stableTypeOf: Boolean =
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_6

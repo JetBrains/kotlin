@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.cli.CliDirectives
 import org.jetbrains.kotlin.test.cli.CliDirectives.ADDITIONAL_JAVA_MODULES
 import org.jetbrains.kotlin.test.cli.CliDirectives.FORCE_COMPILE_AS_JAVA_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.JVM_INDY_ALLOW_ANNOTATED_LAMBDAS
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -200,6 +201,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
         register(DISABLE_OPTIMIZATION, JVMConfigurationKeys.DISABLE_OPTIMIZATION)
+        register(JVM_INDY_ALLOW_ANNOTATED_LAMBDAS, JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

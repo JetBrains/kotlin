@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.name.*
@@ -312,3 +315,24 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         "suspendCoroutineUninterceptedOrReturn",
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
+
+/**
+ * @return null - if [this] class is not an annotation class ([isAnnotationClass])
+ * set of [KotlinTarget] representing the annotation targets of the annotation
+ * ```
+ * @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
+ * annotation class Foo
+ * ```
+ *
+ * shall return Class, Function, Property & Constructor
+ */
+fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
+    if (!this.isAnnotationClass) return null
+
+    val valueArgument = getAnnotation(StandardNames.FqNames.target)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
+        ?: return KotlinTarget.DEFAULT_TARGET_SET
+    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
+        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
+    }.toSet()
+}

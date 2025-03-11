@@ -94,6 +94,7 @@ where advanced options include:
                                                              A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.
                              -Xlambdas=class                 Generate lambdas as explicit classes.
                              The default value is 'indy' if language version is 2.0+, and 'class' otherwise.
+  -Xindy-allow-annotated-lambdas Allow using 'invokedynamic' for lambda expressions with annotations
   -Xklib=<path>              Paths to cross-platform libraries in the .klib format.
   -Xno-reset-jar-timestamps  Don't reset jar entry timestamps to a fixed date.
   -Xno-unified-null-checks   Use pre-1.4 exception types instead of 'java.lang.NPE' in null checks. See KT-22275 for more details.
