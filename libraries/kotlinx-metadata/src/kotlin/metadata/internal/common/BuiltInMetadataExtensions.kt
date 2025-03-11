@@ -16,6 +16,7 @@ import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.internal.readAnnotation
 import kotlin.metadata.internal.writeAnnotation
 
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 public class BuiltInsMetadataExtensions : MetadataExtensions {
     override fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext) {
         proto.getExtension(BuiltInsProtoBuf.classAnnotation).forEach { annotation ->

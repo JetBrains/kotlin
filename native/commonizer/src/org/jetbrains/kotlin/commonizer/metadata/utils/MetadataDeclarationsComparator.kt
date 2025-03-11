@@ -23,6 +23,7 @@ import kotlin.reflect.KProperty1
  * The entry point is [MetadataDeclarationsComparator.Companion.compare] function.
  */
 // TODO: extract to kotlinx-metadata-klib library?
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 class MetadataDeclarationsComparator private constructor(private val config: Config) {
 
     interface Config {

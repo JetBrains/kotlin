@@ -5,19 +5,12 @@
 
 package kotlinx.metadata.klib
 
-import kotlin.metadata.KmAnnotation
-import kotlin.metadata.KmClass
-import kotlin.metadata.KmClassifier
-import kotlin.metadata.KmConstructor
-import kotlin.metadata.KmFunction
-import kotlin.metadata.KmProperty
-import kotlin.metadata.KmPropertyAccessorAttributes
-import kotlin.metadata.KmType
-import kotlin.metadata.KmValueParameter
+import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 class KlibAnnotationsTest {
     @Test
     fun testKlibAnnotations() {

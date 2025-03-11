@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kotlinp
 import kotlin.contracts.ExperimentalContracts
 import kotlin.metadata.*
 
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 abstract class Kotlinp(protected val settings: Settings) {
     fun renderAnnotation(annotation: KmAnnotation, printer: Printer): Unit = with(printer) {
         append(annotation.className)

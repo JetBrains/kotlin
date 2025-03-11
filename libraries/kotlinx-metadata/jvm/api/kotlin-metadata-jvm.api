@@ -130,6 +130,9 @@ public final class kotlin/metadata/ClassNameKt {
 	public static final fun isLocalClassName (Ljava/lang/String;)Z
 }
 
+public abstract interface annotation class kotlin/metadata/ExperimentalAnnotationsInMetadata : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
 }
 

@@ -19,6 +19,7 @@ import kotlin.metadata.ClassKind as KmClassKind
 import kotlin.metadata.Modality as KmModality
 import kotlin.metadata.Visibility as KmVisibility
 
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 object CirDeserializers {
     private fun annotations(annotations: List<KmAnnotation>, typeResolver: CirTypeResolver): List<CirAnnotation> =
         annotations.compactMap { annotation(it, typeResolver) }

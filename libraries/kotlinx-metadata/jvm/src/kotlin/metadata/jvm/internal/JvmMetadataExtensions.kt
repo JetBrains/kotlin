@@ -17,6 +17,7 @@ import kotlin.metadata.jvm.JvmMemberSignature
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.wrapAsPublic
 
+@OptIn(ExperimentalAnnotationsInMetadata::class)
 internal class JvmMetadataExtensions : MetadataExtensions {
     override fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext) {
         val ext = kmClass.jvm
