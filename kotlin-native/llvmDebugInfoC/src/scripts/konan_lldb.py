@@ -62,13 +62,8 @@ class DebuggerException(Exception):
     pass
 
 
-_OUTPUT_MAX_CHILDREN = re.compile(r"target.max-children-count \(int\) = (.*)\n")
 def _max_children_count():
-    result = lldb.SBCommandReturnObject()
-    lldb.debugger.GetCommandInterpreter().HandleCommand("settings show target.max-children-count", result, False)
-    if not result.Succeeded():
-        raise DebuggerException()
-    v = _OUTPUT_MAX_CHILDREN.search(result.GetOutput()).group(1)
+    v = lldb.debugger.GetInternalVariableValue('target.max-children-count', lldb.debugger.GetInstanceName()).GetStringAtIndex(0)
     return int(v)
 
 
