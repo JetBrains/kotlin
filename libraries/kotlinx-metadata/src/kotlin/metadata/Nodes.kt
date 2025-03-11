@@ -111,6 +111,7 @@ public class KmClass : KmDeclarationContainer {
     /**
      * Annotations on the class.
      */
+    @SinceKotlin("2.2")
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     /**
@@ -185,6 +186,7 @@ public class KmConstructor internal constructor(internal var flags: Int) {
     /**
      * Annotations on the constructor.
      */
+    @SinceKotlin("2.2")
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmConstructorExtension> =
@@ -243,6 +245,7 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     /**
      * Annotations on the function.
      */
+    @SinceKotlin("2.2")
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmFunctionExtension> =
@@ -261,6 +264,7 @@ public class KmPropertyAccessorAttributes internal constructor(internal var flag
     /**
      * Annotations on the property accessor.
      */
+    @SinceKotlin("2.2")
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 }
 
@@ -350,6 +354,7 @@ public class KmProperty internal constructor(
     /**
      * Annotations on the property.
      */
+    @SinceKotlin("2.2")
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmPropertyExtension> =
@@ -430,6 +435,7 @@ public class KmValueParameter internal constructor(
     /**
      * Annotations on the value parameter.
      */
+    @SinceKotlin("2.2")
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmValueParameterExtension> =
