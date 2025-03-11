@@ -140,6 +140,7 @@ constructor(
         val propValue = project.kotlinPropertiesProvider.jsKarmaBrowsers(compilation.target)
         val propBrowsers = propValue?.split(",")
         propBrowsers?.map(String::trim)?.forEach {
+            @Suppress("DEPRECATION")
             when (it.toLowerCaseAsciiOnly()) {
                 "chrome" -> useChrome()
                 "chrome-canary" -> useChromeCanary()
@@ -250,7 +251,10 @@ constructor(
         useChromeLike(debuggableChrome)
     }
 
-    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomjsLauncher)
+    @Deprecated("It is not supported anymore. Scheduled for removal in Kotlin 2.4.")
+    fun usePhantomJS() {
+        project.logger.warn("PhantomJS is not supported anymore. Use other browsers instead.")
+    }
 
     private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
 
