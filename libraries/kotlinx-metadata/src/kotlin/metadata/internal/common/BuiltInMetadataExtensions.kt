@@ -66,6 +66,9 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext) {
+    }
+
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
         val ext = kmType.builtins
         proto.getExtension(BuiltInsProtoBuf.typeAnnotation).forEach { annotation ->
@@ -129,6 +132,9 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun writeEnumEntryExtensions(enumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry.Builder, c: WriteContext) {
+    }
+
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) {
         for (annotation in extension { type.annotations }) {
             proto.addExtension(BuiltInsProtoBuf.typeAnnotation, annotation.writeAnnotation(c.strings).build())
@@ -160,6 +166,8 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     override fun createConstructorExtension(): KmConstructorExtension = BuiltInConstructorExtension()
 
     override fun createTypeParameterExtension(): KmTypeParameterExtension = BuiltInTypeParameterExtension()
+
+    override fun createEnumEntryExtension(): KmEnumEntryExtension? = null
 
     override fun createTypeExtension(): KmTypeExtension = BuiltInTypeExtension()
 

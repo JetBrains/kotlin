@@ -105,6 +105,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext) {
+    }
+
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
         val ext = kmType.jvm
         ext.isRaw = proto.getExtension(JvmProtoBuf.isRaw)
@@ -220,6 +223,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         }
     }
 
+    override fun writeEnumEntryExtensions(enumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry.Builder, c: WriteContext) {
+    }
+
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) =
         with(type.jvm) {
             if (isRaw) proto.setExtension(JvmProtoBuf.isRaw, true)
@@ -258,6 +264,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun createConstructorExtension(): KmConstructorExtension = JvmConstructorExtension()
 
     override fun createTypeParameterExtension(): KmTypeParameterExtension = JvmTypeParameterExtension()
+
+    override fun createEnumEntryExtension(): KmEnumEntryExtension? = null
 
     override fun createTypeExtension(): KmTypeExtension = JvmTypeExtension()
 

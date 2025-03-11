@@ -33,9 +33,6 @@ var KmClass.file: KlibSourceFile?
         klibExtensions.file = value
     }
 
-val KmClass.klibEnumEntries: MutableList<KlibEnumEntry>
-    get() = klibExtensions.enumEntries
-
 var KmProperty.uniqId: UniqId?
     get() = klibExtensions.uniqId
     set(value) {
@@ -95,3 +92,18 @@ var KmTypeAlias.uniqId: UniqId?
     set(value) {
         klibExtensions.uniqId = value
     }
+
+var KmEnumEntry.ordinal: Int?
+    get() = klibExtensions.ordinal
+    set(value) {
+        klibExtensions.ordinal = value
+    }
+
+var KmEnumEntry.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }
+
+val KmEnumEntry.annotations: MutableList<KmAnnotation>
+    get() = klibExtensions.annotations

@@ -41,9 +41,9 @@ class BuiltInsKotlinp(settings: Settings) : Kotlinp(settings) {
         properties.sortedBy { render(it, ::renderProperty) }
 
     override fun Printer.appendEnumEntries(clazz: KmClass) {
-        clazz.enumEntries.forEach { enumEntry ->
+        clazz.kmEnumEntries.forEach { enumEntry ->
             appendLine()
-            appendLine(enumEntry, ",")
+            appendLine(enumEntry.name, ",")
         }
     }
 

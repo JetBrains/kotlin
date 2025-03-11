@@ -76,7 +76,9 @@ public fun ProtoBuf.Class.toKmClass(
     nestedClassNameList.mapTo(v.nestedClasses) { c[it] }
     for (enumEntry in enumEntryList) {
         if (!enumEntry.hasName()) throw InconsistentKotlinMetadataException("No name for EnumEntry")
+        @Suppress("DEPRECATION")
         v.enumEntries.add(c[enumEntry.name])
+        v.kmEnumEntries.add(enumEntry.toKmEnumEntry(c))
     }
     sealedSubclassFqNameList.mapTo(v.sealedSubclasses) { c.className(it) }
     if (hasInlineClassUnderlyingPropertyName()) {
@@ -88,6 +90,14 @@ public fun ProtoBuf.Class.toKmClass(
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
     c.extensions.forEach { it.readClassExtensions(v, this, c) }
+
+    return v
+}
+
+private fun ProtoBuf.EnumEntry.toKmEnumEntry(c: ReadContext): KmEnumEntry {
+    val v = KmEnumEntry(c[name])
+
+    c.extensions.forEach { it.readEnumEntryExtensions(v, this, c) }
 
     return v
 }

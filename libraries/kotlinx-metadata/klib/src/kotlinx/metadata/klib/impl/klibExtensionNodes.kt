@@ -4,7 +4,6 @@
  */
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.klib.KlibEnumEntry
 import kotlinx.metadata.klib.KlibSourceFile
 import kotlinx.metadata.klib.UniqId
 import kotlin.metadata.*
@@ -29,6 +28,9 @@ internal val KmConstructor.klibExtensions: KlibConstructorExtension
 internal val KmTypeParameter.klibExtensions: KlibTypeParameterExtension
     get() = getExtension(KlibTypeParameterExtension.TYPE) as KlibTypeParameterExtension
 
+internal val KmEnumEntry.klibExtensions: KlibEnumEntryExtension
+    get() = getExtension(KlibEnumEntryExtension.TYPE) as KlibEnumEntryExtension
+
 internal val KmPackage.klibExtensions: KlibPackageExtension
     get() = getExtension(KlibPackageExtension.TYPE) as KlibPackageExtension
 
@@ -51,7 +53,6 @@ internal class KlibFunctionExtension : KmFunctionExtension {
 }
 
 internal class KlibClassExtension : KmClassExtension {
-    val enumEntries: MutableList<KlibEnumEntry> = mutableListOf()
     var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
 
@@ -121,6 +122,19 @@ internal class KlibTypeParameterExtension : KmTypeParameterExtension {
 
     companion object {
         val TYPE = KmExtensionType(KlibTypeParameterExtension::class)
+    }
+}
+
+internal class KlibEnumEntryExtension : KmEnumEntryExtension {
+    var ordinal: Int? = null
+    var uniqId: UniqId? = null
+    val annotations: MutableList<KmAnnotation> = mutableListOf()
+
+    override val type: KmExtensionType
+        get() = TYPE
+
+    companion object {
+        val TYPE = KmExtensionType(KlibEnumEntryExtension::class)
     }
 }
 

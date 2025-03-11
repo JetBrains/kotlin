@@ -91,7 +91,15 @@ public class KmClass : KmDeclarationContainer {
     /**
      * Names of enum entries, if this class is an enum class.
      */
+    @DeprecatedSinceKotlin(warningSince = "2.2")
+    @Deprecated("Use `kmEnumEntries` instead.")
     public val enumEntries: MutableList<String> = ArrayList(0)
+
+    /**
+     * Enum entries, if this class is an enum class.
+     */
+    @SinceKotlin("2.2")
+    public val kmEnumEntries: MutableList<KmEnumEntry> = ArrayList(0)
 
     /**
      * Names of direct subclasses of this class, if this class is `sealed`.
@@ -463,6 +471,17 @@ public class KmTypeParameter internal constructor(
 
     internal val extensions: List<KmTypeParameterExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeParameterExtension)
+}
+
+/**
+ * Represents an enum entry.
+ *
+ * @property name the name of the enum entry
+ */
+@SinceKotlin("2.2")
+public class KmEnumEntry(public var name: String) {
+    internal val extensions: List<KmEnumEntryExtension> =
+        MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createEnumEntryExtension)
 }
 
 /**
