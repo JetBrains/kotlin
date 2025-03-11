@@ -333,12 +333,12 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     abstract val buildMetaInfo: BuildMetaInfoType
 
-    fun isVersionChanged(chunk: KotlinChunk, compilerArguments: CommonCompilerArguments): Boolean {
+    fun isVersionChanged(chunk: KotlinChunk, compilerArguments: CommonCompilerArguments, additionalArguments: String): Boolean {
         fun printReasonToRebuild(reasonToRebuild: String) {
             KotlinBuilder.LOG.info("$reasonToRebuild. Performing non-incremental rebuild (kotlin only)")
         }
 
-        val currentCompilerArgumentsMap = buildMetaInfo.createPropertiesMapFromCompilerArguments(compilerArguments)
+        val currentCompilerArgumentsMap = buildMetaInfo.createPropertiesMapFromCompilerArguments(compilerArguments, additionalArguments)
 
         val file = chunk.compilerArgumentsFile(jpsModuleBuildTarget)
         if (Files.notExists(file)) return false

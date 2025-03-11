@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.*
 
 abstract class BuildMetaInfo {
     enum class CustomKeys {
-        LANGUAGE_VERSION_STRING, IS_EAP, METADATA_VERSION_STRING, PLUGIN_CLASSPATHS, API_VERSION_STRING
+        LANGUAGE_VERSION_STRING, IS_EAP, METADATA_VERSION_STRING, PLUGIN_CLASSPATHS, API_VERSION_STRING, ADDITIONAL_COMPILER_ARGUMENTS
     }
 
     fun obtainReasonForRebuild(currentCompilerArgumentsMap: Map<String, String>, previousCompilerArgsMap: Map<String, String>): String? {
@@ -64,7 +64,7 @@ abstract class BuildMetaInfo {
         return null
     }
 
-    open fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments): Map<String, String> {
+    open fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments, additionalArguments: String): Map<String, String> {
         val resultMap = transformClassToPropertiesMap(args, excludedProperties).toMutableMap()
         val languageVersion = args.languageVersion?.let { LanguageVersion.fromVersionString(it) }
             ?: LanguageVersion.LATEST_STABLE
@@ -80,6 +80,8 @@ abstract class BuildMetaInfo {
         val pluginClasspath = PluginClasspath(args.pluginClasspaths).serialize()
         resultMap[CustomKeys.PLUGIN_CLASSPATHS.name] = pluginClasspath
 
+        resultMap[CustomKeys.ADDITIONAL_COMPILER_ARGUMENTS.name] = additionalArguments
+
         return resultMap
     }
 
@@ -89,7 +91,7 @@ abstract class BuildMetaInfo {
         .associate { it.substringBefore("=") to it.substringAfter("=") }
 
     private fun serializeMapToString(myList: Map<String, String>) = myList.map { "${it.key}=${it.value}" }.joinToString("\n")
-    fun serializeArgsToString(args: CommonCompilerArguments) = serializeMapToString(createPropertiesMapFromCompilerArguments(args))
+    fun serializeArgsToString(args: CommonCompilerArguments, additionalArguments: String) = serializeMapToString(createPropertiesMapFromCompilerArguments(args, additionalArguments))
 
     open val excludedProperties = listOf(
         "languageVersion",

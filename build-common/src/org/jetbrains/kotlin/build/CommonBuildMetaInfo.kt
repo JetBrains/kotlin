@@ -26,13 +26,13 @@ class CommonBuildMetaInfo : BuildMetaInfo() {
         return null
     }
 
-    override fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments): Map<String, String> {
+    override fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments, additionalArguments: String): Map<String, String> {
         val resultMap = mutableMapOf<String, String>()
         val metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) }
         val metadataVersion = metadataVersionArray?.let(::MetadataVersion) ?: MetadataVersion.INSTANCE
         val metadataVersionString = metadataVersion.toString()
         resultMap[CustomKeys.METADATA_VERSION_STRING.name] = metadataVersionString
 
-        return super.createPropertiesMapFromCompilerArguments(args) + resultMap
+        return super.createPropertiesMapFromCompilerArguments(args, additionalArguments) + resultMap
     }
 }

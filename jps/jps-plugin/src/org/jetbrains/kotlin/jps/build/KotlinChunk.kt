@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.jps.incremental.CacheStatus
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
+import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
+import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -140,7 +142,9 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
 
     fun shouldRebuild(): Boolean {
         targets.forEach { target ->
-            if (target.isVersionChanged(this, compilerArguments)) {
+//TODO: remove            compilerArguments.freeArgs = representativeTarget.module.kotlinCompilerSettings.additionalArgumentsAsList
+            val additionalArguments = representativeTarget.module.kotlinCompilerSettings.additionalArguments
+            if (target.isVersionChanged(this, compilerArguments, additionalArguments)) {
                 KotlinBuilder.LOG.info("$target version changed, rebuilding $this")
                 return true
             }
@@ -167,7 +171,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
             it.initialLocalCacheAttributesDiff.manager.writeVersion()
         }
 
-        val serializedCompilerArguments = representativeTarget.buildMetaInfo.serializeArgsToString(compilerArguments)
+        val serializedCompilerArguments = representativeTarget.buildMetaInfo.serializeArgsToString(compilerArguments, representativeTarget.module.kotlinCompilerSettings.additionalArguments)
         targets.forEach { target ->
             Files.newOutputStream(compilerArgumentsFile(target.jpsModuleBuildTarget)).bufferedWriter()
                 .use { it.append(serializedCompilerArguments) }
