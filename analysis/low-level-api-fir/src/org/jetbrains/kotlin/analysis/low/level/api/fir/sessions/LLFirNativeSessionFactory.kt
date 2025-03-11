@@ -46,8 +46,8 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        return doCreateLibrarySession(module) { context ->
+    override fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+        return doCreateResolvableLibrarySession(module) { context ->
             registerNativeComponents()
             // Resolvable library session for decompiled libraries can miss annotation arguments
             // necessary for correct work of the native overload checker

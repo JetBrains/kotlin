@@ -273,15 +273,15 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
-            is KaBuiltinsModule -> sessionFactory.createLibrarySession(module)
+            is KaBuiltinsModule -> sessionFactory.createResolvableLibrarySession(module)
             is KaLibraryModule -> {
                 if (module.isSdk) {
                     sessionFactory.createBinaryLibrarySession(module)
                 } else {
-                    sessionFactory.createLibrarySession(module)
+                    sessionFactory.createResolvableLibrarySession(module)
                 }
             }
-            is KaLibrarySourceModule -> sessionFactory.createLibrarySession(module)
+            is KaLibrarySourceModule -> sessionFactory.createResolvableLibrarySession(module)
             is KaLibraryFallbackDependenciesModule -> sessionFactory.createBinaryLibrarySession(module)
             is KaScriptModule -> sessionFactory.createScriptSession(module)
             is KaDanglingFileModule -> {

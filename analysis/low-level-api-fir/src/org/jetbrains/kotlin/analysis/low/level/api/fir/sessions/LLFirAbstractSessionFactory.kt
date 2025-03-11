@@ -79,7 +79,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         get() = LLFirGlobalResolveComponents.getInstance(project)
 
     abstract fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession
-    abstract fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession
+
+    abstract fun createResolvableLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession
 
     /**
      * Creates a binary [LLFirLibrarySession] for a [KaLibraryModule] or [KaLibraryFallbackDependenciesModule].
@@ -352,7 +353,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val dependencyProvider: LLDependenciesSymbolProvider,
     )
 
-    protected fun doCreateLibrarySession(
+    protected fun doCreateResolvableLibrarySession(
         module: KaModule,
         additionalSessionConfiguration: LLFirLibraryOrLibrarySourceResolvableModuleSession.(context: LibrarySessionCreationContext) -> Unit,
     ): LLFirLibraryOrLibrarySourceResolvableModuleSession {
