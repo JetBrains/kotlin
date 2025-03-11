@@ -441,13 +441,12 @@ class Strings {
 
         assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 0: Found at 1")
         assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
-        assertPrints(matchDetails(inputString, toFind, 5), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
         assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
 
     @Sample
     fun lastIndexOf() {
-        fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = 0): String {
+        fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = inputString.length - 1): String {
             val matchIndex = inputString.lastIndexOf(whatToFind, startIndex)
             return "Searching for '$whatToFind' in '$inputString' starting at position $startIndex: " +
                     if (matchIndex >= 0) "Found at $matchIndex" else "Not found"
@@ -456,8 +455,9 @@ class Strings {
         val inputString = "Never ever give up"
         val toFind = "ever"
 
-        assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 0: Found at 6")
-        assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
+        assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 17: Found at 6")
+        assertPrints(matchDetails(inputString, toFind, 0), "Searching for 'ever' in 'Never ever give up' starting at position 0: Not found")
+        assertPrints(matchDetails(inputString, toFind, 5), "Searching for 'ever' in 'Never ever give up' starting at position 5: Found at 1")
     }
 
     @Sample
