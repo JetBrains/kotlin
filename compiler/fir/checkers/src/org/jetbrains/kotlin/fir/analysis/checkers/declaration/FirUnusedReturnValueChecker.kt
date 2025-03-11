@@ -137,14 +137,14 @@ private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
 private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean = annotations.any { it.isIgnorableValue(session) }
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(session: FirSession): Boolean {
-    // TODO: add this.moduleData == session.moduleData check
-
     // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
     if (this.callableId.packageName.asString() == "kotlin") return true
     callableId.ifMappedTypeCollection { return it }
 
-    val classOrFile = getContainingSymbol(session) ?: return false
+    val classOrFile = getContainingSymbol(session)
+    println("classOrFile = $classOrFile for $callableId") // <- Here, top-level declarations from other modules do not have containing files.
+    classOrFile ?: return false
     return classOrFile.annotations.any { it.isMustUseReturnValue(session) }
 }
 
