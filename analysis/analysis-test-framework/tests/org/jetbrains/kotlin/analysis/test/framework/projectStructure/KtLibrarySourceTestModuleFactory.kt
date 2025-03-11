@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -98,7 +98,7 @@ fun createKtLibrarySourceModule(
         binaryLibrary = libraryKtModule,
     )
 
-    if (testModule.directives.contains(AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES)) {
+    if (testModule.hasFallbackDependencies) {
         librarySourceKtModule.directRegularDependencies += KaLibraryFallbackDependenciesModuleImpl(libraryKtModule)
     }
 

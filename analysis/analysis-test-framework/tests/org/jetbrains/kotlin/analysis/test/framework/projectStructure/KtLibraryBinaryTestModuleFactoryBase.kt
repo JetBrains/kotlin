@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -47,7 +47,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
             isSdk = false,
         )
 
-        if (testModule.directives.contains(AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES)) {
+        if (testModule.hasFallbackDependencies) {
             libraryModule.directRegularDependencies += KaLibraryFallbackDependenciesModuleImpl(libraryModule)
         }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 
 object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
     val MODULE_KIND by enumDirective<TestModuleKind>(
@@ -67,3 +68,6 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Module,
     )
 }
+
+val TestModule.hasFallbackDependencies: Boolean
+    get() = directives.contains(AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES)

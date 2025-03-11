@@ -12,6 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.getScopeForLibraryByRoots
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -81,10 +82,7 @@ object TestModuleStructureFactory {
             val analysisContextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.ANALYSIS_CONTEXT_MODULE)
             val analysisContextModule = analysisContextModuleName?.let(existingModules::getValue)
 
-            val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
-                val libraryModule = existingModules.getValue(dependency.dependencyModule.name).ktModule as? KaLibraryModule
-                libraryModule?.binaryRoots.orEmpty()
-            }
+            val dependencyBinaryRoots = testModule.getDependencyBinaryRoots(existingModules)
 
             val ktTestModule = testServices
                 .getKtModuleFactoryForTestModule(testModule)
@@ -95,6 +93,21 @@ object TestModuleStructureFactory {
         }
 
         return result
+    }
+
+    private fun TestModule.getDependencyBinaryRoots(existingModules: Map<String, KtTestModule>): List<Path> {
+        val dependencyTestModules = if (hasFallbackDependencies) {
+            // To compile a library module with fallback dependencies, it should depend on all preceding library modules, since it doesn't
+            // have explicit dependencies.
+            existingModules.values.filter { it.ktModule is KaLibraryModule }.map { it.testModule }
+        } else {
+            regularDependencies.map { it.dependencyModule }
+        }
+
+        return dependencyTestModules.flatMap { dependency ->
+            val libraryModule = existingModules.getValue(dependency.name).ktModule as? KaLibraryModule
+            libraryModule?.binaryRoots.orEmpty()
+        }
     }
 
     private fun KtTestModule.addDependencies(
