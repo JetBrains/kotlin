@@ -83,9 +83,9 @@ class PhasedPipelineChecker(
         return createDiffsForAllTestDataFiles("Phase $targetedPhase could be promoted to $expectedLastPhase") {
             val proposedDirectiveDeclaration = when (targetedPhase) {
                 defaultRunPipelineTill -> ""
-                else -> "// RUN_PIPELINE_TILL: $expectedLastPhase\n"
+                else -> "// RUN_PIPELINE_TILL: $expectedLastPhase"
             }
-            it.replace("// RUN_PIPELINE_TILL: $targetedPhase\n", proposedDirectiveDeclaration)
+            it.replace("// RUN_PIPELINE_TILL: $targetedPhase", proposedDirectiveDeclaration)
         }
     }
 
