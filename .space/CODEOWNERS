@@ -10,7 +10,7 @@
 # OWNER_LIST: "Kotlin Frontend"
 # OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
 # OWNER_LIST: "Kotlin Performance QA"
-# OWNER_LIST: "Kotlin IDE Analysis Core"
+# OWNER_LIST: "Kotlin Analysis API"
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: Compose
@@ -38,7 +38,7 @@
 
 /.space/ "Kotlin Build Infrastructure"
 
-/analysis/ "Kotlin IDE Analysis Core"
+/analysis/ "Kotlin Analysis API"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt "Kotlin Frontend"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt "Kotlin Frontend"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt "Kotlin Frontend"
@@ -104,7 +104,7 @@
 /compiler/ir/serialization.native/ "Kotlin Native"
 /compiler/ir/ir.inline/ "Kotlin Common Backend"
 /compiler/javac-wrapper/ "Kotlin Frontend"
-/compiler/light-classes/ "Kotlin IDE Analysis Core"
+/compiler/light-classes/ "Kotlin Analysis API"
 /compiler/plugin-api/ "Kotlin Frontend"
 /compiler/preloader/ "Kotlin Frontend"
 /compiler/psi/ "Kotlin Frontend"
@@ -116,7 +116,7 @@
 /compiler/test-infrastructure-utils/ "Kotlin Frontend"
 
 /compiler/testData/asJava/findClasses/ "Kotlin Frontend"
-/compiler/testData/asJava/lightClasses/ "Kotlin IDE Analysis Core"
+/compiler/testData/asJava/lightClasses/ "Kotlin Analysis API"
 /compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/capturedTypeApproximation/ "Kotlin Frontend"
 /compiler/testData/cfg/ "Kotlin Frontend"
@@ -183,7 +183,7 @@
 /compiler/testData/parseCodeFragment/ "Kotlin Frontend"
 /compiler/testData/psi/ "Kotlin Frontend"
 /compiler/testData/psiUtil/ "Kotlin Frontend"
-/compiler/testData/psiKdocCoverage/ "Kotlin IDE Analysis Core"
+/compiler/testData/psiKdocCoverage/ "Kotlin Analysis API"
 /compiler/testData/recursiveProcessor/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries"
 /compiler/testData/repl/ "Kotlin Frontend"
@@ -202,11 +202,11 @@
 /compiler/testData/type-checker-test.kt "Kotlin Frontend"
 /compiler/testData/type-substitutor.kt "Kotlin Frontend"
 /compiler/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-/compiler/tests/org/jetbrains/kotlin/psi/PsiKDocCoverageTest.kt "Kotlin IDE Analysis Core"
-/compiler/tests/org/jetbrains/kotlin/util/KDocCoverageTest.kt "Kotlin IDE Analysis Core"
+/compiler/tests/org/jetbrains/kotlin/psi/PsiKDocCoverageTest.kt "Kotlin Analysis API"
+/compiler/tests/org/jetbrains/kotlin/util/KDocCoverageTest.kt "Kotlin Analysis API"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-/compiler/tests-common/tests/org/jetbrains/kotlin/asJava/ "Kotlin IDE Analysis Core"
+/compiler/tests-common/tests/org/jetbrains/kotlin/asJava/ "Kotlin Analysis API"
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/ir/ "Kotlin Frontend" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
@@ -252,11 +252,11 @@
 /dependencies/ "Kotlin Build Infrastructure"
 
 # UNKNOWN: /docs/
-/docs/analysis/ "Kotlin IDE Analysis Core"
+/docs/analysis/ "Kotlin Analysis API"
 /docs/code_authoring_and_core_review.md Vsevolod.Tolstopyato Simon.Ogorodnik
 
 /generators/ReadMe.md "Kotlin Build Infrastructure"
-/generators/analysis-api-generator/ "Kotlin IDE Analysis Core"
+/generators/analysis-api-generator/ "Kotlin Analysis API"
 /generators/builtins/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /generators/evaluate/ "Kotlin Frontend"
 /generators/ide-iml-to-gradle-generator/ "Kotlin Build Infrastructure"
@@ -314,7 +314,7 @@
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/abi-validation/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin Wasm" "Kotlin JS"
-/libraries/tools/ide-plugin-dependencies-validator "Kotlin IDE Analysis Core"
+/libraries/tools/ide-plugin-dependencies-validator "Kotlin Analysis API"
 /libraries/kotlin-dom-api-compat/ Ilya.Goncharov Stanislav.Erokhin
 /libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
@@ -446,7 +446,7 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin" "Kotlin IDE Analysis Core" "Kotlin Wasm" "Compose" "Parcelize" 
+*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Compose" "Parcelize" 
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
