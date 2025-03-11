@@ -44,11 +44,11 @@ public expect abstract class Number() {
     /**
      * Returns the value of this number as a [Short], which may involve rounding or truncation.
      */
-    public abstract fun toShort(): Short
+    public open fun toShort(): Short
 
     /**
      * Returns the value of this number as a [Byte], which may involve rounding or truncation.
      */
-    public abstract fun toByte(): Byte
+    public open fun toByte(): Byte
 }
 

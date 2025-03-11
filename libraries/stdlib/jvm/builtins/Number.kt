@@ -41,11 +41,15 @@ public actual abstract class Number {
     /**
      * Returns the value of this number as a [Short], which may involve rounding or truncation.
      */
-    public actual abstract fun toShort(): Short
+    public actual open fun toShort(): Short {
+        return toInt().toShort()
+    }
 
     /**
      * Returns the value of this number as a [Byte], which may involve rounding or truncation.
      */
-    public actual abstract fun toByte(): Byte
+    public actual open fun toByte(): Byte {
+        return toInt().toByte()
+    }
 }
 

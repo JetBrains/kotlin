@@ -637,7 +637,7 @@ public final class Nothing {
 
 public abstract class Number : kotlin.Any, java.io.Serializable {
     /*primary*/ public constructor Number()
-    public abstract fun toByte(): kotlin.Byte
+    public open fun toByte(): kotlin.Byte
     @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
 See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {})) @kotlin.DeprecatedSinceKotlin(errorSince = "2.3", warningSince = "1.9") public open fun toChar(): kotlin.Char
@@ -645,7 +645,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
     public abstract fun toFloat(): kotlin.Float
     public abstract fun toInt(): kotlin.Int
     public abstract fun toLong(): kotlin.Long
-    public abstract fun toShort(): kotlin.Short
+    public open fun toShort(): kotlin.Short
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.SinceKotlin(version = "1.3") public final annotation class OptIn : kotlin.Annotation {
