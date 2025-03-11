@@ -1430,6 +1430,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val LOCAL_EXTENSION_PROPERTY by error<PsiElement>()
+
+        val UNNAMED_VAR_PROPERTY by error<PsiElement>(PositioningStrategy.VAL_OR_VAR_NODE)
+        val UNNAMED_DELEGATED_PROPERTY by error<PsiElement>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD)
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

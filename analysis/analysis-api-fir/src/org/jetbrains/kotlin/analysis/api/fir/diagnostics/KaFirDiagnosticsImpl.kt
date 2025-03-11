@@ -3496,6 +3496,16 @@ internal class LocalExtensionPropertyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LocalExtensionProperty
 
+internal class UnnamedVarPropertyImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnnamedVarProperty
+
+internal class UnnamedDelegatedPropertyImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnnamedDelegatedProperty
+
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
