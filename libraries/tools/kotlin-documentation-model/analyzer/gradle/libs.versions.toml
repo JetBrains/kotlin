@@ -15,14 +15,14 @@ ktor = "2.3.11"
 javaDiffUtils = "4.12"
 
 ## Analysis
-kotlin-compiler = "2.1.10"
-kotlin-compiler-k2 = "2.2.0-dev-326"
+kotlin-compiler = "2.2.0-dev-7826"
+kotlin-compiler-k2 = "2.2.0-dev-7826"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
 # on the classpath and will fail with hard to debug problems in runtime.
-# See: https://github.com/JetBrains/kotlin/blob/480b38f967493adf494b4e049cbe5ac1060d215f/gradle/versions.properties#L1
-intellij-platform = "233.13135.103"
+# See: https://github.com/JetBrains/kotlin/blob/79b4def109dc73f882ec8a291a69d0197ad55c58/gradle/versions.properties#L1
+intellij-platform = "241.19416.19"
 
 ## HTML
 jsoup = "1.16.1"
