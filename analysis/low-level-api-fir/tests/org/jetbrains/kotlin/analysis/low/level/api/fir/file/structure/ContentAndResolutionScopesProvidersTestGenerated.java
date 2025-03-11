@@ -30,6 +30,24 @@ public class ContentAndResolutionScopesProvidersTestGenerated extends AbstractCo
   }
 
   @Test
+  @TestMetadata("libraryDependency.kt")
+  public void testLibraryDependency() {
+    runTest("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders/libraryDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("librarySourceWithFallbackDependencies.kt")
+  public void testLibrarySourceWithFallbackDependencies() {
+    runTest("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders/librarySourceWithFallbackDependencies.kt");
+  }
+
+  @Test
+  @TestMetadata("librarySourceWithRegularDependencies.kt")
+  public void testLibrarySourceWithRegularDependencies() {
+    runTest("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders/librarySourceWithRegularDependencies.kt");
+  }
+
+  @Test
   @TestMetadata("randomFiles.kt")
   public void testRandomFiles() {
     runTest("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders/randomFiles.kt");
