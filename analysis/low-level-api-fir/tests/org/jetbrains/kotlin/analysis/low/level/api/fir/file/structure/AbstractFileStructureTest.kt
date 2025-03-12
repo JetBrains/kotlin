@@ -79,8 +79,7 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        val danglingModifierLists = mainFile.collectDescendantsOfType<KtModifierList> { it.isNonLocalDanglingModifierList() }
-        for (modifierList in danglingModifierLists) {
+        for (modifierList in mainFile.collectDescendantsOfType<KtModifierList>()) {
             val structureElement = declarationToStructureElement[modifierList] ?: continue
             val comment = structureElement.createComment()
             elementToComment[modifierList] = comment
