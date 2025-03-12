@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -29,7 +30,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -291,4 +294,45 @@ fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
     return stringClassSymbol?.fir?.declarations?.singleOrNull {
         it is FirSimpleFunction && it.name == OperatorNameConventions.PLUS
     }?.symbol as? FirNamedFunctionSymbol
+}
+
+/**
+ * Detects a common pattern of invalid code where a modifier list (e.g., annotation)
+ * is dangling—unattached to a valid declaration—or left unclosed and followed by another declaration.
+ *
+ * ### Examples
+ *
+ * ```kotlin
+ * class C1 {
+ *     @Ann1 @Ann2
+ * }
+ *
+ * class C2 {
+ *     @Ann(
+ *     fun foo() {}
+ * }
+ *
+ * @Ann("argument"
+ * fun foo() {}
+ * ```
+ * @see org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
+ */
+@LLFirInternals
+fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
+    val isLocal = when (val parent = parent) {
+        is KtFile -> false
+        is KtClassBody if (parent.parent as? KtClassOrObject)?.isLocal() == false -> false
+        else -> true
+    }
+
+    if (isLocal) {
+        // We ignore local modifier lists for LL file structure purposes
+        return false
+    }
+
+    // A dangling modifier list is, by definition, syntactically invalid.
+    // Given the variety of invalid code patterns, we rely on a simple best-effort check:
+    // a modifier list is considered dangling if it's followed by a syntax error
+    // or contains any syntax errors within its descendants recursively.
+    return getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement || anyDescendantOfType<PsiErrorElement>()
 }
