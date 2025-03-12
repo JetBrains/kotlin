@@ -1,0 +1,127 @@
+FILE: annotationArguments.kt
+    @Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithArrays : R|kotlin/Any| {
+        public? constructor(): R|WithArrays| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithExplicitArrays : R|kotlin/Any| {
+        public? constructor(): R|WithExplicitArrays| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @ClassLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithClassLiteral : R|kotlin/Any| {
+        public? constructor(): R|WithClassLiteral| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @EnumLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithEnumLiteral : R|kotlin/Any| {
+        public? constructor(): R|WithEnumLiteral| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @VarArg(LAZY_EXPRESSION) public final? class OneVararg : R|kotlin/Any| {
+        public? constructor(): R|OneVararg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class TwoVararg : R|kotlin/Any| {
+        public? constructor(): R|TwoVararg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class ThreeVararg : R|kotlin/Any| {
+        public? constructor(): R|ThreeVararg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @VarArg(LAZY_EXPRESSION) public final? class SpreadVararg : R|kotlin/Any| {
+        public? constructor(): R|SpreadVararg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithNested : R|kotlin/Any| {
+        public? constructor(): R|WithNested| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithQualifiedNested : R|kotlin/Any| {
+        public? constructor(): R|WithQualifiedNested| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION) public final? class Qualified : R|kotlin/Any| {
+        public? constructor(): R|Qualified| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION) public final? class Sum : R|kotlin/Any| {
+        public? constructor(): R|Sum| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION) public final? class Negative : R|kotlin/Any| {
+        public? constructor(): R|Negative| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION) public final? class Negative2 : R|kotlin/Any| {
+        public? constructor(): R|Negative2| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION) public final? class Positive : R|kotlin/Any| {
+        public? constructor(): R|Positive| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithSimple : R|kotlin/Any| {
+        public? constructor(): R|WithSimple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithNamedSimple : R|kotlin/Any| {
+        public? constructor(): R|WithNamedSimple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithSimpleOperations : R|kotlin/Any| {
+        public? constructor(): R|WithSimpleOperations| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringLiteral : R|kotlin/Any| {
+        public? constructor(): R|WithStringLiteral| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringLiteralConcat : R|kotlin/Any| {
+        public? constructor(): R|WithStringLiteralConcat| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringInterpolationPrefix : R|kotlin/Any| {
+        public? constructor(): R|WithStringInterpolationPrefix| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
