@@ -1,62 +1,3 @@
-StringLiteral.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/StringLiteral, fqName=test.StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=StringLiteral]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s1]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s2]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s3]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=String]
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-        PROPERTY[fqName=test.StringLiteral.s1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=test.StringLiteral.s2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=test.StringLiteral.s3, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s3]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-
-
 AnnotationValues.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
@@ -163,67 +104,19 @@ AnnotationValues.class:
           CLASS_BODY
 
 
-VarArg.class:
+AnnotationValuesKt.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/VarArg, fqName=test.VarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=VarArg]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
-            MODIFIER_LIST[vararg]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Int]
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-        PROPERTY[fqName=test.VarArg.v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=v]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]
-
-
-E.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
-      MODIFIER_LIST[enum public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=E]
-        MODIFIER_LIST[private]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Enum]
-              TYPE_ARGUMENT_LIST
-                TYPE_PROJECTION[projectionKind=NONE]
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=test]
-                      REFERENCE_EXPRESSION[referencedName=E]
-      CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
-        ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+    PROPERTY[fqName=test.CONSTANT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
 
 
 Arrays.class:
@@ -324,6 +217,97 @@ Arrays.class:
               REFERENCE_EXPRESSION[referencedName=BooleanArray]
 
 
+ClassLiteral.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/ClassLiteral, fqName=test.ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassLiteral]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c1]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c2]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+        PROPERTY[fqName=test.ClassLiteral.c1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c1]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+        PROPERTY[fqName=test.ClassLiteral.c2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c2]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+
+
+E.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
+      MODIFIER_LIST[enum public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=E]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Enum]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=E]
+      CLASS_BODY
+        ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+
+
 EnumLiteral.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
@@ -381,6 +365,98 @@ EnumLiteral.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=test]
               REFERENCE_EXPRESSION[referencedName=E]
+
+
+Nested.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/Nested, fqName=test.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+        PROPERTY[fqName=test.Nested.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY[fqName=test.Nested.s, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+
+
+Outer.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Outer]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=some]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nested]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=test]
+                REFERENCE_EXPRESSION[referencedName=Nested]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+        PROPERTY[fqName=test.Outer.some, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=some]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        PROPERTY[fqName=test.Outer.nested, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nested]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=test]
+              REFERENCE_EXPRESSION[referencedName=Nested]
 
 
 Simple.class:
@@ -507,28 +583,34 @@ Simple.class:
               REFERENCE_EXPRESSION[referencedName=Boolean]
 
 
-Outer.class:
+StringLiteral.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[Annotation]]
+    CLASS[classId=test/StringLiteral, fqName=test.StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Outer]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=StringLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=some]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s1]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nested]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s2]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=test]
-                REFERENCE_EXPRESSION[referencedName=Nested]
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s3]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -537,44 +619,46 @@ Outer.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Outer.some, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=some]
+        PROPERTY[fqName=test.StringLiteral.s1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=test.Outer.nested, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nested]
+        PROPERTY[fqName=test.StringLiteral.s2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s2]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=test]
-              REFERENCE_EXPRESSION[referencedName=Nested]
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        PROPERTY[fqName=test.StringLiteral.s3, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s3]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
 
 
-Nested.class:
+VarArg.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Nested, fqName=test.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[Annotation]]
+    CLASS[classId=test/VarArg, fqName=test.VarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=VarArg]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
+            MODIFIER_LIST[vararg]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=String]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -583,94 +667,10 @@ Nested.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Nested.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+        PROPERTY[fqName=test.VarArg.v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=v]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY[fqName=test.Nested.s, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-
-
-AnnotationValuesKt.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    PROPERTY[fqName=test.CONSTANT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
-      MODIFIER_LIST[public const]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=kotlin]
-          REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-
-
-ClassLiteral.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/ClassLiteral, fqName=test.ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassLiteral]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c1]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=reflect]
-                REFERENCE_EXPRESSION[referencedName=KClass]
-                TYPE_ARGUMENT_LIST
-                  TYPE_PROJECTION[projectionKind=STAR]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c2]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=reflect]
-                REFERENCE_EXPRESSION[referencedName=KClass]
-                TYPE_ARGUMENT_LIST
-                  TYPE_PROJECTION[projectionKind=STAR]
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-        PROPERTY[fqName=test.ClassLiteral.c1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=reflect]
-              REFERENCE_EXPRESSION[referencedName=KClass]
-              TYPE_ARGUMENT_LIST
-                TYPE_PROJECTION[projectionKind=STAR]
-        PROPERTY[fqName=test.ClassLiteral.c2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=reflect]
-              REFERENCE_EXPRESSION[referencedName=KClass]
-              TYPE_ARGUMENT_LIST
-                TYPE_PROJECTION[projectionKind=STAR]
+              REFERENCE_EXPRESSION[referencedName=IntArray]

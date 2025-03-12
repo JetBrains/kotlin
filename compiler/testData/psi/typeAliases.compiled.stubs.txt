@@ -1,15 +1,64 @@
-TypeAliasesKt.class:
+Ann.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    TYPEALIAS[classId=test/Z, fqName=test.Z, isTopLevel=true, name=Z]
+    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Ann]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+DependencyKt.class:
+  PsiJetFileStubImpl[package=dependency]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=dependency]
+    IMPORT_LIST
+    FUN[fqName=dependency.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
       MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=dependency]
-          REFERENCE_EXPRESSION[referencedName=SomeClass]
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Unit]
+    TYPEALIAS[classId=dependency/A, fqName=dependency.A, isTopLevel=true, name=A]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
 
 
 Outer.class:
@@ -80,6 +129,19 @@ Outer.class:
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=H]
+
+
+SomeClass.class:
+  PsiJetFileStubImpl[package=dependency]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=dependency]
+    IMPORT_LIST
+    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=SomeClass]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
 
 
 TypeAliases.class:
@@ -265,77 +327,15 @@ TypeAliases.class:
                       REFERENCE_EXPRESSION[referencedName=F]
 
 
-Ann.class:
+TypeAliasesKt.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=annotation]
-                REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Ann]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-
-
-DependencyKt.class:
-  PsiJetFileStubImpl[package=dependency]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=dependency]
-    IMPORT_LIST
-    FUN[fqName=dependency.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    TYPEALIAS[classId=test/Z, fqName=test.Z, isTopLevel=true, name=Z]
       MODIFIER_LIST[public]
-      VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              VALUE_PARAMETER_LIST
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=Unit]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=kotlin]
-          REFERENCE_EXPRESSION[referencedName=Unit]
-    TYPEALIAS[classId=dependency/A, fqName=dependency.A, isTopLevel=true, name=A]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          VALUE_PARAMETER_LIST
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Unit]
-
-
-SomeClass.class:
-  PsiJetFileStubImpl[package=dependency]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=dependency]
-    IMPORT_LIST
-    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=SomeClass]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      CLASS_BODY
+            REFERENCE_EXPRESSION[referencedName=dependency]
+          REFERENCE_EXPRESSION[referencedName=SomeClass]

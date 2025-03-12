@@ -1,205 +1,3 @@
-TypeAliasExpansionKt.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    TYPEALIAS[classId=test/StringAlias, fqName=test.StringAlias, isTopLevel=true, name=StringAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=kotlin]
-          REFERENCE_EXPRESSION[referencedName=String]
-    TYPEALIAS[classId=test/EntryAlias, fqName=test.EntryAlias, isTopLevel=true, name=EntryAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=collections]
-            REFERENCE_EXPRESSION[referencedName=Map]
-          REFERENCE_EXPRESSION[referencedName=Entry]
-          TYPE_ARGUMENT_LIST
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=String]
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=Int]
-    TYPEALIAS[classId=test/FunctionAlias, fqName=test.FunctionAlias, isTopLevel=true, name=FunctionAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          VALUE_PARAMETER_LIST
-            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=String]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-    TYPEALIAS[classId=test/NestedStringAlias, fqName=test.NestedStringAlias, isTopLevel=true, name=NestedStringAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=StringAlias]
-    TYPEALIAS[classId=test/NestedFunctionAlias, fqName=test.NestedFunctionAlias, isTopLevel=true, name=NestedFunctionAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=FunctionAlias]
-    TYPEALIAS[classId=test/ParameterizedListAlias, fqName=test.ParameterizedListAlias, isTopLevel=true, name=ParameterizedListAlias]
-      MODIFIER_LIST[public]
-      TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=collections]
-          REFERENCE_EXPRESSION[referencedName=List]
-          TYPE_ARGUMENT_LIST
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=A]
-    TYPEALIAS[classId=test/NestedListAliasWithTypeArgument, fqName=test.NestedListAliasWithTypeArgument, isTopLevel=true, name=NestedListAliasWithTypeArgument]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
-          TYPE_ARGUMENT_LIST
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=String]
-    TYPEALIAS[classId=test/NestedListAliasWithAliasTypeArgument, fqName=test.NestedListAliasWithAliasTypeArgument, isTopLevel=true, name=NestedListAliasWithAliasTypeArgument]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
-          TYPE_ARGUMENT_LIST
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=test]
-                  REFERENCE_EXPRESSION[referencedName=StringAlias]
-    TYPEALIAS[classId=test/NestedListAliasWithNestedAliasTypeArgument, fqName=test.NestedListAliasWithNestedAliasTypeArgument, isTopLevel=true, name=NestedListAliasWithNestedAliasTypeArgument]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
-          TYPE_ARGUMENT_LIST
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=test]
-                  REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
-    TYPEALIAS[classId=test/NestedParameterizedListAlias, fqName=test.NestedParameterizedListAlias, isTopLevel=true, name=NestedParameterizedListAlias]
-      MODIFIER_LIST[public]
-      TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
-          TYPE_ARGUMENT_LIST
-            TYPE_PROJECTION[projectionKind=NONE]
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=test]
-                  REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
-                  TYPE_ARGUMENT_LIST
-                    TYPE_PROJECTION[projectionKind=NONE]
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION[referencedName=A]
-    TYPEALIAS[classId=test/NullableStringAlias, fqName=test.NullableStringAlias, isTopLevel=true, name=NullableStringAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        NULLABLE_TYPE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=String]
-    TYPEALIAS[classId=test/NestedNullableStringAlias, fqName=test.NestedNullableStringAlias, isTopLevel=true, name=NestedNullableStringAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
-    TYPEALIAS[classId=test/NullableNestedStringAlias, fqName=test.NullableNestedStringAlias, isTopLevel=true, name=NullableNestedStringAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        NULLABLE_TYPE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=test]
-            REFERENCE_EXPRESSION[referencedName=StringAlias]
-    TYPEALIAS[classId=test/NullableFunctionAlias, fqName=test.NullableFunctionAlias, isTopLevel=true, name=NullableFunctionAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        NULLABLE_TYPE
-          FUNCTION_TYPE
-            VALUE_PARAMETER_LIST
-              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=String]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Int]
-    TYPEALIAS[classId=test/NestedNullableFunctionAlias, fqName=test.NestedNullableFunctionAlias, isTopLevel=true, name=NestedNullableFunctionAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=test]
-          REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
-    TYPEALIAS[classId=test/NullableNestedFunctionAlias, fqName=test.NullableNestedFunctionAlias, isTopLevel=true, name=NullableNestedFunctionAlias]
-      MODIFIER_LIST[public]
-      TYPE_REFERENCE
-        NULLABLE_TYPE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=test]
-            REFERENCE_EXPRESSION[referencedName=FunctionAlias]
-
-
 TypeAliasExpansion.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
@@ -677,3 +475,205 @@ TypeAliasExpansion.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+
+
+TypeAliasExpansionKt.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    TYPEALIAS[classId=test/StringAlias, fqName=test.StringAlias, isTopLevel=true, name=StringAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+    TYPEALIAS[classId=test/EntryAlias, fqName=test.EntryAlias, isTopLevel=true, name=EntryAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=collections]
+            REFERENCE_EXPRESSION[referencedName=Map]
+          REFERENCE_EXPRESSION[referencedName=Entry]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=String]
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
+    TYPEALIAS[classId=test/FunctionAlias, fqName=test.FunctionAlias, isTopLevel=true, name=FunctionAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=String]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+    TYPEALIAS[classId=test/NestedStringAlias, fqName=test.NestedStringAlias, isTopLevel=true, name=NestedStringAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=StringAlias]
+    TYPEALIAS[classId=test/NestedFunctionAlias, fqName=test.NestedFunctionAlias, isTopLevel=true, name=NestedFunctionAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=FunctionAlias]
+    TYPEALIAS[classId=test/ParameterizedListAlias, fqName=test.ParameterizedListAlias, isTopLevel=true, name=ParameterizedListAlias]
+      MODIFIER_LIST[public]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=collections]
+          REFERENCE_EXPRESSION[referencedName=List]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+    TYPEALIAS[classId=test/NestedListAliasWithTypeArgument, fqName=test.NestedListAliasWithTypeArgument, isTopLevel=true, name=NestedListAliasWithTypeArgument]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=String]
+    TYPEALIAS[classId=test/NestedListAliasWithAliasTypeArgument, fqName=test.NestedListAliasWithAliasTypeArgument, isTopLevel=true, name=NestedListAliasWithAliasTypeArgument]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=StringAlias]
+    TYPEALIAS[classId=test/NestedListAliasWithNestedAliasTypeArgument, fqName=test.NestedListAliasWithNestedAliasTypeArgument, isTopLevel=true, name=NestedListAliasWithNestedAliasTypeArgument]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+    TYPEALIAS[classId=test/NestedParameterizedListAlias, fqName=test.NestedParameterizedListAlias, isTopLevel=true, name=NestedParameterizedListAlias]
+      MODIFIER_LIST[public]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=A]
+    TYPEALIAS[classId=test/NullableStringAlias, fqName=test.NullableStringAlias, isTopLevel=true, name=NullableStringAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+    TYPEALIAS[classId=test/NestedNullableStringAlias, fqName=test.NestedNullableStringAlias, isTopLevel=true, name=NestedNullableStringAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
+    TYPEALIAS[classId=test/NullableNestedStringAlias, fqName=test.NullableNestedStringAlias, isTopLevel=true, name=NullableNestedStringAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=test]
+            REFERENCE_EXPRESSION[referencedName=StringAlias]
+    TYPEALIAS[classId=test/NullableFunctionAlias, fqName=test.NullableFunctionAlias, isTopLevel=true, name=NullableFunctionAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+    TYPEALIAS[classId=test/NestedNullableFunctionAlias, fqName=test.NestedNullableFunctionAlias, isTopLevel=true, name=NestedNullableFunctionAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
+    TYPEALIAS[classId=test/NullableNestedFunctionAlias, fqName=test.NullableNestedFunctionAlias, isTopLevel=true, name=NullableNestedFunctionAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=test]
+            REFERENCE_EXPRESSION[referencedName=FunctionAlias]

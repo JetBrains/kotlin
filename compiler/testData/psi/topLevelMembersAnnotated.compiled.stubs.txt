@@ -1,3 +1,22 @@
+C.class:
+  PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
+    PACKAGE_DIRECTIVE
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            REFERENCE_EXPRESSION[referencedName=b]
+          REFERENCE_EXPRESSION[referencedName=c]
+        REFERENCE_EXPRESSION[referencedName=topLevelMembersAnnotated]
+    IMPORT_LIST
+    CLASS[classId=a/b/c/topLevelMembersAnnotated/C, fqName=a.b.c.topLevelMembersAnnotated.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=C]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
 TopLevelMembersAnnotatedKt.class:
   PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
     PACKAGE_DIRECTIVE
@@ -105,22 +124,27 @@ TopLevelMembersAnnotatedKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
 
 
-C.class:
-  PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
+a.class:
+  PsiJetFileStubImpl[package=d.e.f]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
-          DOT_QUALIFIED_EXPRESSION
-            REFERENCE_EXPRESSION[referencedName=a]
-            REFERENCE_EXPRESSION[referencedName=b]
-          REFERENCE_EXPRESSION[referencedName=c]
-        REFERENCE_EXPRESSION[referencedName=topLevelMembersAnnotated]
+          REFERENCE_EXPRESSION[referencedName=d]
+          REFERENCE_EXPRESSION[referencedName=e]
+        REFERENCE_EXPRESSION[referencedName=f]
     IMPORT_LIST
-    CLASS[classId=a/b/c/topLevelMembersAnnotated/C, fqName=a.b.c.topLevelMembersAnnotated.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=C]
+    CLASS[classId=d/e/f/a, fqName=d.e.f.a, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=a]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
 
 
@@ -136,30 +160,6 @@ b.class:
     CLASS[classId=d/e/f/b, fqName=d.e.f.b, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=b]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-
-
-a.class:
-  PsiJetFileStubImpl[package=d.e.f]
-    PACKAGE_DIRECTIVE
-      DOT_QUALIFIED_EXPRESSION
-        DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION[referencedName=d]
-          REFERENCE_EXPRESSION[referencedName=e]
-        REFERENCE_EXPRESSION[referencedName=f]
-    IMPORT_LIST
-    CLASS[classId=d/e/f/a, fqName=d.e.f.a, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=a]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST

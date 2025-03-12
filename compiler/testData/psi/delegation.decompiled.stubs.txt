@@ -1,19 +1,27 @@
-T.class:
+A.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/T, fqName=T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
-      MODIFIER_LIST[public]
+    CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[T]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=T]
       CLASS_BODY
-        PROPERTY[fqName=T.g, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
-          MODIFIER_LIST[abstract public]
+        PROPERTY[fqName=A.g, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
+          MODIFIER_LIST[open public]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-        FUN[fqName=T.f, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-          MODIFIER_LIST[abstract public]
+        FUN[fqName=A.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          MODIFIER_LIST[open public]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -80,30 +88,22 @@ Delegation.class:
               REFERENCE_EXPRESSION[referencedName=Unit]
 
 
-A.class:
+T.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[T]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=T]
+    CLASS[classId=/T, fqName=T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
+      MODIFIER_LIST[public]
       CLASS_BODY
-        PROPERTY[fqName=A.g, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
-          MODIFIER_LIST[open public]
+        PROPERTY[fqName=T.g, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
+          MODIFIER_LIST[abstract public]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-        FUN[fqName=A.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-          MODIFIER_LIST[open public]
+        FUN[fqName=T.f, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          MODIFIER_LIST[abstract public]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE

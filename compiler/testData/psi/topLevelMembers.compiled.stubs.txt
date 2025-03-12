@@ -1,33 +1,3 @@
-D.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
-    PACKAGE_DIRECTIVE
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION[referencedName=foo]
-        REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
-    IMPORT_LIST
-    CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=D]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      CLASS_BODY
-
-
-Nothing.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
-    PACKAGE_DIRECTIVE
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION[referencedName=foo]
-        REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
-    IMPORT_LIST
-    CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nothing]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      CLASS_BODY
-
-
 A.class:
   PsiJetFileStubImpl[package=foo.TopLevelMembers]
     PACKAGE_DIRECTIVE
@@ -56,6 +26,36 @@ A.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+D.class:
+  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+    PACKAGE_DIRECTIVE
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+    IMPORT_LIST
+    CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=D]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+Nothing.class:
+  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+    PACKAGE_DIRECTIVE
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+    IMPORT_LIST
+    CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nothing]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
       CLASS_BODY
 
 

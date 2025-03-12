@@ -1,31 +1,3 @@
-f.class:
-  PsiJetFileStubImpl[package=]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=f, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=annotation]
-                REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=f]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-
-
 Annotations.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
@@ -454,6 +426,60 @@ Annotations.class:
                   REFERENCE_EXPRESSION[referencedName=Int]
 
 
+E.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
+      MODIFIER_LIST[enum public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=E]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Enum]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=E]
+      CLASS_BODY
+        ENUM_ENTRY[classId=null, fqName=E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+
+
+a.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=a]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
 b.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
@@ -509,34 +535,6 @@ b.class:
               REFERENCE_EXPRESSION[referencedName=E]
 
 
-a.class:
-  PsiJetFileStubImpl[package=]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=annotation]
-                REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=a]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-
-
 c.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
@@ -565,14 +563,23 @@ c.class:
       CLASS_BODY
 
 
-E.class:
+f.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
-      MODIFIER_LIST[enum public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=E]
-        MODIFIER_LIST[private]
+    CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=f, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=f]
+        MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
@@ -580,12 +587,5 @@ E.class:
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Enum]
-              TYPE_ARGUMENT_LIST
-                TYPE_PROJECTION[projectionKind=NONE]
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=E]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
-        ENUM_ENTRY[classId=null, fqName=E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]

@@ -1,14 +1,3 @@
-Foo.class:
-  PsiJetFileStubImpl[package=]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
-      MODIFIER_LIST[public]
-      TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      CLASS_BODY
-
-
 AnonymousReturnWithGenericType.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
@@ -57,3 +46,14 @@ AnonymousReturnWithGenericType.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Any]
+
+
+Foo.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+      MODIFIER_LIST[public]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      CLASS_BODY

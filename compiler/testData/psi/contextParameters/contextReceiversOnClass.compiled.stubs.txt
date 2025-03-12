@@ -1,41 +1,3 @@
-B.class:
-  PsiJetFileStubImpl[package=]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      CLASS_BODY
-        PROPERTY[fqName=B.valueB, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueB]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-
-
-MyAnnotation.class:
-  PsiJetFileStubImpl[package=]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MyAnnotation]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY
-
-
 A.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
@@ -47,6 +9,25 @@ A.class:
         VALUE_PARAMETER_LIST
       CLASS_BODY
         PROPERTY[fqName=A.valueA, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueA]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+
+
+B.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+        PROPERTY[fqName=B.valueB, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueB]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -78,4 +59,23 @@ ContextReceiversOnClass.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ContextReceiversOnClass]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+MyAnnotation.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MyAnnotation]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY

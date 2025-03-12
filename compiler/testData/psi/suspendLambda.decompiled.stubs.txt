@@ -1,3 +1,67 @@
+A.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+Continuation.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/Continuation, fqName=test.Continuation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Continuation, superNames=[]]
+      MODIFIER_LIST[public final]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Continuation]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+P.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/P, fqName=test.P, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=P, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY
+
+
+RS.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/RS, fqName=test.RS, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY
+
+
 SuspendLambda.class:
   PsiJetFileStubImpl[package=test]
     PACKAGE_DIRECTIVE
@@ -305,67 +369,3 @@ SuspendLambda.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Nothing]
-
-
-RS.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/RS, fqName=test.RS, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]
-      MODIFIER_LIST[public]
-      CLASS_BODY
-
-
-P.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/P, fqName=test.P, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=P, superNames=[]]
-      MODIFIER_LIST[public]
-      CLASS_BODY
-
-
-Continuation.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/Continuation, fqName=test.Continuation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Continuation, superNames=[]]
-      MODIFIER_LIST[public final]
-      TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Continuation]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      CLASS_BODY
-
-
-A.class:
-  PsiJetFileStubImpl[package=test]
-    PACKAGE_DIRECTIVE
-      REFERENCE_EXPRESSION[referencedName=test]
-    IMPORT_LIST
-    CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
-      MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=annotation]
-                REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      SUPER_TYPE_LIST
-        SUPER_TYPE_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Annotation]
-      CLASS_BODY

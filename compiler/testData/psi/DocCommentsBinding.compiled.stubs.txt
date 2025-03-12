@@ -1,15 +1,3 @@
-B.class:
-  PsiJetFileStubImpl[package=]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
-      MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
-        MODIFIER_LIST[public]
-        VALUE_PARAMETER_LIST
-      CLASS_BODY
-
-
 A.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
@@ -59,3 +47,15 @@ A.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+
+
+B.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY

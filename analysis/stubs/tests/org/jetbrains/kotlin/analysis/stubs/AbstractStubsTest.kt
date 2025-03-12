@@ -9,7 +9,6 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContentImpl
-import junit.framework.TestCase.assertEquals
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val files = mainModule.ktFiles
-        val filesAndStubs = files.map { it to computeStub(it) }
+        val filesAndStubs = files.sortedBy(KtFile::getName).map { it to computeStub(it) }
 
         val actual = prettyPrint {
             if (filesAndStubs.isEmpty()) {
