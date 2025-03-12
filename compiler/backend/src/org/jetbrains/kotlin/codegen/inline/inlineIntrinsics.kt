@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.org.objectweb.asm.Type
 
-
-
 private fun FunctionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
     isTopLevelInPackage(
         "suspendCoroutineUninterceptedOrReturn",
