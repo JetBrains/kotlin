@@ -218,7 +218,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         val expectedOut = Regex("// EXPECTED_OUT: (.*)").findAll(ktFile.text).map {
             it.groups[1]!!.value
         }.joinToString("\n")
-        val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"]*)\"?").findAll(ktFile.text).map {
+        val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"\\n]*)\"?").findAll(ktFile.text).map {
             it.groups[1]!!.value to it.groups[2]!!.value
         }
 
@@ -309,7 +309,7 @@ private class ReplRunViaApiChecker(
                     // TODO: implement expected exception (KT-74354)
                     assertions.fail { evaluationResult.error.message ?: evaluationResult.error.toString() }
                 }
-                val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"]*)\"?").findAll(module.files.first().originalContent).map {
+                val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"\\n]*)\"?").findAll(module.files.first().originalContent).map {
                     it.groups[1]!!.value to it.groups[2]!!.value
                 }
                 val snippetClass = evaluationResult.scriptClass!!.java
