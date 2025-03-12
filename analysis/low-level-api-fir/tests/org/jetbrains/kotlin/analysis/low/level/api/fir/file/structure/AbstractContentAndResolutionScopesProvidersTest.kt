@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestFile
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.nameWithoutExtension
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -160,10 +162,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 
         moduleDataByKaModule.values.forEach { moduleData ->
             moduleData.dependencies.addAll(
-                moduleData.moduleWithFiles.ktTestModule.testModule.allDependencies.mapNotNull { dependencyDescription ->
-                    val dependencyKtTestModule = testServices.ktTestModuleStructure.getKtTestModule(dependencyDescription.dependencyModule)
-                    moduleDataByKaModule[dependencyKtTestModule.ktModule]
-                }
+                moduleData.collectDependencies(moduleDataByKaModule, testServices)
             )
         }
 
@@ -242,6 +241,26 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
             testServices.assertions.assertTrue(fileNames.distinct().size == fileNames.size) {
                 "All files across working modules are expected to be unique"
             }
+        }
+    }
+
+    private fun ModuleData.collectDependencies(
+        moduleDataByKaModule: Map<KaModule, ModuleData>,
+        testServices: TestServices,
+    ): List<ModuleData> {
+        val testModule = moduleWithFiles.testModule
+
+        // When the module has fallback dependencies, it effectively depends on all other library modules.
+        if (testModule.hasFallbackDependencies) {
+            return moduleDataByKaModule.values.filter { otherModuleData ->
+                val otherKaModule = otherModuleData.moduleWithFiles.kaModule
+                otherKaModule is KaLibraryModule && otherKaModule != moduleWithFiles.kaModule
+            }
+        }
+
+        return testModule.allDependencies.mapNotNull { dependencyDescription ->
+            val dependencyKtTestModule = testServices.ktTestModuleStructure.getKtTestModule(dependencyDescription.dependencyModule)
+            moduleDataByKaModule[dependencyKtTestModule.ktModule]
         }
     }
 
@@ -344,6 +363,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
     ) {
         val moduleName: String get() = ktTestModule.name
         val kaModule: KaModule get() = ktTestModule.ktModule
+        val testModule: TestModule get() = ktTestModule.testModule
 
         val isWorkingModule: Boolean get() = originalModule == null
         val isRefinerModule: Boolean get() = originalModule != null

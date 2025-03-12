@@ -4,3 +4,5 @@ Module LIBRARY:
     x.class
 Module MAIN:
     main.kt
+    a.class
+    x.class
