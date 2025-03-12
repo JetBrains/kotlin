@@ -5,7 +5,7 @@ gradle-custom-user-data = "2.0.2"
 develocity = "3.17.5"
 gradle-plugin-publish = "1.2.1"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
-gradle-toolchains-foojay-resolver = "0.4.0"
+gradle-toolchains-foojay-resolver = "0.9.0"
 # guava and failureaccess should be aligned relatively
 guava = "33.3.1-jre"
 failureaccess = "1.0.2"
