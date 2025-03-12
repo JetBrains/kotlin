@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
@@ -65,8 +65,8 @@ internal class FileStructure private constructor(
          *
          * @see getNonLocalContainingOrThisDeclaration
          */
-        private fun findNonLocalContainer(element: KtElement): KtDeclaration? {
-            return element.getNonLocalContainingOrThisDeclaration(KtDeclaration::isAutonomousDeclaration)
+        private fun findNonLocalContainer(element: KtElement): KtElement? {
+            return element.getNonLocalContainingOrThisElement { it.isAutonomousDeclaration }
         }
     }
 
@@ -92,7 +92,7 @@ internal class FileStructure private constructor(
      */
     fun getStructureElementFor(
         element: KtElement,
-        nonLocalContainer: KtDeclaration? = findNonLocalContainer(element),
+        nonLocalContainer: KtElement? = findNonLocalContainer(element),
     ): FileStructureElement {
         val container = getContainerKtElement(element, nonLocalContainer)
         return structureElements.getOrPut(container) { createStructureElement(container) }
@@ -105,16 +105,11 @@ internal class FileStructure private constructor(
         }
     }
 
-    private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtElement {
-        getStructureKtElement(element, nonLocalContainer)?.let { return it }
-        val modifierList = element.parentOfType<KtModifierList>(withSelf = true)
-        if (modifierList?.isNonLocalDanglingModifierList() == true) {
-            return modifierList
-        }
-        return element.containingKtFile
+    private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtElement?): KtElement {
+        return getStructureKtElement(element, nonLocalContainer) ?: element.containingKtFile
     }
 
-    private fun getStructureKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtDeclaration? {
+    private fun getStructureKtElement(element: KtElement, nonLocalContainer: KtElement?): KtElement? {
         val container = if (nonLocalContainer?.isAutonomousDeclaration == true)
             nonLocalContainer
         else {
