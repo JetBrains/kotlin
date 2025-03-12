@@ -55,6 +55,7 @@ fun IrBuilderWithScope.irDiagramString(
     }
 
     val valuesByRow = variables
+        .filterIsInstance<IrTemporaryVariable.Displayable>()
         .map { it.toValueDisplay(callInfo) }
         .sortedBy { it.indent }
         .groupBy { it.row }
@@ -136,7 +137,7 @@ private data class ValueDisplay(
     val row: Int,
 )
 
-private fun IrTemporaryVariable.toValueDisplay(
+private fun IrTemporaryVariable.Displayable.toValueDisplay(
     originalInfo: SourceRangeInfo,
 ): ValueDisplay {
     var indent = sourceRangeInfo.startColumnNumber

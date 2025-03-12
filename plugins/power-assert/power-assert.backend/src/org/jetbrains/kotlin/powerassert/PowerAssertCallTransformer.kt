@@ -100,8 +100,8 @@ class PowerAssertCallTransformer(
                 .map { buildTree(it) }
         }
 
-        // If all roots are null, there are no transformable parameters
-        if (roots.all { it == null }) {
+        // If all roots are null or non-visible, there are no transformable parameters
+        if (roots.all { it == null || !it.isVisible() }) {
             configuration.messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
             return super.visitCall(expression)
         }

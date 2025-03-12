@@ -26,12 +26,22 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-data class IrTemporaryVariable(
+sealed class IrTemporaryVariable(
     val temporary: IrVariable,
     val original: IrExpression,
-    val sourceRangeInfo: SourceRangeInfo,
-    val text: String,
-)
+) {
+    class Displayable(
+        temporary: IrVariable,
+        original: IrExpression,
+        val sourceRangeInfo: SourceRangeInfo,
+        val text: String,
+    ) : IrTemporaryVariable(temporary, original)
+
+    class Hidden(
+        temporary: IrVariable,
+        original: IrExpression,
+    ) : IrTemporaryVariable(temporary, original)
+}
 
 class IrTemporaryExtractionTransformer(
     private val builder: IrStatementsBuilder<*>,
