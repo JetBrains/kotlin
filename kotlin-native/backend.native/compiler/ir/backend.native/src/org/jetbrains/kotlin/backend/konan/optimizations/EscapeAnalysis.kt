@@ -348,6 +348,7 @@ internal object EscapeAnalysis {
             val lifetimes: MutableMap<IrElement, Lifetime>,
             val propagateExiledToHeapObjects: Boolean
     ) {
+        private val enableLocalObjects: Boolean = context.config.enableLocalObjects
 
         private val symbols = context.symbols
         private val throwable = symbols.throwable.owner
@@ -1654,7 +1655,11 @@ internal object EscapeAnalysis {
                     val computedLifetime = lifetimeOf(node)
                     var lifetime = computedLifetime
 
-                    if (lifetime != Lifetime.STACK) {
+                    if (!enableLocalObjects && lifetime == Lifetime.LOCAL) {
+                        lifetime = Lifetime.GLOBAL
+                    }
+
+                    if (lifetime != Lifetime.STACK && lifetime != Lifetime.LOCAL) {
                         // TODO: Support other lifetimes - requires arenas.
                         lifetime = Lifetime.GLOBAL
                     }
@@ -1671,14 +1676,18 @@ internal object EscapeAnalysis {
                                     stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arrayLength!!, arraySizeInBytes.toInt())
                                 } else {
                                     // Can be placed into the local arena.
-                                    lifetime = Lifetime.LOCAL
+                                    lifetime = if (enableLocalObjects) {
+                                        Lifetime.LOCAL
+                                    } else {
+                                        Lifetime.GLOBAL
+                                    }
                                 }
                             }
                         }
                     }
 
                     if (lifetime != computedLifetime) {
-                        if (propagateExiledToHeapObjects && node is DataFlowIR.Node.Alloc) {
+                        if (propagateExiledToHeapObjects && lifetime == Lifetime.GLOBAL && node is DataFlowIR.Node.Alloc) {
                             context.log { "Forcing node ${nodeToString(node)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
@@ -1697,13 +1706,15 @@ internal object EscapeAnalysis {
                         ptgNode.forcedLifetime = Lifetime.STACK_ARRAY(length)
                     } else {
                         remainedToAlloc = 0
-                        // Do not exile primitive arrays - they ain't reference no object.
-                        if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
+                        if (enableLocalObjects) {
+                            ptgNode.forcedLifetime = Lifetime.LOCAL
+                        } else if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
                             context.log { "Forcing node ${nodeToString(ptgNode.node!!)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
                         } else {
-                            ptgNode.forcedLifetime = Lifetime.LOCAL
+                            // Do not exile primitive arrays - they ain't reference no object.
+                            ptgNode.forcedLifetime = Lifetime.GLOBAL
                         }
                     }
                 }
@@ -1794,7 +1805,12 @@ internal object EscapeAnalysis {
         assert(lifetimes.isEmpty())
 
         try {
-            InterproceduralAnalysis(context, generationState, callGraph, moduleDFG, lifetimes, propagateExiledToHeapObjects = false).analyze()
+            InterproceduralAnalysis(context, generationState, callGraph,
+                    moduleDFG, lifetimes,
+                    // The GC must be careful not to scan exiled objects, that have already became dead,
+                    // as they may reference other already destroyed stack-allocated objects.
+                    propagateExiledToHeapObjects = context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
+            ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
                     """

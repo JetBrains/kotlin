@@ -290,6 +290,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.preCodegenInlineThreshold) ?: 0U
     }
 
+    val enableLocalObjects: Boolean by lazy {
+        configuration.get(BinaryOptions.enableLocalObjects) != false
+    }
+
     val enableDebugTransparentStepping: Boolean
         get() = target.family.isAppleFamily && (configuration.get(BinaryOptions.enableDebugTransparentStepping) ?: true)
 
