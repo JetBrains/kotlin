@@ -12,7 +12,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.io.PrintWriter
-import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.*
 import kotlin.test.fail
@@ -33,15 +32,13 @@ fun TestProject.makeSnapshotTo(
     if (isTeamCityRun) fail("Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!")
     if (!useSnapshotWithInjections && usesInjections) fail(
         """
-            Test project tries to make a snapshot with injections. Rebuilding test classes will result in the updated behavior in the snapshot.
-              
-            Please opt-in explicitly using "makeSnapshotTo(..., useSnapshotWithInjections = true)"
-            
+        Test project tries to make a snapshot with injections. Rebuilding test classes will result in the updated behavior in the snapshot.
+          
+        Please opt-in explicitly using "makeSnapshotTo(..., useSnapshotWithInjections = true)"
         """.trimIndent()
     )
 
-    val dest = Paths
-        .get(destinationPath)
+    val dest = Path(destinationPath)
         .resolve(projectName)
         .resolve(gradleVersion.version)
         .also {
@@ -51,27 +48,33 @@ fun TestProject.makeSnapshotTo(
 
     projectPath.copyRecursively(dest)
 
-    val gradlePropertiesFile = dest.resolve("gradle.properties")
-    val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion).toMutableMap()
-    if (gradlePropertiesFile.exists()) {
-        val propertiesRegex = """^\s*(\S+)=(.*)""".toRegex()
-        val content = gradlePropertiesFile.readLines()
-            .map {
-                val trimmedLine = it.trimStart()
-                val match = propertiesRegex.matchEntire(trimmedLine) ?: return@map trimmedLine
-                val (key, value) = match.destructured
-                val overriddenValue = gradlePropertiesFromBuildOptions.remove(key)
-                if (overriddenValue != null && value != overriddenValue) {
-                    "# $trimmedLine // overridden by buildOptions with\n$key=$overriddenValue\n"
-                } else {
-                    "${trimmedLine}\n"
-                }
-            }
-        gradlePropertiesFile.writeLines(content)
-    }
+    val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion)
+    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { (k, v) -> "${k}=${v}" }
 
-    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { "${it.key}=${it.value}" }
-    gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent")
+    dest.walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "settings.gradle" || it.name == "settings.gradle.kts" }
+        .map { it.resolveSibling("gradle.properties") }
+        .forEach { gradlePropertiesFile ->
+            if (gradlePropertiesFile.exists()) {
+                val propertiesRegex = """^\s*(\S+)=(.*)""".toRegex()
+                val content = gradlePropertiesFile.readLines()
+                    .map { it.trim() }
+                    .map { line ->
+                        val match = propertiesRegex.matchEntire(line) ?: return@map line
+                        val (key, value) = match.destructured
+                        val overriddenValue = gradlePropertiesFromBuildOptions[key]
+                        if (overriddenValue != null && value != overriddenValue) {
+                            "# $line // overridden by buildOptions with\n$key=$overriddenValue\n"
+                        } else {
+                            "${line}\n"
+                        }
+                    }
+                gradlePropertiesFile.writeLines(content)
+            }
+
+            gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent\n")
+        }
 
     dest.resolve("run.sh").run {
         writeText(
@@ -101,15 +104,15 @@ fun TestProject.makeSnapshotTo(
         )
     }
 
-    val wrapperDir = dest.resolve("gradle").resolve("wrapper").apply { createDirectories() }
+    val wrapperDir = dest.resolve("gradle/wrapper").createDirectories()
     wrapperDir.resolve("gradle-wrapper.properties").writeText(
         """
         distributionUrl=https\://services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
         """.trimIndent()
     )
     // Copied from 'Wrapper' task class implementation
-    val projectRoot = Paths.get("../../../")
-    projectRoot.resolve("gradle").resolve("wrapper").resolve("gradle-wrapper.jar").run {
+    val projectRoot = Path("../../../")
+    projectRoot.resolve("gradle/wrapper/gradle-wrapper.jar").run {
         copyTo(wrapperDir.resolve(fileName))
     }
     projectRoot.resolve("gradlew").run {
