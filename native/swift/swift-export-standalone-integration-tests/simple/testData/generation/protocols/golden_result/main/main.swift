@@ -28,13 +28,34 @@ public protocol Foeble: KotlinRuntime.KotlinBase {
 public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main._SiblingProtocol_NestedClass
 }
+@objc(_Barable)
+protocol _Barable: main._Foeble {
+}
+@objc(_Bazzable)
+protocol _Bazzable {
+}
+@objc(_ContainerProtocol)
+protocol _ContainerProtocol {
+}
 public protocol _ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main.__ContainerProtocol_NestedProtocol_NestedClass
 }
 public protocol _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
 }
-public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.Foeble, main.Bazzable, KotlinRuntimeSupport._KotlinBridged {
+@objc(_Foeble)
+protocol _Foeble {
+}
+@objc(_SiblingProtocol)
+protocol _SiblingProtocol {
+}
+@objc(__ContainerProtocol_NestedProtocol)
+protocol __ContainerProtocol_NestedProtocol {
+}
+@objc(__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol)
+protocol __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
+}
+public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, main.Foeble, main._Foeble, main.Bazzable, main._Bazzable, KotlinRuntimeSupport._KotlinBridged {
     public var baz: main.Bar {
         get {
             return main.Bar(__externalRCRef: Bar_baz_get(self.__externalRCRef()))
@@ -56,7 +77,7 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.Foeble, mai
         return main.Bar(__externalRCRef: Bar_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()))
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main._Foeble, KotlinRuntimeSupport._KotlinBridged {
     public var baz: any main.Foeble {
         get {
             return KotlinRuntime.KotlinBase(__externalRCRef: Foo_baz_get(self.__externalRCRef())) as! any main.Foeble
@@ -290,6 +311,28 @@ public extension main._ContainerProtocol_NestedProtocol where Self : KotlinRunti
 }
 public extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
 }
+extension KotlinRuntimeSupport._KotlinExistential: main.ContainerProtocol where Wrapped : main._ContainerProtocol {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.SiblingProtocol where Wrapped : main._SiblingProtocol {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.Foeble where Wrapped : main._Foeble {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.Barable where Wrapped : main._Barable {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.Bazzable where Wrapped : main._Bazzable {
+}
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.ContainerProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
+}
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
+}
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Foeble where Wrapped : ExportedKotlinPackages.repeating_conformances._Foeble {
+}
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Barable where Wrapped : ExportedKotlinPackages.repeating_conformances._Barable {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main._ContainerProtocol_NestedProtocol where Wrapped : main.__ContainerProtocol_NestedProtocol {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Wrapped : main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
+}
 public extension ExportedKotlinPackages.packagewithprotocols {
     public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
         typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
@@ -298,7 +341,13 @@ public extension ExportedKotlinPackages.packagewithprotocols {
     public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
         typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
     }
-    public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+    @objc(_ContainerProtocol)
+    protocol _ContainerProtocol {
+    }
+    @objc(_SiblingProtocol)
+    protocol _SiblingProtocol {
+    }
+    public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
             get {
                 return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
@@ -315,7 +364,7 @@ public extension ExportedKotlinPackages.packagewithprotocols {
             return ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE(__externalRCRef: packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value))
         }
     }
-    public final class INHERITANCE_COUPLE: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol {
+    public final class INHERITANCE_COUPLE: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
         public override init() {
             let __kt = packagewithprotocols_INHERITANCE_COUPLE_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -339,7 +388,7 @@ public extension ExportedKotlinPackages.packagewithprotocols {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, KotlinRuntimeSupport._KotlinBridged {
+    public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE {
             get {
                 return ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE(__externalRCRef: packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get())
@@ -379,6 +428,12 @@ public extension ExportedKotlinPackages.repeating_conformances {
     public protocol Barable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble {
     }
     public protocol Foeble: KotlinRuntime.KotlinBase {
+    }
+    @objc(_Barable)
+    protocol _Barable: ExportedKotlinPackages.repeating_conformances._Foeble {
+    }
+    @objc(_Foeble)
+    protocol _Foeble {
     }
     open class Child1: ExportedKotlinPackages.repeating_conformances.Parent1 {
         public override init() {
@@ -476,7 +531,7 @@ public extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    open class GrandChild4: ExportedKotlinPackages.repeating_conformances.Child4, ExportedKotlinPackages.repeating_conformances.Barable {
+    open class GrandChild4: ExportedKotlinPackages.repeating_conformances.Child4, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable {
         public override init() {
             let __kt = repeating_conformances_GrandChild4_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -488,7 +543,7 @@ public extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    open class GrandChild5: ExportedKotlinPackages.repeating_conformances.Child5, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.Foeble {
+    open class GrandChild5: ExportedKotlinPackages.repeating_conformances.Child5, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble {
         public override init() {
             let __kt = repeating_conformances_GrandChild5_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -500,7 +555,7 @@ public extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    open class Parent1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = repeating_conformances_Parent1_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -512,7 +567,7 @@ public extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    open class Parent2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = repeating_conformances_Parent2_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -524,7 +579,7 @@ public extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    open class Parent3: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Barable, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent3: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = repeating_conformances_Parent3_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -536,7 +591,7 @@ public extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    open class Parent4: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent4: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = repeating_conformances_Parent4_init_allocate()
             super.init(__externalRCRef: __kt)

@@ -59,7 +59,8 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
-            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.classId?.asFqNameString()
+                ?: error("Unnameable declaration $declaration")
         }
     }
 }

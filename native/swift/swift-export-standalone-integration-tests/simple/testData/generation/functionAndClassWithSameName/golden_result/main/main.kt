@@ -6,6 +6,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(EnumWithFactory::class, "4main15EnumWithFactoryC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ObjectWithFactory::class, "4main17ObjectWithFactoryC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(UtcOffset::class, "4main9UtcOffsetC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceWithFactory::class, "_InterfaceWithFactory")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

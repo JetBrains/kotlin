@@ -6,6 +6,9 @@ import KotlinRuntime
 public extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase {
     }
+    @objc(_Annotation)
+    protocol _Annotation {
+    }
     public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
             get {
@@ -209,4 +212,6 @@ public extension ExportedKotlinPackages.kotlin {
     }
 }
 public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }

@@ -24,6 +24,9 @@ public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
 }
+@objc(_OUTSIDE_PROTO)
+protocol _OUTSIDE_PROTO {
+}
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package override init() {
         fatalError()
@@ -202,7 +205,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
+public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, main._OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
         get {
             return main.OBJECT_WITH_INTERFACE_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())
@@ -299,6 +302,8 @@ public func produce_closure() -> main.closure {
     }()
 }
 public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
 }
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo

@@ -4,6 +4,8 @@
  */
 
 #include "SwiftExport.hpp"
+#include "Types.h"
+#include "ObjCExport.h"
 
 #if KONAN_OBJC_INTEROP
 
@@ -14,11 +16,14 @@
 
 using namespace kotlin;
 
+extern "C" Class kotlin_wrap_into_existential(Class);
+
 namespace {
 
-Class computeBestFittingClass(const TypeInfo* typeInfo) noexcept {
+__attribute__((optnone))
+NO_INLINE Class computeBestFittingClass(const TypeInfo* typeInfo) noexcept {
     auto& objCExport = kotlin::objCExport(typeInfo);
-    std_support::atomic_ref<Class> clazz(objCExport.objCClass);
+    std_support::atomic_ref<Class> clazz(objCExport.swiftClass);
     Class bestFitting = clazz.load(std::memory_order_relaxed);
     if (bestFitting != nil) {
         // There's already a stored Class, just return it.
@@ -28,7 +33,7 @@ Class computeBestFittingClass(const TypeInfo* typeInfo) noexcept {
     }
 
     // Try to get `Class` from name stored in `typeAdapter`.
-    if (auto* typeAdapter = objCExport.typeAdapter) {
+    if (auto* typeAdapter = objCExport.typeAdapter; typeAdapter != nullptr) {
         if (auto* className = typeAdapter->objCName) {
             bestFitting = objc_getClass(className);
             RuntimeAssert(bestFitting != nil, "Could not find class named %s stored for Kotlin type %p", className, typeInfo);
@@ -39,7 +44,14 @@ Class computeBestFittingClass(const TypeInfo* typeInfo) noexcept {
     if (bestFitting == nil) {
         auto* superTypeInfo = typeInfo->superType_;
         RuntimeAssert(superTypeInfo != nullptr, "Type %p has no super type", typeInfo);
-        bestFitting = computeBestFittingClass(superTypeInfo);
+
+        if (superTypeInfo == theAnyTypeInfo) { // If this is a root class, we default to existential
+            Class marker = Kotlin_ObjCExport_GetOrCreateClass(typeInfo);
+            // function provided by KotlinRuntimeSupport.swift, returns _KotlinExistential<marker>
+            bestFitting = kotlin_wrap_into_existential(marker);
+        } else { // Otherwise, we default to a parent's wrapper
+            bestFitting = computeBestFittingClass(superTypeInfo);
+        }
     }
     RuntimeAssert(bestFitting != nil, "No type in %p hierarchy has best-fitting ObjC class", typeInfo);
 

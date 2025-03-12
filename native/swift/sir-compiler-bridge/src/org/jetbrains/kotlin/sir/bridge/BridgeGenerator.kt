@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.bridge
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.impl.*
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 
 /**
  * Marker interface for all possible bridge requests.
@@ -69,10 +70,10 @@ public class KotlinFunctionBridge(
 )
 
 /**
- * A mapping from Kotlin class to a corresponding [Swift class][sirClass].
+ * A mapping from Kotlin type to a corresponding [Swift type declaration][sirTypeDeclaration].
  */
 public class TypeBindingBridgeRequest(
-    public val sirClass: SirClass,
+    public val sirTypeDeclaration: SirNamedDeclaration,
 ) : BridgeRequest
 
 /**
