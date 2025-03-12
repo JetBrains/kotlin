@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(project(":core:util.runtime"))
+    api(project(":compiler:arguments.common"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":js:js.config"))
     implementation(project(":wasm:wasm.config"))
