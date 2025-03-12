@@ -118,10 +118,8 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
     private fun loadIrDeclaration(index: Int, fileIndex: Int) =
         combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
 
-    private val combinedDeclarations: DeclarationIrMultiTableFileReader by lazy {
-        DeclarationIrMultiTableFileReader(access.inPlace {
-            it.irDeclarations
-        })
+    private val combinedDeclarations: DeclarationIdMultiTableReader by lazy {
+        DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irDeclarations)
     }
 
     private val types: IrMultiArrayReader by lazy {
