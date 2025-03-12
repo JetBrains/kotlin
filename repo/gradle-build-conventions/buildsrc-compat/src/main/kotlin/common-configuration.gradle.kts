@@ -187,6 +187,8 @@ fun Project.configureKotlinCompilationOptions() {
 
                 if (!skipJvmDefaultAllForModule(project.path)) {
                     freeCompilerArgs.add("-Xjvm-default=all")
+                } else {
+                    freeCompilerArgs.add("-Xjvm-default=disable")
                 }
             }
         }
