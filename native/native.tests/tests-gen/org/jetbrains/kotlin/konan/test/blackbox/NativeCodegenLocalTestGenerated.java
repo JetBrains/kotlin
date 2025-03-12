@@ -803,6 +803,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("kt75861.kt")
+    public void testKt75861() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75861.kt");
+    }
+
+    @Test
     @TestMetadata("negativeArraySize.kt")
     public void testNegativeArraySize() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/negativeArraySize.kt");
