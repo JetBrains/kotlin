@@ -97,7 +97,7 @@ fun computeCacheDirName(
     cacheKind: String,
     debuggable: Boolean,
     partialLinkageEnabled: Boolean
-) = "$testTarget${if (debuggable) "-g" else ""}$cacheKind${if (partialLinkageEnabled) "-pl" else ""}"
+) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}-user${if (partialLinkageEnabled) "-pl" else ""}"
 
 fun TestProject.getFileCache(
     fileProjectName: String,

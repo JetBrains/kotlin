@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
     internal val distribution = run {
@@ -47,6 +49,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 overridenProperties,
                 configuration.get(KonanConfigKeys.KONAN_DATA_DIR)
         )
+    }
+
+    class Option<T>(val default: T, configuredValueProvider: () -> T?) : ReadOnlyProperty<KonanConfig, T> {
+        var value: T = configuredValueProvider() ?: default
+        override fun getValue(thisRef: KonanConfig, property: KProperty<*>) = value
     }
 
     private val platformManager = PlatformManager(distribution)
@@ -553,6 +560,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val systemCacheFlavorString = buildString {
         appendCommonCacheFlavor()
+        append("-system")
 
         if (useDebugInfoInNativeLibs)
             append("-runtime_debug")
@@ -576,6 +584,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
+        append("-user")
         if (partialLinkageConfig.isEnabled) append("-pl")
     }
 
