@@ -1463,6 +1463,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
   }
 
   @Test
+  @TestMetadata("typealiasOfExpectTypeWithActualTypealias.kt")
+  public void testTypealiasOfExpectTypeWithActualTypealias() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typealiasOfExpectTypeWithActualTypealias.kt");
+  }
+
+  @Test
   @TestMetadata("unresolvableOperator_elvis_1.kt")
   public void testUnresolvableOperator_elvis_1() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unresolvableOperator_elvis_1.kt");
