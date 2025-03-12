@@ -47,16 +47,15 @@ object TestModuleStructureFactory {
         project: Project,
     ): KtTestModuleStructure {
         val modules = createModules(moduleStructure, testServices, project)
-
         val modulesByName = modules.associateBy { it.testModule.name }
 
         val libraryCache = LibraryCache(testServices, project)
-
         for (ktTestModule in modules) {
             libraryCache.registerLibraryModuleIfNeeded(ktTestModule.ktModule)
             ktTestModule.addDependencies(testServices, modulesByName, libraryCache)
         }
 
+        verifyModules(modules)
         return KtTestModuleStructure(moduleStructure, modules, libraryCache.libraryModules)
     }
 
@@ -255,6 +254,23 @@ object TestModuleStructureFactory {
 
                 else -> error("Unexpected file ${testFile.name}")
             }
+        }
+    }
+
+    private fun verifyModules(ktTestModules: List<KtTestModule>) {
+        ktTestModules.forEach { it.verifyModuleWithFallbackDependencies() }
+    }
+
+    private fun KtTestModule.verifyModuleWithFallbackDependencies() {
+        if (!testModule.hasFallbackDependencies) return
+
+        require(ktModule is KaLibraryModule || ktModule is KaLibrarySourceModule) {
+            "Fallback dependencies should only be applied to library (source) modules, but '$name' is a `${ktModule::class.simpleName}`."
+        }
+
+        require(testModule.allDependencies.isEmpty()) {
+            "Module '$name' should not have any explicit dependencies, as it has fallback dependencies. " +
+                    "Actual dependencies: ${testModule.allDependencies.map { it.dependencyModule.name }}."
         }
     }
 }
