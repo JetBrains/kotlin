@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
@@ -243,25 +246,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         if (!originalExpression.shouldBeResolvedInContextSensitiveMode()) return null
 
-        val newExpression =
-            components.runContextSensitiveResolutionForPropertyAccess(originalExpression, expectedType)
-                ?: return null
-
-        if ((data as? ResolutionMode.WithExpectedType)?.expectedTypeMismatchIsReportedInChecker == true) return newExpression
-
-        if (!newExpression.resolvedType.isSubtypeOf(expectedType, session, errorTypesEqualToAnything = true)) {
-            return buildPropertyAccessExpression {
-                source = originalExpression.source
-                calleeReference = buildErrorNamedReference {
-                    source = originalExpression.calleeReference.source
-                    name = originalExpression.calleeReference.name
-                    diagnostic = ConeTypeMismatch(newExpression.resolvedType, expectedType)
-                }
-                coneTypeOrNull = newExpression.resolvedType
-            }
-        }
-
-        return newExpression
+        return components.runContextSensitiveResolutionForPropertyAccess(originalExpression, expectedType)
     }
 
     override fun transformQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression, data: ResolutionMode): FirStatement {

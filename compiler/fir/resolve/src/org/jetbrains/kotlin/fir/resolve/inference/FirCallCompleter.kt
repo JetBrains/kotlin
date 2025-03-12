@@ -195,16 +195,6 @@ class FirCallCompleter(
             resolutionMode.forceFullCompletion && candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType) -> {
                 system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
-
-            // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
-            // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
-            // the expected type, and then would report diagnostic in the checker.
-            // It's assumed to be safe & sound, because if constraint system has contradictions when expected type is added,
-            // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
-            // thus the diagnostic should be reported.
-            !resolutionMode.shouldBeStrictlyEnforced || resolutionMode.expectedTypeMismatchIsReportedInChecker -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
-            }
             resolutionMode.fromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
                     system.addSubtypeConstraint(
@@ -213,6 +203,7 @@ class FirCallCompleter(
                     )
                 }
             }
+            // Hopefully, this whole part may be removed with KT-63678
             expectedType.isUnitOrFlexibleUnit && resolutionMode.lastStatementInBlock -> {
                 when {
                     system.notFixedTypeVariables.isEmpty() -> return
@@ -228,7 +219,20 @@ class FirCallCompleter(
                     else -> system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
                 }
             }
-            else -> system.addSubtypeConstraint(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+            // In general, we assume that type mismatch should always be reported in some checker/resolution stage explicitly,
+            // so we only add an expected type as a hint, not as a strict requirement.
+            // The idea behind it is that it would be more clear if we let the call be inferred without the expected type
+            // leading to CS error, and then would report diagnostic in the checker for the whole resolved expression.
+            //
+            // For example, in a case like `val x: List<Int> = listOf("")`, it seems to be clearer to infer
+            // the whole expression type to List<String> and then to report INITIALIZER_TYPE_MISMATCH on it then to handle vague CS errors
+            // after adding apriori incorrect constraints from the expected type
+            //
+            // It's assumed to be safe & sound, because if a constraint system has contradictions when the expected type is added,
+            // the resulting expression type cannot be inferred to something that is a subtype of `expectedType`,
+            // thus the diagnostic would be reported in the checker in any case
+            // (see the kdoc for ResolutionMode.WithExpectedType).
+            else -> system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
         }
     }
 

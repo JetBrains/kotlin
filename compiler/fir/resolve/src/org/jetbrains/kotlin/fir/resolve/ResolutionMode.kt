@@ -24,12 +24,32 @@ sealed class ResolutionMode(
         companion object : ReceiverResolution(forCallableReference = false)
     }
 
+    /**
+     * This mode is intended to be used as a type hint for inference/resolution.
+     *
+     * For example, when resolving `val x: List<String> = emptyList()`, we would resolve `emptyList()`
+     * with ExpectedType(List<String>).
+     *
+     * But note that it's not the responsibility of each node transform function to ensure that the resulting expression
+     * has a suitable type.
+     *
+     * So, if necessary, all creators of that mode do ensure about the check.
+     *
+     * In the example, with variable initializer, it would be FirInitializerTypeMismatchChecker
+     * that reports an INITIALIZER_TYPE_MISMATCH error
+     *
+     */
     @OptIn(WithExpectedType.ExpectedTypeRefAccess::class)
     class WithExpectedType(
         @property:ExpectedTypeRefAccess
         val expectedTypeRef: FirResolvedTypeRef,
         val lastStatementInBlock: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+        /**
+         * For cases like findViewById() as MyView, it the expected type would be MyView.
+         * We only allow using it for a limited number of cases: when the LHS of cast is a call to the specifically shaped
+         * function (see `isFunctionForExpectTypeFromCastFeature`).
+         */
         val fromCast: Boolean = false,
         /**
          * Expected type is used for inferring array literal types in places where array literal syntax is supported

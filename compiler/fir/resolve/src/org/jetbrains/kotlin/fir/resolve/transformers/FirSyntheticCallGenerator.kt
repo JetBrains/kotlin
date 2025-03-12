@@ -280,7 +280,7 @@ class FirSyntheticCallGenerator(
         (resultingCall.calleeReference as? FirResolvedErrorReference)?.let {
             val diagnostic = it.diagnostic
 
-            if (!anonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(diagnostic, expectedTypeData)) {
+            if (!anonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(diagnostic)) {
                 // Frankly speaking, all the diagnostics reported further should be transformed into some YT issue
                 // with the `kotlin-error-message` tag.
                 //
@@ -311,9 +311,7 @@ class FirSyntheticCallGenerator(
      */
     private fun FirAnonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(
         diagnostic: ConeDiagnostic,
-        expectedTypeData: ResolutionMode.WithExpectedType?,
     ): Boolean {
-        if (expectedTypeData?.expectedTypeMismatchIsReportedInChecker != true) return false
         if (diagnostic !is ConeInapplicableCandidateError) return false
 
         val candidate = diagnostic.candidate as Candidate
