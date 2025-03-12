@@ -416,10 +416,10 @@ fun TestProject.enableStatisticReports(
 
 fun String.wrapIntoBlock(s: String): String =
     """
-        |$s {
-        |    $this
-        |}
-        """.trimMargin()
+    |$s {
+    |    $this
+    |}
+    """.trimMargin()
 
 open class GradleProject(
     val projectName: String,
@@ -734,7 +734,7 @@ private fun setupProjectFromTestResources(
         }
 }
 
-private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
+private val String.testProjectPath: Path get() = Path("src/test/resources/testProject", this)
 
 internal fun Path.addDefaultSettingsToSettingsGradle(
     gradleVersion: GradleVersion,
@@ -766,55 +766,25 @@ private fun Path.addDependencyRepositoriesToBuildScript(
     additionalDependencyRepositories: Set<String>,
     localRepo: Path? = null,
 ) {
-    val buildGradle = resolve("build.gradle")
-    val buildGradleKts = resolve("build.gradle.kts")
-    val settingsGradle = resolve("settings.gradle")
-    val settingsGradleKts = resolve("settings.gradle.kts")
-    when {
-        Files.exists(buildGradle) -> buildGradle.modify {
-            it.insertBlockToBuildScriptAfterPluginsAndImports(
-                getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
-            )
+    walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "build.gradle" || it.name == "build.gradle.kts" }
+        .forEach { buildGradle ->
+            val repositoryBlock =
+                if (buildGradle.extension == " kts") {
+                    getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo)
+                } else {
+                    getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo)
+                }
+
+            buildGradle.modify {
+                it.insertBlockToBuildScriptAfterPluginsAndImports(
+                    repositoryBlock
+                )
+            }
         }
-
-        Files.exists(buildGradleKts) -> buildGradleKts.modify {
-            it.insertBlockToBuildScriptAfterPluginsAndImports(
-                getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
-            )
-        }
-
-        Files.exists(settingsGradle) -> buildGradle.toFile()
-            .writeText(
-                getGroovyRepositoryBlock(
-                    additionalDependencyRepositories,
-                    localRepo
-                ).wrapWithAllProjectBlock()
-            )
-
-        Files.exists(settingsGradleKts) -> buildGradleKts.toFile()
-            .writeText(
-                getKotlinRepositoryBlock(
-                    additionalDependencyRepositories,
-                    localRepo
-                ).wrapWithAllProjectBlock()
-            )
-
-        else -> error("No build-file or settings file found")
-    }
-
-    if (Files.exists(resolve("buildSrc"))) {
-        resolve("buildSrc").addDependencyRepositoriesToBuildScript(additionalDependencyRepositories, localRepo)
-    }
 }
 
-private fun String.wrapWithAllProjectBlock(): String =
-    """
-    |
-    |allprojects {
-    |    $this
-    |}
-    |
-    """.trimMargin()
 
 internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
@@ -837,45 +807,26 @@ internal fun String.insertBlockToBuildScriptAfterImports(blockToInsert: String):
 
 
 internal fun Path.addPluginManagementToSettings() {
-    val buildGradle = resolve("build.gradle")
-    val buildGradleKts = resolve("build.gradle.kts")
-    val settingsGradle = resolve("settings.gradle")
-    val settingsGradleKts = resolve("settings.gradle.kts")
-    when {
-        Files.exists(settingsGradle) -> settingsGradle.modify {
-            if (!it.contains("pluginManagement {")) {
-                """
-                |$DEFAULT_GROOVY_SETTINGS_FILE
+    walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "settings.gradle" || it.name == "settings.gradle.kts" }
+        .forEach { settingsGradle ->
+            if ("pluginManagement {" !in settingsGradle.readText()) {
+                val defaultSettings = if (settingsGradle.extension == "kts") {
+                    DEFAULT_KOTLIN_SETTINGS_FILE
+                } else {
+                    DEFAULT_GROOVY_SETTINGS_FILE
+                }
+
+                settingsGradle.modify {
+                    """
+                    |$defaultSettings
                 |
                 |$it
-                |""".trimMargin()
-            } else {
-                it
+                    |""".trimMargin()
+                }
             }
         }
-
-        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
-            if (!it.contains("pluginManagement {")) {
-                """
-                |$DEFAULT_KOTLIN_SETTINGS_FILE
-                |
-                |$it
-                """.trimMargin()
-            } else {
-                it
-            }
-        }
-
-        Files.exists(buildGradle) -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-
-        Files.exists(buildGradleKts) -> settingsGradleKts.toFile().writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
-
-        else -> error("No build-file or settings file found")
-    }
-
-    if (Files.exists(resolve("buildSrc"))) {
-        resolve("buildSrc").addPluginManagementToSettings()
-    }
 }
 
 
@@ -884,71 +835,36 @@ internal fun Path.addDependencyManagementToSettings(
     additionalDependencyRepositories: Set<String>,
     localRepo: Path? = null,
 ) {
-    val buildGradle = resolve("build.gradle")
-    val buildGradleKts = resolve("build.gradle.kts")
-    val settingsGradle = resolve("settings.gradle")
-    val settingsGradleKts = resolve("settings.gradle.kts")
-    when {
-        Files.exists(settingsGradle) -> settingsGradle.modify {
-            if (!it.contains("dependencyManagement {")) {
-                """
-                |$it
-                |
-                |${
-                    getGroovyDependencyManagementBlock(
-                        gradleRepositoriesMode,
-                        additionalDependencyRepositories,
-                        localRepo
-                    )
-                }
-                """.trimMargin()
-            } else {
-                it
-            }
-        }
+    walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "settings.gradle" || it.name == "settings.gradle.kts" }
+        .forEach { settingsGradle ->
 
-        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
-            if (!it.contains("dependencyManagement {")) {
-                """
-                |$it
-                |
-                |${
+            val dependencyManagementBlock =
+                if (settingsGradle.extension == "kts") {
                     getKotlinDependencyManagementBlock(
                         gradleRepositoriesMode,
                         additionalDependencyRepositories,
-                        localRepo
+                        localRepo,
+                    )
+                } else {
+                    getGroovyDependencyManagementBlock(
+                        gradleRepositoriesMode,
+                        additionalDependencyRepositories,
+                        localRepo,
                     )
                 }
-                """.trimMargin()
-            } else {
-                it
+
+            if ("dependencyManagement {" !in settingsGradle.readText()) {
+                settingsGradle.modify {
+                    """
+                    |$it
+                    |
+                    |${dependencyManagementBlock}
+                    """.trimMargin()
+                }
             }
         }
-
-        Files.exists(buildGradle) -> settingsGradle.toFile()
-            .writeText(
-                getGroovyDependencyManagementBlock(
-                    gradleRepositoriesMode,
-                    additionalDependencyRepositories,
-                    localRepo
-                )
-            )
-
-        Files.exists(buildGradleKts) -> settingsGradleKts.toFile()
-            .writeText(
-                getKotlinDependencyManagementBlock(
-                    gradleRepositoriesMode,
-                    additionalDependencyRepositories,
-                    localRepo
-                )
-            )
-
-        else -> error("No build-file or settings file found")
-    }
-
-    if (Files.exists(resolve("buildSrc"))) {
-        resolve("buildSrc").addDependencyManagementToSettings(gradleRepositoriesMode, additionalDependencyRepositories, localRepo)
-    }
 }
 
 private fun TestProject.agreeToBuildScanService() {
@@ -1021,49 +937,65 @@ internal fun Path.enableAndroidSdk() {
 
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current gradle module project dir
-    val redirectorScript = Paths.get("../../../repo/scripts/cache-redirector.settings.gradle.kts")
-    assert(redirectorScript.exists()) {
-        "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
+    val sourceRedirectorScript = Path("../../../repo/scripts/cache-redirector.settings.gradle.kts")
+    assert(sourceRedirectorScript.exists()) {
+        "$sourceRedirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }
     val gradleDir = resolve("gradle").also { it.createDirectories() }
-    redirectorScript.copyTo(gradleDir.resolve("cache-redirector.settings.gradle.kts"))
+    val projectRedirectorScript = gradleDir.resolve("cache-redirector.settings.gradle.kts")
 
-    val projectCacheRedirectorStatus = Paths
-        .get("../../../gradle.properties")
-        .readText()
-        .lineSequence()
-        .first { it.startsWith("cacheRedirectorEnabled") }
+    sourceRedirectorScript.copyTo(projectRedirectorScript)
 
-    resolve("gradle.properties")
-        .also { if (!it.exists()) it.createFile() }
-        .appendText(
-            """
-            |
-            |$projectCacheRedirectorStatus
-            |
-            """.trimMargin()
-        )
+    walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "settings.gradle" || it.name == "settings.gradle.kts" }
+        .forEach { settingsGradle ->
 
-    val settingsGradle = resolve("settings.gradle")
-    val settingsGradleKts = resolve("settings.gradle.kts")
-    when {
-        Files.exists(settingsGradle) -> settingsGradle.modify {
-            """
-            |${it.substringBefore("pluginManagement {")}
-            |pluginManagement {
-            |    apply from: 'gradle/cache-redirector.settings.gradle.kts'
-            |${it.substringAfter("pluginManagement {")}
-            """.trimMargin()
+            val projectRedirectorScriptRelativePath =
+                projectRedirectorScript
+                    .relativeTo(settingsGradle.parent)
+                    .invariantSeparatorsPathString
+
+            val applyCacheRedirector = if (settingsGradle.extension == "kts") {
+                """
+                |pluginManagement {
+                |    apply(from = "$projectRedirectorScriptRelativePath")
+                """.trimMargin()
+            } else {
+                """
+                |pluginManagement {
+                |    apply from: '$projectRedirectorScriptRelativePath'
+                """.trimMargin()
+            }
+
+            settingsGradle.modify {
+                """
+                |${it.substringBefore("pluginManagement {")}
+                    |$applyCacheRedirector
+                |${it.substringAfter("pluginManagement {")}
+                """.trimMargin()
+            }
         }
-        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
-            """
-            |${it.substringBefore("pluginManagement {")}
-            |pluginManagement {
-            |    apply(from = "gradle/cache-redirector.settings.gradle.kts")
-            |${it.substringAfter("pluginManagement {")}
-            """.trimMargin()
+
+    val projectCacheRedirectorStatus = Path("../../../gradle.properties")
+        .useLines { lines -> lines.first { it.startsWith("cacheRedirectorEnabled") } }
+
+    walk()
+        .filter { it.isRegularFile() }
+        .filter { it.name == "settings.gradle" || it.name == "settings.gradle.kts" }
+        .map { it.resolveSibling("gradle.properties") }
+        .forEach { gradleProperties ->
+            if (!gradleProperties.exists()) {
+                gradleProperties.createFile()
+            }
+            gradleProperties.appendText(
+                """
+                |
+                |$projectCacheRedirectorStatus
+                |
+                """.trimMargin()
+            )
         }
-    }
 }
 
 private fun GradleProject.addHeapDumpOptions() {
