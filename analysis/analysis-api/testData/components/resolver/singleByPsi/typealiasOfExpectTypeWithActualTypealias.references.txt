@@ -15,4 +15,4 @@ jvm - Jvm.kt:
   <caret_typeArg>:
     KtNameReferenceExpression(273,295): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
-        (in ROOT) actual typealias ExpectClass = JvmClass
+        (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
