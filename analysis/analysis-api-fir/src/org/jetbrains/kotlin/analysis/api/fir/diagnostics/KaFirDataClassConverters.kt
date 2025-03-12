@@ -1398,6 +1398,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED) { firDiagnostic ->
+        IgnorabilityAnnotationsWithCheckerDisabledImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
         JsModuleProhibitedOnVarImpl(
             firDiagnostic as KtPsiDiagnostic,

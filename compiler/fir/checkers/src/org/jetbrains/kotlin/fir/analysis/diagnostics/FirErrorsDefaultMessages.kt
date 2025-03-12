@@ -719,6 +719,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
@@ -1232,6 +1233,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE,
             "Annotations on block-level expressions are parsed differently depending on the presence of a new line. " +
                     "Add a new line after the annotations to annotate the entire expression."
+        )
+        map.put(
+            IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
+            "Ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state."
         )
 
         // OptIn

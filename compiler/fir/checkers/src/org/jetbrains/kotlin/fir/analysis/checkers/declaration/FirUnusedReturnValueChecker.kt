@@ -11,16 +11,17 @@ import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -30,6 +31,29 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
+
+
+object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override fun check(
+        declaration: FirDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) return
+
+        val session = context.session
+        declaration.annotations.forEach { annotation ->
+            if (annotation.isMustUseReturnValue(session) || annotation.isIgnorableValue(session)) {
+                reporter.reportOn(
+                    annotation.source,
+                    FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
+                    context
+                )
+            }
+        }
+    }
+}
+
 
 object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     override fun isEnabled(context: CheckerContext): Boolean =

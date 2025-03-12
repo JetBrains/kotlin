@@ -9238,6 +9238,17 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crvDisabled")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CrvDisabled {
+      @Test
+      @TestMetadata("disabledChecker.kt")
+      public void testDisabledChecker() {
+        runTest("compiler/testData/diagnostics/tests/crvDisabled/disabledChecker.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {

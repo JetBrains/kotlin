@@ -368,6 +368,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_IN_WHERE_CLAUSE_WARNING = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<KtAnnotationEntry> IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED = DiagnosticFactory0.create(ERROR);
+
     // Const
     DiagnosticFactory0<PsiElement> CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CONST_VAL_WITH_GETTER = DiagnosticFactory0.create(ERROR);

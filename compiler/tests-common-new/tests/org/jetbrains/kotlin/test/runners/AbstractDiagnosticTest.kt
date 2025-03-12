@@ -114,6 +114,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             }
         }
 
+        forTestsMatching("compiler/testData/diagnostics/tests/crvDisabled/*") {
+            defaultDirectives {
+                RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.DISABLED
+            }
+        }
+
         forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/*") {
             defaultDirectives {
                 EXPLICIT_RETURN_TYPES_MODE with ExplicitApiMode.STRICT

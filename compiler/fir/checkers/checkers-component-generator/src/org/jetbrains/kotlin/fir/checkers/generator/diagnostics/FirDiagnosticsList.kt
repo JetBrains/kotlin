@@ -463,6 +463,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("useSiteDescription")
         }
         val ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE by warning<PsiElement>()
+        
+        val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED by error<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

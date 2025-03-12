@@ -226,6 +226,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/crvDisabled/*") {
+        defaultDirectives {
+            RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.DISABLED
+        }
+    }
+
     forTestsMatching(
         "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
                 "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"
