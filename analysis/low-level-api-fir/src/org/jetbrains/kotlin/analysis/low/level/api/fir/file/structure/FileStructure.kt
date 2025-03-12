@@ -106,12 +106,12 @@ internal class FileStructure private constructor(
     }
 
     private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtElement {
+        getStructureKtElement(element, nonLocalContainer)?.let { return it }
         val modifierList = element.parentOfType<KtModifierList>(withSelf = true)
         if (modifierList?.isNonLocalDanglingModifierList() == true) {
             return modifierList
         }
-        val declaration = getStructureKtElement(element, nonLocalContainer)
-        return declaration ?: element.containingKtFile
+        return element.containingKtFile
     }
 
     private fun getStructureKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtDeclaration? {

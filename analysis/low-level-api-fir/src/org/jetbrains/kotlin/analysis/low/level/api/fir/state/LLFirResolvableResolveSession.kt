@@ -99,17 +99,20 @@ internal class LLFirResolvableResolveSession(
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
 
-        if (ktDeclaration.parentOfType<KtModifierList>()?.isNonLocalDanglingModifierList() == true) {
-            // Invalid code: the declaration does not have a non-local container (at least on the top level),
-            // because it is considered to be an argument of an unclosed (dangling) annotation
-            return findDeclarationInSourceViaResolve(ktDeclaration)
-        }
-
         val nonLocalDeclaration = getNonLocalContainingDeclaration(ktDeclaration, codeFragmentAware = true)
-            ?: errorWithAttachment("Declaration should have non-local container") {
+
+        if (nonLocalDeclaration == null) {
+            if (ktDeclaration.parentOfType<KtModifierList>()?.isNonLocalDanglingModifierList() == true) {
+                // Invalid code: the declaration does not have a non-local container,
+                // because it is considered to be an argument of an unclosed (dangling) annotation
+                return findDeclarationInSourceViaResolve(ktDeclaration)
+            }
+
+            errorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", module) { it.moduleDescription }
             }
+        }
 
         if (ktDeclaration == nonLocalDeclaration) {
             val session = sessionProvider.getResolvableSession(module)
