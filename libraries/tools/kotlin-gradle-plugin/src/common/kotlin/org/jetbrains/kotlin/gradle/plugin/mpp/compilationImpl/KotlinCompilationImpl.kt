@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal class KotlinCompilationImpl(
     private val params: Params,
-) : InternalKotlinCompilation<KotlinCommonOptions> {
+) : InternalKotlinCompilation<KotlinAnyOptionsDeprecated> {
 
     //region Params
 

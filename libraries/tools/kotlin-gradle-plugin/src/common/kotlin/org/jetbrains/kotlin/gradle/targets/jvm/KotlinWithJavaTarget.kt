@@ -44,7 +44,7 @@ internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
 ) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
 
 @Suppress("DEPRECATION")
-abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
+abstract class KotlinWithJavaTarget<KotlinOptionsType : Any, CO : KotlinCommonCompilerOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,

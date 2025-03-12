@@ -21,7 +21,7 @@ import javax.inject.Inject
 open class KotlinJvmAndroidCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
     val androidVariant: DeprecatedAndroidBaseVariant
-) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation) {
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinAnyOptionsDeprecated>(compilation) {
 
     override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
 

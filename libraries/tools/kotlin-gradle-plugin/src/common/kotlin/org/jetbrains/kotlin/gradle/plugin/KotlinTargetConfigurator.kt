@@ -41,7 +41,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 internal val KotlinTarget.testTaskName: String
     get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
 
-abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
+abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<Any>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
     createTestCompilation: Boolean,
 ) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation)
 

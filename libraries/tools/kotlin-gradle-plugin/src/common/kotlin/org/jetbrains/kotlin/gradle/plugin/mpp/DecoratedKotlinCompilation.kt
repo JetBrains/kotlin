@@ -8,18 +8,16 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
-@Suppress("DEPRECATION")
 @InternalKotlinGradlePluginApi
-abstract class DecoratedKotlinCompilation<T : KotlinCommonOptions> internal constructor(
+abstract class DecoratedKotlinCompilation<T : KotlinAnyOptionsDeprecated> internal constructor(
     internal val compilation: KotlinCompilationImpl,
 ) : InternalKotlinCompilation<T> by compilation as InternalKotlinCompilation<T> {
     override fun toString(): String = compilation.toString()
 }
 
-@Suppress("DEPRECATION")
-internal inline val <reified T : KotlinCommonOptions> InternalKotlinCompilation<T>.decoratedInstance: DecoratedKotlinCompilation<T>
-    get() = if (this is DecoratedKotlinCompilation<T>) this
-    else (target.compilations.getByName(compilationName).internal.castKotlinOptionsType<T>() as DecoratedKotlinCompilation<T>)
+internal inline val <T : KotlinAnyOptionsDeprecated> InternalKotlinCompilation<T>.decoratedInstance: DecoratedKotlinCompilation<T>
+    get() = this as? DecoratedKotlinCompilation<T>
+        ?: target.compilations.getByName(compilationName).internal as DecoratedKotlinCompilation<T>
