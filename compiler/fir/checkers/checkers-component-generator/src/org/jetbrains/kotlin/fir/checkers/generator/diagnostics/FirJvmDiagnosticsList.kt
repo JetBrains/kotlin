@@ -250,7 +250,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
         }
-        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE_OBJECTS by warning<KtElement> {
+        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }
         val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS by warning<KtElement> {
