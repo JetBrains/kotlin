@@ -26,72 +26,72 @@ public class SymbolLightClassesAnnotationEqualityForSourceTestGenerated extends 
   @Test
   @TestMetadata("Deprecated.kt")
   public void testDeprecated() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/Deprecated.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/Deprecated.kt");
   }
 
   @Test
   @TestMetadata("EnumConstantNameInQuotes.kt")
   public void testEnumConstantNameInQuotes() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/EnumConstantNameInQuotes.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/EnumConstantNameInQuotes.kt");
   }
 
   @Test
   @TestMetadata("ExplicitRetension.kt")
   public void testExplicitRetension() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/ExplicitRetension.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/ExplicitRetension.kt");
   }
 
   @Test
   @TestMetadata("ImplicitRetension.kt")
   public void testImplicitRetension() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/ImplicitRetension.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/ImplicitRetension.kt");
   }
 
   @Test
   @TestMetadata("JavaRepeatable.kt")
   public void testJavaRepeatable() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/JavaRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/JavaRepeatable.kt");
   }
 
   @Test
   @TestMetadata("JvmRepeatable.kt")
   public void testJvmRepeatable() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/JvmRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/JvmRepeatable.kt");
   }
 
   @Test
   @TestMetadata("KotlinTargetFirst.kt")
   public void testKotlinTargetFirst() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/KotlinTargetFirst.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/KotlinTargetFirst.kt");
   }
 
   @Test
   @TestMetadata("OverrideMethod.kt")
   public void testOverrideMethod() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/OverrideMethod.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/OverrideMethod.kt");
   }
 
   @Test
   @TestMetadata("Repeatable.kt")
   public void testRepeatable() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/Repeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/Repeatable.kt");
   }
 
   @Test
   @TestMetadata("Target.kt")
   public void testTarget() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/Target.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/Target.kt");
   }
 
   @Test
   @TestMetadata("TopLevelFunctionWithDeprecatedAnnotation.kt")
   public void testTopLevelFunctionWithDeprecatedAnnotation() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithDeprecatedAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithDeprecatedAnnotation.kt");
   }
 
   @Test
   @TestMetadata("TopLevelFunctionWithRegularAnnotation.kt")
   public void testTopLevelFunctionWithRegularAnnotation() {
-    runTest("analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithRegularAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithRegularAnnotation.kt");
   }
 }

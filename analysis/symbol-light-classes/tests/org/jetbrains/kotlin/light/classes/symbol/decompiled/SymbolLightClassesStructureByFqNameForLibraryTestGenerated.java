@@ -26,6 +26,6 @@ public class SymbolLightClassesStructureByFqNameForLibraryTestGenerated extends 
   @Test
   @TestMetadata("DefaultImpls.kt")
   public void testDefaultImpls() {
-    runTest("analysis/symbol-light-classes/testData/structureByFqName/DefaultImpls.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structureByFqName/DefaultImpls.kt");
   }
 }

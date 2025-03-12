@@ -19,7 +19,8 @@ internal operator fun Repository.plus(other: Repository): Repository {
     return CompositeRepository(listOf(this, other))
 }
 
-private class CompositeRepository(val repositories: Iterable<Repository>) : Repository {
+private class CompositeRepository(val repositories:
+ Iterable<Repository>) : Repository {
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
         return repositories.map { it.getLibraries(target) }.flatten().toSet()
     }

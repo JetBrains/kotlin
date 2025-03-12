@@ -41,6 +41,7 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.test.fail
+import kotlin.io.path.absolutePathString
 
 // Same as LightProjectDescriptor.TEST_MODULE_NAME
 private const val TEST_MODULE_NAME = "light_idea_test_case"

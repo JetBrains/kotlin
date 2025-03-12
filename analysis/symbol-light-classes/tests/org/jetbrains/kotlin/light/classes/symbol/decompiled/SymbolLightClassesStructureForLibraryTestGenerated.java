@@ -26,42 +26,42 @@ public class SymbolLightClassesStructureForLibraryTestGenerated extends Abstract
   @Test
   @TestMetadata("Annotations.kt")
   public void testAnnotations() {
-    runTest("analysis/symbol-light-classes/testData/structure/Annotations.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/Annotations.kt");
   }
 
   @Test
   @TestMetadata("Classes.kt")
   public void testClasses() {
-    runTest("analysis/symbol-light-classes/testData/structure/Classes.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/Classes.kt");
   }
 
   @Test
   @TestMetadata("EnumEntries.kt")
   public void testEnumEntries() {
-    runTest("analysis/symbol-light-classes/testData/structure/EnumEntries.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/EnumEntries.kt");
   }
 
   @Test
   @TestMetadata("InterfaceAndClasses.kt")
   public void testInterfaceAndClasses() {
-    runTest("analysis/symbol-light-classes/testData/structure/InterfaceAndClasses.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/InterfaceAndClasses.kt");
   }
 
   @Test
   @TestMetadata("Interfaces.kt")
   public void testInterfaces() {
-    runTest("analysis/symbol-light-classes/testData/structure/Interfaces.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/Interfaces.kt");
   }
 
   @Test
   @TestMetadata("NestedClasses.kt")
   public void testNestedClasses() {
-    runTest("analysis/symbol-light-classes/testData/structure/NestedClasses.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/NestedClasses.kt");
   }
 
   @Test
   @TestMetadata("Objects.kt")
   public void testObjects() {
-    runTest("analysis/symbol-light-classes/testData/structure/Objects.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/structure/Objects.kt");
   }
 }

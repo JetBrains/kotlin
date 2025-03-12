@@ -26,24 +26,24 @@ public class SymbolLightClassesNestedClassesConsistencyForLibraryTestGenerated e
   @Test
   @TestMetadata("classesAndObjects.kt")
   public void testClassesAndObjects() {
-    runTest("analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/classesAndObjects.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/classesAndObjects.kt");
   }
 
   @Test
   @TestMetadata("companion.kt")
   public void testCompanion() {
-    runTest("analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/companion.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/companion.kt");
   }
 
   @Test
   @TestMetadata("namedCompanion.kt")
   public void testNamedCompanion() {
-    runTest("analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/namedCompanion.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/namedCompanion.kt");
   }
 
   @Test
   @TestMetadata("namedCompanion2.kt")
   public void testNamedCompanion2() {
-    runTest("analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/namedCompanion2.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/libraryNestedClassesConsistency/namedCompanion2.kt");
   }
 }

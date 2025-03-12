@@ -128,7 +128,7 @@ object PathUtil {
 
     @JvmStatic
     val kotlinPathsForDistDirectory: KotlinPaths
-        get() = KotlinPathsFromHomeDir(File("dist", HOME_FOLDER_NAME))
+        get() = KotlinPathsFromHomeDir(File("/Users/ilya.goncharov/repos/kotlin-amper/dist", HOME_FOLDER_NAME))
 
     private val compilerPathForCompilerJar: File
         get() {

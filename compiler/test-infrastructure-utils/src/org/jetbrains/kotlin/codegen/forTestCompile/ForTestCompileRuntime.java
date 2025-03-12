@@ -25,42 +25,42 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib.jar");
+        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-stdlib.jar");
     }
 
     @NotNull
     public static File runtimeJarForTestsWithJdk8() {
-        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-jdk8.jar");
+        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-stdlib-jdk8.jar");
     }
 
     @NotNull
     public static File minimalRuntimeJarForTests() {
-        return assertExists(new File("dist/kotlin-stdlib-jvm-minimal-for-test.jar"));
+        return assertExists(new File("/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlin-stdlib-jvm-minimal-for-test.jar"));
     }
 
     @NotNull
     public static File kotlinTestJarForTests() {
-        return propertyOrDist(KOTLIN_TEST_JAR_PATH, "dist/kotlinc/lib/kotlin-test.jar");
+        return propertyOrDist(KOTLIN_TEST_JAR_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-test.jar");
     }
 
     @NotNull
     public static File reflectJarForTests() {
-        return propertyOrDist(KOTLIN_REFLECT_JAR_PATH, "dist/kotlinc/lib/kotlin-reflect.jar");
+        return propertyOrDist(KOTLIN_REFLECT_JAR_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-reflect.jar");
     }
 
     @NotNull
     public static File scriptRuntimeJarForTests() {
-        return propertyOrDist(KOTLIN_SCRIPT_RUNTIME_PATH, "dist/kotlinc/lib/kotlin-script-runtime.jar");
+        return propertyOrDist(KOTLIN_SCRIPT_RUNTIME_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-script-runtime.jar");
     }
 
     @NotNull
     public static File runtimeSourcesJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
+        return assertExists(new File("/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
     }
 
     @NotNull
     public static File stdlibCommonForTests() {
-        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
+        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/common/kotlin-stdlib-common.klib");
     }
 
     private static File propertyOrDist(String property, String distPath) {
@@ -72,7 +72,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File jvmAnnotationsForTests() {
-        return propertyOrDist(KOTLIN_ANNOTATIONS_PATH, "dist/kotlinc/lib/kotlin-annotations-jvm.jar");
+        return propertyOrDist(KOTLIN_ANNOTATIONS_PATH, "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/kotlin-annotations-jvm.jar");
     }
 
     @NotNull

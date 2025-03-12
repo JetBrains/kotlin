@@ -26,60 +26,60 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @Test
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/mangledName.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/mangledName.kt");
   }
 
   @Test
   @TestMetadata("mangledNameWithAnnotations.kt")
   public void testMangledNameWithAnnotations() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/mangledNameWithAnnotations.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/mangledNameWithAnnotations.kt");
   }
 
   @Test
   @TestMetadata("primaryConstructorWithDefaultParameter.kt")
   public void testPrimaryConstructorWithDefaultParameter() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/primaryConstructorWithDefaultParameter.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/primaryConstructorWithDefaultParameter.kt");
   }
 
   @Test
   @TestMetadata("propertyAccessor.kt")
   public void testPropertyAccessor() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyAccessor.kt");
   }
 
   @Test
   @TestMetadata("propertyAccessorWithAnnotation.kt")
   public void testPropertyAccessorWithAnnotation() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessorWithAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyAccessorWithAnnotation.kt");
   }
 
   @Test
   @TestMetadata("propertyAccessorWithImplicitAnnotation.kt")
   public void testPropertyAccessorWithImplicitAnnotation() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessorWithImplicitAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyAccessorWithImplicitAnnotation.kt");
   }
 
   @Test
   @TestMetadata("propertyWithExplicitAccessors.kt")
   public void testPropertyWithExplicitAccessors() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessors.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessors.kt");
   }
 
   @Test
   @TestMetadata("propertyWithExplicitAccessorsAndAnnotation.kt")
   public void testPropertyWithExplicitAccessorsAndAnnotation() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessorsAndAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessorsAndAnnotation.kt");
   }
 
   @Test
   @TestMetadata("propertyWithExplicitAccessorsAndAnnotationOnThem.kt")
   public void testPropertyWithExplicitAccessorsAndAnnotationOnThem() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessorsAndAnnotationOnThem.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessorsAndAnnotationOnThem.kt");
   }
 
   @Test
   @TestMetadata("propertyWithImplicitAccessors.kt")
   public void testPropertyWithImplicitAccessors() {
-    runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithImplicitAccessors.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/lightElements/propertyWithImplicitAccessors.kt");
   }
 }

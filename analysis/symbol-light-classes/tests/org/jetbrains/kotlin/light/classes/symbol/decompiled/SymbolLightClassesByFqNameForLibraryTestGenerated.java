@@ -27,457 +27,457 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   @Test
   @TestMetadata("AnnotatedParameterInEnumConstructor.kt")
   public void testAnnotatedParameterInEnumConstructor() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedParameterInEnumConstructor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedParameterInEnumConstructor.kt");
   }
 
   @Test
   @TestMetadata("AnnotatedParameterInInnerClassConstructor.kt")
   public void testAnnotatedParameterInInnerClassConstructor() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedParameterInInnerClassConstructor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedParameterInInnerClassConstructor.kt");
   }
 
   @Test
   @TestMetadata("AnnotatedPropertyWithSites.kt")
   public void testAnnotatedPropertyWithSites() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedPropertyWithSites.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedPropertyWithSites.kt");
   }
 
   @Test
   @TestMetadata("annotationBinaryRetention.kt")
   public void testAnnotationBinaryRetention() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");
   }
 
   @Test
   @TestMetadata("AnnotationClass.kt")
   public void testAnnotationClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationClass.kt");
   }
 
   @Test
   @TestMetadata("AnnotationJavaRepeatable.kt")
   public void testAnnotationJavaRepeatable() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationJavaRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationJavaRepeatable.kt");
   }
 
   @Test
   @TestMetadata("AnnotationJvmRepeatable.kt")
   public void testAnnotationJvmRepeatable() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationJvmRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationJvmRepeatable.kt");
   }
 
   @Test
   @TestMetadata("AnnotationKotlinAndJavaRepeatable.kt")
   public void testAnnotationKotlinAndJavaRepeatable() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationKotlinAndJavaRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationKotlinAndJavaRepeatable.kt");
   }
 
   @Test
   @TestMetadata("AnnotationKotlinAndJvmRepeatable.kt")
   public void testAnnotationKotlinAndJvmRepeatable() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationKotlinAndJvmRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationKotlinAndJvmRepeatable.kt");
   }
 
   @Test
   @TestMetadata("AnnotationRepeatable.kt")
   public void testAnnotationRepeatable() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationRepeatable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotationRepeatable.kt");
   }
 
   @Test
   @TestMetadata("BackingFields.kt")
   public void testBackingFields() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/BackingFields.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/BackingFields.kt");
   }
 
   @Test
   @TestMetadata("classAndCompanionDelegatedProperty.kt")
   public void testClassAndCompanionDelegatedProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionDelegatedProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionDelegatedProperty.kt");
   }
 
   @Test
   @TestMetadata("classAndCompanionJvmFieldProperty.kt")
   public void testClassAndCompanionJvmFieldProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionJvmFieldProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionJvmFieldProperty.kt");
   }
 
   @Test
   @TestMetadata("classAndCompanionProperty.kt")
   public void testClassAndCompanionProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/classAndCompanionProperty.kt");
   }
 
   @Test
   @TestMetadata("classJvmFieldAndCompanionJvmFieldProperty.kt")
   public void testClassJvmFieldAndCompanionJvmFieldProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionJvmFieldProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionJvmFieldProperty.kt");
   }
 
   @Test
   @TestMetadata("classJvmFieldAndCompanionProperty.kt")
   public void testClassJvmFieldAndCompanionProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/classJvmFieldAndCompanionProperty.kt");
   }
 
   @Test
   @TestMetadata("ClassTypeParameterAnnotation.kt")
   public void testClassTypeParameterAnnotation() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ClassTypeParameterAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ClassTypeParameterAnnotation.kt");
   }
 
   @Test
   @TestMetadata("CompanionObject.kt")
   public void testCompanionObject() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");
   }
 
   @Test
   @TestMetadata("CompanionObjectWithAConflictingProperty.kt")
   public void testCompanionObjectWithAConflictingProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObjectWithAConflictingProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObjectWithAConflictingProperty.kt");
   }
 
   @Test
   @TestMetadata("constructorWithValueClass.kt")
   public void testConstructorWithValueClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClass.kt");
   }
 
   @Test
   @TestMetadata("constructorWithValueClassAsProperty.kt")
   public void testConstructorWithValueClassAsProperty() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClassAsProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/constructorWithValueClassAsProperty.kt");
   }
 
   @Test
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
   }
 
   @Test
   @TestMetadata("DataClassWithCustomImplementedMembers.kt")
   public void testDataClassWithCustomImplementedMembers() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
   }
 
   @Test
   @TestMetadata("DefaultImplsWithTypeParameters.kt")
   public void testDefaultImplsWithTypeParameters() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DefaultImplsWithTypeParameters.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DefaultImplsWithTypeParameters.kt");
   }
 
   @Test
   @TestMetadata("DelegatedNested.kt")
   public void testDelegatedNested() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");
   }
 
   @Test
   @TestMetadata("Delegation.kt")
   public void testDelegation() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Delegation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/Delegation.kt");
   }
 
   @Test
   @TestMetadata("Deprecated.kt")
   public void testDeprecated() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Deprecated.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/Deprecated.kt");
   }
 
   @Test
   @TestMetadata("DeprecatedEnumEntry.kt")
   public void testDeprecatedEnumEntry() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DeprecatedEnumEntry.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DeprecatedEnumEntry.kt");
   }
 
   @Test
   @TestMetadata("DeprecatedNotHiddenInClass.kt")
   public void testDeprecatedNotHiddenInClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DeprecatedNotHiddenInClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DeprecatedNotHiddenInClass.kt");
   }
 
   @Test
   @TestMetadata("DollarsInName.kt")
   public void testDollarsInName() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DollarsInName.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DollarsInName.kt");
   }
 
   @Test
   @TestMetadata("DollarsInNameNoPackage.kt")
   public void testDollarsInNameNoPackage() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DollarsInNameNoPackage.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/DollarsInNameNoPackage.kt");
   }
 
   @Test
   @TestMetadata("EnumClass.kt")
   public void testEnumClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/EnumClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/EnumClass.kt");
   }
 
   @Test
   @TestMetadata("EnumClassWithEnumEntries.kt")
   public void testEnumClassWithEnumEntries() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/EnumClassWithEnumEntries.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/EnumClassWithEnumEntries.kt");
   }
 
   @Test
   @TestMetadata("EnumEntry.kt")
   public void testEnumEntry() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/EnumEntry.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/EnumEntry.kt");
   }
 
   @Test
   @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
   public void testExtendingInterfaceWithDefaultImpls() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ExtendingInterfaceWithDefaultImpls.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ExtendingInterfaceWithDefaultImpls.kt");
   }
 
   @Test
   @TestMetadata("HiddenDeprecated.kt")
   public void testHiddenDeprecated() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecated.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecated.kt");
   }
 
   @Test
   @TestMetadata("HiddenDeprecatedInClass.kt")
   public void testHiddenDeprecatedInClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecatedInClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecatedInClass.kt");
   }
 
   @Test
   @TestMetadata("InheritingInterfaceDefaultImpls.kt")
   public void testInheritingInterfaceDefaultImpls() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InheritingInterfaceDefaultImpls.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/InheritingInterfaceDefaultImpls.kt");
   }
 
   @Test
   @TestMetadata("InlineReified.kt")
   public void testInlineReified() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InlineReified.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/InlineReified.kt");
   }
 
   @Test
   @TestMetadata("InterfaceTypeParameterAnnotation.kt")
   public void testInterfaceTypeParameterAnnotation() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceTypeParameterAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceTypeParameterAnnotation.kt");
   }
 
   @Test
   @TestMetadata("InterfaceWithDefaultMethodAndCompanion.kt")
   public void testInterfaceWithDefaultMethodAndCompanion() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceWithDefaultMethodAndCompanion.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceWithDefaultMethodAndCompanion.kt");
   }
 
   @Test
   @TestMetadata("internalValueClass.kt")
   public void testInternalValueClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/internalValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/internalValueClass.kt");
   }
 
   @Test
   @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
   public void testInvalidJavaIdentifierAsAnnotationArgument() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
   }
 
   @Test
   @TestMetadata("InvalidJavaIdentifierAsPropertyInitializer.kt")
   public void testInvalidJavaIdentifierAsPropertyInitializer() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsPropertyInitializer.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsPropertyInitializer.kt");
   }
 
   @Test
   @TestMetadata("JavaBetween.kt")
   public void testJavaBetween() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaBetween.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/JavaBetween.kt");
   }
 
   @Test
   @TestMetadata("JavaClassWithAnnotation.kt")
   public void testJavaClassWithAnnotation() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaClassWithAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/JavaClassWithAnnotation.kt");
   }
 
   @Test
   @TestMetadata("JvmNameOnMember.kt")
   public void testJvmNameOnMember() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JvmNameOnMember.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/JvmNameOnMember.kt");
   }
 
   @Test
   @TestMetadata("JvmStatic.kt")
   public void testJvmStatic() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JvmStatic.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/JvmStatic.kt");
   }
 
   @Test
   @TestMetadata("LocalFunctions.kt")
   public void testLocalFunctions() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/LocalFunctions.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/LocalFunctions.kt");
   }
 
   @Test
   @TestMetadata("MethodTypeParameterAnnotation.kt")
   public void testMethodTypeParameterAnnotation() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/MethodTypeParameterAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/MethodTypeParameterAnnotation.kt");
   }
 
   @Test
   @TestMetadata("NestedObjects.kt")
   public void testNestedObjects() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedObjects.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/NestedObjects.kt");
   }
 
   @Test
   @TestMetadata("NestedTypeAnnotations.kt")
   public void testNestedTypeAnnotations() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedTypeAnnotations.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/NestedTypeAnnotations.kt");
   }
 
   @Test
   @TestMetadata("NonDataClassWithComponentFunctions.kt")
   public void testNonDataClassWithComponentFunctions() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NonDataClassWithComponentFunctions.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/NonDataClassWithComponentFunctions.kt");
   }
 
   @Test
   @TestMetadata("OnlySecondaryConstructors.kt")
   public void testOnlySecondaryConstructors() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/OnlySecondaryConstructors.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/OnlySecondaryConstructors.kt");
   }
 
   @Test
   @TestMetadata("PrivateObject.kt")
   public void testPrivateObject() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
   }
 
   @Test
   @TestMetadata("privateValueClass.kt")
   public void testPrivateValueClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/privateValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/privateValueClass.kt");
   }
 
   @Test
   @TestMetadata("PropertyTypeParameterAnnotation.kt")
   public void testPropertyTypeParameterAnnotation() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PropertyTypeParameterAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/PropertyTypeParameterAnnotation.kt");
   }
 
   @Test
   @TestMetadata("PublishedApi.kt")
   public void testPublishedApi() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PublishedApi.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/PublishedApi.kt");
   }
 
   @Test
   @TestMetadata("SimpleObject.kt")
   public void testSimpleObject() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SimpleObject.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/SimpleObject.kt");
   }
 
   @Test
   @TestMetadata("SimplePublicField.kt")
   public void testSimplePublicField() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SimplePublicField.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/SimplePublicField.kt");
   }
 
   @Test
   @TestMetadata("SpecialAnnotationsOnAnnotationClass.kt")
   public void testSpecialAnnotationsOnAnnotationClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SpecialAnnotationsOnAnnotationClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/SpecialAnnotationsOnAnnotationClass.kt");
   }
 
   @Test
   @TestMetadata("StubOrderForOverloads.kt")
   public void testStubOrderForOverloads() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/StubOrderForOverloads.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/StubOrderForOverloads.kt");
   }
 
   @Test
   @TestMetadata("SubstitutionOverride.kt")
   public void testSubstitutionOverride() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SubstitutionOverride.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/SubstitutionOverride.kt");
   }
 
   @Test
   @TestMetadata("Throws.kt")
   public void testThrows() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
   }
 
   @Test
   @TestMetadata("TypePararametersInClass.kt")
   public void testTypePararametersInClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/TypePararametersInClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/TypePararametersInClass.kt");
   }
 
   @Test
   @TestMetadata("UnitAsTypeAlias.kt")
   public void testUnitAsTypeAlias() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
   }
 
   @Test
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
   public void testValueClassInParametersWithJvmName() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
   }
 
   @Test
   @TestMetadata("valueClassMembers.kt")
   public void testValueClassMembers() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassMembers.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassMembers.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithDelegatedSuperInterface.kt")
   public void testValueClassWithDelegatedSuperInterface() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithDelegatedSuperInterface.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithDelegatedSuperInterface.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithInternalParam.kt")
   public void testValueClassWithInternalParam() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithInternalParam.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithInternalParam.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithPrivateParam.kt")
   public void testValueClassWithPrivateParam() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithPrivateParam.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithPrivateParam.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithSuperInterface.kt")
   public void testValueClassWithSuperInterface() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithSuperInterface.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithSuperInterface.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithValueClass.kt")
   public void testValueClassWithValueClass() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithValueClass.kt");
   }
 
   @Test
   @TestMetadata("VarArgs.kt")
   public void testVarArgs() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
   }
 
   @Test
   @TestMetadata("wildcardWithoutArguments.kt")
   public void testWildcardWithoutArguments() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArguments.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArguments.kt");
   }
 
   @Test
   @TestMetadata("wildcardWithoutArgumentsOnType.kt")
   public void testWildcardWithoutArgumentsOnType() {
-    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArgumentsOnType.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArgumentsOnType.kt");
   }
 
   @Nested
@@ -492,19 +492,19 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     @Test
     @TestMetadata("Function.kt")
     public void testFunction() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/Function.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/Function.kt");
     }
 
     @Test
     @TestMetadata("Property.kt")
     public void testProperty() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/Property.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/Property.kt");
     }
 
     @Test
     @TestMetadata("WithImplicitType.kt")
     public void testWithImplicitType() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/WithImplicitType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/delegation/WithImplicitType.kt");
     }
   }
 
@@ -520,61 +520,61 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     @Test
     @TestMetadata("AllPrivate.kt")
     public void testAllPrivate() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/AllPrivate.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/AllPrivate.kt");
     }
 
     @Test
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
     }
 
     @Test
     @TestMetadata("Deprecated.kt")
     public void testDeprecated() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/Deprecated.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/Deprecated.kt");
     }
 
     @Test
     @TestMetadata("FunctionTypeParameterAnnotation.kt")
     public void testFunctionTypeParameterAnnotation() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/FunctionTypeParameterAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/FunctionTypeParameterAnnotation.kt");
     }
 
     @Test
     @TestMetadata("InternalFacadeClass.kt")
     public void testInternalFacadeClass() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/InternalFacadeClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/InternalFacadeClass.kt");
     }
 
     @Test
     @TestMetadata("MultiFile.kt")
     public void testMultiFile() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/MultiFile.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/MultiFile.kt");
     }
 
     @Test
     @TestMetadata("PropertyTypeParameterAnnotation.kt")
     public void testPropertyTypeParameterAnnotation() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/PropertyTypeParameterAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/PropertyTypeParameterAnnotation.kt");
     }
 
     @Test
     @TestMetadata("SingleFile.kt")
     public void testSingleFile() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleFile.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleFile.kt");
     }
 
     @Test
     @TestMetadata("SingleJvmClassName.kt")
     public void testSingleJvmClassName() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleJvmClassName.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleJvmClassName.kt");
     }
 
     @Test
     @TestMetadata("ValueClassInParametersWithJvmName.kt")
     public void testValueClassInParametersWithJvmName() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/ValueClassInParametersWithJvmName.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/facades/ValueClassInParametersWithJvmName.kt");
     }
   }
 
@@ -590,49 +590,49 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     @Test
     @TestMetadata("AllOpenAnnotatedClasses.kt")
     public void testAllOpenAnnotatedClasses() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/AllOpenAnnotatedClasses.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/AllOpenAnnotatedClasses.kt");
     }
 
     @Test
     @TestMetadata("ImplementingCharSequenceAndNumber.kt")
     public void testImplementingCharSequenceAndNumber() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingCharSequenceAndNumber.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingCharSequenceAndNumber.kt");
     }
 
     @Test
     @TestMetadata("ImplementingMap.kt")
     public void testImplementingMap() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingMap.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingMap.kt");
     }
 
     @Test
     @TestMetadata("ImplementingMutableSet.kt")
     public void testImplementingMutableSet() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingMutableSet.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/ImplementingMutableSet.kt");
     }
 
     @Test
     @TestMetadata("InheritingInterfaceDefaultImpls.kt")
     public void testInheritingInterfaceDefaultImpls() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/InheritingInterfaceDefaultImpls.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/InheritingInterfaceDefaultImpls.kt");
     }
 
     @Test
     @TestMetadata("OverridingFinalInternal.kt")
     public void testOverridingFinalInternal() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/OverridingFinalInternal.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/OverridingFinalInternal.kt");
     }
 
     @Test
     @TestMetadata("OverridingInternal.kt")
     public void testOverridingInternal() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/OverridingInternal.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/OverridingInternal.kt");
     }
 
     @Test
     @TestMetadata("OverridingProtected.kt")
     public void testOverridingProtected() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/OverridingProtected.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/ideRegression/OverridingProtected.kt");
     }
   }
 
@@ -648,127 +648,127 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     @Test
     @TestMetadata("Class.kt")
     public void testClass() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Class.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Class.kt");
     }
 
     @Test
     @TestMetadata("ClassObjectField.kt")
     public void testClassObjectField() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ClassObjectField.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ClassObjectField.kt");
     }
 
     @Test
     @TestMetadata("ClassWithConstructor.kt")
     public void testClassWithConstructor() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ClassWithConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ClassWithConstructor.kt");
     }
 
     @Test
     @TestMetadata("ClassWithConstructorAndProperties.kt")
     public void testClassWithConstructorAndProperties() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ClassWithConstructorAndProperties.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ClassWithConstructorAndProperties.kt");
     }
 
     @Test
     @TestMetadata("FileFacade.kt")
     public void testFileFacade() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/FileFacade.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/FileFacade.kt");
     }
 
     @Test
     @TestMetadata("Generic.kt")
     public void testGeneric() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Generic.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Generic.kt");
     }
 
     @Test
     @TestMetadata("ImplicitArrayWithFlexibleParameterTypes.kt")
     public void testImplicitArrayWithFlexibleParameterTypes() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ImplicitArrayWithFlexibleParameterTypes.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ImplicitArrayWithFlexibleParameterTypes.kt");
     }
 
     @Test
     @TestMetadata("IntOverridesAny.kt")
     public void testIntOverridesAny() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/IntOverridesAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/IntOverridesAny.kt");
     }
 
     @Test
     @TestMetadata("JvmOverloads.kt")
     public void testJvmOverloads() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/JvmOverloads.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/JvmOverloads.kt");
     }
 
     @Test
     @TestMetadata("NullableUnitReturn.kt")
     public void testNullableUnitReturn() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/NullableUnitReturn.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/NullableUnitReturn.kt");
     }
 
     @Test
     @TestMetadata("OverrideAnyWithUnit.kt")
     public void testOverrideAnyWithUnit() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/OverrideAnyWithUnit.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/OverrideAnyWithUnit.kt");
     }
 
     @Test
     @TestMetadata("PlatformTypes.kt")
     public void testPlatformTypes() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PlatformTypes.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PlatformTypes.kt");
     }
 
     @Test
     @TestMetadata("PrimitiveBackedInlineClasses.kt")
     public void testPrimitiveBackedInlineClasses() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PrimitiveBackedInlineClasses.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PrimitiveBackedInlineClasses.kt");
     }
 
     @Test
     @TestMetadata("Primitives.kt")
     public void testPrimitives() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Primitives.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Primitives.kt");
     }
 
     @Test
     @TestMetadata("PrivateInClass.kt")
     public void testPrivateInClass() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PrivateInClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PrivateInClass.kt");
     }
 
     @Test
     @TestMetadata("Synthetic.kt")
     public void testSynthetic() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Synthetic.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Synthetic.kt");
     }
 
     @Test
     @TestMetadata("Trait.kt")
     public void testTrait() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Trait.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Trait.kt");
     }
 
     @Test
     @TestMetadata("typeAlias.kt")
     public void testTypeAlias() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/typeAlias.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/typeAlias.kt");
     }
 
     @Test
     @TestMetadata("UnitAsGenericArgument.kt")
     public void testUnitAsGenericArgument() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/UnitAsGenericArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/UnitAsGenericArgument.kt");
     }
 
     @Test
     @TestMetadata("UnitParameter.kt")
     public void testUnitParameter() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/UnitParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/UnitParameter.kt");
     }
 
     @Test
     @TestMetadata("VoidReturn.kt")
     public void testVoidReturn() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/VoidReturn.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/VoidReturn.kt");
     }
   }
 
@@ -794,13 +794,13 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     @Test
     @TestMetadata("allOpen.kt")
     public void testAllOpen() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/allOpen.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/allOpen.kt");
     }
 
     @Test
     @TestMetadata("companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt")
     public void testCompanionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt");
     }
   }
 }

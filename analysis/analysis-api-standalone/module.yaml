@@ -3,6 +3,7 @@ product:
   platforms: [jvm]
 
 repositories:
+
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
   - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
@@ -251,6 +252,7 @@ test-dependencies:
   - org.apache.commons:commons-lang3:3.12.0
   - com.google.code.gson:gson:2.11.0
   - ./../analysis-api-fir
+  - ./../analysis-api-fir-tests
   - ./../analysis-test-framework
   - ./analysis-api-standalone-base
   - ./../analysis-api-impl-base
@@ -400,5 +402,7 @@ test-dependencies:
   - ../low-level-api-fir-tests
 
 test-settings:
+  jvm:
+    release: 8
   kotlin:
     freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xexplicit-api=disable, -opt-in, org.jetbrains.kotlin.analysis.api.KaPlatformInterface, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

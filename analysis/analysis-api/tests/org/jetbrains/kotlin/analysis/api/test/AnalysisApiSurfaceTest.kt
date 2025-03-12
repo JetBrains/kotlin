@@ -13,7 +13,7 @@ import kotlin.io.path.readText
 
 class AnalysisApiSurfaceTest {
     private companion object {
-        private val API_SURFACE_PATH = Paths.get("analysis/analysis-api/api/analysis-api.api")
+        private val API_SURFACE_PATH = Paths.get("/Users/ilya.goncharov/repos/kotlin-amper/analysis/analysis-api/api/analysis-api.api")
     }
 
     @Test

@@ -199,7 +199,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     }
 
     private fun String.dist(): String {
-        return "dist/kotlinc/lib/$this"
+        return "/Users/ilya.goncharov/repos/kotlin-amper/dist/kotlinc/lib/$this"
     }
 }
 

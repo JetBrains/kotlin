@@ -15,8 +15,8 @@ import java.io.File
 class NullabilityAnnotationSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         return listOf(
-            "analysis/symbol-light-classes/testData/additionalFiles/NotNull.java",
-            "analysis/symbol-light-classes/testData/additionalFiles/Nullable.java",
+            "/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/additionalFiles/NotNull.java",
+            "/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/additionalFiles/Nullable.java",
         ).map { path ->
             File(path).toTestFile(relativePath = "org/jetbrains/annotations")
         }

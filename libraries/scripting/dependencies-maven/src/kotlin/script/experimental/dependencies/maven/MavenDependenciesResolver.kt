@@ -37,7 +37,8 @@ class MavenDependenciesResolver(
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos.toList() // copy to avoid sharing problems
 
-    private val getResolveSession = { repositories: List<RemoteRepository> ->
+    private val getResolveSession = { repositories:
+ List<RemoteRepository> ->
         AetherResolveSession(null, repositories)
     }.let { sessionFactory ->
         if (cacheResolveSession) LRU1Cache(sessionFactory) else sessionFactory

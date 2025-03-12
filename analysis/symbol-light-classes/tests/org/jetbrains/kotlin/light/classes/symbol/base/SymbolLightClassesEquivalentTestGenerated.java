@@ -26,60 +26,60 @@ public class SymbolLightClassesEquivalentTestGenerated extends AbstractSymbolLig
   @Test
   @TestMetadata("AnnotationClass.kt")
   public void testAnnotationClass() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/AnnotationClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/AnnotationClass.kt");
   }
 
   @Test
   @TestMetadata("AnonymousClass.kt")
   public void testAnonymousClass() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/AnonymousClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/AnonymousClass.kt");
   }
 
   @Test
   @TestMetadata("ClassPropertyWithAccessor.kt")
   public void testClassPropertyWithAccessor() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/ClassPropertyWithAccessor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/ClassPropertyWithAccessor.kt");
   }
 
   @Test
   @TestMetadata("CompanionProperty.kt")
   public void testCompanionProperty() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/CompanionProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/CompanionProperty.kt");
   }
 
   @Test
   @TestMetadata("Constructor.kt")
   public void testConstructor() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/Constructor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/Constructor.kt");
   }
 
   @Test
   @TestMetadata("EnumClassEntry.kt")
   public void testEnumClassEntry() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/EnumClassEntry.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/EnumClassEntry.kt");
   }
 
   @Test
   @TestMetadata("Function.kt")
   public void testFunction() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/Function.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/Function.kt");
   }
 
   @Test
   @TestMetadata("Interface.kt")
   public void testInterface() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/Interface.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/Interface.kt");
   }
 
   @Test
   @TestMetadata("Klass.kt")
   public void testKlass() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/Klass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/Klass.kt");
   }
 
   @Test
   @TestMetadata("TypeParameter.kt")
   public void testTypeParameter() {
-    runTest("analysis/symbol-light-classes/testData/equivalentTo/TypeParameter.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/symbol-light-classes/testData/equivalentTo/TypeParameter.kt");
   }
 }

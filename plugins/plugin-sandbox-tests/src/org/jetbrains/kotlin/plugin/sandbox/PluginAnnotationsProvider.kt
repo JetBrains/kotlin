@@ -46,7 +46,7 @@ class PluginRuntimeAnnotationsProvider(testServices: TestServices) : RuntimeClas
 }
 
 
-private const val ANNOTATIONS_JAR_DIR = "plugins/plugin-sandbox/plugin-annotations/build/libs/"
+private const val ANNOTATIONS_JAR_DIR = "/Users/ilya.goncharov/repos/kotlin-amper/plugins/plugin-sandbox/plugin-annotations/build/libs"
 private val JVM_ANNOTATIONS_JAR_FILTER = createFilter("plugin-annotations-jvm", ".jar")
 private val JS_ANNOTATIONS_KLIB_FILTER = createFilter("plugin-annotations-js", ".klib")
 

@@ -21,10 +21,10 @@ import kotlin.test.fail
 
 class ArtifactsTest {
 
-    private val kotlinVersion = System.getProperty("kotlin.version")
-    private val mavenLocal = System.getProperty("maven.repo.local")
+    private val kotlinVersion = "2.2.255-SNAPSHOT"
+    private val mavenLocal = "/Users/ilya.goncharov/repos/kotlin-amper/build/repo"
     private val localRepoPath = Paths.get(mavenLocal, "org/jetbrains/kotlin")
-    private val expectedRepoPath = Paths.get("repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
+    private val expectedRepoPath = Paths.get("/Users/ilya.goncharov/repos/kotlin-amper/repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin")
 
     /**
      * Kotlin native bundles are present in TC artifacts but should not be checked until kotlin native enabled project-wide

@@ -137,9 +137,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-            TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
-                runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
-            }
+            TestJdkKind.FULL_JDK -> KtTestUtil.getJdk8Home()
         }
 
         inline fun getJdkHomeFromProperty(onNull: () -> File?): File? {
