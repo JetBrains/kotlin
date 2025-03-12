@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.arguments.types.BooleanType
 import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
+import org.jetbrains.kotlin.cli.common.arguments.GradleOption
+import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArguments) {
     compilerArgument {
@@ -22,6 +27,14 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
 
         valueType = KotlinJvmTargetType()
         valueDescription = "<version>".asReleaseDependent()
+
+        additionalAnnotation(
+            GradleOption(
+                value = DefaultValue.JVM_TARGET_VERSIONS,
+                gradleInputType = GradleInputTypes.INPUT,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
 
         stubLifecycle()
     }
@@ -66,6 +79,14 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         description = "Don't automatically include the Java runtime in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotation(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INPUT,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
+
         stubLifecycle()
     }
 
@@ -108,6 +129,14 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
+        additionalAnnotation(
+            GradleOption(
+                value = DefaultValue.STRING_NULL_DEFAULT,
+                gradleInputType = GradleInputTypes.INPUT,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
+
         stubLifecycle()
     }
 
@@ -115,6 +144,14 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         name = "java-parameters"
         description = "Generate metadata for Java 1.8 reflection on method parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotation(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INPUT,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
 
         stubLifecycle()
     }
@@ -129,6 +166,14 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
 -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
+
+        additionalAnnotation(
+            GradleOption(
+                value = DefaultValue.JVM_DEFAULT_MODES,
+                gradleInputType = GradleInputTypes.INPUT,
+                gradleName = "jvmDefault",
+            )
+        )
 
         stubLifecycle()
     }
@@ -698,6 +743,10 @@ If API Level >= 2.2 -- no-op.""".asReleaseDependent()
         name = "Xannotations-in-metadata"
         description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotation(
+            Enables(LanguageFeature.AnnotationsInMetadata)
+        )
 
         stubLifecycle()
     }

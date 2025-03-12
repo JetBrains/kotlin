@@ -14,6 +14,12 @@ import org.jetbrains.kotlin.arguments.types.BooleanType
 import org.jetbrains.kotlin.arguments.types.KotlinVersionType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
+import org.jetbrains.kotlin.cli.common.arguments.Disables
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
+import org.jetbrains.kotlin.cli.common.arguments.GradleOption
+import org.jetbrains.kotlin.config.LanguageFeature
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -28,6 +34,14 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
             valueType = KotlinVersionType()
             valueDescription = "<version>".asReleaseDependent()
 
+            additionalAnnotation(
+                GradleOption(
+                    value = DefaultValue.LANGUAGE_VERSIONS,
+                    gradleInputType = GradleInputTypes.INPUT,
+                    shouldGenerateDeprecatedKotlinOptions = true,
+                )
+            )
+
             stubLifecycle()
         }
 
@@ -36,6 +50,14 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
             description = "Allow using declarations from only the specified version of bundled libraries.".asReleaseDependent()
             valueType = KotlinVersionType()
             valueDescription = "<version>".asReleaseDependent()
+
+            additionalAnnotation(
+                GradleOption(
+                    value = DefaultValue.API_VERSIONS,
+                    gradleInputType = GradleInputTypes.INPUT,
+                    shouldGenerateDeprecatedKotlinOptions = true,
+                )
+            )
 
             stubLifecycle()
         }
@@ -60,6 +82,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
                 """.trimIndent().asReleaseDependent()
             valueType = BooleanType.defaultFalse
 
+            additionalAnnotation(
+                GradleOption(
+                    value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                    gradleInputType = GradleInputTypes.INPUT
+                )
+            )
+
             stubLifecycle()
         }
 
@@ -76,6 +105,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
             description = "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.".asReleaseDependent()
             valueType = StringArrayType.defaultNull
             valueDescription = "<fq.name>".asReleaseDependent()
+
+            additionalAnnotation(
+                GradleOption(
+                    value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
+                    gradleInputType = GradleInputTypes.INPUT
+                )
+            )
 
             stubLifecycle()
         }
@@ -200,6 +236,10 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
             name = "Xlegacy-smart-cast-after-try"
             description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks.".asReleaseDependent()
             valueType = BooleanType.defaultFalse
+
+            additionalAnnotation(
+                Disables(LanguageFeature.SoundSmartCastsAfterTry)
+            )
 
             stubLifecycle()
         }
@@ -385,6 +425,14 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
             description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
             valueType = BooleanType.defaultFalse
 
+            additionalAnnotation(
+                GradleOption(
+                    value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                    gradleInputType = GradleInputTypes.INPUT,
+                    shouldGenerateDeprecatedKotlinOptions = false,
+                )
+            )
+
             stubLifecycle()
         }
 
@@ -471,6 +519,10 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
             name = "Xinference-compatibility"
             description = "Enable compatibility changes for the generic type inference algorithm.".asReleaseDependent()
             valueType = BooleanType.defaultFalse
+
+            additionalAnnotation(
+                Enables(LanguageFeature.InferenceCompatibility)
+            )
 
             stubLifecycle()
         }
@@ -609,6 +661,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             description = "Allow compiling scripts along with regular Kotlin sources.".asReleaseDependent()
             valueType = BooleanType.defaultFalse
 
+            additionalAnnotation(
+                Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
+            )
+
             stubLifecycle()
         }
 
@@ -675,6 +731,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             description = "Enable experimental language support for when guards.".asReleaseDependent()
             valueType = BooleanType.defaultFalse
 
+            additionalAnnotation(
+                Enables(LanguageFeature.WhenGuards)
+            )
+
             stubLifecycle()
         }
 
@@ -683,6 +743,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             name = "Xnested-type-aliases"
             description = "Enable experimental language support for nested type aliases.".asReleaseDependent()
             valueType = BooleanType.defaultFalse
+
+            additionalAnnotation(
+                Enables(LanguageFeature.NestedTypeAliases)
+            )
 
             stubLifecycle()
         }

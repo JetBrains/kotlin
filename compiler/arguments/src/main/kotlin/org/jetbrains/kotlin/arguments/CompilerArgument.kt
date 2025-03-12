@@ -21,6 +21,8 @@ data class CompilerArgument(
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
+
+    val additionalAnnotations: List<Annotation>,
 ) : WithKotlinReleaseVersionsMetadata
 
 @KotlinArgumentsDslMarker
@@ -34,6 +36,7 @@ class CompilerArgumentBuilder {
     var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
 
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
+    private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
     fun lifecycle(
         introducedVersion: KotlinReleaseVersion,
@@ -49,6 +52,10 @@ class CompilerArgumentBuilder {
         )
     }
 
+    fun additionalAnnotation(annotation: Annotation) {
+        additionalAnnotations.add(annotation)
+    }
+
     fun build(): CompilerArgument = CompilerArgument(
         name = name,
         shortName = shortName,
@@ -57,6 +64,7 @@ class CompilerArgumentBuilder {
         valueType = valueType,
         valueDescription = valueDescription,
         releaseVersionsMetadata = releaseVersionsMetadata,
+        additionalAnnotations = additionalAnnotations,
     )
 }
 
