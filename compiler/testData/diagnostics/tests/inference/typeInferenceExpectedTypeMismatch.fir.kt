@@ -4,7 +4,7 @@ package typeInferenceExpectedTypeMismatch
 import java.util.*
 
 fun test() {
-    val s : Set<Int> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>newList<!>()<!>
+    val s : Set<Int> = <!INITIALIZER_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newList<!>()<!>
     use(s)
 }
 
@@ -26,7 +26,7 @@ fun <T, R> foo(o: Out<T>, i: In<R>): Two<T, R> = throw Exception("$o $i")
 fun test1(outA: Out<A>, inB: In<B>) {
     foo(outA, inB)
 
-    val b: Two<A, C> = <!TYPE_MISMATCH!>foo(outA, inB)<!>
+    val b: Two<A, C> = <!INITIALIZER_TYPE_MISMATCH!>foo(outA, inB)<!>
     use(b)
 }
 

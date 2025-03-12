@@ -37,7 +37,7 @@ fun <T> bar(n: Number?, d: T, e: T) {
     val c = Foo.simpleId(n)
 
     val x4 = Foo(if (true) 10 else null)
-    val x5: Number = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>x4.produceT()<!>
+    val x5: Number = <!INITIALIZER_TYPE_MISMATCH!>x4.produceT()<!>
     val x6: Number? = x4.produceT()
     val x7 = x4.produceT()
     val x8 = x4.produceNotNullT()

@@ -12,17 +12,17 @@
 
 fun test1(): Int {
     val x: String = <!INITIALIZER_TYPE_MISMATCH!>if (true) {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>when {
-            true -> <!TYPE_MISMATCH!>Any()<!>
+        when {
+            true -> Any()
             else -> null
-        }<!>
+        }
     } else ""<!>
     return x.hashCode()
 }
 
 fun test2(): Int {
-    val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>when {
-                        true -> <!TYPE_MISMATCH!>Any()<!>
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!>when {
+                        true -> Any()
                         else -> null
                     } ?: return 0<!>
     return x.hashCode()

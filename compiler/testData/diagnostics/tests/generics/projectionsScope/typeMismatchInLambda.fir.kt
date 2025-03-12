@@ -16,9 +16,9 @@ fun test(a: A<out CharSequence>, z: Out<CharSequence>) {
         val x: String = <!INITIALIZER_TYPE_MISMATCH!>1<!> // Should be no TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS
         <!RETURN_TYPE_MISMATCH!>""<!>
     }
-    a.bar { <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>Out<CharSequence>()<!> }
+    a.bar { <!RETURN_TYPE_MISMATCH!>Out<CharSequence>()<!> }
     a.bar { Out() }
-    a.bar { <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>z.id()<!> }
+    a.bar { <!RETURN_TYPE_MISMATCH!>z.id()<!> }
 
     a.foo {
         z.foobar(if (1 > 2) return@foo <!RETURN_TYPE_MISMATCH!>""<!> else "")

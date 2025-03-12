@@ -6,7 +6,7 @@ sealed class NullableBooleanHolder(val value: Boolean?)
 
 fun elvisInGuard(x: Any, y: Boolean?) {
     when (x) {
-        is NullableBooleanHolder if <!CONDITION_TYPE_MISMATCH, TYPE_MISMATCH!>y ?: y<!> -> 1
+        is NullableBooleanHolder if <!CONDITION_TYPE_MISMATCH!>y ?: y<!> -> 1
         is NullableBooleanHolder if y ?: y == null -> 1
         is NullableBooleanHolder if x.value ?: when (y) {
             true if true -> true

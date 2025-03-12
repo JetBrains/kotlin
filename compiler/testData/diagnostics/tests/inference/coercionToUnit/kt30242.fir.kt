@@ -49,7 +49,7 @@ fun bar(block: () -> String) {}
 fun test_5(b: Boolean) {
     bar {
         <!RETURN_TYPE_MISMATCH!>if (b) {
-            <!TYPE_MISMATCH!>println("meh")<!>
+            println("meh")
         }<!>
     }
 }

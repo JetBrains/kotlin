@@ -49,6 +49,6 @@ fun typeCheckerBehavior(x: Any, y: Any) {
         !is Boolean if InnerBoundedBooleanHolder<Boolean>(false).compare(<!ARGUMENT_TYPE_MISMATCH!>x<!>) -> 350
         is String if InnerBoundedBooleanHolder<Boolean>(true).compare(<!ARGUMENT_TYPE_MISMATCH!>x<!>) -> 400
         is Boolean if OuterBoundedBooleanHolder<Boolean>(true).getValue() -> 500
-        is Boolean if <!CONDITION_TYPE_MISMATCH, TYPE_MISMATCH!>OuterBoundedBooleanHolder<<!UPPER_BOUND_VIOLATED!>CharSequence<!>>(<!ARGUMENT_TYPE_MISMATCH!>true<!>).getValue()<!> -> 600
+        is Boolean if <!CONDITION_TYPE_MISMATCH!>OuterBoundedBooleanHolder<<!UPPER_BOUND_VIOLATED!>CharSequence<!>>(<!ARGUMENT_TYPE_MISMATCH!>true<!>).getValue()<!> -> 600
     }
 }

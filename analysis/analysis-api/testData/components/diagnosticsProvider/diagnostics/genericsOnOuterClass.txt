@@ -2,6 +2,3 @@ Diagnostics from file:
   for PSI element of type KtProperty at (37,5-52)
     INITIALIZER_TYPE_MISMATCH      text ranges: [(247,260)]
       PSI: KtProperty at (37,5-52)
-  for PSI element of type KtCallExpression at (37,39-52)
-    TYPE_MISMATCH      text ranges: [(247,260)]
-      PSI: KtCallExpression at (37,39-52)

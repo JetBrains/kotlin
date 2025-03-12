@@ -85,8 +85,8 @@ digraph destructuringDeclarationsScript_fir_kts {
                 38 [label="Access variable R|<local>/<destruct>| [3]"];
                 39 [label="Function call arguments exit [3]"];
             }
-            40 [label="Function call enter: R|<local>/<destruct>|.R|/A.component2<CS errors: /A.component2>#|() [3]"];
-            41 [label="Function call exit: R|<local>/<destruct>|.R|/A.component2<CS errors: /A.component2>#|() [3]" style="filled" fillcolor=yellow];
+            40 [label="Function call enter: R|<local>/<destruct>|.R|/A.component2|() [3]"];
+            41 [label="Function call exit: R|<local>/<destruct>|.R|/A.component2|() [3]" style="filled" fillcolor=yellow];
             42 [label="Exit property [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_14 {

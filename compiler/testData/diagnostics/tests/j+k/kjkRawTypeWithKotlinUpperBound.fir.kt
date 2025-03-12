@@ -13,5 +13,5 @@ open class KotlinClass<T : Number> {
 class A : Java1()
 
 fun test(a: A) {
-    val k: Number = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>a.bar()<!>
+    val k: Number = <!INITIALIZER_TYPE_MISMATCH!>a.bar()<!>
 }

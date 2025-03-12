@@ -9,7 +9,7 @@ fun foo() =
         cond1() -> 12
         cond2() -> 2
         <!CONDITION_TYPE_MISMATCH!>4<!> -> 34
-        <!CONDITION_TYPE_MISMATCH, TYPE_MISMATCH!>Pair(1, 2)<!> -> 3
+        <!CONDITION_TYPE_MISMATCH!>Pair(1, 2)<!> -> 3
         <!EXPECTED_CONDITION!>in 1..10<!> -> 34
         <!CONDITION_TYPE_MISMATCH!>4<!> -> 38
         <!EXPECTED_CONDITION!>is Int<!> -> 33

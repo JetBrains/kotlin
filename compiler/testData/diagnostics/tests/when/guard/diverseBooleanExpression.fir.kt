@@ -42,7 +42,7 @@ fun complexBooleanExpressionsInGuards(x: Any, y: Boolean?) {
         is String if x == "" || !y!! -> 3
         is String if <!EQUALITY_NOT_APPLICABLE_WARNING!>x == true<!> || false -> 4
         is Boolean if listOf(x, false)[0] -> 45
-        !is Boolean if <!CONDITION_TYPE_MISMATCH, TYPE_MISMATCH!>listOf(x, false)[1]<!> -> 47
+        !is Boolean if <!CONDITION_TYPE_MISMATCH!>listOf(x, false)[1]<!> -> 47
         is Int if x > 0 && x in 1..10 && y == null -> 50
         is Int if (try { y.toString() } catch (e: NumberFormatException) { null } finally { x.toString() has '!' } != null) -> 60
     }
