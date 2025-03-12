@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.powerassert.isEqualOperator
 import org.jetbrains.kotlin.powerassert.isImplicitArgument
 import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
 import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
@@ -85,7 +87,8 @@ class ChainNode : Node() {
 }
 
 class WhenNode(
-    val expression: IrExpression,
+    val expression: IrWhen,
+    val subject: IrVariable?,
 ) : Node() {
     override fun isVisible(): Boolean = true
     override fun toString() = "WhenNode(${expression.dumpKotlinLike()})"
@@ -110,6 +113,10 @@ fun buildTree(
     val tree = RootNode()
     expression.accept(
         object : IrVisitor<Unit, Node>() {
+            private val whenSubjects = mutableListOf<IrVariableSymbol>()
+
+            private fun IrExpression.isWhenSubjectAccess(): Boolean = this is IrGetValue && this.symbol in whenSubjects
+
             override fun visitElement(element: IrElement, data: Node) {
                 element.acceptChildren(this, data)
             }
@@ -123,6 +130,9 @@ fun buildTree(
                     data.addChild(HiddenNode(expression))
                 } else if (expression.isImplicitArgument()) {
                     // Do not diagram implicit arguments.
+                    data.addChild(HiddenNode(expression))
+                } else if (expression.isWhenSubjectAccess()) {
+                    // Do not diagram implicit when-subjects.
                     data.addChild(HiddenNode(expression))
                 } else {
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
@@ -174,7 +184,7 @@ fun buildTree(
                         val notNullBranch = branches[1]
 
                         // Make sure each branch results in 2 child nodes: condition and result.
-                        val whenNode = WhenNode(conditional).also { elvisNode.addChild(it) }
+                        val whenNode = WhenNode(conditional, null).also { elvisNode.addChild(it) }
                         whenNode.addChild(ConstantNode(nullBranch.condition)) // Constant node for the synthetic nullable condition.
                         nullBranch.result.accept(this, whenNode)
                         whenNode.addChild(ConstantNode(notNullBranch.condition)) // Constant node for the synthetic non-null condition.
@@ -184,6 +194,21 @@ fun buildTree(
                         check(whenNode.children.size == 4) {
                             "Expected the when of the elvis expression to consist of exactly two branches.\n${expression.dump()}"
                         }
+                    }
+                    IrStatementOrigin.WHEN -> {
+                        // When-with-subject expressions are handled with a special node.
+                        val statements = expression.statements
+                        check(statements.size == 2) {
+                            "Expected the when-with-subject expression to consist of exactly two statements.\n${expression.dump()}"
+                        }
+                        val variable = statements[0] as? IrVariable
+                            ?: error("Expected the first statement of the when-with-subject expression to be a variable.\n${expression.dump()}")
+                        val conditional = statements[1] as? IrWhen
+                            ?: error("Expected the second statement of the when-with-subject expression to be a when.\n${expression.dump()}")
+
+                        val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                        variable.acceptChildren(this, chainNode)
+                        processWhen(conditional, chainNode, variable)
                     }
                     else -> {
                         // Everything else is considered unsafe and terminates the expression tree
@@ -221,6 +246,11 @@ fun buildTree(
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.dispatchReceiver!!.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
+                } else if (expression.isEqualOperator() && expression.arguments.getOrNull(0)?.isWhenSubjectAccess() == true) {
+                    // Exclude equality call for when-with-subject branches.
+                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                    expression.acceptChildren(this, chainNode)
+                    chainNode.addChild(HiddenNode(expression))
                 } else {
                     super.visitCall(expression, data)
                 }
@@ -248,13 +278,19 @@ fun buildTree(
             }
 
             override fun visitWhen(expression: IrWhen, data: Node) {
-                val whenNode = WhenNode(expression).also { data.addChild(it) }
+                processWhen(expression, data)
+            }
 
+            private fun processWhen(expression: IrWhen, data: Node, subject: IrVariable? = null) {
+                val whenNode = WhenNode(expression, subject).also { data.addChild(it) }
+
+                if (subject != null) whenSubjects.add(subject.symbol)
                 for (branch in expression.branches) {
                     // Each branch should result in 2 child nodes: a condition and a result.
                     branch.condition.accept(this, whenNode)
                     branch.result.accept(this, whenNode)
                 }
+                if (subject != null) whenSubjects.removeLast()
 
                 // Make sure each branch resulted in 2 child nodes: condition and result.
                 check(whenNode.children.size == 2 * expression.branches.size) {

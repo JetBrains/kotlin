@@ -54,9 +54,9 @@ private fun IrBlockBuilder.buildExpression(
     is ConstantNode -> add(node, variables, call)
     is HiddenNode -> add(node, variables, call)
     is ExpressionNode -> add(sourceFile, node, variables, call)
-    is ChainNode -> nest(sourceFile, node, 0, variables, call)
-    is WhenNode -> nest(sourceFile, node, 0, variables, call)
-    is ElvisNode -> nest(sourceFile, node, 0, variables, call)
+    is ChainNode -> nest(sourceFile, node, index = 0, variables, call)
+    is WhenNode -> nest(sourceFile, node, index = 0, variables, call)
+    is ElvisNode -> nest(sourceFile, node, index = 0, variables, call)
     is RootNode -> error("Unsupported node type=$node")
 }
 
@@ -131,7 +131,7 @@ private fun IrBlockBuilder.add(
     val sourceRangeInfo = sourceFile.getSourceRangeInfo(expression)
     val text = sourceFile.getText(sourceRangeInfo)
 
-    val transformer = IrTemporaryExtractionTransformer(this@add, variables)
+    val transformer = IrTemporaryExtractionTransformer(this, variables)
     val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
 
     val variable = irTemporary(copy, nameHint = "PowerAssertSynthesized")
@@ -237,6 +237,15 @@ private fun IrBlockBuilder.nest(
             }
             return super.visitWhen(expression)
         }
+    }
+
+    if (index == 0 && node.subject != null) {
+        /**
+         * When-expression subject variable needs to be added explicitly so it is maintained during transformation.
+         * Also, perform temporary variable extraction on it to make sure any Power-Assert temporary variables are correctly referenced from
+         * the initializer.
+         */
+        +IrTemporaryExtractionTransformer(this@nest, variables).visitVariable(node.subject, null)
     }
 
     val children = node.children
