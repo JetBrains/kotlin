@@ -94,6 +94,9 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
      */
     public abstract val classId: ClassId?
 
+    @Deprecated("Use `classId` instead.", ReplaceWith("classId"), level = DeprecationLevel.HIDDEN)
+    public val classIdIfNonLocal: ClassId? get() = classId
+
     abstract override fun createPointer(): KaSymbolPointer<KaClassLikeSymbol>
 }
 

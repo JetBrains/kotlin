@@ -228,6 +228,13 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KaType.allSupertypes: Sequence<KaType>
         get() = allSupertypes(shouldApproximate = false)
 
+    @Deprecated(
+        "Use 'allSupertypes()' instead.",
+        replaceWith = ReplaceWith("allSupertypes(shouldApproximate)"),
+        level = DeprecationLevel.HIDDEN
+    )
+    public fun KaType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KaType> = allSupertypes(shouldApproximate).toList()
+
     /**
      * This function is provided for a few use-cases where it's hard to go without it.
      *

@@ -65,6 +65,9 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      */
     public val PsiElement.expectedType: KaType?
 
+    @Deprecated("Use 'expressionType' instead.", replaceWith = ReplaceWith("expressionType"), level = DeprecationLevel.HIDDEN)
+    public fun KtExpression.getKtType(): KaType? = expressionType
+
     /**
      * Whether this expression is *definitely null*, based on the declared nullability and smart cast types derived from data-flow analysis
      * facts.
