@@ -8,6 +8,7 @@ fun box(): String = runAll(
     "test6" to { test6(2) },
     "test7" to { test7() },
     "test8" to { test8(2) },
+    "test9" to { test9(2) },
 )
 
 fun test1(x: Int, a: Int, b: Int) {
@@ -82,8 +83,19 @@ fun test7() {
 fun test8(x: Any) {
     assert(
         when (x) {
+            is Int if x == 1 -> true
             is Int if x == 2 -> false
             else -> true
+        }
+    )
+}
+
+fun test9(x: Int) {
+    assert(
+        when (val a = x + x + x) {
+            x -> true
+            x + x -> true
+            else -> false
         }
     )
 }

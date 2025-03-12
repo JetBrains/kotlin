@@ -99,6 +99,9 @@ internal fun IrCall.getExplicitReceiver(): IrExpression? {
     return null
 }
 
+internal fun IrCall.isEqualOperator(): Boolean =
+    (origin == IrStatementOrigin.EQEQ && symbol.owner.name.asString() == BuiltInOperatorNames.EQEQ)
+
 internal fun IrCall.isInnerOfNotEqualOperator(): Boolean =
     (origin == IrStatementOrigin.EXCLEQ && symbol.owner.name.asString() == BuiltInOperatorNames.EQEQ) ||
             (origin == IrStatementOrigin.EXCLEQEQ && symbol.owner.name.asString() == BuiltInOperatorNames.EQEQEQ)
