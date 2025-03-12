@@ -54,12 +54,24 @@ def bench(start, msg):
 
 def evaluate(expr):
     result = lldb.debugger.GetSelectedTarget().EvaluateExpression(expr)
+    err = result.GetError()
+    if not err.Success():
+        raise EvaluateDebuggerException(expr, err)
     log(lambda : "evaluate: {} => {}".format(expr, result))
     return result
 
 
 class DebuggerException(Exception):
     pass
+
+
+class EvaluateDebuggerException(DebuggerException):
+    def __init__(self, expression, error):
+        self.expression = expression
+        self.error = error
+
+    def __str__(self):
+        return "Error evaluating `{}`: {}".format(self.expression, self.error.description)
 
 
 def _max_children_count():
