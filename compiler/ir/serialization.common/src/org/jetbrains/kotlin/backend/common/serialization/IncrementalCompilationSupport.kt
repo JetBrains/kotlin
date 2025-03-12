@@ -29,7 +29,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override val hasIr get() = true
     override val hasFileEntriesTable get() = true
 
-    private inline fun <K, R : IrTableReader<K>> Array<R?>.itemBytes(fileIndex: Int, key: K, factory: () -> R): ByteArray {
+    private inline fun Array<DeclarationIdTableReader?>.itemBytes(fileIndex: Int, key: DeclarationId, factory: () -> DeclarationIdTableReader): ByteArray {
         val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
 
         return reader.tableItemBytes(key)
@@ -47,7 +47,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
         return reader?.tableItemBytes(index)
     }
 
-    private val indexedDeclarations = arrayOfNulls<DeclarationIrTableMemoryReader>(icData.size)
+    private val indexedDeclarations = arrayOfNulls<DeclarationIdTableReader>(icData.size)
     private val indexedTypes = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedSignatures = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedStrings = arrayOfNulls<IrArrayReader>(icData.size)
@@ -57,7 +57,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
 
     override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
         indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
-            DeclarationIrTableMemoryReader(icData[fileIndex].declarations)
+            DeclarationIdTableReader(icData[fileIndex].declarations)
         }
 
     override fun type(index: Int, fileIndex: Int): ByteArray =
