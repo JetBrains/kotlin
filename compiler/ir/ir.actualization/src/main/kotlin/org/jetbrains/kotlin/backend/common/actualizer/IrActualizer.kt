@@ -34,6 +34,7 @@ class IrActualizer(
     val mainFragment: IrModuleFragment,
     val dependentFragments: List<IrModuleFragment>,
     extraActualClassExtractors: List<IrExtraActualDeclarationExtractor> = emptyList(),
+    private val missingActualProvider: IrMissingActualDeclarationProvider?
 ) {
     private val collector = ExpectActualCollector(
         mainFragment,
@@ -42,6 +43,7 @@ class IrActualizer(
         ktDiagnosticReporter,
         expectActualTracker,
         extraActualClassExtractors,
+        missingActualProvider,
     )
 
     val classActualizationInfo: ClassActualizationInfo = collector.collectClassActualizationInfo()
@@ -74,6 +76,12 @@ class IrActualizer(
         // 3. Actualize expect calls in dependent fragments using info obtained in the previous steps
         val actualizerVisitor = ActualizerVisitor(symbolRemapper)
         dependentFragments.forEach { it.transform(actualizerVisitor, null) }
+
+        // In lenient mode, calls in the main fragment can resolve to expect declarations because of missing actuals.
+        // Therefore, we also need to actualize expect calls there.
+        if (missingActualProvider != null) {
+            mainFragment.transform(actualizerVisitor, null)
+        }
 
         // 4. Move all declarations to mainFragment
         mergeIrFragments(mainFragment, dependentFragments)
