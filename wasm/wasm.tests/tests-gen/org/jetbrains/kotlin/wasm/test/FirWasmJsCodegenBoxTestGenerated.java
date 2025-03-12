@@ -31270,6 +31270,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("overrideToByteToChar.kt")
+    public void testOverrideToByteToChar() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/overrideToByteToChar.kt");
+    }
+
+    @Test
     @TestMetadata("rangeTo.kt")
     public void testRangeTo() {
       runTest("compiler/testData/codegen/box/primitiveTypes/rangeTo.kt");

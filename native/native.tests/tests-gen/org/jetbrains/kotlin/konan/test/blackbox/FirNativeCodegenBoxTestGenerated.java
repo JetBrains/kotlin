@@ -33757,6 +33757,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("overrideToByteToChar.kt")
+      public void testOverrideToByteToChar() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/overrideToByteToChar.kt");
+      }
+
+      @Test
       @TestMetadata("rangeTo.kt")
       public void testRangeTo() {
         runTest("compiler/testData/codegen/box/primitiveTypes/rangeTo.kt");
