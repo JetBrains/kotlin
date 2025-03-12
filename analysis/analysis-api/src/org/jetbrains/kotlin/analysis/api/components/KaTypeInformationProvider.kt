@@ -190,6 +190,11 @@ public interface KaTypeInformationProvider : KaSessionComponent {
             }
         }
 
+    /** The class symbol backing the given type, if available. */
+    @Deprecated("Use 'expandedSymbol' instead.", ReplaceWith("expandedSymbol"), level = DeprecationLevel.HIDDEN)
+    public val KaType.expandedClassSymbol: KaClassSymbol?
+        get() = expandedSymbol
+
     /**
      * The type that corresponds to the given [KaType] with fully expanded type aliases.
      *

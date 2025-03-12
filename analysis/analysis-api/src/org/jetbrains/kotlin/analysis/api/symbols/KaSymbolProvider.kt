@@ -176,6 +176,9 @@ public interface KaSymbolProvider : KaSessionComponent {
      */
     public fun findClass(classId: ClassId): KaClassSymbol?
 
+    @Deprecated("Use 'findClass() instead.", replaceWith = ReplaceWith("findClass(classId)"), level = DeprecationLevel.HIDDEN)
+    public fun getClassOrObjectSymbolByClassId(classId: ClassId): KaClassSymbol? = findClass(classId)
+
     /**
      * Returns a [KaTypeAliasSymbol] for the specified [ClassId], or `null` if such a symbol cannot be found.
      */
