@@ -32,8 +32,10 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
     @TaskAction
     fun checkNoErrors() {
         val diagnostics = errorDiagnostics.get()
+        val reporter = problemsReporter.get()
+        val options = renderingOptions.get()
         if (diagnostics.isNotEmpty()) {
-            diagnostics.renderReportedDiagnostics(logger, problemsReporter.get(), renderingOptions.get())
+            diagnostics.reportProblems(reporter, options)
             throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the log for details")
         }
     }

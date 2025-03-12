@@ -9,27 +9,6 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 
-internal fun ToolingDiagnostic.renderReportedDiagnostic(
-    logger: Logger,
-    problemsReporter: ProblemsReporter?,
-    renderingOptions: ToolingDiagnosticRenderingOptions,
-) {
-    for (diagnostic in diagnostics) {
-        renderReportedDiagnostic(diagnostic, logger, renderingOptions)
-        problemsReporter?.reportProblemDiagnostic(diagnostic, renderingOptions)
-    }
-}
-
-internal fun Collection<ToolingDiagnostic>.renderReportedDiagnostics(
-    logger: Logger,
-    problemsReporter: ProblemsReporter?,
-    renderingOptions: ToolingDiagnosticRenderingOptions,
-) {
-    for (diagnostic in this) {
-        diagnostic.renderReportedDiagnostic(logger, problemsReporter, renderingOptions)
-    }
-}
-
 internal sealed class ReportedDiagnostic(val severity: ToolingDiagnostic.Severity) {
     class Message(
         severity: ToolingDiagnostic.Severity
@@ -41,14 +20,13 @@ internal sealed class ReportedDiagnostic(val severity: ToolingDiagnostic.Severit
     ) : ReportedDiagnostic(severity)
 }
 
-internal fun renderReportedDiagnostic(
-    diagnostic: ToolingDiagnostic,
+internal fun ToolingDiagnostic.renderReportedDiagnostic(
     logger: Logger,
     renderingOptions: ToolingDiagnosticRenderingOptions
 ): ReportedDiagnostic? {
-    if (diagnostic.isSuppressed(renderingOptions)) return null
-    val effectiveSeverity = renderingOptions.effectiveSeverity(diagnostic.severity) ?: return null
-    val message by lazy { diagnostic.render(renderingOptions) }
+    if (isSuppressed(renderingOptions)) return null
+    val effectiveSeverity = renderingOptions.effectiveSeverity(severity) ?: return null
+    val message by lazy { render(renderingOptions, effectiveSeverity = effectiveSeverity) }
 
     when (effectiveSeverity) {
         WARNING -> logger.warn("w: ${message}\n")
@@ -57,7 +35,7 @@ internal fun renderReportedDiagnostic(
     }
 
     return if (effectiveSeverity == FATAL)
-        ReportedDiagnostic.Throwable(effectiveSeverity, diagnostic.createAnExceptionForFatalDiagnostic(renderingOptions))
+        ReportedDiagnostic.Throwable(effectiveSeverity, createAnExceptionForFatalDiagnostic(renderingOptions))
     else
         ReportedDiagnostic.Message(effectiveSeverity)
 }
