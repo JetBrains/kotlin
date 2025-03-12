@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
-import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import java.io.File
 import javax.inject.Inject
 
@@ -176,7 +175,6 @@ private fun fireEnvException(frameworkTaskName: String, envBuildType: NativeBuil
     }
 }
 
-@ExperimentalSwiftExportDsl
 internal fun Project.registerEmbedSwiftExportTask(
     target: KotlinNativeTarget,
     environment: XcodeEnvironment,
