@@ -99,6 +99,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val preCodegenInlineThreshold by uintOption()
 
+    val enableLocalObjects by booleanOption()
+
     val enableDebugTransparentStepping by booleanOption()
 
     val debugCompilationDir by stringOption()
