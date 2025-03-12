@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.ProblemSpec
@@ -17,10 +18,11 @@ internal abstract class ProblemsReporterG88 @Inject constructor(
     private val problems: Problems,
 ) : ProblemsReporter {
 
+    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
     private val reporter by lazy { problems.forNamespace("org.jetbrains.kotlin.gradle.plugin") }
 
-    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions, logger: Logger) {
-        val renderedDiagnostic: ReportedDiagnostic = renderReportedDiagnostic(diagnostic, logger, options) ?: return
+    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions) {
+        val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
         reporter.report(renderedDiagnostic) { spec, throwable ->
             fillSpec(spec, diagnostic, renderedDiagnostic.severity, throwable)
         }

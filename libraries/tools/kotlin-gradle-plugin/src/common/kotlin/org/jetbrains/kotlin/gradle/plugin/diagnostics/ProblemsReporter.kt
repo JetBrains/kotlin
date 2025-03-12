@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.*
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories
@@ -13,10 +14,26 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 internal interface ProblemsReporter {
-    fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions, logger: Logger)
+    fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions)
 
     interface Factory : VariantImplementationFactories.VariantImplementationFactory {
         fun getInstance(objects: ObjectFactory): ProblemsReporter
+    }
+}
+
+internal fun ToolingDiagnostic.reportProblem(
+    reporter: ProblemsReporter,
+    options: ToolingDiagnosticRenderingOptions
+) {
+    reporter.reportProblemDiagnostic(this, options)
+}
+
+internal fun Collection<ToolingDiagnostic>.reportProblems(
+    reporter: ProblemsReporter,
+    options: ToolingDiagnosticRenderingOptions
+) {
+    for (diagnostic in this) {
+        diagnostic.reportProblem(reporter, options)
     }
 }
 
@@ -33,8 +50,10 @@ internal fun ProblemReporter.report(
 internal abstract class DefaultProblemsReporter @Inject constructor(
     private val problems: Problems
 ) : ProblemsReporter {
-    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions, logger: Logger) {
-        val renderedDiagnostic: ReportedDiagnostic = renderReportedDiagnostic(diagnostic, logger, options) ?: return
+    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
+
+    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions) {
+        val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
         problems.reporter.report(renderedDiagnostic) { spec, throwable ->
             fillSpec(spec, diagnostic, renderedDiagnostic.severity, throwable)
         }
