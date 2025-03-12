@@ -1,0 +1,165 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+@CONSTRUCTOR_PARAMETER:Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/c from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/c from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/c from FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirConstructorSymbol /Derived.Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+@PROPERTY_GETTER:Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.b
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.b
+@PROPERTY:Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.c
+@Anno(LAZY_EXPRESSION)
+
+context -> FirNamedFunctionSymbol /Derived.component1
+@Anno(LAZY_EXPRESSION)
+
+context -> FirNamedFunctionSymbol /Derived.component1
+@Anno(LAZY_EXPRESSION)
+
+context -> FirNamedFunctionSymbol /Derived.component1
+@Anno(LAZY_EXPRESSION)
+
+context -> FirNamedFunctionSymbol /Derived.component2
+@Anno(LAZY_EXPRESSION)
+
+context -> FirNamedFunctionSymbol /Derived.component2
+@Anno(LAZY_EXPRESSION)
+
+context -> FirNamedFunctionSymbol /Derived.component2
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/c from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/c from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/c from FirNamedFunctionSymbol /Derived.copy
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Derived
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Derived
+@Anno(LAZY_EXPRESSION)

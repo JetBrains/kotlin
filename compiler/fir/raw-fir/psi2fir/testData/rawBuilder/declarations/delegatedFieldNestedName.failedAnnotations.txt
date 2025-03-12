@@ -1,0 +1,51 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirRegularClassSymbol second/Anno
+@Target(LAZY_EXPRESSION)
+
+context -> FirFieldSymbol second/MyClass.$$delegate_0
+@Anno(LAZY_EXPRESSION)
+
+context -> FirFieldSymbol second/MyClass.$$delegate_0
+@Anno(LAZY_EXPRESSION)
+
+context -> FirFieldSymbol second/MyClass.$$delegate_0
+@Anno(LAZY_EXPRESSION)
+
+context -> FirFieldSymbol second/MyClass.$$delegate_1
+@Anno(LAZY_EXPRESSION)
+
+context -> FirFieldSymbol second/MyClass.$$delegate_1
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass.Companion
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass.Companion
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass.Companion
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass.NestedObject
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass.NestedObject
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass
+@Anno(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol second/MyClass
+@Anno(LAZY_EXPRESSION)

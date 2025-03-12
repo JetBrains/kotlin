@@ -1,0 +1,21 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
+@AnnotationWithConstructor(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
+@AnnotationWithConstructor(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+@AnnotationWithConstructor(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+@AnnotationWithConstructor(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeWithConstructor
+@AnnotationWithConstructor(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeNamedWithConstructor
+@AnnotationWithConstructor(LAZY_EXPRESSION)

@@ -54,6 +54,7 @@ dependencies {
     testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testImplementation(kotlinTest("junit"))
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

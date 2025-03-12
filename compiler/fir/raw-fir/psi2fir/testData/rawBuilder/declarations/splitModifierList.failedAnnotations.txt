@@ -1,0 +1,9 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirRegularClassSymbol A
+@Target(LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol B
+@Target(LAZY_EXPRESSION, LAZY_EXPRESSION)
