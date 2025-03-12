@@ -31,13 +31,15 @@ import org.jetbrains.kotlin.powerassert.isImplicitArgument
 import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
 import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
-abstract class Node {
+sealed class Node {
     private val _children = mutableListOf<Node>()
     val children: List<Node> get() = _children
 
     fun addChild(node: Node) {
         _children.add(node)
     }
+
+    abstract fun isVisible(): Boolean
 
     fun dump(): String = buildString {
         dump(this, 0)
@@ -51,25 +53,41 @@ abstract class Node {
     }
 }
 
+class RootNode : Node() {
+    override fun isVisible(): Boolean = children.any { it.isVisible() }
+    override fun toString() = "RootNode"
+}
+
 class ConstantNode(
     val expression: IrExpression,
 ) : Node() {
+    override fun isVisible(): Boolean = false
     override fun toString() = "ConstantNode(${expression.dumpKotlinLike()})"
+}
+
+class HiddenNode(
+    val expression: IrExpression,
+) : Node() {
+    override fun isVisible(): Boolean = false
+    override fun toString() = "HiddenNode(${expression.dumpKotlinLike()})"
 }
 
 class ExpressionNode(
     val expression: IrExpression,
 ) : Node() {
+    override fun isVisible(): Boolean = true
     override fun toString() = "ExpressionNode(${expression.dumpKotlinLike()})"
 }
 
 class ChainNode : Node() {
+    override fun isVisible(): Boolean = children.any { it.isVisible() }
     override fun toString() = "ChainNode"
 }
 
 class WhenNode(
     val expression: IrExpression,
 ) : Node() {
+    override fun isVisible(): Boolean = true
     override fun toString() = "WhenNode(${expression.dumpKotlinLike()})"
 }
 
@@ -77,6 +95,7 @@ class ElvisNode(
     val expression: IrExpression,
     val variable: IrVariable,
 ) : Node() {
+    override fun isVisible(): Boolean = true
     override fun toString() = "ElvisNode(${expression.dumpKotlinLike()})"
 }
 
@@ -85,10 +104,6 @@ fun buildTree(
     sourceFile: SourceFile,
     expression: IrExpression,
 ): Node? {
-    class RootNode : Node() {
-        override fun toString() = "RootNode"
-    }
-
     fun IrConst.isEvaluatedConst(): Boolean =
         constTracker?.load(startOffset, endOffset, sourceFile.irFile.nameWithPackage) != null
 
@@ -102,13 +117,13 @@ fun buildTree(
             override fun visitExpression(expression: IrExpression, data: Node) {
                 if (expression is IrGetObjectValue) {
                     // Do not transform object access.
-                    data.addChild(ConstantNode(expression))
+                    data.addChild(HiddenNode(expression))
                 } else if (expression is IrFunctionExpression) {
                     // Do not transform lambda expressions, especially their body.
-                    data.addChild(ConstantNode(expression))
+                    data.addChild(HiddenNode(expression))
                 } else if (expression.isImplicitArgument()) {
                     // Do not diagram implicit arguments.
-                    data.addChild(ConstantNode(expression))
+                    data.addChild(HiddenNode(expression))
                 } else {
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.acceptChildren(this, chainNode)
@@ -190,7 +205,7 @@ fun buildTree(
                         -> chainNode.addChild(ExpressionNode(expression))
 
                     // Do not diagram other type operations.
-                    else -> chainNode.addChild(ConstantNode(expression))
+                    else -> chainNode.addChild(HiddenNode(expression))
                 }
             }
 
