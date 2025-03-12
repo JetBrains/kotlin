@@ -41,11 +41,13 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
         }
 
         val expression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(file)
-            ?: testServices.expressionMarkerProvider.getTopmostSelectedElementOfTypeByDirective(
+            ?: testServices.expressionMarkerProvider.getTopmostSelectedElementOfTypeByDirectiveOrNull(
                 file = file,
                 module = module,
                 defaultType = KtElement::class,
-            ) as KtElement
+            ) as KtElement?
+
+        if (expression == null) return emptyList()
 
         val elementToResolve = expression.elementToResolve
         return listOf(ResolveKtElementTestCaseContext(element = elementToResolve, marker = null))
