@@ -476,7 +476,8 @@ open class PsiRawFirBuilder(
                     { expression }.toFirExpression("Argument is absent")
                 }
             }
-            val isSpread = getSpreadElement() != null
+
+            val isSpread = isSpread
             return when {
                 name != null -> buildNamedArgumentExpression {
                     source = (this@toFirExpression as? PsiElement)?.toFirSourceElement()

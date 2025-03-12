@@ -102,6 +102,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return node == null ? null : (LeafPsiElement) node.getPsi();
     }
 
+    @Override
     public boolean isSpread() {
         KotlinValueArgumentStub stub = getGreenStub();
         if (stub != null) {
