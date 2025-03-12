@@ -489,6 +489,7 @@ public final class kotlin/metadata/KmEnumEntry {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getName ()Ljava/lang/String;
 	public final fun setName (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlin/metadata/KmFlexibleTypeUpperBound {

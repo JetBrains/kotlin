@@ -482,6 +482,8 @@ public class KmTypeParameter internal constructor(
 public class KmEnumEntry(public var name: String) {
     internal val extensions: List<KmEnumEntryExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createEnumEntryExtension)
+
+    override fun toString(): String = name
 }
 
 /**
