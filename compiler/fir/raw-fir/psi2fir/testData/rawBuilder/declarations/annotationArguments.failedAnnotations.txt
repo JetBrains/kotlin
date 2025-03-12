@@ -20,9 +20,6 @@ context -> FirRegularClassSymbol TwoVararg
 context -> FirRegularClassSymbol ThreeVararg
 @VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
-context -> FirRegularClassSymbol SpreadVararg
-@VarArg(LAZY_EXPRESSION)
-
 context -> FirRegularClassSymbol WithNested
 @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION)
 
