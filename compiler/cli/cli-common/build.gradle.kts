@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("generated-sources")
 }
 
 dependencies {
@@ -32,3 +33,23 @@ tasks.getByName<Jar>("jar") {
     //excludes unused bunch files
     exclude("META-INF/extensions/*.xml.**")
 }
+
+generatedSourcesTask(
+    taskName = "generateCliArguments",
+    generatorProject = ":compiler:cli:cli-arguments-generator",
+    generatorRoot = "compiler/cli/cli-argument-generator/src",
+    generatorMainClass = "org.jetbrains.kotlin.cli.arguments.generator.MainKt",
+    argsProvider = { generationRoot ->
+        listOf(
+            generationRoot.toString(),
+            "commonToolArguments",
+            "commonCompilerArguments",
+            "jvmCompilerArguments",
+            "commonKlibBasedArguments",
+            "wasmArguments",
+            "jsArguments",
+            "nativeArguments",
+            "metadataArguments",
+        )
+    }
+)
