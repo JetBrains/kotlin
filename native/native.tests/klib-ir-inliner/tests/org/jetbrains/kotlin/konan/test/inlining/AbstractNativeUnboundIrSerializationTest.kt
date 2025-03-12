@@ -209,7 +209,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
             function.fullyLinkedSerializedFunction = SingleFunctionSerializer(
                 IrSerializationSettings(
                     languageVersionSettings = configuration.languageVersionSettings,
-                    reuseExistingSignaturesForSymbols = false,
+                    reuseExistingSignaturesForSymbols = true,
                 ),
                 irBuiltIns
             ).serializeSingleFunction(function.fullyLinkedIrFunction)
@@ -394,7 +394,7 @@ private class DeepCopyForLazyIrEmulation(
 private class SingleFunctionSerializer(
     settings: IrSerializationSettings,
     irBuiltIns: IrBuiltIns,
-) : KonanIrFileSerializer(settings, KonanDeclarationTable(KonanGlobalDeclarationTable(irBuiltIns))) {
+) : KonanIrFileSerializer(settings, KonanDeclarationTable(KonanGlobalDeclarationTable(irBuiltIns, settings))) {
     fun serializeSingleFunction(irFunction: IrSimpleFunction): SerializedFunction {
         check(protoTypeArray.protoTypes.isEmpty())
         check(protoIdSignatureArray.isEmpty())

@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.signature.DescToIrIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-class KonanGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(KonanManglerIr) {
+class KonanGlobalDeclarationTable(
+    builtIns: IrBuiltIns, settings: IrSerializationSettings
+) : GlobalDeclarationTable(KonanManglerIr, settings.reuseExistingSignaturesForSymbols) {
     init {
         loadKnownBuiltins(builtIns)
     }
