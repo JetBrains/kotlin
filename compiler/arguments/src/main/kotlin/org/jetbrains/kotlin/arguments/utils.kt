@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.arguments
 
 import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.types.StringArrayType
+import org.jetbrains.kotlin.arguments.types.StringType
 
 val BooleanType.Companion.defaultFalse: BooleanType
     get() = BooleanType(
@@ -18,3 +20,20 @@ val BooleanType.Companion.defaultTrue: BooleanType
         isNullable = false.asReleaseDependent(),
         defaultValue = true.asReleaseDependent()
     )
+
+val StringType.Companion.defaultNull: StringType
+    get() = StringType()
+
+val StringArrayType.Companion.defaultNull: StringArrayType
+    get() = StringArrayType()
+
+/**
+ * This is a stub method for lifecycle.
+ * All usages should be eventually removed and replaced with proper lifecycle.
+ */
+fun CompilerArgumentBuilder.stubLifecycle() {
+    lifecycle(
+        introducedVersion = KotlinReleaseVersion.v1_4_0,
+        stabilizedVersion = KotlinReleaseVersion.v1_4_0,
+    )
+}

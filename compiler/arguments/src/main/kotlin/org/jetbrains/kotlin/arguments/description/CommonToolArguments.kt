@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.asReleaseDependent
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.defaultFalse
+import org.jetbrains.kotlin.arguments.stubLifecycle
 import org.jetbrains.kotlin.arguments.types.BooleanType
 
 /*
@@ -23,10 +24,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Print a synopsis of standard options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_0,
-            stabilizedVersion = KotlinReleaseVersion.v1_4_0
-        )
+        stubLifecycle()
     }
 
     compilerArgument {
@@ -34,9 +32,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Print a synopsis of advanced options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_20
-        )
+        stubLifecycle()
     }
 
     compilerArgument {
@@ -44,9 +40,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Display the compiler version.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_20
-        )
+        stubLifecycle()
     }
 
     compilerArgument {
@@ -54,9 +48,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Enable verbose logging output.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_20
-        )
+        stubLifecycle()
     }
 
     compilerArgument {
@@ -64,9 +56,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Don't generate any warnings.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_20
-        )
+        stubLifecycle()
     }
 
     compilerArgument {
@@ -74,8 +64,14 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Report an error if there are any warnings.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_20
-        )
+        stubLifecycle()
+    }
+
+    compilerArgument {
+        name = "Wextra"
+        description = "Enable extra checkers for K2.".asReleaseDependent()
+
+        valueType = BooleanType.defaultFalse
+        stubLifecycle()
     }
 }

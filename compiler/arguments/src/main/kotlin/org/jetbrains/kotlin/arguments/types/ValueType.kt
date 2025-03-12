@@ -31,6 +31,19 @@ class BooleanType(
 ) : KotlinArgumentValueType<Boolean>
 
 @Serializable
+class StringType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<Boolean?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Boolean>
+
+@Serializable
+class StringArrayType(
+    override val defaultValue: ReleaseDependent<Array<String>?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Array<String>> {
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
+}
+
+@Serializable
 class KotlinVersionType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<KotlinVersion?> = ReleaseDependent(
