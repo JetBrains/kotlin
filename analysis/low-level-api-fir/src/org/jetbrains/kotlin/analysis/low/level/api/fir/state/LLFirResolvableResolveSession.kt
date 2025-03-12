@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isNonLocalDanglingModifierList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
-import org.jetbrains.kotlin.analysis.utils.isNonLocalDanglingModifierList
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
