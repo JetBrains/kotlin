@@ -1,0 +1,271 @@
+KtFile: arrays.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: Arrays.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Arrays')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('ia')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IntArray')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('la')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('LongArray')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('fa')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('FloatArray')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('da')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('DoubleArray')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('ca')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('CharArray')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('ba')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('BooleanArray')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithArrays.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Arrays')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            COLLECTION_LITERAL_EXPRESSION
+              PsiElement(LBRACKET)('[')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('2')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('3')
+              PsiElement(RBRACKET)(']')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            COLLECTION_LITERAL_EXPRESSION
+              PsiElement(LBRACKET)('[')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1L')
+              PsiElement(RBRACKET)(']')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            COLLECTION_LITERAL_EXPRESSION
+              PsiElement(LBRACKET)('[')
+              PsiElement(RBRACKET)(']')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            COLLECTION_LITERAL_EXPRESSION
+              PsiElement(LBRACKET)('[')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('2.2')
+              PsiElement(RBRACKET)(']')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            COLLECTION_LITERAL_EXPRESSION
+              PsiElement(LBRACKET)('[')
+              CHARACTER_CONSTANT
+                PsiElement(CHARACTER_LITERAL)(''a'')
+              PsiElement(RBRACKET)(']')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            COLLECTION_LITERAL_EXPRESSION
+              PsiElement(LBRACKET)('[')
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+              PsiElement(RBRACKET)(']')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithArrays')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithExplicitArrays.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Arrays')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('intArrayOf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('2')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('3')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('longArrayOf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1L')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('floatArrayOf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('doubleArrayOf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  FLOAT_CONSTANT
+                    PsiElement(FLOAT_CONSTANT)('2.2')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('charArrayOf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  CHARACTER_CONSTANT
+                    PsiElement(CHARACTER_LITERAL)(''a'')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('booleanArrayOf')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  BOOLEAN_CONSTANT
+                    PsiElement(false)('false')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithExplicitArrays')

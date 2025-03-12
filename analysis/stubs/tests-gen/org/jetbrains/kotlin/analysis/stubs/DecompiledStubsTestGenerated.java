@@ -1806,6 +1806,64 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
         }
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/psi/annotation/values")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Values {
+      @Test
+      public void testAllFilesPresentInValues() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/values"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("arrays.kt")
+      public void testArrays() {
+        runTest("compiler/testData/psi/annotation/values/arrays.kt");
+      }
+
+      @Test
+      @TestMetadata("classLiterals.kt")
+      public void testClassLiterals() {
+        runTest("compiler/testData/psi/annotation/values/classLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("enumLiterals.kt")
+      public void testEnumLiterals() {
+        runTest("compiler/testData/psi/annotation/values/enumLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("intVarargLiterals.kt")
+      public void testIntVarargLiterals() {
+        runTest("compiler/testData/psi/annotation/values/intVarargLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedAnnotation.kt")
+      public void testNestedAnnotation() {
+        runTest("compiler/testData/psi/annotation/values/nestedAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("qualifiedLiterals.kt")
+      public void testQualifiedLiterals() {
+        runTest("compiler/testData/psi/annotation/values/qualifiedLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleLiterals.kt")
+      public void testSimpleLiterals() {
+        runTest("compiler/testData/psi/annotation/values/simpleLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("stringLiterals.kt")
+      public void testStringLiterals() {
+        runTest("compiler/testData/psi/annotation/values/stringLiterals.kt");
+      }
+    }
   }
 
   @Nested

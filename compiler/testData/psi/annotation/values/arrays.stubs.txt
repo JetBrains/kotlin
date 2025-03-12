@@ -1,0 +1,78 @@
+Arrays.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Arrays, fqName=Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Arrays]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Arrays.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=IntArray]
+          VALUE_PARAMETER[fqName=Arrays.la, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=la]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=LongArray]
+          VALUE_PARAMETER[fqName=Arrays.fa, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=fa]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=FloatArray]
+          VALUE_PARAMETER[fqName=Arrays.da, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=da]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=DoubleArray]
+          VALUE_PARAMETER[fqName=Arrays.ca, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ca]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=CharArray]
+          VALUE_PARAMETER[fqName=Arrays.ba, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ba]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=BooleanArray]
+
+
+WithArrays.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Arrays]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION
+            VALUE_ARGUMENT[isSpread=false]
+              COLLECTION_LITERAL_EXPRESSION
+
+
+WithExplicitArrays.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithExplicitArrays, fqName=WithExplicitArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithExplicitArrays, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Arrays]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]

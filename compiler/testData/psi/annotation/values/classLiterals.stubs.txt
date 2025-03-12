@@ -1,0 +1,46 @@
+ClassLiteral.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+      IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isValid=true]
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=reflect]
+          REFERENCE_EXPRESSION[referencedName=KClass]
+    CLASS[classId=/ClassLiteral, fqName=ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassLiteral]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=ClassLiteral.c1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c1]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+          VALUE_PARAMETER[fqName=ClassLiteral.c2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c2]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+
+
+WithClassLiteral.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithClassLiteral, fqName=WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithClassLiteral, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              CLASS_LITERAL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
+            VALUE_ARGUMENT[isSpread=false]
+              CLASS_LITERAL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Boolean]

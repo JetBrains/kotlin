@@ -1,0 +1,89 @@
+StringLiteral.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/StringLiteral, fqName=StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=StringLiteral]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=StringLiteral.s1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s1]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+          VALUE_PARAMETER[fqName=StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+          VALUE_PARAMETER[fqName=StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY[fqName=CONSTANT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
+      MODIFIER_LIST[const]
+
+
+WithStringInterpolationPrefix.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithStringInterpolationPrefix, fqName=WithStringInterpolationPrefix, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringInterpolationPrefix, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                SHORT_STRING_TEMPLATE_ENTRY[text=$CONSTANT]
+                  REFERENCE_EXPRESSION[referencedName=CONSTANT]
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                SHORT_STRING_TEMPLATE_ENTRY[text=$$CONSTANT]
+                  REFERENCE_EXPRESSION[referencedName=CONSTANT]
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                SHORT_STRING_TEMPLATE_ENTRY[text=$$$CONSTANT]
+                  REFERENCE_EXPRESSION[referencedName=CONSTANT]
+
+
+WithStringLiteral.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithStringLiteral, fqName=WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteral, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=H]
+                SHORT_STRING_TEMPLATE_ENTRY[text=$CONSTANT]
+                  REFERENCE_EXPRESSION[referencedName=CONSTANT]
+
+
+WithStringLiteralConcat.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithStringLiteralConcat, fqName=WithStringLiteralConcat, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteralConcat, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
