@@ -21,6 +21,7 @@ components/KaDiagnosticProvider.kt:KaDiagnosticProvider
 components/KaEvaluator.kt:KaEvaluator
 components/KaExpressionInformationProvider.kt:KaExpressionInformationProvider
 components/KaExpressionTypeProvider.kt:KaExpressionTypeProvider
+components/KaExpressionTypeProvider.kt:KaExpressionTypeProvider:@Deprecated("Use 'expressionType' instead.", replaceWith = ReplaceWith("expressionType"), level = DeprecationLevel.HIDDEN) getKtType()
 components/KaImportOptimizer.kt:@KaIdeApi KaImportOptimizer
 components/KaJavaInteroperabilityComponent.kt:KaJavaInteroperabilityComponent
 components/KaReferenceShortener.kt:@KaIdeApi KaReferenceShortener
@@ -40,6 +41,11 @@ components/KaReferenceShortener.kt:ShortenCommand:targetFile
 components/KaReferenceShortener.kt:ShortenCommand:thisLabelsToShorten
 components/KaResolveExtensionInfoProvider.kt:@KaExperimentalApi KaResolveExtensionInfoProvider
 components/KaResolver.kt:KaResolver
+components/KaResolver.kt:KaResolver:@Deprecated(
+        message = "The API will be changed soon. Use 'resolveToCall()' in a transit period",
+        replaceWith = ReplaceWith("resolveToCall()"),
+        level = DeprecationLevel.HIDDEN,
+    ) resolveCall()
 components/KaScopeProvider.kt:@KaIdeApi KaScopeKinds
 components/KaScopeProvider.kt:@KaIdeApi KaScopeWithKindImpl
 components/KaScopeProvider.kt:KaScopeKind:LocalScope
@@ -68,6 +74,11 @@ components/KaTypeCreator.kt:KaTypeCreator
 components/KaTypeInformationProvider.kt:DefaultTypeClassIds
 components/KaTypeInformationProvider.kt:KaTypeInformationProvider
 components/KaTypeProvider.kt:KaTypeProvider
+components/KaTypeProvider.kt:KaTypeProvider:@Deprecated(
+        "Use 'allSupertypes()' instead.",
+        replaceWith = ReplaceWith("allSupertypes(shouldApproximate)"),
+        level = DeprecationLevel.HIDDEN
+    ) getAllSuperTypes(Boolean)
 components/KaTypeProvider.kt:KaTypeProvider:@Deprecated("Use `defaultType` from `KaClassifierSymbol` directly", level = DeprecationLevel.HIDDEN) defaultType
 components/KaTypeProvider.kt:abstract KaBuiltinTypes
 components/KaTypeRelationChecker.kt:KaTypeRelationChecker
@@ -555,6 +566,7 @@ renderer/types/renderers/KaUnresolvedClassErrorTypeRenderer.kt:KaUnresolvedClass
 renderer/types/renderers/KaUsualClassTypeRenderer.kt:@KaExperimentalApi KaUsualClassTypeRenderer
 renderer/types/renderers/KaUsualClassTypeRenderer.kt:KaUsualClassTypeRenderer:@KaExperimentalApi AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS
 renderer/types/renderers/KaUsualClassTypeRenderer.kt:KaUsualClassTypeRenderer:renderType(KaSession, KaUsualClassType, KaTypeRenderer, PrettyPrinter)
+resolution/KaCall.kt:KaCompoundAccessCall:@Deprecated("Use `compoundOperation` instead", ReplaceWith("compoundOperation"), level = DeprecationLevel.HIDDEN) compoundAccess
 resolution/KaCall.kt:KaDelegatedConstructorCall:enum Kind
 resolution/KaCompoundOperation.kt:KaCompoundAssignOperation:@KaExperimentalApi enum Kind
 resolution/KaCompoundOperation.kt:KaCompoundUnaryOperation:@KaExperimentalApi enum Kind
@@ -582,9 +594,11 @@ symbols/DebugSymbolRenderer.kt:DebugSymbolRenderer:renderAnnotationApplication(K
 symbols/DebugSymbolRenderer.kt:DebugSymbolRenderer:renderType(KaSession, KaType)
 symbols/KaClassLikeSymbol.kt:KaClassKind:isClass
 symbols/KaClassLikeSymbol.kt:KaClassKind:isObject
+symbols/KaClassLikeSymbol.kt:KaClassLikeSymbol:@Deprecated("Use `classId` instead.", ReplaceWith("classId"), level = DeprecationLevel.HIDDEN) classIdIfNonLocal
 symbols/KaClassLikeSymbol.kt:KaClassifierSymbol:abstract name
 symbols/KaDeclarationSymbol.kt:@KaExperimentalApi typeParameters
 symbols/KaDeclarationSymbol.kt:KaDeclarationSymbol:@KaExperimentalApi compilerVisibility
+symbols/KaSymbolProvider.kt:KaSymbolProvider:@Deprecated("Use 'findClass() instead.", replaceWith = ReplaceWith("findClass(classId)"), level = DeprecationLevel.HIDDEN) getClassOrObjectSymbolByClassId(ClassId)
 symbols/markers/markers.kt:KaTypeParameterOwnerSymbol:typeParameters
 symbols/pointers/KaPsiSymbolPointerCreator.kt:@KaImplementationDetail KaPsiSymbolPointerCreator
 symbols/pointers/KaSymbolPointer.kt:inline symbolPointer((KaSession) -> S?)
@@ -593,6 +607,7 @@ types/KaClassTypeQualifier.kt:KaClassTypeQualifier:name
 types/KaClassTypeQualifier.kt:KaClassTypeQualifier:typeArguments
 types/KaClassTypeQualifier.kt:KaResolvedClassTypeQualifier:symbol
 types/KaType.kt:Companion:create(Boolean)
+types/KaType.kt:KaClassType:@Deprecated("Use 'typeArguments' instead.", ReplaceWith("typeArguments"), level = DeprecationLevel.HIDDEN) ownTypeArguments
 types/KaType.kt:KaErrorType:@KaNonPublicApi errorMessage
 types/KaType.kt:KaErrorType:@KaNonPublicApi presentableText
 types/KaType.kt:KaType:@KaExperimentalApi createPointer()
