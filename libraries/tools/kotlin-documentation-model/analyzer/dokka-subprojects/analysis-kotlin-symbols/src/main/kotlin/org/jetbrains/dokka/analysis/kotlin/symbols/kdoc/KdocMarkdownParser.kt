@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser.Companion.fqDeclarationName
 import org.jetbrains.dokka.links.DRI
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.checkDecompiledText
 
 internal fun parseFromKDocTag(
     kDocTag: KDocTag?,
@@ -107,3 +108,26 @@ private fun getAllKDocTags(kDocImpl: PsiElement): List<KDocTag> =
     kDocImpl.children.filterIsInstance<KDocTag>().filterNot { it is KDocSection } + kDocImpl.children.flatMap {
         getAllKDocTags(it)
     }
+
+// copied-pasted from [org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType]
+private inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
+    forEachDescendantOfType({ true }, action)
+}
+
+private inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline action: (T) -> Unit
+) {
+    checkDecompiledText()
+    this.accept(object : PsiRecursiveElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (canGoInside(element)) {
+                super.visitElement(element)
+            }
+
+            if (element is T) {
+                action(element)
+            }
+        }
+    })
+}
