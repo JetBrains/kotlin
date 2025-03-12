@@ -550,6 +550,14 @@ private class BackendChecker(
                     arguments.map { it.second } + searchForReferences(expression.symbol.owner, capturedVariables.toSet())
             )
         }
+        is IrRichFunctionReference -> {
+            val arguments = expression.boundValues
+            val capturedVariables = captures(expression.invokeFunction)
+            ReferencedFunctionWithCapture(
+                    expression.invokeFunction.takeIf { arguments.isEmpty() && capturedVariables.isEmpty() },
+                    arguments + searchForReferences(expression.invokeFunction, capturedVariables.toSet())
+            )
+        }
         is IrFunctionExpression -> {
             val capturedVariables = captures(expression.function)
             ReferencedFunctionWithCapture(
