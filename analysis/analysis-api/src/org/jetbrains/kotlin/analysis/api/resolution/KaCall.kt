@@ -137,6 +137,9 @@ public interface KaCompoundAccessCall {
      * The corresponding [compound operation][KaCompoundOperation].
      */
     public val compoundOperation: KaCompoundOperation
+
+    @Deprecated("Use `compoundOperation` instead", ReplaceWith("compoundOperation"), level = DeprecationLevel.HIDDEN)
+    public val compoundAccess: KaCompoundOperation get() = compoundOperation
 }
 
 /**

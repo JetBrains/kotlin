@@ -51,6 +51,13 @@ public interface KaResolver : KaSessionComponent {
      */
     public fun KtElement.resolveToCall(): KaCallInfo?
 
+    @Deprecated(
+        message = "The API will be changed soon. Use 'resolveToCall()' in a transit period",
+        replaceWith = ReplaceWith("resolveToCall()"),
+        level = DeprecationLevel.HIDDEN,
+    )
+    public fun KtElement.resolveCall(): KaCallInfo? = resolveToCall()
+
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
      * corresponding to this [KtElement].

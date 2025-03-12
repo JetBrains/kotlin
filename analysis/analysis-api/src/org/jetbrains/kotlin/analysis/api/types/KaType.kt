@@ -201,6 +201,10 @@ public sealed class KaClassType : KaType {
      */
     public abstract val qualifiers: List<KaResolvedClassTypeQualifier>
 
+    @Deprecated("Use 'typeArguments' instead.", ReplaceWith("typeArguments"), level = DeprecationLevel.HIDDEN)
+    public val ownTypeArguments: List<KaTypeProjection>
+        get() = typeArguments
+
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaClassType>
 }
