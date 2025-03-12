@@ -1581,6 +1581,59 @@ public class ParsingTestGenerated extends AbstractParsingTest {
           }
         }
       }
+
+      @TestMetadata("compiler/testData/psi/annotation/values")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Values extends AbstractParsingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInValues() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/values"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+        }
+
+        @TestMetadata("arrays.kt")
+        public void testArrays() {
+          runTest("compiler/testData/psi/annotation/values/arrays.kt");
+        }
+
+        @TestMetadata("classLiterals.kt")
+        public void testClassLiterals() {
+          runTest("compiler/testData/psi/annotation/values/classLiterals.kt");
+        }
+
+        @TestMetadata("enumLiterals.kt")
+        public void testEnumLiterals() {
+          runTest("compiler/testData/psi/annotation/values/enumLiterals.kt");
+        }
+
+        @TestMetadata("intVarargLiterals.kt")
+        public void testIntVarargLiterals() {
+          runTest("compiler/testData/psi/annotation/values/intVarargLiterals.kt");
+        }
+
+        @TestMetadata("nestedAnnotation.kt")
+        public void testNestedAnnotation() {
+          runTest("compiler/testData/psi/annotation/values/nestedAnnotation.kt");
+        }
+
+        @TestMetadata("qualifiedLiterals.kt")
+        public void testQualifiedLiterals() {
+          runTest("compiler/testData/psi/annotation/values/qualifiedLiterals.kt");
+        }
+
+        @TestMetadata("simpleLiterals.kt")
+        public void testSimpleLiterals() {
+          runTest("compiler/testData/psi/annotation/values/simpleLiterals.kt");
+        }
+
+        @TestMetadata("stringLiterals.kt")
+        public void testStringLiterals() {
+          runTest("compiler/testData/psi/annotation/values/stringLiterals.kt");
+        }
+      }
     }
 
     @TestMetadata("compiler/testData/psi/contextParameters")

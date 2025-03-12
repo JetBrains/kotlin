@@ -1,0 +1,134 @@
+Simple.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Simple, fqName=Simple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Simple]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Simple.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=Simple.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Long]
+          VALUE_PARAMETER[fqName=Simple.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Byte]
+          VALUE_PARAMETER[fqName=Simple.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Double]
+          VALUE_PARAMETER[fqName=Simple.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Float]
+          VALUE_PARAMETER[fqName=Simple.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Char]
+          VALUE_PARAMETER[fqName=Simple.b1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b1]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Boolean]
+          VALUE_PARAMETER[fqName=Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Boolean]
+
+
+WithNamedSimple.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNamedSimple, fqName=WithNamedSimple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNamedSimple, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=d]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=f]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b1]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b2]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+
+
+WithSimple.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithSimple, fqName=WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimple, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+            VALUE_ARGUMENT[isSpread=false]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+
+
+WithSimpleOperations.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithSimpleOperations, fqName=WithSimpleOperations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimpleOperations, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
