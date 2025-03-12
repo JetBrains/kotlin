@@ -2945,18 +2945,20 @@ open class PsiRawFirBuilder(
                                                 )
                                             } else {
                                                 shouldBind = true
-                                                buildErrorExpression {
-                                                    source = condition.toFirSourceElement()
-                                                    nonExpressionElement = condition.toFirWhenCondition(
-                                                        subjectVariable,
-                                                        { toFirExpression(it) },
-                                                        { toFirOrErrorType() },
-                                                    )
-                                                    diagnostic = ConeSimpleDiagnostic(
-                                                        "No expression in condition with expression",
-                                                        DiagnosticKind.ExpressionExpected,
-                                                    )
-                                                }
+                                                val convertedCondition = condition.toFirWhenCondition(
+                                                    subjectVariable,
+                                                    { toFirExpression(it) },
+                                                    { toFirOrErrorType() },
+                                                )
+                                                convertedCondition.takeIf { subjectVariable != null }
+                                                    ?: buildErrorExpression {
+                                                        source = condition.toFirSourceElement()
+                                                        this.nonExpressionElement = convertedCondition
+                                                        diagnostic = ConeSimpleDiagnostic(
+                                                            "No expression in condition with expression",
+                                                            DiagnosticKind.ExpressionExpected,
+                                                        )
+                                                    }
                                             }
                                         })
                                     }.guardedBy(entryGuard)
