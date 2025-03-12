@@ -562,6 +562,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("EnumCompanion.kt")
+    public void testEnumCompanion() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/EnumCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("EnumNameOverride.kt")
     public void testEnumNameOverride() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/EnumNameOverride.kt");

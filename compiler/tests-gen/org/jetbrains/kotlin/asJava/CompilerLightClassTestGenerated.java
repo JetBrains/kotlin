@@ -481,6 +481,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/AnnotationModifiers.kt");
     }
 
+    @TestMetadata("EnumCompanion.kt")
+    public void testEnumCompanion() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/EnumCompanion.kt");
+    }
+
     @TestMetadata("EnumNameOverride.kt")
     public void testEnumNameOverride() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/EnumNameOverride.kt");
