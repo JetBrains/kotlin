@@ -4,7 +4,9 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.checkDecompiledText
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
@@ -191,5 +193,31 @@ private fun KtElement.lookupKDocInContainer(): KDocContent? {
         // documentation for a very specific element, like a property/param
         KDocContent(it, sections = emptyList())
     }
+}
+
+private inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
+    return findDescendantOfType({ true }, predicate)
+}
+
+private inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline predicate: (T) -> Boolean = { true }
+): T? {
+    checkDecompiledText()
+    var result: T? = null
+    this.accept(object : PsiRecursiveElementWalkingVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (element is T && predicate(element)) {
+                result = element
+                stopWalking()
+                return
+            }
+
+            if (canGoInside(element)) {
+                super.visitElement(element)
+            }
+        }
+    })
+    return result
 }
 
