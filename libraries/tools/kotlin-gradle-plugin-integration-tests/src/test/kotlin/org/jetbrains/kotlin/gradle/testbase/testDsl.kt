@@ -386,7 +386,7 @@ internal inline fun <reified T> TestProject.getModels(
 fun TestProject.enableLocalBuildCache(
     buildCacheLocation: Path,
 ) {
-    val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
+    val settingsFile = if (settingsGradle.exists()) settingsGradle else settingsGradleKts
 
     settingsFile.append(
         """
@@ -721,8 +721,24 @@ private fun setupProjectFromTestResources(
     optionalSubDir: String,
 ): Path {
     val testProjectPath = projectName.testProjectPath
-    assertTrue("Test project doesn't exists") { Files.exists(testProjectPath) }
-    assertTrue("Test project path isn't a directory") { Files.isDirectory(testProjectPath) }
+    assertTrue("Test project doesn't exists") { testProjectPath.exists() }
+    assertTrue("Test project path isn't a directory") { testProjectPath.exists() }
+    assertTrue("Test project must have a settings.gradle or settings.gradle.kts file. One will be created automatically - please commit it.") {
+        val hasSettingsFile = testProjectPath.resolve("settings.gradle").exists() ||
+                testProjectPath.resolve("settings.gradle.kts").exists()
+
+        if (!hasSettingsFile) {
+            testProjectPath.resolve("settings.gradle.kts")
+                .writeText(
+                    """
+                    |rootProject.name = "${projectName}"
+                    |
+                    """.trimMargin()
+                )
+        }
+
+        hasSettingsFile
+    }
 
     return tempDir
         .resolve(gradleVersion.version)
@@ -771,7 +787,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
         .filter { it.name == "build.gradle" || it.name == "build.gradle.kts" }
         .forEach { buildGradle ->
             val repositoryBlock =
-                if (buildGradle.extension == " kts") {
+                if (buildGradle.extension == "kts") {
                     getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo)
                 } else {
                     getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo)
@@ -821,8 +837,8 @@ internal fun Path.addPluginManagementToSettings() {
                 settingsGradle.modify {
                     """
                     |$defaultSettings
-                |
-                |$it
+                    |
+                    |$it
                     |""".trimMargin()
                 }
             }
@@ -1050,9 +1066,9 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
     }
     settingsFile.append(
         """
-            |
-            |enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-            """.trimMargin()
+        |
+        |enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+        """.trimMargin()
     )
 }
 
