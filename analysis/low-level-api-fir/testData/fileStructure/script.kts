@@ -18,10 +18,10 @@ build {
     }
 
     execute()
-}
+}/* DeclarationStructureElement */
 
 val builder = build {
     version = "321"
 }/* DeclarationStructureElement */
 
-builder.execute()
+builder.execute()/* DeclarationStructureElement */

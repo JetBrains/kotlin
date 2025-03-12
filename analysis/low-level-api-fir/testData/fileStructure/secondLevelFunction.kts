@@ -9,6 +9,6 @@ if (true) {
     val prop = LocalClass().foo()
     fun foo(y: Int) = y + 20
     x = foo(prop)
-}
+}/* DeclarationStructureElement */
 
 val rv = x/* DeclarationStructureElement */
