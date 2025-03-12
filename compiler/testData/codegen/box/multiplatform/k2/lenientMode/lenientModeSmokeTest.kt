@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: ANY
+// LENIENT_MODE
 // MODULE: common
 // FILE: common.kt
 package pkg
