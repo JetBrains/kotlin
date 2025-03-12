@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 interface IrLazyClassBase : IrLazyDeclarationBase {
     val moduleName: String?
+        get() = null
 
     val isNewPlaceForBodyGeneration: Boolean?
+        get() = null
 
     val isK2: Boolean
 }
