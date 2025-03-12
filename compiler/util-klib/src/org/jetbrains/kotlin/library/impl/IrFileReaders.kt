@@ -106,9 +106,23 @@ class IrMultiArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
-abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val keyReader: ReadBuffer.() -> K) {
+/** Read directly from a byte array. */
+fun DeclarationIdMultiTableReader(bytes: ByteArray): DeclarationIdMultiTableReader =
+    DeclarationIdMultiTableReader(ReadBuffer.MemoryBuffer(bytes))
+
+/** On-demand read from a byte array that will be loaded on the first access. */
+fun DeclarationIdMultiTableReader(loadBytes: () -> ByteArray): DeclarationIdMultiTableReader =
+    DeclarationIdMultiTableReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+
+/** On-demand read from a file (potentially inside a KLIB archive file). */
+fun <L : KotlinLibraryLayout> DeclarationIdMultiTableReader(
+    access: BaseLibraryAccess<L>,
+    getFile: L.() -> File
+): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { access.inPlace { it.getFile().readBytes() } }
+
+class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
-    private val indexToIndexMap = mutableMapOf<Int, Map<K, Pair<Int, Int>>>()
+    private val indexToIndexMap = mutableMapOf<Int, Map<DeclarationId, Pair<Int, Int>>>()
 
     private fun readOffsets(position: Int): IntArray {
         buffer.position = position
@@ -127,14 +141,14 @@ abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val
         indexToOffset = readOffsets(0)
     }
 
-    private fun readIndexMap(position: Int): Map<K, Pair<Int, Int>> {
+    private fun readIndexMap(position: Int): Map<DeclarationId, Pair<Int, Int>> {
         buffer.position = position
-        val result = mutableMapOf<K, Pair<Int, Int>>()
+        val result = mutableMapOf<DeclarationId, Pair<Int, Int>>()
 
         val count = buffer.int
 
         for (i in 0 until count) {
-            val key = keyReader(buffer)
+            val key = DeclarationId(buffer.int)
             val offset = buffer.int
             val size = buffer.int
 
@@ -154,7 +168,7 @@ abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val
         return result
     }
 
-    fun tableItemBytes(row: Int, id: K): ByteArray {
+    fun tableItemBytes(row: Int, id: DeclarationId): ByteArray {
 
         val rowOffset = indexToOffset[row]
 
@@ -211,12 +225,5 @@ class DeclarationIrTableFileReader(file: File) :
 
 class DeclarationIrTableMemoryReader(bytes: ByteArray) :
     IrTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })
-
-class DeclarationIrMultiTableFileReader(file: File) :
-    IrMultiTableReader<DeclarationId>(ReadBuffer.OnDemandMemoryBuffer { file.readBytes() }, { DeclarationId(int) })
-
-class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) :
-    IrMultiTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })
-
 
 fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }
