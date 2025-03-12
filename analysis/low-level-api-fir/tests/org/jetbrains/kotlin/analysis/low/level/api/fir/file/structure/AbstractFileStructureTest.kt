@@ -72,7 +72,7 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
                     elementToComment[mainFile.importList!!] = comment
                 }
                 is KtScriptInitializer -> {
-                    elementToComment[ktDeclaration.body!!]
+                    elementToComment[ktDeclaration.body!!] = comment
                 }
                 is KtDestructuringDeclaration, is KtDestructuringDeclarationEntry -> {
                     elementToComment[ktDeclaration] = comment
