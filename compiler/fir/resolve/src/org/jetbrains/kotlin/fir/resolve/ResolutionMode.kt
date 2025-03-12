@@ -28,7 +28,7 @@ sealed class ResolutionMode(
     class WithExpectedType(
         @property:ExpectedTypeRefAccess
         val expectedTypeRef: FirResolvedTypeRef,
-        val mayBeCoercionToUnitApplied: Boolean = false,
+        val lastStatementInBlock: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,
         /**
@@ -66,12 +66,12 @@ sealed class ResolutionMode(
 
         fun copy(
             expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
-            mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
+            lastStatementInBlock: Boolean = this.lastStatementInBlock,
             forceFullCompletion: Boolean = this.forceFullCompletion,
             shouldBeStrictlyEnforced: Boolean = this.shouldBeStrictlyEnforced,
         ): WithExpectedType = WithExpectedType(
             expectedTypeRef = expectedTypeRef,
-            mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied,
+            lastStatementInBlock = lastStatementInBlock,
             expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
             fromCast = fromCast,
             arrayLiteralPosition = arrayLiteralPosition,
@@ -81,7 +81,7 @@ sealed class ResolutionMode(
 
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}, " +
-                    "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
+                    "lastStatementInBlock=${lastStatementInBlock}, " +
                     "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
                     "arrayLiteralPosition=${arrayLiteralPosition}, " +
@@ -155,15 +155,15 @@ fun withExpectedType(
 }
 
 @JvmName("withExpectedTypeNullable")
-fun withExpectedType(coneType: ConeKotlinType?, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
-    return coneType?.let { withExpectedType(it, mayBeCoercionToUnitApplied) } ?: ResolutionMode.ContextDependent
+fun withExpectedType(coneType: ConeKotlinType?, lastStatementInBlock: Boolean = false): ResolutionMode {
+    return coneType?.let { withExpectedType(it, lastStatementInBlock) } ?: ResolutionMode.ContextDependent
 }
 
-fun withExpectedType(coneType: ConeKotlinType, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
+fun withExpectedType(coneType: ConeKotlinType, lastStatementInBlock: Boolean = false): ResolutionMode {
     val typeRef = buildResolvedTypeRef {
         this.coneType = coneType
     }
-    return ResolutionMode.WithExpectedType(typeRef, mayBeCoercionToUnitApplied)
+    return ResolutionMode.WithExpectedType(typeRef, lastStatementInBlock)
 }
 
 fun FirDeclarationStatus.mode(): ResolutionMode =

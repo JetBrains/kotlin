@@ -242,7 +242,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             transformer,
             withExpectedType(
                 data.expectedType,
-                mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
+                lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
             )
         )
 
@@ -297,19 +297,19 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         data: ResolutionMode,
     ): ResolutionMode {
         val expectedType = data.expectedType
-        val mayBeCoercionToUnitApplied = (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true
+        val lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
 
         val isObsoleteCompilerMode =
             !session.languageVersionSettings.supportsFeature(LanguageFeature.ElvisInferenceImprovementsIn21)
         return when {
-            mayBeCoercionToUnitApplied && expectedType?.isUnitOrFlexibleUnit == true ->
+            lastStatementInBlock && expectedType?.isUnitOrFlexibleUnit == true ->
                 when {
                     isObsoleteCompilerMode ->
                         // The problematic part is that we even forget about nullability
                         // And forcefully run coercion to Unit of nullable LHS
                         withExpectedType(
                             expectedType, // Always Unit here
-                            mayBeCoercionToUnitApplied = true
+                            lastStatementInBlock = true
                         )
                     else -> ResolutionMode.ContextDependent
                 }

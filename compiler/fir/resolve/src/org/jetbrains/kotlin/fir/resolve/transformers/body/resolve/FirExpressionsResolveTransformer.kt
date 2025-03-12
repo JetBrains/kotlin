@@ -736,7 +736,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val value =
                 if (index == numberOfStatements - 1)
                     if (data is ResolutionMode.WithExpectedType)
-                        data.copy(mayBeCoercionToUnitApplied = true)
+                        data.copy(lastStatementInBlock = true)
                     else
                         data
                 else

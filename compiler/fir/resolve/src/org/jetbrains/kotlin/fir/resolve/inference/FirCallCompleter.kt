@@ -213,7 +213,7 @@ class FirCallCompleter(
                     )
                 }
             }
-            expectedType.isUnitOrFlexibleUnit && resolutionMode.mayBeCoercionToUnitApplied -> {
+            expectedType.isUnitOrFlexibleUnit && resolutionMode.lastStatementInBlock -> {
                 when {
                     system.notFixedTypeVariables.isEmpty() -> return
                     expectedType.isUnit ->
