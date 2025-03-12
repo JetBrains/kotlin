@@ -9,6 +9,11 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibraryLayout
 import java.nio.ByteBuffer
 
+
+/******************************************************************************/
+/** [ByteArray] readers                                                       */
+/******************************************************************************/
+
 /** Read directly from a byte array. */
 fun IrArrayReader(bytes: ByteArray): IrArrayReader = IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
@@ -106,6 +111,52 @@ class IrMultiArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
+
+/******************************************************************************/
+/** [DeclarationId] readers                                                   */
+/******************************************************************************/
+
+data class DeclarationId(val id: Int)
+
+/** Read directly from a byte array. */
+fun DeclarationIdTableReader(bytes: ByteArray): DeclarationIdTableReader =
+    DeclarationIdTableReader(ReadBuffer.MemoryBuffer(bytes))
+
+/** On-demand read from a byte array that will be loaded on the first access. */
+fun DeclarationIdTableReader(loadBytes: () -> ByteArray): DeclarationIdTableReader =
+    DeclarationIdTableReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+
+/** On-demand read from a file (potentially inside a KLIB archive file). */
+fun <L : KotlinLibraryLayout> DeclarationIdTableReader(
+    access: BaseLibraryAccess<L>,
+    getFile: L.() -> File
+): DeclarationIdTableReader = DeclarationIdTableReader { access.inPlace { it.getFile().readBytes() } }
+
+class DeclarationIdTableReader(private val buffer: ReadBuffer) {
+    private val indexToOffset = mutableMapOf<DeclarationId, Pair<Int, Int>>()
+
+    init {
+        val count = buffer.int
+        for (i in 0 until count) {
+            val key = DeclarationId(buffer.int)
+            val offset = buffer.int
+            val size = buffer.int
+
+            indexToOffset[key] = offset to size
+        }
+    }
+
+    fun tableItemBytes(id: DeclarationId): ByteArray {
+        val coordinates = indexToOffset[id] ?: error("No coordinates found for $id")
+        val offset = coordinates.first
+        val size = coordinates.second
+        val result = ByteArray(size)
+        buffer.position = offset
+        buffer.get(result, 0, size)
+        return result
+    }
+}
+
 /** Read directly from a byte array. */
 fun DeclarationIdMultiTableReader(bytes: ByteArray): DeclarationIdMultiTableReader =
     DeclarationIdMultiTableReader(ReadBuffer.MemoryBuffer(bytes))
@@ -186,49 +237,12 @@ class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
     }
 }
 
-/** Read directly from a byte array. */
-fun DeclarationIdTableReader(bytes: ByteArray): DeclarationIdTableReader =
-    DeclarationIdTableReader(ReadBuffer.MemoryBuffer(bytes))
 
-/** On-demand read from a byte array that will be loaded on the first access. */
-fun DeclarationIdTableReader(loadBytes: () -> ByteArray): DeclarationIdTableReader =
-    DeclarationIdTableReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
-
-/** On-demand read from a file (potentially inside a KLIB archive file). */
-fun <L : KotlinLibraryLayout> DeclarationIdTableReader(
-    access: BaseLibraryAccess<L>,
-    getFile: L.() -> File
-): DeclarationIdTableReader = DeclarationIdTableReader { access.inPlace { it.getFile().readBytes() } }
-
-class DeclarationIdTableReader(private val buffer: ReadBuffer) {
-    private val indexToOffset = mutableMapOf<DeclarationId, Pair<Int, Int>>()
-
-    init {
-        val count = buffer.int
-        for (i in 0 until count) {
-            val key = DeclarationId(buffer.int)
-            val offset = buffer.int
-            val size = buffer.int
-
-            indexToOffset[key] = offset to size
-        }
-    }
-
-    fun tableItemBytes(id: DeclarationId): ByteArray {
-        val coordinates = indexToOffset[id] ?: error("No coordinates found for $id")
-        val offset = coordinates.first
-        val size = coordinates.second
-        val result = ByteArray(size)
-        buffer.position = offset
-        buffer.get(result, 0, size)
-        return result
-    }
-}
+/******************************************************************************/
+/** Other auxiliary public API.                                               */
+/******************************************************************************/
 
 val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
+fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }
 
 fun File.javaFile(): java.io.File = java.io.File(path)
-
-data class DeclarationId(val id: Int)
-
-fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }
