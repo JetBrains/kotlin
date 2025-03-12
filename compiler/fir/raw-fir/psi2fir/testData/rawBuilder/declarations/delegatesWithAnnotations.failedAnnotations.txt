@@ -1,0 +1,36 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirPropertySymbol /x
+@Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /delegate
+@PROPERTY_DELEGATE_FIELD:Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /delegate
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /value
+@PROPERTY_GETTER:Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /value
+@PROPERTY_DELEGATE_FIELD:Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /value
+@Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /variable
+@PROPERTY_GETTER:Anno(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/variable from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /variable
+@SETTER_PARAMETER:Anno(LAZY_EXPRESSION)
+
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /variable
+@PROPERTY_SETTER:Anno(LAZY_EXPRESSION)
+
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /variable
+@PROPERTY_DELEGATE_FIELD:Anno(LAZY_EXPRESSION)
+
+context -> FirPropertySymbol /variable
+@Anno(LAZY_EXPRESSION)

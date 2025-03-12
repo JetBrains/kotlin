@@ -1,0 +1,15 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+@NestedNestedParameterTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+@NestedParameterTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+@ParameterTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+@ParameterAnnotation(LAZY_EXPRESSION)

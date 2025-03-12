@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -116,64 +116,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
-    private fun FirElementWithResolveState.collectAnnotations(): Collection<AnnotationWithContext> {
-        val result = mutableListOf<AnnotationWithContext>()
-        val contextStack = ContextStack()
-
-        this.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                contextStack.withStack(element) {
-                    if (element is FirAnnotationCall) {
-                        result += AnnotationWithContext(element, contextStack.dumpContext())
-                    }
-
-                    element.acceptChildren(this)
-                }
-            }
-        })
-
-        return result
-    }
-
-    private class AnnotationWithContext(val annotation: FirAnnotationCall, val context: String)
-
-    private class ContextStack {
-        val stack = mutableListOf<FirDeclaration>()
-
-        inline fun withStack(element: FirElement, action: () -> Unit) {
-            if (element !is FirDeclaration) {
-                action()
-                return
-            }
-
-            stack += element
-            try {
-                action()
-            } finally {
-                val last = stack.removeLast()
-                if (last != element) {
-                    error("Stack is corrupted")
-                }
-            }
-        }
-
-        fun dumpContext(): String {
-            val reversedStack = stack.asReversed().iterator()
-            return buildString {
-                var declaration = reversedStack.next()
-                append(declaration.symbol)
-
-                while (declaration.shouldAddParentContext() && reversedStack.hasNext()) {
-                    declaration = reversedStack.next()
-                    append(" from ")
-                    append(declaration.symbol)
-                }
-            }
-        }
-
-        private fun FirDeclaration.shouldAddParentContext(): Boolean = symbol is FirFunctionWithoutNameSymbol || !isNonLocal
-    }
-
     protected open fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
         return (createFile(filePath, KtNodeTypes.KT_FILE) as KtFile).apply {
@@ -282,6 +224,66 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                     parent = oldParent
                 }
             }
+        }
+    }
+
+    companion object {
+        fun FirElementWithResolveState.collectAnnotations(): Collection<AnnotationWithContext> {
+            val result = mutableListOf<AnnotationWithContext>()
+            val contextStack = ContextStack()
+
+            this.accept(object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    contextStack.withStack(element) {
+                        if (element is FirAnnotationCall) {
+                            result += AnnotationWithContext(element, contextStack.dumpContext())
+                        }
+
+                        element.acceptChildren(this)
+                    }
+                }
+            })
+
+            return result
+        }
+
+        class AnnotationWithContext(val annotation: FirAnnotationCall, val context: String)
+
+        private class ContextStack {
+            val stack = mutableListOf<FirDeclaration>()
+
+            inline fun withStack(element: FirElement, action: () -> Unit) {
+                if (element !is FirDeclaration) {
+                    action()
+                    return
+                }
+
+                stack += element
+                try {
+                    action()
+                } finally {
+                    val last = stack.removeLast()
+                    if (last != element) {
+                        error("Stack is corrupted")
+                    }
+                }
+            }
+
+            fun dumpContext(): String {
+                val reversedStack = stack.asReversed().iterator()
+                return buildString {
+                    var declaration = reversedStack.next()
+                    append(declaration.symbol)
+
+                    while (declaration.shouldAddParentContext() && reversedStack.hasNext()) {
+                        declaration = reversedStack.next()
+                        append(" from ")
+                        append(declaration.symbol)
+                    }
+                }
+            }
+
+            private fun FirDeclaration.shouldAddParentContext(): Boolean = symbol is FirFunctionWithoutNameSymbol || !isNonLocal
         }
     }
 }

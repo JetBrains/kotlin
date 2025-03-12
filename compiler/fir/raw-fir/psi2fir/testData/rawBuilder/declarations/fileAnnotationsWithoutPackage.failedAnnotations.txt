@@ -1,0 +1,12 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+@FILE:FileAnnotation(LAZY_EXPRESSION)
+
+context -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+@FILE:Annotation1(LAZY_EXPRESSION)
+
+context -> FirDanglingModifierSymbol from FirFileSymbol fileAnnotationsWithoutPackage.kt
+@WithouTarget(LAZY_EXPRESSION)

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -33,6 +34,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractFirScriptLazyBodiesCalculatorTest> {
             model("rawBuilder", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractLLSourceAnnotationArgumentsCalculatorTest> {
+            model("rawBuilder", pattern = TestGeneratorUtil.KT)
         }
     }
 

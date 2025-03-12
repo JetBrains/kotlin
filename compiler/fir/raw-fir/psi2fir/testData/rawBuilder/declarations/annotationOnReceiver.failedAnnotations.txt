@@ -1,0 +1,42 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+@ReceiverNestedTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+@ReceiverTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+@RECEIVER:FunctionReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+@ReceiverNestedTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+@ReceiverTypeAnnotation(LAZY_EXPRESSION)
+
+context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+@RECEIVER:PropertyReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
+
+context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClassWithExplicitConstructor
+@ContextReceiverAnnotation(LAZY_EXPRESSION)
