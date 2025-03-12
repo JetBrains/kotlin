@@ -332,7 +332,7 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
             appendLine()
             appendLine("Environment variables instantiated at:")
             overridingEnvironmentVariablesInstantiationBacktrace?.backtrace()?.lineSequence()?.drop(1)?.forEach {
-                appendLine("  ${it}")
+                appendLine("  $it")
             }
             appendLine()
         }
@@ -703,7 +703,7 @@ internal val testKitDir get() = Paths.get(".").resolve("build").resolve("testKit
 /**
  * Use this directory to store some cross-test information, such as [BuildOptions.customKotlinDaemonRunFilesDirectory]
  *
- * Should be preferred over [testKitDir] to avoid potetial clashes.
+ * Should be preferred over [testKitDir] to avoid potential clashes.
  *
  * On changing this directory, update related location in 'cleanTestKitCache' task.
  */
@@ -936,7 +936,7 @@ internal fun Path.enableAndroidSdk() {
 }
 
 internal fun Path.enableCacheRedirector() {
-    // Path relative to the current gradle module project dir
+    // Path relative to the current Gradle module project dir
     val sourceRedirectorScript = Path("../../../repo/scripts/cache-redirector.settings.gradle.kts")
     assert(sourceRedirectorScript.exists()) {
         "$sourceRedirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
@@ -971,7 +971,7 @@ internal fun Path.enableCacheRedirector() {
             settingsGradle.modify {
                 """
                 |${it.substringBefore("pluginManagement {")}
-                    |$applyCacheRedirector
+                |$applyCacheRedirector
                 |${it.substringAfter("pluginManagement {")}
                 """.trimMargin()
             }
@@ -1067,7 +1067,8 @@ sealed interface DependencyManagement {
 /**
  * Resolves the temporary local repository path for the test with specified Gradle version.
  */
-fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
+fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion): Path =
+    workingDir.resolve(gradleVersion.version).resolve("repo")
 
 fun enableConfigurationCacheSinceGradle(
     sinceGradleVersion: String,
@@ -1096,7 +1097,7 @@ private fun acceptAndroidSdkLicenses(androidHome: File) {
     } else {
         sdkLicenses
             .subtract(
-                sdkLicenseFile.readText().lines()
+                sdkLicenseFile.readText().lines().toSet()
             )
             .forEach {
                 sdkLicenseFile.appendText("$it\n")
@@ -1140,8 +1141,8 @@ enum class EnableGradleDebug {
 }
 
 private fun Throwable.backtrace(): String = StringWriter().use {
-    PrintWriter(it).use {
-        this.printStackTrace(it)
+    PrintWriter(it).use { writer ->
+        this.printStackTrace(writer)
     }
     it
 }.toString()
