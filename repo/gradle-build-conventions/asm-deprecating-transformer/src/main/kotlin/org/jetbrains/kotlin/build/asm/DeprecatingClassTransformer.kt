@@ -126,6 +126,9 @@ class DeprecatingClassTransformer(
                 // we cover only regular classes/interfaces currently and not file facades or other types of classes
                 // top-level symbols are hidden by removing .kotlin_module files in `KotlinModuleMetadataVersionBasedSkippingTransformer`
                 val kClass = metadata.kmClass
+
+                // After bootstrap, `hasAnnotations` can be replaced with `hasAnnotationsInBytecode`, and this suppression can be removed.
+                @Suppress("DEPRECATION")
                 kClass.hasAnnotations = true
             }
 

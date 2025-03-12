@@ -12,6 +12,77 @@ import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import kotlin.metadata.jvm.internal.jvm
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
+import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
+
+/**
+ * Indicates that the corresponding class has at least one annotation in the JVM bytecode.
+ *
+ * Before annotations in metadata are enabled by default in the Kotlin compiler (https://youtrack.jetbrains.com/issue/KT-75736),
+ * annotations are only generated in the JVM bytecode. The compiler writes and reads this flag to metadata as an optimization, to avoid
+ * parsing class file one additional time when it's not needed.
+ *
+ * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
+ */
+public var KmClass.hasAnnotationsInBytecode: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
+
+/**
+ * Indicates that the corresponding constructor has at least one annotation in the JVM bytecode.
+ *
+ * Before annotations in metadata are enabled by default in the Kotlin compiler (https://youtrack.jetbrains.com/issue/KT-75736),
+ * annotations are only generated in the JVM bytecode. The compiler writes and reads this flag to metadata as an optimization, to avoid
+ * parsing class file one additional time when it's not needed.
+ *
+ * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
+ */
+public var KmConstructor.hasAnnotationsInBytecode: Boolean by constructorBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
+
+/**
+ * Indicates that the corresponding function has at least one annotation in the JVM bytecode.
+ *
+ * Before annotations in metadata are enabled by default in the Kotlin compiler (https://youtrack.jetbrains.com/issue/KT-75736),
+ * annotations are only generated in the JVM bytecode. The compiler writes and reads this flag to metadata as an optimization, to avoid
+ * parsing class file one additional time when it's not needed.
+ *
+ * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
+ */
+public var KmFunction.hasAnnotationsInBytecode: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
+
+/**
+ * Indicates that the corresponding property has at least one annotation in the JVM bytecode.
+ *
+ * Before annotations in metadata are enabled by default in the Kotlin compiler (https://youtrack.jetbrains.com/issue/KT-75736),
+ * annotations are only generated in the JVM bytecode. The compiler writes and reads this flag to metadata as an optimization, to avoid
+ * parsing class file one additional time when it's not needed.
+ *
+ * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
+ */
+public var KmProperty.hasAnnotationsInBytecode: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
+
+/**
+ * Indicates that the corresponding property accessor has at least one annotation in the JVM bytecode.
+ *
+ * Before annotations in metadata are enabled by default in the Kotlin compiler (https://youtrack.jetbrains.com/issue/KT-75736),
+ * annotations are only generated in the JVM bytecode. The compiler writes and reads this flag to metadata as an optimization, to avoid
+ * parsing class file one additional time when it's not needed.
+ *
+ * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
+ */
+public var KmPropertyAccessorAttributes.hasAnnotationsInBytecode: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
+
+/**
+ * Indicates that the corresponding value parameter has at least one annotation in the JVM bytecode.
+ *
+ * Before annotations in metadata are enabled by default in the Kotlin compiler (https://youtrack.jetbrains.com/issue/KT-75736),
+ * annotations are only generated in the JVM bytecode. The compiler writes and reads this flag to metadata as an optimization, to avoid
+ * parsing class file one additional time when it's not needed.
+ *
+ * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
+ */
+public var KmValueParameter.hasAnnotationsInBytecode: Boolean by valueParameterBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
+
+// KmType and KmTypeParameter have annotations in it, and this flag for them is not written
+// KmTypeAlias has both annotations and flag, but its value always corresponds to whether the annotations list is non-empty.
+
 
 /**
  * Applicable to a property declared in an interface's companion object.

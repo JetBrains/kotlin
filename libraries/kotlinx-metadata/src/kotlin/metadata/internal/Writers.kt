@@ -2,9 +2,12 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalAnnotationsInMetadata::class)
+
 package kotlin.metadata.internal
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.metadata.serialization.StringTable
@@ -113,8 +116,10 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
     extensions.forEach {
         it.writeConstructorExtensions(kmConstructor, t, this)
     }
-    if (kmConstructor.flags != ProtoBuf.Constructor.getDefaultInstance().flags) {
-        t.flags = kmConstructor.flags
+    val flags = kmConstructor.flags or
+            Flags.HAS_ANNOTATIONS.toFlags(kmConstructor.annotations.isNotEmpty())
+    if (flags != ProtoBuf.Constructor.getDefaultInstance().flags) {
+        t.flags = flags
     }
     return t
 }
@@ -136,8 +141,10 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     extensions.forEach { it.writeFunctionExtensions(kmFunction, t, this) }
 
     t.name = this[kmFunction.name]
-    if (kmFunction.flags != ProtoBuf.Function.getDefaultInstance().flags) {
-        t.flags = kmFunction.flags
+    val flags = kmFunction.flags or
+            Flags.HAS_ANNOTATIONS.toFlags(kmFunction.annotations.isNotEmpty())
+    if (flags != ProtoBuf.Function.getDefaultInstance().flags) {
+        t.flags = flags
     }
     return t
 }
@@ -160,14 +167,19 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
     extensions.forEach { it.writePropertyExtensions(kmProperty, t, this) }
 
     t.name = this[kmProperty.name]
-    if (kmProperty.flags != ProtoBuf.Property.getDefaultInstance().flags) {
-        t.flags = kmProperty.flags
+    val flags = kmProperty.flags or
+            Flags.HAS_ANNOTATIONS.toFlags(kmProperty.annotations.isNotEmpty())
+    if (flags != ProtoBuf.Property.getDefaultInstance().flags) {
+        t.flags = flags
     }
+
     // TODO: do not write getterFlags/setterFlags if not needed
-    t.getterFlags = kmProperty.getter.flags
+    t.getterFlags = kmProperty.getter.flags or
+            Flags.HAS_ANNOTATIONS.toFlags(kmProperty.getter.annotations.isNotEmpty())
 
     kmProperty.setter?.let { setter ->
-        t.setterFlags = setter.flags
+        t.setterFlags = setter.flags or
+                Flags.HAS_ANNOTATIONS.toFlags(setter.annotations.isNotEmpty())
     }
     return t
 }
@@ -179,8 +191,10 @@ private fun WriteContext.writeValueParameter(
     t.type = writeType(kmValueParameter.type).build()
     kmValueParameter.varargElementType?.let { t.varargElementType = writeType(it).build() }
     extensions.forEach { it.writeValueParameterExtensions(kmValueParameter, t, this) }
-    if (kmValueParameter.flags != ProtoBuf.ValueParameter.getDefaultInstance().flags) {
-        t.flags = kmValueParameter.flags
+    val flags = kmValueParameter.flags or
+            Flags.HAS_ANNOTATIONS.toFlags(kmValueParameter.annotations.isNotEmpty())
+    if (flags != ProtoBuf.ValueParameter.getDefaultInstance().flags) {
+        t.flags = flags
     }
     t.name = this[kmValueParameter.name]
     return t
@@ -197,8 +211,10 @@ private fun WriteContext.writeTypeAlias(
     t.addAllVersionRequirement(typeAlias.versionRequirements.mapNotNull(::writeVersionRequirement))
     extensions.forEach { it.writeTypeAliasExtensions(typeAlias, t, this) }
 
-    if (typeAlias.flags != ProtoBuf.TypeAlias.getDefaultInstance().flags) {
-        t.flags = typeAlias.flags
+    val flags = typeAlias.flags or
+            Flags.HAS_ANNOTATIONS.toFlags(typeAlias.annotations.isNotEmpty())
+    if (flags != ProtoBuf.TypeAlias.getDefaultInstance().flags) {
+        t.flags = flags
     }
     t.name = this[typeAlias.name]
     return t
@@ -313,8 +329,10 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
     public val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
     public fun writeClass(kmClass: KmClass) {
-        if (kmClass.flags != ProtoBuf.Class.getDefaultInstance().flags) {
-            t.flags = kmClass.flags
+        val flags = kmClass.flags or
+                Flags.HAS_ANNOTATIONS.toFlags(kmClass.annotations.isNotEmpty())
+        if (flags != ProtoBuf.Class.getDefaultInstance().flags) {
+            t.flags = flags
         }
         t.fqName = c.getClassName(kmClass.name)
 

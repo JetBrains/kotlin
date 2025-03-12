@@ -2,17 +2,18 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlin.metadata.*
-import kotlin.metadata.Modality as KmModality
-import kotlin.metadata.ClassKind as KmClassKind
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import kotlin.metadata.*
+import kotlin.metadata.ClassKind as KmClassKind
+import kotlin.metadata.Modality as KmModality
 
 internal fun KmFunction.modifiersFrom(cf: CirFunction, isExpect: Boolean) {
     hasAnnotations = cf.hasAnnotations

@@ -263,7 +263,6 @@ private class MappingExtensions(
         visibility = Visibility.PUBLIC
         modality = fs.modality.kmModality
         isExternal = fs.external
-        hasAnnotations = fs.annotations.isNotEmpty()
         hasNonStableParameterNames = !fs.hasStableParameterNames
     }
 
@@ -281,7 +280,6 @@ private class MappingExtensions(
         visibility = Visibility.PUBLIC
         modality = ps.modality.kmModality
         kind = MemberKind.DECLARATION
-        hasAnnotations = ps.annotations.isNotEmpty()
         when (ps.kind) {
             is PropertyStub.Kind.Val -> {}
             is PropertyStub.Kind.Var -> {
@@ -307,7 +305,6 @@ private class MappingExtensions(
         } else {
             visibility = Visibility.PUBLIC
             modality = ps.modality.kmModality
-            hasAnnotations = getter.annotations.isNotEmpty()
             isNotDefault = true
             isExternal = getter is PropertyAccessor.Getter.ExternalGetter
         }
@@ -316,7 +313,6 @@ private class MappingExtensions(
     fun setterFrom(ps: PropertyStub): KmPropertyAccessorAttributes? {
         val setter = if (ps.kind is PropertyStub.Kind.Var) ps.kind.setter else return null
         return KmPropertyAccessorAttributes().apply {
-            hasAnnotations = setter.annotations.isNotEmpty()
             visibility = Visibility.PUBLIC
             modality = ps.modality.kmModality
             isNotDefault = true
@@ -329,7 +325,6 @@ private class MappingExtensions(
     }
 
     fun KmClass.modifiersFrom(cs: ClassStub) {
-        hasAnnotations = cs.annotations.isNotEmpty()
         visibility = Visibility.PUBLIC
         kind = when (cs) {
             is ClassStub.Simple -> {
@@ -348,7 +343,6 @@ private class MappingExtensions(
     fun KmConstructor.modifiersFrom(cs: ConstructorStub) {
         visibility = cs.visibility.kmVisibility
         isSecondary = !cs.isPrimary
-        hasAnnotations = cs.annotations.isNotEmpty()
     }
 
     private tailrec fun StubType.isEffectivelyNullable(): Boolean =
@@ -504,7 +498,6 @@ private class MappingExtensions(
 
     fun FunctionParameterStub.map(): KmValueParameter =
             KmValueParameter(name).also { km ->
-                km.hasAnnotations = annotations.isNotEmpty()
                 val kmType = type.map()
                 if (isVararg) {
                     km.varargElementType = kmType

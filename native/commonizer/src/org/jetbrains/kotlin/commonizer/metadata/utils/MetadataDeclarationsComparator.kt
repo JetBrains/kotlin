@@ -1114,6 +1114,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
+    @Suppress("DEPRECATION")
     companion object {
         fun compare(
             metadataA: KlibModuleMetadata,

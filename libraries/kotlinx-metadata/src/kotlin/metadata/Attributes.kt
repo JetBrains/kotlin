@@ -13,6 +13,7 @@ import kotlin.metadata.internal.EnumFlagDelegate
 import kotlin.metadata.internal.classBooleanFlag
 import kotlin.metadata.internal.constructorBooleanFlag
 import kotlin.contracts.ExperimentalContracts
+import kotlin.metadata.internal.FlagImpl
 import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
 
 // --- ANNOTATIONS ---
@@ -26,7 +27,8 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
  */
-public var KmClass.hasAnnotations: Boolean by annotationsOn(KmClass::flags)
+@Deprecated("On JVM, use `hasAnnotationsInBytecode` instead. On other platforms, check whether `annotations` is empty or not instead.")
+public var KmClass.hasAnnotations: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 /**
  * Indicates that the corresponding constructor has at least one annotation.
@@ -37,7 +39,8 @@ public var KmClass.hasAnnotations: Boolean by annotationsOn(KmClass::flags)
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
  */
-public var KmConstructor.hasAnnotations: Boolean by annotationsOn(KmConstructor::flags)
+@Deprecated("On JVM, use `hasAnnotationsInBytecode` instead. On other platforms, check whether `annotations` is empty or not instead.")
+public var KmConstructor.hasAnnotations: Boolean by constructorBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 /**
  * Indicates that the corresponding function has at least one annotation.
@@ -48,7 +51,8 @@ public var KmConstructor.hasAnnotations: Boolean by annotationsOn(KmConstructor:
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
  */
-public var KmFunction.hasAnnotations: Boolean by annotationsOn(KmFunction::flags)
+@Deprecated("On JVM, use `hasAnnotationsInBytecode` instead. On other platforms, check whether `annotations` is empty or not instead.")
+public var KmFunction.hasAnnotations: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 /**
  * Indicates that the corresponding property has at least one annotation.
@@ -59,7 +63,8 @@ public var KmFunction.hasAnnotations: Boolean by annotationsOn(KmFunction::flags
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
  */
-public var KmProperty.hasAnnotations: Boolean by annotationsOn(KmProperty::flags)
+@Deprecated("On JVM, use `hasAnnotationsInBytecode` instead. On other platforms, check whether `annotations` is empty or not instead.")
+public var KmProperty.hasAnnotations: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 /**
  * Indicates that the corresponding property accessor has at least one annotation.
@@ -70,7 +75,8 @@ public var KmProperty.hasAnnotations: Boolean by annotationsOn(KmProperty::flags
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
  */
-public var KmPropertyAccessorAttributes.hasAnnotations: Boolean by annotationsOn(KmPropertyAccessorAttributes::flags)
+@Deprecated("On JVM, use `hasAnnotationsInBytecode` instead. On other platforms, check whether `annotations` is empty or not instead.")
+public var KmPropertyAccessorAttributes.hasAnnotations: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 /**
  * Indicates that the corresponding value parameter has at least one annotation.
@@ -81,7 +87,8 @@ public var KmPropertyAccessorAttributes.hasAnnotations: Boolean by annotationsOn
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files.
  */
-public var KmValueParameter.hasAnnotations: Boolean by annotationsOn(KmValueParameter::flags)
+@Deprecated("On JVM, use `hasAnnotationsInBytecode` instead. On other platforms, check whether `annotations` is empty or not instead.")
+public var KmValueParameter.hasAnnotations: Boolean by valueParameterBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 /**
  * Indicates that the corresponding type alias has at least one annotation.
@@ -92,7 +99,8 @@ public var KmValueParameter.hasAnnotations: Boolean by annotationsOn(KmValuePara
  *
  * Only annotations with [AnnotationRetention.BINARY] and [AnnotationRetention.RUNTIME] are written to the class files and metadata.
  */
-public var KmTypeAlias.hasAnnotations: Boolean by annotationsOn(KmTypeAlias::flags)
+@Deprecated("Check whether `annotations` is empty or not instead.")
+public var KmTypeAlias.hasAnnotations: Boolean by typeAliasBooleanFlag(FlagImpl(ProtoFlags.HAS_ANNOTATIONS))
 
 // KmType and KmTypeParameter have annotations in it, and this flag for them is not written
 
