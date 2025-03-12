@@ -261,7 +261,8 @@ private class Fir2IrPipeline(
                 fir2IrConfiguration.expectActualTracker,
                 mainIrFragment,
                 dependentIrFragments,
-                this@Fir2IrPipeline.extraActualDeclarationExtractorsInitializer(componentsStorage),
+                extraActualDeclarationExtractorsInitializer(componentsStorage),
+                missingActualProvider = LenientModeMissingActualDeclarationProvider.initializeIfNeeded(componentsStorage),
             )
         }
 

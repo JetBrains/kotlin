@@ -49,6 +49,7 @@ internal class ExpectActualCollector(
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
     private val extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
+    private val missingActualProvider: IrMissingActualDeclarationProvider?
 ) {
     fun collectClassActualizationInfo(): ClassActualizationInfo {
         val expectTopLevelDeclarations = ExpectTopLevelDeclarationCollector.collect(dependentFragments)
@@ -61,13 +62,28 @@ internal class ExpectActualCollector(
     fun matchAllExpectDeclarations(classActualizationInfo: ClassActualizationInfo): IrExpectActualMap {
         val linkCollector = ExpectActualLinkCollector()
         val linkCollectorContext = ExpectActualLinkCollector.MatchingContext(
-            typeSystemContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, null
+            typeSystemContext,
+            diagnosticsReporter,
+            expectActualTracker,
+            classActualizationInfo,
+            missingActualProvider
         )
         dependentFragments.forEach { linkCollector.collectAndCheckMapping(it, linkCollectorContext) }
         // It doesn't make sense to link expects from the last module because actuals always should be located in another module
         // Thus relevant actuals are always missing for the last module
         // But the collector should be run anyway to detect and report "hanging" expect declarations
         linkCollector.collectAndCheckMapping(mainFragment, linkCollectorContext)
+
+        // We can't add generated actuals to their parents' list of declarations during visiting because it would lead to CME.
+        if (missingActualProvider != null) {
+            for (symbol in linkCollectorContext.expectActualMap.expectToActual.values) {
+                val declaration = symbol.owner as IrDeclaration
+                if (declaration.origin == IrDeclarationOrigin.STUB_FOR_LENIENT && !declaration.isPropertyAccessor) {
+                    (declaration.parent as IrDeclarationContainer).declarations.add(declaration)
+                }
+            }
+        }
+
         return linkCollectorContext.expectActualMap
     }
 }
@@ -369,9 +385,26 @@ private class ExpectActualLinkCollector {
         private val diagnosticsReporter: IrDiagnosticReporter,
         private val expectActualTracker: ExpectActualTracker?,
         internal val classActualizationInfo: ClassActualizationInfo,
+        private val missingActualProvider: IrMissingActualDeclarationProvider?,
+        val expectActualMap: IrExpectActualMap,
         private val currentExpectFile: IrFile?,
-        val expectActualMap: IrExpectActualMap = IrExpectActualMap(),
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
+
+        constructor(
+            typeSystemContext: IrTypeSystemContext,
+            diagnosticsReporter: IrDiagnosticReporter,
+            expectActualTracker: ExpectActualTracker?,
+            classActualizationInfo: ClassActualizationInfo,
+            missingActualProvider: IrMissingActualDeclarationProvider?,
+        ) : this(
+            typeSystemContext = typeSystemContext,
+            diagnosticsReporter = diagnosticsReporter,
+            expectActualTracker = expectActualTracker,
+            classActualizationInfo = classActualizationInfo,
+            missingActualProvider = missingActualProvider,
+            expectActualMap = IrExpectActualMap(),
+            currentExpectFile = null,
+        )
 
         private val currentExpectIoFile by lazy(LazyThreadSafetyMode.PUBLICATION) { currentExpectFile?.toIoFile() }
 
@@ -379,7 +412,13 @@ private class ExpectActualLinkCollector {
 
         fun withNewCurrentFile(newCurrentFile: IrFile) =
             MatchingContext(
-                typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, expectActualMap
+                typeContext,
+                diagnosticsReporter,
+                expectActualTracker,
+                classActualizationInfo,
+                missingActualProvider,
+                expectActualMap,
+                newCurrentFile
             )
 
         override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
@@ -410,7 +449,16 @@ private class ExpectActualLinkCollector {
         ) {
             require(expectSymbol is IrSymbol)
             if (actualSymbolsByIncompatibility.isEmpty() && !expectSymbol.owner.containsOptionalExpectation()) {
-                diagnosticsReporter.reportMissingActual(expectSymbol)
+                val actualSymbolForMissingActual = missingActualProvider?.provideSymbolForMissingActual(
+                    expectSymbol = expectSymbol,
+                    containingExpectClassSymbol = containingExpectClassSymbol as IrClassSymbol?,
+                    containingActualClassSymbol = containingActualClassSymbol as IrClassSymbol?
+                )
+                if (actualSymbolForMissingActual != null) {
+                    onMatchedMembers(expectSymbol, actualSymbolForMissingActual, containingActualClassSymbol, containingActualClassSymbol)
+                } else {
+                    diagnosticsReporter.reportMissingActual(expectSymbol)
+                }
             }
             for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {

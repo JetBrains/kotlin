@@ -116,6 +116,8 @@ interface IrDeclarationOrigin {
          * Used on synthetic `invoke` methods for `[K][Suspend]FunctionN` interfaces.
          */
         val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl
+
+        val STUB_FOR_LENIENT by IrDeclarationOriginImpl.Synthetic
     }
 
     /**
