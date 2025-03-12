@@ -65,6 +65,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val smallBinary: Boolean get() = configuration.get(BinaryOptions.smallBinary)
                 ?: target.needSmallBinary()
+    val inlineForPerformance = !debug && !smallBinary
 
     val assertsEnabled = configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
 
