@@ -60,5 +60,3 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
     }
     return false
 }
-
-val FirUserTypeRef.isUnderscored get() = qualifier.lastOrNull()?.source?.getElementTextInContextForDebug() == "_"
