@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE
@@ -172,8 +172,8 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING
         )
         map.put(
-            IDENTITY_HASH_CODE_ON_VALUE_TYPE_OBJECT,
-            "Call to ''kotlin.native.identityHashCode'' on an object of value type ''{0}'' is forbidden.",
+            IDENTITY_HASH_CODE_ON_VALUE_TYPE,
+            "Call to ''kotlin.native.identityHashCode'' on an instance of value type ''{0}'' is forbidden.",
             RENDER_TYPE,
         )
     }
