@@ -11,4 +11,5 @@ package org.jetbrains.kotlin.gradle.swiftexport
     "This API is experimental and can be unstable. Add @OptIn(org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl::class) annotation.",
     level = RequiresOptIn.Level.WARNING
 )
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 annotation class ExperimentalSwiftExportDsl

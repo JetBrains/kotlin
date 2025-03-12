@@ -11,7 +11,6 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
@@ -32,10 +31,8 @@ private const val SWIFT_EXPORT_EMBEDDABLE_MODULE = "swift-export-embeddable"
 internal const val SWIFT_EXPORT_MODULE_NAME_PATTERN = "^[A-Za-z0-9_]+$"
 
 internal fun Project.initSwiftExportClasspathConfigurations() {
-    if (project.kotlinPropertiesProvider.swiftExportEnabled) {
-        maybeCreateSwiftExportClasspathDependenciesConfiguration()
-        SwiftExportClasspathResolvableConfiguration
-    }
+    maybeCreateSwiftExportClasspathDependenciesConfiguration()
+    SwiftExportClasspathResolvableConfiguration
 }
 
 private fun Project.maybeCreateSwiftExportClasspathDependenciesConfiguration(): Configuration {

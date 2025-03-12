@@ -34,9 +34,6 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             buildAndFail(
@@ -60,9 +57,6 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -103,9 +97,6 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -163,9 +154,6 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -203,9 +191,6 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -241,9 +226,6 @@ class SwiftExportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(

@@ -35,9 +35,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -73,9 +70,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -120,9 +114,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -163,9 +154,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -200,9 +188,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             build(
@@ -219,9 +204,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf(mavenUrl.absolutePathString())),
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             projectPath.resolve("shared/build.gradle.kts").replaceText(
@@ -259,9 +241,6 @@ class SwiftExportDslIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                nativeOptions = NativeOptions().copy(
-                    swiftExportEnabled = true,
-                )
             )
         ) {
             projectPath.resolve("shared/build.gradle.kts").replaceText(

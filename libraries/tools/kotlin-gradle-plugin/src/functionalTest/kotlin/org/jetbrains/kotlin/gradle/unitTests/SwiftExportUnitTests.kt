@@ -607,7 +607,6 @@ private fun swiftExportProject(
             archs = archs,
         )
         configureRepositoriesForTests()
-        enableSwiftExport()
     },
     code = {
         kotlin {
@@ -633,7 +632,6 @@ private fun ProjectInternal.setupForSwiftExport(
         sdk = sdk,
         archs = archs,
     )
-    enableSwiftExport()
     applyMultiplatformPlugin()
     kotlin {
         multiplatform()
