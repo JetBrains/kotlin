@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.setFunctionAlwaysInline
 private const val PERFORMANCE_INLINE_ANNOTATION = "performance_inline"
 
 internal fun handlePerformanceInlineAnnotation(config: KonanConfig, llvm: BasicLlvmHelpers) {
-    if (!config.debug && !config.smallBinary) {
+    if (config.inlineForPerformance) {
         val toInline = llvm.runtimeAnnotationMap[PERFORMANCE_INLINE_ANNOTATION] ?: return
         toInline.filter { it.isDefinition() }.forEach { setFunctionAlwaysInline(it) }
     }
