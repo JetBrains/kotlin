@@ -23,5 +23,5 @@ annotation class Anno1(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>A
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno2(vararg val x: String, val y: String)
 
-@Anno1(x = ["", <!TYPE_MISMATCH!>Anno2(x = [""], y = "")<!>], y = "")
+@Anno1(x = ["", Anno2(x = [""], y = "")], y = "")
 fun foo5() {}
