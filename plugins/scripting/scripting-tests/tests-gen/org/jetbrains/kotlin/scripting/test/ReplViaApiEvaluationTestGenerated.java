@@ -36,9 +36,9 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
-  @TestMetadata("class_property_initializer_depends_on_expected_type.kts")
-  public void testClass_property_initializer_depends_on_expected_type() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_property_initializer_depends_on_expected_type.kts");
+  @TestMetadata("class_property_initializer_depends_on_expected_type.repl.kts")
+  public void testClass_property_initializer_depends_on_expected_type_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_property_initializer_depends_on_expected_type.repl.kts");
   }
 
   @Test
