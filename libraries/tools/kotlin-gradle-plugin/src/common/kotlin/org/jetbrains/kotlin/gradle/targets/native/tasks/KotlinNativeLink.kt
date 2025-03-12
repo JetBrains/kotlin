@@ -211,8 +211,8 @@ constructor(
 
     private val konanCacheDir = project.getKonanCacheKind(konanTarget)
     private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
-    private val cacheBuilderSettings
-        get() = CacheBuilder.Settings(
+    private val cacheBuilderSettings by lazy {
+        CacheBuilder.Settings(
             konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory }.map { File(it) },
             konanCacheKind = konanCacheDir,
             gradleUserHomeDir = gradleUserHomeDir,
@@ -225,6 +225,7 @@ constructor(
             kotlinCompilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel,
             forceDisableRunningInProcess = forceDisableRunningInProcess,
         )
+    }
 
     private class CacheSettings(
         val orchestration: NativeCacheOrchestration,
