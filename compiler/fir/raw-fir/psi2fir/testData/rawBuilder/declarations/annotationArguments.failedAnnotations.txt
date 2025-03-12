@@ -1,0 +1,63 @@
+Annotations from the list below require AST loading to calculate arguments.
+It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+See KT-71787 for reference.
+
+context -> FirRegularClassSymbol WithExplicitArrays
+@Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithClassLiteral
+@ClassLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithEnumLiteral
+@EnumLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol OneVararg
+@VarArg(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol TwoVararg
+@VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol ThreeVararg
+@VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol SpreadVararg
+@VarArg(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithNested
+@Outer(LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithQualifiedNested
+@Outer(LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Qualified
+@Simple(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Sum
+@Simple(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Negative
+@Simple(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Negative2
+@Simple(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Positive
+@Simple(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithSimple
+@Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithNamedSimple
+@Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithSimpleOperations
+@Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithStringLiteral
+@StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithStringLiteralConcat
+@StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithStringInterpolationPrefix
+@StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)

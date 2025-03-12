@@ -1,0 +1,83 @@
+@Arrays(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <implicitArrayOf>(Long(1)), <implicitArrayOf>(), <implicitArrayOf>(Double(2.2)), <implicitArrayOf>(Char(a)), <implicitArrayOf>(Boolean(true), Boolean(false)))
+owner -> FirRegularClassSymbol WithArrays
+context -> FirRegularClassSymbol WithArrays
+
+@Arrays(intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), longArrayOf#(Long(1)), floatArrayOf#(), doubleArrayOf#(Double(2.2)), charArrayOf#(Char(a)), booleanArrayOf#(Boolean(true), Boolean(false)))
+owner -> FirRegularClassSymbol WithExplicitArrays
+context -> FirRegularClassSymbol WithExplicitArrays
+
+@ClassLiteral(<getClass>(WithClassLiteral#), <getClass>(Boolean#))
+owner -> FirRegularClassSymbol WithClassLiteral
+context -> FirRegularClassSymbol WithClassLiteral
+
+@EnumLiteral(E1#, E#.E2#, e3 = test#.E#.E2#)
+owner -> FirRegularClassSymbol WithEnumLiteral
+context -> FirRegularClassSymbol WithEnumLiteral
+
+@VarArg(IntegerLiteral(1))
+owner -> FirRegularClassSymbol OneVararg
+context -> FirRegularClassSymbol OneVararg
+
+@VarArg(IntegerLiteral(1), IntegerLiteral(2))
+owner -> FirRegularClassSymbol TwoVararg
+context -> FirRegularClassSymbol TwoVararg
+
+@VarArg(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#)
+owner -> FirRegularClassSymbol ThreeVararg
+context -> FirRegularClassSymbol ThreeVararg
+
+@VarArg(*<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4)))
+owner -> FirRegularClassSymbol SpreadVararg
+context -> FirRegularClassSymbol SpreadVararg
+
+@Outer(String(value), nested = Nested#(IntegerLiteral(0), String(nested value)))
+owner -> FirRegularClassSymbol WithNested
+context -> FirRegularClassSymbol WithNested
+
+@Outer(String(value), foo#.Nested#(IntegerLiteral(1), String(nested value)))
+owner -> FirRegularClassSymbol WithQualifiedNested
+context -> FirRegularClassSymbol WithQualifiedNested
+
+@Simple(test#.Simple#.Companion#.CONST1#)
+owner -> FirRegularClassSymbol Qualified
+context -> FirRegularClassSymbol Qualified
+
+@Simple(test#.Simple#.Companion#.CONST1#.plus#(Simple#.CONST2#))
+owner -> FirRegularClassSymbol Sum
+context -> FirRegularClassSymbol Sum
+
+@Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#())
+owner -> FirRegularClassSymbol Negative
+context -> FirRegularClassSymbol Negative
+
+@Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#().unaryMinus#().unaryMinus#())
+owner -> FirRegularClassSymbol Negative2
+context -> FirRegularClassSymbol Negative2
+
+@Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#().unaryMinus#())
+owner -> FirRegularClassSymbol Positive
+context -> FirRegularClassSymbol Positive
+
+@Simple(IntegerLiteral(12), Long(12), IntegerLiteral(12), Double(3.3), Float(3.3), Char(a), Boolean(true), Boolean(false))
+owner -> FirRegularClassSymbol WithSimple
+context -> FirRegularClassSymbol WithSimple
+
+@Simple(IntegerLiteral(12), Long(12), IntegerLiteral(12), d = Double(3.3), f = Float(3.3), c = Char(a), b1 = Boolean(true), b2 = Boolean(false))
+owner -> FirRegularClassSymbol WithNamedSimple
+context -> FirRegularClassSymbol WithNamedSimple
+
+@Simple(IntegerLiteral(12).div#(IntegerLiteral(6)), Long(12).rem#(Long(5)), IntegerLiteral(12), Double(3.3).minus#(Double(3.0)), Float(3.3).times#(Float(2.0)), Char(a), Boolean(true) && Boolean(false), Boolean(false) || Boolean(true))
+owner -> FirRegularClassSymbol WithSimpleOperations
+context -> FirRegularClassSymbol WithSimpleOperations
+
+@StringLiteral(String(some), String(), <strcat>(String(H), CONSTANT#))
+owner -> FirRegularClassSymbol WithStringLiteral
+context -> FirRegularClassSymbol WithStringLiteral
+
+@StringLiteral(<strcat>(String(some), String(1)), String().plus#(CONSTANT#).plus#(String(2)), <strcat>(<strcat>(CONSTANT#), String(3)))
+owner -> FirRegularClassSymbol WithStringLiteralConcat
+context -> FirRegularClassSymbol WithStringLiteralConcat
+
+@StringLiteral(<strcat>(CONSTANT#), <strcat>(CONSTANT#), <strcat>(CONSTANT#))
+owner -> FirRegularClassSymbol WithStringInterpolationPrefix
+context -> FirRegularClassSymbol WithStringInterpolationPrefix
