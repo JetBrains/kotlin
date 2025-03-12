@@ -44,7 +44,6 @@ sealed class ResolutionMode(
         @property:ExpectedTypeRefAccess
         val expectedTypeRef: FirResolvedTypeRef,
         val lastStatementInBlock: Boolean = false,
-        val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         /**
          * For cases like findViewById() as MyView, it the expected type would be MyView.
          * We only allow using it for a limited number of cases: when the LHS of cast is a call to the specifically shaped
@@ -58,19 +57,6 @@ sealed class ResolutionMode(
          * it can contain type parameter types which aren't substituted to type variable types.
          */
         val arrayLiteralPosition: ArrayLiteralPosition? = null,
-        /**
-         * It might be ok if the types turn out to be incompatible.
-         * Consider the following examples with properties and their backing fields:
-         *
-         * ```
-         * val items: List field = mutableListOf()
-         * val s: String field = 10 get() = ...
-         * ```
-         *
-         * In these examples we should try using the property type information while resolving the initializer,
-         * but it's ok if it's not applicable
-         */
-        val shouldBeStrictlyEnforced: Boolean = true,
         val hintForContextSensitiveResolution: ConeKotlinType? = null,
         /** Currently the only case for expected type when we don't force completion are when's branches */
         forceFullCompletion: Boolean = true,
@@ -88,24 +74,19 @@ sealed class ResolutionMode(
             expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
             lastStatementInBlock: Boolean = this.lastStatementInBlock,
             forceFullCompletion: Boolean = this.forceFullCompletion,
-            shouldBeStrictlyEnforced: Boolean = this.shouldBeStrictlyEnforced,
         ): WithExpectedType = WithExpectedType(
             expectedTypeRef = expectedTypeRef,
             lastStatementInBlock = lastStatementInBlock,
-            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
             fromCast = fromCast,
             arrayLiteralPosition = arrayLiteralPosition,
-            shouldBeStrictlyEnforced = shouldBeStrictlyEnforced,
             forceFullCompletion = forceFullCompletion
         )
 
         override fun toString(): String {
             return "WithExpectedType: ${expectedTypeRef.prettyString()}, " +
                     "lastStatementInBlock=${lastStatementInBlock}, " +
-                    "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
                     "arrayLiteralPosition=${arrayLiteralPosition}, " +
-                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
                     "forceFullCompletion=${forceFullCompletion}, "
         }
     }
@@ -161,13 +142,11 @@ val ResolutionMode.expectedType: ConeKotlinType?
 
 fun withExpectedType(
     expectedTypeRef: FirTypeRef,
-    expectedTypeMismatchIsReportedInChecker: Boolean = false,
     arrayLiteralPosition: ArrayLiteralPosition? = null,
     hintForContextSensitiveResolution: ConeKotlinType? = null,
 ): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
-        expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
         arrayLiteralPosition = arrayLiteralPosition,
         hintForContextSensitiveResolution = hintForContextSensitiveResolution,
     )

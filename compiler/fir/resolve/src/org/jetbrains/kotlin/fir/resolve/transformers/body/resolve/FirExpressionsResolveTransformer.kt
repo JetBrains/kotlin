@@ -852,7 +852,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 (lhsVariable?.returnTypeRef as? FirResolvedTypeRef)?.let {
-                    ResolutionMode.WithExpectedType(it, expectedTypeMismatchIsReportedInChecker = true)
+                    ResolutionMode.WithExpectedType(it)
                 } ?: ResolutionMode.ContextIndependent,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
@@ -1299,7 +1299,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 transformer,
                 withExpectedType(
                     variableAssignment.lValue.resolvedType.toFirResolvedTypeRef(),
-                    expectedTypeMismatchIsReportedInChecker = true,
                 ),
             )
         }

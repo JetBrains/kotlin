@@ -1484,7 +1484,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirBackingField = whileAnalysing(session, backingField) {
         val initializerData = when {
             backingField.returnTypeRef is FirResolvedTypeRef -> withExpectedType(backingField.returnTypeRef)
-            data is ResolutionMode.WithExpectedType -> data.copy(shouldBeStrictlyEnforced = false)
+            data is ResolutionMode.WithExpectedType -> data
             data is ResolutionMode.ContextIndependent -> ResolutionMode.ContextIndependent
             else -> ResolutionMode.ContextDependent
         }

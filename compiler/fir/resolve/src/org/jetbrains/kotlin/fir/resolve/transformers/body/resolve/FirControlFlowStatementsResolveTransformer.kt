@@ -194,7 +194,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             labeledElement.symbol in context.anonymousFunctionsAnalyzedInDependentContext -> ResolutionMode.ContextDependent
 
             expectedTypeRef is FirResolvedTypeRef ->
-                ResolutionMode.WithExpectedType(expectedTypeRef, expectedTypeMismatchIsReportedInChecker = true)
+                ResolutionMode.WithExpectedType(expectedTypeRef)
 
             else -> ResolutionMode.ContextIndependent
         }
