@@ -41382,6 +41382,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         public void testLenientModeSmokeTest() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/lenientModeSmokeTest.kt");
         }
+
+        @Test
+        @TestMetadata("returnTypes.kt")
+        public void testReturnTypes() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/returnTypes.kt");
+        }
       }
 
       @Nested
