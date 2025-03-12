@@ -400,8 +400,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
                 val resolvedExpandedType = when {
                     aliasedTypeExpansionGloballyDisabled -> resolvedType
-                    (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                    isFromLibraryDependency && resolvedTypeSymbol is FirTypeAliasSymbol -> {
                         resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
+                    }
+                    expandTypeAliases && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                        resolvedType.fullyExpandedType(session)
                     }
                     else -> resolvedType
                 }
