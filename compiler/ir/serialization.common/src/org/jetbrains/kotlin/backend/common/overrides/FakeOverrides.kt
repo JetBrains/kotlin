@@ -142,7 +142,12 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     }
 
     private fun composeSignature(declaration: IrDeclaration, manglerCompatibleMode: Boolean) =
-        fakeOverrideDeclarationTable.signatureByDeclaration(declaration, manglerCompatibleMode, recordInSignatureClashDetector = false)
+        fakeOverrideDeclarationTable.signatureByDeclaration(
+            declaration,
+            manglerCompatibleMode,
+            recordInSignatureClashDetector = false,
+            reuseExistingSignaturesForSymbols = false,
+        )
 
     private fun computeFunctionFakeOverrideSymbol(
         function: IrFunctionWithLateBinding,

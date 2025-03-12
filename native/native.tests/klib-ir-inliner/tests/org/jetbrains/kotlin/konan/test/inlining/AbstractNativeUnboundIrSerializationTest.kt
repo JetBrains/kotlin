@@ -209,7 +209,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
             function.fullyLinkedSerializedFunction = SingleFunctionSerializer(
                 IrSerializationSettings(
                     languageVersionSettings = configuration.languageVersionSettings,
-                    reuseExistingSignaturesForSymbols = false,
+                    reuseExistingSignaturesForSymbols = true,
                 ),
                 irBuiltIns
             ).serializeSingleFunction(function.fullyLinkedIrFunction)

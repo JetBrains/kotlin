@@ -294,7 +294,8 @@ open class IrFileSerializer(
                         symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
                             symbolOwner,
                             settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-                            recordInSignatureClashDetector = isDeclared
+                            recordInSignatureClashDetector = isDeclared,
+                            reuseExistingSignaturesForSymbols = settings.reuseExistingSignaturesForSymbols
                         )
 
                         symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
@@ -1485,7 +1486,8 @@ open class IrFileSerializer(
             val idSig = declarationTable.signatureByDeclaration(
                 it,
                 settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-                recordInSignatureClashDetector = false
+                recordInSignatureClashDetector = false,
+                settings.reuseExistingSignaturesForSymbols,
             )
             require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
