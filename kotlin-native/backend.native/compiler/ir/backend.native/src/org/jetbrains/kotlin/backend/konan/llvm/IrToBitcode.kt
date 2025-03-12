@@ -509,13 +509,25 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun mergeRuntimeInitializers(
-            runtimeInitializers: List<RuntimeInitializer>
-    ): RuntimeInitializer = generateRuntimeInitializer {
-        runtimeInitializers.forEach {
-            this.call(it.llvmCallable, listOf(param(0), param(1)), exceptionHandler = ExceptionHandler.Caller)
+    private fun mergeRuntimeInitializers(runtimeInitializers: List<RuntimeInitializer>): RuntimeInitializer? {
+        if (runtimeInitializers.size <= 1) return runtimeInitializers.singleOrNull()
+
+        // It would be natural to generate a single runtime initializer function
+        // and call all the initializers from it.
+        // However, right now we can have quite many initializers (see e.g. KT-74774).
+        // So, this natural solution can lead to generating huge LLVM functions triggering slow compilation.
+        // Apply a cheap trick -- merge them by chunks recursively.
+
+        val chunkInitializers = runtimeInitializers.chunked(100) { chunk ->
+            generateRuntimeInitializer {
+                chunk.forEach {
+                    this.call(it.llvmCallable, listOf(param(0), param(1)), exceptionHandler = ExceptionHandler.Caller)
+                }
+                ret(null)
+            }
         }
-        ret(null)
+
+        return mergeRuntimeInitializers(chunkInitializers)
     }
 
     private fun generateRuntimeInitializer(block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
@@ -2723,9 +2735,7 @@ internal class CodeGeneratorVisitor(
 
         val ctorFunctions = dependencies.flatMap { dependency ->
             val library = dependency?.library
-            val initializer = libraryToInitializers.getValue(library)
-                    .takeIf { it.isNotEmpty() }
-                    ?.let { mergeRuntimeInitializers(it) }
+            val initializer = mergeRuntimeInitializers(libraryToInitializers.getValue(library))
                     ?.let { createInitCtor(createInitNode(it)) }
 
             val ctorName = when {
