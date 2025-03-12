@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isNonLocalDanglingModifierList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -358,6 +359,10 @@ internal fun getNonLocalContainingDeclaration(
     }
 
     for (parent in elementsToCheck) {
+        if (parent is KtModifierList && parent.isNonLocalDanglingModifierList()) {
+            return null
+        }
+
         candidate?.let { notNullCandidate ->
             if (parent is KtEnumEntry ||
                 parent is KtCallableDeclaration &&
