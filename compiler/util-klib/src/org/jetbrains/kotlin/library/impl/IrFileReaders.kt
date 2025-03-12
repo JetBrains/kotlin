@@ -27,19 +27,9 @@ fun <L : KotlinLibraryLayout> IrArrayReader(
 ): IrArrayReader = IrArrayReader { access.inPlace { it.getFile().readBytes() } }
 
 class IrArrayReader(private val buffer: ReadBuffer) {
-    private val indexToOffset: IntArray
+    private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
 
     fun entryCount() = indexToOffset.size - 1
-
-    init {
-        val count = buffer.int
-        indexToOffset = IntArray(count + 1)
-        indexToOffset[0] = 4 * (count + 1)
-        for (i in 0 until count) {
-            val size = buffer.int
-            indexToOffset[i + 1] = indexToOffset[i] + size
-        }
-    }
 
     fun tableItemBytes(id: Int): ByteArray {
         val offset = indexToOffset[id]
@@ -64,25 +54,8 @@ fun <L : KotlinLibraryLayout> IrMultiArrayReader(
 ): IrMultiArrayReader = IrMultiArrayReader { access.inPlace { it.getFile().readBytes() } }
 
 class IrMultiArrayReader(private val buffer: ReadBuffer) {
-    private val indexToOffset: IntArray
-    private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
-
-    private fun readOffsets(position: Int): IntArray {
-        buffer.position = position
-        val count = buffer.int
-        val result = IntArray(count + 1)
-        result[0] = 4 * (count + 1)
-        for (i in 0 until count) {
-            val size = buffer.int
-            result[i + 1] = result[i] + size
-        }
-
-        return result
-    }
-
-    init {
-        indexToOffset = readOffsets(0)
-    }
+    private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
+    private val indexIndexToOffset = mutableMapOf<Int, IndexToOffset>()
 
     fun tableItemBytes(id: Int): ByteArray {
         val offset = indexToOffset[id]
@@ -97,7 +70,7 @@ class IrMultiArrayReader(private val buffer: ReadBuffer) {
         val rowOffset = indexToOffset[row]
 
         val columnOffsets = indexIndexToOffset.getOrPut(row) {
-            readOffsets(rowOffset)
+            buffer.readIndexToOffset(rowOffset)
         }
 
         val dataOffset = columnOffsets[column]
@@ -172,25 +145,8 @@ fun <L : KotlinLibraryLayout> DeclarationIdMultiTableReader(
 ): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { access.inPlace { it.getFile().readBytes() } }
 
 class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
-    private val indexToOffset: IntArray
+    private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
     private val indexToIndexMap = mutableMapOf<Int, Map<DeclarationId, Pair<Int, Int>>>()
-
-    private fun readOffsets(position: Int): IntArray {
-        buffer.position = position
-        val count = buffer.int
-        val result = IntArray(count + 1)
-        result[0] = 4 * (count + 1)
-        for (i in 0 until count) {
-            val size = buffer.int
-            result[i + 1] = result[i] + size
-        }
-
-        return result
-    }
-
-    init {
-        indexToOffset = readOffsets(0)
-    }
 
     private fun readIndexMap(position: Int): Map<DeclarationId, Pair<Int, Int>> {
         buffer.position = position
@@ -246,3 +202,25 @@ val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
 fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }
 
 fun File.javaFile(): java.io.File = java.io.File(path)
+
+
+/******************************************************************************/
+/** Private utilities.                                                        */
+/******************************************************************************/
+
+private typealias IndexToOffset = IntArray
+
+private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
+    this.position = position
+
+    val count = this.int
+    val indexToOffset = IndexToOffset(count + 1)
+
+    indexToOffset[0] = 4 * (count + 1)
+    for (i in 0 until count) {
+        val size = this.int
+        indexToOffset[i + 1] = indexToOffset[i] + size
+    }
+
+    return indexToOffset
+}
