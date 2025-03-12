@@ -24,6 +24,9 @@ public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
 }
+@objc(_OUTSIDE_PROTO)
+protocol _OUTSIDE_PROTO {
+}
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package init() {
         fatalError()
@@ -318,6 +321,8 @@ public func produce_closure() -> main.closure {
     }()
 }
 public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
 }
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo

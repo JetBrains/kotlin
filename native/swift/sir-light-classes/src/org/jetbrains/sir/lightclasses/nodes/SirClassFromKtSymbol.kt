@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.sir.lightclasses.BindableBridgedType
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -85,9 +86,9 @@ internal class SirEnumClassFromKtSymbol(
 internal abstract class SirAbstractClassFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol> {
+) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol>, BindableBridgedType {
 
-    override val origin: SirOrigin by lazy {
+    override val origin: KotlinSource by lazy {
         KotlinSource(ktSymbol)
     }
     override val visibility: SirVisibility by lazy {

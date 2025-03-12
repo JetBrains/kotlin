@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val cinterop = "kotlinx.cinterop.*"
@@ -170,8 +171,10 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
 
     private fun generateTypeBindingBridge(request: TypeBindingBridgeRequest): TypeBindingBridge {
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
-        val kotlinType = typeNamer.kotlinFqName(SirNominalType(request.sirClass))
-        val swiftName = request.sirClass.mangledNameOrNull
+        val kotlinType = typeNamer.kotlinFqName(SirNominalType(request.sirTypeDeclaration))
+        val swiftName = request.sirTypeDeclaration.let {
+            it.attributes.firstIsInstanceOrNull<SirAttribute.ObjC>()?.name ?: it.mangledNameOrNull
+        }
         requireNotNull(swiftName) {
             "Cannot mangle name for Swift class exported from `$kotlinType`"
         }

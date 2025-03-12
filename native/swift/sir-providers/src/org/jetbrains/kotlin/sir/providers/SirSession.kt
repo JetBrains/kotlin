@@ -158,10 +158,18 @@ public sealed interface SirTranslationResult {
 
     public data class RegularInterface(
         public val declaration: SirProtocol,
-        public val bridgedImplementation: SirExtension?
+        public val bridgedImplementation: SirExtension?,
+        public val markerDeclaration: SirProtocol,
+        public val existentialExtension: SirExtension,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
-        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration, bridgedImplementation)
+        override val allDeclarations: List<SirDeclaration> =
+            listOfNotNull(
+                declaration,
+                bridgedImplementation,
+                markerDeclaration,
+                existentialExtension
+            )
     }
 
     public data class StubClass(

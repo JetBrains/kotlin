@@ -126,7 +126,9 @@ public class SirAsSwiftSourcesPrinter private constructor(
     }
 
     private fun SirExtension.printDeclaration() {
-        printVisibility()
+        if (this.protocols.isEmpty()) {
+            printVisibility()
+        }
         print("extension ")
         printName()
         printInheritanceClause()
@@ -299,12 +301,12 @@ public class SirAsSwiftSourcesPrinter private constructor(
     private fun SirConstrainedDeclaration.printWhereClause() {
         constraints.takeIf { it.isNotEmpty() }?.joinToString(", ", prefix = "where ") {
             listOf(
-                "Self" + (it.subjectPath.takeIf { it.isNotEmpty() }?.joinToString(separator = ".", prefix = ".") ?: ""),
+                (it.subjectPath.takeIf { it.isNotEmpty() }?.joinToString(separator = ".") ?: "Self"),
                 when (it) {
                     is SirTypeConstraint.Conformance -> ":"
                     is SirTypeConstraint.Equality -> "=="
                 },
-                it.constraint.swiftRender
+                it.constraint.swiftRenderAsConstraint
             ).joinToString(separator = " ")
         }?.let { print(" $it") }
     }
@@ -483,13 +485,18 @@ private val SirVisibility.swift
         SirVisibility.PACKAGE -> "package"
     }
 
-
 private val SirType.swiftRender: String
     get() = when (this) {
         is SirOptionalType -> wrappedType.swiftRender.let { if (it.any { it.isWhitespace() }) "($it)" else it } + "?"
         is SirArrayType -> "[${elementType.swiftRender}]"
         is SirDictionaryType -> "[${keyType.swiftRender}: ${valueType.swiftRender}]"
         else -> swiftName
+    }
+
+private val SirType.swiftRenderAsConstraint: String
+    get() = when (this) {
+        is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.swiftFqName } ?: "Any"
+        else -> this.swiftRender
     }
 
 private val SirClassMemberDeclaration.callableKind: SirCallableKind

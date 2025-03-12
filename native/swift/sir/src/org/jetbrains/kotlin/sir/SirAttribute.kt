@@ -48,4 +48,9 @@ public sealed interface SirAttribute {
         override val identifier: String get() = "escaping"
         override val arguments: List<SirArgument>? get() = null
     }
+
+    class ObjC(val name: String?) : SirAttribute {
+        override val identifier: String get() = "objc"
+        override val arguments: List<SirArgument> get() = listOfNotNull(name?.let { SirArgument(name) })
+    }
 }

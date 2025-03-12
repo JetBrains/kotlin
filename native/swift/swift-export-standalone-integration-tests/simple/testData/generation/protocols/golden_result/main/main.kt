@@ -3,6 +3,8 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.INHERITANCE_COUPLE::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE18INHERITANCE_COUPLEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.INHERITANCE_SINGLE_PROTO::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE24INHERITANCE_SINGLE_PROTOC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE33OBJECT_WITH_INTERFACE_INHERITANCEC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.ContainerProtocol::class, "_ContainerProtocol")
+@file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.SiblingProtocol::class, "_SiblingProtocol")
 @file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Child1::class, "22ExportedKotlinPackages22repeating_conformancesO4mainE6Child1C")
 @file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Child2::class, "22ExportedKotlinPackages22repeating_conformancesO4mainE6Child2C")
 @file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Child3::class, "22ExportedKotlinPackages22repeating_conformancesO4mainE6Child3C")
@@ -18,6 +20,8 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Parent3::class, "22ExportedKotlinPackages22repeating_conformancesO4mainE7Parent3C")
 @file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Parent4::class, "22ExportedKotlinPackages22repeating_conformancesO4mainE7Parent4C")
 @file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Parent5::class, "22ExportedKotlinPackages22repeating_conformancesO4mainE7Parent5C")
+@file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Barable::class, "_Barable")
+@file:kotlin.native.internal.objc.BindClassToObjCName(repeating_conformances.Foeble::class, "_Foeble")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyObject::class, "4main8MyObjectC")
@@ -30,7 +34,9 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(SealedFoeble.SomeFoeble::class, "4main24_SealedFoeble_SomeFoebleC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SiblingProtocol.NestedClass::class, "4main28_SiblingProtocol_NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SiblingProtocol.NestedClass.NestedClass::class, "4main28_SiblingProtocol_NestedClassC11NestedClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ContainerProtocol.NestedProtocol::class, "__ContainerProtocol_NestedProtocol")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ContainerProtocol.NestedProtocol.NestedClass::class, "4main46__ContainerProtocol_NestedProtocol_NestedClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.ContainerProtocol.NestedProtocol::class, "__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass::class, "4main90__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClassC")
 
 import kotlin.native.internal.ExportedBridge

@@ -10,4 +10,20 @@ public struct KotlinError: Error {
 
 public protocol _KotlinBridged: KotlinBase {}
 
+public class _KotlinExistential<Wrapped>: KotlinBase & _KotlinBridged {
 
+}
+
+
+@_cdecl("kotlin_wrap_into_existential")
+func _kotlinGetExistentialType(markerType: AnyObject.Type) -> KotlinBase.Type {
+    func wrap<T>(_ cls: T.Type) -> KotlinBase.Type {
+        _KotlinExistential<T>.self
+    }
+
+    func openAndWrap(_ markerType: AnyObject.Type) -> KotlinBase.Type {
+        return _openExistential(markerType, do: wrap)
+    }
+
+    return openAndWrap(markerType)
+}

@@ -55,6 +55,7 @@ using convertReferenceToRetainedObjC = id (*)(ObjHeader* obj);
 struct TypeInfoObjCExportAddition {
   /*convertReferenceToRetainedObjC*/ void* convertToRetained;
   Class objCClass;
+  Class swiftClass;
   const ObjCTypeAdapter* typeAdapter;
 };
 

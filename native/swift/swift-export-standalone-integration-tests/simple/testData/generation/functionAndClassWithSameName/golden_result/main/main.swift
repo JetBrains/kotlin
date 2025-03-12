@@ -7,6 +7,9 @@ import flattened
 
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
 }
+@objc(_InterfaceWithFactory)
+protocol _InterfaceWithFactory {
+}
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var value: Swift.Int32 {
         get {
@@ -116,6 +119,8 @@ public func utcOffset(
     return main.UtcOffset.__create(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
 public extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
 public extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {

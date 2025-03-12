@@ -988,7 +988,7 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     documentation = """
                         ///
-                        /// this is a documented extension 
+                        /// this is a documented extension
                         /// (is it even possible? Printer don't actually care)
                         ///
                     """.trimIndent()

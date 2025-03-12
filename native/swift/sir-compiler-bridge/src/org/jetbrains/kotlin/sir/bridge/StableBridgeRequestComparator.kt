@@ -21,7 +21,7 @@ public object StableBridgeRequestComparator : Comparator<BridgeRequest> {
         is TypeBindingBridgeRequest -> {
             when (rhs) {
                 is FunctionBridgeRequest -> -1
-                is TypeBindingBridgeRequest -> lhs.sirClass.swiftFqName.compareTo(rhs.sirClass.swiftFqName)
+                is TypeBindingBridgeRequest -> lhs.sirTypeDeclaration.swiftFqName.compareTo(rhs.sirTypeDeclaration.swiftFqName)
             }
         }
     }

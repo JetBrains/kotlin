@@ -14,6 +14,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(OPEN_CLASS::class, "4main10OPEN_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED::class, "4main6SEALEDC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OUTSIDE_PROTO::class, "_OUTSIDE_PROTO")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

@@ -135,6 +135,7 @@ private fun CodeGenerator.setWritableTypeInfo(
 private fun CodeGenerator.buildWritableTypeInfoValue(
         convertToRetained: ConstPointer?,
         objCClass: ConstPointer?,
+        swiftClass: ConstPointer? = null,
         typeAdapter: ConstPointer?
 ): Struct {
     if (convertToRetained != null) {
@@ -149,6 +150,7 @@ private fun CodeGenerator.buildWritableTypeInfoValue(
             runtime.typeInfoObjCExportAddition,
             convertToRetained?.bitcast(llvm.int8PtrType),
             objCClass,
+            swiftClass,
             typeAdapter
     )
 
