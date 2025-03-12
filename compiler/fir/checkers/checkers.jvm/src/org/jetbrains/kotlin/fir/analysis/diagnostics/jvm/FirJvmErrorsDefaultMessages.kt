@@ -201,7 +201,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes.")
         map.put(
             SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS,
-            "Attempt to synchronize on an instance of a value-based class ''{0}''.",
+            "Synchronizing on a Java value-based class ''{0}'' will produce exceptions in the future.",
             RENDER_TYPE,
         )
         map.put(SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, "Synchronizing on ''{0}'' is forbidden.", RENDER_TYPE)
