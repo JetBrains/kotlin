@@ -27,7 +27,7 @@ import javax.inject.Inject
 abstract class AbstractKotlinNativeCompilation internal constructor(
     compilation: KotlinCompilationImpl,
     val konanTarget: KonanTarget,
-) : DeprecatedAbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
+) : DeprecatedAbstractKotlinCompilation<KotlinAnyOptionsDeprecated>(compilation) {
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -106,6 +106,6 @@ open class KotlinSharedNativeCompilation @Inject internal constructor(
     compilation,
     konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(compilation.project.kotlinPropertiesProvider) } ?: konanTargets.first()
 ),
-    KotlinMetadataCompilation<KotlinCommonOptions> {
+    KotlinMetadataCompilation<Any> {
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget
 }

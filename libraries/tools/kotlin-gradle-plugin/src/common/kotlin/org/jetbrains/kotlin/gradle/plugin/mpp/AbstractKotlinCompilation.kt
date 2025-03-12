@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
 @Suppress("DEPRECATION")
 @Deprecated("Use KotlinCompilation<T> instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-abstract class AbstractKotlinCompilation<T : KotlinCommonOptions> internal constructor(compilation: KotlinCompilationImpl) :
+abstract class AbstractKotlinCompilation<T : KotlinAnyOptionsDeprecated> internal constructor(compilation: KotlinCompilationImpl) :
     DecoratedKotlinCompilation<T>(compilation)
 
 @Suppress("DEPRECATION_ERROR")

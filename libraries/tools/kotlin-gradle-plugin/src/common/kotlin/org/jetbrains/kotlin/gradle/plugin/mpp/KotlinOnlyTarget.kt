@@ -10,7 +10,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
-abstract class KotlinOnlyTarget<T : KotlinCompilation<*>>(
+abstract class KotlinOnlyTarget<T : KotlinCompilation<Any>>(
     project: Project,
     override val platformType: KotlinPlatformType
 ) : AbstractKotlinTarget(project) {

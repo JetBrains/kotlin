@@ -20,7 +20,8 @@ import javax.inject.Inject
  * This compilation is used by 'kotlin-jvm' plugin.
  */
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
-open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject internal constructor(
+open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinAnyOptionsDeprecated, CO : KotlinCommonCompilerOptions>
+@Inject internal constructor(
     compilation: KotlinCompilationImpl,
     val javaSourceSet: SourceSet,
 ) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(compilation),

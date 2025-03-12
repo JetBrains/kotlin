@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
 @Suppress("DEPRECATION")
 @ExternalKotlinTargetApi
 abstract class DecoratedExternalKotlinCompilation(delegate: Delegate) :
-    DecoratedKotlinCompilation<KotlinCommonOptions>(delegate.compilation) {
+    DecoratedKotlinCompilation<KotlinAnyOptionsDeprecated>(delegate.compilation) {
     open class Delegate internal constructor(internal open val compilation: KotlinCompilationImpl)
 }
 

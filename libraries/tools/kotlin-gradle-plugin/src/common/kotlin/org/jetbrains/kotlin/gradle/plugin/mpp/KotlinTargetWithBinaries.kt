@@ -16,7 +16,7 @@ interface HasBinaries<out T : DomainObjectSet<*>> {
     val binaries: T
 }
 
-abstract class KotlinTargetWithBinaries<T : KotlinCompilation<*>, out R : DomainObjectSet<*>> @Inject constructor(
+abstract class KotlinTargetWithBinaries<T : KotlinCompilation<Any>, out R : DomainObjectSet<*>> @Inject constructor(
     project: Project,
     platformType: KotlinPlatformType
 ) : KotlinOnlyTarget<T>(project, platformType), HasBinaries<R> {

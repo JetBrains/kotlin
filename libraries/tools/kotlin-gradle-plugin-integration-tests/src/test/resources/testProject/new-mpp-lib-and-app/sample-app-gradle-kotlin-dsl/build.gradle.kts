@@ -1,5 +1,6 @@
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
@@ -24,7 +25,9 @@ kotlin {
     }
     jvm("jvm8") {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
-        compilations["main"].kotlinOptions.jvmTarget = "1.8"
+        compilations["main"].compileTaskProvider.configure {
+            compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 
 

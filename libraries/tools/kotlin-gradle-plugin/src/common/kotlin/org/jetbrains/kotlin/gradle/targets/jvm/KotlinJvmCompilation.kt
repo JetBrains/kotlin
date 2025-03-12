@@ -27,8 +27,8 @@ import javax.inject.Inject
 open class KotlinJvmCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
     internal val defaultJavaSourceSet: SourceSet,
-) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
-    DeprecatedKotlinCompilationWithResources<KotlinJvmOptions> {
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinAnyOptionsDeprecated>(compilation),
+    DeprecatedKotlinCompilationWithResources<KotlinAnyOptionsDeprecated> {
 
     final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 

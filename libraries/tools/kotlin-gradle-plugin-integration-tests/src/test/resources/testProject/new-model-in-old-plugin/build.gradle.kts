@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     kotlin("jvm")
     `maven-publish`
@@ -11,32 +13,32 @@ repositories {
     mavenCentral()
 }
 
-kotlin.jvmToolchain(8)
-kotlin.target.compilations {
-    all {
-        kotlinOptions {
-            allWarningsAsErrors = true
-            jvmTarget = "1.8"
-        }
+kotlin {
+    jvmToolchain(8)
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        jvmTarget.set(JvmTarget.JVM_1_8)
     }
 
-    val main by getting {
-        defaultSourceSet.dependencies {
-            api(kotlin("gradle-plugin-api"))
-            implementation(kotlin("stdlib-jdk8"))
+    target.compilations {
+        val main by getting {
+            defaultSourceSet.dependencies {
+                api(kotlin("gradle-plugin-api"))
+                implementation(kotlin("stdlib-jdk8"))
+            }
         }
-    }
 
-    val test by getting {
-        defaultSourceSet.dependencies {
-            implementation(kotlin("test-junit"))
+        val test by getting {
+            defaultSourceSet.dependencies {
+                implementation(kotlin("test-junit"))
+            }
         }
-    }
 
-    val benchmark by creating {
-        associateWith(main)
-        defaultSourceSet.dependencies {
-            implementation(kotlin("reflect"))
+        val benchmark by creating {
+            associateWith(main)
+            defaultSourceSet.dependencies {
+                implementation(kotlin("reflect"))
+            }
         }
     }
 }

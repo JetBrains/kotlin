@@ -15,19 +15,20 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 @DeprecatedTargetPresetApi
 class KotlinMetadataTargetPreset(
     project: Project
-) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<*>>(project) {
+) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<Any>>(project) {
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
         forTarget: KotlinMetadataTarget
-    ): KotlinCompilationFactory<KotlinCompilation<*>> =
-        object : KotlinCompilationFactory<KotlinCompilation<*>> {
+    ): KotlinCompilationFactory<KotlinCompilation<Any>> =
+        object : KotlinCompilationFactory<KotlinCompilation<Any>> {
             override val target: KotlinTarget = forTarget
 
-            override val itemClass: Class<KotlinCompilation<*>>
-                get() = KotlinCompilation::class.java
+            @Suppress("UNCHECKED_CAST")
+            override val itemClass: Class<KotlinCompilation<Any>>
+                get() = KotlinCompilation::class.java as Class<KotlinCompilation<Any>>
 
-            override fun create(name: String): InternalKotlinCompilation<*> = when (name) {
+            override fun create(name: String): InternalKotlinCompilation<Any> = when (name) {
                 KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinCommonCompilationFactory(
                     forTarget, getOrCreateDefaultSourceSet(name)
                 ).create(name)
