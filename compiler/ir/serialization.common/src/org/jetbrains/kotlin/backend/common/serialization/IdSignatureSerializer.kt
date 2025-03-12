@@ -28,7 +28,7 @@ class IdSignatureSerializer(
         proto.addAllPackageFqName(serializeFqName(signature.packageFqName))
         proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqName))
 
-        signature.id?.let { proto.memberUniqId = it }
+        signature.id?.let { proto.hash = it }
         if (signature.mask != 0L) {
             proto.flags = signature.mask
         }

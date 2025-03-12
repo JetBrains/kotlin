@@ -38,13 +38,13 @@ class IdSignatureDeserializer(
     private fun deserializePublicIdSignature(proto: ProtoCommonIdSignature): IdSignature.CommonSignature {
         val pkg = irInterner.string(libraryFile.deserializeFqName(proto.packageFqNameList))
         val cls = irInterner.string(libraryFile.deserializeFqName(proto.declarationFqNameList))
-        val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
+        val id = if (proto.hasHash()) proto.hash else null
         val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(irInterner::string) else null
 
         return IdSignature.CommonSignature(
             packageFqName = pkg,
             declarationFqName = cls,
-            id = memberId,
+            id = id,
             mask = proto.flags,
             description = description,
         )

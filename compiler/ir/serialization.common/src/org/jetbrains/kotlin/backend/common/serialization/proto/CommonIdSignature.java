@@ -97,7 +97,7 @@ public final class CommonIdSignature extends
           }
           case 24: {
             bitField0_ |= 0x00000001;
-            memberUniqId_ = input.readInt64();
+            hash_ = input.readInt64();
             break;
           }
           case 32: {
@@ -196,19 +196,19 @@ public final class CommonIdSignature extends
   }
   private int declarationFqNameMemoizedSerializedSize = -1;
 
-  public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 3;
-  private long memberUniqId_;
+  public static final int HASH_FIELD_NUMBER = 3;
+  private long hash_;
   /**
-   * <code>optional int64 member_uniq_id = 3;</code>
+   * <code>optional int64 hash = 3;</code>
    */
-  public boolean hasMemberUniqId() {
+  public boolean hasHash() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>optional int64 member_uniq_id = 3;</code>
+   * <code>optional int64 hash = 3;</code>
    */
-  public long getMemberUniqId() {
-    return memberUniqId_;
+  public long getHash() {
+    return hash_;
   }
 
   public static final int FLAGS_FIELD_NUMBER = 4;
@@ -244,7 +244,7 @@ public final class CommonIdSignature extends
   private void initFields() {
     packageFqName_ = java.util.Collections.emptyList();
     declarationFqName_ = java.util.Collections.emptyList();
-    memberUniqId_ = 0L;
+    hash_ = 0L;
     flags_ = 0L;
     debugInfo_ = 0;
   }
@@ -276,7 +276,7 @@ public final class CommonIdSignature extends
       output.writeInt32NoTag(declarationFqName_.get(i));
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt64(3, memberUniqId_);
+      output.writeInt64(3, hash_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt64(4, flags_);
@@ -323,7 +323,7 @@ public final class CommonIdSignature extends
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(3, memberUniqId_);
+        .computeInt64Size(3, hash_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -431,7 +431,7 @@ public final class CommonIdSignature extends
       bitField0_ = (bitField0_ & ~0x00000001);
       declarationFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
-      memberUniqId_ = 0L;
+      hash_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
       flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -473,7 +473,7 @@ public final class CommonIdSignature extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.memberUniqId_ = memberUniqId_;
+      result.hash_ = hash_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000002;
       }
@@ -508,8 +508,8 @@ public final class CommonIdSignature extends
         }
         
       }
-      if (other.hasMemberUniqId()) {
-        setMemberUniqId(other.getMemberUniqId());
+      if (other.hasHash()) {
+        setHash(other.getHash());
       }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
@@ -677,34 +677,34 @@ public final class CommonIdSignature extends
       return this;
     }
 
-    private long memberUniqId_ ;
+    private long hash_ ;
     /**
-     * <code>optional int64 member_uniq_id = 3;</code>
+     * <code>optional int64 hash = 3;</code>
      */
-    public boolean hasMemberUniqId() {
+    public boolean hasHash() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int64 member_uniq_id = 3;</code>
+     * <code>optional int64 hash = 3;</code>
      */
-    public long getMemberUniqId() {
-      return memberUniqId_;
+    public long getHash() {
+      return hash_;
     }
     /**
-     * <code>optional int64 member_uniq_id = 3;</code>
+     * <code>optional int64 hash = 3;</code>
      */
-    public Builder setMemberUniqId(long value) {
+    public Builder setHash(long value) {
       bitField0_ |= 0x00000004;
-      memberUniqId_ = value;
+      hash_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 member_uniq_id = 3;</code>
+     * <code>optional int64 hash = 3;</code>
      */
-    public Builder clearMemberUniqId() {
+    public Builder clearHash() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      memberUniqId_ = 0L;
+      hash_ = 0L;
       
       return this;
     }
