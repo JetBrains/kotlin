@@ -1,0 +1,51 @@
+FILE: selectDuringTyping.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface ExplodeSchema : R|kotlin/Any| {
+        public abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
+            public get(): R|kotlin/collections/List<kotlin/Int>|
+
+    }
+    public final fun explode(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|kotlin/Unit| {
+        R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_94>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class ExplodeSchema_94I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
+                    public get(): R|kotlin/collections/List<kotlin/Int>|
+
+                public constructor(): R|<local>/ExplodeSchema_94I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ExplodeSchema_94I>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
+                    public get(): R|kotlin/collections/List<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/ExplodeSchema_94I>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class ExplodeSchema_94 : R|<local>/ExplodeSchema_94I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                public constructor(): R|<local>/ExplodeSchema_94|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|org/jetbrains/kotlinx/dataframe/ExplodeSchema|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
+                ^ <Unresolved name: timestamp>#
+            }
+            )
+        }
+        )
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
+        public get(): R|kotlin/collections/List<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|

@@ -1,0 +1,11 @@
+FILE: targetOfCastIsNotDataSchema.kt
+    public abstract interface MySchema : R|kotlin/Any| {
+        public abstract val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval df: R|{org/jetbrains/kotlinx/dataframe/AnyFrame=} org/jetbrains/kotlinx/dataframe/DataFrame<*>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion.Empty|
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|MySchema|>()
+        ^box String(OK)
+    }

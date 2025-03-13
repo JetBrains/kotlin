@@ -1,0 +1,113 @@
+FILE: test.kt
+    public final class S : R|kotlin/Any| {
+        public constructor(javaRecord: R|JavaRecord|): R|S| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val javaRecord: R|JavaRecord| = R|<local>/javaRecord|
+            public get(): R|JavaRecord|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(R|/JavaRecord.JavaRecord|())).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class S_43I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+
+                public constructor(): R|<local>/S_43I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class JavaRecord_771 : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val i: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/JavaRecord_771|
+
+            }
+
+            local final class Scope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.i: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/JavaRecord_771>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/Scope1|
+
+            }
+
+            local abstract class Bean_771 : R|kotlin/Any| {
+                public constructor(): R|<local>/Bean_771|
+
+            }
+
+            local final class Scope3 : R|kotlin/Any| {
+                public constructor(): R|<local>/Scope3|
+
+            }
+
+            local abstract class Aaa_771 : R|kotlin/Any| {
+                public constructor(): R|<local>/Aaa_771|
+
+            }
+
+            local final class Scope2 : R|kotlin/Any| {
+                public constructor(): R|<local>/Scope2|
+
+            }
+
+            local abstract class S_43 : R|<local>/S_43I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope3: R|<local>/Scope3|
+                    public get(): R|<local>/Scope3|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope2: R|<local>/Scope2|
+                    public get(): R|<local>/Scope2|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
+                    public get(): R|<local>/Scope1|
+
+                public constructor(): R|<local>/S_43|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/toDataFrame|<R|S|>(Int(2))
+        }
+        )
+        (this@R|/box|, (this@R|/box|, R|<local>/res|).R|<local>/Scope0.javaRecord|).R|<local>/Scope1.i|
+        (this@R|/box|, (this@R|/box|, R|<local>/res|).R|<local>/Scope0.javaRecord|).R|<local>/Scope1.aaa|
+        (this@R|/box|, (this@R|/box|, R|<local>/res|).R|<local>/Scope0.javaRecord|).R|<local>/Scope1.bean|
+        ^box String(OK)
+    }
