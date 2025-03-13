@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.kotlin.dsl.support.unzipTo
-import org.jetbrains.kotlin.gradle.testing.assertEqualsPP
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.IncompatibleUklibVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.Rule
@@ -103,15 +104,14 @@ class UklibDeserializationTests {
             val contents: String,
         )
 
-        assertEqualsPP(
+        assertEquals<PrettyPrint<List<TestFragment>>>(
             uklib.module.fragments.map {
                 TestFragment(
                     it.identifier,
                     it.attributes,
                     it.file().resolve("file").readText(),
                 )
-            },
-            mutableListOf(
+            }.prettyPrinted, mutableListOf<TestFragment>(
                 TestFragment(
                     attributes = mutableSetOf(
                         "ios_arm64",
@@ -135,6 +135,7 @@ class UklibDeserializationTests {
                     identifier = "jvmMain",
                 ),
             )
+                .prettyPrinted
         )
     }
 
