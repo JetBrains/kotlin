@@ -323,7 +323,7 @@ internal fun getKotlinRepositoryBlock(
     |        maven {
     |            url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
     |        }
-    |        ${additionalDependencyRepositories.map { repo -> "maven{ url = uri(\"$repo\") }" }.joinToString("\n")}
+    |        ${additionalDependencyRepositories.joinToString("\n") { repo -> "maven{ url = uri(\"$repo\") }" }}
     |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = uri(\"${repo.replace("\\", "\\\\")}\") }" } ?: ""}
     |    }
     """.trimMargin()
