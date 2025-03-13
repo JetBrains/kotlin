@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import java.io.File
 import java.lang.ref.SoftReference
 import java.nio.ByteBuffer
 
