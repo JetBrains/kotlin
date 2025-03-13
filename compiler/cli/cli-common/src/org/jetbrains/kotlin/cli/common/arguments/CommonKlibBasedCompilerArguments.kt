@@ -114,7 +114,8 @@ fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: Messag
         return null
     }
     val version = versionParts.mapNotNull { it.toIntOrNull() }
-    if (version.size != 3 || version.any { it !in 0..255 }) {
+    val validNumberRegex = Regex("(0|[1-9]\\d{0,2})")
+    if (versionParts.any { !it.matches(validNumberRegex) } || version.any { it !in 0..255 }) {
         collector.report(
             CompilerMessageSeverity.ERROR,
             "Invalid ABI version numbers. Each part must be in the range 0..255."
