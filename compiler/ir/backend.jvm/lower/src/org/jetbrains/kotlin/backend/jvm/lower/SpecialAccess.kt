@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 /**
  * This lowering replaces member accesses that are illegal according to JVM accessibility rules with corresponding calls to the
@@ -299,7 +300,7 @@ internal class SpecialAccessLowering(
         val classPartStubOrThis = declaringClass.classPartForMultifileFacadeOrThis
         val signatureToLookup = if (classPartStubOrThis != declaringClass && DescriptorVisibilities.isPrivate(symbol.owner.visibility)) {
             JvmMethodSignature(
-                org.jetbrains.org.objectweb.asm.commons.Method(
+                Method(
                     "${signature.asmMethod.name}$${classPartStubOrThis.classOrFail.owner.name}",
                     signature.asmMethod.descriptor
                 ),
