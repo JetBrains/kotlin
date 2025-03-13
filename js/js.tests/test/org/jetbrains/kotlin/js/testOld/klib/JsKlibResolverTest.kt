@@ -67,6 +67,50 @@ open class JsKlibResolverTest {
     }
 
     @Test
+    fun testABIVersionCLIFlag() {
+        val testDataDir = File("compiler/testData/klib/resolve/mismatched-abi-version")
+        val klibDir = createKlibDir("lib1", 1)
+
+        val correctVersions = arrayOf(
+            "0.0.0", "255.255.255",
+            "0.10.200", "10.200.0", "200.0.10",
+            "2.2.0", "2.3.0"
+        )
+        for (version in correctVersions) {
+            compileKlib(
+                sourceFile = testDataDir.resolve("lib1.kt"),
+                outputFile = klibDir,
+                extraArgs = arrayOf(K2JSCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+            ).assertSuccess()
+
+            val manifest = File("${klibDir.absolutePath}/default/manifest")
+            val versionBumped = manifest.readLines()
+                .find { it.startsWith("abi_version") }
+                ?.split("=")
+                ?.get(1)
+            assertEquals(versionBumped, version)
+        }
+
+        val incorrectVersions = arrayOf(
+            "0", "0.1", "0.1.", "0.1.2.", "..", "0 .1. 2",
+            "00.001.0002", "-0.-0.-0", "256.256.256"
+        )
+        for (version in incorrectVersions) {
+            val result = compileKlib(
+                sourceFile = testDataDir.resolve("lib1.kt"),
+                outputFile = klibDir,
+                extraArgs = arrayOf(K2JSCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+            )
+            result.assertFailure()
+
+            val compilerOutputLines = result.output.lines()
+            assertTrue(compilerOutputLines.any {
+                it.contains("error: invalid ABI version")
+            })
+        }
+    }
+
+    @Test
     fun testResolvingTransitiveDependenciesRecordedInManifest() {
         val moduleA = Module("a")
         val moduleB = Module("b", "a")
