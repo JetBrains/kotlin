@@ -27,7 +27,7 @@ internal interface ClassMultiHashProvider {
      * fetch transitive dependencies, deduplicate the whole dependency tree, and only then
      * to apply the multihash (if it's symmetric, which is usually a good trait)
      */
-    fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>): Long
+    fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>, initialPrefix: String): Long
 }
 
 internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
@@ -39,27 +39,22 @@ internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
         return InstanceOwnerRecordingClassVisitor(classNode, methodToUsedClassesMap = methodToUsedFqNames)
     }
 
-    override fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
+    override fun calculateInlineMethodHash(
+        methodSignature: JvmMemberSignature.Method,
+        inlinedClassPrefix: String,
+        ownMethodHash: Long
+    ): Long {
         val usedInstances = methodToUsedFqNames[methodSignature] ?: mutableSetOf()
-        return ownMethodHash xor classMultiHashProvider.searchAndGetFullAbiHashOfUsedClasses(usedInstances)
+        return ownMethodHash xor classMultiHashProvider.searchAndGetFullAbiHashOfUsedClasses(usedInstances, inlinedClassPrefix)
     }
 }
 
-internal class SearchAndCalculateOutcome(
-    val calculatedHash: Long,
-    val loadedClasses: List<Pair<ClassDescriptorForProcessing, ClassFileWithContents>>,
-)
-
-/**
- * Manages inlined class interdependencies.
- *
- * Most of the time we should be dealing with very small class sets and very small dependency graphs.
- */
-internal class InlinedClassSnapshotter(
+private class InstanceBasedSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
     private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
 ) {
+
     private val knownClassUsages = HashMap<JvmClassName, Set<JvmClassName>>()
 
     private fun expandClassSetWithTransitiveDependenciesOnce(fullSet: MutableSet<JvmClassName>): Boolean {
@@ -81,47 +76,130 @@ internal class InlinedClassSnapshotter(
         return classData.contents.hashToLong()
     }
 
-    fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>): SearchAndCalculateOutcome {
+    fun findInlinedClassesRecursively(rootClasses: Set<JvmClassName>): Set<JvmClassName> {
+        val classesWithTransitiveDependencies = rootClasses.toMutableSet()
+
+        fun getIncompleteClasses() =
+            classesWithTransitiveDependencies.zip(classesWithTransitiveDependencies.map { jvmClassName ->
+                jvmClassName.toDescriptor()
+            }).filter { (_, descriptor) ->
+                descriptor != null && descriptor.inlinedSnapshot == null
+            }
+
+        var incompleteClasses = getIncompleteClasses()
+        while (incompleteClasses.isNotEmpty()) {
+            for ((jvmClassName, descriptor) in incompleteClasses) {
+                val classFileWithContentsProvider =
+                    classNameToClassFileMap[jvmClassName]!! // not null by virtue of `descriptor != null` above
+                val classFileWithContents = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                    // Assuming that it's OK because these classes are tiny
+                    classFileWithContentsProvider.loadContents()
+                }
+                descriptor!!.inlinedSnapshot = extractInlinedSnapshotAndDependenciesFromClassData(classFileWithContents)
+            }
+            // we've processed the class files for which we didn't have the inlined snapshot yet,
+            // so we might have found new dependencies for them. check:
+            if (!expandClassSetWithTransitiveDependenciesOnce(classesWithTransitiveDependencies)) {
+                break
+            }
+            incompleteClasses = getIncompleteClasses()
+        }
+
+        while (expandClassSetWithTransitiveDependenciesOnce(classesWithTransitiveDependencies)) {
+            // it's possible that the set can still be expanded, if current root classes were all processed previously
+        }
+        return classesWithTransitiveDependencies
+    }
+
+    private fun JvmClassName.toDescriptor(): ClassDescriptorForProcessing? {
+        return classNameToClassFileMap[this]?.let { classFileToDescriptorMap[it] }
+    }
+}
+
+private class PrefixBasedSnapshotter(
+    classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
+) {
+    private val sortedInternalNames = classNameToClassFileMap.keys.sortedBy { it.internalName }
+
+    fun getSetOfClasses(classPrefix: String): Set<JvmClassName> {
+        return getRangeByPredicate(classPrefix).toSet()
+    }
+
+    fun getSetOfClasses(addedClasses: Set<JvmClassName>, processedClasses: Set<JvmClassName>): Set<JvmClassName> {
+        val accumulator = mutableSetOf<JvmClassName>()
+        addedClasses.flatMapTo(accumulator) { addedClass ->
+            getRangeByPredicate(addedClass.internalName)
+        }.retainAll {
+            it !in processedClasses
+        }
+        return accumulator
+    }
+
+    private fun getRangeByPredicate(prefix: String): Iterable<JvmClassName> {
+        return object : Iterable<JvmClassName> {
+            override fun iterator() = object : Iterator<JvmClassName> {
+                var position: Int = sortedInternalNames.binarySearchBy(prefix) { it.internalName }
+
+                init {
+                    if (position >= 0) {
+                        // exact match found - since we use predicate logic for expanding known class sets, we can skip this item
+                        position++
+                    } else {
+                        // insertion point found - means that further items are "bigger" than this
+                        val trueInsertionPoint = -(position + 1)
+                        position = trueInsertionPoint
+                    }
+                }
+
+                override fun hasNext(): Boolean {
+                    return position < sortedInternalNames.size
+                            &&
+                            sortedInternalNames[position].internalName.startsWith(prefix)
+                }
+
+                override fun next(): JvmClassName {
+                    position++
+                    return sortedInternalNames[position - 1]
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Manages inlined class interdependencies.
+ *
+ * Most of the time we should be dealing with very small class sets and very small dependency graphs.
+ */
+internal class InlinedClassSnapshotter(
+    private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
+    private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
+    private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+): ClassMultiHashProvider {
+    private val instanceBasedSnapshotter = InstanceBasedSnapshotter(classNameToClassFileMap, classFileToDescriptorMap, metrics)
+    private val prefixBasedSnapshotter = PrefixBasedSnapshotter(classNameToClassFileMap)
+
+    override fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>, initialPrefix: String): Long {
+
         metrics.measure(GradleBuildTime.SNAPSHOT_INLINED_CLASSES) {
-            val classesWithTransitiveDependencies = rootClasses.toMutableSet()
-            val queueForRegularSnapshot = mutableListOf<Pair<ClassDescriptorForProcessing, ClassFileWithContents>>()
+            var initialClassSet = rootClasses + prefixBasedSnapshotter.getSetOfClasses(initialPrefix)
+            var instanceExpandedClassSet = instanceBasedSnapshotter.findInlinedClassesRecursively(initialClassSet)
 
-            fun getIncompleteClasses() =
-                classesWithTransitiveDependencies.zip(classesWithTransitiveDependencies.map { jvmClassName ->
-                    jvmClassName.toDescriptor()
-                }).filter { (_, descriptor) ->
-                    descriptor != null && descriptor.inlinedSnapshot == null
-                }
-
-            var incompleteClasses = getIncompleteClasses()
-            while (incompleteClasses.isNotEmpty()) {
-                for ((jvmClassName, descriptor) in incompleteClasses) {
-                    val classFileWithContentsProvider =
-                        classNameToClassFileMap[jvmClassName]!! // not null by virtue of `descriptor != null` above
-                    val classFileWithContents = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
-                        classFileWithContentsProvider.loadContents()
-                    }
-                    descriptor!!.inlinedSnapshot = extractInlinedSnapshotAndDependenciesFromClassData(classFileWithContents)
-
-                    if (descriptor.snapshot == null) {
-                        queueForRegularSnapshot.add(descriptor to classFileWithContents)
-                    }
-                }
-                // we've processed the class files for which we didn't have the inlined snapshot yet,
-                // so we might have found new dependencies for them. check:
-                if (!expandClassSetWithTransitiveDependenciesOnce(classesWithTransitiveDependencies)) {
-                    break
-                }
-                incompleteClasses = getIncompleteClasses()
+            while (instanceExpandedClassSet.size > initialClassSet.size) {
+                // the loop goes like this: prefix - instance - prefix - ...
+                // it allows us to handle cases where inline functions are calling other inline functions in an optimized way
+                val setDiff = instanceExpandedClassSet - initialClassSet
+                val newClassesByPrefix = prefixBasedSnapshotter.getSetOfClasses(
+                    addedClasses = setDiff,
+                    processedClasses = instanceExpandedClassSet
+                )
+                initialClassSet = instanceExpandedClassSet
+                instanceExpandedClassSet = instanceExpandedClassSet + instanceBasedSnapshotter.findInlinedClassesRecursively(newClassesByPrefix)
             }
 
-            while (expandClassSetWithTransitiveDependenciesOnce(classesWithTransitiveDependencies)) {
-                // it's possible that the set can still be expanded, if current root classes were all processed previously
-            }
-            val finalHash = classesWithTransitiveDependencies.fold(0L) { currentHash, nextElement ->
+            return instanceExpandedClassSet.fold(0L) { currentHash, nextElement ->
                 currentHash xor (nextElement.toDescriptor()?.inlinedSnapshot ?: 0L)
             }
-            return SearchAndCalculateOutcome(finalHash, queueForRegularSnapshot)
         }
     }
 
