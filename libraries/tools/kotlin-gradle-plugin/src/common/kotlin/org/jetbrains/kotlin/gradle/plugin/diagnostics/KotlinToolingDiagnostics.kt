@@ -1238,13 +1238,16 @@ internal object KotlinToolingDiagnostics {
     }
 
     object ExperimentalFeatureWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
-        operator fun invoke(featureName: String, youtrackUrl: String) = build {
+        operator fun invoke(featureName: String, youtrackUrl: String, extraSolution: String? = null) = build {
             title("Experimental Feature Notice")
                 .description {
                     "$featureName is an experimental feature and subject to change in any future releases."
                 }
-                .solution {
-                    "It may not function as you expect and you may encounter bugs. Use it at your own risk."
+                .solutions {
+                    listOfNotNull(
+                        "It may not function as you expect and you may encounter bugs. Use it at your own risk.",
+                        extraSolution
+                    )
                 }
                 .documentationLink(URI(youtrackUrl)) { url ->
                     "Thank you for your understanding. We would appreciate your feedback on this feature in YouTrack $url."
