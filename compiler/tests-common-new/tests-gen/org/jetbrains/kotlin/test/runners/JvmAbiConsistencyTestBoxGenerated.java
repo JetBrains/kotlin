@@ -33339,12 +33339,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
-      @TestMetadata("anyAnnotationDisablesIndyLambdaGeneration.kt")
-      public void testAnyAnnotationDisablesIndyLambdaGeneration() {
-        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/anyAnnotationDisablesIndyLambdaGeneration.kt");
-      }
-
-      @Test
       @TestMetadata("bigArityExtLambda.kt")
       public void testBigArityExtLambda() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/bigArityExtLambda.kt");
@@ -33477,9 +33471,21 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("runtimeAnnotationDisablesIndyLambdaGeneration.kt")
+      public void testRuntimeAnnotationDisablesIndyLambdaGeneration() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotationDisablesIndyLambdaGeneration.kt");
+      }
+
+      @Test
       @TestMetadata("simpleIndyLambda.kt")
       public void testSimpleIndyLambda() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/simpleIndyLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("sourcesAnnotationAllowsIndyLambdaGeneration.kt")
+      public void testSourcesAnnotationAllowsIndyLambdaGeneration() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/sourcesAnnotationAllowsIndyLambdaGeneration.kt");
       }
 
       @Test

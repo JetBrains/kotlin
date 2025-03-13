@@ -1111,7 +1111,7 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                 )
             ),
             validate = {
-                val indyExpr = Regex("INVOKEDYNAMIC.*?\\[([\\w\\W]*?)]").find(it)
+                val indyExpr = Regex("INVOKEDYNAMIC getContent.*?\\[([\\w\\W]*?)]").find(it)
                 val indyParams = indyExpr?.groupValues?.first()
 
                 assertTrue(
@@ -1119,7 +1119,6 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                     indyParams != null
                 )
                 assertEquals(
-                    indyParams!!.lines().joinToString("\n") { it.trimEnd() },
                     """
                         INVOKEDYNAMIC getContent()Lbase/Base; [
                               // handle kind 0x6 : INVOKESTATIC
@@ -1130,7 +1129,8 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                               main/MainKt.funInterfaceReturnComposable%lambda%0(Lkotlin/jvm/functions/Function2;)Lkotlin/jvm/functions/Function2;,
                               (Lkotlin/jvm/functions/Function2;)Lkotlin/jvm/functions/Function2;
                             ]
-                    """.trimIndent()
+                    """.trimIndent(),
+                    indyParams!!.lines().joinToString("\n") { it.trimEnd() },
                 )
             },
         )

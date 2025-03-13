@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: JVM_IR
 @Target(AnnotationTarget.CLASS)
 annotation class ClsAnn
 
