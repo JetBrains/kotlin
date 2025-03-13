@@ -385,7 +385,10 @@ internal class KaSymbolByFirBuilder(
             firSymbol.unwrapImportedFromObjectOrStatic(::buildFieldSymbol)?.let { return it }
             firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { return buildFieldSymbol(it.symbol) }
 
-            checkRequirementForBuildingSymbol<KaFirJavaFieldSymbol>(firSymbol, firSymbol.fir.isJavaFieldOrSubstitutionOverrideOfJavaField())
+            checkRequirementForBuildingSymbol<KaFirJavaFieldSymbol>(
+                firSymbol,
+                firSymbol.fir.isJavaFieldOrFakeOverrideOfJavaField()
+            )
             return KaFirJavaFieldSymbol(firSymbol, analysisSession)
         }
 
@@ -411,9 +414,12 @@ internal class KaSymbolByFirBuilder(
             return backingFieldSymbol
         }
 
-        private fun FirField.isJavaFieldOrSubstitutionOverrideOfJavaField(): Boolean = when (this) {
+        private fun FirField.isJavaFieldOrFakeOverrideOfJavaField(): Boolean = when (this) {
             is FirJavaField -> true
-            is FirFieldImpl -> (this as FirField).originalForSubstitutionOverride?.isJavaFieldOrSubstitutionOverrideOfJavaField() == true
+            is FirFieldImpl -> {
+                // KT-75894: not just type substitution, but intersection is possible too.
+                (this as FirField).originalIfFakeOverride()?.isJavaFieldOrFakeOverrideOfJavaField() == true
+            }
             else -> throwUnexpectedElementError(this)
         }
     }

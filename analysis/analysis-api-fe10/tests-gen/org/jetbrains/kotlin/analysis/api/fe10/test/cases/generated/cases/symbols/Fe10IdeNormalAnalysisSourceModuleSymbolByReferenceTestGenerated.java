@@ -203,6 +203,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("javaField_intersectionOverride.kt")
+  public void testJavaField_intersectionOverride() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField_intersectionOverride.kt");
+  }
+
+  @Test
   @TestMetadata("javaMethod.kt")
   public void testJavaMethod() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethod.kt");

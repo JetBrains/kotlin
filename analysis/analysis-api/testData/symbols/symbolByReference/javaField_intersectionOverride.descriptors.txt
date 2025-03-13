@@ -1,0 +1,31 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /Config.minValue
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: minValue
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: T!
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+    ]
+    type: Config<T>
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Config
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
