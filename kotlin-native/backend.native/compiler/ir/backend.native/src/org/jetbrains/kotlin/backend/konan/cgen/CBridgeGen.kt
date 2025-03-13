@@ -521,8 +521,9 @@ private fun KotlinStubs.generateCFunction(
     }
 
     signature.parameters.forEach {
-        if (it.kind == IrParameterKind.DispatchReceiver) return@forEach
-        callbackBuilder.addParameter(it, function.parameters[it.indexInParameters])
+        if (it.kind != IrParameterKind.DispatchReceiver) {
+        	callbackBuilder.addParameter(it, function.parameters[it.indexInParameters])
+        }
     }
 
     return callbackBuilder.build(function, signature)
