@@ -1,3 +1,15 @@
+## 2.1.20-RC3
+
+### Compiler
+
+- [`KT-75578`](https://youtrack.jetbrains.com/issue/KT-75578) K2: False negative [SUPER_CALL_WITH_DEFAULT_PARAMETERS] when calling the upper-class implementation of a method with the default value argument
+- [`KT-75965`](https://youtrack.jetbrains.com/issue/KT-75965) The iOS app did not run successfully in Release mode
+
+### Native
+
+- [`KT-75807`](https://youtrack.jetbrains.com/issue/KT-75807) CMP caching fails for iOS with Kotlin 2.1.20-RC2
+
+
 ## 2.1.20-RC2
 
 ### Compiler
