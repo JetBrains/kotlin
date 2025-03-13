@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.params.ParameterizedTest
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

@@ -47,6 +47,9 @@ val applePrivacyManifestPluginClasses = configurations.detachedConfiguration(
 ).also { it.isTransitive = false }
 
 dependencies {
+    testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
+        (this as ModuleDependency).isTransitive = false
+    }
     testImplementation(project(":kotlin-gradle-plugin")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
@@ -362,9 +365,11 @@ fun configureJvmTarget8() {
 
 configureJvmTarget8()
 
-val mergedTestClassesClasspathTask = tasks.register<Copy>("testClassesCopy") {
-    from(kotlin.target.compilations.getByName("test").output.classesDirs)
-    into(layout.buildDirectory.dir("testClassesCopy"))
+val kgpTestingUtilities = configurations.detachedConfiguration(
+    dependencies.create(dependencies.testFixtures(dependencies.project(":kotlin-gradle-plugin")))
+).also {
+    // We don't want to influence target build script's classpath; only take the test fixtures jar
+    it.isTransitive = false
 }
 
 tasks.withType<Test>().configureEach {
@@ -455,10 +460,13 @@ tasks.withType<Test>().configureEach {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    val mergedTestClassesDirectory = files(mergedTestClassesClasspathTask)
-    inputs.files(mergedTestClassesDirectory)
+    // This is a classpath that the injections will see
+    val buildScriptInjectionsClasspath = files(
+        kgpTestingUtilities,
+        kotlin.target.compilations.getByName("test").output.classesDirs,
+    )
     doFirst {
-        systemProperty("buildScriptInjectionsClasspath", mergedTestClassesDirectory.single())
+        systemProperty("buildScriptInjectionsClasspath", buildScriptInjectionsClasspath.joinToString(":"))
     }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase.

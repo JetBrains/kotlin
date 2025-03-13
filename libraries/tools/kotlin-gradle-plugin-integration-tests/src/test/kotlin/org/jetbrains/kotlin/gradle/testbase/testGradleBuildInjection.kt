@@ -176,17 +176,12 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
 }
 
 private const val buildScriptInjectionsMarker = "// MARKER: GradleBuildScriptInjections Enabled"
+private const val buildScriptInjectionsClasspathProperty = "buildScriptInjectionsClasspath"
 
 private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     buildScript: Path,
     buildScriptKts: Path,
 ) {
-    val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
-        ?: error("Missing required system property '${"buildScriptInjectionsClasspath"}'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
-
     if (buildScript.exists()) {
         if (buildScript.readText().contains(buildScriptInjectionsMarker)) return
         buildScript.modify {
@@ -196,7 +191,11 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
                 buildscript {
                     println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
                     dependencies {
-                        classpath(files('$escapedInjectionClasses'))
+                        classpath(
+                            files(
+                                ${escapedBuildScriptClasspathUrlsGroovy()}
+                            )
+                        )
                     }
                 }
                 
@@ -208,19 +207,19 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
 
     if (buildScriptKts.exists()) {
         if (buildScriptKts.readText().contains(buildScriptInjectionsMarker)) return
-
         buildScriptKts.modify {
-            it.insertBlockToBuildScriptAfterImports(
-                """
+            it.insertBlockToBuildScriptAfterImports("""
                 $buildScriptInjectionsMarker
                 buildscript {
                     println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                    val classes = files("$escapedInjectionClasses")
+                    val classes = files(
+                        ${escapedBuildScriptClasspathUrls()}
+                    )
                     dependencies {
                         classpath(classes)
                     }
                 }
-                
+            
                 """.trimIndent()
             )
         }
@@ -715,17 +714,14 @@ private fun scriptIsolatedInjectionLoad(
     targetPropertyClassName: String,
     serializedInjectionPath: File,
 ): String {
-    val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
-        ?: error("Missing test classes output directory in property '${"buildScriptInjectionsClasspath"}'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
     val lambdaName = "invokeInjection${serializedInjectionPath.name.replace("-", "_")}"
 
     return """
         
         val $lambdaName = {
-            val testClasses = arrayOf(File("$escapedInjectionClasses").toURI().toURL())
+            val testClasses = arrayOf(
+                ${escapedBuildScriptClasspathUrls()}
+            )
             val injectionLoaderClass = java.net.URLClassLoader(
                 testClasses, 
                 this.javaClass.classLoader
@@ -750,17 +746,14 @@ private fun scriptIsolatedInjectionLoadGroovy(
     targetPropertyClassName: String,
     serializedInjectionPath: File,
 ): String {
-    val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
-        ?: error("Missing test classes output directory in property '${"buildScriptInjectionsClasspath"}'")
-    val escapedInjectionClasses = injectionClasses
-        .replace("\\", "\\\\")
-        .replace("$", "\\$")
     val lambdaName = "invokeInjection${serializedInjectionPath.name.replace("-", "_")}"
 
     return """
         
         def ${lambdaName} = {
-            URL[] testClasses = [new File('${escapedInjectionClasses}').toURI().toURL()]
+            URL[] testClasses = [
+                ${escapedBuildScriptClasspathUrlsGroovy()}
+            ]
             def injectionLoaderClass = new URLClassLoader(
                 testClasses, 
                 this.getClass().classLoader
@@ -810,3 +803,14 @@ private fun injectionLoadProjectGroovy(
     
     new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path.normalizePath()}'))
 """.trimIndent()
+
+private fun escapedBuildScriptClasspath(): List<String> {
+    val injectionClasses = System.getProperty(buildScriptInjectionsClasspathProperty)
+        ?: error("Missing required system property '${buildScriptInjectionsClasspathProperty}'")
+    return injectionClasses.split(":").map { path ->
+        path.replace("\\", "\\\\").replace("$", "\\$")
+    }
+}
+
+private fun escapedBuildScriptClasspathUrlsGroovy() = escapedBuildScriptClasspath().joinToString("\n") { "new File('${it}').toURI().toURL()," }
+private fun escapedBuildScriptClasspathUrls() = escapedBuildScriptClasspath().joinToString("\n") { "File(\"$it\").toURI().toURL()," }

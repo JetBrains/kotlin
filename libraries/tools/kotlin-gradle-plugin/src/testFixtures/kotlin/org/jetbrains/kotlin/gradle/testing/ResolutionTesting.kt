@@ -24,7 +24,7 @@ fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
         "org.gradle.status",
     ),
 ): Map<ComponentPath, ResolvedComponentWithArtifacts> {
-    val selfProjectPath = incoming.resolutionResult.rootVariant.get().owner.projectPathOrNull
+    val selfProjectPath = incoming.resolutionResult.root.variants.single().owner.projectPathOrNull
     val artifacts = resolveProjectDependencyVariantsFromArtifacts(removeAttributesNamed).filterNot { it.path == selfProjectPath }
     val components = resolveProjectDependencyComponents().filterNot { it.path == selfProjectPath }
     val componentToArtifacts = LinkedHashMap<String, ResolvedComponentWithArtifacts>()
