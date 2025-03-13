@@ -253,10 +253,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
 
                 val resolvedByTaskInput = project.configurations.create("resolvedByTaskInputConsumer") { it.isCanBeConsumed = false }
                 val resolvedAtExecution = project.configurations.create("resolvedAtExecutionInConsumer") { it.isCanBeConsumed = false }
+                val resolvedAtExecutionProvider = project.provider { resolvedAtExecution.resolve() }
                 project.tasks.register("execute") {
                     it.inputs.files(resolvedByTaskInput)
                     it.doLast {
-                        resolvedAtExecution.resolve()
+                        resolvedAtExecutionProvider.get()
                     }
                 }
             }
