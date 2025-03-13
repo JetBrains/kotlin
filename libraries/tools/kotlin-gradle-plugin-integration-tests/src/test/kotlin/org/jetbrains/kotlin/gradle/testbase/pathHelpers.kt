@@ -9,7 +9,6 @@ import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
 import kotlin.streams.asSequence
-import kotlin.streams.toList
 import kotlin.test.fail
 
 /**
@@ -70,7 +69,7 @@ internal fun Path.copyRecursively(dest: Path) {
     Files.walkFileTree(this, setOf(FileVisitOption.FOLLOW_LINKS), Int.MAX_VALUE, object : SimpleFileVisitor<Path>() {
         override fun preVisitDirectory(
             dir: Path,
-            attrs: BasicFileAttributes
+            attrs: BasicFileAttributes,
         ): FileVisitResult {
             dest.resolve(relativize(dir)).createDirectories()
             return FileVisitResult.CONTINUE
@@ -78,7 +77,7 @@ internal fun Path.copyRecursively(dest: Path) {
 
         override fun visitFile(
             file: Path,
-            attrs: BasicFileAttributes
+            attrs: BasicFileAttributes,
         ): FileVisitResult {
             file.copyTo(dest.resolve(relativize(file)))
             return FileVisitResult.CONTINUE
@@ -94,7 +93,7 @@ internal fun Iterable<String>.toPaths(): List<Path> = map { Paths.get(it) }
 fun TestProject.sourceFilesRelativeToProject(
     expectedSourceFiles: List<String>,
     sourcesDir: GradleProject.() -> Path = { javaSourcesDir() },
-    subProjectName: String? = null
+    subProjectName: String? = null,
 ): Iterable<Path> {
     return expectedSourceFiles
         .map {
