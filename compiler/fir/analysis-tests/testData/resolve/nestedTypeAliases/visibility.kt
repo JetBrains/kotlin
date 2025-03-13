@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73476
-// SKIP_FIR_DUMP
 
 class Class
 private class PrivateClass

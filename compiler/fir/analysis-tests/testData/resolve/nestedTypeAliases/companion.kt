@@ -17,11 +17,18 @@ class Class {
     typealias NestedWithCompanionTA = NestedWithCompanion
 
     object Object {
+        typealias NestedObjectTA = Class
         val prop1 = true
         val prop2 = ""
     }
 
     typealias ObjectTA = Object
+
+    companion object {
+        typealias NestedCompanionTA = Class
+        val companionProp  = ""
+
+    }
 
     fun test() {
         val companionObject = NestedWithCompanionTA
@@ -31,6 +38,9 @@ class Class {
         val simpleObject = ObjectTA
         simpleObject.prop1.not()
         simpleObject.prop2.uppercase()
+
+        NestedCompanionTA.companionProp.uppercase()
+        Object.NestedObjectTA.companionProp.uppercase()
 
         val negative = <!NO_COMPANION_OBJECT!>NestedTA<!>}
 }
