@@ -14,14 +14,13 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.project
-import org.jetbrains.kotlin.gradle.testing.assertEqualsPP
-import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
-import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ResolutionTestingTests {
 
@@ -30,8 +29,8 @@ class ResolutionTestingTests {
 
     @Test
     fun `single artifact resolution`() {
-        assertEqualsPP(
-            mutableMapOf(
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
@@ -41,18 +40,18 @@ class ResolutionTestingTests {
                     ),
                     configuration = "jvmApiElements-published",
                 ),
-            ),
+            ).prettyPrinted,
             resolveComponent(
                 singleArtifactVariant,
                 mapOf(attribute to attributeValue),
-            ),
+            ).prettyPrinted
         )
     }
 
     @Test
     fun `multiple artifacts resolution`() {
-        assertEqualsPP(
-            mutableMapOf(
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
@@ -64,11 +63,10 @@ class ResolutionTestingTests {
                     ),
                     configuration = "jvmApiElements-published",
                 ),
-            ),
-            resolveComponent(
+            ).prettyPrinted, resolveComponent(
                 multipleArtifactsWithDifferentExtensionsVariant,
                 mapOf(attribute to attributeValue),
-            ),
+            ).prettyPrinted
         )
     }
 
@@ -88,15 +86,14 @@ class ResolutionTestingTests {
             }
         }
 
-        assertEqualsPP(
-            mutableMapOf(
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 ":producer" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                     ),
                     configuration = "consumable",
                 ),
-            ),
-            with(
+            ).prettyPrinted, with(
                 buildProject(
                     projectBuilder = {
                         this.withName("consumer")
@@ -111,14 +108,15 @@ class ResolutionTestingTests {
                     it.attributes.attribute(attribute, attributeValue)
                 }
             }.resolveProjectDependencyComponentsWithArtifacts()
+                .prettyPrinted
         )
     }
 
     @Test
     fun `resolution with transforms`() {
         val transformAttribute = Attribute.of("transformed", String::class.java)
-        assertEqualsPP(
-            mutableMapOf(
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
@@ -129,8 +127,7 @@ class ResolutionTestingTests {
                     ),
                     configuration = "jvmApiElements-published",
                 ),
-            ),
-            resolveComponent(
+            ).prettyPrinted, resolveComponent(
                 singleArtifactVariant,
                 mapOf(
                     attribute to attributeValue,
@@ -143,7 +140,7 @@ class ResolutionTestingTests {
                     it.to.attribute(transformAttribute, "true")
                 }
             }
-        )
+                .prettyPrinted)
     }
 
     private fun resolveComponent(
