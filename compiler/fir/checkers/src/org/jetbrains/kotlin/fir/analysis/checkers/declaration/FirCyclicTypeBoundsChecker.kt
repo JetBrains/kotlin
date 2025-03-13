@@ -21,10 +21,12 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirMemberDeclaration) return
         if (declaration is FirConstructor || declaration is FirTypeAlias) return
+        val actualTypeParameters = declaration.typeParameters.filterNot { it is FirOuterClassTypeParameterRef }.takeIf { it.isNotEmpty() }
+            ?: return
 
         val processed = mutableSetOf<Name>()
         val cycles = mutableSetOf<Name>()
-        val graph = declaration.typeParameters.associate { param ->
+        val graph = actualTypeParameters.associate { param ->
             param.symbol.name to param.symbol.resolvedBounds.flatMap { extractTypeParamNames(it) }.toSet()
         }
         val graphFunc = { name: Name -> graph.getOrDefault(name, emptySet()) }
@@ -44,10 +46,10 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             }
         }
 
-        declaration.typeParameters.forEach { param -> findCycles(param.symbol.name) }
+        actualTypeParameters.forEach { param -> findCycles(param.symbol.name) }
 
         if (cycles.isNotEmpty()) {
-            declaration.typeParameters
+            actualTypeParameters
                 .filter { cycles.contains(it.symbol.name) }
                 .forEach { param ->
                     //for some reason FE 1.0 report differently for class declarations
