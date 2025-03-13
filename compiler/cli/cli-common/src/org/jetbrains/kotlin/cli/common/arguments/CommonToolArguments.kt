@@ -21,11 +21,6 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
 abstract class CommonToolArguments : Freezable(), Serializable {
-    companion object {
-        @JvmStatic
-        private val serialVersionUID = 0L
-    }
-
     var freeArgs: List<String> = emptyList()
         set(value) {
             checkFrozen()

@@ -33,7 +33,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpPerf = from.dumpPerf
     to.enableBuilderInference = from.enableBuilderInference
     to.expectActualClasses = from.expectActualClasses
-    to.experimental = from.experimental?.copyOf()
     to.explicitApi = from.explicitApi
     to.explicitReturnTypes = from.explicitReturnTypes
     to.fragmentRefines = from.fragmentRefines?.copyOf()
@@ -83,7 +82,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.suppressVersionWarnings = from.suppressVersionWarnings
     to.suppressedDiagnostics = from.suppressedDiagnostics?.copyOf()
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
-    to.useExperimental = from.useExperimental?.copyOf()
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT

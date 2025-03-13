@@ -268,26 +268,6 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
-    @IDEAPluginsCompatibilityAPI(
-        IDEAPlatforms._212, // maybe 211 AS used it too
-        IDEAPlatforms._213,
-        message = "Please migrate to -opt-in",
-        plugins = "Android"
-    )
-    var experimental: Array<String>? = null
-
-    @IDEAPluginsCompatibilityAPI(
-        IDEAPlatforms._212, // maybe 211 AS used it too
-        IDEAPlatforms._213,
-        message = "Please migrate to -opt-in",
-        plugins = "Android"
-    )
-    var useExperimental: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics.")
     var reportPerf = false
         set(value) {
@@ -908,13 +888,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
-            val useExperimentalFqNames = useExperimental?.toList().orEmpty()
-            if (useExperimentalFqNames.isNotEmpty()) {
-                collector.report(
-                    WARNING, "'-Xuse-experimental' is deprecated and will be removed in a future release, please use -opt-in instead"
-                )
-            }
-            put(AnalysisFlags.optIn, useExperimentalFqNames + optIn?.toList().orEmpty())
+            put(AnalysisFlags.optIn, optIn?.toList().orEmpty())
             put(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
