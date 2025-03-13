@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
@@ -147,10 +146,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
-            buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
-            projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
-
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
@@ -177,10 +172,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample1",
             gradleVersion,
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
-            buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
-            projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
-
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":compileKotlinJvm")
@@ -211,10 +202,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
-            buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
-            projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
-
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":compileKotlinJvm")
@@ -475,7 +462,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 """
                 old_kotlin_version=$producerKotlinVersion
                 kotlin.native.version=$producerKotlinVersion
-                """.trimIndent())
+                """.trimIndent()
+            )
         }
 
         project(
