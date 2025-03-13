@@ -30,11 +30,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
+import org.jetbrains.kotlin.resolve.jvm.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
@@ -189,7 +187,7 @@ public class SignaturesPropagationData {
 
         // TODO: Add propagation for other kotlin descriptors (KT-3621)
         Name name = method.getName();
-        Method autoSignature = null;
+        KotlinToJvmSignatureMapper.MethodSignature autoSignature = null;
         boolean autoMethodContainsVararg = SignaturePropagationUtilKt.containsVarargs(autoMethodDescriptor);
         for (KotlinType supertype : containingClass.getTypeConstructor().getSupertypes()) {
             Collection<? extends SimpleFunctionDescriptor> superFunctionCandidates =
@@ -206,8 +204,8 @@ public class SignaturesPropagationData {
                 // Moreover, we fail with exception sometimes
                 // TODO: remove this continue when KT-15747 is fixed
                 if (candidate.isSuspend()) continue;
-                Method candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
-                if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
+                KotlinToJvmSignatureMapper.MethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
+                if (SIGNATURE_MAPPER.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
                     superFunctions.add(candidate);
                 }
             }
