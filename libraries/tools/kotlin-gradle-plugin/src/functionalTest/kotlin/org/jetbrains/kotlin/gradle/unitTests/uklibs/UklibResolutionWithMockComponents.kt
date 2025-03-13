@@ -22,14 +22,12 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
-import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
-import org.jetbrains.kotlin.gradle.testing.assertEqualsPP
-import org.jetbrains.kotlin.gradle.testing.compilationResolution
-import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalWasmDsl::class)
 class UklibResolutionTestsWithMockComponents {
@@ -63,32 +61,30 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
         }
 
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(uklibApiVariant.attributes + uklibTransformationIosArm64Attributes)
-                ),
-            ),
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationIosArm64Attributes)
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(uklibApiVariant.attributes + uklibTransformationJvmAttributes)
-                ),
-            ),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationJvmAttributes)
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(uklibApiVariant.attributes + uklibTransformationMetadataAttributes)
-                ),
-            ),
-            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationMetadataAttributes)
+                    ),
+                ).prettyPrinted,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
 
@@ -121,38 +117,36 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
         }
 
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpIosArm64KlibVariant.name,
-                    artifacts=mutableListOf(
-                        kmpIosArm64KlibVariant.attributes + klibCinteropCommonizerType,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpIosArm64KlibVariant.name,
+                        artifacts = mutableListOf(
+                            kmpIosArm64KlibVariant.attributes + klibCinteropCommonizerType,
+                        )
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpJvmApiVariant.name,
-                    artifacts=mutableListOf(
-                        kmpJvmApiVariant.attributes + notAMetadataJar + jarArtifact,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpJvmApiVariant.name,
+                        artifacts = mutableListOf(
+                            kmpJvmApiVariant.attributes + notAMetadataJar + jarArtifact,
+                        )
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpMetadataJarVariant.name,
-                    artifacts=mutableListOf(
-                        kmpMetadataJarVariant.attributes + maybeAMetadataJar + jarArtifact + libraryElementsJar,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpMetadataJarVariant.name,
+                        artifacts = mutableListOf(
+                            kmpMetadataJarVariant.attributes + maybeAMetadataJar + jarArtifact + libraryElementsJar,
+                        )
+                    ),
+                ).prettyPrinted,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
 
@@ -204,22 +198,21 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
         }
 
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpMetadataJarVariant.name,
-                    artifacts=mutableListOf(
-                        // This artifact is filtered out by a transform
-                    )
-                ),
-                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpIosX64KlibVariant.name,
-                    artifacts=mutableListOf(
-                        kmpIosX64KlibVariant.attributes + klibCinteropCommonizerType,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.iosX64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpMetadataJarVariant.name,
+                        artifacts = mutableListOf(
+                            // This artifact is filtered out by a transform
+                        )
+                    ),
+                    "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpIosX64KlibVariant.name,
+                        artifacts = mutableListOf(
+                            kmpIosX64KlibVariant.attributes + klibCinteropCommonizerType,
+                        )
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosX64().compilationResolution().prettyPrinted
         )
     }
 
@@ -245,14 +238,13 @@ class UklibResolutionTestsWithMockComponents {
             consumer.multiplatformExtension.jvm().compilations.getByName("main").internal.configurations.compileDependencyConfiguration,
             consumer.multiplatformExtension.wasmJs().compilations.getByName("main").internal.configurations.compileDependencyConfiguration,
         ).forEach {
-            assertEqualsPP(
-                mapOf(
-                    "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                        configuration="commonFakeApiElements-published",
-                        artifacts=mutableListOf()
-                    ),
-                ),
-                it.resolveProjectDependencyComponentsWithArtifacts(),
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                            "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                                configuration = "commonFakeApiElements-published",
+                                artifacts = mutableListOf()
+                            ),
+                        ).prettyPrinted, it.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
             )
         }
 
@@ -265,16 +257,15 @@ class UklibResolutionTestsWithMockComponents {
              */
             consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration,
         ).forEach {
-            assertEqualsPP(
-                mapOf(
-                    "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                        configuration="jsApiElements-published",
-                        artifacts=mutableListOf(
-                            kmpJsVariantAttributes + klibArtifact,
-                        )
-                    ),
-                ),
-                it.resolveProjectDependencyComponentsWithArtifacts(),
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                            "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                                configuration = "jsApiElements-published",
+                                artifacts = mutableListOf(
+                                    kmpJsVariantAttributes + klibArtifact,
+                                )
+                            ),
+                        ).prettyPrinted, it.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
             )
         }
     }
@@ -292,74 +283,70 @@ class UklibResolutionTestsWithMockComponents {
             }
         }
 
-        assertEqualsPP(
-            mapOf(
-                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="nativeApiElements",
-                    artifacts=mutableListOf()
-                ),
-            ),
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "nativeApiElements",
+                        artifacts = mutableListOf()
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="jvmApiElements",
-                    artifacts=mutableListOf(
-                        kmpJvmApiVariantAttributes + jarArtifact + notAMetadataJar,
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "jvmApiElements",
+                        artifacts = mutableListOf(
+                            kmpJvmApiVariantAttributes + jarArtifact + notAMetadataJar,
+                        )
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        configuration = "compile",
+                        artifacts = mutableListOf(
+                            jvmApiAttributes + jarArtifact + notAMetadataJar,
+                        )
                     )
-                ),
-                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                    configuration="compile",
-                    artifacts=mutableListOf(
-                        jvmApiAttributes + jarArtifact + notAMetadataJar,
-                    )
-                )
-            ),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
+                ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="wasmJsApiElements",
-                    artifacts=mutableListOf(
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "wasmJsApiElements",
+                        artifacts = mutableListOf(
+                        )
+                    ),
+                    "org.jetbrains.kotlin:kotlin-stdlib-wasm-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "wasmJsApiElements",
+                        artifacts = mutableListOf(
+                            kmpWasmJsVariantAttributes + klibArtifact + packed,
+                        )
                     )
-                ),
-                "org.jetbrains.kotlin:kotlin-stdlib-wasm-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="wasmJsApiElements",
-                    artifacts=mutableListOf(
-                        kmpWasmJsVariantAttributes + klibArtifact + packed,
-                    )
-                )
-            ),
-            consumer.multiplatformExtension.wasmJs().compilationResolution(),
+                ).prettyPrinted, consumer.multiplatformExtension.wasmJs().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="jsApiElements",
-                    artifacts=mutableListOf(
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "jsApiElements",
+                        artifacts = mutableListOf(
+                        )
+                    ),
+                    "org.jetbrains.kotlin:kotlin-stdlib-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "jsApiElements",
+                        artifacts = mutableListOf(
+                            kmpJsVariantAttributes + klibArtifact + packed,
+                        )
                     )
-                ),
-                "org.jetbrains.kotlin:kotlin-stdlib-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="jsApiElements",
-                    artifacts=mutableListOf(
-                        kmpJsVariantAttributes + klibArtifact + packed,
-                    )
-                )
-            ),
-            consumer.multiplatformExtension.js().compilationResolution(),
+                ).prettyPrinted, consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                    configuration="metadataApiElements",
-                    artifacts=mutableListOf(
-                        kmpMetadataVariantAttributes + maybeAMetadataJar + jarArtifact + libraryElementsJar,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                        configuration = "metadataApiElements",
+                        artifacts = mutableListOf(
+                            kmpMetadataVariantAttributes + maybeAMetadataJar + jarArtifact + libraryElementsJar,
+                        )
+                    ),
+                ).prettyPrinted,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
 
@@ -388,16 +375,15 @@ class UklibResolutionTestsWithMockComponents {
             consumer.multiplatformExtension.js().compilationResolution(),
             consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
         ).forEach {
-            assertEqualsPP(
-                mapOf(
-                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                        configuration="compile",
-                        artifacts=mutableListOf(
-                            jvmApiAttributes + jarArtifact + notAMetadataJar,
-                        )
-                    )
-                ),
-                consumer.multiplatformExtension.iosArm64().compilationResolution(),
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                            "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                                configuration = "compile",
+                                artifacts = mutableListOf(
+                                    jvmApiAttributes + jarArtifact + notAMetadataJar,
+                                )
+                            )
+                        ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
             )
         }
     }
@@ -435,16 +421,15 @@ class UklibResolutionTestsWithMockComponents {
             consumer.multiplatformExtension.js().compilationResolution(),
             consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
         ).forEach {
-            assertEqualsPP(
-                mapOf(
-                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                        configuration="jvmApiElements",
-                        artifacts=mutableListOf(
-                            jvmApiAttributes + jarArtifact + notAMetadataJar,
-                        )
-                    )
-                ),
-                consumer.multiplatformExtension.iosArm64().compilationResolution(),
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                            "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                                configuration = "jvmApiElements",
+                                artifacts = mutableListOf(
+                                    jvmApiAttributes + jarArtifact + notAMetadataJar,
+                                )
+                            )
+                        ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
             )
         }
     }
@@ -481,45 +466,45 @@ class UklibResolutionTestsWithMockComponents {
             }
         }
 
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(uklibApiVariant.attributes + uklibTransformationIosArm64Attributes)
-                ),
-            ),
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationIosArm64Attributes)
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(
-                        /**
-                         * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
-                         */
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.iosX64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(
+                            /**
+                             * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
+                             */
+                            /**
+                             * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
+                             */
+                        )
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosX64().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(uklibApiVariant.attributes + uklibTransformationJvmAttributes)
-                ),
-            ),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationJvmAttributes)
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=uklibApiVariant.name,
-                    artifacts=mutableListOf(uklibApiVariant.attributes + uklibTransformationMetadataAttributes)
-                ),
-            ),
-            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = uklibApiVariant.name,
+                        artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationMetadataAttributes)
+                    ),
+                ).prettyPrinted,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
 
@@ -557,38 +542,36 @@ class UklibResolutionTestsWithMockComponents {
             }
         }
 
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpIosArm64KlibVariant.name,
-                    artifacts=mutableListOf(
-                        kmpIosArm64KlibVariant.attributes + klibCinteropCommonizerType,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpIosArm64KlibVariant.name,
+                        artifacts = mutableListOf(
+                            kmpIosArm64KlibVariant.attributes + klibCinteropCommonizerType,
+                        )
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpJvmApiVariant.name,
-                    artifacts=mutableListOf(
-                        kmpJvmApiVariant.attributes + jarArtifact,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpJvmApiVariant.name,
+                        artifacts = mutableListOf(
+                            kmpJvmApiVariant.attributes + jarArtifact,
+                        )
+                    ),
+                ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
         )
-        assertEqualsPP(
-            mapOf(
-                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    configuration=kmpMetadataJarVariant.name,
-                    artifacts=mutableListOf(
-                        kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar,
-                    )
-                ),
-            ),
-            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpMetadataJarVariant.name,
+                        artifacts = mutableListOf(
+                            kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar,
+                        )
+                    ),
+                ).prettyPrinted,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
 
@@ -623,9 +606,9 @@ class UklibResolutionTestsWithMockComponents {
         }
 
         listOf(
-            {consumer.multiplatformExtension.iosArm64().compilationResolution()},
-            {consumer.multiplatformExtension.jvm().compilationResolution()},
-            {consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts()},
+            { consumer.multiplatformExtension.iosArm64().compilationResolution() },
+            { consumer.multiplatformExtension.jvm().compilationResolution() },
+            { consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts() },
         ).forEach {
             val resolutionException = runCatching {
                 it()
@@ -703,6 +686,7 @@ class UklibResolutionTestsWithMockComponents {
         module = "transitive",
         version = "1.0",
     )
+
     private fun transitiveMavenComponent(packaging: String? = null) = MavenComponent(
         transitiveGradleComponent.group, transitiveGradleComponent.module, transitiveGradleComponent.version,
         packaging = packaging,
@@ -715,6 +699,7 @@ class UklibResolutionTestsWithMockComponents {
         module = "direct",
         version = "1.0",
     )
+
     private fun directMavenComponent(packaging: String? = null) = MavenComponent(
         directGradleComponent.group, directGradleComponent.module, directGradleComponent.version,
         packaging = packaging,
