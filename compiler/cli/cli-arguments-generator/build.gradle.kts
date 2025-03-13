@@ -12,10 +12,13 @@ dependencies {
     implementation(project(":generators"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:arguments"))
+    implementation(project(":compiler:plugin-api"))
 
     compileOnly(intellijCore())
 
     runtimeOnly(intellijJDom())
+//    runtimeOnly(project(":compiler:arguments.common"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
 }
 
 application {
