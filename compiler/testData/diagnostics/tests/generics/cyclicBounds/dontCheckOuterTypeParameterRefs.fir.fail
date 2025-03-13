@@ -1,7 +1,0 @@
-Caused by: java.lang.IllegalArgumentException: source must not be null
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:68)
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:18)
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn$default(KtDiagnosticReportHelpers.kt:12)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCyclicTypeBoundsChecker.check(FirCyclicTypeBoundsChecker.kt:61)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitAnonymousObject(DeclarationCheckersDiagnosticComponent.kt:529)
-	... 51 more
