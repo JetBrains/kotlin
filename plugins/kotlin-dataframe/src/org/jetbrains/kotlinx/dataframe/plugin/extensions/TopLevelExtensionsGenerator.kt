@@ -2,6 +2,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
@@ -54,7 +55,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
 
     private val fields by lazy {
         matchedClasses.filterNot { it.isLocal }.flatMap { classSymbol ->
-            classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
+            classSymbol.declaredProperties(session).map { propertySymbol ->
                 val callableId = propertySymbol.callableId
                 DataSchemaField(
                     classSymbol,

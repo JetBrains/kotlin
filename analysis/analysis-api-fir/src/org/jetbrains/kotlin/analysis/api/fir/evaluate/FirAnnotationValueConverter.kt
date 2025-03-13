@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.getTargetType
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
@@ -162,7 +162,7 @@ internal object FirAnnotationValueConverter {
 
             is FirAnnotation -> {
                 val annotationSymbol = annotationTypeRef.toRegularClassSymbol(session) ?: return null
-                val constructorSymbol = annotationSymbol.primaryConstructorSymbol(session) ?: return null
+                val constructorSymbol = annotationSymbol.primaryConstructorIfAny(session) ?: return null
                 createNestedAnnotation(builder, psi, constructorSymbol, argumentMapping.mapping)
             }
 

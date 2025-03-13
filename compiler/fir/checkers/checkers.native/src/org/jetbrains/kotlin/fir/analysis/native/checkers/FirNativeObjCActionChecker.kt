@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST
 import org.jetbrains.kotlin.fir.backend.native.interop.isKotlinObjCClass
 import org.jetbrains.kotlin.fir.backend.native.interop.isObjCObjectType
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 
@@ -30,25 +30,25 @@ object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
 
-        fun checkCanGenerateFunctionImp(function: FirSimpleFunction) {
-            if (function.valueParameters.size > 2)
+        fun checkCanGenerateFunctionImp(function: FirNamedFunctionSymbol) {
+            if (function.valueParameterSymbols.size > 2)
                 reporter.reportOn(function.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, context)
         }
 
-        fun checkCanGenerateActionImp(function: FirSimpleFunction) {
+        fun checkCanGenerateActionImp(function: FirNamedFunctionSymbol) {
             val action = "@${objCActionClassId.asFqNameString()}"
 
-            function.receiverParameter?.let {
+            function.receiverParameterSymbol?.let {
                 reporter.reportOn(it.source, MUST_NOT_HAVE_EXTENSION_RECEIVER, "$action method", context)
             }
 
-            function.valueParameters.forEach {
-                val kotlinType = it.returnTypeRef
+            function.valueParameterSymbols.forEach {
+                val kotlinType = it.resolvedReturnTypeRef
                 if (!kotlinType.isObjCObjectType(session))
                     reporter.reportOn(it.source, MUST_BE_OBJC_OBJECT_TYPE, "$action method parameter type", kotlinType.coneType, context)
             }
 
-            val returnType = function.returnTypeRef
+            val returnType = function.resolvedReturnTypeRef
             if (!returnType.isUnit)
                 reporter.reportOn(function.source, MUST_BE_UNIT_TYPE, "$action method return type", returnType.coneType, context)
 
@@ -56,8 +56,8 @@ object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
         }
 
         fun checkKotlinObjCClass(firClass: FirClass) {
-            for (decl in firClass.declarations) {
-                if (decl is FirSimpleFunction && decl.annotations.hasAnnotation(objCActionClassId, session))
+            firClass.symbol.processAllDeclaredCallables(context.session) { decl ->
+                if (decl is FirNamedFunctionSymbol && decl.annotations.hasAnnotation(objCActionClassId, session))
                     checkCanGenerateActionImp(decl)
             }
         }

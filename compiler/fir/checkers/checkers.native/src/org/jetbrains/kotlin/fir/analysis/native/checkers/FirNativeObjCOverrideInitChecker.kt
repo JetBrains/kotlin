@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getDirectOverriddenSymbols
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.getObjCInitMethod
 import org.jetbrains.kotlin.fir.backend.native.interop.isKotlinObjCClass
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOverrideInitClassId
 
 object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platform) {
@@ -43,10 +44,10 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
             }
         }
 
-        fun checkCanGenerateOverrideInit(firClass: FirClass, constructor: FirConstructor) {
+        fun checkCanGenerateOverrideInit(firClass: FirClass, constructor: FirConstructorSymbol) {
             val superClass = (firClass as FirRegularClass).symbol.getSuperClassSymbolOrAny(session)
             val superConstructors = superClass.constructors(session).filter {
-                constructor.symbol.overridesConstructor(it)
+                constructor.overridesConstructor(it)
             }.toList()
 
             val superConstructor: FirConstructorSymbol = superConstructors.singleOrNull() ?: run {
@@ -70,8 +71,11 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
             val initMethod = superConstructor.getObjCInitMethod(session)!!
 
             // Remove fake overrides of this init method, also check for explicit overriding:
-            firClass.declarations.forEach {
-                if (it is FirSimpleFunction && initMethod in it.getDirectOverriddenSymbols(context) && !it.isSubstitutionOrIntersectionOverride) {
+            firClass.symbol.processAllDeclaredCallables(context.session) {
+                if (it is FirNamedFunctionSymbol &&
+                    initMethod in it.directOverriddenFunctions(context) &&
+                    !it.isSubstitutionOrIntersectionOverride
+                ) {
                     reporter.reportOn(
                         constructor.source,
                         FirNativeErrors.CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER,
@@ -83,9 +87,10 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
         }
 
         fun checkKotlinObjCClass(firClass: FirClass) {
-            for (decl in firClass.declarations) {
-                if (decl is FirConstructor && decl.annotations.hasAnnotation(objCOverrideInitClassId, session))
+            firClass.constructors(context.session).forEach { decl ->
+                if (decl.annotations.hasAnnotation(objCOverrideInitClassId, session)) {
                     checkCanGenerateOverrideInit(firClass, decl)
+                }
             }
         }
 

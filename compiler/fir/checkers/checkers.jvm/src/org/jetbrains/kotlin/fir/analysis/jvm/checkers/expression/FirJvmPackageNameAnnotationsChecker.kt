@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -37,6 +38,7 @@ object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker(MppCheckerKind
         }
 
         val file = context.containingFile ?: return
+        @OptIn(DirectDeclarationsAccess::class)
         if (file.declarations.any { it is FirClass }) {
             reporter.reportOn(expression.source, FirJvmErrors.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES, context)
         }

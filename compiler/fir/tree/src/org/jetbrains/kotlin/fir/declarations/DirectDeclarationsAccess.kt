@@ -5,5 +5,14 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-@RequiresOptIn
+/**
+ * This OptIn is used to mark direct access of .declarations property of FirFile/FirClass/FirScript, see KT-75498.
+ *
+ * Direct access to .declarations can be risky for various reasons:
+ * - one doesn't see any plugin-generated declarations
+ * - in IDE mode, there is no guarantees about resolve phase
+ *
+ * It's recommended to use scope-based methods, like processAllDeclarations, processAllDeclaredCallables etc.
+ */
+@RequiresOptIn(message = "Please use processAllDeclarations or similar functions instead")
 annotation class DirectDeclarationsAccess

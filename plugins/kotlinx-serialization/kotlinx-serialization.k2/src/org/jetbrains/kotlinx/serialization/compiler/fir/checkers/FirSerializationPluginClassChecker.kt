@@ -118,12 +118,12 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             }
         }
 
-        val descriptorOverridden = classSymbol.properties(session).singleOrNull {
+        val descriptorOverridden = classSymbol.declaredProperties(session).singleOrNull {
             it.name == SerialEntityNames.SERIAL_DESC_FIELD_NAME
                     && it.isOverride
                     && it.origin == FirDeclarationOrigin.Source
         } != null
-        val functions = classSymbol.functions(session)
+        val functions = classSymbol.declaredFunctions(session)
         val serializeOverridden = functions.singleOrNull {
             it.name == SerialEntityNames.SAVE_NAME
                     && it.valueParameterSymbols.size == 2
@@ -525,7 +525,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     }
 
     private fun CheckerContext.checkTransients(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
-        for (propertySymbol in classSymbol.properties(session)) {
+        for (propertySymbol in classSymbol.declaredProperties(session)) {
             val isInitialized = propertySymbol.isLateInit || declarationHasInitializer(propertySymbol)
             val transientAnnotation = propertySymbol.getSerialTransientAnnotation(session) ?: continue
             val hasBackingField = propertySymbol.hasBackingField

@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.processAllCallables
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
@@ -41,6 +42,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         var reachedDeadEnd =
             (declaration as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph?.enterNode?.isDead == true
         // Order is important here, so we have to use declarations directly
+        @OptIn(DirectDeclarationsAccess::class)
         for (innerDeclaration in declaration.declarations) {
             if (innerDeclaration is FirProperty) {
                 val symbol = innerDeclaration.symbol
@@ -56,7 +58,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
     private fun FirClass.collectInitializationInfo(context: CheckerContext, reporter: DiagnosticReporter): VariableInitializationInfo? {
         val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
         val memberPropertySymbols = mutableSetOf<FirPropertySymbol>()
-        symbol.processAllCallables(context.session) { symbol ->
+        symbol.processAllDeclaredCallables(context.session) { symbol ->
             if (symbol is FirPropertySymbol && symbol.requiresInitialization(isForInitialization = true)) {
                 memberPropertySymbols += symbol
             }

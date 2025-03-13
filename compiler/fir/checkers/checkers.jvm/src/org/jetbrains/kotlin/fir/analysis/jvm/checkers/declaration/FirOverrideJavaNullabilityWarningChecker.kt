@@ -48,7 +48,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
             stubTypesEqualToAnything = false
         )
 
-        declaration.symbol.processAllCallables(context.session) { memberSymbol ->
+        declaration.symbol.processAllDeclaredCallables(context.session) { memberSymbol ->
             var anyBaseEnhanced = false
             var anyReported = false
 

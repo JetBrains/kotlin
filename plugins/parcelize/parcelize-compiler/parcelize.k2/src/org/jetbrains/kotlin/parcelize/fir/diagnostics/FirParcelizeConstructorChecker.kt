@@ -74,6 +74,7 @@ class FirParcelizeConstructorChecker(
             val lookingFor = notValOrVarParameters.map { it.symbol }.toSet()
             val referenceFinder = ReferenceFinder(lookingFor, reporter, context)
             // check if they are referenced in the bodies, if so report error
+            @OptIn(DirectDeclarationsAccess::class)
             for (decl in containingClass.declarations) when (decl) {
                 is FirAnonymousInitializer, is FirProperty -> decl.accept(referenceFinder)
                 else -> {}

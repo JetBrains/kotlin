@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
@@ -48,6 +49,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             )
         ) {
             if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
+                @OptIn(DirectDeclarationsAccess::class)
                 if (context.containingFile?.declarations?.singleOrNull() !is FirCodeFragment) {
                     reporter.report(symbol.toInvisibleReferenceDiagnostic(expression.source, context.session), context)
                 }
@@ -62,6 +64,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             val invisibleCompanion = expression.symbol?.fullyExpandedClass(context.session)?.toInvisibleCompanion(context)
             if (invisibleCompanion != null) {
                 if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
+                    @OptIn(DirectDeclarationsAccess::class)
                     if (context.containingFile?.declarations?.singleOrNull() !is FirCodeFragment) {
                         reporter.report(invisibleCompanion.toInvisibleReferenceDiagnostic(expression.source, context.session), context)
                     }

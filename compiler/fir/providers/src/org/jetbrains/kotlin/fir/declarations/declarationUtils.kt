@@ -33,20 +33,20 @@ fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymb
     return result
 }
 
-fun FirClassSymbol<*>.processAllCallables(
+fun FirClassSymbol<*>.processAllDeclaredCallables(
     session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
     session.declaredMemberScope(this, memberRequiredPhase).processAllCallables(processor)
 }
 
-fun FirClassSymbol<*>.properties(
+fun FirClassSymbol<*>.declaredProperties(
     session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
 ): List<FirPropertySymbol> {
     val result = mutableListOf<FirPropertySymbol>()
-    processAllCallables(session, memberRequiredPhase) {
+    processAllDeclaredCallables(session, memberRequiredPhase) {
         if (it is FirPropertySymbol) {
             result += it
         }
@@ -54,12 +54,12 @@ fun FirClassSymbol<*>.properties(
     return result
 }
 
-fun FirClassSymbol<*>.functions(
+fun FirClassSymbol<*>.declaredFunctions(
     session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
 ): List<FirNamedFunctionSymbol> {
     val result = mutableListOf<FirNamedFunctionSymbol>()
-    processAllCallables(session, memberRequiredPhase) {
+    processAllDeclaredCallables(session, memberRequiredPhase) {
         if (it is FirNamedFunctionSymbol) {
             result += it
         }
@@ -69,7 +69,7 @@ fun FirClassSymbol<*>.functions(
 
 fun FirClassSymbol<*>.processAllClassifiers(
     session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
     processor: (FirClassifierSymbol<*>) -> Unit
 ) {
     session.declaredMemberScope(this, memberRequiredPhase).processAllClassifiers(processor)
@@ -77,7 +77,7 @@ fun FirClassSymbol<*>.processAllClassifiers(
 
 fun FirClass.processAllDeclarations(
     session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
     processor: (FirBasedSymbol<*>) -> Unit
 ) {
     session.declaredMemberScope(this, memberRequiredPhase).let {

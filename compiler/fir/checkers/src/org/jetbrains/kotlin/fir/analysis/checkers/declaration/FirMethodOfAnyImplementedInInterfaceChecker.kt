@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isEquals
-import org.jetbrains.kotlin.fir.declarations.processAllCallables
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -26,8 +26,8 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(MppC
             return
         }
 
-        declaration.symbol.processAllCallables(context.session) { function ->
-            if (function !is FirNamedFunctionSymbol || !function.isOverride || !function.hasBody) return@processAllCallables
+        declaration.symbol.processAllDeclaredCallables(context.session) { function ->
+            if (function !is FirNamedFunctionSymbol || !function.isOverride || !function.hasBody) return@processAllDeclaredCallables
             var methodOfAny = false
             if (function.valueParameterSymbols.isEmpty() &&
                 (function.name == HASHCODE_NAME || function.name == TO_STRING)

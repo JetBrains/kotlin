@@ -131,15 +131,6 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
-@OptIn(SymbolInternals::class)
-//@Deprecated(
-//    message = "This method is deprecated, please use primaryConstructorIfAny instead",
-//    replaceWith = ReplaceWith("primaryConstructorIfAny(session)", "org.jetbrains.kotlin.fir.declarations")
-//)
-fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstructorSymbol? {
-    return primaryConstructorIfAny(session)
-}
-
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
 
 fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {

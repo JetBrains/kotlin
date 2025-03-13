@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -204,6 +205,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
+        @OptIn(DirectDeclarationsAccess::class)
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration is FirField) {
                 if (subDeclaration.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
@@ -259,9 +261,10 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         if (declaration.isExpect) return
         val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
         if (primaryConstructor != null) return
+        @OptIn(DirectDeclarationsAccess::class)
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration !is FirField) continue
-            if (subDeclaration.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
+            if (subDeclaration.symbol.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
                 reporter.reportOn(
                     subDeclaration.source,
                     FirErrors.UNSUPPORTED,

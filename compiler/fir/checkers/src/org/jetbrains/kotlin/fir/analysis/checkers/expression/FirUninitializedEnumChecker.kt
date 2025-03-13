@@ -108,11 +108,13 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         }
         if (!isInsideCorrespondingEnum) return
 
+        @OptIn(DirectDeclarationsAccess::class)
         val declarationSymbols = enumClassSymbol.declarationSymbols
         val enumMemberProperties = declarationSymbols.filterIsInstance<FirPropertySymbol>()
         val enumInitBlocks = declarationSymbols.filterIsInstance<FirAnonymousInitializerSymbol>()
         val enumEntries = declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
         val enumEntriesInitBlocks = enumEntries.flatAssociateBy {
+            @OptIn(DirectDeclarationsAccess::class)
             it.initializerObjectSymbol?.declarationSymbols?.filterIsInstance<FirAnonymousInitializerSymbol>().orEmpty()
         }
 

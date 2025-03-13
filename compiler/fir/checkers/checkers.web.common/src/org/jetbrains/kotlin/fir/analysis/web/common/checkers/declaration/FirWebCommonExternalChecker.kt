@@ -175,8 +175,8 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
         if (this !is FirMemberDeclaration || !isNativeOrEffectivelyExternal(symbol, context.session)) return
 
         if (this is FirClass) {
-            declarations.firstIsInstanceOrNull<FirPrimaryConstructor>()?.let {
-                val constructorCall = it.delegatedConstructor
+            primaryConstructorIfAny(context.session)?.let {
+                val constructorCall = it.resolvedDelegatedConstructorCall
 
                 if (constructorCall?.source?.kind is KtRealSourceElementKind) {
                     reporter.reportOn(constructorCall.source, FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, context)

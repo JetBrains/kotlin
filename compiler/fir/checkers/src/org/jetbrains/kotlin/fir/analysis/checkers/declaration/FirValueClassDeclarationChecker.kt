@@ -144,6 +144,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
         // Separate handling of delegate fields
+        @OptIn(DirectDeclarationsAccess::class)
         declaration.declarations.forEach { innerDeclaration ->
             if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
             val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
@@ -241,13 +242,16 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
 
-                declaration.multiFieldValueClassRepresentation != null && primaryConstructorParameter.defaultValue != null -> {
-                    // TODO, KT-50113: Fix when inline arguments are supported.
-                    reporter.reportOn(
-                        primaryConstructorParameter.defaultValue!!.source,
-                        FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
-                        context
-                    )
+                declaration.multiFieldValueClassRepresentation != null -> {
+                    val defaultValue = primaryConstructorParameter.resolvedDefaultValue
+                    if (defaultValue != null) {
+                        // TODO, KT-50113: Fix when inline arguments are supported.
+                        reporter.reportOn(
+                            defaultValue.source,
+                            FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
+                            context
+                        )
+                    }
                 }
             }
         }

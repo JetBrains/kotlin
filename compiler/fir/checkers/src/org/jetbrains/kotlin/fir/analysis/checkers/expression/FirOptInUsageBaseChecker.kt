@@ -235,7 +235,7 @@ object FirOptInUsageBaseChecker {
                 val componentNIndex = DataClassResolver.getComponentIndex(this.nameOrSpecialName.identifier)
                 val valueParameters = parentClassSymbol.primaryConstructorIfAny(context.session)?.valueParameterSymbols
                 val valueParameter = valueParameters?.getOrNull(componentNIndex - 1)
-                val properties = parentClassSymbol.properties(context.session)
+                val properties = parentClassSymbol.declaredProperties(context.session)
                 val property = properties.firstOrNull { it.name == valueParameter?.name }
                 property?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false)
             }

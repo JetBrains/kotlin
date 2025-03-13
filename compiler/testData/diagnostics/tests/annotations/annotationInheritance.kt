@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 val a = object: T {}
 open class C
