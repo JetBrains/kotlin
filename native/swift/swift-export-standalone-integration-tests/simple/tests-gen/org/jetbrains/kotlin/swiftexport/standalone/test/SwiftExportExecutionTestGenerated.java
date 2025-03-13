@@ -62,6 +62,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("generics")
+  public void testGenerics() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/generics/");
+  }
+
+  @Test
   @TestMetadata("inheritance")
   public void testInheritance() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/inheritance/");

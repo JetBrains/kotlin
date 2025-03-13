@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
-import stdlib
 import KotlinRuntime
+import stdlib
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinSerialization
 
@@ -94,13 +94,13 @@ public func decodeFromHexString(
     _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
     deserializer: Swift.Never,
     hex: Swift.String
-) -> Swift.Never {
+) -> KotlinRuntime.KotlinBase? {
     ExportedKotlinPackages.kotlinx.serialization.decodeFromHexString(receiver, deserializer: deserializer, hex: hex)
 }
 public func encodeToHexString(
     _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
     serializer: Swift.Never,
-    value: Swift.Never
+    value: KotlinRuntime.KotlinBase?
 ) -> Swift.String {
     ExportedKotlinPackages.kotlinx.serialization.encodeToHexString(receiver, serializer: serializer, value: value)
 }
@@ -114,7 +114,7 @@ public func findPolymorphicSerializer(
 public func findPolymorphicSerializer(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer,
     encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-    value: Swift.Never
+    value: KotlinRuntime.KotlinBase
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.findPolymorphicSerializer(receiver, encoder: encoder, value: value)
 }
@@ -123,10 +123,10 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         func decodeFromByteArray(
             deserializer: Swift.Never,
             bytes: ExportedKotlinPackages.kotlin.ByteArray
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func encodeToByteArray(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> ExportedKotlinPackages.kotlin.ByteArray
     }
     public protocol KSerializer: KotlinRuntime.KotlinBase {
@@ -140,10 +140,10 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         func decodeFromString(
             deserializer: Swift.Never,
             string: Swift.String
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func encodeToString(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.String
     }
     public final class ContextualSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -274,13 +274,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
         deserializer: Swift.Never,
         hex: Swift.String
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public static func encodeToHexString(
         _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.String {
         fatalError()
     }
@@ -294,7 +294,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
     public static func findPolymorphicSerializer(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer,
         encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase
     ) -> Swift.Never {
         fatalError()
     }
@@ -502,7 +502,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         ) -> Swift.Void
         func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping (KotlinRuntime.KotlinBase) -> Swift.Never
         ) -> Swift.Void
     }
     open class SerializersModule: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -519,7 +519,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
         open func getPolymorphic(
             baseClass: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase
         ) -> Swift.Never {
             fatalError()
         }
@@ -571,7 +571,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
         public func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping (KotlinRuntime.KotlinBase) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
@@ -1281,15 +1281,15 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase?
         func decodeSequentially() -> Swift.Bool
         func decodeSerializableElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase?
         func decodeShortElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32
@@ -1349,13 +1349,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeSerializableElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeShortElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
@@ -1399,10 +1399,10 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func decodeNull() -> Swift.Never?
         func decodeNullableSerializableValue(
             deserializer: Swift.Never
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func decodeSerializableValue(
             deserializer: Swift.Never
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func decodeShort() -> Swift.Int16
         func decodeString() -> Swift.String
     }
@@ -1449,11 +1449,11 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func encodeNull() -> Swift.Void
         func encodeNullableSerializableValue(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeSerializableValue(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeShort(
             value: Swift.Int16
@@ -1557,22 +1557,22 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never {
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase? {
             fatalError()
         }
         open func decodeSerializableElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never {
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase? {
             fatalError()
         }
         open func decodeSerializableValue(
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never {
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase? {
             fatalError()
         }
         open func decodeShort() -> Swift.Int16 {
@@ -1730,7 +1730,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void {
             fatalError()
         }
@@ -1738,7 +1738,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void {
             fatalError()
         }
@@ -1790,12 +1790,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat where
     public func decodeFromByteArray(
         deserializer: Swift.Never,
         bytes: ExportedKotlinPackages.kotlin.ByteArray
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func encodeToByteArray(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> ExportedKotlinPackages.kotlin.ByteArray {
         fatalError()
     }
@@ -1811,12 +1811,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.StringFormat where
     public func decodeFromString(
         deserializer: Swift.Never,
         string: Swift.String
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func encodeToString(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.String {
         fatalError()
     }
@@ -1856,7 +1856,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules.Serializer
     }
     public func polymorphicDefaultSerializer(
         baseClass: Swift.Never,
-        defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+        defaultSerializerProvider: @escaping (KotlinRuntime.KotlinBase) -> Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
@@ -1996,8 +1996,8 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         deserializer: Swift.Never,
-        previousValue: Swift.Never
-    ) -> Swift.Never {
+        previousValue: KotlinRuntime.KotlinBase?
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeSequentially() -> Swift.Bool {
@@ -2007,8 +2007,8 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         deserializer: Swift.Never,
-        previousValue: Swift.Never
-    ) -> Swift.Never {
+        previousValue: KotlinRuntime.KotlinBase?
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeShortElement(
@@ -2094,7 +2094,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
@@ -2102,7 +2102,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
@@ -2182,12 +2182,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder w
     }
     public func decodeNullableSerializableValue(
         deserializer: Swift.Never
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeSerializableValue(
         deserializer: Swift.Never
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeShort() -> Swift.Int16 {
@@ -2268,13 +2268,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder w
     }
     public func encodeNullableSerializableValue(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
     public func encodeSerializableValue(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }

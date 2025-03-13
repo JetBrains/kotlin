@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -133,8 +134,7 @@ public class SirTypeProviderImpl(
                         )
                     }
                 }
-                is KaTypeParameterType
-                    -> SirUnsupportedType
+                is KaTypeParameterType -> ctx.translateTypeParameterType(kaType)
                 is KaErrorType
                     -> SirErrorType(kaType.errorMessage)
                 else
@@ -145,6 +145,23 @@ public class SirTypeProviderImpl(
         return ktType.abbreviation?.let { buildRegularType(it) }
             ?: buildPrimitiveType(ktType)
             ?: buildRegularType(ktType)
+    }
+
+    private fun TypeTranslationCtx.translateTypeParameterType(type: KaTypeParameterType): SirType {
+        val symbol = type.symbol
+        val fallbackType = SirUnsupportedType
+        if (symbol.isReified) return fallbackType
+        return when (symbol.upperBounds.size) {
+            0 -> SirNominalType(KotlinRuntimeModule.kotlinBase).optional()
+            1 -> {
+                val upperBound = symbol.upperBounds.single().translateType(this)
+                when (type.nullability) {
+                    KaTypeNullability.NULLABLE -> upperBound.optional()
+                    else -> upperBound
+                }
+            }
+            else -> fallbackType
+        }
     }
 
     private fun SirType.handleErrors(

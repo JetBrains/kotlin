@@ -104,6 +104,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("generics")
+  public void testGenerics() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/generics/");
+  }
+
+  @Test
   @TestMetadata("hiddenFromObjectiveC")
   public void testHiddenFromObjectiveC() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/hiddenFromObjectiveC/");
