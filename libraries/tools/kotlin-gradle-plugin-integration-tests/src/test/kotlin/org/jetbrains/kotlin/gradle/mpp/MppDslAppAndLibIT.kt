@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import java.util.zip.ZipFile
-import kotlin.io.path.appendText
-import kotlin.io.path.deleteRecursively
-import kotlin.io.path.exists
-import kotlin.io.path.name
-import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.*
 import kotlin.test.assertContains
 
 @MppGradlePluginTests
@@ -33,11 +29,13 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
-    fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) = doTestLibAndApp(
-        libProjectPath = "new-mpp-lib-and-app/sample-lib",
-        appProjectPath = "new-mpp-lib-and-app/sample-app",
-        gradleVersion = gradleVersion,
-    )
+    fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) {
+        doTestLibAndApp(
+            libProjectPath = "new-mpp-lib-and-app/sample-lib",
+            appProjectPath = "new-mpp-lib-and-app/sample-app",
+            gradleVersion = gradleVersion,
+        )
+    }
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
