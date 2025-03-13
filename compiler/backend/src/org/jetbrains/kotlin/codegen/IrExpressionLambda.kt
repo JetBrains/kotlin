@@ -7,4 +7,5 @@ package org.jetbrains.kotlin.codegen
 
 interface IrExpressionLambda {
     val isExtensionLambda: Boolean
+    val contextParameterCount: Int
 }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
@@ -179,6 +180,8 @@ class IrExpressionLambdaImpl(
 ) : ExpressionLambda(), IrExpressionLambda {
     override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null && reference.extensionReceiver == null
 
+    override val contextParameterCount: Int = function.parameters.count { it.kind == IrParameterKind.Context }
+
     val function: IrFunction
         get() = reference.symbol.owner
 
@@ -200,7 +203,8 @@ class IrExpressionLambdaImpl(
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
         val capturedParameters = reference.getArgumentsWithIr()
-        val captureStart = if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
+        val captureStart =
+            contextParameterCount + if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
         val captureEnd = captureStart + capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()

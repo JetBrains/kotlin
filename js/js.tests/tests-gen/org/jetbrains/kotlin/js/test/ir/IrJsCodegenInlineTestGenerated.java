@@ -1425,6 +1425,41 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/contextParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class ContextParameters {
+    @Test
+    public void testAllFilesPresentInContextParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("contextAndReceiver.kt")
+    public void testContextAndReceiver() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextAndReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("contextOnly.kt")
+    public void testContextOnly() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextOnly.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverAndParameter.kt")
+    public void testContextReceiverAndParameter() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextReceiverAndParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverAndParameterLong.kt")
+    public void testContextReceiverAndParameterLong() {
+      runTest("compiler/testData/codegen/boxInline/contextParameters/contextReceiverAndParameterLong.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/boxInline/contracts")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
