@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.indyAllowAnnotatedLambdas
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -175,6 +175,11 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
         if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.isNotEmpty()) {
             abiHazard = true
+        }
+
+        if (implFun.annotations.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)) {
+            // Lambdas annotated with @kotlin.jvm.JvmSerializableLambda are expected to generate their own class
+            semanticsHazard = true
         }
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
