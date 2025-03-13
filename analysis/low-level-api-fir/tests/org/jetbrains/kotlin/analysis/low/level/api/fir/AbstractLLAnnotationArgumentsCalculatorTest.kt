@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  */
 abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = listOf(Directives)
+        get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
         /**
