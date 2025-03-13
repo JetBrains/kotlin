@@ -103,7 +103,9 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
         properties.removeAll(kClass.declaredMemberProperties)
     }
     return properties.filter { property ->
-        property.visibility == KVisibility.PUBLIC && (property.javaField?.modifiers?.let { Modifier.isTransient(it) } != true)
+        property.visibility == KVisibility.PUBLIC
+                && (property.javaField?.modifiers?.let { Modifier.isTransient(it) } != true)
+                && (!property.isAbstract)
     }
 }
 

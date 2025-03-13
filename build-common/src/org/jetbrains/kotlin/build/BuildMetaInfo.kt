@@ -116,7 +116,8 @@ abstract class BuildMetaInfo {
         "script",
         "verbose",
         "verbosePhases",
-        "version"
+        "version",
+        "configurator",
     )
 
     open val argumentsListForSpecialCheck = listOf(

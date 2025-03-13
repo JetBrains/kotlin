@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.platform.impl
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.Freezable
-import org.jetbrains.kotlin.cli.common.arguments.copyCommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -64,8 +61,10 @@ object NativeIdePlatformKind : IdePlatformKind() {
     message = "Use K2NativeCompilerArguments instead",
     level = DeprecationLevel.WARNING
 )
+@Suppress("DEPRECATION")
 class FakeK2NativeCompilerArguments : CommonCompilerArguments() {
-    @Suppress("DEPRECATION")
+    override val configurator: CommonCompilerArgumentsConfigurator = CommonCompilerArgumentsConfigurator()
+
     override fun copyOf(): Freezable = copyCommonCompilerArguments(this, FakeK2NativeCompilerArguments())
 }
 
