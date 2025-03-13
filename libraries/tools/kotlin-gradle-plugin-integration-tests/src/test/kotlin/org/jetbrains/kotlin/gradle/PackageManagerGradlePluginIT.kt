@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
@@ -61,6 +62,70 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
                 assertFileExists(packageLock)
                 assertFileDoesNotContain(packageLock, "\\")
             }
+        }
+    }
+
+    @GradleTest
+    fun `when transitive npm dependency version changes - expect package json is rebuilt`(
+        gradleVersion: GradleVersion,
+    ) {
+        project("js-composite-build", gradleVersion) {
+
+            /**
+             * Verify the `package.json` task is initially executed, and afterwards is up-to-date.
+             * And assert that compilation tasks don't run.
+             */
+            fun validateTasks() {
+
+                fun BuildResult.assertCompileTasksNotRun() {
+                    assertTasksAreNotInTaskGraph(
+                        buildList {
+                            add(":compileKotlinJs")
+                            add(":lib:lib-2:compileKotlinJs")
+                            add(":base:compileKotlinJs")
+                        }
+                    )
+                }
+
+                build(":rootPackageJson") {
+                    assertTasksExecuted(":rootPackageJson")
+                    assertCompileTasksNotRun()
+                }
+                build(":rootPackageJson") {
+                    assertTasksUpToDate(":rootPackageJson")
+                    assertCompileTasksNotRun()
+                }
+            }
+
+            fun assertDependencyUpdateReRunsRootPackageJsonTask(
+                old: String,
+                new: String,
+            ) {
+                // modify a dependency in the composite 'base' build
+                projectPath.resolve("base/build.gradle.kts").modify { content ->
+                    require(old in content) { "dependency $old not defined in buildscript" }
+                    content.replace(old, new)
+                }
+
+                // Because a npm dependency in a dependency changed,
+                // the root project package.json task should be re-run.
+                validateTasks()
+            }
+
+            assertDependencyUpdateReRunsRootPackageJsonTask(
+                """implementation(npm("decamelize", "1.1.1"))""",
+                """implementation(npm("decamelize", "1.1.2"))""",
+            )
+
+            assertDependencyUpdateReRunsRootPackageJsonTask(
+                """api(npm("cowsay", "1.6.0"))""",
+                """api(npm("cowsay", "1.5.0"))""",
+            )
+
+            assertDependencyUpdateReRunsRootPackageJsonTask(
+                """runtimeOnly(npm("uuid", "11.1.0"))""",
+                """runtimeOnly(npm("uuid", "10.0.0"))""",
+            )
         }
     }
 }
@@ -176,7 +241,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                  * because reporting diagnostics cause writing report to build directory, and it causes the task to be no up-to-date
                  */
                 warningMode = WarningMode.None,
-				configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
             )
         ) {
             testFailingWithLockFileUpdate(

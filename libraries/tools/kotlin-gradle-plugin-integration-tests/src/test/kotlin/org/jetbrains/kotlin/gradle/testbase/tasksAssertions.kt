@@ -16,6 +16,17 @@ import org.gradle.testkit.runner.TaskOutcome
  * are not considered 'executed').
  */
 fun BuildResult.assertTasksAreNotInTaskGraph(vararg taskPaths: String) {
+    assertTasksAreNotInTaskGraph(taskPaths.asList())
+}
+
+/**
+ * Asserts given tasks are not present in the build task graph.
+ *
+ * (Note: 'not in task graph' has a different meaning to 'not executed'.
+ * Tasks with outcomes [TaskOutcome.SKIPPED] and [TaskOutcome.UP_TO_DATE] will be in the task graph, but
+ * are not considered 'executed').
+ */
+fun BuildResult.assertTasksAreNotInTaskGraph(taskPaths: Collection<String>) {
     val presentTasks = taskPaths.mapNotNull { task(it) }
     assert(presentTasks.isEmpty()) {
         printBuildOutput()
