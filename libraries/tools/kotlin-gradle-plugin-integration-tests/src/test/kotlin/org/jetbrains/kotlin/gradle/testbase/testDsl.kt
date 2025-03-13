@@ -70,7 +70,6 @@ fun KGPBaseTest.project(
         gradleVersion,
         dependencyManagement,
         localRepoDir,
-        buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
     )
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
@@ -766,13 +765,12 @@ private fun Path.addDefaultSettingsToSettingsGradle(
     gradleVersion: GradleVersion,
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
-    projectIsolationEnabled: Boolean = false,
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
         is DependencyManagement.DefaultDependencyManagement -> {
             // we cannot switch to dependencyManagement before Gradle 8.1 because of KT-65708
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1) && !projectIsolationEnabled) {
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1)) {
                 addDependencyRepositoriesToBuildScript(
                     additionalDependencyRepositories = dependencyManagement.additionalRepos,
                     localRepo = localRepo
