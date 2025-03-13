@@ -10,15 +10,17 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":compiler:test --tests 'org.jetbrains.kotlin.psi.PsiKDocCoverageTest'" />
+          <option value=":compiler:test" />
+          <option value="--tests" />
+          <option value="'org.jetbrains.kotlin.psi.PsiKDocCoverageTest'" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
-    <RunAsTest>false</RunAsTest>
+    <RunAsTest>true</RunAsTest>
     <method v="2" />
   </configuration>
 </component>
