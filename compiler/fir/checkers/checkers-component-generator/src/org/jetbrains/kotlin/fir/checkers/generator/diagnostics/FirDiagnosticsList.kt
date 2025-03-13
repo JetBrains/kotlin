@@ -905,7 +905,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             isSuppressible = true
         }
 
-        val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
+        val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement> {
+            parameter<List<FirTypeParameterSymbol>>("typeParameters")
+        }
 
         val FINITE_BOUNDS_VIOLATION by error<PsiElement>()
         val FINITE_BOUNDS_VIOLATION_IN_JAVA by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
