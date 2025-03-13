@@ -16,13 +16,7 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
-import kotlin.io.path.Path
-import kotlin.io.path.appendText
-import kotlin.io.path.invariantSeparatorsPathString
-import kotlin.io.path.pathString
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
-import kotlin.io.readText
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
