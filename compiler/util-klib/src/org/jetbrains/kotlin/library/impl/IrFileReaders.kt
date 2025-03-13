@@ -106,23 +106,10 @@ fun <L : KotlinLibraryLayout> DeclarationIdTableReader(
 ): DeclarationIdTableReader = DeclarationIdTableReader { access.inPlace { it.getFile().readBytes() } }
 
 class DeclarationIdTableReader(private val buffer: ReadBuffer) {
-    private val indexToOffset = mutableMapOf<DeclarationId, Pair<Int, Int>>()
+    private val declarationIdToCoordinates: DeclarationIdToCoordinates = buffer.readDeclarationIdToCoordinates(0)
 
-    init {
-        val count = buffer.int
-        for (i in 0 until count) {
-            val key = DeclarationId(buffer.int)
-            val offset = buffer.int
-            val size = buffer.int
-
-            indexToOffset[key] = offset to size
-        }
-    }
-
-    fun tableItemBytes(id: DeclarationId): ByteArray {
-        val coordinates = indexToOffset[id] ?: error("No coordinates found for $id")
-        val offset = coordinates.first
-        val size = coordinates.second
+    fun tableItemBytes(declarationId: DeclarationId): ByteArray {
+        val (offset, size) = declarationIdToCoordinates[declarationId] ?: error("No coordinates found for $declarationId")
         val result = ByteArray(size)
         buffer.position = offset
         buffer.get(result, 0, size)
@@ -146,24 +133,7 @@ fun <L : KotlinLibraryLayout> DeclarationIdMultiTableReader(
 
 class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
-    private val indexToIndexMap = mutableMapOf<Int, Map<DeclarationId, Pair<Int, Int>>>()
-
-    private fun readIndexMap(position: Int): Map<DeclarationId, Pair<Int, Int>> {
-        buffer.position = position
-        val result = mutableMapOf<DeclarationId, Pair<Int, Int>>()
-
-        val count = buffer.int
-
-        for (i in 0 until count) {
-            val key = DeclarationId(buffer.int)
-            val offset = buffer.int
-            val size = buffer.int
-
-            result[key] = offset to size
-        }
-
-        return result
-    }
+    private val indexToIndexMap = mutableMapOf<Int, DeclarationIdToCoordinates>()
 
     fun tableItemBytes(idx: Int): ByteArray {
         val rowOffset = indexToOffset[idx]
@@ -175,17 +145,15 @@ class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
         return result
     }
 
-    fun tableItemBytes(row: Int, id: DeclarationId): ByteArray {
+    fun tableItemBytes(row: Int, declarationId: DeclarationId): ByteArray {
 
         val rowOffset = indexToOffset[row]
 
         val indexToMap = indexToIndexMap.getOrPut(row) {
-            readIndexMap(rowOffset)
+            buffer.readDeclarationIdToCoordinates(rowOffset)
         }
 
-        val coordinates = indexToMap[id] ?: error("No coordinates found for $id")
-        val offset = coordinates.first
-        val size = coordinates.second
+        val (offset, size) = indexToMap[declarationId] ?: error("No coordinates found for $declarationId")
         val result = ByteArray(size)
         buffer.position = rowOffset + offset
         buffer.get(result, 0, size)
@@ -208,7 +176,11 @@ fun File.javaFile(): java.io.File = java.io.File(path)
 /** Private utilities.                                                        */
 /******************************************************************************/
 
+/** The coordinates of [DeclarationId]. */
+private data class DeclarationCoordinates(val offset: Int, val size: Int)
+
 private typealias IndexToOffset = IntArray
+private typealias DeclarationIdToCoordinates = MutableMap<DeclarationId, DeclarationCoordinates>
 
 private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
     this.position = position
@@ -223,4 +195,20 @@ private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
     }
 
     return indexToOffset
+}
+
+private fun ReadBuffer.readDeclarationIdToCoordinates(position: Int): DeclarationIdToCoordinates {
+    this.position = position
+
+    val count = this.int
+    val declarationIdToCoordinates: DeclarationIdToCoordinates = mutableMapOf()
+
+    for (i in 0 until count) {
+        val declarationId = DeclarationId(this.int)
+        val offset = this.int
+        val size = this.int
+        declarationIdToCoordinates[declarationId] = DeclarationCoordinates(offset, size)
+    }
+
+    return declarationIdToCoordinates
 }
