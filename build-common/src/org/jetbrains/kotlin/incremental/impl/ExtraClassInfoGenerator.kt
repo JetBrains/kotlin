@@ -25,7 +25,16 @@ open class ExtraClassInfoGenerator() {
         return classNode
     }
 
-    protected open fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
+    /**
+     * @param methodSignature well-typed method signature. doesn't include the containing class' internal name
+     * @param inlinedClassPrefix - includes class internal name and method name. example value is "com/bar/OuterClass$InnerClass$calculate"
+     * @param ownMethodHash - a basic intuition is that it's based on bytecode and debug info
+     */
+    protected open fun calculateInlineMethodHash(
+        methodSignature: JvmMemberSignature.Method,
+        inlinedClassPrefix: String,
+        ownMethodHash: Long
+    ): Long {
         return ownMethodHash
     }
 
@@ -89,8 +98,9 @@ open class ExtraClassInfoGenerator() {
             //     class metadata (also in the source file), but not in the bytecode. However, we can safely ignore those
             //     inline functions/accessors because they are not declared in the bytecode and therefore can't be referenced.
             val methodSignature = JvmMemberSignature.Method(name = methodNode.name, desc = methodNode.desc)
+            val innerClassPrefix = "${classNode.name}\$${methodNode.name}"
             var methodHash = snapshotMethod(methodNode, classNode.version)
-            inlineFunctionsAndAccessors[methodSignature]!! to calculateInlineMethodHash(methodSignature, methodHash)
+            inlineFunctionsAndAccessors[methodSignature]!! to calculateInlineMethodHash(methodSignature, innerClassPrefix, methodHash)
         }
 
         return ExtraInfo(classSnapshotExcludingMembers, constantSnapshots, inlineFunctionOrAccessorSnapshots)

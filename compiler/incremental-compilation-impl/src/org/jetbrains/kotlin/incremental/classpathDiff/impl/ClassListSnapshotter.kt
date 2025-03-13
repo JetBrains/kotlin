@@ -142,11 +142,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
 
 
     override fun snapshot(): List<ClassSnapshot> {
-        return classes.map {
-            val mapped = makeOrReuseClassSnapshot(it)
-
-            mapped
-        }
+        return classes.map { makeOrReuseClassSnapshot(it) }
     }
 
     private fun makeOrReuseClassSnapshot(classFile: ClassFileWithContentsProvider): ClassSnapshot {
@@ -164,9 +160,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
     private fun makeOrReuseClassSnapshot(descriptor: ClassDescriptorForProcessing, classFileWithContents: ClassFileWithContents): ClassSnapshot {
         descriptor.snapshot?.let { return it }
 
-        // loading is an expensive part of ClassListSnapshotter, so it's worth trying to minimize it.
-        // this part of the implementation would be updated by KT-75883
-        val loadedClasses = mutableListOf<Pair<ClassDescriptorForProcessing, ClassFileWithContents>>()
+        // TODO consider reusing loaded classes across the pipeline - it should be benefitial but it makes the process more complicated
 
         val snapshot = if (isInaccessible(classFileWithContents)) {
             InaccessibleClassSnapshot
@@ -177,13 +171,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
                  * so inlinedSnapshots calculation must not directly call regular snapshotting to prevent infinite loops
                  */
                 val extraInfo = ExtraInfoGeneratorWithInlinedClassSnapshotting(
-                    classMultiHashProvider = object : ClassMultiHashProvider {
-                        override fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>): Long {
-                            val outcome = inlinedClassSnapshotter.searchAndGetFullAbiHashOfUsedClasses(rootClasses)
-                            loadedClasses.addAll(outcome.loadedClasses)
-                            return outcome.calculatedHash
-                        }
-                    },
+                    classMultiHashProvider = inlinedClassSnapshotter as ClassMultiHashProvider,
                 ).getExtraInfo(
                     classFileWithContents.classInfo.kotlinClassHeader!!,
                     classFileWithContents.contents,
@@ -204,9 +192,6 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
 
         descriptor.snapshot = snapshot
 
-        for ((descriptor, contents) in loadedClasses) {
-            makeOrReuseClassSnapshot(descriptor, contents)
-        }
         return snapshot
     }
 

@@ -32,12 +32,25 @@ class InstanceOwnerRecordingClassVisitor(
 
         return object : MethodVisitor(Opcodes.ASM9, super.visitMethod(access, name, descriptor, signature, exceptions)) {
             override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, descriptor: String?) {
-                if (owner != null && opcode == Opcodes.GETSTATIC && name == "INSTANCE") {
-                    val jvmClassName = JvmClassName.byInternalName(owner)
-                    methodToUsedClassesMap?.getOrPut(methodSignature) { mutableSetOf() }?.add(jvmClassName)
-                    allUsedClassesSet?.add(jvmClassName)
+                if (opcode == Opcodes.GETSTATIC && name == "INSTANCE" && owner?.contains("$") == true) {
+                    storeUsage(owner)
                 }
                 super.visitFieldInsn(opcode, owner, name, descriptor)
+            }
+
+            override fun visitTypeInsn(opcode: Int, type: String?) {
+                if (opcode == Opcodes.NEW && type?.contains("$") == true) {
+                    // here we might be instantiating a class from another inline function in the same module
+                    // better safe than sorry, so:
+                    storeUsage(type)
+                }
+                super.visitTypeInsn(opcode, type)
+            }
+
+            private fun storeUsage(internalName: String) {
+                val jvmClassName = JvmClassName.byInternalName(internalName)
+                methodToUsedClassesMap?.getOrPut(methodSignature) { mutableSetOf() }?.add(jvmClassName)
+                allUsedClassesSet?.add(jvmClassName)
             }
         }
     }
