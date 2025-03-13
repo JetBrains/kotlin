@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 @LLFirInternals
 class LLFirResolveSessionService(project: Project) {
@@ -40,7 +41,7 @@ class LLFirResolveSessionService(project: Project) {
 
     private fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
         return when (module) {
-            is KaSourceModule -> LLSourceModuleResolutionStrategyProvider
+            is KaSourceModule -> LLSourceModuleResolutionStrategyProvider(module)
             is KaLibraryModule, is KaBuiltinsModule, is KaLibrarySourceModule -> LLBinaryModuleResolutionStrategyProvider(module)
             is KaScriptModule -> LLScriptModuleResolutionStrategyProvider(module)
             is KaDanglingFileModule -> {
@@ -73,16 +74,15 @@ class LLFirResolveSessionService(project: Project) {
     }
 }
 
-private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStrategyProvider {
+private class LLSourceModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
             is KaSourceModule -> LLModuleResolutionStrategy.LAZY
             is KaBuiltinsModule, is KaLibraryModule -> LLModuleResolutionStrategy.STATIC
-            else -> unexpectedElementError("module", module)
+            else -> cannotProvideResolutionStrategy(module, useSiteModule)
         }
     }
 }
-
 
 private class LLBinaryModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
@@ -101,7 +101,7 @@ private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule
         return when (module) {
             useSiteModule, is KaSourceModule, is KaLibrarySourceModule -> LLModuleResolutionStrategy.LAZY
             is KaBuiltinsModule, is KaLibraryModule -> LLModuleResolutionStrategy.STATIC
-            else -> unexpectedElementError("module", module)
+            else -> cannotProvideResolutionStrategy(module, useSiteModule)
         }
     }
 }
@@ -113,5 +113,12 @@ private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLM
             is KaDanglingFileModule -> LLModuleResolutionStrategy.LAZY
             else -> delegate.getKind(module)
         }
+    }
+}
+
+private fun cannotProvideResolutionStrategy(module: KaModule, useSiteModule: KaModule): Nothing {
+    errorWithAttachment("Cannot provide a resolution strategy for `${module::class.simpleName}`.") {
+        withKaModuleEntry("module", module)
+        withKaModuleEntry("useSiteModule", useSiteModule)
     }
 }
