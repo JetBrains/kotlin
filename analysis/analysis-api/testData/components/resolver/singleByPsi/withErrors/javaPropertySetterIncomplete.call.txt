@@ -16,5 +16,5 @@ KtNameReferenceExpression(144,147): 'foo'
           contextParameters = []
           callableId = /JavaClass.foo
       simpleAccess = Write:
-        value = null
+        value = javaClass.foo =
       typeArgumentsMapping = {}

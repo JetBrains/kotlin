@@ -35,8 +35,8 @@ package d
 
 interface I {
     fun <T
-            > f<!SYNTAX!><!> = <!TOO_MANY_ARGUMENTS!>C<!>(
-        <!SYNTAX!><!SYNTAX!><!>.<!><!CANNOT_INFER_PARAMETER_TYPE, INFIX_MODIFIER_REQUIRED, TOO_MANY_ARGUMENTS!>f<!><!SYNTAX!><!>
+            > f<!SYNTAX!><!> = C(
+        <!SYNTAX!><!SYNTAX!><!>.<!><!CANNOT_INFER_PARAMETER_TYPE, INFIX_MODIFIER_REQUIRED!>f<!><!SYNTAX!><!>
     class C : I<!SYNTAX!><!>
 
 // FILE: e.kt
@@ -45,7 +45,7 @@ package e
 class A<E<!SYNTAX!><!>
 {
 
-    var bar = <!TOO_MANY_ARGUMENTS!>EmptyContinuation<!>(
+    var bar = EmptyContinuation(
         <!SYNTAX!><!SYNTAX!><!>.<!><!FUNCTION_EXPECTED!>bar<!><!SYNTAX!><!>
 
     class EmptyContinuation : A<<!SYNTAX, SYNTAX!><!>

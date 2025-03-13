@@ -939,7 +939,11 @@ class LightTreeRawFirDeclarationBuilder(
 
     private fun buildFirDestructuringDeclarationInitializer(destructuringDeclaration: LighterASTNode): FirExpression {
         val initializer = destructuringDeclaration.getChildExpression().takeUnless { it?.tokenType == PROPERTY_DELEGATE }
-        return expressionConverter.getAsFirExpression(initializer, "Initializer required for destructuring declaration")
+        return expressionConverter.getAsFirExpression(
+            initializer,
+            "Initializer required for destructuring declaration",
+            sourceWhenInvalidExpression = destructuringDeclaration
+        )
     }
 
     private fun buildErrorTopLevelDeclarationForDanglingModifierList(node: LighterASTNode) = buildDanglingModifierList {
@@ -1536,7 +1540,7 @@ class LightTreeRawFirDeclarationBuilder(
             isVar,
             entries,
             firExpression ?: buildErrorExpression(
-                null,
+                destructingDeclaration.toFirSourceElement(),
                 ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
             ),
             source,
@@ -1782,7 +1786,7 @@ class LightTreeRawFirDeclarationBuilder(
                     val effect = it.getFirstChild()
                     if (effect == null) {
                         val errorExpression =
-                            buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+                            buildErrorExpression(rawContractDescription.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
                         destination.add(errorExpression)
                     } else {
                         val expression = expressionConverter.convertExpression(effect, errorReason)

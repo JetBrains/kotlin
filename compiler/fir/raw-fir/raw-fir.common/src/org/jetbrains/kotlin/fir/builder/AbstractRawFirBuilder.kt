@@ -639,6 +639,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         convert: T.() -> FirExpression,
     ): FirExpression {
         val unwrappedReceiver = receiver.unwrap() ?: return buildErrorExpression {
+            source = wholeExpression.toFirSourceElement()
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
@@ -839,7 +840,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         receiver: T?,
         convert: T.() -> FirExpression,
         isChildInParentheses: Boolean,
-        sourceElementForError: KtSourceElement?,
+        sourceElementForError: KtSourceElement,
         init: FirBlockBuilder.(receiver: FirExpression) -> Unit = {},
     ): FirExpression {
         val receiverFir = receiver?.convert() ?: buildErrorExpression {
@@ -884,7 +885,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     // T is a PSI or a light-tree node
     @OptIn(FirContractViolation::class)
     fun T?.generateAssignment(
-        baseSource: KtSourceElement?,
+        baseSource: KtSourceElement,
         arrayAccessSource: KtSourceElement?,
         rhsExpression: FirExpression,
         operation: FirOperation,
@@ -897,6 +898,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         convert: T.() -> FirExpression,
     ): FirStatement {
         val unwrappedLhs = this.unwrap() ?: return buildErrorExpression {
+            source = baseSource
             diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
@@ -941,7 +943,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
             val receiverToUse =
                 lhsReceiver ?: buildErrorExpression {
-                    source = null
+                    source = baseSource
                     diagnostic = ConeSimpleDiagnostic(
                         "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
                     )
@@ -1023,7 +1025,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
     private fun generateIndexedAccessAugmentedAssignment(
         receiver: FirExpression, // a.get(x,y)
-        baseSource: KtSourceElement?,
+        baseSource: KtSourceElement,
         arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
         annotations: List<FirAnnotation>,
@@ -1041,7 +1043,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         // Also, disable `set` resolution for `(a[0]) += ...` where `a: Array<A>`.
         if (receiver is FirSafeCallExpression || isLhsParenthesized && prohibitSetCallsForParenthesizedLhs) {
             val argument = rhs?.convert() ?: buildErrorExpression(
-                null,
+                baseSource,
                 ConeSyntaxDiagnostic("No value for array set")
             )
             return generateAssignmentOperatorCall(operation, baseSource, receiver, argument, annotations)
@@ -1056,7 +1058,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             this.operation = operation
             this.lhsGetCall = receiver
             this.rhs = rhs?.convert() ?: buildErrorExpression(
-                null,
+                baseSource,
                 ConeSyntaxDiagnostic("No value for array set")
             )
             this.arrayAccessSource = arrayAccessSource
@@ -1252,6 +1254,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         diagnostic = ConeDestructuringDeclarationsOnTopLevel
         symbol = FirErrorPropertySymbol(diagnostic)
         this.initializer = initializer ?: buildErrorExpression {
+            this.source = source
             diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
         }
     }

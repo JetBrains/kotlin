@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
     whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
-    convert: KtExpression?.(String) -> FirExpression,
+    convert: KtExpression?.(String, fallbackSource: KtElement) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
@@ -39,12 +39,12 @@ internal fun KtWhenCondition.toFirWhenCondition(
                 source = (expression ?: firstChild)?.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
-                    firSubjectExpression, expression.convert("No expression in condition with expression")
+                    firSubjectExpression, expression.convert("No expression in condition with expression", this@toFirWhenCondition)
                 )
             }
         }
         is KtWhenConditionInRange -> {
-            val firRange = rangeExpression.convert("No range in condition with range")
+            val firRange = rangeExpression.convert("No range in condition with range", this)
             firRange.generateContainsOperation(
                 firSubjectExpression,
                 isNegated,
@@ -68,7 +68,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
     subject: FirExpressionRef<FirWhenExpression>,
-    convert: KtExpression?.(String) -> FirExpression,
+    convert: KtExpression?.(String, fallbackSource: KtElement) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val conditions = this.map { condition ->

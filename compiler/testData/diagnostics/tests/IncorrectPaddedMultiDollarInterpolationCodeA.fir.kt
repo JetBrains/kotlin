@@ -11,61 +11,61 @@
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun emptyInterpolation() {
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"<!>
-    $$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>}<!> padding"
-    $$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>}<!> padding"
-    $$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>}<!> padding"
+    "padding ${<!SYNTAX!><!>} padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!SYNTAX!><!>} padding"<!>
+    $$"padding $${<!SYNTAX!><!>} padding"
+    $$$$"padding $$$${<!SYNTAX!><!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>} padding"
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"""
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>}<!> padding"""<!>
-    $$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>}<!> padding"""
-    $$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>}<!> padding"""
-    $$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>}<!> padding"""
+    """padding ${<!SYNTAX!><!>} padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!SYNTAX!><!>} padding"""<!>
+    $$"""padding $${<!SYNTAX!><!>} padding"""
+    $$$$"""padding $$$${<!SYNTAX!><!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>} padding"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun blankInterpolation() {
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"<!>
-    $$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>    }<!> padding"
-    $$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>    }<!> padding"
-    $$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>    }<!> padding"
+    "padding ${<!SYNTAX!><!>    } padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!SYNTAX!><!>    } padding"<!>
+    $$"padding $${<!SYNTAX!><!>    } padding"
+    $$$$"padding $$$${<!SYNTAX!><!>    } padding"
+    $$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>    } padding"
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"""
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>    }<!> padding"""<!>
-    $$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>    }<!> padding"""
-    $$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>    }<!> padding"""
-    $$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>    }<!> padding"""
+    """padding ${<!SYNTAX!><!>    } padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!SYNTAX!><!>    } padding"""<!>
+    $$"""padding $${<!SYNTAX!><!>    } padding"""
+    $$$$"""padding $$$${<!SYNTAX!><!>    } padding"""
+    $$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>    } padding"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun linebreakInterpolation() {
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"<!>
-    $$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>
-    }<!> padding"
-    $$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>
-    }<!> padding"
-    $$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>
-    }<!> padding"
+    "padding ${<!SYNTAX!><!>
+    } padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!SYNTAX!><!>
+    } padding"<!>
+    $$"padding $${<!SYNTAX!><!>
+    } padding"
+    $$$$"padding $$$${<!SYNTAX!><!>
+    } padding"
+    $$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>
+    } padding"
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"""
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>
-    }<!> padding"""<!>
-    $$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>
-    }<!> padding"""
-    $$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>
-    }<!> padding"""
-    $$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>
-    }<!> padding"""
+    """padding ${<!SYNTAX!><!>
+    } padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!SYNTAX!><!>
+    } padding"""<!>
+    $$"""padding $${<!SYNTAX!><!>
+    } padding"""
+    $$$$"""padding $$$${<!SYNTAX!><!>
+    } padding"""
+    $$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>
+    } padding"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -120,11 +120,11 @@ fun interpolationOfMisplacedDollar() {
     $$$$"padding $$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"
     $$$$$$$$"padding $$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"
 
-    "padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"<!>
-    $$"padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"
-    $$$$"padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"
-    $$$$$$$$"padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"
+    "padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"<!>
+    $$"padding $${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"
+    $$$$"padding $$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"
 
 
     """padding $<!UNRESOLVED_REFERENCE!>`$`<!> padding"""
@@ -133,11 +133,11 @@ fun interpolationOfMisplacedDollar() {
     $$$$"""padding $$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"""
     $$$$$$$$"""padding $$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!> padding"""
 
-    """padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""
-    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding <!SYNTAX{LT}!>${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""<!>
-    $$"""padding <!SYNTAX{LT}!>$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""
-    $$$$"""padding <!SYNTAX{LT}!>$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""
-    $$$$$$$$"""padding <!SYNTAX{LT}!>$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}<!> padding"""
+    """padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""<!>
+    $$"""padding $${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""
+    $$$$"""padding $$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>} padding"""
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8

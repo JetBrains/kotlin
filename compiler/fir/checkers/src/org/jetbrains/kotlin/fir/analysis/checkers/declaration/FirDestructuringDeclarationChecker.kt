@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -65,6 +66,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 }
                 else -> null
             } ?: return
+        if (originalDestructuringDeclarationOrInitializer.isMissingInitializer()) return
         val originalDestructuringDeclarationOrInitializerSource = originalDestructuringDeclarationOrInitializer.source ?: return
         val originalDestructuringDeclarationType =
             when (originalDestructuringDeclarationOrInitializer) {
@@ -95,15 +97,13 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        val needToReport =
-            when (initializer) {
-                null -> true
-                is FirErrorExpression -> initializer.diagnostic is ConeSyntaxDiagnostic
-                else -> false
-            }
-        if (needToReport) {
+        if (initializer.isMissingInitializer()) {
             reporter.reportOn(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, context)
         }
+    }
+
+    private fun FirElement?.isMissingInitializer(): Boolean {
+        return this == null || this is FirErrorExpression && diagnostic is ConeSyntaxDiagnostic
     }
 
     private fun checkComponentCall(
