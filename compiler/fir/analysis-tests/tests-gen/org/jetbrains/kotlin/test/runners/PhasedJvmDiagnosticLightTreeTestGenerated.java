@@ -2118,39 +2118,9 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
-    @TestMetadata("unnamedLocalVariableVsNamedUnderscore.kt")
-    public void testUnnamedLocalVariableVsNamedUnderscore() {
-      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariableVsNamedUnderscore.kt");
-    }
-
-    @Test
-    @TestMetadata("unnamedLocalVariableVsNamedUnderscore_Disabled.kt")
-    public void testUnnamedLocalVariableVsNamedUnderscore_Disabled() {
-      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariableVsNamedUnderscore_Disabled.kt");
-    }
-
-    @Test
-    @TestMetadata("unnamedLocalVariables.kt")
-    public void testUnnamedLocalVariables() {
-      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables.kt");
-    }
-
-    @Test
-    @TestMetadata("unnamedLocalVariables_Disabled.kt")
-    public void testUnnamedLocalVariables_Disabled() {
-      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables_Disabled.kt");
-    }
-
-    @Test
     @TestMetadata("unnamedParameterOnOverride.kt")
     public void testUnnamedParameterOnOverride() {
       runTest("compiler/testData/diagnostics/tests/unnamedParameterOnOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
-    public void testUnnamedTypeArgumentVsNamedUnderscore() {
-      runTest("compiler/testData/diagnostics/tests/unnamedTypeArgumentVsNamedUnderscore.kt");
     }
 
     @Test
@@ -43218,6 +43188,41 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("unitConversionForSubtypes.kt")
       public void testUnitConversionForSubtypes() {
         runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionForSubtypes.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/unnamedLocalVariables")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnnamedLocalVariables {
+      @Test
+      @TestMetadata("unnamedLocalVariableVsNamedUnderscore.kt")
+      public void testUnnamedLocalVariableVsNamedUnderscore() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariableVsNamedUnderscore.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedLocalVariableVsNamedUnderscore_Disabled.kt")
+      public void testUnnamedLocalVariableVsNamedUnderscore_Disabled() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariableVsNamedUnderscore_Disabled.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedLocalVariables.kt")
+      public void testUnnamedLocalVariables() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariables.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedLocalVariables_Disabled.kt")
+      public void testUnnamedLocalVariables_Disabled() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedLocalVariables_Disabled.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
+      public void testUnnamedTypeArgumentVsNamedUnderscore() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedTypeArgumentVsNamedUnderscore.kt");
       }
     }
 

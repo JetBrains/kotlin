@@ -203,12 +203,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       runTest("compiler/testData/diagnostics/tests/unnamedArgsInJavaAnnotations.kt");
     }
 
-    @Test
-    @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
-    public void testUnnamedTypeArgumentVsNamedUnderscore() {
-      runTest("compiler/testData/diagnostics/tests/unnamedTypeArgumentVsNamedUnderscore.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/annotations")
     @TestDataPath("$PROJECT_ROOT")
@@ -2113,6 +2107,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       @TestMetadata("wrongNumberOfArgumentsInTypeAliasConstructor.kt")
       public void testWrongNumberOfArgumentsInTypeAliasConstructor() {
         runTest("compiler/testData/diagnostics/tests/typealias/wrongNumberOfArgumentsInTypeAliasConstructor.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/unnamedLocalVariables")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnnamedLocalVariables {
+      @Test
+      @TestMetadata("unnamedTypeArgumentVsNamedUnderscore.kt")
+      public void testUnnamedTypeArgumentVsNamedUnderscore() {
+        runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables/unnamedTypeArgumentVsNamedUnderscore.kt");
       }
     }
 
