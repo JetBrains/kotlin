@@ -18,7 +18,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  */
 class InstanceOwnerRecordingClassVisitor(
     delegateClassVisitor: ClassVisitor?,
-    private val methodToUsedClassesMap: MutableMap<JvmMemberSignature.Method, MutableSet<JvmClassName>>? = null,
     private val allUsedClassesSet: MutableSet<JvmClassName>? = null,
 ) : ClassVisitor(Opcodes.ASM9, delegateClassVisitor) {
     override fun visitMethod(
@@ -33,9 +32,7 @@ class InstanceOwnerRecordingClassVisitor(
         return object : MethodVisitor(Opcodes.ASM9, super.visitMethod(access, name, descriptor, signature, exceptions)) {
             override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, descriptor: String?) {
                 if (owner != null && opcode == Opcodes.GETSTATIC && name == "INSTANCE") {
-                    val jvmClassName = JvmClassName.byInternalName(owner)
-                    methodToUsedClassesMap?.getOrPut(methodSignature) { mutableSetOf() }?.add(jvmClassName)
-                    allUsedClassesSet?.add(jvmClassName)
+                    allUsedClassesSet?.add(JvmClassName.byInternalName(owner))
                 }
                 super.visitFieldInsn(opcode, owner, name, descriptor)
             }

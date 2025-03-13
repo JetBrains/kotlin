@@ -46,7 +46,8 @@ internal class BasicClassInfo(
         fun compute(classContents: ByteArray): BasicClassInfo {
             val kotlinClassHeaderClassVisitor = KotlinClassHeaderClassVisitor()
             val innerClassesClassVisitor = InnerClassesClassVisitor(kotlinClassHeaderClassVisitor)
-            val basicClassInfoVisitor = BasicClassInfoClassVisitor(innerClassesClassVisitor)
+            val outerClassClassVisitor = OuterClassClassVisitor(innerClassesClassVisitor)
+            val basicClassInfoVisitor = BasicClassInfoClassVisitor(outerClassClassVisitor)
 
             // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important
             ClassReader(classContents).accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
@@ -93,6 +94,14 @@ private class InnerClassesClassVisitor(cv: ClassVisitor) : ClassVisitor(Opcodes.
     }
 
     fun getInnerClassesInfo(): InnerClassesInfo = innerClassesInfo
+}
+
+private class OuterClassClassVisitor(cv: ClassVisitor) : ClassVisitor(Opcodes.API_VERSION, cv) {
+
+    override fun visitOuterClass(owner: String?, name: String?, descriptor: String?) {
+        println("yo $owner $name $descriptor")
+        super.visitOuterClass(owner, name, descriptor)
+    }
 }
 
 private class KotlinClassHeaderClassVisitor : ClassVisitor(Opcodes.API_VERSION) {

@@ -30,6 +30,9 @@ import kotlin.math.ceil
  * Either way, if it's good enough for compiler, it must be good enough for snapshotter too.
  */
 internal sealed interface ClassListSnapshotter {
+    /**
+     * This must preserve the order of classes (usages might zip the return value with another list)
+     */
     fun snapshot(): List<ClassSnapshot>
 }
 
@@ -140,12 +143,32 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
      *  - (i.e. doesn't have two classes which are each other's outer classes, or a larger cycle like this)
      */
 
-
     override fun snapshot(): List<ClassSnapshot> {
-        return classes.map {
-            val mapped = makeOrReuseClassSnapshot(it)
+        // expected order:
+        // InlinedLocalClassKt$calculate$foo$1, InlinedLocalClassKt$calculate$bar$1, InlinedLocalClassKt
+        // this allows us to visit inner classes before the outer class
+        val sortedClasses = classes.sortedByDescending { it.classFile.getClassName().internalName }
+        println(sortedClasses.map {it.classFile.getClassName().internalName}.joinToString(", "))
 
-            mapped
+        val (inner, outer) = classes.partition { it.classFile.getClassName().internalName.contains("$") }
+        val innerSorted = inner.sortedBy { it.classFile.getClassName().internalName }
+
+        for (outerClass in outer) {
+            // outer class snapshotting might find accessible inline functons ->
+            makeOrReuseClassSnapshot(outerClass)
+        }
+
+        for (innerClass in innerSorted) {
+            //TODO add test case - inline fun in a local class
+            //disgusting
+            makeOrReuseClassSnapshot(innerClass)
+        }
+
+        println(innerSorted.map {it.classFile.getClassName().internalName}.joinToString(", "))
+        println(innerSorted.binarySearchBy("InlinedLocalClassKt\$calculate") { it.classFile.getClassName().internalName })
+
+        return classes.map { // returns class snapshots in the expected order
+            classFileToDescriptorMap[it]?.snapshot ?: error("unreachable")
         }
     }
 
@@ -161,6 +184,28 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
         return makeOrReuseClassSnapshot(descriptor, classFileWithContents)
     }
 
+    /**
+     * OK, let's do it
+     *
+     * first pass: process all $ classes, extract fun to hash multimapping
+     * second pass: process all primary classes, update all inline funs via known hashes
+     *
+     * uhm, how does it work in a three module setup? start with test and look at bytecodes
+     *
+     * error recovery: if we process a normal class and its outerclass is related to a known inline fun,
+     * what can we do?
+     *
+     * write down "nclass X has outerclass Z"
+     * check if Z has inline fun
+     *
+     * this implementation is actually MORE precise than the INSTANCE one,
+     * because INSTANCE fully relied on classnames
+     *
+     * .. how to avoid isAccessible checks? well basically, we know for a fact that if a class has
+     * proper name, it can't be inside an inline fun
+     *
+     * v2: start by processing top-level classes, each inline fun creates prefix for inlined-snapshot
+     */
     private fun makeOrReuseClassSnapshot(descriptor: ClassDescriptorForProcessing, classFileWithContents: ClassFileWithContents): ClassSnapshot {
         descriptor.snapshot?.let { return it }
 
@@ -178,8 +223,8 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
                  */
                 val extraInfo = ExtraInfoGeneratorWithInlinedClassSnapshotting(
                     classMultiHashProvider = object : ClassMultiHashProvider {
-                        override fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>): Long {
-                            val outcome = inlinedClassSnapshotter.searchAndGetFullAbiHashOfUsedClasses(rootClasses)
+                        override fun searchAndGetFullAbiHashOfUsedClasses(inlinedClassPrefix: String): Long {
+                            val outcome = inlinedClassSnapshotter.searchAndGetFullAbiHashOfUsedClasses(inlinedClassPrefix)
                             loadedClasses.addAll(outcome.loadedClasses)
                             return outcome.calculatedHash
                         }

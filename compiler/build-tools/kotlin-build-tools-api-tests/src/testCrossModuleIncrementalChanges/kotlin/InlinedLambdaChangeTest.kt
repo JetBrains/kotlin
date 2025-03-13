@@ -284,7 +284,6 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
-    @Disabled("KT-75883 - here callable's code creates a new object so there's no INSTANCE")
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by an anonymous object - slightly evil")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
@@ -306,6 +305,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
+    //TODO drop printlns from final mr
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in inline function inside named inner class")
     @TestMetadata("ic-scenarios/inline-named-inner/lib")
