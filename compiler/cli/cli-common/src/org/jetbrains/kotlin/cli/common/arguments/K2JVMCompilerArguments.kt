@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.*
+import com.intellij.util.xmlb.annotations.Transient
+import org.jetbrains.kotlin.config.JVMAssertionsMode
+import org.jetbrains.kotlin.config.JvmTarget
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -846,82 +846,9 @@ If API Level >= 2.2 -- no-op."""
             field = value
         }
 
-    override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
-        val result = super.configureAnalysisFlags(collector, languageVersion)
-        result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
-        result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
-            .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
-        result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        configureJvmDefaultMode(collector)?.let {
-            result[JvmAnalysisFlags.jvmDefaultMode] = it
-        }
-        result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
-        result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
-        result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
-        result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
-        result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
-        result[JvmAnalysisFlags.outputBuiltinsMetadata] = outputBuiltinsMetadata
-        if (expectBuiltinsAsPartOfStdlib && !stdlibCompilation) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "-Xcompile-builtins-as-part-of-stdlib must not be used without -Xstdlib-compilation"
-            )
-        }
-        result[JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib] = expectBuiltinsAsPartOfStdlib
-        return result
-    }
-
-    private fun configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode? = when {
-        jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
-            if (it == null) {
-                collector?.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
-                            "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
-                )
-            }
-        }
-        jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
-            if (it == null) {
-                collector?.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
-                            "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
-                )
-            }
-        }
-        else -> null
-    }
-
-    override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
-        val result = super.configureLanguageFeatures(collector)
-        if (typeEnhancementImprovementsInStrictMode) {
-            result[LanguageFeature.TypeEnhancementImprovementsInStrictMode] = LanguageFeature.State.ENABLED
-        }
-        if (enhanceTypeParameterTypesToDefNotNull) {
-            result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
-        }
-        if (valueClasses) {
-            result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
-        }
-        if (annotationsInMetadata) {
-            result[LanguageFeature.AnnotationsInMetadata] = LanguageFeature.State.ENABLED
-        }
-
-        // If a JVM default mode is enabled via `-jvm-default` or `-Xjvm-default`, also forcibly enable a few flags that fix incomplete
-        // error reporting in some cases.
-        // Note that this won't have effect if a JVM default mode is enabled by other means, specifically if:
-        // * language version is 1.9+, and `JvmDefaultEnableByDefault` is either enabled manually or automatically (if LV is 2.2+).
-        //   In this case, both flags will be enabled simply because their `sinceVersion` is <= 1.9.
-        // * language version is 1.8 or earlier, and `JvmDefaultEnableByDefault` is enabled manually. In this case, the flags will not be
-        //   enabled, but that is fine because manually enabling language features is an advanced use case without any guarantees.
-        if (configureJvmDefaultMode(null)?.isEnabled == true) {
-            result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
-            result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
-        }
-
-        return result
-    }
+    @get:Transient
+    @field:kotlin.jvm.Transient
+    override val configurator: CommonCompilerArgumentsConfigurator = K2JVMCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())
 }

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.LanguageVersion
+import com.intellij.util.xmlb.annotations.Transient
 
 class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
     // First go the options interesting to the general public.
@@ -476,16 +473,9 @@ The default value is 1."""
             field = value
         }
 
-    override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
-        super.configureAnalysisFlags(collector, languageVersion).also {
-            val optInList = it[AnalysisFlags.optIn] as List<*>
-            it[AnalysisFlags.optIn] = optInList + listOf("kotlin.ExperimentalUnsignedTypes")
-            if (printIr)
-                phasesToDumpAfter = arrayOf("ALL")
-            if (metadataKlib) {
-                it[AnalysisFlags.metadataCompilation] = true
-            }
-        }
+    @get:Transient
+    @field:kotlin.jvm.Transient
+    override val configurator: CommonCompilerArgumentsConfigurator = K2NativeCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
 
