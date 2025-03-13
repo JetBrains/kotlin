@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -255,13 +256,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) return
         if (annotationClassId != StandardClassIds.Annotations.ContextFunctionTypeParams) return
-        reporter.reportOn(
-            source,
-            FirErrors.UNSUPPORTED_FEATURE,
-            LanguageFeature.ContextReceivers to context.languageVersionSettings,
-            context
-        )
+        source.requireFeatureSupport(LanguageFeature.ContextReceivers, context, reporter)
     }
 }
