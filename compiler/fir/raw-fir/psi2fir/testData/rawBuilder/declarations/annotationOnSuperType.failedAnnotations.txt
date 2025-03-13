@@ -2,9 +2,6 @@ Annotations from the list below require AST loading to calculate arguments.
 It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
 See KT-71787 for reference.
 
-context -> FirRegularClassSymbol util/Anno
-@Target(LAZY_EXPRESSION)
-
 context -> FirRegularClassSymbol util/MyClassWithoutConstructor
 @Anno(LAZY_EXPRESSION)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.getAncestors
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
 import org.jetbrains.kotlin.util.getChildren
@@ -96,11 +98,17 @@ private open class LightTreeSourceNavigator : SourceNavigator {
     }
 
     override fun KtSourceElement.getRawIdentifier(): CharSequence? {
-        return when (elementType) {
-            is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> lighterASTNode.toString()
-            is KtTypeProjectionElementType -> lighterASTNode.getChildren(treeStructure).last().toString()
-            else -> null
-        }
+        val astNode = lighterASTNode
+        return astNode.getRawIdentifier(treeStructure)
+    }
+
+    private fun LighterASTNode.getRawIdentifier(
+        treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
+    ): CharSequence? = when (tokenType) {
+        is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> toString()
+        is KtTypeProjectionElementType -> getChildren(treeStructure).last().toString()
+        is KtDotQualifiedExpressionElementType, KtTokens.SAFE_ACCESS -> getChildren(treeStructure).last().getRawIdentifier(treeStructure)
+        else -> null
     }
 
     override fun FirDeclaration.getRawName(): String? {
@@ -157,17 +165,14 @@ private object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     override fun FirTypeRef.isInConstructorCallee(): Boolean = psi<KtTypeReference>()?.parent is KtConstructorCalleeExpression
 
-    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
-        val psi = psi<PsiElement>()
-        return if (psi is KtNameReferenceExpression) {
-            psi.getReferencedNameElement().node.chars
-        } else if (psi is KtTypeProjection) {
-            psi.typeReference?.typeElement?.text
-        } else if (psi is LeafPsiElement && psi.elementType == KtTokens.IDENTIFIER) {
-            psi.chars
-        } else {
-            null
-        }
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? = psi<PsiElement>()?.getRawIdentifier()
+
+    private fun PsiElement.getRawIdentifier(): CharSequence? = when (this) {
+        is KtNameReferenceExpression -> getReferencedNameElement().node.chars
+        is KtTypeProjection -> typeReference?.typeElement?.text
+        is LeafPsiElement if elementType == KtTokens.IDENTIFIER -> chars
+        is KtQualifiedExpression -> selectorExpression?.getRawIdentifier()
+        else -> null
     }
 
     override fun FirDeclaration.getRawName(): String? {

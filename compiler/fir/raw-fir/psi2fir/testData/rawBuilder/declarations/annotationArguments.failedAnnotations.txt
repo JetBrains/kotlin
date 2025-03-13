@@ -5,12 +5,6 @@ See KT-71787 for reference.
 context -> FirRegularClassSymbol WithExplicitArrays
 @Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
-context -> FirRegularClassSymbol WithClassLiteral
-@ClassLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol WithEnumLiteral
-@EnumLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
 context -> FirRegularClassSymbol OneVararg
 @VarArg(LAZY_EXPRESSION)
 
@@ -25,9 +19,6 @@ context -> FirRegularClassSymbol WithNested
 
 context -> FirRegularClassSymbol WithQualifiedNested
 @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol Qualified
-@Simple(LAZY_EXPRESSION)
 
 context -> FirRegularClassSymbol Sum
 @Simple(LAZY_EXPRESSION)

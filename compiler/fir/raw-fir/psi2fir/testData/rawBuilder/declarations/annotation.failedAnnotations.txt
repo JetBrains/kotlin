@@ -2,12 +2,6 @@ Annotations from the list below require AST loading to calculate arguments.
 It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
 See KT-71787 for reference.
 
-context -> FirRegularClassSymbol base
-@Target(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol derived
-@Target(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
 context -> FirValueParameterSymbol <local>/x from FirConstructorSymbol /correctDerived.correctDerived
 @derived(LAZY_EXPRESSION)
 

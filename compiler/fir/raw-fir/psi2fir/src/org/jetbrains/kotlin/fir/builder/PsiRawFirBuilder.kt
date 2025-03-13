@@ -2753,18 +2753,10 @@ open class PsiRawFirBuilder(
                 else -> expression
             }.toFirSourceElement()
 
-            val expressionSource = expression.toFirSourceElement()
-            var diagnostic: ConeDiagnostic? = null
-            val rawText = expression.getReferencedNameElement().node.text
-            if (rawText.isUnderscore) {
-                diagnostic = ConeUnderscoreUsageWithoutBackticks(expressionSource)
-            }
-
             return generateAccessExpression(
                 qualifiedSource,
-                expressionSource,
+                expression.toFirSourceElement(),
                 expression.getReferencedNameAsName(),
-                diagnostic
             )
         }
 
