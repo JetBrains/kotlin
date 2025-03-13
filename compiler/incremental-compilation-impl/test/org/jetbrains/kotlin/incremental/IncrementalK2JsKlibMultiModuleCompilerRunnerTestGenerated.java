@@ -25,7 +25,7 @@ public class IncrementalK2JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
 
-  public void testAllFilesPresentInCommon() {
+  public void testAllFilesPresentInCommonAbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^\\.]+)$"), null, true);
   }
 

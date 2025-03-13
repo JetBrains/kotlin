@@ -22,12 +22,12 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
   @TestMetadata("jps/jps-plugin/testData/incremental/lazyKotlinCaches")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class LazyKotlinCaches extends AbstractIncrementalLazyCachesTest {
+  public static class LazyKotlinCachesAbstractIncrementalLazyCachesTest extends AbstractIncrementalLazyCachesTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInLazyKotlinCaches() {
+    public void testAllFilesPresentInLazyKotlinCachesAbstractIncrementalLazyCachesTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -179,12 +179,12 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
   @TestMetadata("jps/jps-plugin/testData/incremental/changeIncrementalOption")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ChangeIncrementalOption extends AbstractIncrementalLazyCachesTest {
+  public static class ChangeIncrementalOptionAbstractIncrementalLazyCachesTest extends AbstractIncrementalLazyCachesTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInChangeIncrementalOption() {
+    public void testAllFilesPresentInChangeIncrementalOptionAbstractIncrementalLazyCachesTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 

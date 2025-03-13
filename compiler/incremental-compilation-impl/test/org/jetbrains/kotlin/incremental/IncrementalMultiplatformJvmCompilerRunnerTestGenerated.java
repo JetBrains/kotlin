@@ -22,12 +22,12 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
   @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class AllPlatforms extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+  public static class AllPlatformsAbstractIncrementalMultiplatformJvmCompilerRunnerTest extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInAllPlatforms() {
+    public void testAllFilesPresentInAllPlatformsAbstractIncrementalMultiplatformJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -71,12 +71,12 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
   @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class JvmOnlyK1 extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+  public static class JvmOnlyK1AbstractIncrementalMultiplatformJvmCompilerRunnerTest extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInJvmOnlyK1() {
+    public void testAllFilesPresentInJvmOnlyK1AbstractIncrementalMultiplatformJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 

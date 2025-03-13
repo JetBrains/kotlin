@@ -25,7 +25,7 @@ public class IncrementalK1JsKlibMultiplatformJsCompilerRunnerTestGenerated exten
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
 
-  public void testAllFilesPresentInAllPlatforms() {
+  public void testAllFilesPresentInAllPlatformsAbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
   }
 

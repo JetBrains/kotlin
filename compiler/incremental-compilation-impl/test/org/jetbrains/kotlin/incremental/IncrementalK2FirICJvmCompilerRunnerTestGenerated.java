@@ -23,7 +23,7 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
   @TestMetadata("jps/jps-plugin/testData/incremental/pureKotlin")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class PureKotlin extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
+  public static class PureKotlinAbstractIncrementalK2FirICJvmCompilerRunnerTest extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
@@ -53,7 +53,7 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/addTopLevelTypeAlias/");
     }
 
-    public void testAllFilesPresentInPureKotlin() {
+    public void testAllFilesPresentInPureKotlinAbstractIncrementalK2FirICJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^.*Expect.*)|(^removeMemberTypeAlias)|(^addMemberTypeAlias))"), TargetBackend.JVM_IR, false);
     }
 
@@ -701,12 +701,12 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
   @TestMetadata("jps/jps-plugin/testData/incremental/classHierarchyAffected")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassHierarchyAffected extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
+  public static class ClassHierarchyAffectedAbstractIncrementalK2FirICJvmCompilerRunnerTest extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassHierarchyAffected() {
+    public void testAllFilesPresentInClassHierarchyAffectedAbstractIncrementalK2FirICJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
     }
 
@@ -924,12 +924,12 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
   @TestMetadata("jps/jps-plugin/testData/incremental/inlineFunCallSite")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class InlineFunCallSite extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
+  public static class InlineFunCallSiteAbstractIncrementalK2FirICJvmCompilerRunnerTest extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInInlineFunCallSite() {
+    public void testAllFilesPresentInInlineFunCallSiteAbstractIncrementalK2FirICJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
     }
 
@@ -1225,12 +1225,12 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
   @TestMetadata("jps/jps-plugin/testData/incremental/withJava")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class WithJava extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
+  public static class WithJavaAbstractIncrementalK2FirICJvmCompilerRunnerTest extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInWithJava() {
+    public void testAllFilesPresentInWithJavaAbstractIncrementalK2FirICJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
     }
 
@@ -2666,12 +2666,12 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
   @TestMetadata("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class IncrementalJvmCompilerOnly extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
+  public static class IncrementalJvmCompilerOnlyAbstractIncrementalK2FirICJvmCompilerRunnerTest extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInIncrementalJvmCompilerOnly() {
+    public void testAllFilesPresentInIncrementalJvmCompilerOnlyAbstractIncrementalK2FirICJvmCompilerRunnerTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
     }
 

@@ -18,67 +18,73 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
-            fun incrementalJvmTestData(targetBackend: TargetBackend, excludePattern: String? = null): TestGroup.TestClass.() -> Unit = {
-                model(
-                    "incremental/pureKotlin",
+            fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
+                val targetBackend = TargetBackend.JVM_IR
+                val excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
+                modelForDirectoryBasedTest(
+                    "incremental", "pureKotlin",
                     extension = null,
                     recursive = false,
                     targetBackend = targetBackend,
                     excludedPattern = excludePattern
                 )
-                model(
-                    "incremental/classHierarchyAffected",
+                modelForDirectoryBasedTest(
+                    "incremental",
+                    "classHierarchyAffected",
                     extension = null,
                     recursive = false,
                     targetBackend = targetBackend,
                     excludedPattern = excludePattern
                 )
-                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/multiModule/withJavaUsedInKotlin", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                modelForDirectoryBasedTest("incremental", "inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                modelForDirectoryBasedTest("incremental", "withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                modelForDirectoryBasedTest(
+                    "incremental",
+                    "incrementalJvmCompilerOnly",
+                    extension = null,
+                    excludeParentDirs = true,
+                    targetBackend = targetBackend
+                )
+                modelForDirectoryBasedTest(
+                    "incremental/multiModule",
+                    "withJavaUsedInKotlin",
+                    extension = null,
+                    excludeParentDirs = true,
+                    targetBackend = targetBackend
+                )
             }
 
             // IR
             testClass<AbstractIncrementalK1JvmJpsTest> {
-                model("incremental/multiModule/common", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
-                model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
-                model(
-                    "incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true,
+                modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                modelForDirectoryBasedTest("incremental/multiModule", "jvm", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                modelForDirectoryBasedTest(
+                    "incremental/multiModule/multiplatform", "custom", extension = null, excludeParentDirs = true,
                     targetBackend = TargetBackend.JVM_IR
                 )
-                model(
-                    "incremental/pureKotlin",
+                modelForDirectoryBasedTest(
+                    "incremental", "pureKotlin",
                     extension = null,
                     recursive = false,
                     targetBackend = TargetBackend.JVM_IR,
                     excludedPattern = ".*SinceK2"
                 )
-                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
-                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
-                model(
-                    "incremental/classHierarchyAffected", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR
+                modelForDirectoryBasedTest("incremental", "withJava", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                modelForDirectoryBasedTest("incremental", "inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
+                modelForDirectoryBasedTest(
+                    "incremental", "classHierarchyAffected", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR
                 )
             }
 
             // K2
             testClass<AbstractIncrementalK2JvmJpsTest>(
-                init = incrementalJvmTestData(
-                    TargetBackend.JVM_IR,
-                    excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
-                )
+                init = incrementalJvmTestData()
             )
             testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
-                init = incrementalJvmTestData(
-                    TargetBackend.JVM_IR,
-                    excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
-                )
+                init = incrementalJvmTestData()
             )
             testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
-                init = incrementalJvmTestData(
-                    TargetBackend.JVM_IR,
-                    excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
-                )
+                init = incrementalJvmTestData()
             )
 
             testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
@@ -89,52 +95,52 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJvmLookupTrackerTest> {
-                model("incremental/lookupTracker/jvm", extension = null, recursive = false)
+                modelForDirectoryBasedTest("incremental/lookupTracker", "jvm", extension = null, recursive = false)
             }
             testClass<AbstractK1JvmLookupTrackerTest> {
-                model("incremental/lookupTracker/jvm", extension = null, recursive = false)
+                modelForDirectoryBasedTest("incremental/lookupTracker", "jvm", extension = null, recursive = false)
             }
             testClass<AbstractJsKlibLookupTrackerTest> {
                 // todo: investigate why lookups are different from non-klib js
-                model("incremental/lookupTracker/jsKlib", extension = null, recursive = false)
+                modelForDirectoryBasedTest("incremental/lookupTracker", "jsKlib", extension = null, recursive = false)
             }
 
             testClass<AbstractIncrementalLazyCachesTest> {
-                model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
-                model("incremental/changeIncrementalOption", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("incremental", "lazyKotlinCaches", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("incremental", "changeIncrementalOption", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractIncrementalCacheVersionChangedTest> {
-                model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("incremental", "cacheVersionChanged", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractDataContainerVersionChangedTest> {
-                model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("incremental", "cacheVersionChanged", extension = null, excludeParentDirs = true)
             }
         }
 
         testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
             fun TestGroup.TestClass.commonProtoComparisonTests() {
-                model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
-                model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
-                model("comparison/classMembersOnlyChanged", extension = null, excludeParentDirs = true)
-                model("comparison/packageMembers", extension = null, excludeParentDirs = true)
-                model("comparison/unchanged", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "classSignatureChange", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "classPrivateOnlyChange", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "classMembersOnlyChanged", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "packageMembers", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "unchanged", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractJvmProtoComparisonTest> {
                 commonProtoComparisonTests()
-                model("comparison/jvmOnly", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "jvmOnly", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractJsProtoComparisonTest> {
                 commonProtoComparisonTests()
-                model("comparison/jsOnly", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "jsOnly", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractFirJsProtoComparisonTest> {
                 commonProtoComparisonTests()
-                model("comparison/jsOnly", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("comparison", "jsOnly", extension = null, excludeParentDirs = true)
             }
         }
     }

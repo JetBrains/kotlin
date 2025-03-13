@@ -22,12 +22,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
   @TestMetadata("jps/jps-plugin/testData/comparison/classSignatureChange")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassSignatureChange extends AbstractJvmProtoComparisonTest {
+  public static class ClassSignatureChangeAbstractJvmProtoComparisonTest extends AbstractJvmProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassSignatureChange() {
+    public void testAllFilesPresentInClassSignatureChangeAbstractJvmProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -233,12 +233,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
   @TestMetadata("jps/jps-plugin/testData/comparison/classPrivateOnlyChange")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassPrivateOnlyChange extends AbstractJvmProtoComparisonTest {
+  public static class ClassPrivateOnlyChangeAbstractJvmProtoComparisonTest extends AbstractJvmProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassPrivateOnlyChange() {
+    public void testAllFilesPresentInClassPrivateOnlyChangeAbstractJvmProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -336,12 +336,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
   @TestMetadata("jps/jps-plugin/testData/comparison/classMembersOnlyChanged")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassMembersOnlyChanged extends AbstractJvmProtoComparisonTest {
+  public static class ClassMembersOnlyChangedAbstractJvmProtoComparisonTest extends AbstractJvmProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassMembersOnlyChanged() {
+    public void testAllFilesPresentInClassMembersOnlyChangedAbstractJvmProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -529,12 +529,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
   @TestMetadata("jps/jps-plugin/testData/comparison/packageMembers")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class PackageMembers extends AbstractJvmProtoComparisonTest {
+  public static class PackageMembersAbstractJvmProtoComparisonTest extends AbstractJvmProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInPackageMembers() {
+    public void testAllFilesPresentInPackageMembersAbstractJvmProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -632,12 +632,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
   @TestMetadata("jps/jps-plugin/testData/comparison/unchanged")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class Unchanged extends AbstractJvmProtoComparisonTest {
+  public static class UnchangedAbstractJvmProtoComparisonTest extends AbstractJvmProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInUnchanged() {
+    public void testAllFilesPresentInUnchangedAbstractJvmProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -681,12 +681,12 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
   @TestMetadata("jps/jps-plugin/testData/comparison/jvmOnly")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class JvmOnly extends AbstractJvmProtoComparisonTest {
+  public static class JvmOnlyAbstractJvmProtoComparisonTest extends AbstractJvmProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInJvmOnly() {
+    public void testAllFilesPresentInJvmOnlyAbstractJvmProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 

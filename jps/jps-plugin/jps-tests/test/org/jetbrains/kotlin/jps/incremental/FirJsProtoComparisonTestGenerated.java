@@ -22,12 +22,12 @@ public class FirJsProtoComparisonTestGenerated extends AbstractFirJsProtoCompari
   @TestMetadata("jps/jps-plugin/testData/comparison/classSignatureChange")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassSignatureChange extends AbstractFirJsProtoComparisonTest {
+  public static class ClassSignatureChangeAbstractFirJsProtoComparisonTest extends AbstractFirJsProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassSignatureChange() {
+    public void testAllFilesPresentInClassSignatureChangeAbstractFirJsProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -233,12 +233,12 @@ public class FirJsProtoComparisonTestGenerated extends AbstractFirJsProtoCompari
   @TestMetadata("jps/jps-plugin/testData/comparison/classPrivateOnlyChange")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassPrivateOnlyChange extends AbstractFirJsProtoComparisonTest {
+  public static class ClassPrivateOnlyChangeAbstractFirJsProtoComparisonTest extends AbstractFirJsProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassPrivateOnlyChange() {
+    public void testAllFilesPresentInClassPrivateOnlyChangeAbstractFirJsProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -336,12 +336,12 @@ public class FirJsProtoComparisonTestGenerated extends AbstractFirJsProtoCompari
   @TestMetadata("jps/jps-plugin/testData/comparison/classMembersOnlyChanged")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassMembersOnlyChanged extends AbstractFirJsProtoComparisonTest {
+  public static class ClassMembersOnlyChangedAbstractFirJsProtoComparisonTest extends AbstractFirJsProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassMembersOnlyChanged() {
+    public void testAllFilesPresentInClassMembersOnlyChangedAbstractFirJsProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -529,12 +529,12 @@ public class FirJsProtoComparisonTestGenerated extends AbstractFirJsProtoCompari
   @TestMetadata("jps/jps-plugin/testData/comparison/packageMembers")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class PackageMembers extends AbstractFirJsProtoComparisonTest {
+  public static class PackageMembersAbstractFirJsProtoComparisonTest extends AbstractFirJsProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInPackageMembers() {
+    public void testAllFilesPresentInPackageMembersAbstractFirJsProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -632,12 +632,12 @@ public class FirJsProtoComparisonTestGenerated extends AbstractFirJsProtoCompari
   @TestMetadata("jps/jps-plugin/testData/comparison/unchanged")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class Unchanged extends AbstractFirJsProtoComparisonTest {
+  public static class UnchangedAbstractFirJsProtoComparisonTest extends AbstractFirJsProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInUnchanged() {
+    public void testAllFilesPresentInUnchangedAbstractFirJsProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
@@ -681,12 +681,12 @@ public class FirJsProtoComparisonTestGenerated extends AbstractFirJsProtoCompari
   @TestMetadata("jps/jps-plugin/testData/comparison/jsOnly")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class JsOnly extends AbstractFirJsProtoComparisonTest {
+  public static class JsOnlyAbstractFirJsProtoComparisonTest extends AbstractFirJsProtoComparisonTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInJsOnly() {
+    public void testAllFilesPresentInJsOnlyAbstractFirJsProtoComparisonTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jsOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 

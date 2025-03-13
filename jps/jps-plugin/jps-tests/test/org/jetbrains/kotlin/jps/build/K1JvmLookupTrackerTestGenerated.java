@@ -25,7 +25,7 @@ public class K1JvmLookupTrackerTestGenerated extends AbstractK1JvmLookupTrackerT
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
 
-  public void testAllFilesPresentInJvm() {
+  public void testAllFilesPresentInJvmAbstractK1JvmLookupTrackerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lookupTracker/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 

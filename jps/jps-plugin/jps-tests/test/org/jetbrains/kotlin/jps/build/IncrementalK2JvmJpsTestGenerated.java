@@ -23,7 +23,7 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
   @TestMetadata("jps/jps-plugin/testData/incremental/pureKotlin")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class PureKotlin extends AbstractIncrementalK2JvmJpsTest {
+  public static class PureKotlinAbstractIncrementalK2JvmJpsTest extends AbstractIncrementalK2JvmJpsTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
@@ -58,7 +58,7 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/addTopLevelTypeAlias/");
     }
 
-    public void testAllFilesPresentInPureKotlin() {
+    public void testAllFilesPresentInPureKotlinAbstractIncrementalK2JvmJpsTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)"), TargetBackend.JVM_IR, false);
     }
 
@@ -706,12 +706,12 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
   @TestMetadata("jps/jps-plugin/testData/incremental/classHierarchyAffected")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassHierarchyAffected extends AbstractIncrementalK2JvmJpsTest {
+  public static class ClassHierarchyAffectedAbstractIncrementalK2JvmJpsTest extends AbstractIncrementalK2JvmJpsTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInClassHierarchyAffected() {
+    public void testAllFilesPresentInClassHierarchyAffectedAbstractIncrementalK2JvmJpsTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)"), TargetBackend.JVM_IR, false);
     }
 
@@ -929,12 +929,12 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
   @TestMetadata("jps/jps-plugin/testData/incremental/inlineFunCallSite")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class InlineFunCallSite extends AbstractIncrementalK2JvmJpsTest {
+  public static class InlineFunCallSiteAbstractIncrementalK2JvmJpsTest extends AbstractIncrementalK2JvmJpsTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInInlineFunCallSite() {
+    public void testAllFilesPresentInInlineFunCallSiteAbstractIncrementalK2JvmJpsTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
     }
 
@@ -1230,12 +1230,12 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
   @TestMetadata("jps/jps-plugin/testData/incremental/withJava")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class WithJava extends AbstractIncrementalK2JvmJpsTest {
+  public static class WithJavaAbstractIncrementalK2JvmJpsTest extends AbstractIncrementalK2JvmJpsTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInWithJava() {
+    public void testAllFilesPresentInWithJavaAbstractIncrementalK2JvmJpsTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
     }
 
@@ -2676,12 +2676,12 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
   @TestMetadata("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class IncrementalJvmCompilerOnly extends AbstractIncrementalK2JvmJpsTest {
+  public static class IncrementalJvmCompilerOnlyAbstractIncrementalK2JvmJpsTest extends AbstractIncrementalK2JvmJpsTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInIncrementalJvmCompilerOnly() {
+    public void testAllFilesPresentInIncrementalJvmCompilerOnlyAbstractIncrementalK2JvmJpsTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
     }
 
@@ -2725,12 +2725,12 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
-  public static class WithJavaUsedInKotlin extends AbstractIncrementalK2JvmJpsTest {
+  public static class WithJavaUsedInKotlinAbstractIncrementalK2JvmJpsTest extends AbstractIncrementalK2JvmJpsTest {
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInWithJavaUsedInKotlin() {
+    public void testAllFilesPresentInWithJavaUsedInKotlinAbstractIncrementalK2JvmJpsTest() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
     }
 

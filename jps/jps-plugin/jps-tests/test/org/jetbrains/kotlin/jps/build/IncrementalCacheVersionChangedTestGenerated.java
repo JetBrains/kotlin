@@ -25,7 +25,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
 
-  public void testAllFilesPresentInCacheVersionChanged() {
+  public void testAllFilesPresentInCacheVersionChangedAbstractIncrementalCacheVersionChangedTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
   }
 

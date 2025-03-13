@@ -25,7 +25,7 @@ public class IncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTestGener
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
 
-  public void testAllFilesPresentInFriendsModuleDisabled() {
+  public void testAllFilesPresentInFriendsModuleDisabledAbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 

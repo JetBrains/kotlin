@@ -25,7 +25,7 @@ public class JsKlibLookupTrackerTestGenerated extends AbstractJsKlibLookupTracke
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
 
-  public void testAllFilesPresentInJsKlib() {
+  public void testAllFilesPresentInJsKlibAbstractJsKlibLookupTrackerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lookupTracker/jsKlib"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
