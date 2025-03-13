@@ -41671,6 +41671,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("classes.kt")
+        public void testClasses() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/classes.kt");
+        }
+
+        @Test
         @TestMetadata("lenientModeSmokeTest.kt")
         public void testLenientModeSmokeTest() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/lenientModeSmokeTest.kt");

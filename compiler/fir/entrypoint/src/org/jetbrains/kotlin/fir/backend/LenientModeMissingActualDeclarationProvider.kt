@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.actualizer.IrMissingActualDeclarationProvider
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -23,9 +26,11 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -93,12 +98,37 @@ class LenientModeMissingActualDeclarationProvider(
             isFun = owner.isFun,
             isExpect = false,
         )
+        clazz.superTypes = owner.superTypes
         clazz.thisReceiver = owner.thisReceiver?.copyAsStub(clazz)
         clazz.annotations = owner.annotations
         clazz.parent = parent
         clazz.declarations.addAll(owner.declarations.mapNotNull { buildStub(it.symbol, clazz)?.owner as IrDeclaration? })
 
+        if (clazz.kind == ClassKind.OBJECT) {
+            clazz.declarations.add(
+                createObjectConstructor(clazz)
+            )
+        }
+
         return symbol
+    }
+
+    private fun createObjectConstructor(clazz: IrClass): IrDeclaration {
+        return IrFactoryImpl.createConstructor(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.STUB_FOR_LENIENT,
+            symbol = IrConstructorSymbolImpl(),
+            name = SpecialNames.INIT,
+            visibility = DescriptorVisibilities.PRIVATE,
+            isInline = false,
+            returnType = clazz.defaultType,
+            isPrimary = true,
+            isExpect = false,
+        ).also {
+            it.parent = clazz
+            it.body = createConstructorBody(clazz)
+        }
     }
 
     private fun buildPropertyStub(expectSymbol: IrPropertySymbol, parent: IrDeclarationParent): IrPropertySymbol {
@@ -149,13 +179,20 @@ class LenientModeMissingActualDeclarationProvider(
             visibility = owner.visibility,
             isInline = owner.isInline,
             returnType = owner.returnType,
+            // We make all constructors non-primary so that they can delegate to the Any constructor
             isPrimary = false,
             isExpect = false,
         )
 
         fillFunction(constructor, owner, parent)
         // TODO handle or forbid cases where class doesn't extend Any
-        constructor.body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+        constructor.body = createConstructorBody(parent)
+
+        return symbol
+    }
+
+    private fun createConstructorBody(parent: IrDeclarationParent): IrBlockBody {
+        return IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
             statements += IrDelegatingConstructorCallImplWithShape(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
@@ -174,8 +211,6 @@ class LenientModeMissingActualDeclarationProvider(
                 type = builtins.unitType
             )
         }
-
-        return symbol
     }
 
     private fun buildFunctionStub(expectSymbol: IrSimpleFunctionSymbol, parent: IrDeclarationParent): IrSimpleFunctionSymbol {
