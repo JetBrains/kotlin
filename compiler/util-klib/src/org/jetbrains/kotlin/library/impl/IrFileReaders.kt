@@ -30,15 +30,7 @@ class IrArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
 
     fun entryCount() = indexToOffset.size - 1
-
-    fun tableItemBytes(id: Int): ByteArray {
-        val offset = indexToOffset[id]
-        val size = indexToOffset[id + 1] - offset
-        val result = ByteArray(size)
-        buffer.position = offset
-        buffer.get(result, 0, size)
-        return result
-    }
+    fun tableItemBytes(index: Int): ByteArray = buffer.readTableItemBytes(indexToOffset, index)
 }
 
 /** Read directly from a byte array. */
@@ -55,33 +47,11 @@ fun <L : KotlinLibraryLayout> IrMultiArrayReader(
 
 class IrMultiArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
-    private val indexIndexToOffset = mutableMapOf<Int, IndexToOffset>()
+    private val indexToIndexToOffset: IndexToIndexToOffset = mutableMapOf()
 
-    fun tableItemBytes(id: Int): ByteArray {
-        val offset = indexToOffset[id]
-        val size = indexToOffset[id + 1] - offset
-        val result = ByteArray(size)
-        buffer.position = offset
-        buffer.get(result, 0, size)
-        return result
-    }
-
-    fun tableItemBytes(row: Int, column: Int): ByteArray {
-        val rowOffset = indexToOffset[row]
-
-        val columnOffsets = indexIndexToOffset.getOrPut(row) {
-            buffer.readIndexToOffset(rowOffset)
-        }
-
-        val dataOffset = columnOffsets[column]
-        val dataSize = columnOffsets[column + 1] - dataOffset
-        val result = ByteArray(dataSize)
-
-        buffer.position = rowOffset + dataOffset
-        buffer.get(result, 0, dataSize)
-
-        return result
-    }
+    fun tableItemBytes(index: Int): ByteArray = buffer.readTableItemBytes(indexToOffset, index)
+    fun tableItemBytes(rowIndex: Int, columnIndex: Int): ByteArray =
+        buffer.readTableItemBytes(indexToOffset, indexToIndexToOffset, rowIndex, columnIndex)
 }
 
 
@@ -108,13 +78,7 @@ fun <L : KotlinLibraryLayout> DeclarationIdTableReader(
 class DeclarationIdTableReader(private val buffer: ReadBuffer) {
     private val declarationIdToCoordinates: DeclarationIdToCoordinates = buffer.readDeclarationIdToCoordinates(0)
 
-    fun tableItemBytes(declarationId: DeclarationId): ByteArray {
-        val (offset, size) = declarationIdToCoordinates[declarationId] ?: error("No coordinates found for $declarationId")
-        val result = ByteArray(size)
-        buffer.position = offset
-        buffer.get(result, 0, size)
-        return result
-    }
+    fun tableItemBytes(declarationId: DeclarationId): ByteArray = buffer.readTableItemBytes(declarationIdToCoordinates, declarationId)
 }
 
 /** Read directly from a byte array. */
@@ -133,32 +97,11 @@ fun <L : KotlinLibraryLayout> DeclarationIdMultiTableReader(
 
 class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
-    private val indexToIndexMap = mutableMapOf<Int, DeclarationIdToCoordinates>()
+    private val indexToDeclarationIdToCoordinates: IndexToDeclarationIdToCoordinates = mutableMapOf()
 
-    fun tableItemBytes(idx: Int): ByteArray {
-        val rowOffset = indexToOffset[idx]
-        val nextOffset = indexToOffset[idx + 1]
-        val size = nextOffset - rowOffset
-        val result = ByteArray(size)
-        buffer.position = rowOffset
-        buffer.get(result, 0, size)
-        return result
-    }
-
-    fun tableItemBytes(row: Int, declarationId: DeclarationId): ByteArray {
-
-        val rowOffset = indexToOffset[row]
-
-        val indexToMap = indexToIndexMap.getOrPut(row) {
-            buffer.readDeclarationIdToCoordinates(rowOffset)
-        }
-
-        val (offset, size) = indexToMap[declarationId] ?: error("No coordinates found for $declarationId")
-        val result = ByteArray(size)
-        buffer.position = rowOffset + offset
-        buffer.get(result, 0, size)
-        return result
-    }
+    fun tableItemBytes(index: Int): ByteArray = buffer.readTableItemBytes(indexToOffset, index)
+    fun tableItemBytes(rowIndex: Int, declarationId: DeclarationId): ByteArray =
+        buffer.readTableItemBytes(indexToOffset, indexToDeclarationIdToCoordinates, rowIndex, declarationId)
 }
 
 
@@ -180,7 +123,9 @@ fun File.javaFile(): java.io.File = java.io.File(path)
 private data class DeclarationCoordinates(val offset: Int, val size: Int)
 
 private typealias IndexToOffset = IntArray
+private typealias IndexToIndexToOffset = MutableMap<Int, IndexToOffset>
 private typealias DeclarationIdToCoordinates = MutableMap<DeclarationId, DeclarationCoordinates>
+private typealias IndexToDeclarationIdToCoordinates = MutableMap<Int, DeclarationIdToCoordinates>
 
 private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
     this.position = position
@@ -211,4 +156,54 @@ private fun ReadBuffer.readDeclarationIdToCoordinates(position: Int): Declaratio
     }
 
     return declarationIdToCoordinates
+}
+
+private fun ReadBuffer.readTableItemBytes(indexToOffset: IndexToOffset, index: Int): ByteArray {
+    val offset = indexToOffset[index]
+    val size = indexToOffset[index + 1] - offset
+    return readTableItemBytes(offset, size)
+}
+
+private fun ReadBuffer.readTableItemBytes(declarationIdToCoordinates: DeclarationIdToCoordinates, declarationId: DeclarationId): ByteArray {
+    val (offset, size) = declarationIdToCoordinates[declarationId] ?: error("No coordinates found for $declarationId")
+    return readTableItemBytes(offset, size)
+}
+
+private fun ReadBuffer.readTableItemBytes(
+    indexToOffset: IndexToOffset,
+    indexToIndexToOffset: IndexToIndexToOffset,
+    rowIndex: Int,
+    columnIndex: Int,
+): ByteArray {
+    val rowOffset = indexToOffset[rowIndex]
+    val columnIndexToOffset: IndexToOffset = indexToIndexToOffset.getOrPut(rowIndex) { readIndexToOffset(rowOffset) }
+
+    val offset = columnIndexToOffset[columnIndex]
+    val size = columnIndexToOffset[columnIndex + 1] - offset
+
+    return readTableItemBytes(rowOffset + offset, size)
+}
+
+private fun ReadBuffer.readTableItemBytes(
+    indexToOffset: IndexToOffset,
+    indexToDeclarationIdToCoordinates: IndexToDeclarationIdToCoordinates,
+    rowIndex: Int,
+    declarationId: DeclarationId
+): ByteArray {
+    val rowOffset = indexToOffset[rowIndex]
+    val declarationIdToCoordinates: DeclarationIdToCoordinates = indexToDeclarationIdToCoordinates.getOrPut(rowIndex) {
+        readDeclarationIdToCoordinates(rowOffset)
+    }
+
+    val (offset, size) = declarationIdToCoordinates[declarationId] ?: error("No coordinates found for $declarationId")
+
+    return readTableItemBytes(rowOffset + offset, size)
+}
+
+private fun ReadBuffer.readTableItemBytes(offset: Int, size: Int): ByteArray {
+    val result = ByteArray(size)
+    this.position = offset
+    this.get(result, 0, size)
+
+    return result
 }
