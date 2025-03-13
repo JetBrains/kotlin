@@ -179,11 +179,23 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public inline val Double.hours: Duration get() = toDuration(DurationUnit.HOURS)
 
 
-        /** Returns a [Duration] equal to this [Int] number of days. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of days.
+         *
+         * Note that a day in this conversion always represents exactly 24 hours.
+         * This is different from calendar days which may be longer or shorter
+         * than 24 hours when a daylight saving transition happens on that day.
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.days: Duration get() = toDuration(DurationUnit.DAYS)
 
-        /** Returns a [Duration] equal to this [Long] number of days. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of days.
+         *
+         * Note that a day in this conversion always represents exactly 24 hours.
+         * This is different from calendar days which may be longer or shorter
+         * than 24 hours when a daylight saving transition happens on that day.
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.days: Duration get() = toDuration(DurationUnit.DAYS)
 
@@ -191,6 +203,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Returns a [Duration] equal to this [Double] number of days.
          *
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
+         * Note that a day in this conversion always represents exactly 24 hours.
+         * This is different from calendar days which may be longer or shorter
+         * than 24 hours when a daylight saving transition happens on that day.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -492,6 +508,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * - `hours` represents the whole number of hours in this duration, and its absolute value is less than 24;
      * - `days` represents the whole number of days in this duration.
      *
+     * Note that a day in this conversion always represents exactly 24 hours.
+     * This is different from calendar days which may be longer or shorter
+     * than 24 hours when a daylight saving transition happens on that day.
+     *
      *   Infinite durations are represented as either [Long.MAX_VALUE] days, or [Long.MIN_VALUE] days (depending on the sign of infinity),
      *   and zeroes in the lower components.
      */
@@ -630,6 +650,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * The part of this duration that is smaller than a day
      * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
+     * Note that a day in this conversion always represents exactly 24 hours.
+     * This is different from calendar days which may be longer or shorter
+     * than 24 hours when a daylight saving transition happens on that day.
      *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
      */
