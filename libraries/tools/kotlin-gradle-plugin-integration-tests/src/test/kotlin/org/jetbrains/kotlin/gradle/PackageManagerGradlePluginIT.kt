@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
@@ -236,14 +235,6 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         project(
             "kotlin-js-package-lock-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                /*
-                 * We need to set the warning mode to none because the test fails at assertTasksUpToDate(":clean")
-                 * because reporting diagnostics cause writing report to build directory, and it causes the task to be no up-to-date
-                 */
-                warningMode = WarningMode.None,
-                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
-            )
         ) {
             testFailingWithLockFileUpdate(
                 storeTaskName = storeTaskName,
@@ -449,11 +440,15 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
         // check if everything ok without build/js/yarn.lock
         build("clean") {
-            assertTasksExecuted(":clean")
+            assertDirectoryInProjectExists(KOTLIN_JS_STORE)
+            assertFileInProjectExists("$KOTLIN_JS_STORE/$lockFileName")
+            assertFileInProjectNotExists("build/js/${lockFileName}")
         }
 
         build("clean") {
-            assertTasksUpToDate(":clean")
+            assertDirectoryInProjectExists(KOTLIN_JS_STORE)
+            assertFileInProjectExists("$KOTLIN_JS_STORE/$lockFileName")
+            assertFileInProjectNotExists("build/js/${lockFileName}")
         }
 
         buildAndFail(storeTaskName) {
