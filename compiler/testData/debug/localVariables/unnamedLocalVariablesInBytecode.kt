@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 // DUMP_IR
+// LANGUAGE: +UnnamedLocalVariables
 // FILE: test.kt
 fun writeFalse(): Boolean = false
 fun writeTrue(): Boolean = true
@@ -17,10 +18,10 @@ fun box() {
 }
 
 // EXPECTATIONS FIR JVM_IR
-// test.kt:11 box:
-// test.kt:4 writeFalse:
-// test.kt:11 box:
+// test.kt:12 box:
+// test.kt:5 writeFalse:
 // test.kt:12 box:
 // test.kt:13 box:
-// test.kt:16 box:
+// test.kt:14 box:
 // test.kt:17 box:
+// test.kt:18 box:

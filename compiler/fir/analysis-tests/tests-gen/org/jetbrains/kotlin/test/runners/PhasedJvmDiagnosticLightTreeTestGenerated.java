@@ -2124,9 +2124,21 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("unnamedLocalVariableVsNamedUnderscore_Disabled.kt")
+    public void testUnnamedLocalVariableVsNamedUnderscore_Disabled() {
+      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariableVsNamedUnderscore_Disabled.kt");
+    }
+
+    @Test
     @TestMetadata("unnamedLocalVariables.kt")
     public void testUnnamedLocalVariables() {
       runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedLocalVariables_Disabled.kt")
+    public void testUnnamedLocalVariables_Disabled() {
+      runTest("compiler/testData/diagnostics/tests/unnamedLocalVariables_Disabled.kt");
     }
 
     @Test
