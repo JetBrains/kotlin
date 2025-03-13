@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -72,13 +74,13 @@ internal class LambdaMetafactoryArguments(
     val fakeInstanceMethod: IrSimpleFunction,
     val implMethodReference: IrFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>,
-    val shouldBeSerializable: Boolean
+    val shouldBeSerializable: Boolean,
 ) : MetafactoryArgumentsResult.Success()
 
 
 internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
-    private val crossinlineLambdas: Set<IrSimpleFunction>
+    private val crossinlineLambdas: Set<IrSimpleFunction>,
 ) {
     private val isJavaSamConversionWithEqualsHashCode =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
@@ -90,7 +92,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         reference: IrFunctionReference,
         samType: IrType,
         plainLambda: Boolean,
-        forceSerializability: Boolean
+        forceSerializability: Boolean,
     ): MetafactoryArgumentsResult {
         val samClass = samType.getClass()
             ?: throw AssertionError("SAM type is not a class: ${samType.render()}")
@@ -171,8 +173,15 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // TODO relaxed mode?
-        if (reference.origin.isLambda && implFun.annotations.isNotEmpty()) {
+        if (reference.origin.isLambda && implFun.annotations.any { annotation ->
+                annotation.symbol.owner.constructedClass.getAnnotationRetention() == KotlinRetention.RUNTIME
+            }) {
             abiHazard = true
+        }
+
+        if (implFun.annotations.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)) {
+            // Lambdas annotated with @kotlin.jvm.JvmSerializableLambda are expected to generate their own class
+            semanticsHazard = true
         }
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
