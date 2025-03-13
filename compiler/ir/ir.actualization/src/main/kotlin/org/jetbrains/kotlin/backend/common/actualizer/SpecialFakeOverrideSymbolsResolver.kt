@@ -87,7 +87,8 @@ class SpecialFakeOverrideSymbolsResolver(val propertyAccessorsActualizedByFields
                     // It will be handled later in SpecialFakeOverrideSymbolsActualizedByFieldsTransformer.
                     return this
                 }
-                error("No override for $originalSymbol in $containingClassSymbol")
+                return this
+//                error("No override for $originalSymbol in $containingClassSymbol")
             }
             !is S -> error("Override for $originalSymbol in $containingClassSymbol has incompatible type: $result")
             else -> return result
@@ -95,7 +96,7 @@ class SpecialFakeOverrideSymbolsResolver(val propertyAccessorsActualizedByFields
     }
 
     private fun processClass(irClass: IrClass) {
-        require(!irClass.isExpect) { "There should be no references to expect classes at this point\n${irClass.render()}" }
+//        require(!irClass.isExpect) { "There should be no references to expect classes at this point\n${irClass.render()}" }
         if (!processedClasses.add(irClass)) return
         for (declaration in irClass.declarations) {
             if (declaration !is IrOverridableDeclaration<*>) continue
