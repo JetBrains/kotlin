@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.config.FirContextParametersLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextParametersDeclarationChecker.checkSubTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -55,13 +56,8 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             }
             val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
             reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message, context)
-        } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
-            reporter.reportOn(
-                source,
-                FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.ContextParameters to context.languageVersionSettings,
-                context
-            )
+        } else {
+            source.requireFeatureSupport(LanguageFeature.ContextParameters, context, reporter)
         }
     }
 

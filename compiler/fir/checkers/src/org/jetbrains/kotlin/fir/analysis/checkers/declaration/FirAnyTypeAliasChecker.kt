@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
 import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -32,13 +33,8 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         if (!context.isTopLevel) {
             if (declaration.isLocal) {
                 reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases are unsupported.", context)
-            } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.NestedTypeAliases to context.languageVersionSettings,
-                    context
-                )
+            } else {
+                declaration.requireFeatureSupport(LanguageFeature.NestedTypeAliases, context, reporter)
             }
         }
 

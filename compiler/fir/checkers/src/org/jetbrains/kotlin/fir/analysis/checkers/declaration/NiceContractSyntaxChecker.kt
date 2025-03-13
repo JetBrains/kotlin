@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -32,8 +31,5 @@ object ContractSyntaxV2PropertyChecker : FirPropertyChecker(MppCheckerKind.Commo
 private fun checkFeatureIsEnabled(declaration: FirContractDescriptionOwner, context: CheckerContext, reporter: DiagnosticReporter) {
     val source = declaration.contractDescription?.source ?: return
     if (source.elementType != KtNodeTypes.CONTRACT_EFFECT_LIST) return
-    val languageVersionSettings = context.languageVersionSettings
-    if (!languageVersionSettings.supportsFeature(LanguageFeature.ContractSyntaxV2)) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED_FEATURE, LanguageFeature.ContractSyntaxV2 to languageVersionSettings, context)
-    }
+    source.requireFeatureSupport(LanguageFeature.ContractSyntaxV2, context, reporter)
 }

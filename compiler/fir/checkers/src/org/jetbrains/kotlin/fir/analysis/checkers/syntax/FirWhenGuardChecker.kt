@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
@@ -42,15 +42,10 @@ object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiEl
         if (!branch.hasGuard) return
         val source = branch.source ?: return
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.WhenGuards)) {
-            reporter.reportOn(
-                source,
-                FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.WhenGuards to context.session.languageVersionSettings,
-                context,
-                positioningStrategy = SourceElementPositioningStrategies.WHEN_GUARD,
-            )
-        }
+        source.requireFeatureSupport(
+            LanguageFeature.WhenGuards, context, reporter,
+            positioningStrategy = SourceElementPositioningStrategies.WHEN_GUARD,
+        )
 
         if (element.subjectVariable == null) {
             reporter.reportOn(source, FirErrors.WHEN_GUARD_WITHOUT_SUBJECT, context)
