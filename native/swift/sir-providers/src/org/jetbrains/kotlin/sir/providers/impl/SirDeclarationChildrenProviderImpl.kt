@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 
 public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSession) : SirChildrenProvider {
-
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
         declarations
             .filter {

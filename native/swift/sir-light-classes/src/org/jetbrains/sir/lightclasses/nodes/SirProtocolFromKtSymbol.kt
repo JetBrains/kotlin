@@ -8,20 +8,25 @@ package org.jetbrains.sir.lightclasses.nodes
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
+import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal class SirProtocolFromKtSymbol(
@@ -35,7 +40,7 @@ internal class SirProtocolFromKtSymbol(
         ktSymbol.documentation()
     }
     override val name: String by lazy {
-        ktSymbol.name.asString()
+        (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.name.asString()
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
@@ -60,10 +65,28 @@ internal class SirProtocolFromKtSymbol(
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
-    override val declarations: List<SirDeclaration> by lazyWithSessions {
+    override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations(useSiteSession)
-            .toList()
+            .flatMap { declaration ->
+                when (declaration) {
+                    is SirVariable, is SirFunction -> listOf(declaration)
+                    is SirNamedDeclaration -> listOf(
+                        buildTypealias {
+                            origin = SirOrigin.Trampoline(declaration)
+                            visibility = SirVisibility.INTERNAL // visibility modifiers are disallowed in protocols
+                            // FIXME: we make here the best effort to restore the original name of a relocated declaration
+                            name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
+                            type = SirNominalType(declaration)
+                        }.apply {
+                            parent = this@SirProtocolFromKtSymbol
+                        },
+                        declaration
+                    )
+                    else -> listOf(declaration)
+                }
+            }
+            .toMutableList()
     }
 }
 
@@ -111,11 +134,11 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations(useSiteSession)
-            .map {
+            .mapNotNull {
                 when (it) {
                     is SirFunction -> SirRelocatedFunction(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
                     is SirVariable -> SirRelocatedVariable(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
-                    else -> it
+                    else -> null
                 }
             }
             .toMutableList()

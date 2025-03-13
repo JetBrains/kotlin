@@ -9,9 +9,13 @@ uintptr_t Barable_bar__TypesOfArguments__anyU20main_Foeble__(uintptr_t self, uin
 
 uintptr_t Barable_baz_get(uintptr_t self);
 
-NSArray<id> * ENUM_WITH_INTERFACE_INHERITANCE_entries_get();
+uintptr_t ContainerProtocol_NestedClass_init_allocate();
 
-uintptr_t ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(NSString * value);
+void ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t ContainerProtocol_NestedProtocol_NestedClass_init_allocate();
+
+void ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
 uintptr_t Foeble_bar__TypesOfArguments__anyU20main_Foeble__(uintptr_t self, uintptr_t arg);
 
@@ -20,6 +24,14 @@ uintptr_t Foeble_baz_get(uintptr_t self);
 uintptr_t Foo_bar__TypesOfArguments__anyU20main_Foeble__(uintptr_t self, uintptr_t arg);
 
 uintptr_t Foo_baz_get(uintptr_t self);
+
+uintptr_t SiblingProtocol_NestedClass_NestedClass_init_allocate();
+
+void SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t SiblingProtocol_NestedClass_init_allocate();
+
+void SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
 uintptr_t __root___Bar_init_allocate();
 
@@ -31,7 +43,13 @@ void __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt
 
 uintptr_t __root___MyObject_get();
 
-uintptr_t __root___OBJECT_WITH_INTERFACE_INHERITANCE_get();
+void __root___foo__TypesOfArguments__anyU20main_ContainerProtocol__(uintptr_t receiver);
+
+void __root___foo__TypesOfArguments__main___ContainerProtocol_NestedProtocol_NestedClass__(uintptr_t receiver);
+
+void __root___foo__TypesOfArguments__main__SiblingProtocol_NestedClass__(uintptr_t receiver);
+
+void __root___foo__TypesOfArguments__anyU20main__ContainerProtocol_NestedProtocol__(uintptr_t receiver);
 
 NSArray<id> * __root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___(NSArray<id> * value);
 
@@ -50,6 +68,44 @@ uintptr_t __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble_
 uintptr_t __root___nullable_get();
 
 void __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(uintptr_t newValue);
+
+uintptr_t packagewithprotocols_ContainerProtocol_NestedClass_init_allocate();
+
+void packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate();
+
+void packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+NSArray<id> * packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get();
+
+uintptr_t packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(NSString * value);
+
+uintptr_t packagewithprotocols_INHERITANCE_COUPLE_init_allocate();
+
+void packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_allocate();
+
+void packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get();
+
+uintptr_t packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_allocate();
+
+void packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+uintptr_t packagewithprotocols_SiblingProtocol_NestedClass_init_allocate();
+
+void packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+void packagewithprotocols_foo__TypesOfArguments__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(uintptr_t receiver);
+
+void packagewithprotocols_foo__TypesOfArguments__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(uintptr_t receiver);
+
+void packagewithprotocols_foo__TypesOfArguments__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(uintptr_t receiver);
+
+void packagewithprotocols_foo__TypesOfArguments__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(uintptr_t receiver);
 
 uintptr_t repeating_conformances_Child1_init_allocate();
 

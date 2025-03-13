@@ -113,7 +113,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val protocol: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
-        parent(declarationContainer)
+        // FIXME KT-75706: Protocols are only mutable due to the fact that we reorder declarations at some late stage.
+        parent(mutableDeclarationContainer)
         parent(classInhertingDeclaration)
         parent(protocolConformingDeclaration)
     }

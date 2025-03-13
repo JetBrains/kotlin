@@ -13,6 +13,10 @@ public protocol Barable: KotlinRuntime.KotlinBase, main.Foeble {
 }
 public protocol Bazzable: KotlinRuntime.KotlinBase {
 }
+public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
+    typealias NestedClass = main._ContainerProtocol_NestedClass
+    typealias NestedProtocol = main._ContainerProtocol_NestedProtocol
+}
 public protocol Foeble: KotlinRuntime.KotlinBase {
     var baz: any main.Foeble {
         get
@@ -21,7 +25,14 @@ public protocol Foeble: KotlinRuntime.KotlinBase {
         arg: any main.Foeble
     ) -> any main.Foeble
 }
-public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
+public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
+    typealias NestedClass = main._SiblingProtocol_NestedClass
+}
+public protocol _ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
+    typealias NestedClass = main.__ContainerProtocol_NestedProtocol_NestedClass
+}
+public protocol _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
+    typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
 }
 public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.Foeble, main.Bazzable, KotlinRuntimeSupport._KotlinBridged {
     public var baz: main.Bar {
@@ -43,23 +54,6 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.Foeble, mai
         arg: any main.Foeble
     ) -> main.Bar {
         return main.Bar(__externalRCRef: Bar_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()))
-    }
-}
-public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
-    public static var allCases: [main.ENUM_WITH_INTERFACE_INHERITANCE] {
-        get {
-            return ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<main.ENUM_WITH_INTERFACE_INHERITANCE>
-        }
-    }
-    package override init(
-        __externalRCRef: Swift.UInt
-    ) {
-        super.init(__externalRCRef: __externalRCRef)
-    }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.ENUM_WITH_INTERFACE_INHERITANCE {
-        return main.ENUM_WITH_INTERFACE_INHERITANCE(__externalRCRef: ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
 public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, KotlinRuntimeSupport._KotlinBridged {
@@ -99,14 +93,95 @@ public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
-    public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
-        get {
-            return main.OBJECT_WITH_INTERFACE_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())
+open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public override init() {
+        let __kt = ContainerProtocol_NestedClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+open class _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public override init() {
+        let __kt = packagewithprotocols_ContainerProtocol_NestedClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public override init() {
+            let __kt = packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_allocate()
+            super.init(__externalRCRef: __kt)
+            packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
         }
     }
-    private override init() {
-        fatalError()
+    public override init() {
+        let __kt = packagewithprotocols_SiblingProtocol_NestedClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public override init() {
+            let __kt = SiblingProtocol_NestedClass_NestedClass_init_allocate()
+            super.init(__externalRCRef: __kt)
+            SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public override init() {
+        let __kt = SiblingProtocol_NestedClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+open class __ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public override init() {
+        let __kt = ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+open class __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public override init() {
+        let __kt = packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     package override init(
         __externalRCRef: Swift.UInt
@@ -137,6 +212,26 @@ public var nullable: (any main.Foeble)? {
     set {
         return __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(newValue.map { it in it.__externalRCRef() } ?? 0)
     }
+}
+public func foo(
+    _ receiver: any main.ContainerProtocol
+) -> Swift.Void {
+    return __root___foo__TypesOfArguments__anyU20main_ContainerProtocol__(receiver.__externalRCRef())
+}
+public func foo(
+    _ receiver: main.__ContainerProtocol_NestedProtocol_NestedClass
+) -> Swift.Void {
+    return __root___foo__TypesOfArguments__main___ContainerProtocol_NestedProtocol_NestedClass__(receiver.__externalRCRef())
+}
+public func foo(
+    _ receiver: main._SiblingProtocol_NestedClass
+) -> Swift.Void {
+    return __root___foo__TypesOfArguments__main__SiblingProtocol_NestedClass__(receiver.__externalRCRef())
+}
+public func foo(
+    _ receiver: any main._ContainerProtocol_NestedProtocol
+) -> Swift.Void {
+    return __root___foo__TypesOfArguments__anyU20main__ContainerProtocol_NestedProtocol__(receiver.__externalRCRef())
 }
 public func list(
     value: [any main.Foeble]
@@ -169,6 +264,10 @@ public extension ExportedKotlinPackages.repeating_conformances.Barable where Sel
 }
 public extension main.Bazzable where Self : KotlinRuntimeSupport._KotlinBridged {
 }
+public extension main.ContainerProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
 public extension main.Foeble where Self : KotlinRuntimeSupport._KotlinBridged {
     public var baz: any main.Foeble {
         get {
@@ -183,7 +282,98 @@ public extension main.Foeble where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension ExportedKotlinPackages.repeating_conformances.Foeble where Self : KotlinRuntimeSupport._KotlinBridged {
 }
-public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
+public extension main.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension main._ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension ExportedKotlinPackages.packagewithprotocols {
+    public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
+        typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
+        typealias NestedProtocol = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
+    }
+    public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
+        typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
+    }
+    public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+        public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
+            get {
+                return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
+            }
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+        public static func valueOf(
+            value: Swift.String
+        ) -> ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE {
+            return ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE(__externalRCRef: packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value))
+        }
+    }
+    public final class INHERITANCE_COUPLE: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol {
+        public override init() {
+            let __kt = packagewithprotocols_INHERITANCE_COUPLE_init_allocate()
+            super.init(__externalRCRef: __kt)
+            packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public final class INHERITANCE_SINGLE_PROTO: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass {
+        public override init() {
+            let __kt = packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_allocate()
+            super.init(__externalRCRef: __kt)
+            packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, KotlinRuntimeSupport._KotlinBridged {
+        public static var shared: ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE {
+            get {
+                return ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE(__externalRCRef: packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get())
+            }
+        }
+        private override init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
+    public static func foo(
+        _ receiver: any ExportedKotlinPackages.packagewithprotocols.ContainerProtocol
+    ) -> Swift.Void {
+        return packagewithprotocols_foo__TypesOfArguments__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(receiver.__externalRCRef())
+    }
+    public static func foo(
+        _ receiver: main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
+    ) -> Swift.Void {
+        return packagewithprotocols_foo__TypesOfArguments__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(receiver.__externalRCRef())
+    }
+    public static func foo(
+        _ receiver: main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
+    ) -> Swift.Void {
+        return packagewithprotocols_foo__TypesOfArguments__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(receiver.__externalRCRef())
+    }
+    public static func foo(
+        _ receiver: any main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
+    ) -> Swift.Void {
+        return packagewithprotocols_foo__TypesOfArguments__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(receiver.__externalRCRef())
+    }
 }
 public extension ExportedKotlinPackages.repeating_conformances {
     public protocol Barable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble {

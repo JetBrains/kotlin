@@ -58,6 +58,9 @@ public interface SirSession :
     override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationParent =
         with(parentProvider) { this@getSirParent.getSirParent(ktAnalysisSession) }
 
+    override fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement =
+        with(parentProvider) { this@getOriginalSirParent.getOriginalSirParent(ktAnalysisSession) }
+
     override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = with (trampolineDeclarationsProvider) {
         this@trampolineDeclarations.trampolineDeclarations()
     }
@@ -176,6 +179,17 @@ public interface SirDeclarationProvider {
  */
 public interface SirParentProvider {
     public fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationParent
+
+    /**
+     * Get original sir parent
+     * Some bridged kotlin declaration is unsuitable for hosting other declarations in swift (e.g. protocols, packaged top-levels etc).
+     * When that is the case, [SirParentProvider] attempts to relocate children declarations into the most appropriate place.
+     * This method returns the original intended parent declaration that the receiver may have been relocated from.
+     *
+     * @param ktAnalysisSession session
+     * @return Sir element for original parent symbol. This is the same as [getSirParent] if the receiver was never relocated.
+     */
+    public fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement
 }
 
 /**

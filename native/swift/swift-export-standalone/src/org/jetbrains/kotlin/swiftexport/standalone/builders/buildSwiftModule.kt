@@ -70,14 +70,24 @@ private fun KaSession.traverseTopLevelDeclarationsInScopes(
     module: KaLibraryModule,
 ) {
     KlibScope(module, useSiteSession).allDeclarations(sirSession, useSiteSession)
-        .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
-        .forEach { it.first.addChild { it.second } }
+        .toList()
+        .forEach { (oldParent, children) ->
+            children
+                .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
+                .forEach { (newParent, declaration) ->
+                    (oldParent as? SirMutableDeclarationContainer)?.apply { declarations.remove(declaration) }
+                    newParent.addChild { declaration }
+                }
+        }
 }
 
-private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession: KaSession): Sequence<SirDeclaration> =
+private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession: KaSession): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> =
     with(sirSession) {
-        generateSequence(this@allDeclarations.extractDeclarations(kaSession)) {
-            it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }.takeIf { it.count() > 0 }
+        generateSequence<List<Pair<SirDeclarationParent, List<SirDeclaration>>>>(this@allDeclarations.extractDeclarations(kaSession).groupBy { it.parent }.toList()) {
+            it.flatMap { (_, children) ->
+                children.filterIsInstance<SirDeclarationContainer>()
+                    .map { it to it.declarations }
+            }.takeIf { it.isNotEmpty() }
         }.flatMap { it }
     }
 

@@ -24,6 +24,12 @@ public class SirParentProviderImpl(
 
     private val createdExtensionsForModule: MutableMap<SirModule, MutableMap<SirEnum, SirExtension>> = mutableMapOf()
 
+    override fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement = with(sirSession) {
+        with(ktAnalysisSession) {
+            this@getOriginalSirParent.containingDeclaration?.toSir()?.primaryDeclaration ?: this@getOriginalSirParent.containingModule.sirModule()
+        }
+    }
+
     override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationContainer {
         val symbol = this@getSirParent
         val parentSymbol = with(ktAnalysisSession) { symbol.containingDeclaration }
@@ -64,7 +70,13 @@ public class SirParentProviderImpl(
             }
         } else {
             with(sirSession) {
-                parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
+                if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol && parentSymbol.classKind == KaClassKind.INTERFACE) {
+                    with(ktAnalysisSession) {
+                        parentSymbol.containingModule.sirModule()
+                    }
+                } else {
+                    parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
+                }
             } ?: error("parent declaration does not produce suitable SIR")
         }
     }
