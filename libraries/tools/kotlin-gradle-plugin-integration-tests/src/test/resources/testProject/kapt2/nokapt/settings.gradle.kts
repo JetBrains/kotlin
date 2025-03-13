@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/nokapt"
+rootProject.name = "kapt2-nokapt"

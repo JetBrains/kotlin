@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/jpms-module"
+rootProject.name = "kapt2-jpms-module"

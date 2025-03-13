@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/generatedSources"
+rootProject.name = "kapt2-generatedSources"

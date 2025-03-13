@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/locationMapping"
+rootProject.name = "kapt2-locationMapping"

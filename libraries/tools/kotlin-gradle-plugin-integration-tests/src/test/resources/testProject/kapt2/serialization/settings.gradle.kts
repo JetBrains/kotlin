@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/serialization"
+rootProject.name = "kapt2-serialization"

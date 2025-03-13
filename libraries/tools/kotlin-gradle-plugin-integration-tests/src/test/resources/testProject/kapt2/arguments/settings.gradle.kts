@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/arguments"
+rootProject.name = "kapt2-arguments"

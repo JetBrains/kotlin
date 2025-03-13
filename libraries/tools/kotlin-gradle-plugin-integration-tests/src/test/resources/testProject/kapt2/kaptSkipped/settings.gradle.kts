@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/kaptSkipped"
+rootProject.name = "kapt2-kaptSkipped"

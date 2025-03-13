@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/incrementalRebuild"
+rootProject.name = "kapt2-incrementalRebuild"

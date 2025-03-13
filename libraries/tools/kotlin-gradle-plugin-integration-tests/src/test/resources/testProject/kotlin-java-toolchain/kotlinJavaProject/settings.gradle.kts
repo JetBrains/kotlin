@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-java-toolchain/kotlinJavaProject"
+rootProject.name = "kotlin-java-toolchain-kotlinJavaProject"

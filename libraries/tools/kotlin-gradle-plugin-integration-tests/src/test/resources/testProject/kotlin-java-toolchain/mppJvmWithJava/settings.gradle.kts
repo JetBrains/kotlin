@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-java-toolchain/mppJvmWithJava"
+rootProject.name = "kotlin-java-toolchain-mppJvmWithJava"

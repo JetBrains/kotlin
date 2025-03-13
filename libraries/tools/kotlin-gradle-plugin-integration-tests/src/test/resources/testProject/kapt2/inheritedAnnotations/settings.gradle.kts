@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/inheritedAnnotations"
+rootProject.name = "kapt2-inheritedAnnotations"

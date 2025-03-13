@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/kapt-in-test-runtime-classpath"
+rootProject.name = "kapt2-kapt-in-test-runtime-classpath"

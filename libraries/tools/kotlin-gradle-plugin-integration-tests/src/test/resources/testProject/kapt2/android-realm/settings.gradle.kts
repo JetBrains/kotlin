@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/android-realm"
+rootProject.name = "kapt2-android-realm"

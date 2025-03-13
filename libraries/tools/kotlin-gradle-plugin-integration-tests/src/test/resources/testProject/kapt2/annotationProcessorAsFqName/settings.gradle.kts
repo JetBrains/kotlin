@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/annotationProcessorAsFqName"
+rootProject.name = "kapt2-annotationProcessorAsFqName"

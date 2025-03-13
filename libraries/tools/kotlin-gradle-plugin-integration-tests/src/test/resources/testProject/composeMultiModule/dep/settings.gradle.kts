@@ -1,1 +1,1 @@
-rootProject.name = "composeMultiModule/dep"
+rootProject.name = "composeMultiModule-dep"

@@ -728,10 +728,20 @@ private fun setupProjectFromTestResources(
                 testProjectPath.resolve("settings.gradle.kts").exists()
 
         if (!hasSettingsFile) {
+            val safeProjectName = projectName
+                .map {
+                    if (it in setOf('/', '\\', ':', '<', '>', '"', '?', '*', '|')) {
+                        '-'
+                    } else {
+                        it
+                    }
+                }
+                .joinToString("")
+
             testProjectPath.resolve("settings.gradle.kts")
                 .writeText(
                     """
-                    |rootProject.name = "${projectName}"
+                    |rootProject.name = "$safeProjectName"
                     |
                     """.trimMargin()
                 )

@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/indirectDependencies"
+rootProject.name = "kapt2-indirectDependencies"

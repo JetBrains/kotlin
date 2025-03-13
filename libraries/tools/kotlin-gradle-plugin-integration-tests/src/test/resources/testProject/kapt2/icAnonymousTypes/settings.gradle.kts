@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/icAnonymousTypes"
+rootProject.name = "kapt2-icAnonymousTypes"

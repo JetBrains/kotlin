@@ -1,1 +1,1 @@
-rootProject.name = "kapt2/generatedDirUpToDate"
+rootProject.name = "kapt2-generatedDirUpToDate"
