@@ -535,7 +535,7 @@ object FirErrors {
     val IMPLICIT_NOTHING_PROPERTY_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("IMPLICIT_NOTHING_PROPERTY_TYPE", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, PsiElement::class)
     val ABBREVIATED_NOTHING_RETURN_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABBREVIATED_NOTHING_RETURN_TYPE", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, PsiElement::class)
     val ABBREVIATED_NOTHING_PROPERTY_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABBREVIATED_NOTHING_PROPERTY_TYPE", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, PsiElement::class)
-    val CYCLIC_GENERIC_UPPER_BOUND: KtDiagnosticFactory0 = KtDiagnosticFactory0("CYCLIC_GENERIC_UPPER_BOUND", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val CYCLIC_GENERIC_UPPER_BOUND: KtDiagnosticFactory1<List<FirTypeParameterSymbol>> = KtDiagnosticFactory1("CYCLIC_GENERIC_UPPER_BOUND", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val FINITE_BOUNDS_VIOLATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("FINITE_BOUNDS_VIOLATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val FINITE_BOUNDS_VIOLATION_IN_JAVA: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("FINITE_BOUNDS_VIOLATION_IN_JAVA", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val EXPANSIVE_INHERITANCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPANSIVE_INHERITANCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

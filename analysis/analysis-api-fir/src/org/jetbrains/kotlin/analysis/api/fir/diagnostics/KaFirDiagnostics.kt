@@ -1969,6 +1969,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface CyclicGenericUpperBound : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
+        val typeParameters: List<KaTypeParameterSymbol>
     }
 
     interface FiniteBoundsViolation : KaFirDiagnostic<PsiElement> {
