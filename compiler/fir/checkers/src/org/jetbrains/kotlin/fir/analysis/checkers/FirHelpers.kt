@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
 import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
@@ -978,6 +980,24 @@ private fun ConeKotlinType.containsMalformedArgument(context: CheckerContext, al
     typeArguments.any {
         it.type?.fullyExpandedType(context.session)?.isMalformedExpandedType(context, allowNullableNothing) == true
     }
+
+fun KtSourceElement?.requireFeatureSupport(
+    feature: LanguageFeature,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
+) {
+    if (!context.languageVersionSettings.supportsFeature(feature)) {
+        reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, context, positioningStrategy)
+    }
+}
+
+fun FirElement.requireFeatureSupport(
+    feature: LanguageFeature,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
+) = source.requireFeatureSupport(feature, context, reporter, positioningStrategy)
 
 fun reportAtomicToPrimitiveProblematicAccess(
     type: ConeKotlinType,

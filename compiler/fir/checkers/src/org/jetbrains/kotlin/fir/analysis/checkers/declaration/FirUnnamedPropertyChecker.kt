@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -25,6 +30,16 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         if (declaration.delegate != null) {
             reporter.reportOn(declaration.delegate?.source, FirErrors.UNNAMED_DELEGATED_PROPERTY, context)
+        }
+
+        if (
+            declaration.initializer?.source?.kind != KtFakeSourceElementKind.DesugaredComponentFunctionCall &&
+            declaration.isCatchParameter != true
+        ) {
+            declaration.requireFeatureSupport(
+                LanguageFeature.UnnamedLocalVariables, context, reporter,
+                positioningStrategy = SourceElementPositioningStrategies.NAME_IDENTIFIER,
+            )
         }
     }
 }

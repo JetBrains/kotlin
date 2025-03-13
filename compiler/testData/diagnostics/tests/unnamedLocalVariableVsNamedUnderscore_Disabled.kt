@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74809
-// LANGUAGE: +UnnamedLocalVariables
+// LANGUAGE: -UnnamedLocalVariables
 
 fun println(a: Any?) {}
 

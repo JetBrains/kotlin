@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74809
 // WITH_STDLIB
-// LANGUAGE: +UnnamedLocalVariables
+// LANGUAGE: -UnnamedLocalVariables
 
 fun writeTo(): Boolean = false
 

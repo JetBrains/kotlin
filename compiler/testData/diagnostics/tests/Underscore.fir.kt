@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEPRECATION -TOPLEVEL_TYPEALIASES_ONLY
+// LANGUAGE: +UnnamedLocalVariables
 
 import kotlin.Deprecated as <!UNDERSCORE_IS_RESERVED!>___<!>
 
