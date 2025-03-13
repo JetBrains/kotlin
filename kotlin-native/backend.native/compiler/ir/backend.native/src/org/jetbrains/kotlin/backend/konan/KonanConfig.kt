@@ -63,9 +63,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
     val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
 
-    val smallBinary: Boolean get() = configuration.get(BinaryOptions.smallBinary)
-                ?: target.needSmallBinary()
-    val inlineForPerformance = !debug && !smallBinary
+    val smallBinary: Boolean = run {
+        val explicit = configuration.get(BinaryOptions.smallBinary)
+        if (debug) {
+            if (explicit == true) {
+                configuration.report(CompilerMessageSeverity.WARNING, "smallBinary is not compatible with debug, and will be ignored")
+            }
+            return@run false
+        }
+        explicit ?: target.needSmallBinary()
+    }
+    val inlineForPerformance get() = !debug && !smallBinary
 
     val assertsEnabled = configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
 
