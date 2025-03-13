@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 //KT-352 Function variable declaration type isn't checked inside a function body
 
 package kt352

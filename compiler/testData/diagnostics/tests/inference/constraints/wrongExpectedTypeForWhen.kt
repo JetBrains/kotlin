@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 fun foo() {
     var f: Int = if (true) <!TYPE_MISMATCH!>{ x: Long ->  }<!> else <!TYPE_MISMATCH!>{ x: Long ->  }<!>
 }
