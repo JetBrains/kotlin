@@ -80,9 +80,6 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
 
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 
-        override fun isIgnoredTest(projectInfo: ProjectInfo) =
-            super.isIgnoredTest(projectInfo) || projectInfo.name == "externalDeclarations" || projectInfo.name == "externalDeclarationsKJS"
-
         override fun onIgnoredTest() = throw TestAbortedException()
     }
 
