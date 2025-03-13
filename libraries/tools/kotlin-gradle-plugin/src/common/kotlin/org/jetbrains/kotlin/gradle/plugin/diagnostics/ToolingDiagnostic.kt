@@ -87,8 +87,8 @@ internal data class ToolingDiagnostic(
     val name: String get() = identifier.displayName
     val group: DiagnosticGroup get() = identifier.group
 
-    override fun toString() = buildString {
-        append("[$id | $severity]")
+    internal fun parsableFormat(effectiveSeverity: ToolingDiagnostic.Severity) = buildString {
+        append("[$id | $effectiveSeverity]")
         appendLine(" $name")
         appendLine(message)
 
@@ -98,4 +98,6 @@ internal data class ToolingDiagnostic(
             appendLine(subLine)
         }
     }.trimEnd()
+
+    override fun toString() = parsableFormat(severity)
 }
