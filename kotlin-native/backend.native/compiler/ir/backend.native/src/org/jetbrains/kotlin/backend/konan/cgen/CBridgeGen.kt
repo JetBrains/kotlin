@@ -131,10 +131,10 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         ).name
         targetFunctionName = "targetPtr"
 
-        for (index in 0..<expression.arguments.size - 1) {
+        for (index in 1..<expression.arguments.size) {
             callBuilder.addArgument(
-                    expression.arguments[index + 1]!!,
-                    type = expression.typeArguments[index]!!,
+                    expression.arguments[index]!!,
+                    type = expression.typeArguments[index - 1]!!,
                     variadic = false,
                     parameter = null
             )
