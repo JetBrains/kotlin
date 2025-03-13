@@ -25,7 +25,6 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
-                "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
@@ -94,7 +93,6 @@ val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
     ":compiler:config", // for CommonCompilerArguments initialization
     ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
     ":compiler:ir.tree", // for PartialLinkageMode (K/N)
-    ":compiler:plugin-api", // `ExperimentalCompilerApi`
     ":compiler:util", // for CommonCompilerArguments initialization, K/N
     ":core:compiler.common", // for FUS statistics parsing all the compiler arguments
     ":core:compiler.common.jvm", // for FUS statistics parsing all the compiler arguments
@@ -479,8 +477,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_85
+    val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
-        val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
         compileClasspath += gradlePluginVariantSourceSet.output
         runtimeClasspath += gradlePluginVariantSourceSet.output
 
@@ -496,9 +494,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     sourceSets.getByName("testFixtures") {
-        val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
-        compileClasspath += gradlePluginVariantSourceSet.output
-
         // test source set has a task dependency on testFixture which produces cyclic dependency when trying to inherit dependencies from test; just exclude self dependency as a workaround
         fun Configuration.dependenciesWithoutSelf() = dependencies.filterNot {
             it is ProjectDependency && it.path == project.path
