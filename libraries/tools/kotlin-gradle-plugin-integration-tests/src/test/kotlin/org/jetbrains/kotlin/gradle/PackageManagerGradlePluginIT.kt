@@ -44,7 +44,7 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val mismatchReportType = "npm.LockFileMismatchReport"
 
-    override val lockFileName: String = LockCopyTask.PACKAGE_LOCK
+    override val lockFileName: String = PACKAGE_LOCK
 
     override val setProperty: (String) -> String = { ".set($it)" }
 
@@ -65,6 +65,7 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     }
 }
 
+@Suppress("JUnitTestCaseWithNoTests") // tests are defined in the supertype
 class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = true
 
@@ -197,7 +198,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksExecuted(":$storeTaskName")
         }
 
-        projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+        projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
         buildGradleKts.modify {
             it + "\n" +
@@ -305,7 +306,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
         }
 
-        projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+        projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
         buildGradleKts.modify {
             it + "\n" +
@@ -383,7 +384,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksFailed(":$storeTaskName")
         }
 
-        projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+        projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
         //check if independent tasks can be executed
         build("help") {
@@ -407,10 +408,10 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         lockFile: String,
     ) {
         build("assemble", taskName) {
-            assertFileExists(projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).resolve(lockFile))
+            assertFileExists(projectPath.resolve(KOTLIN_JS_STORE).resolve(lockFile))
             assert(
                 projectPath
-                    .resolve(LockCopyTask.KOTLIN_JS_STORE)
+                    .resolve(KOTLIN_JS_STORE)
                     .resolve(lockFile)
                     .readText() == projectPath.resolve("build/js/${lockFile}").readText()
             )
@@ -494,7 +495,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                 |            doLast {
                 |                val file = rootPackageJsonFile.get().asFile
                 |                val rootPackageJson = org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson(file) 
-                |                    ?: error("Null PackageJson from ${"$"}file")
+                |                    ?: error("Null PackageJson from ${'$'}file")
                 |                rootPackageJson.version = "foo"
                 |                rootPackageJson.saveTo(file)
                 |            }
@@ -520,7 +521,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             }
 
             projectPath.resolve("build/js/$lockFileName").deleteRecursively()
-            projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+            projectPath.resolve(KOTLIN_JS_STORE).deleteRecursively()
 
             build("kotlinNpmInstall", storeTaskName) {
                 assertTasksUpToDate(":rootPackageJson")
