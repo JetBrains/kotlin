@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -266,21 +266,16 @@ fun generateAccessExpression(
     qualifiedSource: KtSourceElement?,
     calleeReferenceSource: KtSourceElement?,
     name: Name,
-    diagnostic: ConeDiagnostic? = null
-): FirQualifiedAccessExpression =
-    buildPropertyAccessExpression {
-        this.source = qualifiedSource
-        calleeReference = buildSimpleNamedReference {
-            this.source = if (calleeReferenceSource == qualifiedSource)
-                calleeReferenceSource?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
-            else
-                calleeReferenceSource
-            this.name = name
-        }
-        if (diagnostic != null) {
-            this.nonFatalDiagnostics.add(diagnostic)
-        }
+): FirPropertyAccessExpression = buildPropertyAccessExpression {
+    this.source = qualifiedSource
+    calleeReference = buildSimpleNamedReference {
+        this.source = if (calleeReferenceSource == qualifiedSource)
+            calleeReferenceSource?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+        else
+            calleeReferenceSource
+        this.name = name
     }
+}
 
 fun generateResolvedAccessExpression(source: KtSourceElement?, variable: FirVariable): FirQualifiedAccessExpression =
     buildPropertyAccessExpression {
