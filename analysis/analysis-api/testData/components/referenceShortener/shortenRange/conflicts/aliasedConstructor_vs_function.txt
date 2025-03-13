@@ -1,6 +1,9 @@
 Before shortening: dependency.FooBar()
 with default settings:
+[qualifier] dependency.FooBar()
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 with SHORTEN_AND_IMPORT:
+[qualifier] dependency.FooBar()
 with SHORTEN_AND_STAR_IMPORT:
+[qualifier] dependency.FooBar()
