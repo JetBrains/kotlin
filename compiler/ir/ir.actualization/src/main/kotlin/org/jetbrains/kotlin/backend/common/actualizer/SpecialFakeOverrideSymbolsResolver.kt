@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * and we can't guarantee that all real symbols are some specific preferred overrides, as they were right after Fir2Ir.
  *
  */
-class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap) : SymbolRemapper.Empty() {
+class SpecialFakeOverrideSymbolsResolver(val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol>) : SymbolRemapper.Empty() {
     /**
      * Map from (class, declaration) -> declarationInsideClass
      *
@@ -79,29 +79,19 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
         if (this !is IrFakeOverrideSymbolBase<*, *, *>) {
             return this
         }
-        val actualizedClassSymbol = containingClassSymbol.actualize()
-        val actualizedOriginalSymbol = originalSymbol.actualize()
-        processClass(actualizedClassSymbol.owner)
-        when (val result = cachedFakeOverrides[actualizedClassSymbol to actualizedOriginalSymbol]) {
+        processClass(containingClassSymbol.owner)
+        when (val result = cachedFakeOverrides[containingClassSymbol to originalSymbol]) {
             null -> {
-                if (originalSymbol in expectActualMap.propertyAccessorsActualizedByFields) {
+                if (originalSymbol in propertyAccessorsActualizedByFields) {
                     // This is an accessor of an expect property actualized by a Java field. Skip for now.
                     // It will be handled later in SpecialFakeOverrideSymbolsActualizedByFieldsTransformer.
                     return this
                 }
-                error("No override for $actualizedOriginalSymbol in $actualizedClassSymbol")
+                error("No override for $originalSymbol in $containingClassSymbol")
             }
-            !is S -> error("Override for $actualizedOriginalSymbol in $actualizedClassSymbol has incompatible type: $result")
+            !is S -> error("Override for $originalSymbol in $containingClassSymbol has incompatible type: $result")
             else -> return result
         }
-    }
-
-    private fun IrClassSymbol.actualize(): IrClassSymbol {
-        return (this as IrSymbol).actualize() as IrClassSymbol
-    }
-
-    private fun IrSymbol.actualize(): IrSymbol {
-        return expectActualMap.expectToActual[this] ?: this
     }
 
     private fun processClass(irClass: IrClass) {
@@ -230,7 +220,7 @@ class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFak
 }
 
 class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
-    private val expectActualMap: IrExpectActualMap
+    private val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol>
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
@@ -239,8 +229,9 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
         val originalAccessorSymbol = fakeOverrideAccessorSymbol.originalSymbol
         val actualizedClassSymbol = fakeOverrideAccessorSymbol.containingClassSymbol
 
-        val actualFieldSymbol = expectActualMap.propertyAccessorsActualizedByFields[originalAccessorSymbol]?.owner?.resolveFakeOverride()?.backingField?.symbol
-            ?: error("No override for $originalAccessorSymbol in $actualizedClassSymbol")
+        val actualFieldSymbol =
+            propertyAccessorsActualizedByFields[originalAccessorSymbol]?.owner?.resolveFakeOverride()?.backingField?.symbol
+                ?: error("No override for $originalAccessorSymbol in $actualizedClassSymbol")
 
         return when {
             originalAccessorSymbol.owner.isGetter -> IrGetFieldImpl(
