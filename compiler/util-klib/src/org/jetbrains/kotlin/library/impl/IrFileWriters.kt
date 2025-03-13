@@ -12,40 +12,23 @@ import java.io.DataOutput
 import java.io.DataOutputStream
 import java.io.FileOutputStream
 
-abstract class IrFileWriter {
-
+sealed class IrDataWriter {
     protected abstract fun writeData(dataOutput: DataOutput)
 
     fun writeIntoFile(path: String) {
-        val fileStream = FileOutputStream(path)
-        val dataOutputStream = DataOutputStream(fileStream)
-
-        writeData(dataOutputStream)
-
-        dataOutputStream.close()
-        fileStream.close()
+        FileOutputStream(path).use { fos ->
+            DataOutputStream(fos).use { dos -> writeData(dos) }
+        }
     }
-}
-
-abstract class IrMemoryWriter {
-
-    protected abstract fun writeData(dataOutput: DataOutput)
 
     fun writeIntoMemory(): ByteArray {
-        val memoryStream = ByteArrayOutputStream()
-        val dataOutputStream = DataOutputStream(memoryStream)
-
-        writeData(dataOutputStream)
-
-        dataOutputStream.close()
-        memoryStream.close()
-
-        return memoryStream.toByteArray()
+        return ByteArrayOutputStream().also { baos ->
+            DataOutputStream(baos).use { dos -> writeData(dos) }
+        }.toByteArray()
     }
 }
 
-
-class IrArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
+class IrArrayWriter(private val data: List<ByteArray>) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(data.size)
 
@@ -54,16 +37,7 @@ class IrArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
     }
 }
 
-class IrMemoryArrayWriter(private val data: List<ByteArray>) : IrMemoryWriter() {
-    override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
-
-        data.forEach { dataOutput.writeInt(it.size) }
-        data.forEach { dataOutput.write(it) }
-    }
-}
-
-class IrMemoryStringWriter(private val data: List<String>) : IrMemoryWriter() {
+class IrStringWriter(private val data: List<String>) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(data.size)
 
@@ -74,37 +48,7 @@ class IrMemoryStringWriter(private val data: List<String>) : IrMemoryWriter() {
     }
 }
 
-class IrByteArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
-    override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
-
-        data.forEach { dataOutput.writeInt(it.size) }
-        data.forEach { dataOutput.write(it) }
-    }
-}
-
-class IrTableWriter(private val data: List<Pair<Long, ByteArray>>) : IrFileWriter() {
-    override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
-
-        var dataOffset = Int.SIZE_BYTES + data.size * (Long.SIZE_BYTES + 2 * Int.SIZE_BYTES)
-
-        data.forEach {
-            dataOutput.writeLong(it.first)
-            dataOutput.writeInt(dataOffset)
-            dataOutput.writeInt(it.second.size)
-            dataOffset += it.second.size
-        }
-
-        data.forEach { dataOutput.write(it.second) }
-    }
-}
-
-class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrFileWriter() {
-
-    private val SINGLE_INDEX_RECORD_SIZE = 3 * Int.SIZE_BYTES
-    private val INDEX_HEADER_SIZE = Int.SIZE_BYTES
-
+class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(declarations.size)
 
@@ -122,28 +66,8 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
         }
     }
 
-}
-
-class IrMemoryDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrMemoryWriter() {
-
-    private val SINGLE_INDEX_RECORD_SIZE = 3 * Int.SIZE_BYTES
-    private val INDEX_HEADER_SIZE = Int.SIZE_BYTES
-
-    override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(declarations.size)
-
-        var dataOffset = INDEX_HEADER_SIZE + SINGLE_INDEX_RECORD_SIZE * declarations.size
-
-        for (d in declarations) {
-            dataOutput.writeInt(d.id)
-            dataOutput.writeInt(dataOffset)
-            dataOutput.writeInt(d.size)
-            dataOffset += d.size
-        }
-
-        for (d in declarations) {
-            dataOutput.write(d.bytes)
-        }
+    companion object {
+        private const val SINGLE_INDEX_RECORD_SIZE = 3 * Int.SIZE_BYTES
+        private const val INDEX_HEADER_SIZE = Int.SIZE_BYTES
     }
-
 }
