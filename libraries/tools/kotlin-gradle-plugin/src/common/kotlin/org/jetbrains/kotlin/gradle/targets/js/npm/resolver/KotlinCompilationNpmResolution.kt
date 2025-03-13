@@ -59,7 +59,6 @@ class KotlinCompilationNpmResolution(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
     ): PreparedKotlinCompilationNpmResolution {
-
         return resolution ?: prepareWithDependencies(
             npmResolutionManager,
             logger
@@ -156,12 +155,12 @@ class KotlinCompilationNpmResolution(
                     if (dependencies.size > 1) {
                         logger.warn(
                             """
-                                Transitive npm dependency version clash for compilation "${compilationDisambiguatedName}"
-                                    Candidates:
-                                ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
-                                    Selected:
-                                        ${selected.name}@${selected.version}
-                                """.trimIndent()
+                            Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
+                                Candidates:
+                            ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
+                                Selected:
+                                    ${selected.name}@${selected.version}
+                            """.trimIndent()
                         )
                     }
                 }
