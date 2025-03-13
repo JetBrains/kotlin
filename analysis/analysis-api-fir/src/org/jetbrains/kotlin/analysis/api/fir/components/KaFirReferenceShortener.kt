@@ -1331,9 +1331,6 @@ private class ElementsToShortenCollector(
 
         val distinctCandidates = candidates.distinctBy { it.callableId }
         return distinctCandidates.singleOrNull()
-            ?: errorWithAttachment("Expected all candidates to have same callableId but some of them but was different") {
-                withEntry("callableIds", distinctCandidates.map { it.callableId.asSingleFqName() }.joinToString())
-            }
     }
 
     private fun findFakePackageToShorten(wholeQualifiedExpression: KtDotQualifiedExpression): ElementToShorten? {

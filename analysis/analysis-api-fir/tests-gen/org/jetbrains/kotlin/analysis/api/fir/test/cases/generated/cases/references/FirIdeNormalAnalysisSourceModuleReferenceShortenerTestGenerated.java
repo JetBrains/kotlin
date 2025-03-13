@@ -687,8 +687,20 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   @TestDataPath("$PROJECT_ROOT")
   public class Conflicts {
     @Test
+    @TestMetadata("aliasedConstructor_vs_function.kt")
+    public void testAliasedConstructor_vs_function() {
+      runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/aliasedConstructor_vs_function.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInConflicts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("constructor_vs_function.kt")
+    public void testConstructor_vs_function() {
+      runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/constructor_vs_function.kt");
     }
 
     @Nested
