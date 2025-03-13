@@ -693,6 +693,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("aliasedConstructor_vs_function_rootIdePackage.kt")
+    public void testAliasedConstructor_vs_function_rootIdePackage() {
+      runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/aliasedConstructor_vs_function_rootIdePackage.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInConflicts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -701,6 +707,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("constructor_vs_function.kt")
     public void testConstructor_vs_function() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/constructor_vs_function.kt");
+    }
+
+    @Test
+    @TestMetadata("constructor_vs_function_rootIdePackage.kt")
+    public void testConstructor_vs_function_rootIdePackage() {
+      runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/constructor_vs_function_rootIdePackage.kt");
     }
 
     @Nested
