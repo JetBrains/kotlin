@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
@@ -118,7 +120,13 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
     /** Set up all of the Android library variants to be published from this target's project within the default publications, which are
      * set up if the `maven-publish` Gradle plugin is applied. This overrides the variants chosen with [publishLibraryVariants] */
+    @Deprecated(
+        message = "Publishing all Android Variants implicitly is not recommended." +
+                " Please specify variants you want to publish explicitly with publishLibraryVariants",
+        replaceWith = ReplaceWith("publishLibraryVariants()")
+    )
     fun publishAllLibraryVariants() {
+        project.reportDiagnostic(KotlinToolingDiagnostics.PublishAllAndroidLibraryVariantsDeprecated())
         publishLibraryVariants = null
     }
 

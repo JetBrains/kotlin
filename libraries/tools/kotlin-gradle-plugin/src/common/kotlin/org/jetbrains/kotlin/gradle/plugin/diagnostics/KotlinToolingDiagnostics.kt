@@ -1602,6 +1602,14 @@ internal object KotlinToolingDiagnostics {
                 }
         }
     }
+
+    object PublishAllAndroidLibraryVariantsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
+        operator fun invoke() = build {
+            title("publishAllLibraryVariants() is deprecated")
+                .description("Publishing all Android Variants implicitly is not recommended.")
+                .solution("Please specify variants you want to publish explicitly with publishLibraryVariants()")
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
