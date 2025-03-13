@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -173,7 +174,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
-        if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.isNotEmpty()) {
+        if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.any { annotation ->
+                annotation.symbol.owner.constructedClass.getAnnotationRetention() == KotlinRetention.RUNTIME
+            }) {
             abiHazard = true
         }
 
