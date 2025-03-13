@@ -44,7 +44,7 @@ abstract class WasmNpmTooling internal constructor() {
 
             val isInstallationDirPresent = installationDir.isPresent
 
-            val cleanableStore = CleanableStore.Companion[defaultInstallationDir.get().asFile.absolutePath]
+            val cleanableStore = CleanableStore[defaultInstallationDir.get().asFile.absolutePath]
 
             val nodeDir: File = if (isInstallationDirPresent) {
                 installationDir.getFile()

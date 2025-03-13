@@ -27,6 +27,7 @@ fun main() {
         .apply {
             put("package", packageName)
             put("class", className)
+            put("license", File("license/COPYRIGHT_HEADER.txt").takeIf { it.exists() }?.readText() ?: "")
         }
 
     val velocityEngine = VelocityEngine().apply {
