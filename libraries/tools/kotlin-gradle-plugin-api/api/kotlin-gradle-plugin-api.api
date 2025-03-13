@@ -1349,7 +1349,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getComponents ()Ljava/util/Set;
 	public abstract fun getDisambiguationClassifier ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public abstract fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public abstract fun getPublishable ()Z
@@ -1357,7 +1356,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public abstract fun getTargetName ()Ljava/lang/String;
-	public abstract fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public abstract fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun mavenPublication (Lorg/gradle/api/Action;)V
 	public abstract fun withSourcesJar (Z)V

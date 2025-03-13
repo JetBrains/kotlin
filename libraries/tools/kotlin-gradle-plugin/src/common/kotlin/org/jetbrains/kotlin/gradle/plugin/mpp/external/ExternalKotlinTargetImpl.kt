@@ -60,12 +60,6 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 
-    @Deprecated("Scheduled for removal with Kotlin 2.2")
-    override val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
-
-    @Deprecated("Scheduled for removal with Kotlin 2.2")
-    override val overrideDisambiguationClassifierOnIdeImport: String? = null
-
     val artifactsTask: TaskProvider<out Task> by lazy {
         artifactsTaskLocator.locate(this)
     }

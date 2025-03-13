@@ -1056,14 +1056,12 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinTarge
 	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public final fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public fun getName ()Ljava/lang/String;
-	public fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
 	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public final fun getProject ()Lorg/gradle/api/Project;
 	public fun getPublishable ()Z
 	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
-	public fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun isSourcesPublishable ()Z
 	public fun jvmToolchain (I)V
@@ -1547,9 +1545,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTargetPre
 	protected abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	protected final fun getProject ()Lorg/gradle/api/Project;
 	protected abstract fun instantiateTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
-	protected fun overrideDisambiguationClassifierOnIdeImport (Ljava/lang/String;)Ljava/lang/String;
 	protected fun provideTargetDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;)Ljava/lang/String;
-	protected fun useDisambiguationClassifierAsSourceSetNamePrefix ()Z
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinProjectStructureMetadata : java/io/Serializable {

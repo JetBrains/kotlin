@@ -72,20 +72,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val disambiguationClassifier: String? get() = targetName
 
     /**
-     * @suppress
-     * Long deprecation cycle, because IDE might be calling into this via reflection.
-     */
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean
-
-    /**
-     * @suppress
-     * Long deprecation cycle, because IDE might be calling into this via reflection.
-     */
-    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
-    val overrideDisambiguationClassifierOnIdeImport: String?
-
-    /**
      * Represents the type of Kotlin platform associated with the target.
      */
     val platformType: KotlinPlatformType
