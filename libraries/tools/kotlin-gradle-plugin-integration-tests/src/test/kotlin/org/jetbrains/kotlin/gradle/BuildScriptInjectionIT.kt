@@ -7,16 +7,23 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.plugins.UnknownPluginException
+import org.gradle.internal.extensions.stdlib.unsafeLazy
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
+import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.test.*
@@ -338,6 +345,67 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     .resolve("${child}.class")
             }.buildAndReturn("compileKotlinJvm")
         )
+    }
+
+    @GradleTest
+    fun kgpTestFixturesRuntime(version: GradleVersion) {
+        // Check we have access to KGP testFixtures source set at compile and run time
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            include(
+                project("empty", version) {
+                    buildScriptInjection {
+                        val consumable = project.configurations.create("consumable") {
+                            it.isCanBeResolved = false
+                            it.attributes.attribute(
+                                Usage.USAGE_ATTRIBUTE,
+                                project.objects.named(Usage::class.java, Usage.JAVA_API)
+                            )
+                        }
+                        project.artifacts.add(
+                            consumable.name,
+                            project.tasks.register("makeFoo", DefaultTask::class.java) {
+                                val foo = project.layout.buildDirectory.file("foo.foo")
+                                it.outputs.file(foo)
+                                it.doLast { foo.get().asFile.createNewFile() }
+                            },
+                        )
+                    }
+                },
+                "sub",
+            )
+
+            val resolvedConfiguration = providerBuildScriptReturn {
+                val resolvable = project.configurations.create("resolvable") {
+                    it.isCanBeConsumed = false
+                    it.attributes.attribute(
+                        Usage.USAGE_ATTRIBUTE,
+                        project.objects.named(Usage::class.java, Usage.JAVA_API)
+                    )
+                    it.dependencies.add(project.dependencies.project(mapOf("path" to ":sub")))
+                }
+                project.provider {
+                    project.ignoreAccessViolations {
+                        resolvable.resolveProjectDependencyComponentsWithArtifacts()
+                    }
+                }
+            }.buildAndReturn()
+
+            assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+                mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                    ":sub" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "foo",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "consumable",
+                    ),
+                ).prettyPrinted,
+                resolvedConfiguration.prettyPrinted,
+            )
+        }
     }
 
     @Test
