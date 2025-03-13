@@ -13,3 +13,5 @@ package dependency
 class FooBar(i: Int)
 
 fun FooBar(i: String) {}
+
+// TODO This test is not correct, see KTIJ-33500
