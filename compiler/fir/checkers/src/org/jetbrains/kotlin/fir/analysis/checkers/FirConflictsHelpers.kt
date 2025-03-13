@@ -231,6 +231,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
     // so only the last declaration is
     // observed when processing all
     // classifiers
+    @OptIn(DirectDeclarationsAccess::class)
     for (declaredClassifier in klass.declarationSymbols) {
         if (declaredClassifier is FirClassifierSymbol<*>) {
             processClassifier(declaredClassifier)
@@ -321,7 +322,7 @@ private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
  */
 @Suppress("GrazieInspection")
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, packageMemberScope: FirPackageMemberScope) {
-
+    @OptIn(DirectDeclarationsAccess::class)
     for ((declarationName, group) in groupTopLevelByName(file.declarations, context)) {
         val groupHasClassLikesOrProperties = group.classLikes.isNotEmpty() || group.properties.isNotEmpty()
         val groupHasSimpleFunctions = group.simpleFunctions.isNotEmpty()

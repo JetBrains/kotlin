@@ -46,6 +46,7 @@ object FirPropertyInitializationChecker : FirRegularClassChecker(MppCheckerKind.
             }
         }
 
+        @OptIn(DirectDeclarationsAccess::class)
         for (member in declaration.declarations.asReversed()) {
             if (declaredLater.isNotEmpty()) {
                 member.accept(visitor)

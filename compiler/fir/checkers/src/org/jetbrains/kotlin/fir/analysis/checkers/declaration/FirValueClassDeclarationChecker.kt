@@ -144,6 +144,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
         // Separate handling of delegate fields
+        @OptIn(DirectDeclarationsAccess::class)
         declaration.declarations.forEach { innerDeclaration ->
             if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
             val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)

@@ -87,6 +87,7 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             }
         }
 
+        @OptIn(DirectDeclarationsAccess::class)
         declaration.declarations.forEach { decl ->
             if (decl is FirProperty) {
                 val fromConstructor = decl.source?.kind == KtFakeSourceElementKind.PropertyFromParameter

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 
@@ -17,6 +18,7 @@ object FirManyCompanionObjectsChecker : FirRegularClassChecker(MppCheckerKind.Co
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         var hasCompanion = false
 
+        @OptIn(DirectDeclarationsAccess::class)
         for (it in declaration.declarations) {
             if (it is FirRegularClass && it.isCompanion) {
                 if (hasCompanion) {
