@@ -15522,6 +15522,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("dontCheckOuterTypeParameterRefs.kt")
+        public void testDontCheckOuterTypeParameterRefs() {
+          runTest("compiler/testData/diagnostics/tests/generics/cyclicBounds/dontCheckOuterTypeParameterRefs.kt");
+        }
+
+        @Test
         @TestMetadata("functions.kt")
         public void testFunctions() {
           runTest("compiler/testData/diagnostics/tests/generics/cyclicBounds/functions.kt");
