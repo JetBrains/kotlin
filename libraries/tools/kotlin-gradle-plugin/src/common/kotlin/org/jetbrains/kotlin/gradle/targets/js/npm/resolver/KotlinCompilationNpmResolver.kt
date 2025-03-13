@@ -13,7 +13,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -32,7 +31,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import java.io.Serializable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
@@ -109,9 +110,10 @@ class KotlinCompilationNpmResolver(
 
                 val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
 
-                target.project.artifacts.add(publicPackageJsonConfiguration.name, packageJsonTask.map { it.packageJsonFile }) {
-                    it.builtBy(packageJsonTask)
-                }
+                target.project.artifacts.add(
+                    publicPackageJsonConfiguration.name,
+                    packageJsonTask.map { it.packageJsonFile },
+                )
             }
         }
     }
@@ -179,7 +181,6 @@ class KotlinCompilationNpmResolver(
 
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()
-        private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependencyDeclaration>()
         private val fileCollectionDependencies = mutableSetOf<FileCollectionExternalGradleDependency>()
@@ -251,27 +252,40 @@ class KotlinCompilationNpmResolver(
             val artifactId = artifact.id
             val componentIdentifier = artifactId.componentIdentifier
 
-            if (artifactId `is` CompositeProjectComponentArtifactMetadata) {
-                visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
+            /**
+             * Check GAV of `dependantProject != componentIdentifier` to filter out
+             * composite build projects with the same path as a local project, but different coords.
+             *
+             * We must verify that `dependentProject` is _not_ a local subproject.
+             *
+             * A local subproject could coincidentally have the same path that of an included build.
+             * E.g. this build could have a subproject `:lib`, and the included build could _also_ have a `:lib` subproject.
+             *
+             * The only way Gradle can differentiate them is by comparing the GAV coordinates.
+             *
+             * If the GAV coords are different, then `dependentProject` and `dependency` cannot refer to the same project,
+             * therefore `dependentProject` is a composite build.
+             *
+             * If the GAV coords are the same, then `dependentProject` and `dependency` could still refer to two separate projects if,
+             * coincidentally, they both have the same `projectPath` _and_ GAV coordinates!
+             * In this case, we cannot differentiate them. However, Gradle will not be able to differentiate them,
+             * so the user will have a heck of a lot more problems than we can deal with.
+             * So, we can just assume it's _not_ a composite build if the GAV coords are the same.
+             */
+            fun ProjectComponentIdentifier.isCompositeBuildDependency(): Boolean {
+                val dependentProject = project.findProject(projectPath)
+                    ?: return true // if there's no local project with the same path the identifier must be for an included build project.
+
+                val dependencyCoords = dependency.run { "${moduleGroup}:${moduleName}:${moduleVersion}" }
+                val projectCoords = dependentProject.run { "${group}:${name}:${version}" }
+
+                return dependencyCoords != projectCoords
             }
 
-            if (componentIdentifier is ProjectComponentIdentifier && !(artifactId `is` CompositeProjectComponentArtifactMetadata)) {
+            if (componentIdentifier is ProjectComponentIdentifier && !componentIdentifier.isCompositeBuildDependency()) {
                 visitProjectDependency(componentIdentifier)
-                return
-            }
-
-            externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
-        }
-
-        private fun visitCompositeProjectDependency(
-            dependency: ResolvedDependency,
-            componentIdentifier: ProjectComponentIdentifier,
-        ) {
-            (componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
-                val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
-                internalCompositeDependencies.add(
-                    CompositeDependency(dependency.moduleName, dependency.moduleVersion, includedBuild.projectDir, includedBuild)
-                )
+            } else {
+                externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
             }
         }
 
@@ -294,27 +308,27 @@ class KotlinCompilationNpmResolver(
         }
 
         fun toPackageJsonProducer() = KotlinCompilationNpmResolution(
-            internalDependencies,
-            internalCompositeDependencies,
-            externalGradleDependencies.map {
+            internalDependencies = internalDependencies,
+            internalCompositeDependencies = emptyList(),
+            externalGradleDependencies = externalGradleDependencies.map {
                 FileExternalGradleDependency(
                     it.dependency.moduleName,
                     it.dependency.moduleVersion,
                     it.artifact.file
                 )
             },
-            externalNpmDependencies,
-            fileCollectionDependencies,
-            projectPath,
-            compilationDisambiguatedName,
-            compilation.outputModuleName.get(),
-            npmVersion,
-            rootResolver.tasksRequirements
+            externalNpmDependencies = externalNpmDependencies,
+            fileCollectionDependencies = fileCollectionDependencies,
+            projectPath = projectPath,
+            compilationDisambiguatedName = compilationDisambiguatedName,
+            npmProjectName = compilation.outputModuleName.get(),
+            npmProjectVersion = npmVersion,
+            tasksRequirements = rootResolver.tasksRequirements
         )
     }
 
     companion object {
-        val publicPackageJsonAttribute = Attribute.of(
+        val publicPackageJsonAttribute: Attribute<String> = Attribute.of(
             "org.jetbrains.kotlin.js.public.package.json",
             String::class.java
         )

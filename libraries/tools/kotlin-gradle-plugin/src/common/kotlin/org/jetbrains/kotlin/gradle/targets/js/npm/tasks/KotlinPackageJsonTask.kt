@@ -15,15 +15,16 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PackageJsonProducerInputs
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
-import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import java.io.File
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
@@ -140,11 +141,7 @@ abstract class KotlinPackageJsonTask :
                                 }
                             }
                             .artifacts
-                            .filter {
-                                it.id `is` CompositeProjectComponentArtifactMetadata
-                            }
-                            .map { it.file }
-                            .toSet()
+                            .artifactFiles
                     }
                 ).disallowChanges()
 
@@ -194,13 +191,11 @@ abstract class KotlinPackageJsonTask :
         private fun findDependentTasks(
             rootResolver: KotlinRootNpmResolver,
             compilationNpmResolution: KotlinCompilationNpmResolution,
-        ): Collection<Any> =
-            compilationNpmResolution.internalDependencies.map { dependency ->
+        ): Collection<String> {
+            return compilationNpmResolution.internalDependencies.map { dependency ->
                 rootResolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
-            } + compilationNpmResolution.internalCompositeDependencies.map { dependency ->
-                dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
-                dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
             }
+        }
 
         private fun getCompilationResolver(
             nodeJsRoot: BaseNodeJsRootExtension,

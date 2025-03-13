@@ -17,6 +17,8 @@ import java.io.Serializable
 
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
+    @Deprecated("No longer used - composite build dependencies will be treated as external dependencies. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("unused")
     var internalCompositeDependencies: Collection<CompositeDependency>,
     var externalGradleDependencies: Collection<FileExternalGradleDependency>,
     var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
