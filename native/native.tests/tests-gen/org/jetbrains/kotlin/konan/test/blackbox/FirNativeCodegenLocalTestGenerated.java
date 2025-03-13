@@ -787,6 +787,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("kt75317_2.kt")
+    public void testKt75317_2() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75317_2.kt");
+    }
+
+    @Test
     @TestMetadata("kt75861.kt")
     public void testKt75861() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75861.kt");
