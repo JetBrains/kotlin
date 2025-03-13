@@ -1211,7 +1211,6 @@ psi/KtValueArgument.java:KtValueArgument:@Nullable getEqualsToken()
 psi/KtValueArgument.java:KtValueArgument:@Nullable getStringTemplateExpression()
 psi/KtValueArgument.java:KtValueArgument:KtValueArgument(ASTNode)
 psi/KtValueArgument.java:KtValueArgument:KtValueArgument(KotlinValueArgumentStub<KtValueArgument>)
-psi/KtValueArgument.java:KtValueArgument:isSpread()
 psi/KtValueArgumentList.java:KtValueArgumentList
 psi/KtValueArgumentList.java:KtValueArgumentList:@NotNull addArgument(KtValueArgument)
 psi/KtValueArgumentList.java:KtValueArgumentList:@NotNull addArgumentAfter(KtValueArgument, KtValueArgument)
