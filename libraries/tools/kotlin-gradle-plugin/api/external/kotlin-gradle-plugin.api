@@ -1211,7 +1211,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public fun getKotlinComponents ()Ljava/util/Set;
 	public fun getName ()Ljava/lang/String;
-	public fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
 	public fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun getProject ()Lorg/gradle/api/Project;
@@ -1225,7 +1224,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public final fun getSourcesElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getTargetName ()Ljava/lang/String;
-	public fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun isSourcesPublishable ()Z
 	public fun jvmToolchain (I)V
