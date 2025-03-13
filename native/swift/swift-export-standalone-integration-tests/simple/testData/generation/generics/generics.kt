@@ -1,0 +1,19 @@
+fun <T> foo(param1: T, param2: T?) {}
+
+class Pair<K, V>(val first: K, val second: V)
+
+fun <K, V> createMap(pairs: List<Pair<K, V>>): Map<K, V> {
+    return pairs.associate { it.first to it.second }
+}
+
+interface Processor<T, R> {
+    fun process(input: T): R
+}
+
+class IdentityProcessor<T> : Processor<T, T> {
+    override fun process(input: T): T = input
+}
+
+fun <T> List<T>.customFilter(predicate: (T) -> Boolean): List<T> {
+    return this.filter(predicate)
+}
