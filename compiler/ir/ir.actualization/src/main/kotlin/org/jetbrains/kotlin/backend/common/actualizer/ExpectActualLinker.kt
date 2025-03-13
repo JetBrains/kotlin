@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldFakeOverrideSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -63,7 +65,7 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
 
     override fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol) = symbol.actualizeSymbol()
 
-    override fun getReferencedField(symbol: IrFieldSymbol) = symbol.actualizeSymbol()
+    override fun getReferencedField(symbol: IrFieldSymbol) = symbol.actualizeMaybeFakeOverrideSymbol()
 
     override fun getReferencedConstructor(symbol: IrConstructorSymbol) = symbol.actualizeSymbol()
 
@@ -71,11 +73,11 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
 
     override fun getReferencedValueParameter(symbol: IrValueParameterSymbol) = symbol.actualizeSymbol<IrValueSymbol>()
 
-    override fun getReferencedFunction(symbol: IrFunctionSymbol) = symbol.actualizeSymbol()
+    override fun getReferencedFunction(symbol: IrFunctionSymbol) = symbol.actualizeMaybeFakeOverrideSymbol()
 
-    override fun getReferencedProperty(symbol: IrPropertySymbol) = symbol.actualizeSymbol()
+    override fun getReferencedProperty(symbol: IrPropertySymbol) = symbol.actualizeMaybeFakeOverrideSymbol()
 
-    override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = symbol.actualizeSymbol()
+    override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = symbol.actualizeMaybeFakeOverrideSymbol()
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol) = symbol.actualizeSymbol()
 
@@ -86,6 +88,29 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
     override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) = symbol.actualizeSymbol<IrReturnTargetSymbol>()
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
+
+    private inline fun <reified S : IrSymbol> S.actualizeMaybeFakeOverrideSymbol(): S {
+        val actualizedSymbol = this.actualizeSymbol()
+        return when (actualizedSymbol) {
+            is IrFunctionFakeOverrideSymbol -> IrFunctionFakeOverrideSymbol(
+                originalSymbol = actualizedSymbol.originalSymbol.actualizeSymbol(),
+                containingClassSymbol = actualizedSymbol.containingClassSymbol.actualizeSymbol(),
+                idSignature = null
+            )
+            is IrPropertyFakeOverrideSymbol -> IrPropertyFakeOverrideSymbol(
+                originalSymbol = actualizedSymbol.originalSymbol.actualizeSymbol(),
+                containingClassSymbol = actualizedSymbol.containingClassSymbol.actualizeSymbol(),
+                idSignature = null
+            )
+            is IrFieldFakeOverrideSymbol -> IrFieldFakeOverrideSymbol(
+                originalSymbol = actualizedSymbol.originalSymbol.actualizeSymbol(),
+                containingClassSymbol = actualizedSymbol.containingClassSymbol.actualizeSymbol(),
+                idSignature = null,
+                correspondingPropertySymbol = getReferencedProperty(actualizedSymbol.correspondingPropertySymbol)
+            )
+            else -> actualizedSymbol
+        } as S
+    }
 
     private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S {
         val actualSymbol = expectActualMap.expectToActual[this] ?: return this

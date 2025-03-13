@@ -75,7 +75,16 @@ class IrActualizer(
         val actualizerVisitor = ActualizerVisitor(symbolRemapper)
         dependentFragments.forEach { it.transform(actualizerVisitor, null) }
 
-        // 4. Move all declarations to mainFragment
+        // 4. Actualize property accessors actualized by java fields
+        if (expectActualMap.propertyAccessorsActualizedByFields.isNotEmpty()) {
+            val specialFakeOverrideSymbolsActualizedByFieldsTransformer =
+                SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(expectActualMap.propertyAccessorsActualizedByFields)
+            dependentFragments.forEach {
+                it.transform(specialFakeOverrideSymbolsActualizedByFieldsTransformer, null)
+            }
+        }
+
+        // 5. Move all declarations to mainFragment
         mergeIrFragments(mainFragment, dependentFragments)
         return expectActualMap
     }

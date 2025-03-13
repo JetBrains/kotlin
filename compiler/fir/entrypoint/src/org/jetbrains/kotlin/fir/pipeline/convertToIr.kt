@@ -203,7 +203,9 @@ private class Fir2IrPipeline(
 
         generateSyntheticBodiesOfDataValueMembers()
 
-        val (fakeOverrideStrategy, delegatedMembersGenerationStrategy) = buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer)
+        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
+        val (fakeOverrideStrategy, delegatedMembersGenerationStrategy) =
+            buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer, fakeOverrideResolver)
 
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
@@ -218,7 +220,6 @@ private class Fir2IrPipeline(
             )
         }
 
-        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         resolveFakeOverrideSymbols(fakeOverrideResolver)
         delegatedMembersGenerationStrategy.updateMetadataSources(
             commonMemberStorage.firClassesWithInheritanceByDelegation,
@@ -292,10 +293,11 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.buildFakeOverridesAndPlatformSpecificDeclarations(
-        irActualizer: IrActualizer?
+        irActualizer: IrActualizer?,
+        fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
     ): Pair<Fir2IrFakeOverrideStrategy, Fir2IrDelegatedMembersGenerationStrategy> {
         val (fakeOverrideBuilder, delegatedMembersGenerationStrategy) = createFakeOverrideBuilder(irActualizer)
-        buildFakeOverrides(fakeOverrideBuilder)
+        buildFakeOverrides(fakeOverrideBuilder, fakeOverrideResolver)
         if (!componentsStorage.configuration.skipBodies) {
             delegatedMembersGenerationStrategy.generateDelegatedBodies()
         }
@@ -304,26 +306,17 @@ private class Fir2IrPipeline(
         return fakeOverrideStrategy to delegatedMembersGenerationStrategy
     }
 
-    private fun Fir2IrConversionResult.buildFakeOverrides(fakeOverrideBuilder: IrFakeOverrideBuilder) {
-        val temporaryResolver = SpecialFakeOverrideSymbolsResolver(IrExpectActualMap())
-        fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
+    private fun Fir2IrConversionResult.buildFakeOverrides(
+        fakeOverrideBuilder: IrFakeOverrideBuilder,
+        fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
+    ) {
+        fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, fakeOverrideResolver)
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(temporaryResolver)
+        componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(fakeOverrideResolver)
     }
 
     private fun Fir2IrConversionResult.resolveFakeOverrideSymbols(fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver) {
         mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
-
-        val expectActualMap = fakeOverrideResolver.expectActualMap
-        if (expectActualMap.propertyAccessorsActualizedByFields.isNotEmpty()) {
-            mainIrFragment.transform(SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(expectActualMap), null)
-        }
-
-        // TODO: remove this and create a correct remapper from the beginnning: KT-70907
-        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        componentsStorage.symbolsMappingForLazyClasses.unregisterRemapper()
-        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(fakeOverrideResolver)
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {
