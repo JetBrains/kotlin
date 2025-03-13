@@ -531,15 +531,19 @@ class TestProject(
         } else {
             "$pathPrefix/$otherProjectName".testProjectPath
         }
-        otherProjectPath.copyRecursively(projectPath.resolve(newSubmoduleName))
+
+        val newSubmoduleDir = projectPath.resolve(newSubmoduleName)
+        otherProjectPath.copyRecursively(newSubmoduleDir)
+        newSubmoduleDir.addDefaultSettingsToSettingsGradle(gradleVersion)
 
         val gradleSettingToUpdate = if (isKts) settingsGradleKts else settingsGradle
 
         gradleSettingToUpdate.append(
             """
-
-            include(":$newSubmoduleName")
-            """.trimIndent()
+            |
+            |include(":$newSubmoduleName")
+            |
+            """.trimMargin()
         )
 
         localRepoDir?.let { subProject(newSubmoduleName).configureLocalRepository(localRepoDir) }
@@ -552,25 +556,21 @@ class TestProject(
         newProjectName: String = otherProjectName,
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
 
-        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
+        val newIncludedBuildDir = projectPath.resolve(newProjectName)
 
-        if (settingsGradle.exists()) {
-            settingsGradle.append(
-                """
+        otherProjectPath.copyRecursively(newIncludedBuildDir)
+        newIncludedBuildDir.addDefaultSettingsToSettingsGradle(gradleVersion)
 
-                    includeBuild '$newProjectName'
-                """.trimIndent()
-            )
-        } else {
-            settingsGradleKts.append(
-                """
+        val gradleSettingToUpdate = if (settingsGradleKts.exists()) settingsGradleKts else settingsGradle
 
-                    includeBuild("$newProjectName")
-                """.trimIndent()
-            )
-        }
+        gradleSettingToUpdate.append(
+            """
+            |
+            |includeBuild("$newProjectName")
+            |
+            """.trimMargin()
+        )
     }
 }
 
@@ -762,7 +762,7 @@ private fun setupProjectFromTestResources(
 
 private val String.testProjectPath: Path get() = Path("src/test/resources/testProject", this)
 
-internal fun Path.addDefaultSettingsToSettingsGradle(
+private fun Path.addDefaultSettingsToSettingsGradle(
     gradleVersion: GradleVersion,
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
