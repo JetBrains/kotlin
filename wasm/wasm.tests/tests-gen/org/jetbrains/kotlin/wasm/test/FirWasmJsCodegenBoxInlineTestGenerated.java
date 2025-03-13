@@ -387,6 +387,12 @@ public class FirWasmJsCodegenBoxInlineTestGenerated extends AbstractFirWasmJsCod
     }
 
     @Test
+    @TestMetadata("kt75902.kt")
+    public void testKt75902() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/kt75902.kt");
+    }
+
+    @Test
     @TestMetadata("kt8133.kt")
     public void testKt8133() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt8133.kt");
