@@ -11,6 +11,7 @@
 
 #include "GCStatistics.hpp"
 #include "ManuallyScoped.hpp"
+#include "MarkState.hpp"
 #include "ObjectData.hpp"
 #include "concurrent/ParallelProcessor.hpp"
 #include "ThreadRegistry.hpp"
@@ -105,10 +106,10 @@ public:
             return objectData.tryMark();
         }
 
-        static PERFORMANCE_INLINE void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        static PERFORMANCE_INLINE void processInMark(MarkState<MarkTraits>& markState, ObjHeader* object) noexcept {
             auto process = object->type_info()->processObjectInMark;
             RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
-            process(static_cast<void*>(&markQueue), object);
+            process(static_cast<void*>(&markState), object);
         }
     };
 
@@ -158,12 +159,12 @@ private:
         return true;
     }
 
-    void completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker);
-    void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
-    void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
-    void parallelMark(ParallelProcessor::Worker& worker);
+    void completeRootSetAndMark(MarkState<MarkTraits>& parallelWorkerMarkState);
+    void completeMutatorsRootSet(MarkState<MarkTraits>& markState);
+    void tryCollectRootSet(mm::ThreadData& thread, MarkState<MarkTraits>& markState);
+    void parallelMark(MarkState<MarkTraits>& markState);
 
-    std::optional<ParallelProcessor::Worker> createWorker();
+    std::optional<MarkState<MarkTraits>> createWorker();
 
     void resetMutatorFlags();
 

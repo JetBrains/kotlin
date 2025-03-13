@@ -41,9 +41,9 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
 
     state_.start(epoch);
 
-    gc::collectRootSet<internal::MarkTraits>(gcHandle, markQueue_, [](mm::ThreadData&) { return true; });
+    gc::collectRootSet<internal::MarkTraits>(gcHandle, markState_, [](mm::ThreadData&) { return true; });
 
-    gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
+    gc::Mark<internal::MarkTraits>(gcHandle, markState_);
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::ExternalRCRefRegistry::instance());
 

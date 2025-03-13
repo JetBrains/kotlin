@@ -11,6 +11,7 @@
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
 #include "Logging.hpp"
+#include "MarkState.hpp"
 #include "Memory.h"
 #include "ObjectOps.hpp"
 #include "ObjectTraversal.hpp"
@@ -27,9 +28,9 @@ namespace internal {
 
 template <typename Traits>
 void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexcept {
-    auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
+    auto& markState = *static_cast<MarkState<Traits>*>(state);
     if (field->heapNotLocal()) {
-        Traits::tryEnqueue(markQueue, field);
+        Traits::tryEnqueue(markState.globalQueue, field);
     }
     if (object->heapNotLocal()) {
         RuntimeAssert(!field->stack(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
@@ -56,17 +57,17 @@ void processArrayInMark(void* state, ArrayHeader* array) noexcept {
 }
 
 template <typename Traits>
-bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexcept {
+bool collectRoot(MarkState<Traits>& markState, ObjHeader* object) noexcept {
     if (isNullOrMarker(object))
         return false;
 
     if (object->heapNotLocal()) {
-        Traits::tryEnqueue(markQueue, object);
+        Traits::tryEnqueue(markState.globalQueue, object);
     } else {
         bool visitChildren = !object->local() || Traits::tryMark(object);
         // Each permanent/stack/local object has own entry in the root set, so it's okay to only process objects in heap.
         if (visitChildren)
-            Traits::processInMark(markQueue, object);
+            Traits::processInMark(markState, object);
         RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
     }
     return true;
@@ -74,7 +75,7 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
 
 // TODO: Consider making it noinline to keep loop in `Mark` small.
 template <typename Traits>
-void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
+void processExtraObjectData(GCHandle::GCMarkScope& markHandle, MarkState<Traits>& markState, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
     if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
                 weakReference->heapNotLocal(), "Weak reference must be a non-local heap object. object=%p weak=%p permanent=%d stack=%d local=%d", object,
@@ -84,7 +85,7 @@ void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::
         if (Traits::tryMark(weakReference)) {
             markHandle.addObject();
             // RegularWeakReferenceImpl is empty, but keeping this just in case.
-            Traits::processInMark(markQueue, weakReference);
+            Traits::processInMark(markState, weakReference);
         }
     }
 }
@@ -92,29 +93,29 @@ void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::
 } // namespace internal
 
 template <typename Traits>
-void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
+void Mark(GCHandle handle, MarkState<Traits>& markState) noexcept {
     auto markHandle = handle.mark();
-    Mark<Traits>(markHandle, markQueue);
+    Mark<Traits>(markHandle, markState);
 }
 
 template <typename Traits>
-void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue) noexcept {
-    while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
+void Mark(GCHandle::GCMarkScope& markHandle, MarkState<Traits>& markState) noexcept {
+    while (ObjHeader* top = Traits::tryDequeue(markState.globalQueue)) {
         markHandle.addObject();
-        Traits::processInMark(markQueue, top);
+        Traits::processInMark(markState, top);
         // TODO: Consider moving it before processInMark to make the latter something of a tail call.
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
-            internal::processExtraObjectData<Traits>(markHandle, markQueue, *extraObjectData, top);
+            internal::processExtraObjectData<Traits>(markHandle, markState, *extraObjectData, top);
         }
     }
 }
 
 template <typename Traits>
-void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
+void collectRootSetForThread(GCHandle gcHandle, MarkState<Traits>& markState, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
-        if (internal::collectRoot<Traits>(markQueue, value.object)) {
+        if (internal::collectRoot<Traits>(markState, value.object)) {
             switch (value.source) {
                 case mm::ThreadRootSet::Source::kStack:
                     handle.addStackRoot();
@@ -128,11 +129,11 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
 }
 
 template <typename Traits>
-void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {
+void collectRootSetGlobals(GCHandle gcHandle, MarkState<Traits>& markState) noexcept {
     auto handle = gcHandle.collectGlobalRoots();
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
-        if (internal::collectRoot<Traits>(markQueue, value.object)) {
+        if (internal::collectRoot<Traits>(markState, value.object)) {
             switch (value.source) {
                 case mm::GlobalRootSet::Source::kGlobal:
                     handle.addGlobalRoot();
@@ -147,15 +148,15 @@ void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQu
 
 // TODO: This needs some tests now.
 template <typename Traits, typename F>
-void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& filter) noexcept {
-    Traits::clear(markQueue);
+void collectRootSet(GCHandle handle, MarkState<Traits>& markState, F&& filter) noexcept {
+    Traits::clear(markState.globalQueue);
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
         if (!filter(thread))
             continue;
         thread.Publish();
-        collectRootSetForThread<Traits>(handle, markQueue, thread);
+        collectRootSetForThread<Traits>(handle, markState, thread);
     }
-    collectRootSetGlobals<Traits>(handle, markQueue);
+    collectRootSetGlobals<Traits>(handle, markState);
 }
 
 template <typename Traits>

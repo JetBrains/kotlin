@@ -6,6 +6,7 @@
 #pragma once
 
 #include "GC.hpp"
+#include "MarkState.hpp"
 #include "IntrusiveList.hpp"
 #include "ObjectData.hpp"
 
@@ -31,10 +32,10 @@ struct MarkTraits {
 
     static bool tryMark(ObjHeader* object) noexcept { return alloc::objectDataForObject(object).tryMark(); }
 
-    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+    static void processInMark(MarkState<MarkTraits>& markState, ObjHeader* object) noexcept {
         auto process = object->type_info()->processObjectInMark;
         RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
-        process(static_cast<void*>(&markQueue), object);
+        process(static_cast<void*>(&markState), object);
     }
 };
 

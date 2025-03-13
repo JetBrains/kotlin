@@ -106,22 +106,22 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
 
 void gc::mark::ParallelMark::runMainInSTW() {
     if (compiler::gcMarkSingleThreaded()) {
-        ParallelProcessor::Worker worker(*parallelProcessor_);
-        gc::collectRootSet<MarkTraits>(gcHandle(), worker, [] (mm::ThreadData&) { return true; });
-        gc::Mark<MarkTraits>(gcHandle(), worker);
+        MarkState<MarkTraits> markState(*parallelProcessor_);
+        gc::collectRootSet<MarkTraits>(gcHandle(), markState, [] (mm::ThreadData&) { return true; });
+        gc::Mark<MarkTraits>(gcHandle(), markState);
     } else {
         RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
-        ParallelProcessor::Worker mainWorker(*parallelProcessor_);
+        MarkState<MarkTraits> mainWorkerMarkState(*parallelProcessor_);
         GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
 
         pacer_.begin(MarkPacer::Phase::kRootSet);
-        completeMutatorsRootSet(mainWorker);
+        completeMutatorsRootSet(mainWorkerMarkState);
         spinWait([this] { return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().markDispatcher_.published(); }); });
         // global root set must be collected after all the mutator's global data have been published
-        collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
+        collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorkerMarkState);
 
         pacer_.begin(MarkPacer::Phase::kParallelMark);
-        parallelMark(mainWorker);
+        parallelMark(mainWorkerMarkState);
     }
 }
 
@@ -176,39 +176,39 @@ void gc::mark::ParallelMark::setParallelismLevel(size_t maxParallelism, bool mut
                    maxParallelism_, (mutatorsCooperate_ ? "" : "non-"));
 }
 
-void gc::mark::ParallelMark::completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker) {
+void gc::mark::ParallelMark::completeRootSetAndMark(MarkState<MarkTraits>& parallelWorkerMarkState) {
     pacer_.wait(MarkPacer::Phase::kRootSet);
-    completeMutatorsRootSet(parallelWorker);
+    completeMutatorsRootSet(parallelWorkerMarkState);
     pacer_.wait(MarkPacer::Phase::kParallelMark);
-    parallelMark(parallelWorker);
+    parallelMark(parallelWorkerMarkState);
 }
 
-void gc::mark::ParallelMark::completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue) {
+void gc::mark::ParallelMark::completeMutatorsRootSet(MarkState<MarkTraits>& markState) {
     // workers compete for mutators to collect their root set
     for (auto& thread: *lockedMutatorsList_) {
-        tryCollectRootSet(thread, markQueue);
+        tryCollectRootSet(thread, markState);
     }
 }
 
-void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
+void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkState<MarkTraits>& markState) {
     auto& gcData = thread.gc().impl().markDispatcher_;
     if (!gcData.tryLockRootSet()) return;
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR,
                konan::currentThreadId(), thread.threadId());
     gcData.publish();
-    collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
+    collectRootSetForThread<MarkTraits>(gcHandle(), markState, thread);
 }
 
-void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
+void gc::mark::ParallelMark::parallelMark(MarkState<MarkTraits>& markState) {
     GCLogDebug(gcHandle().getEpoch(), "Mark loop has begun");
-    Mark<MarkTraits>(gcHandle(), worker);
+    Mark<MarkTraits>(gcHandle(), markState);
 
     std::unique_lock guard(workerCreationMutex_);
     activeWorkersCount_.fetch_sub(1, std::memory_order_relaxed);
 }
 
-std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::ParallelMark::createWorker() {
+std::optional<gc::MarkState<gc::mark::ParallelMark::MarkTraits>> gc::mark::ParallelMark::createWorker() {
     std::unique_lock guard(workerCreationMutex_);
     if (!pacer_.acceptingNewWorkers() ||
         activeWorkersCount_.load(std::memory_order_relaxed) >= maxParallelism_ ||
@@ -216,7 +216,7 @@ std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::Paral
 
     auto num = activeWorkersCount_.fetch_add(1, std::memory_order_relaxed);
     GCLogDebug(gcHandle().getEpoch(), "Creating mark worker #%zu", num);
-    return std::make_optional<ParallelProcessor::Worker>(*parallelProcessor_);
+    return std::make_optional<gc::MarkState<gc::mark::ParallelMark::MarkTraits>>(*parallelProcessor_);
 }
 
 void gc::mark::ParallelMark::resetMutatorFlags() {

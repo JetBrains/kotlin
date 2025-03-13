@@ -111,11 +111,11 @@ public:
         return result.second;
     }
 
-    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+    static void processInMark(gc::MarkState<ScopedMarkTraits>& markState, ObjHeader* object) noexcept {
         if (object->type_info() == theArrayTypeInfo) {
-            gc::internal::processArrayInMark<ScopedMarkTraits>(static_cast<void*>(&markQueue), object->array());
+            gc::internal::processArrayInMark<ScopedMarkTraits>(static_cast<void*>(&markState), object->array());
         } else {
-            gc::internal::processObjectInMark<ScopedMarkTraits>(static_cast<void*>(&markQueue), object);
+            gc::internal::processObjectInMark<ScopedMarkTraits>(static_cast<void*>(&markState), object);
         }
     }
 
@@ -141,10 +141,10 @@ public:
     }
 
     gc::MarkStats Mark(std::initializer_list<std::reference_wrapper<test_support::Any>> graySet) {
-        std::vector<ObjHeader*> objects;
-        for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(objects, object.get().header());
+        gc::MarkState<ScopedMarkTraits> markState;
+        for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(markState.globalQueue, object.get().header());
         auto handle = gc::GCHandle::create(epoch_++);
-        gc::Mark<ScopedMarkTraits>(handle, objects);
+        gc::Mark<ScopedMarkTraits>(handle, markState);
         handle.finished();
         return handle.getMarked();
     }

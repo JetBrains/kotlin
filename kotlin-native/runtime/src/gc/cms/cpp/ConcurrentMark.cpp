@@ -70,7 +70,7 @@ void gc::mark::ConcurrentMark::endMarkingEpoch() {
 
 void gc::mark::ConcurrentMark::runMainInSTW() {
     std::unique_lock markLock(markMutex_);
-    ParallelProcessor::Worker mainWorker(*parallelProcessor_);
+    MarkState<MarkTraits> markState(*parallelProcessor_);
     GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
 
     // create mutator mark queues
@@ -78,13 +78,13 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
         thread.gc().impl().mark_.markQueue().construct(*parallelProcessor_);
     }
 
-    completeMutatorsRootSet(mainWorker);
+    completeMutatorsRootSet(markState);
 
     barriers::enableBarriers(gcHandle().getEpoch());
     resumeTheWorld(gcHandle());
 
     // global root set must be collected after all the mutator's global data have been published
-    collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
+    collectRootSetGlobals<MarkTraits>(gcHandle(), markState);
 
     // Mutator threads might release their internal batch at a pretty arbitrary moment (during a barrier execution with overflow).
     // So there are not so many reliable ways to track releases of new work.
@@ -95,7 +95,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     bool terminateInSTW = false;
     do {
         GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%zu)", iter);
-        Mark<MarkTraits>(gcHandle(), mainWorker);
+        Mark<MarkTraits>(gcHandle(), markState);
 
         RuntimeCheck(iter <= compiler::concurrentMarkMaxIterations(), "Failed to terminate mark in STW in a single iteration");
         ++iter;
@@ -133,20 +133,20 @@ gc::GCHandle& gc::mark::ConcurrentMark::gcHandle() {
     return gcHandle_;
 }
 
-void gc::mark::ConcurrentMark::completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue) {
+void gc::mark::ConcurrentMark::completeMutatorsRootSet(MarkState<MarkTraits>& markState) {
     // workers compete for mutators to collect their root set
     for (auto& thread : *lockedMutatorsList_) {
-        tryCollectRootSet(thread, markQueue);
+        tryCollectRootSet(thread, markState);
     }
 }
 
-void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
+void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkState<MarkTraits>& markState) {
     auto& gcData = thread.gc().impl().mark_;
     if (!gcData.tryLockRootSet()) return;
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR, konan::currentThreadId(), thread.threadId());
     gcData.publish();
-    collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
+    collectRootSetForThread<MarkTraits>(gcHandle(), markState, thread);
 }
 
 /** Terminates the mark loop if possible, otherwise returns `false`. */

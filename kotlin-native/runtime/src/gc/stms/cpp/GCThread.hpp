@@ -25,7 +25,7 @@ private:
     GCStateHolder& state_;
     alloc::Allocator& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
-    MarkQueue markQueue_;
+    MarkState<MarkTraits> markState_;
     UtilityThread thread_;
 };
 
