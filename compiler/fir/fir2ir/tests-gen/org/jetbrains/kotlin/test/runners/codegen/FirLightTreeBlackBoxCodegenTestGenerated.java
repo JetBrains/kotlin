@@ -57610,6 +57610,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("deserializedMembers_kt75949.kt")
+    public void testDeserializedMembers_kt75949() {
+      runTest("compiler/testData/codegen/box/serialization/deserializedMembers_kt75949.kt");
+    }
+
+    @Test
     @TestMetadata("serializedCatch.kt")
     public void testSerializedCatch() {
       runTest("compiler/testData/codegen/box/serialization/serializedCatch.kt");
