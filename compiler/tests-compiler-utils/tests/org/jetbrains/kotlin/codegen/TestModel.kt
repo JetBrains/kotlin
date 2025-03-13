@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
 
@@ -19,7 +20,9 @@ class ProjectInfo(
     val moduleKind: ModuleKind,
     val ignoredGranularities: Set<JsGenerationGranularity>,
     val callMain: Boolean,
-    val checkTypeScriptDefinitions: Boolean
+    val checkTypeScriptDefinitions: Boolean,
+    val ignoreK1Backends: Set<TargetBackend>,
+    val ignoreK2Backends: Set<TargetBackend>,
 ) {
 
     class ProjectBuildStep(
@@ -91,6 +94,9 @@ private const val LANGUAGE = "language"
 private const val IGNORE_PER_FILE = "IGNORE_PER_FILE"
 private const val IGNORE_PER_MODULE = "IGNORE_PER_MODULE"
 private const val TYPESCRIPT_DEFINITIONS = "TYPESCRIPT_DEFINITIONS"
+private const val IGNORE_BACKEND = "IGNORE_BACKEND"
+private const val IGNORE_BACKEND_K1 = "IGNORE_BACKEND_K1"
+private const val IGNORE_BACKEND_K2 = "IGNORE_BACKEND_K2"
 
 const val MODULE_INFO_FILE = "module.info"
 private const val DEPENDENCIES = "dependencies"
@@ -201,6 +207,8 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
         var callMain = false
         var checkTypeScriptDefinitions = false
         var moduleKind = ModuleKind.ES
+        val ignoreBackendsK1 = mutableSetOf<TargetBackend>()
+        val ignoreBackendsK2 = mutableSetOf<TargetBackend>()
 
         loop { line ->
             lineCounter++
@@ -227,6 +235,11 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
                 op == MODULES_KIND -> moduleKind = split[1].trim()
                     .ifEmpty { error("Module kind value should be provided if MODULE_KIND pragma was specified") }
                     .let { moduleKindMap[it] ?: error("Unknown MODULE_KIND value '$it'") }
+                op in arrayOf(IGNORE_BACKEND, IGNORE_BACKEND_K1, IGNORE_BACKEND_K2) -> {
+                    val backends = split[1].trim().split(", ").map { TargetBackend.valueOf(it) }
+                    if (op == IGNORE_BACKEND || op == IGNORE_BACKEND_K1) ignoreBackendsK1 += backends
+                    if (op == IGNORE_BACKEND || op == IGNORE_BACKEND_K2) ignoreBackendsK2 += backends
+                }
                 op.matches(STEP_PATTERN.toRegex()) -> {
                     val m = STEP_PATTERN.matcher(op)
                     if (!m.matches()) throwSyntaxError(line)
@@ -253,7 +266,10 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
             false
         }
 
-        return ProjectInfo(entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain, checkTypeScriptDefinitions)
+        return ProjectInfo(
+            entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain, checkTypeScriptDefinitions,
+            ignoreBackendsK1, ignoreBackendsK2
+        )
     }
 }
 

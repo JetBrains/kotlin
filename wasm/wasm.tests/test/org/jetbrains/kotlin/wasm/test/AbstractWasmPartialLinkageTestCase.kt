@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
@@ -48,6 +49,9 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         override val buildDir: File get() = this@AbstractWasmPartialLinkageTestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
         override val testModeConstructorParameters = mapOf("isWasm" to "true")
+        override val targetBackend get() = TargetBackend.WASM
+        override val isK2: Boolean
+            get() = compilerType.useFir
 
         override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
             if (moduleName == MAIN_MODULE_NAME) {

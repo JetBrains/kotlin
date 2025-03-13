@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -48,6 +49,10 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         override val buildDir: File get() = this@AbstractJsKlibLinkageTestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
         override val testModeConstructorParameters = mapOf("isJs" to "true")
+        override val targetBackend
+            get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
+        override val isK2: Boolean
+            get() = compilerType.useFir
 
         override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
             if (moduleName == MAIN_MODULE_NAME)

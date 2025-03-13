@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
@@ -19,6 +20,8 @@ object PartialLinkageTestUtils {
         val buildDir: File
         val stdlibFile: File
         val testModeConstructorParameters: Map<String, String>
+        val targetBackend: TargetBackend
+        val isK2: Boolean
 
         // Customize the source code of a module before compiling it to a KLIB.
         fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
@@ -41,7 +44,12 @@ object PartialLinkageTestUtils {
         fun onNonEmptyBuildDirectory(directory: File)
 
         // A way to check if a test is ignored or not. Override this function if necessary.
-        fun isIgnoredTest(projectInfo: ProjectInfo): Boolean = projectInfo.muted
+        fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
+            if (projectInfo.muted) return true
+            val compatibleBackends = generateSequence(targetBackend) { if (it == TargetBackend.ANY) null else it.compatibleWith }.toSet()
+            val ignoredBackends = if (isK2) projectInfo.ignoreK2Backends else projectInfo.ignoreK1Backends
+            return ignoredBackends.intersect(compatibleBackends).isNotEmpty()
+        }
 
         // How to handle the test that is known to be ignored.
         fun onIgnoredTest()

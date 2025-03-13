@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.opentest4j.TestAbortedException
@@ -32,6 +33,9 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
         override val testDir = getAbsoluteFile(testPath)
         override val buildDir get() = this@AbstractKlibLinkageTest.buildDir
         override val stdlibFile get() = this@AbstractKlibLinkageTest.stdlibFile
+        override val targetBackend get() = TargetBackend.NATIVE
+        override val isK2: Boolean
+            get() = testRunSettings.get<PipelineType>() == PipelineType.K2
 
         override val testModeConstructorParameters = buildMap {
             this["isNative"] = "true"
