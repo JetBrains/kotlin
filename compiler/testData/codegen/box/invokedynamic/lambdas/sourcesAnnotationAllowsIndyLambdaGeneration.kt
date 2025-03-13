@@ -4,7 +4,7 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// 0 java/lang/invoke/LambdaMetafactory
+// 3 java/lang/invoke/LambdaMetafactory
 
 import kotlin.jvm.internal.Lambda
 

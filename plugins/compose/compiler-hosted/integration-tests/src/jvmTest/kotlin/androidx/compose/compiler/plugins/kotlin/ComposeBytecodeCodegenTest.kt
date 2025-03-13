@@ -778,13 +778,19 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 }
             """,
             validate = { bytecode ->
-                val classesRegex = Regex("final class (.*?) \\{[\\S\\s]*?^}", RegexOption.MULTILINE)
-                val matches = classesRegex.findAll(bytecode)
-                val lambdaClass = matches
-                    .single { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda%") == true }
-                    .value
-                val invokeRegex = Regex("public final invoke([\\s\\S]*?)LOCALVARIABLE")
-                val invokeMethod = invokeRegex.find(lambdaClass)?.value ?: error("Could not find invoke method in $lambdaClass")
+                val invokeMethod = if (!useFir) {
+                    val classesRegex = Regex("final class (.*?) \\{[\\S\\s]*?^}", RegexOption.MULTILINE)
+                    val matches = classesRegex.findAll(bytecode)
+                    val lambdaClass = matches
+                        .single { it.groups[1]?.value?.startsWith("test/ComposableSingletons%TestKt%lambda%") == true }
+                        .value
+                    val invokeRegex = Regex("public final invoke([\\s\\S]*?)LOCALVARIABLE")
+                    invokeRegex.find(lambdaClass)?.value ?: error("Could not find invoke method in $lambdaClass")
+                } else {
+                    val staticLambdaFunctionRegex = Regex("private final static lambda.*lambda%0[\\S\\s]*?\\v\\v", RegexOption.MULTILINE)
+                    val matches = staticLambdaFunctionRegex.findAll(bytecode)
+                    matches.single().value
+                }
                 val lineNumbers = invokeMethod.lines()
                     .mapNotNull {
                         it.takeIf { it.contains("LINENUMBER") }
