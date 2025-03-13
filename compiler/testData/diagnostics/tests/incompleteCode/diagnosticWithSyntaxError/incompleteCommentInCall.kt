@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 
 class Box(val value: String)
 
