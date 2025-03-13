@@ -372,11 +372,15 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
         // check if everything ok without build/js/yarn.lock
         build("clean") {
-            assertTasksExecuted(":clean")
+            assertDirectoryInProjectExists(KOTLIN_JS_STORE)
+            assertFileInProjectExists("$KOTLIN_JS_STORE/$lockFileName")
+            assertFileInProjectNotExists("build/js/${lockFileName}")
         }
 
         build("clean") {
-            assertTasksUpToDate(":clean")
+            assertDirectoryInProjectExists(KOTLIN_JS_STORE)
+            assertFileInProjectExists("$KOTLIN_JS_STORE/$lockFileName")
+            assertFileInProjectNotExists("build/js/${lockFileName}")
         }
 
         buildAndFail(storeTaskName) {
