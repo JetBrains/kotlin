@@ -7,18 +7,27 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
+import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 internal object PartialLinkageUtils {
     val UNKNOWN_NAME = Name.identifier("<unknown name>")
@@ -114,4 +123,44 @@ internal fun <T> MutableCollection<T>.getCopyAndClear(): Collection<T> {
     val result = ArrayList(this)
     this.clear()
     return result
+}
+
+fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
+    return when (this) {
+        is IrCall -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR //|| symbol == builtIns.linkageErrorSymbol
+        is IrContainerExpression -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR || statements.any { it.isPartialLinkageRuntimeError() }
+        else -> false
+    }
+}
+
+
+// A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with MessageCollector.
+class PartialLinkageLogger(val messageCollector: MessageCollector, val logLevel: PartialLinkageLogLevel) {
+    class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
+        fun render(): StringBuilder = StringBuilder().apply {
+            append(moduleName)
+            if (filePath.isNotEmpty()) {
+                append(" @ ").append(filePath)
+                if (lineNumber != UNDEFINED_LINE_NUMBER && columnNumber != UNDEFINED_COLUMN_NUMBER) {
+                    append(':').append(lineNumber).append(':').append(columnNumber)
+                }
+            }
+        }
+
+        override fun toString() = render().toString()
+    }
+
+    private val irLoggerSeverity = when (logLevel) {
+        PartialLinkageLogLevel.INFO -> CompilerMessageSeverity.INFO
+        PartialLinkageLogLevel.WARNING -> CompilerMessageSeverity.WARNING
+        PartialLinkageLogLevel.ERROR -> CompilerMessageSeverity.ERROR
+    }
+
+    fun log(message: String, location: Location) {
+        messageCollector.report(
+            severity = irLoggerSeverity,
+            message = location.render().append(": ").append(message).toString(),
+            location = null
+        )
+    }
 }

@@ -1,32 +1,23 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.linkage.partial
+package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
+import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
+import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.Name
-
-fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
-    return when (this) {
-        is IrCall -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR //|| symbol == builtIns.linkageErrorSymbol
-        is IrContainerExpression -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR || statements.any { it.isPartialLinkageRuntimeError() }
-        else -> false
-    }
-}
 
 object PartialLinkageSources {
     /** For fast check if a declaration is in the module */
@@ -45,7 +36,11 @@ object PartialLinkageSources {
             override val name = "<missing declarations>"
         }
 
-        fun defaultLocationWithoutPath() = PartialLinkageLogger.Location(name, /* no path */ "", UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+        fun defaultLocationWithoutPath() = PartialLinkageLogger.Location(
+            name, /* no path */ "",
+            UNDEFINED_LINE_NUMBER,
+            UNDEFINED_COLUMN_NUMBER
+        )
 
         companion object {
             fun determineModuleFor(declaration: IrDeclaration): Module = determineFor(
@@ -120,7 +115,7 @@ object PartialLinkageSources {
         onSyntheticBuiltInFunction: R,
         onIrBased: (IrFile) -> R,
         onLazyIrBased: (PackageFragmentDescriptor) -> R,
-        onError: () -> Nothing
+        onError: () -> Nothing,
     ): R {
         return if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
             onMissingDeclaration
@@ -135,36 +130,5 @@ object PartialLinkageSources {
                 else -> onError()
             }
         }
-    }
-}
-
-// A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with MessageCollector.
-class PartialLinkageLogger(val messageCollector: MessageCollector, val logLevel: PartialLinkageLogLevel) {
-    class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
-        fun render(): StringBuilder = StringBuilder().apply {
-            append(moduleName)
-            if (filePath.isNotEmpty()) {
-                append(" @ ").append(filePath)
-                if (lineNumber != UNDEFINED_LINE_NUMBER && columnNumber != UNDEFINED_COLUMN_NUMBER) {
-                    append(':').append(lineNumber).append(':').append(columnNumber)
-                }
-            }
-        }
-
-        override fun toString() = render().toString()
-    }
-
-    private val irLoggerSeverity = when (logLevel) {
-        PartialLinkageLogLevel.INFO -> CompilerMessageSeverity.INFO
-        PartialLinkageLogLevel.WARNING -> CompilerMessageSeverity.WARNING
-        PartialLinkageLogLevel.ERROR -> CompilerMessageSeverity.ERROR
-    }
-
-    fun log(message: String, location: Location) {
-        messageCollector.report(
-            severity = irLoggerSeverity,
-            message = location.render().append(": ").append(message).toString(),
-            location = null
-        )
     }
 }

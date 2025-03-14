@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources
 import org.jetbrains.kotlin.ir.symbols.*
 
 /**

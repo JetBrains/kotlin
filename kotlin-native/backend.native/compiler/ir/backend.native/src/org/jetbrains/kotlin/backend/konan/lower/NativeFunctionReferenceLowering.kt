@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 // [NativeSuspendFunctionsLowering] checks annotation of an extension receiver parameter type.
 // Unfortunately, it can't be checked on invoke method of lambda/reference, as it can't

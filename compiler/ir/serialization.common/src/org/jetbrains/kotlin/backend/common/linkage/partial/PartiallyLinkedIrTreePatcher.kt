@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_L
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
 import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
-import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -44,8 +42,8 @@ import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.*
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.File as PLFile
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.Module as PLModule
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,

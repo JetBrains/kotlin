@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.Module as PLModule
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal class ClassifierExplorer(
     private val builtIns: IrBuiltIns,

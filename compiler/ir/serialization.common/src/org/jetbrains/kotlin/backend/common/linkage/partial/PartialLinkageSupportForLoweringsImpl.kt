@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
 import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
