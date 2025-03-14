@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * and we can't guarantee that all real symbols are some specific preferred overrides, as they were right after Fir2Ir.
  *
  */
-class SpecialFakeOverrideSymbolsResolver(val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol>) : SymbolRemapper.Empty() {
+class SpecialFakeOverrideSymbolsResolver() : SymbolRemapper.Empty() {
     /**
      * Map from (class, declaration) -> declarationInsideClass
      *
@@ -80,22 +80,14 @@ class SpecialFakeOverrideSymbolsResolver(val propertyAccessorsActualizedByFields
             return this
         }
         processClass(containingClassSymbol.owner)
-        when (val result = cachedFakeOverrides[containingClassSymbol to originalSymbol]) {
-            null -> {
-                if (originalSymbol in propertyAccessorsActualizedByFields) {
-                    // This is an accessor of an expect property actualized by a Java field. Skip for now.
-                    // It will be handled later in SpecialFakeOverrideSymbolsActualizedByFieldsTransformer.
-                    return this
-                }
-                return this
-//                error("No override for $originalSymbol in $containingClassSymbol")
-            }
-            !is S -> error("Override for $originalSymbol in $containingClassSymbol has incompatible type: $result")
-            else -> return result
-        }
+        val result = cachedFakeOverrides[containingClassSymbol to originalSymbol]
+//        if (result == null) error("No override for $originalSymbol in $containingClassSymbol")
+//        return result as? S ?: error("Override for $originalSymbol in $containingClassSymbol has incompatible type: $result")
+        return result as? S ?: this // patch for stdlib build in native
     }
 
     private fun processClass(irClass: IrClass) {
+        // patch for stdlib build in native
 //        require(!irClass.isExpect) { "There should be no references to expect classes at this point\n${irClass.render()}" }
         if (!processedClasses.add(irClass)) return
         for (declaration in irClass.declarations) {
@@ -230,6 +222,8 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
         val originalAccessorSymbol = fakeOverrideAccessorSymbol.originalSymbol
         val actualizedClassSymbol = fakeOverrideAccessorSymbol.containingClassSymbol
 
+        if (propertyAccessorsActualizedByFields[originalAccessorSymbol] == null) return expression
+
         val actualFieldSymbol =
             propertyAccessorsActualizedByFields[originalAccessorSymbol]?.owner?.resolveFakeOverride()?.backingField?.symbol
                 ?: error("No override for $originalAccessorSymbol in $actualizedClassSymbol")
@@ -248,7 +242,7 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
                 expression.startOffset, expression.endOffset,
                 symbol = actualFieldSymbol,
                 receiver = expression.dispatchReceiver,
-                value = expression.arguments[originalAccessorSymbol.owner.parameters.indexOfFirst{ it.kind == IrParameterKind.Regular }]!!,
+                value = expression.arguments[originalAccessorSymbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.Regular }]!!,
                 type = expression.type,
                 origin = expression.origin,
                 superQualifierSymbol = expression.superQualifierSymbol

@@ -201,7 +201,7 @@ private class Fir2IrPipeline(
 
         generateSyntheticBodiesOfDataValueMembers()
 
-        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(mutableMapOf())
+        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
         val (fakeOverrideStrategy, delegatedMembersGenerationStrategy) =
             buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer, fakeOverrideResolver)
 
@@ -218,7 +218,6 @@ private class Fir2IrPipeline(
             )
         }
 
-        fakeOverrideResolver.propertyAccessorsActualizedByFields.putAll(expectActualMap.propertyAccessorsActualizedByFields)
         resolveFakeOverrideSymbols(fakeOverrideResolver)
         delegatedMembersGenerationStrategy.updateMetadataSources(
             commonMemberStorage.firClassesWithInheritanceByDelegation,
@@ -316,13 +315,6 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.resolveFakeOverrideSymbols(fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver) {
         mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
-
-        if (fakeOverrideResolver.propertyAccessorsActualizedByFields.isNotEmpty()) {
-            mainIrFragment.transform(
-                SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(fakeOverrideResolver.propertyAccessorsActualizedByFields),
-                null
-            )
-        }
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {

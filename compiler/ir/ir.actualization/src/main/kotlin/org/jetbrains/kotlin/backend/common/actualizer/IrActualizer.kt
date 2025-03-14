@@ -77,6 +77,15 @@ class IrActualizer(
 
         // 4. Move all declarations to mainFragment
         mergeIrFragments(mainFragment, dependentFragments)
+
+        // 5. Actualize property accessors actualized by java fields
+        if (expectActualMap.propertyAccessorsActualizedByFields.isNotEmpty()) {
+            mainFragment.transform(
+                SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(expectActualMap.propertyAccessorsActualizedByFields),
+                null
+            )
+        }
+
         return expectActualMap
     }
 
