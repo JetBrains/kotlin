@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -74,6 +75,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  * @property filePathRenderer allows to post-process the rendered IrFile name
  * @property printSourceOffsets If source offsets of elements should be printed.
+ * @property guessTypeBySignatureOfUnboundClassifierSymbol If an unbound symbol is met in [IrSimpleType], should we try to guess
+ *   the fully qualified name of the class by symbol's signature or just render the standard "unbound symbol" text.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -97,6 +100,7 @@ data class DumpIrTreeOptions(
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
     val filePathRenderer: (IrFile, String) -> String = { _, name -> name },
     val printSourceOffsets: Boolean = false,
+    val guessTypeBySignatureOfUnboundClassifierSymbol: Boolean = false,
 ) {
     /**
      * A customizable filter to exclude some (or all) flags for declarations or declaration references.
