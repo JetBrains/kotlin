@@ -17,6 +17,8 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
@@ -33,67 +35,95 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
     }
 
     @Test
-    fun testComposableFunctionReferences() {
+    fun testComposableFunctionReferencesK1() {
+        assumeFalse(useFir)
         check(
-            if (!useFir) {
-                """
-            import androidx.compose.runtime.Composable
-
-            @Composable fun A() {}
-            val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
-            val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            fun doSomething(fn: () -> Unit) { print(fn) }
-            @Composable fun B(content: @Composable () -> Unit) {
-                content()
-                doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
-                B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
-            }
-        """
-            } else {
-                // In K2, we are taking composability into account when resolving function references,
-                // so trying to resolve `::A` in a context where we expect a non-composable function
-                // type fails with an `UNRESOLVED_REFERENCE` error, instead of a
-                // `COMPOSABLE_FUNCTION_REFERENCE` error in the plugin..
-                """
-            import androidx.compose.runtime.Composable
-
-            @Composable fun A() {}
-            val aCallable: () -> Unit = <!INITIALIZER_TYPE_MISMATCH,COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-            fun doSomething(fn: () -> Unit) { print(fn) }
-            @Composable fun B(content: @Composable () -> Unit) {
-                content()
-                doSomething(::<!INAPPLICABLE_CANDIDATE!>A<!>)
-                B(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
-            }
-        """
-            }
+            """
+                import androidx.compose.runtime.Composable
+    
+                @Composable fun A() {}
+                val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+                val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
+                val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+                fun doSomething(fn: () -> Unit) { print(fn) }
+                @Composable fun B(content: @Composable () -> Unit) {
+                    content()
+                    doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
+                    B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
+                }
+            """
         )
     }
 
     @Test
-    fun testNonComposableFunctionReferences() {
-        // This code fails for two different reasons in K1 and K2. In K1, the code fails with
-        // a TYPE_MISMATCH, since we infer a non-composable function type in a context where a
-        // composable function type is expected. In K2, we can promote non-composable function
-        // types to composable function types (as this matches the behavior for suspend functions),
-        // but we explicitly forbid composable function references.
-        val error = if (useFir) "COMPOSABLE_FUNCTION_REFERENCE" else "TYPE_MISMATCH"
+    fun testComposableFunctionReferencesK2() {
+        assumeTrue(useFir)
+        check(
+            """
+                import androidx.compose.runtime.Composable
+    
+                @Composable fun A() {}
+                fun F() {}
+                val aCallable: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>::A<!>
+                val bCallable: @Composable () -> Unit = ::A
+                val cCallable = ::A
+                fun doSomething(fn: () -> Unit) { print(fn) }
+                @Composable fun B(content: @Composable () -> Unit) {
+                    content()
+                    doSomething(::<!INAPPLICABLE_CANDIDATE!>A<!>)
+                    doSomething(<!ARGUMENT_TYPE_MISMATCH!>cCallable<!>)
+                    B(::A)
+                    B(::<!INAPPLICABLE_CANDIDATE!>F<!>)
+                    B(bCallable)
+                    B(cCallable)
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testNonComposableFunctionReferencesK1() {
+        assumeFalse(useFir)
         check(
             """
             import androidx.compose.runtime.Composable
 
             fun A() {}
             val aCallable: () -> Unit = ::A
-            val bCallable: @Composable () -> Unit = <!$error!>::A<!>
+            val bCallable: @Composable () -> Unit = <!TYPE_MISMATCH!>::A<!>
             val cCallable = ::A
+            val compCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::B<!>
             fun doSomething(fn: () -> Unit) { print(fn) }
             @Composable fun B(content: @Composable () -> Unit) {
                 content()
                 doSomething(::A)
-                B(<!$error!>::A<!>)
+                B(<!TYPE_MISMATCH!>::A<!>)
+                B(<!TYPE_MISMATCH!>compCallable<!>)
+                B(<!TYPE_MISMATCH!>cCallable<!>)
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testNonComposableFunctionReferencesK2() {
+        assumeTrue(useFir)
+        check(
+            """
+            import androidx.compose.runtime.Composable
+
+            fun A() {}
+            val aCallable: () -> Unit = ::A
+            val bCallable: @Composable () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>::A<!>
+            val cCallable = ::A
+            val compCallable = ::B
+            fun doSomething(fn: () -> Unit) { print(fn) }
+            @Composable fun B(content: @Composable () -> Unit) {
+                content()
+                doSomething(::A)
+                B(::<!INAPPLICABLE_CANDIDATE!>A<!>)
+                B(<!ARGUMENT_TYPE_MISMATCH!>compCallable<!>)
+                B(<!ARGUMENT_TYPE_MISMATCH!>cCallable<!>)
             }
         """
         )
