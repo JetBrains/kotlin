@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
@@ -25,7 +26,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -63,10 +66,20 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 KotlinTarget.PROPERTY_GETTER !in applicableTargets &&
                 KotlinTarget.PROPERTY_SETTER !in applicableTargets
             ) {
-                assert(KotlinTarget.EXPRESSION in applicableTargets) {
-                    "Inconsistent target list for lambda annotation: $applicableTargets on $annotated"
+                if (annotation.source == SourceElement.NO_SOURCE) {
+                    // Leniency: Behavior before -Xindy-allow-annotated-lambdas allowed such annotations when added by plugins
+                    // This leniency can be faced out in Kotlin 2.3
+                    context.report(
+                        CompilerMessageSeverity.WARNING, annotated, annotated.fileOrNull,
+                        "Inconsistent target list for lambda annotation: +" +
+                                "${annotation.annotationClass.kotlinFqName} $applicableTargets on ${annotated.kotlinFqName}"
+                    )
+                } else {
+                    assert(KotlinTarget.EXPRESSION in applicableTargets) {
+                        "Inconsistent target list for lambda annotation: $applicableTargets on $annotated"
+                    }
+                    continue
                 }
-                continue
             }
             if (annotated is IrClass &&
                 annotated.visibility == DescriptorVisibilities.LOCAL &&
@@ -208,7 +221,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     private fun genCompileTimeValue(
         name: String?,
         value: IrExpression,
-        annotationVisitor: AnnotationVisitor
+        annotationVisitor: AnnotationVisitor,
     ) {
         when (value) {
             is IrConst -> annotationVisitor.visit(name, value.value)
@@ -259,7 +272,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
             classCodegen: ClassCodegen,
             referenceType: Int,
             boundType: Int,
-            visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor
+            visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor,
         ) {
             for ((index, typeParameter) in typeParameterContainer.typeParameters.withIndex()) {
                 object : AnnotationCodegen(classCodegen) {
