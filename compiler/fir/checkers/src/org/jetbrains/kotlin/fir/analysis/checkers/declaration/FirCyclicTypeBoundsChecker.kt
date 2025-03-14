@@ -26,21 +26,18 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
 
         val processed = mutableSetOf<FirTypeParameterSymbol>()
         val typeParameterCycles = mutableListOf<List<FirTypeParameterSymbol>>()
-        val graph = actualTypeParameters.associate { param ->
-            param.symbol to param.symbol.resolvedBounds.flatMap { extractTypeParamSymbols(it) }.toSet()
-        }
-        val graphFunc = { symbol: FirTypeParameterSymbol -> graph.getOrDefault(symbol, emptySet()) }
         val path = mutableListOf<FirTypeParameterSymbol>()
 
         fun findCycles(typeParameterSymbol: FirTypeParameterSymbol) {
             if (processed.add(typeParameterSymbol)) {
                 path.add(typeParameterSymbol)
-                graphFunc(typeParameterSymbol).forEach { nextNode ->
-                    findCycles(nextNode)
+                val resolvedBounds = typeParameterSymbol.resolvedBounds.flatMap { extractTypeParamSymbols(it) }.toSet()
+                resolvedBounds.forEach {
+                    findCycles(it)
                 }
                 path.removeAt(path.size - 1)
-            } else {
-                typeParameterCycles.addIfNotNull(path.dropWhile { it != typeParameterSymbol }.takeIf { it.isNotEmpty() })
+            } else if (path.isNotEmpty()) {
+                typeParameterCycles.add(path.dropWhile { it != typeParameterSymbol })
             }
         }
 
