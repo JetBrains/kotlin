@@ -147,7 +147,7 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
     var cacheDirectories: Array<String>? = null
 
     @Argument(
-        value = CACHED_LIBRARY,
+        value = "-Xcached-library",
         valueDescription = "<library path>,<cache path>",
         description = "Paths to a library and its cache, separated by a comma.",
         delimiter = Argument.Delimiters.none
@@ -172,7 +172,7 @@ By default caches will be placed into the kotlin-native system cache directory."
     var autoCacheDir: String? = null
 
     @Argument(
-        value = INCREMENTAL_CACHE_DIR,
+        value = "-Xic-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where incremental build caches should be put.",
         delimiter = ""
@@ -235,7 +235,7 @@ Currently this option is disabled by default on other platforms."""
 
 
     @Argument(
-        value = ADD_CACHE,
+        value = "-Xadd-cache",
         valueDescription = "<path>",
         description = "Path to a library to be added to the cache.",
         delimiter = Argument.Delimiters.none
@@ -291,20 +291,20 @@ The default value is 1."""
     var runtimeFile: String? = null
 
     @Argument(
-        value = INCLUDE_ARG,
+        value = "-Xinclude",
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files."
     )
     var includes: Array<String>? = null
 
     @Argument(
-        value = SHORT_MODULE_NAME_ARG,
+        value = "-Xshort-module-name",
         valueDescription = "<name>",
         description = "A short name used to denote this library in the IDE and in a generated Objective-C header."
     )
     var shortModuleName: String? = null
 
-    @Argument(value = STATIC_FRAMEWORK_FLAG, description = "Create a framework with a static library instead of a dynamic one.")
+    @Argument(value = "-Xstatic-framework", description = "Create a framework with a static library instead of a dynamic one.")
     var staticFramework: Boolean = false
 
     @Argument(value = "-Xtemporary-files-dir", deprecatedName = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory.")
@@ -478,13 +478,4 @@ The default value is 1."""
     override val configurator: CommonCompilerArgumentsConfigurator = K2NativeCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
-
-    companion object {
-        const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
-        const val INCLUDE_ARG = "-Xinclude"
-        const val CACHED_LIBRARY = "-Xcached-library"
-        const val ADD_CACHE = "-Xadd-cache"
-        const val INCREMENTAL_CACHE_DIR = "-Xic-cache-dir"
-        const val SHORT_MODULE_NAME_ARG = "-Xshort-module-name"
-    }
 }

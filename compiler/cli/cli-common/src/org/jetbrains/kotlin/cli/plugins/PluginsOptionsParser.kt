@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.cli.plugins
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.argumentAnnotation
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
@@ -40,7 +42,7 @@ fun processCompilerPluginsOptions(
     commandLineProcessors: List<CommandLineProcessor>
 ) {
     val optionValuesByPlugin = pluginOptions?.map(::parseLegacyPluginOption)?.groupBy {
-        if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
+        if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments::pluginOptions.argumentAnnotation.valueDescription}")
         it.pluginId
     } ?: mapOf()
 
