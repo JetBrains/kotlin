@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -331,7 +331,11 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     }
 
     private fun generateCompanionDeclaration(owner: FirRegularClassSymbol): FirRegularClassSymbol? {
-        if (owner.companionObjectSymbol != null) return null
+        @OptIn(SymbolInternals::class)
+        if (owner.companionObjectSymbol != null) {
+            return null
+        }
+
         val companion = createCompanionObject(owner, SerializationPluginKey) {
             if (owner.companionNeedsSerializerFactory(session)) {
                 val serializerFactoryClassId = ClassId(SerializationPackages.internalPackageFqName, SERIALIZER_FACTORY_INTERFACE_NAME)

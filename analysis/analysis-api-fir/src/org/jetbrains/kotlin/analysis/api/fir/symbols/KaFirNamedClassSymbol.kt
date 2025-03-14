@@ -142,7 +142,7 @@ internal class KaFirNamedClassSymbol private constructor(
                 }
             }
 
-            firSymbol.companionObjectSymbol?.let {
+            firSymbol.resolvedCompanionObjectSymbol?.let {
                 builder.classifierBuilder.buildNamedClassSymbol(it)
             }
         }

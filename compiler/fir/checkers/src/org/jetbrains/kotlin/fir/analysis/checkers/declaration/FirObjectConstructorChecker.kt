@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,7 +55,7 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
             if (resolvedQualifier.symbol == data.objectSymbol) {
                 data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
             } else if (resolvedQualifier.resolvedToCompanionObject) {
-                val companionSymbol = resolvedQualifier.symbol?.fullyExpandedClass(data.context.session)?.companionObjectSymbol
+                val companionSymbol = resolvedQualifier.symbol?.fullyExpandedClass(data.context.session)?.resolvedCompanionObjectSymbol
                 if (companionSymbol == data.objectSymbol) {
                     data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
                 }

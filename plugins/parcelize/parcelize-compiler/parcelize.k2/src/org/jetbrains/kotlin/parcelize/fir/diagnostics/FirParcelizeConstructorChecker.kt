@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -99,7 +99,7 @@ class FirParcelizeConstructorChecker(
     }
 
     private fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
-        val companion = companionObjectSymbol ?: return false
+        val companion = resolvedCompanionObjectSymbol ?: return false
         return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
             it.classId in ParcelizeNames.PARCELER_CLASS_IDS
         }

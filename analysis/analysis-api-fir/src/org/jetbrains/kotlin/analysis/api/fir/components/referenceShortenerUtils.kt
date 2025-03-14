@@ -63,7 +63,7 @@ private fun FirExpression.boundSymbolForReceiverExpression(): FirBasedSymbol<*>?
 
     is FirResolvedQualifier -> {
         if (resolvedToCompanionObject) {
-            (symbol as? FirRegularClassSymbol)?.companionObjectSymbol
+            (symbol as? FirRegularClassSymbol)?.resolvedCompanionObjectSymbol
         } else {
             symbol
         }

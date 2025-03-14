@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker(MppCheckerKind.Platform) {
@@ -94,7 +94,7 @@ private fun checkClashWithCompanionProperty(
     expression: FirQualifiedAccessExpression,
 ) {
     val dispatchReceiverClass = expression.dispatchReceiver?.resolvedType?.toRegularClassSymbol(context.session) ?: return
-    val companionClass = dispatchReceiverClass.companionObjectSymbol ?: return
+    val companionClass = dispatchReceiverClass.resolvedCompanionObjectSymbol ?: return
     val companionScope = companionClass.unsubstitutedScope(context)
     val properties = companionScope.getProperties(fieldSymbol.name)
     for (property in properties) {

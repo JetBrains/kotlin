@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -87,7 +87,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
 
     private fun FirRegularClassSymbol.toInvisibleCompanion(context: CheckerContext): FirRegularClassSymbol? {
         val firFile = context.containingFile ?: return null
-        return companionObjectSymbol?.takeIf {
+        return resolvedCompanionObjectSymbol?.takeIf {
             !context.session.visibilityChecker.isClassLikeVisible(
                 it.firForVisibilityChecker, context.session, firFile, context.containingDeclarations,
             )

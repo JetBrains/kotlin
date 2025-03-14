@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.customAnnotations
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
@@ -45,7 +45,7 @@ internal fun FirClassSymbol<*>?.classSerializer(c: CheckerContext): FirClassSymb
     // serializer annotation on class?
     getSerializableWith(session)?.let { return it.classSymbolOrUpperBound(session) }
     // companion object serializer?
-    if (this is FirRegularClassSymbol && isInternallySerializableObject(session)) return companionObjectSymbol
+    if (this is FirRegularClassSymbol && isInternallySerializableObject(session)) return resolvedCompanionObjectSymbol
     // can infer @Poly?
     polymorphicSerializerIfApplicableAutomatically(session)?.let { return it }
     // default serializable?

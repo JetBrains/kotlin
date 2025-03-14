@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,19 +40,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.jspo.compiler.fir.services.ClassProperty
 import org.jetbrains.kotlinx.jspo.compiler.fir.services.jsPlainObjectPropertiesProvider
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsPluginKey
 import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
-import kotlin.collections.plusAssign
 
 /**
  * The extension generate a synthetic factory and copy-method for an `external interface` annotated with @JsPlainObjects
@@ -126,7 +120,11 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
     }
 
     private fun generateCompanionDeclaration(owner: FirRegularClassSymbol): FirRegularClassSymbol? {
-        if (owner.companionObjectSymbol != null) return null
+        @OptIn(SymbolInternals::class)
+        if (owner.companionObjectSymbol != null) {
+            return null
+        }
+
         val classId = owner.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
         return buildRegularClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE

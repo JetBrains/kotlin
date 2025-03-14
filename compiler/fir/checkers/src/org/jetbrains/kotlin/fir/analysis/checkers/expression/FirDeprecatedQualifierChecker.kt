@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             // is handled automatically when getting deprecationInfo
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
-            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.companionObjectSymbol ?: return
+            val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.resolvedCompanionObjectSymbol ?: return
             FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol, context, reporter)
         }
     }

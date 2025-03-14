@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -197,7 +197,7 @@ class CandidateFactory private constructor(
 
     private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(session: FirSession): Boolean {
         val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
-        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.companionObjectSymbol == null
+        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.resolvedCompanionObjectSymbol == null
     }
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
