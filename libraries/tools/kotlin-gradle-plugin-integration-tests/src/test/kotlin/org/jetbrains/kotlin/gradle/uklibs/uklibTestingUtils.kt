@@ -59,6 +59,7 @@ data class PublishedProject(
         val pom: File get() = path.resolve("${artifactsPrefix}.pom")
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+        val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
     }
 
     val rootCoordinate: String = "$group:$name:$version"
@@ -92,11 +93,12 @@ fun Project.setupMavenPublication(
     }
 }
 
-fun TestProject.publish(
-    publisherConfiguration: PublisherConfiguration,
-    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
-): PublishedProject {
-    val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
+fun TestProject.publishReturn(
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_kotlin_${generateIdentifier()}"
+    ),
+    repositoryIdentifier: String,
+): ReturnFromBuildScriptAfterExecution<PublishedProject> {
     buildScriptInjection {
         if (project.hasProperty(repositoryIdentifier)) {
             project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
@@ -109,15 +111,32 @@ fun TestProject.publish(
             project.name,
             publisherConfiguration.version,
         )
-    }.buildAndReturn(
+    }
+}
+
+fun TestProject.publish(
+    vararg buildArguments: String = emptyArray(),
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_kotlin_${generateIdentifier()}"
+    ),
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject {
+    val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
+    return publishReturn(
+        publisherConfiguration = publisherConfiguration,
+        repositoryIdentifier = repositoryIdentifier,
+    ).buildAndReturn(
         "publishAllPublicationsTo${repositoryIdentifier}Repository",
         "-P${repositoryIdentifier}",
+        *buildArguments,
         deriveBuildOptions = deriveBuildOptions,
     )
 }
 
 fun TestProject.publishJava(
-    publisherConfiguration: PublisherConfiguration,
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_java_${generateIdentifier()}"
+    ),
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
 ): PublishedProject {
     val repositoryIdentifier = "_JavaPublication_${generateIdentifier()}_"
@@ -253,5 +272,4 @@ internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy 
         PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY,
         strategy.propertyName,
     )
-    computeTransformedLibraryChecksum(false)
 }
