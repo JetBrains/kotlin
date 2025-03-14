@@ -19,10 +19,11 @@ import java.util.Objects
  */
 class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
     private class Entry<K, V>(
-        override val key: K, override var value: V, // cached hash value
-        val hash: Int
+        override val key: K,
+        override var value: V,
+        val hash: Int // cached hash value
     ) : MutableMap.MutableEntry<K, V>, Serializable {
-        override fun setValue(value: V): V {
+        override fun setValue(newValue: V): V {
             val old = this.value
             this.value = value
             return old
@@ -32,9 +33,9 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
             return hash xor Objects.hashCode(value)
         }
 
-        override fun equals(o: Any?): Boolean {
-            if (o !is MutableMap.MutableEntry<*, *>) return false
-            val e = o
+        override fun equals(other: Any?): Boolean {
+            if (other !is MutableMap.MutableEntry<*, *>) return false
+            val e = other
             return hash == (e as Entry<*, *>).hash &&
                     key == e.key &&
                     value == e.value
@@ -68,7 +69,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
             val tableIndex = offset + levelIndex
 
             val entry = table[tableIndex]
-            if (entry == null) {
+            if (entry === null) {
                 return null
             }
             if (entry.hash == hash && entry.key == key) {
@@ -99,9 +100,9 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
 
             // Actual put() logic:
             val entry = table[tableIndex]
-            if (entry == null || (entry.hash == hash && key == entry.key)) {
+            if (entry === null || (entry.hash == hash && key == entry.key)) {
                 val e = tab[tableIndex]
-                if (e == null) {
+                if (e === null) {
                     tab[tableIndex] = Entry<K, V>(key, value, hash)
                     _size++
                     return null
@@ -150,7 +151,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
             val tableIndex = offset + levelIndex
 
             val entry = table[tableIndex]
-            if (entry == null || (entry.hash == hash && key == entry.key)) {
+            if (entry === null || (entry.hash == hash && key == entry.key)) {
                 // to avoid doing this twice this funnelProbe has been inlined into get(), put(), remove().
                 return tableIndex
             }
@@ -174,7 +175,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
         capacity = newCapacity
         var newSize = 0
         for (e in oldTable) {
-            if (e != null) {
+            if (e !== null) {
                 val idx = funnelProbe(e.key, e.hash)
                 table[idx] = e
                 newSize++
@@ -199,25 +200,27 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
     }
 
     override fun containsKey(key: K): Boolean {
-        return get(key) != null
+        return get(key) !== null
     }
 
     override fun containsValue(value: V): Boolean {
         for (e in table) {
-            if (e != null && e.value == value) return true
+            if (e !== null && e.value == value) return true
         }
         return false
     }
 
-    override fun putAll(m: Map<out K, V>) {
-        for (entry in m.entries) put(entry.key, entry.value)
+    override fun putAll(from: Map<out K, V>) {
+        for (entry in from.entries) {
+            put(entry.key, entry.value)
+        }
     }
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() {
             val set: MutableSet<MutableMap.MutableEntry<K, V>> = HashSet<MutableMap.MutableEntry<K, V>>()
             for (e in table) {
-                if (e != null) {
+                if (e !== null) {
                     set.add(e)
                 }
             }
@@ -228,7 +231,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
         get() {
             val set: MutableSet<K> = HashSet<K>()
             for (e in table) {
-                if (e != null) {
+                if (e !== null) {
                     set.add(e.key)
                 }
             }
@@ -239,7 +242,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
         get() {
             val values: MutableList<V> = ArrayList<V>()
             for (e in table) {
-                if (e != null) {
+                if (e !== null) {
                     values.add(e.value)
                 }
             }
@@ -251,7 +254,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
         sb.append("{")
         var first = true
         for (e in table) {
-            if (e != null) {
+            if (e !== null) {
                 if (!first) {
                     sb.append(", ")
                 }
