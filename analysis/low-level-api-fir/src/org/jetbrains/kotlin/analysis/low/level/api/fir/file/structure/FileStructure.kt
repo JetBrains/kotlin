@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -60,10 +59,10 @@ internal class FileStructure private constructor(
         }
 
         /**
-         * Returns [KtDeclaration] which will be used inside [getStructureElementFor].
+         * Returns [KtElement] which will be used inside [getStructureElementFor].
          * `null` means that [KtElement.containingKtFile] will be used instead.
          *
-         * @see getNonLocalContainingOrThisDeclaration
+         * @see getNonLocalContainingOrThisElement
          */
         private fun findNonLocalContainer(element: KtElement): KtElement? {
             return element.getNonLocalContainingOrThisElement { it.isAutonomousDeclaration }
@@ -88,7 +87,7 @@ internal class FileStructure private constructor(
     }
 
     /**
-     * @return [FileStructureElement] for the closest non-local declaration which contains this [element].
+     * @return [FileStructureElement] for the closest non-local element which contains this [element].
      */
     fun getStructureElementFor(
         element: KtElement,
