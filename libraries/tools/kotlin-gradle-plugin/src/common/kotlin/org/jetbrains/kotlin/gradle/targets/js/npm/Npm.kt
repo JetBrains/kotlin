@@ -141,12 +141,12 @@ class Npm internal constructor(
     ) {
         val progressLogger = objects.newBuildOpLogger()
         execWithProgress(progressLogger, description, execOps = execOps) { execSpec ->
-            val arguments: List<String> = mutableListOf<String>().apply {
+            val arguments = buildList {
                 add("install")
                 addAll(args)
                 if (logger.isDebugEnabled) add("--verbose")
                 if (environment.ignoreScripts) add("--ignore-scripts")
-            }.filter { it.isNotEmpty() }
+            }
 
             if (!environment.standalone) {
                 val nodeExecutable = nodeJs.nodeExecutable
