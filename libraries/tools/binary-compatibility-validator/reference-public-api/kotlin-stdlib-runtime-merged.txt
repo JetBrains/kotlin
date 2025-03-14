@@ -3265,6 +3265,7 @@ public final class kotlin/io/FileTreeWalk : kotlin/sequences/Sequence {
 
 public final class kotlin/io/FileWalkDirection : java/lang/Enum {
 	public static final field BOTTOM_UP Lkotlin/io/FileWalkDirection;
+	public static final field BREADTH_FIRST Lkotlin/io/FileWalkDirection;
 	public static final field TOP_DOWN Lkotlin/io/FileWalkDirection;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/FileWalkDirection;
@@ -3315,6 +3316,7 @@ public final class kotlin/io/FilesKt {
 	public static final fun walk (Ljava/io/File;Lkotlin/io/FileWalkDirection;)Lkotlin/io/FileTreeWalk;
 	public static synthetic fun walk$default (Ljava/io/File;Lkotlin/io/FileWalkDirection;ILjava/lang/Object;)Lkotlin/io/FileTreeWalk;
 	public static final fun walkBottomUp (Ljava/io/File;)Lkotlin/io/FileTreeWalk;
+	public static final fun walkBreadthFirst (Ljava/io/File;)Lkotlin/io/FileTreeWalk;
 	public static final fun walkTopDown (Ljava/io/File;)Lkotlin/io/FileTreeWalk;
 	public static final fun writeBytes (Ljava/io/File;[B)V
 	public static final fun writeText (Ljava/io/File;Ljava/lang/String;Ljava/nio/charset/Charset;)V
