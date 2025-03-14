@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -72,7 +73,7 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +
-        shortModuleName?.let { arrayOf("${K2NativeCompilerArguments.SHORT_MODULE_NAME_ARG}=$it") }.orEmpty() +
+        shortModuleName?.let { arrayOf("${K2NativeCompilerArguments::shortModuleName.cliArgument}=$it") }.orEmpty() +
         arguments.kotlincOption
 }
 

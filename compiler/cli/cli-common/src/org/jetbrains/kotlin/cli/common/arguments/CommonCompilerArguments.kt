@@ -13,16 +13,6 @@ import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 
 @SuppressWarnings("WeakerAccess")
 abstract class CommonCompilerArguments : CommonToolArguments() {
-    companion object {
-        const val PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>"
-        const val PLUGIN_DECLARATION_FORMAT = "<path>[=<optionName>=<value>]"
-
-        const val WARN = "warn"
-        const val ERROR = "error"
-        const val ENABLE = "enable"
-        const val DEFAULT = "default"
-    }
-
     @get:Transient
     var autoAdvanceLanguageVersion = true
         set(value) {
@@ -182,7 +172,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
-    @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin.")
+    @Argument(value = "-P", valueDescription = "plugin:<pluginId>:<optionName>=<value>", description = "Pass an option to a plugin.")
     var pluginOptions: Array<String>? = null
         set(value) {
             checkFrozen()

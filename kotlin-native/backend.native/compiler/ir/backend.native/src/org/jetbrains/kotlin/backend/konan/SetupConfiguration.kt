@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -184,7 +185,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     val libraryToAddToCache = parseLibraryToAddToCache(arguments, this@setupFromArguments, outputKind)
     if (libraryToAddToCache != null && !arguments.outputName.isNullOrEmpty())
-        report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} already implicitly sets output file name")
+        report(ERROR, "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} already implicitly sets output file name")
     libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
     put(CACHED_LIBRARIES, parseCachedLibraries(arguments, this@setupFromArguments))
     put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
@@ -193,7 +194,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     val incrementalCacheDir = arguments.incrementalCacheDir
     if ((incrementalCacheDir != null) xor (arguments.incrementalCompilation == true))
         report(ERROR, "For incremental compilation both flags should be supplied: " +
-                "-Xenable-incremental-compilation and ${K2NativeCompilerArguments.INCREMENTAL_CACHE_DIR}")
+                "-Xenable-incremental-compilation and ${K2NativeCompilerArguments::incrementalCacheDir.cliArgument}")
     incrementalCacheDir?.let { put(INCREMENTAL_CACHE_DIR, it) }
     arguments.filesToCache?.let { put(FILES_TO_CACHE, it.toList()) }
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
@@ -373,7 +374,7 @@ private fun selectFrameworkType(
     return if (outputKind != CompilerOutputKind.FRAMEWORK && arguments.staticFramework) {
         configuration.report(
                 STRONG_WARNING,
-                "'${K2NativeCompilerArguments.STATIC_FRAMEWORK_FLAG}' is only supported when producing frameworks, " +
+                "'${K2NativeCompilerArguments::staticFramework.cliArgument}' is only supported when producing frameworks, " +
                         "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         false
@@ -424,7 +425,7 @@ private fun selectIncludes(
     return if (includes.isNotEmpty() && outputKind == CompilerOutputKind.LIBRARY) {
         configuration.report(
                 ERROR,
-                "The ${K2NativeCompilerArguments.INCLUDE_ARG} flag is not supported when producing ${outputKind.name.lowercase()}"
+                "The ${K2NativeCompilerArguments::includes.cliArgument} flag is not supported when producing ${outputKind.name.lowercase()}"
         )
         emptyList()
     } else {
@@ -440,7 +441,7 @@ private fun parseCachedLibraries(
     if (libraryAndCache.size != 2) {
         configuration.report(
                 ERROR,
-                "incorrect ${K2NativeCompilerArguments.CACHED_LIBRARY} format: expected '<library>,<cache>', got '$it'"
+                "incorrect ${K2NativeCompilerArguments::cachedLibraries.cliArgument} format: expected '<library>,<cache>', got '$it'"
         )
         null
     } else {
@@ -456,7 +457,7 @@ private fun parseLibraryToAddToCache(
     val input = arguments.libraryToAddToCache
 
     return if (input != null && !outputKind.isCache) {
-        configuration.report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} can't be used when not producing cache")
+        configuration.report(ERROR, "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} can't be used when not producing cache")
         null
     } else {
         input
@@ -482,7 +483,7 @@ private fun parseShortModuleName(
     return if (input != null && outputKind != CompilerOutputKind.LIBRARY) {
         configuration.report(
                 STRONG_WARNING,
-                "${K2NativeCompilerArguments.SHORT_MODULE_NAME_ARG} is only supported when producing a Kotlin library, " +
+                "${K2NativeCompilerArguments::shortModuleName.cliArgument} is only supported when producing a Kotlin library, " +
                         "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         null
