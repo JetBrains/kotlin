@@ -24,6 +24,7 @@ import com.intellij.util.keyFMap.KeyFMap;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.util.OpenAddressLinearProbingHashTable;
 
 import java.util.Collection;
 import java.util.Collections;
