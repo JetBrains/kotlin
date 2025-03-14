@@ -49,12 +49,9 @@ open class FunctionInlining(
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        // TODO container: IrSymbolDeclaration
         withinScope(container) {
             irBody.accept(this, null)
         }
-
-        irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
