@@ -1,7 +1,10 @@
 package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.createTempDir
+import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.unzipTo
+import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.impl.*
@@ -55,20 +58,24 @@ private open class ExtractingTargetedLibraryImpl(zipped: TargetedLibraryLayoutIm
     override val libraryName = zipped.libraryName
     override val component = zipped.component
 
-    override val includedDir: File by lazy { zipped.extractDir(zipped.includedDir) }
+    override val includedDir: File by lazy { extractDir(zipped.klib, zipped.includedDir) }
 }
 
 private class ExtractingBitcodeLibraryImpl(zipped: BitcodeLibraryLayoutImpl) :
     ExtractingTargetedLibraryImpl(zipped), BitcodeKotlinLibraryLayout {
 
-    override val nativeDir: File by lazy { zipped.extractDir(zipped.nativeDir) }
+    override val nativeDir: File by lazy { extractDir(zipped.klib, zipped.nativeDir) }
 }
 
-fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
-
 private fun extractDir(zipFile: File, directory: File): File {
-    val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
-    temporary.deleteOnExitRecursively()
-    zipFile.unzipTo(temporary, fromSubdirectory = directory)
-    return temporary
+    val directoryInZipExists = zipFile.withZipFileSystem { zipFileSystem -> zipFileSystem.file(directory).isDirectory }
+    return if (directoryInZipExists) {
+        val extractedDir = createTempDir(directory.name)
+        zipFile.unzipTo(extractedDir, fromSubdirectory = directory)
+        extractedDir.deleteOnExitRecursively()
+        extractedDir
+    } else {
+        // return a deliberately nonexistent directory name
+        File(zipFile.path + "!" + directory.path)
+    }
 }
