@@ -139,6 +139,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("simple_data_class.repl.kts")
+  public void testSimple_data_class_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_data_class.repl.kts");
+  }
+
+  @Test
   @TestMetadata("simple_property.repl.kts")
   public void testSimple_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_property.repl.kts");
