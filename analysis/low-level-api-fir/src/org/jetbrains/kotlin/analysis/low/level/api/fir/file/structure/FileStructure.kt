@@ -72,18 +72,15 @@ internal class FileStructure private constructor(
      * @see getNonLocalReanalyzableContainingDeclaration
      */
     fun invalidateElement(element: KtElement) {
-        val container = getContainerKtElement(element, findNonLocalContainer(element))
+        val container = getContainerForStructureElement(element)
         structureElements.remove(container)
     }
 
     /**
      * @return [FileStructureElement] for the closest non-local element which contains this [element].
      */
-    fun getStructureElementFor(
-        element: KtElement,
-        nonLocalContainer: KtElement? = findNonLocalContainer(element),
-    ): FileStructureElement {
-        val container = getContainerKtElement(element, nonLocalContainer)
+    fun getStructureElementFor(element: KtElement, nonLocalContainer: KtElement? = null): FileStructureElement {
+        val container = getContainerForStructureElement(element, nonLocalContainer)
         return structureElements.getOrPut(container) { createStructureElement(container) }
     }
 
@@ -94,20 +91,24 @@ internal class FileStructure private constructor(
         }
     }
 
-    private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtElement?): KtElement {
-        val autonomousContainer = if (nonLocalContainer?.isAutonomousElement == true) {
-            nonLocalContainer
-        } else {
-            nonLocalContainer?.let(::findNonLocalContainer)
-        }
+    /**
+     * Returns the [KtElement] which will be used inside [getStructureElementFor].
+     */
+    private fun getContainerForStructureElement(element: KtElement, nonLocalContainer: KtElement? = null): KtElement {
+        fun findAutonomousContainer(element: KtElement): KtElement? =
+            element.getNonLocalContainingOrThisElement { it.isAutonomousElement }
 
-        val resultContainer = if (autonomousContainer is KtClassOrObject && autonomousContainer.isPartOfSuperClassCall(element)) {
-            autonomousContainer.primaryConstructor
-        } else {
-            autonomousContainer
-        }
+        val autonomousContainer = nonLocalContainer?.takeIf { it.isAutonomousElement }
+            ?: nonLocalContainer?.let { findAutonomousContainer(it) }
+            ?: findAutonomousContainer(element)
 
-        return resultContainer ?: element.containingKtFile
+        return when (autonomousContainer) {
+            null -> element.containingKtFile
+            is KtClassOrObject if autonomousContainer.isPartOfSuperClassCall(element) -> {
+                autonomousContainer.primaryConstructor ?: autonomousContainer
+            }
+            else -> autonomousContainer
+        }
     }
 
     private fun KtClassOrObject.isPartOfSuperClassCall(element: KtElement): Boolean {
@@ -123,16 +124,6 @@ internal class FileStructure private constructor(
         }
 
         return false
-    }
-
-    /**
-     * Returns the [KtElement] which will be used inside [getStructureElementFor].
-     * `null` means that the [KtElement.containingKtFile] will be used instead.
-     *
-     * @see getNonLocalContainingOrThisElement
-     */
-    private fun findNonLocalContainer(element: KtElement): KtElement? {
-        return element.getNonLocalContainingOrThisElement { it.isAutonomousElement }
     }
 
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
