@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal.WhatNextAfterOneLine
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
+import org.jetbrains.kotlin.scripting.test.testScriptDefinitionClasspath
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
@@ -31,7 +33,26 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isIncomplete
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 import kotlin.script.experimental.util.LinkedSnippet
+
+// Add annotation
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class DependsOn(val value: String = "")
+
+fun onAnnotationsHandler(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    // Simplistic way of finding the value of @DependsOn annotations (to keep line-count down in this file)
+    val files = context.script.text.lines().filter {
+        it.startsWith("@file:DependsOn")
+    }.map {
+        it.removePrefix("@file:DependsOn(\"").removeSuffix("\")")
+    }
+    return context.compilationConfiguration.withUpdatedClasspath(
+        files.map { File(it) }
+    ).asSuccess()
+}
 
 /**
  * Test K2 REPL implementation. Very Experimental! Do not use! May break at any moment!
@@ -59,8 +80,17 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
     private val initialScriptCompilationConfiguration = ScriptCompilationConfiguration {
         jvm {
             updateClasspath(
-                listOf(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
+                buildList {
+                    add(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
+                    addAll(testScriptDefinitionClasspath)
+                }
             )
+        }
+        defaultImports(
+            listOf("org.jetbrains.kotlin.scripting.test.repl.example.DependsOn")
+        )
+        refineConfiguration {
+            onAnnotations(DependsOn::class, handler = ::onAnnotationsHandler)
         }
     }
 

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-private val testScriptDefinitionClasspath by lazy {
+val testScriptDefinitionClasspath by lazy {
     System.getProperty("kotlin.script.test.script.definition.classpath")!!.split(File.pathSeparator).map {
         File(it).also {
             require(it.exists()) {
