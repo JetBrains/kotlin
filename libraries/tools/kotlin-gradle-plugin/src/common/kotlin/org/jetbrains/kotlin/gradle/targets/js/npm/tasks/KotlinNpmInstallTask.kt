@@ -45,7 +45,10 @@ abstract class KotlinNpmInstallTask :
 
     @TaskAction
     fun resolve() {
-        if (isOffline) return
+        val args = buildList {
+            addAll(args)
+            if (isOffline) add("--offline")
+        }
 
         npmResolutionManager.get()
             .installIfNeeded(
