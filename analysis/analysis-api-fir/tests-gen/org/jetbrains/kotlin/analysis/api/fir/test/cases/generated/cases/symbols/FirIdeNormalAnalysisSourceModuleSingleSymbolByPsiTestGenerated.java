@@ -882,6 +882,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("companionObjectCompilerPlugin.kt")
+    public void testCompanionObjectCompilerPlugin() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/withTestCompilerPluginEnabled/companionObjectCompilerPlugin.kt");
+    }
+
+    @Test
     @TestMetadata("statusCompilerPlugin.kt")
     public void testStatusCompilerPlugin() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/withTestCompilerPluginEnabled/statusCompilerPlugin.kt");
