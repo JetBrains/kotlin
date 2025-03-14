@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.File as PLFile
 
 /**
  * When deserializing [IrRichCallableReference], it may happen that the originally referenced  function/property

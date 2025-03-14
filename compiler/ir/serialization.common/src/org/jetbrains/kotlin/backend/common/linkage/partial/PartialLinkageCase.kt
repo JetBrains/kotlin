@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources
 import org.jetbrains.kotlin.ir.symbols.*
 
 /**
@@ -144,8 +144,8 @@ sealed interface PartialLinkageCase {
     class ExpressionHasInaccessibleDeclaration(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
-        val declaringModule: PartialLinkageUtils.Module,
-        val useSiteModule: PartialLinkageUtils.Module
+        val declaringModule: PartialLinkageSources.Module,
+        val useSiteModule: PartialLinkageSources.Module
     ) : PartialLinkageCase
 
     /**

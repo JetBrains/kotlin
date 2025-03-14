@@ -28,7 +28,7 @@ fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
     }
 }
 
-object PartialLinkageUtils {
+object PartialLinkageSources {
     /** For fast check if a declaration is in the module */
     sealed interface Module {
         val name: String

@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSources.File as PLFile
 
 internal object PartialLinkageUtils {
     val UNKNOWN_NAME = Name.identifier("<unknown name>")
