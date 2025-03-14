@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.config.LanguageVersion
 
 // TODO remove inheritance from K2WasmCompilerArguments after or within extracting Wasm parts from JS CLI (KT-56850) 
 class K2JSCompilerArguments : K2WasmCompilerArguments() {
-    companion object {
-        @JvmStatic private val serialVersionUID = 0L
-    }
-
     // TODO: KT-70222 Remove this option in 2.2
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
     @Argument(

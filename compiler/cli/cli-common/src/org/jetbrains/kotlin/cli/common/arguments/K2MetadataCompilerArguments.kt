@@ -19,10 +19,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import com.intellij.util.xmlb.annotations.Transient
 
 class K2MetadataCompilerArguments : CommonCompilerArguments() {
-    companion object {
-        @JvmStatic private val serialVersionUID = 0L
-    }
-
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated .kotlin_metadata files.")
     var destination: String? = null
         set(value) {

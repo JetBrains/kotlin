@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 @SuppressWarnings("WeakerAccess")
 abstract class CommonCompilerArguments : CommonToolArguments() {
     companion object {
-        @JvmStatic
-        private val serialVersionUID = 0L
-
         const val PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>"
         const val PLUGIN_DECLARATION_FORMAT = "<path>[=<optionName>=<value>]"
 

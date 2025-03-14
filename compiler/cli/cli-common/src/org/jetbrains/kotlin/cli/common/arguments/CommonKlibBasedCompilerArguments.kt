@@ -8,11 +8,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
-    companion object {
-        @JvmStatic
-        private val serialVersionUID = 0L
-    }
-
     @Argument(
         value = "-Xklib-relative-path-base",
         description = "Provide a base path to compute the source's relative paths in klib (default is empty)."
