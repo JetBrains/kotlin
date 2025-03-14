@@ -9,6 +9,7 @@ dependencies {
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.interpreter"))
+    api(project(":compiler:ir.serialization.common"))
     implementation(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
 
