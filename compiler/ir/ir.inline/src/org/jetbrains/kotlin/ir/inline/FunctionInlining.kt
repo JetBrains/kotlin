@@ -337,12 +337,9 @@ private class CallInlining(
 
             var unboundIndex = 0
             val unboundArgsSet = unboundFunctionParameters.toSet()
-            val valueParameters = irCall.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
+            val valueParameters = irCall.arguments.filterNotNull().drop(1) // Skip dispatch receiver.
 
             val superType = irFunctionReference.type as IrSimpleType
-            val superTypeArgumentsMap = irCall.symbol.owner.parentAsClass.typeParameters.associate { typeParam ->
-                typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
-            }
 
             require(superType.arguments.isNotEmpty()) { "type should have at least one type argument: ${superType.render()}" }
             // This expression equals to return type of function reference with substituted type arguments
@@ -388,10 +385,14 @@ private class CallInlining(
                             assert(unboundIndex < valueParameters.size) {
                                 "Attempt to use unbound parameter outside of the callee's value parameters"
                             }
-                            valueParameters[unboundIndex++].second
+                            valueParameters[unboundIndex++]
                         }
                         else -> {
                             val elements = mutableListOf<IrVarargElement>()
+                            val valueParameters = irCall.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
+                            val superTypeArgumentsMap = irCall.symbol.owner.parentAsClass.typeParameters.associate { typeParam ->
+                                typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
+                            }
                             while (unboundIndex < valueParameters.size) {
                                 val (param, value) = valueParameters[unboundIndex++]
                                 val substitutedParamType = param.type.substitute(superTypeArgumentsMap)
