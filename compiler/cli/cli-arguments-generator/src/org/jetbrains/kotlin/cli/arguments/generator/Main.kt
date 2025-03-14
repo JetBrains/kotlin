@@ -25,17 +25,18 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-private val COPYRIGHT by lazy { File("/home/demiurg/Programming/kotlin/kotlin/license/COPYRIGHT_HEADER.txt").readText() }
+private val COPYRIGHT by lazy { File("license/COPYRIGHT_HEADER.txt").readText() }
 
 fun main(args: Array<String>) {
-    generateLevel(Levels.commonToolArguments)
-    generateLevel(Levels.commonCompilerArguments)
-    generateLevel(Levels.jvmCompilerArguments)
+    val genDir = File(args[0])
+    for (level in args.drop(1)) {
+        generateLevel(genDir, level)
+    }
 }
 
-private fun generateLevel(levelName: String) {
+private fun generateLevel(genDir: File, levelName: String) {
     val (level, parent) = findLevelWithParent(levelName)
-    generateArgumentsClass(level, parent)
+    generateArgumentsClass(genDir, level, parent)
 }
 
 private fun findLevelWithParent(name: String): Pair<CompilerArgumentsLevel, CompilerArgumentsLevel?> {
@@ -64,31 +65,41 @@ val ArgumentsInfo.isCommonCompilerArgs: Boolean
 
 val levelToClassNameMap = listOf(
     ArgumentsInfo(
-        levelName = "commonToolArguments",
-        className = "CommonToolArguments2",
+        levelName = Levels.commonToolArguments,
+        className = "CommonToolArguments",
         configuratorName = null,
         levelIsFinal = false,
         additionalGenerator = SmartPrinter::generateFreeArgsAndErrors,
     ),
     ArgumentsInfo(
-        levelName = "commonCompilerArguments",
-        className = "CommonCompilerArguments2",
+        levelName = Levels.commonCompilerArguments,
+        className = "CommonCompilerArguments",
         levelIsFinal = false,
         additionalSyntheticArguments = listOf("autoAdvanceLanguageVersion", "autoAdvanceApiVersion"),
         additionalGenerator = SmartPrinter::generateDummyImpl
     ),
-    ArgumentsInfo(levelName = "jvmCompilerArguments", className = "K2JVMCompilerArguments2", levelIsFinal = true),
+    ArgumentsInfo(
+        levelName = Levels.jvmCompilerArguments,
+        className = "K2JVMCompilerArguments",
+        levelIsFinal = true
+    ),
 ).associateBy { it.levelName }
 
 private fun generateArgumentsClass(
+    genDir: File,
     level: CompilerArgumentsLevel,
     parent: CompilerArgumentsLevel?,
 ) {
-    val genDir = File("/home/demiurg/Programming/kotlin/kotlin/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments").also {
-            it.mkdirs()
-        }
     val info = levelToClassNameMap.getValue(level.name)
-    genDir.resolve(info.className + ".kt").printWriter().use {
+    val packagePath = info.classPackage
+        .dropLastWhile { it == '.' }
+        .split(".")
+    var dir = genDir
+    for (packagePart in packagePath) {
+        dir = dir.resolve(packagePart)
+    }
+    dir.mkdirs()
+    dir.resolve(info.className + ".kt").printWriter().use {
         val printer = SmartPrinter(it)
         printer.generateArgumentsClass(level, parent, info)
     }
@@ -118,7 +129,7 @@ private fun SmartPrinter.generateArgumentsClass(
     }
     print("class ${info.className}")
     val supertypes = when (parent) {
-        null -> "Freezable(), java.io.Serializable"
+        null -> "Freezable(), Serializable"
         else -> "${levelToClassNameMap.getValue(parent.name).className}()"
     }
     println(" : $supertypes {")
@@ -143,6 +154,9 @@ private fun CompilerArgumentsLevel.collectImports(info: ArgumentsInfo): List<Str
         add("org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator")
         if (info.levelIsFinal || info.isCommonCompilerArgs) {
             add("com.intellij.util.xmlb.annotations.Transient")
+        }
+        if (info.isCommonToolsArgs) {
+            add("java.io.Serializable")
         }
         arguments.flatMapTo(this) { argument ->
             argument.additionalAnnotations.flatMap {

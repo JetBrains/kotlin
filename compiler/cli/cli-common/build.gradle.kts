@@ -39,5 +39,12 @@ generatedSourcesTask(
     generatorProject = ":compiler:cli:cli-arguments-generator",
     generatorRoot = "compiler/cli/cli-argument-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.cli.arguments.generator.MainKt",
-    argsProvider = { generationRoot -> listOf(generationRoot.toString(), "tools")}
+    argsProvider = { generationRoot ->
+        listOf(
+            generationRoot.toString(),
+            "commonToolArguments",
+            "commonCompilerArguments",
+            "jvmCompilerArguments",
+        )
+    }
 )
