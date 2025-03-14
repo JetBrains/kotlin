@@ -165,6 +165,9 @@ public actual fun readlnOrNull(): String? = readLine()
 /**
  * Reads a line of input from the standard input stream.
  *
+ * **This function is obsolete and will be deprecated soon. Consider using [readln] or [readlnOrNull] depending on
+ * how the end of the input stream should be handled.**
+ *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
 public fun readLine(): String? = LineReader.readLine(System.`in`, Charset.defaultCharset())
