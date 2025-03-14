@@ -1,0 +1,42 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Ref(content: @Composable () -> Int) {
+    Ref(::property::get)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Ref(content: Function2<Composer, Int, Int>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Ref)<::prop...>,<Ref(::...>:Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Ref(<block>{
+      val tmp0 = ::property
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
+        tmp0::get
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Ref(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
