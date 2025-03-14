@@ -174,7 +174,7 @@ private fun SmartPrinter.generateAdditionalSyntheticArguments(info: ArgumentsInf
     for (argument in info.additionalSyntheticArguments) {
         println("@get:Transient")
         println("var $argument: Boolean = true")
-        generateSetter(type = "Boolean")
+        generateSetter(type = "Boolean", argument = null)
         println()
     }
 }
@@ -269,16 +269,16 @@ private fun SmartPrinter.generateProperty(argument: CompilerArgument) {
         }
     }
     println("var $name: $type = ${argument.defaultValueInArgs}")
-    generateSetter(type)
+    generateSetter(type, argument)
 }
 
-private fun SmartPrinter.generateSetter(type: String) {
+private fun SmartPrinter.generateSetter(type: String, argument: CompilerArgument?) {
     withIndent {
         println("set(value) {")
         withIndent {
             println("checkFrozen()")
             if (type == "String?") {
-                println("field = if (value.isNullOrEmpty()) null else value")
+                println("field = if (value.isNullOrEmpty()) ${argument?.defaultValueInArgs} else value")
             } else {
                 println("field = value")
             }
@@ -307,6 +307,11 @@ private fun SmartPrinter.generateConfigurator(info: ArgumentsInfo) {
     println()
 }
 
+private fun SmartPrinter.generateCopyOf(info: ArgumentsInfo) {
+    val className = info.className
+    println("override fun copyOf(): Freezable = copy$className(this, $className())")
+}
+
 private fun SmartPrinter.generateDummyImpl() {
     println("// Used only for serialize and deserialize settings. Don't use in other places!")
     println("class DummyImpl : CommonCompilerArguments() {")
@@ -322,10 +327,10 @@ private fun SmartPrinter.generateDummyImpl() {
 
 private fun SmartPrinter.generateFreeArgsAndErrors() {
     println("var freeArgs: List<String> = emptyList()")
-    generateSetter("List<String>")
+    generateSetter("List<String>", argument = null)
     println()
     println("var internalArguments: List<InternalArgument> = emptyList()")
-    generateSetter("List<InternalArgument>")
+    generateSetter("List<InternalArgument>", argument = null)
     println()
     println("@Transient")
     println("var errors: ArgumentParseErrors? = null")
@@ -336,7 +341,7 @@ private val CompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
         val valueType = valueType as KotlinArgumentValueType<Any?>
-        return valueType.stringRepresentation(valueType.defaultValue.current)
+        return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 
 private const val tripleQuote = "\"\"\""
