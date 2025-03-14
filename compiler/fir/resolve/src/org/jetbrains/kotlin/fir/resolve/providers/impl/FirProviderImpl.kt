@@ -96,17 +96,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
                 state.classifierInPackage[packageFqName].orEmpty()
 
             override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = buildSet {
-                for (key in state.functionMap.keys) {
-                    if (key.packageName == packageFqName) {
-                        add(key.callableName)
-                    }
-                }
-
-                for (key in state.propertyMap.keys) {
-                    if (key.packageName == packageFqName) {
-                        add(key.callableName)
-                    }
-                }
+                addAll(state.functionInPackage[packageFqName].orEmpty())
+                addAll(state.propertyInPackage[packageFqName].orEmpty())
             }
         }
     }
@@ -171,26 +162,28 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         private inline fun <reified D : FirCallableDeclaration, S : FirCallableSymbol<D>> registerCallable(
             symbol: S,
             data: FirRecorderData,
-            map: MutableMap<CallableId, List<S>>
+            map: MutableMap<CallableId, List<S>>,
+            mapInPackage: MutableMap<FqName, List<Name>>?,
         ) {
             val callableId = symbol.callableId
             map.merge(callableId, listOf(symbol)) { a, b -> a + b }
+            mapInPackage?.merge(callableId.packageName, listOf(symbol.name)) { a, b -> a + b }
             data.state.callableContainerMap[symbol] = data.file
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: FirRecorderData) {
             val symbol = constructor.symbol
-            registerCallable(symbol, data, data.state.constructorMap)
+            registerCallable(symbol, data, data.state.constructorMap, null)
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: FirRecorderData) {
             val symbol = simpleFunction.symbol
-            registerCallable(symbol, data, data.state.functionMap)
+            registerCallable(symbol, data, data.state.functionMap, data.state.functionInPackage)
         }
 
         override fun visitProperty(property: FirProperty, data: FirRecorderData) {
             val symbol = property.symbol
-            registerCallable(symbol, data, data.state.propertyMap)
+            registerCallable(symbol, data, data.state.propertyMap, data.state.propertyInPackage)
             property.getter?.let { visitPropertyAccessor(it, data) }
             property.setter?.let { visitPropertyAccessor(it, data) }
         }
@@ -226,8 +219,12 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         val classifierContainerFileMap = OpenAddressLinearProbingHashTable<ClassId, FirFile>()
         val classifierInPackage = OpenAddressLinearProbingHashTable<FqName, MutableSet<Name>>()
         val classesInPackage = OpenAddressLinearProbingHashTable<FqName, MutableSet<Name>>()
-        val functionMap = mutableMapOf<CallableId, List<FirNamedFunctionSymbol>>()
-        val propertyMap = mutableMapOf<CallableId, List<FirPropertySymbol>>()
+
+        val functionMap = OpenAddressLinearProbingHashTable<CallableId, List<FirNamedFunctionSymbol>>()
+        val propertyMap = OpenAddressLinearProbingHashTable<CallableId, List<FirPropertySymbol>>()
+        val functionInPackage = OpenAddressLinearProbingHashTable<FqName, List<Name>>()
+        val propertyInPackage = OpenAddressLinearProbingHashTable<FqName, List<Name>>()
+
         val constructorMap = OpenAddressLinearProbingHashTable<CallableId, List<FirConstructorSymbol>>()
         val callableContainerMap = OpenAddressLinearProbingHashTable<FirCallableSymbol<*>, FirFile>()
         val scriptContainerMap = OpenAddressLinearProbingHashTable<FirScriptSymbol, FirFile>()
@@ -241,6 +238,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             classifierContainerFileMap.clear()
             functionMap.clear()
             propertyMap.clear()
+            functionInPackage.clear()
+            propertyInPackage.clear()
             constructorMap.clear()
             callableContainerMap.clear()
             scriptContainerMap.clear()
@@ -253,6 +252,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             classifierContainerFileMap.putAll(other.classifierContainerFileMap)
             functionMap.putAll(other.functionMap)
             propertyMap.putAll(other.propertyMap)
+            functionInPackage.putAll(other.functionInPackage)
+            propertyInPackage.putAll(other.propertyInPackage)
             constructorMap.putAll(other.constructorMap)
             callableContainerMap.putAll(other.callableContainerMap)
             scriptContainerMap.putAll(other.scriptContainerMap)
