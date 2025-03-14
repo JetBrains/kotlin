@@ -28,7 +28,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         valueType = KotlinJvmTargetType()
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.JVM_TARGET_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -79,7 +79,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         description = "Don't automatically include the Java runtime in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -129,7 +129,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -145,7 +145,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         description = "Generate metadata for Java 1.8 reflection on method parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -167,7 +167,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
         valueType = StringType.defaultNull
         valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.JVM_DEFAULT_MODES,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -744,7 +744,7 @@ If API Level >= 2.2 -- no-op.""".asReleaseDependent()
         description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             Enables(LanguageFeature.AnnotationsInMetadata)
         )
 

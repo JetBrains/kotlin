@@ -10,13 +10,22 @@ import org.jetbrains.kotlin.arguments.CompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.description.Levels
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
+import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption
+import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
-import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
+
+private val COPYRIGHT by lazy { File("/home/demiurg/Programming/kotlin/kotlin/license/COPYRIGHT_HEADER.txt").readText() }
 
 fun main(args: Array<String>) {
     generateLevel(Levels.commonToolArguments)
@@ -37,11 +46,39 @@ private fun findLevelWithParent(name: String): Pair<CompilerArgumentsLevel, Comp
     return find(kotlinCompilerArguments.topLevel, null) ?: error("Level with name $name not found")
 }
 
-val levelToClassNameMap = mapOf(
-    "commonToolArguments" to "CommonToolArguments2",
-    "commonCompilerArguments" to "CommonCompilerArguments2",
-    "jvmCompilerArguments" to "K2JVMCompilerArguments2",
+class ArgumentsInfo(
+    val levelName: String,
+    val className: String,
+    val classPackage: String = "org.jetbrains.kotlin.cli.common.arguments.",
+    val configuratorName: String? = "${className}Configurator",
+    val levelIsFinal: Boolean,
+    val additionalSyntheticArguments: List<String> = emptyList(),
+    val additionalGenerator: SmartPrinter.() -> Unit = {},
 )
+
+val ArgumentsInfo.isCommonToolsArgs: Boolean
+    get() = levelName == Levels.commonToolArguments
+
+val ArgumentsInfo.isCommonCompilerArgs: Boolean
+    get() = levelName == Levels.commonCompilerArguments
+
+val levelToClassNameMap = listOf(
+    ArgumentsInfo(
+        levelName = "commonToolArguments",
+        className = "CommonToolArguments2",
+        configuratorName = null,
+        levelIsFinal = false,
+        additionalGenerator = SmartPrinter::generateFreeArgsAndErrors,
+    ),
+    ArgumentsInfo(
+        levelName = "commonCompilerArguments",
+        className = "CommonCompilerArguments2",
+        levelIsFinal = false,
+        additionalSyntheticArguments = listOf("autoAdvanceLanguageVersion", "autoAdvanceApiVersion"),
+        additionalGenerator = SmartPrinter::generateDummyImpl
+    ),
+    ArgumentsInfo(levelName = "jvmCompilerArguments", className = "K2JVMCompilerArguments2", levelIsFinal = true),
+).associateBy { it.levelName }
 
 private fun generateArgumentsClass(
     level: CompilerArgumentsLevel,
@@ -50,77 +87,153 @@ private fun generateArgumentsClass(
     val genDir = File("/home/demiurg/Programming/kotlin/kotlin/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments").also {
             it.mkdirs()
         }
-    genDir.resolve(levelToClassNameMap.getValue(level.name) + ".kt").printWriter().use {
-        val printer = Printer(it)
-        printer.generateArgumentsClass(level, parent)
+    val info = levelToClassNameMap.getValue(level.name)
+    genDir.resolve(info.className + ".kt").printWriter().use {
+        val printer = SmartPrinter(it)
+        printer.generateArgumentsClass(level, parent, info)
     }
 }
 
-private fun Printer.generateArgumentsClass(
+private fun SmartPrinter.generateArgumentsClass(
     level: CompilerArgumentsLevel,
     parent: CompilerArgumentsLevel?,
+    info: ArgumentsInfo
 ) {
+    println(COPYRIGHT)
     println("package org.jetbrains.kotlin.cli.common.arguments")
     println()
 
-    print("open class ${levelToClassNameMap[level.name]}")
+    val imports = level.collectImports(info)
+    if (imports.isNotEmpty()) {
+        imports.forEach { println(it) }
+        println()
+    }
+
+    print(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
+    println("compiler/cli/cli-arguments-generator")
+    println()
+
+    if (!info.levelIsFinal) {
+        print("abstract ")
+    }
+    print("class ${info.className}")
     val supertypes = when (parent) {
         null -> "Freezable(), java.io.Serializable"
-        else -> "${levelToClassNameMap[parent.name]}()"
+        else -> "${levelToClassNameMap.getValue(parent.name).className}()"
     }
     println(" : $supertypes {")
     withIndent {
+        generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
             if (argument.releaseVersionsMetadata.removedVersion != null) continue
-            generateAdditionalAnnotations(argument)
+            generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument)
+            generateFeatureAnnotations(argument)
             generateProperty(argument)
             println()
         }
+        generateConfigurator(info)
+        info.additionalGenerator.invoke(this)
+    }
+    println("}")
+}
+
+private fun CompilerArgumentsLevel.collectImports(info: ArgumentsInfo): List<String> {
+    val rawImports = buildSet {
+        add("org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator")
+        if (info.levelIsFinal || info.isCommonCompilerArgs) {
+            add("com.intellij.util.xmlb.annotations.Transient")
+        }
+        arguments.flatMapTo(this) { argument ->
+            argument.additionalAnnotations.flatMap {
+                when (it) {
+                    is Enables -> listOf(Enables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
+                    is Disables -> listOf(Disables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
+                    is GradleOption -> listOf(
+                        GradleOption::class.qualifiedName!!,
+                        DefaultValue::class.qualifiedName!!,
+                        GradleInputTypes::class.qualifiedName!!,
+                    )
+                    is GradleDeprecatedOption -> listOf(
+                        GradleDeprecatedOption::class.qualifiedName!!,
+                        LanguageVersion::class.qualifiedName!!,
+                    )
+                    else -> error("Unknown annotation ${it::class}")
+                }
+
+            }
+        }
+    }
+    return rawImports
+        .sorted()
+        .filter { it.dropLastWhile { it != '.' } != info.classPackage }
+        .map { "import $it" }
+}
+
+private fun SmartPrinter.generateAdditionalSyntheticArguments(info: ArgumentsInfo) {
+    for (argument in info.additionalSyntheticArguments) {
+        println("@get:Transient")
+        println("var $argument: Boolean = true")
+        generateSetter(type = "Boolean")
+        println()
     }
 }
 
-private fun Printer.generateArgumentAnnotation(argument: CompilerArgument) {
+private fun SmartPrinter.generateArgumentAnnotation(argument: CompilerArgument) {
     println("@Argument(")
     withIndent {
         println("""value = "-${argument.name}",""")
-        argument.shortName?.let { println("""shortName = "$it",""") }
-        argument.deprecatedName?.let { println("""shortName = "$it",""") }
+        argument.shortName?.let { println("""shortName = "-$it",""") }
+        argument.deprecatedName?.let { println("""deprecatedName = "-$it",""") }
         argument.valueDescription.current?.let { println("""valueDescription = "$it",""") }
-        val rawDescription = argument.description.current
+        val rawDescription = argument.description.current.replace("\"", """\"""")
         val description = if ("\n" in rawDescription) {
             "$tripleQuote$rawDescription$tripleQuote"
         } else {
             "\"$rawDescription\""
         }
         println("description = $description,")
+        argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName}") }
     }
     println(")")
 }
 
-private fun Printer.generateAdditionalAnnotations(argument: CompilerArgument) {
+private enum class AnnotationKind {
+    Gradle,
+    LanguageFeature
+}
+
+private fun SmartPrinter.generateGradleAnnotations(argument: CompilerArgument) {
+    generateAdditionalAnnotations(argument, kind = AnnotationKind.Gradle)
+}
+
+private fun SmartPrinter.generateFeatureAnnotations(argument: CompilerArgument) {
+    generateAdditionalAnnotations(argument, kind = AnnotationKind.LanguageFeature)
+}
+
+private fun SmartPrinter.generateAdditionalAnnotations(argument: CompilerArgument, kind: AnnotationKind) {
     for (annotation in argument.additionalAnnotations) {
-        generateAnnotation(annotation)
+        generateAnnotation(annotation, kind)
     }
 }
 
-private fun Printer.generateAnnotation(annotation: Annotation) {
+private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: AnnotationKind) {
     when (annotation) {
-        is Enables -> {
+        is Enables if kind == AnnotationKind.LanguageFeature -> {
             val feature = annotation.feature
             val featureName = feature.name
             println("@Enables(LanguageFeature.$featureName)")
         }
-        is Disables -> {
+        is Disables if kind == AnnotationKind.LanguageFeature-> {
             val feature = annotation.feature
             val featureName = feature.name
             println("@Disables(LanguageFeature.$featureName)")
         }
-        is GradleOption -> {
+        is GradleOption if kind == AnnotationKind.Gradle-> {
             println("@GradleOption(")
             withIndent {
                 println("value = DefaultValue.${annotation.value.name},")
-                println("gradleInputType = GradleInputType.${annotation.gradleInputType.name},")
+                println("gradleInputType = GradleInputTypes.${annotation.gradleInputType.name},")
                 if (annotation.shouldGenerateDeprecatedKotlinOptions) {
                     println("shouldGenerateDeprecatedKotlinOptions = true,")
                 }
@@ -130,22 +243,36 @@ private fun Printer.generateAnnotation(annotation: Annotation) {
             }
             println(")")
         }
-        else -> error("Unknown annotation ${annotation::class}")
+        is GradleDeprecatedOption if kind == AnnotationKind.Gradle-> {
+            println("@GradleDeprecatedOption(")
+            withIndent {
+                println("""message = "${annotation.message}",""")
+                println("removeAfter = LanguageVersion.${annotation.removeAfter.name},")
+                println("level = DeprecationLevel.${annotation.level.name}")
+            }
+            println(")")
+        }
     }
 }
 
-private fun Printer.generateProperty(argument: CompilerArgument) {
-    val name = argument.name
+private fun SmartPrinter.generateProperty(argument: CompilerArgument) {
+    val name = argument.compilerName ?: argument.name
         .removePrefix("X").removePrefix("X")
         .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
         .replaceFirstChar(Char::lowercaseChar)
-        .let { it.ifEmpty { "X" } }
     val type = when (argument.valueType) {
         is BooleanType -> "Boolean"
         is StringArrayType -> "Array<String>?"
-        else -> "String?"
+        else -> when (argument.valueType.isNullable.current) {
+            true -> "String?"
+            false -> "String"
+        }
     }
-    println("var $name: $type = ${argument.valueType.defaultValue.current.defaultValueInArgs}")
+    println("var $name: $type = ${argument.defaultValueInArgs}")
+    generateSetter(type)
+}
+
+private fun SmartPrinter.generateSetter(type: String) {
     withIndent {
         println("set(value) {")
         withIndent {
@@ -160,13 +287,56 @@ private fun Printer.generateProperty(argument: CompilerArgument) {
     }
 }
 
-private val Any?.defaultValueInArgs: Any?
-    get() = when (this) {
-        is Boolean -> this
-        is String -> this
-        else -> null
+private fun SmartPrinter.generateConfigurator(info: ArgumentsInfo) {
+    if (info.isCommonToolsArgs || !(info.isCommonCompilerArgs || info.levelIsFinal)) return
+    println("@get:Transient")
+    if (info.levelIsFinal) {
+        println("@field:kotlin.jvm.Transient")
     }
+    if (info.isCommonCompilerArgs) {
+        print("abstract ")
+    } else {
+        print("override ")
+    }
+    print("val configurator: CommonCompilerArgumentsConfigurator")
+    if (info.levelIsFinal) {
+        println(" = ${info.configuratorName}()")
+    } else {
+        println()
+    }
+    println()
+}
 
+private fun SmartPrinter.generateDummyImpl() {
+    println("// Used only for serialize and deserialize settings. Don't use in other places!")
+    println("class DummyImpl : CommonCompilerArguments() {")
+    withIndent {
+        println("override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())")
+        println()
+        println("@get:Transient")
+        println("@field:kotlin.jvm.Transient")
+        println("override val configurator: CommonCompilerArgumentsConfigurator = CommonCompilerArgumentsConfigurator()")
+    }
+    println("}")
+}
 
+private fun SmartPrinter.generateFreeArgsAndErrors() {
+    println("var freeArgs: List<String> = emptyList()")
+    generateSetter("List<String>")
+    println()
+    println("var internalArguments: List<InternalArgument> = emptyList()")
+    generateSetter("List<InternalArgument>")
+    println()
+    println("@Transient")
+    println("var errors: ArgumentParseErrors? = null")
+    println()
+}
+
+private val CompilerArgument.defaultValueInArgs: String
+    get() {
+        @Suppress("UNCHECKED_CAST")
+        val valueType = valueType as KotlinArgumentValueType<Any?>
+        return valueType.stringRepresentation(valueType.defaultValue.current)
+    }
 
 private const val tripleQuote = "\"\"\""

@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.*
+import org.jetbrains.kotlin.arguments.CompilerArgument.Delimiter
 import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.types.ExplicitApiModeType
 import org.jetbrains.kotlin.arguments.types.KotlinVersionType
+import org.jetbrains.kotlin.arguments.types.ReturnValueCheckerModeType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -25,7 +29,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         valueType = KotlinVersionType()
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.LANGUAGE_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -42,7 +46,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         valueType = KotlinVersionType()
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.API_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -64,6 +68,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "progressive"
+        compilerName = "progressiveMode"
         description = """
                 Enable progressive compiler mode.
                 In this mode, deprecations and bug fixes for unstable code take effect immediately
@@ -73,7 +78,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
                 """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT
@@ -93,12 +98,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "opt-in"
+        deprecatedName = "Xopt-in"
         description =
             "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<fq.name>".asReleaseDependent()
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT
@@ -159,6 +165,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "Xplugin"
+        compilerName = "pluginClasspaths"
         description = "Load plugins from the given classpath.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
@@ -168,6 +175,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "P"
+        compilerName = "pluginOptions"
         description = "Pass an option to a plugin.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "plugin:<pluginId>:<optionName>=<value>".asReleaseDependent()
@@ -177,9 +185,11 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "Xcompiler-plugin"
+        compilerName = "pluginConfigurations"
         description = "Register a compiler plugin.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]".asReleaseDependent()
+        delimiter = Delimiter.None
 
         stubLifecycle()
     }
@@ -188,6 +198,8 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         name = "Xmulti-platform"
         description = "Enable language support for multiplatform projects.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.MultiPlatformProjects))
 
         stubLifecycle()
     }
@@ -215,6 +227,12 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         description = "Enable the new experimental generic type inference algorithm.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(
+            Enables(LanguageFeature.NewInference),
+            Enables(LanguageFeature.SamConversionPerArgument),
+            Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType),
+            Enables(LanguageFeature.DisableCompatibilityModeForNewInference),
+        )
         stubLifecycle()
     }
 
@@ -222,6 +240,10 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         name = "Xinline-classes"
         description = "Enable experimental inline classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.InlineClasses)
+        )
 
         stubLifecycle()
     }
@@ -231,7 +253,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             Disables(LanguageFeature.SoundSmartCastsAfterTry)
         )
 
@@ -343,6 +365,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "Xdump-fqname"
+        compilerName = "dumpOnlyFqName"
         description = "Dump the declaration with the given FqName.".asReleaseDependent()
         valueType = StringType.defaultNull
 
@@ -421,11 +444,16 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
             "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
                 shouldGenerateDeprecatedKotlinOptions = false,
+            ),
+            GradleDeprecatedOption(
+                message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
+                level = DeprecationLevel.HIDDEN,
+                removeAfter = LanguageVersion.KOTLIN_2_2,
             )
         )
 
@@ -444,6 +472,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "Xuse-fir-ic"
+        compilerName = "useFirIC"
         description =
             "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -454,6 +483,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "Xuse-fir-lt"
+        compilerName = "useFirLT"
         description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
         valueType = BooleanType.defaultTrue
 
@@ -463,6 +493,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
 
     compilerArgument {
         name = "Xmetadata-klib"
+        deprecatedName = "Xexpect-actual-linker"
         description = "Produce a klib that only contains the metadata of declarations.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
@@ -484,7 +515,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(Levels.commonCompile
         description = """Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
 Use the 'warning' level to issue warnings instead of errors.""".asReleaseDependent()
         valueDescription = "{strict|warning|disable}".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = ExplicitApiModeType()
 
         stubLifecycle()
     }
@@ -496,7 +527,7 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
 Use the 'warning' level to issue warnings instead of errors.
 This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""".asReleaseDependent()
         valueDescription = "{strict|warning|disable}".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = ExplicitApiModeType()
 
         stubLifecycle()
     }
@@ -507,7 +538,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         description =
             "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.".asReleaseDependent()
         valueDescription = "{check|full|disable}".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = ReturnValueCheckerModeType()
 
         stubLifecycle()
     }
@@ -518,7 +549,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         description = "Enable compatibility changes for the generic type inference algorithm.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             Enables(LanguageFeature.InferenceCompatibility)
         )
 
@@ -562,6 +593,8 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
             "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.DataClassCopyRespectsConstructorVisibility))
+
         stubLifecycle()
     }
 
@@ -571,6 +604,8 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description =
             "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.UnrestrictedBuilderInference))
 
         stubLifecycle()
     }
@@ -582,6 +617,8 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 The corresponding calls' declarations may not be marked with @BuilderInference.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.UseBuilderInferenceWithoutAnnotation))
+
         stubLifecycle()
     }
 
@@ -592,6 +629,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.TypeInferenceOnCallsWithSelfTypes))
+
         stubLifecycle()
     }
 
@@ -600,6 +639,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         name = "Xcontext-receivers"
         description = "Enable experimental context receivers.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ContextReceivers))
 
         stubLifecycle()
     }
@@ -610,6 +651,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         description = "Enable experimental context parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.ContextParameters))
+
         stubLifecycle()
     }
 
@@ -618,6 +661,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         name = "Xnon-local-break-continue"
         description = "Enable experimental non-local break and continue.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.BreakContinueInInlineLambdas))
 
         stubLifecycle()
     }
@@ -628,6 +673,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         description = "Enable experimental direct Java actualization support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
+
         stubLifecycle()
     }
 
@@ -636,6 +683,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         name = "Xmulti-dollar-interpolation"
         description = "Enable experimental multi-dollar interpolation.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.MultiDollarInterpolation))
 
         stubLifecycle()
     }
@@ -664,7 +713,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         description = "Allow compiling scripts along with regular Kotlin sources.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
         )
 
@@ -734,7 +783,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         description = "Enable experimental language support for when guards.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             Enables(LanguageFeature.WhenGuards)
         )
 
@@ -747,7 +796,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         description = "Enable experimental language support for nested type aliases.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotation(
+        additionalAnnotations(
             Enables(LanguageFeature.NestedTypeAliases)
         )
 
@@ -757,6 +806,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     compilerArgument {
         name = "Xsuppress-warning"
+        compilerName = "suppressedDiagnostics"
         description =
             "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag".asReleaseDependent()
         valueDescription = "<WARNING_NAME>".asReleaseDependent()
@@ -768,6 +818,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     compilerArgument {
         name = "Xwarning-level"
+        compilerName = "warningLevels"
         description = """Set the severity of the given warning.
 - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)
 - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
@@ -807,6 +858,8 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         name = "Xannotation-target-all"
         description = "Enable experimental language support for @all: annotation use-site target.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AnnotationAllUseSiteTarget))
 
         stubLifecycle()
     }

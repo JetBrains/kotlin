@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.defaultFalse
 import org.jetbrains.kotlin.arguments.stubLifecycle
 import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
+import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
+import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -29,6 +32,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
 
     compilerArgument {
         name = "X"
+        compilerName = "extraHelp"
         description = "Print a synopsis of advanced options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
@@ -48,30 +52,67 @@ val actualCommonToolsArguments by compilerArgumentsLevel(Levels.commonToolArgume
         description = "Enable verbose logging output.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INTERNAL,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
         stubLifecycle()
     }
 
     compilerArgument {
         name = "nowarn"
+        compilerName = "suppressWarnings"
         description = "Don't generate any warnings.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INTERNAL,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+
+        )
         stubLifecycle()
     }
 
     compilerArgument {
         name = "Werror"
+        compilerName = "allWarningsAsErrors"
         description = "Report an error if there are any warnings.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INPUT,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
+
         stubLifecycle()
     }
 
     compilerArgument {
         name = "Wextra"
+        compilerName = "extraWarnings"
         description = "Enable extra checkers for K2.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INPUT,
+            )
+        )
+
         stubLifecycle()
     }
 }

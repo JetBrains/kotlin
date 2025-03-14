@@ -21,15 +21,6 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
 abstract class CommonToolArguments : Freezable(), Serializable {
-    var freeArgs: List<String> = emptyList()
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Transient
-    var errors: ArgumentParseErrors? = null
-
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options.")
     var help = false
         set(value) {
@@ -106,4 +97,13 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             checkFrozen()
             field = value
         }
+
+    var freeArgs: List<String> = emptyList()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Transient
+    var errors: ArgumentParseErrors? = null
 }
