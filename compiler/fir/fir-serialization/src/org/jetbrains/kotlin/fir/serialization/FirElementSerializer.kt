@@ -1309,7 +1309,7 @@ class FirElementSerializer private constructor(
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
         val hasAnnotations = accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor)
-        val isDefault = property.isLocal ||
+        val isDefault = (property.isLocalInFunction) ||
                 (accessor is FirDefaultPropertyAccessor &&
                         !hasAnnotations &&
                         accessor.visibility == property.visibility &&
@@ -1402,11 +1402,13 @@ class FirElementSerializer private constructor(
     }
 
     private fun normalizeVisibility(declaration: FirMemberDeclaration): Visibility {
-        return declaration.visibility.normalize()
+        // REPL snippet declarations are lowered to public ones, so we should save the metadata accordingly
+        return if (declaration.isReplSnippetDeclaration == true) Visibilities.Public else declaration.visibility.normalize()
     }
 
     private fun normalizeVisibility(declaration: FirPropertyAccessor): Visibility {
-        return declaration.visibility.normalize()
+        // REPL snippet declarations are lowered to public ones, so we should save the metadata accordingly
+        return if (declaration.isReplSnippetDeclaration == true) Visibilities.Public else declaration.visibility.normalize()
     }
 
     private fun getClassifierId(declaration: FirClassLikeDeclaration): Int {
