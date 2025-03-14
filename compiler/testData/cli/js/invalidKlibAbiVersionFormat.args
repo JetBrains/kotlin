@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/simple2js.kt
+-Xklib-abi-version=2.1
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

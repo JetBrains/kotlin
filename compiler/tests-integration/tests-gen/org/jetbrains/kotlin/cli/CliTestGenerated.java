@@ -1976,6 +1976,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/firMultiplatformCompilationWithError.args");
     }
 
+    @TestMetadata("invalidKlibAbiVersionFormat.args")
+    public void testInvalidKlibAbiVersionFormat() {
+      runTest("compiler/testData/cli/js/invalidKlibAbiVersionFormat.args");
+    }
+
     @TestMetadata("jsExtraHelp.args")
     public void testJsExtraHelp() {
       runTest("compiler/testData/cli/js/jsExtraHelp.args");
