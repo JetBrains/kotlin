@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.impl.*
@@ -61,4 +62,13 @@ private class ExtractingBitcodeLibraryImpl(zipped: BitcodeLibraryLayoutImpl) :
     ExtractingTargetedLibraryImpl(zipped), BitcodeKotlinLibraryLayout {
 
     override val nativeDir: File by lazy { zipped.extractDir(zipped.nativeDir) }
+}
+
+fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
+
+private fun extractDir(zipFile: File, directory: File): File {
+    val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
+    temporary.deleteOnExitRecursively()
+    zipFile.unzipTo(temporary, fromSubdirectory = directory)
+    return temporary
 }
