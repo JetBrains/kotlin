@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OpenAddressLinearProbingHashTable
+import org.jetbrains.kotlin.util.openAddressHashTable
 import org.jetbrains.kotlin.utils.SmartList
 
 class FirPackageMemberScope(
@@ -31,9 +31,9 @@ class FirPackageMemberScope(
     private val symbolProvider: FirSymbolProvider = session.symbolProvider,
     private val excludedNames: Set<Name> = emptySet(),
 ) : FirScope() {
-    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>> = OpenAddressLinearProbingHashTable()
-    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = OpenAddressLinearProbingHashTable()
-    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = OpenAddressLinearProbingHashTable()
+    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>> = openAddressHashTable()
+    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = openAddressHashTable()
+    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = openAddressHashTable()
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,

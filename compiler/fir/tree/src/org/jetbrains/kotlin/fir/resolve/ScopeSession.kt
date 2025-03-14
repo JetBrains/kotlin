@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.util.OpenAddressLinearProbingHashTable
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 class ScopeSession {
-    private val scopes: OpenAddressLinearProbingHashTable<Any, OpenAddressLinearProbingHashTable<ScopeSessionKey<*, *>, Any>> =
-        OpenAddressLinearProbingHashTable()
+    private val scopes: MutableMap<Any, MutableMap<ScopeSessionKey<*, *>, Any>> =
+        openAddressHashTable()
 
     @PrivateForInline
-    fun scopes(): OpenAddressLinearProbingHashTable<Any, OpenAddressLinearProbingHashTable<ScopeSessionKey<*, *>, Any>> =
+    fun scopes(): MutableMap<Any, MutableMap<ScopeSessionKey<*, *>, Any>> =
         scopes
 
     @OptIn(PrivateForInline::class)
     inline fun <reified ID : Any, reified FS : Any> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {
         return scopes().getOrPut(id) {
-            OpenAddressLinearProbingHashTable()
+            openAddressHashTable()
         }.getOrPut(key) {
             build()
         } as FS
