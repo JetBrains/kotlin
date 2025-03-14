@@ -9,10 +9,6 @@ import java.nio.file.FileSystem
 open class TargetedLibraryLayoutImpl(klib: File, component: String, override val target: KonanTarget?) :
     KotlinLibraryLayoutImpl(klib, component), TargetedKotlinLibraryLayout {
 
-    open val extractingToTemp: TargetedKotlinLibraryLayout by lazy {
-        ExtractingTargetedLibraryImpl(this)
-    }
-
     override fun directlyFromZip(zipFileSystem: FileSystem): TargetedKotlinLibraryLayout =
         FromZipTargetedLibraryImpl(this, zipFileSystem)
 
@@ -20,9 +16,6 @@ open class TargetedLibraryLayoutImpl(klib: File, component: String, override val
 
 class BitcodeLibraryLayoutImpl(klib: File, component: String, target: KonanTarget?) :
     TargetedLibraryLayoutImpl(klib, component, target), BitcodeKotlinLibraryLayout {
-    override val extractingToTemp: BitcodeKotlinLibraryLayout by lazy {
-        ExtractingBitcodeLibraryImpl(this)
-    }
 
     override fun directlyFromZip(zipFileSystem: FileSystem): BitcodeKotlinLibraryLayout =
         FromZipBitcodeLibraryImpl(this, zipFileSystem)
@@ -31,19 +24,23 @@ class BitcodeLibraryLayoutImpl(klib: File, component: String, target: KonanTarge
 
 open class TargetedLibraryAccess<L : TargetedKotlinLibraryLayout>(klib: File, component: String, val target: KonanTarget?) :
     BaseLibraryAccess<L>(klib, component) {
+
     override val layout = TargetedLibraryLayoutImpl(klib, component, target)
+    protected open val extractingLayout: TargetedKotlinLibraryLayout by lazy { ExtractingTargetedLibraryImpl(layout) }
 
     @Suppress("UNCHECKED_CAST")
-    inline fun <T> realFiles(action: (L) -> T): T =
+    fun <T> realFiles(action: (L) -> T): T =
         if (layout.isZipped)
-            action(layout.extractingToTemp as L)
+            action(extractingLayout as L)
         else
             action(layout as L)
 }
 
 open class BitcodeLibraryAccess<L : BitcodeKotlinLibraryLayout>(klib: File, component: String, target: KonanTarget?) :
     TargetedLibraryAccess<L>(klib, component, target) {
+
     override val layout = BitcodeLibraryLayoutImpl(klib, component, target)
+    override val extractingLayout: BitcodeKotlinLibraryLayout by lazy { ExtractingBitcodeLibraryImpl(layout) }
 }
 
 private open class FromZipTargetedLibraryImpl(zipped: TargetedLibraryLayoutImpl, zipFileSystem: FileSystem) :
