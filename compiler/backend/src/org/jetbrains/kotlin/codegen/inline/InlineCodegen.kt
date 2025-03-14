@@ -226,7 +226,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    protected fun putArgumentToLocalVal(jvmKotlinType: JvmKotlinType, stackValue: StackValue, parameterIndex: Int, kind: ValueKind) {
+    protected fun putArgumentToLocalVal(
+        jvmKotlinType: JvmKotlinType,
+        stackValue: StackValue,
+        parameterIndex: Int,
+        kind: ValueKind,
+        addInplaceArgumentEndMarker: Boolean,
+    ) {
         if (kind === ValueKind.DEFAULT_MASK || kind === ValueKind.METHOD_HANDLE_IN_DEFAULT) {
             return processDefaultMaskOrMethodHandler(stackValue, kind)
         }
@@ -251,6 +257,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 info.remapValue = stackValue
             else -> {
                 stackValue.put(info.type, jvmKotlinType.kotlinType, codegen.visitor)
+                if (addInplaceArgumentEndMarker) codegen.visitor.addInplaceArgumentEndMarker()
                 codegen.visitor.store(codegen.frameMap.enterTemp(info.type), info.type)
             }
         }

@@ -127,6 +127,8 @@ class IrInlineCodegen(
                     ValueKind.GENERAL
             }
 
+            var pendingInplaceArgumentEndMarker = false
+
             val onStack = when (kind) {
                 ValueKind.METHOD_HANDLE_IN_DEFAULT ->
                     StackValue.Constant(null, AsmTypes.OBJECT_TYPE)
@@ -148,14 +150,19 @@ class IrInlineCodegen(
                         StackValue.OnStack(parameterType, irValueParameter.type.toIrBasedKotlinType())
                     }
                     if (inlineArgumentsInPlace) {
-                        codegen.visitor.addInplaceArgumentEndMarker()
+                        // The value is not on stack yet, postpone adding END marker
+                        if (argValue is StackValue.Local) {
+                            pendingInplaceArgumentEndMarker = true
+                        } else {
+                            codegen.visitor.addInplaceArgumentEndMarker()
+                        }
                     }
                     argValue
                 }
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-            putArgumentToLocalVal(expectedType, onStack, irValueParameter.indexInOldValueParameters, kind)
+            putArgumentToLocalVal(expectedType, onStack, irValueParameter.indexInOldValueParameters, kind, pendingInplaceArgumentEndMarker)
         }
     }
 
