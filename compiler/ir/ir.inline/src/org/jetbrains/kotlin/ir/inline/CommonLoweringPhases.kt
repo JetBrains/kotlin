@@ -121,7 +121,7 @@ fun loweringsOfTheFirstPhase(
         this += outerThisSpecialAccessorInInlineFunctionsPhase
         this += syntheticAccessorGenerationPhase
         this += validateIrAfterInliningOnlyPrivateFunctions
-        //this += inlineAllFunctionsPhase(irMangler)
+        this += inlineAllFunctionsPhase(irMangler)
         //this += validateIrAfterInliningAllFunctions
     }
 }
