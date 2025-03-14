@@ -189,6 +189,13 @@ class SerializedIrDumpHandler(
              * ```
              */
             printAnnotationsInFakeOverrides = false,
+
+            /**
+             * It may happen that after running the IR inliner at the 1st phase of compilation, there are unbound symbols in IR types.
+             * For such types, the IR dumper just renders the standard "unbound symbol" text. Which leads to diverging ID dumps.
+             * To work around this, we deduce the fully qualified name of the class by the symbol's signature.
+             */
+            guessTypeBySignatureOfUnboundClassifierSymbol = true,
         )
 
         val builder = dumper.builderForModule(module.name)

@@ -1566,3 +1566,5 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
 ) {
     arguments.assignFrom(src.arguments)
 }
+
+fun <S : IrBindableSymbol<*, O>, O : IrSymbolOwner> S.getOwnerIfBound(): O? = if (isBound) owner else null

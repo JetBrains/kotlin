@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -696,16 +699,18 @@ internal fun IrDeclaration.renderOriginIfNonTrivial(options: DumpIrTreeOptions):
     return if (origin in originsToSkipFromRendering) "" else "$origin "
 }
 
-internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions): String =
-    if (isBound)
-        when (val owner = owner) {
-            is IrClass -> owner.renderClassFqn(options)
-            is IrScript -> owner.renderScriptFqn(options)
-            is IrTypeParameter -> owner.renderTypeParameterFqn(options)
-            else -> "`unexpected classifier: ${owner.render(options)}`"
-        }
-    else
-        "<unbound ${this.javaClass.simpleName}>"
+internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions): String {
+    fun CommonSignature.guessClassFqnBySignature(): String =
+        "${if (packageFqName.isEmpty()) FqName.ROOT.toString() else packageFqName}.${declarationFqName}"
+
+    return when (this) {
+        is IrClassSymbol if isBound -> owner.renderClassFqn(options)
+        is IrClassSymbol if options.guessTypeBySignatureOfUnboundClassifierSymbol -> (signature as? CommonSignature)?.guessClassFqnBySignature()
+        is IrTypeParameterSymbol if isBound -> owner.renderTypeParameterFqn(options)
+        is IrScriptSymbol if isBound -> owner.renderScriptFqn(options)
+        else -> null
+    } ?: "<unbound ${this.javaClass.simpleName}>"
+}
 
 internal fun IrTypeAliasSymbol.renderTypeAliasFqn(options: DumpIrTreeOptions): String =
     if (isBound)
@@ -1012,7 +1017,15 @@ private fun StringBuilder.renderAsAnnotation(
     renderer: RenderIrElementVisitor?,
     options: DumpIrTreeOptions,
 ) {
-    val annotationClassName = irAnnotation.symbol.takeIf { it.isBound }?.owner?.parentAsClass?.name?.asString() ?: "<unbound>"
+    val annotationClassName = irAnnotation.symbol.getOwnerIfBound()?.parentAsClass?.name?.asString()
+        ?: runIf(options.guessTypeBySignatureOfUnboundClassifierSymbol) {
+            val nameSegments = (irAnnotation.symbol.signature as? CommonSignature)?.nameSegments.orEmpty()
+            runIf(nameSegments.size >= 2 && nameSegments[nameSegments.lastIndex] == SpecialNames.INIT.asString()) {
+                nameSegments[nameSegments.lastIndex - 1]
+            }
+        }
+        ?: "<unbound>"
+
     append(annotationClassName)
 
     if (irAnnotation.typeArguments.isNotEmpty()) {
