@@ -118,9 +118,9 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     if (context.config.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
                         && irClass.classId == StandardClassIds.AbstractMap
                         && irClass.typeParameters.size == 2
-                        && stub.hasShape(regularParameters = 2)
-                        && stub.parameters[0].type.classifierOrNull == irClass.typeParameters[0].symbol
-                        && stub.parameters[1].type.classifierOrNull == irClass.typeParameters[1].symbol
+                        && stub.hasShape(dispatchReceiver = true, regularParameters = 2)
+                        && stub.parameters[1].type.classifierOrNull == irClass.typeParameters[0].symbol
+                        && stub.parameters[2].type.classifierOrNull == irClass.typeParameters[1].symbol
                     ) {
                         continue
                     }
