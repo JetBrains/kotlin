@@ -1,0 +1,37 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+val property: @Composable (Int) -> Int = ::Fn
+
+@Composable
+fun Ref(content: @Composable (Int) -> Int) {
+    Ref(property)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val property: Function3<Int, Composer, Int, Int> = ::Fn
+@Composable
+fun Ref(content: Function3<Int, Composer, Int, Int>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Ref)<Ref(pr...>:Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Ref(property, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Ref(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

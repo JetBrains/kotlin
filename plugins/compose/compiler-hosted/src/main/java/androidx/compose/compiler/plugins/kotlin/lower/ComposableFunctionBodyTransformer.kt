@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.ADAPTER_FOR_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -633,6 +634,9 @@ class ComposableFunctionBodyTransformer(
         if (declaration.isDefaultParamStub) {
             // don't transform the body of the stub normally
             return visitComposableFunctionStub(declaration)
+        }
+        if (declaration.origin == ADAPTER_FOR_CALLABLE_REFERENCE) {
+            return visitComposableReferenceAdapter(declaration, scope)
         }
 
         val restartable = declaration.shouldBeRestartable()
@@ -1289,6 +1293,18 @@ class ComposableFunctionBodyTransformer(
                 call.arguments[param.indexInParameters] = irGet(parameter)
             }
         }
+
+        return declaration
+    }
+
+    private fun visitComposableReferenceAdapter(
+        declaration: IrFunction,
+        scope: Scope.FunctionScope
+    ): IrStatement {
+        scope.dirty = scope.changedParameter
+        scope.preserveIrShape = true
+
+        declaration.transformChildrenVoid()
 
         return declaration
     }
@@ -3701,7 +3717,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     override fun visitReturn(expression: IrReturn): IrExpression {
-        if (!isInComposableScope) return super.visitReturn(expression)
+        if (!isInComposableScope || currentFunctionScope.preserveIrShape) return super.visitReturn(expression)
         val scope = Scope.ReturnScope(expression)
         withScope(scope) {
             expression.transformChildrenVoid()
@@ -4064,6 +4080,8 @@ class ComposableFunctionBodyTransformer(
             var dirty: IrChangedBitMaskValue? = null
 
             var outerGroupRequired = false
+
+            var preserveIrShape = false
 
             val markerPreamble = mutableStatementContainer(transformer.context)
             private var marker: IrVariable? = null

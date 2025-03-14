@@ -961,4 +961,57 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         )
     }
+
+    @Test
+    fun testFunctionReferenceInline() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable inline fun Fn(content: @Composable (Int) -> Unit) {
+                    content(0)
+                }
+
+                @Composable inline fun Fn2(int: Int) {
+                    println("Test " + int)
+                }
+
+                @Composable
+                fun Test() {
+                    Fn(::Fn2)
+                }
+            """,
+            validate = {
+                val testRegex = Regex("public final static Test([\\s\\S]*?)LOCALVARIABLE")
+                val test = testRegex.find(it)?.value ?: error("Could not find Test in $it")
+                assertTrue("Test should contain inlined println") {
+                    test.contains("INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V")
+                }
+            }
+        )
+    }
+
+    @Test
+    fun testFunctionReferenceInlineIntoNotInline() {
+        assumeTrue(useFir)
+        testCompile(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun Fn(content: @Composable (Int) -> Unit) {
+                    content(0)
+                }
+
+                @Composable inline fun Fn2(int: Int) {
+                    println("Test " + int)
+                }
+
+                @Composable
+                fun Test() {
+                    Fn(::Fn2)
+                }
+            """,
+        )
+    }
 }
