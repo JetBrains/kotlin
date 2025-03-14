@@ -12,26 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.compilerArguments
 import org.jetbrains.kotlin.arguments.types.BooleanType
 import java.io.File
 
-val someArguments by compilerArgument {
-    name = "some-argument"
-    description = ReleaseDependent(
-        "The awesome argument to make compilation fast",
-        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to "Slows your compilation"
-    )
-
-    valueType = BooleanType()
-    valueDescription = "true|false".asReleaseDependent()
-
-    lifecycle(
-        introducedVersion = KotlinReleaseVersion.v1_4_0,
-        stabilizedVersion = KotlinReleaseVersion.v1_4_0,
-    )
-}
-
 val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
-
-    addCompilerArguments(someArguments)
-
     compilerArgument {
         name = "another-test"
         description = "TBA".asReleaseDependent()
