@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption
 
+import org.gradle.api.artifacts.transform.CacheableTransform
 import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
@@ -20,7 +21,7 @@ import java.util.zip.ZipFile
 /**
  * Platform compile dependency configurations can inherit dependencies from metadata variant. We remove the resolved metadata jars here
  */
-@DisableCachingByDefault(because = "...")
+@CacheableTransform
 internal abstract class ThrowAwayMetadataJarsTransform : TransformAction<TransformParameters.None> {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact

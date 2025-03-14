@@ -16,7 +16,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
 import java.io.File
 
-@DisableCachingByDefault(because = "...")
+@CacheableTransform
 internal abstract class UnzippedUklibToPlatformCompilationTransform :
     TransformAction<UnzippedUklibToPlatformCompilationTransform.Parameters> {
     interface Parameters : TransformParameters {
