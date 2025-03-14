@@ -78,15 +78,6 @@ class FromZipMetadataLibraryImpl(zipped: MetadataLibraryLayoutImpl, zipFileSyste
 class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSystem) :
     FromZipBaseLibraryImpl(zipped, zipFileSystem), IrKotlinLibraryLayout
 
-fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
-
-private fun extractDir(zipFile: File, directory: File): File {
-    val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
-    temporary.deleteOnExitRecursively()
-    zipFile.unzipTo(temporary, fromSubdirectory = directory)
-    return temporary
-}
-
 internal fun zippedKotlinLibraryChecks(klibFile: File) {
     check(klibFile.exists) { "Could not find $klibFile." }
     check(klibFile.isFile) { "Expected $klibFile to be a regular file." }
