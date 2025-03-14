@@ -969,6 +969,7 @@ tasks {
         dependsOn(":kotlin-sam-with-receiver-compiler-plugin:test")
         dependsOn(":kotlin-power-assert-compiler-plugin:test")
         dependsOn(":plugins:plugins-interactions-testing:test")
+        dependsOn(":kotlin-dataframe-compiler-plugin:test")
     }
 
     register("toolsTest") {
