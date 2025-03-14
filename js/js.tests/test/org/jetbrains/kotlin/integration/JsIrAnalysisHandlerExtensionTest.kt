@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.integration.JsCompilationTestHelper.TestKtFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -29,11 +30,6 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-
-private data class TestKtFile(
-    val name: String,
-    val content: String
-)
 
 private val classNotFound = TestKtFile("C.kt", "class C : ClassNotFound")
 private val repeatedAnalysis = TestKtFile("D.kt", "class D : Generated")

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
@@ -31,6 +33,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.util.*
+import kotlin.test.assertNotNull
 
 private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation/manifest-writing"
 
@@ -75,6 +78,25 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
             testInfo,
             "-Xmanifest-native-targets=ios_arm64,ios_x64, unknown_target"
         )
+    }
+
+    @Test
+    fun testEnableAndSuppressLanguageFeatures() {
+        val experimentalLanguageFeature = LanguageFeature.entries.first { it.sinceVersion == null }
+        val enabledLanguageFeature = LanguageFeature.entries.first { it.sinceVersion == LanguageVersion.LATEST_STABLE }
+
+        val compilationResult = compileLibrary(
+            testRunSettings,
+            stubSourceFile,
+            packed = false,
+            freeCompilerArgs = listOf("-XXLanguage:+$experimentalLanguageFeature", "-XXLanguage:-$enabledLanguageFeature")
+        )
+
+        val klib = compilationResult.assertSuccess().resultingArtifact.klibFile
+        val manifestProperties = File(klib, "default/manifest").readText().split("\n")
+
+        checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_ENABLED_LANGUAGE_FEATURES, experimentalLanguageFeature.name)
+        checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_SUPPRESSED_LANGUAGE_FEATURES, enabledLanguageFeature.name)
     }
 
     private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
@@ -156,6 +178,12 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
             }
 
             return result.sortedBy { it.first }
+        }
+
+        private fun checkPropertyAndValue(properties: List<String>, propertyName: String, propertyValue: String) {
+            val property = properties.firstOrNull { it.startsWith(propertyName) }
+            assertNotNull(property, "Property $propertyName not found in the manifest")
+            assertTrue(property.contains(propertyValue))
         }
 
         private val stubSourceFile: File

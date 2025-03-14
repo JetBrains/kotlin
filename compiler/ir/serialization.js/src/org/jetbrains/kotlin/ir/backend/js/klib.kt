@@ -673,6 +673,19 @@ fun serializeModuleIntoKlib(
         val fingerprints = fullSerializedIr.files.sortedBy { it.path }.map { SerializedIrFileFingerprint(it) }
         p.setProperty(KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS, fingerprints.joinIrFileFingerprints())
         p.setProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT, SerializedKlibFingerprint(fingerprints).klibFingerprint.toString())
+
+        val enabledLanguageFeatures = configuration.languageVersionSettings.getEnabledExperimentalFeatures()
+        val suppressedLanguageFeatures = configuration.languageVersionSettings.getSuppressedLanguageFeatures()
+
+        if (enabledLanguageFeatures.isNotEmpty()) {
+            val presentableEnabledFeatures = enabledLanguageFeatures.sortedBy(LanguageFeature::name).joinToString(" ")
+            p.setProperty(KLIB_PROPERTY_ENABLED_LANGUAGE_FEATURES, presentableEnabledFeatures)
+        }
+
+        if (suppressedLanguageFeatures.isNotEmpty()) {
+            val presentableSuppressedFeatures = suppressedLanguageFeatures.sortedBy(LanguageFeature::name).joinToString(" ")
+            p.setProperty(KLIB_PROPERTY_SUPPRESSED_LANGUAGE_FEATURES, presentableSuppressedFeatures)
+        }
     }
 
     buildKotlinLibrary(
