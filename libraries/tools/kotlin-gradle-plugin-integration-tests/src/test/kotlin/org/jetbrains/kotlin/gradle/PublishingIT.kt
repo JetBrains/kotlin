@@ -142,7 +142,7 @@ class PublishingIT : KGPBaseTest() {
                 }
             }
 
-            val pom = parsePom(publish(PublisherConfiguration()).rootComponent.pom)
+            val pom = parsePom(publish(publisherConfiguration = PublisherConfiguration()).rootComponent.pom)
             assertEquals(
                 setOf(
                     MavenModule(
@@ -245,7 +245,7 @@ class PublishingIT : KGPBaseTest() {
         }
 
         val published = rootProject.publish(
-            PublisherConfiguration(
+            publisherConfiguration = PublisherConfiguration(
                 group = pomRewriterRootName,
                 version = "1.0"
             )
@@ -384,7 +384,7 @@ class PublishingIT : KGPBaseTest() {
             }
 
             configureProducerProject()
-        }.publish(PublisherConfiguration())
+        }.publish(publisherConfiguration = PublisherConfiguration())
 
         val consumer = project(projectDir, gradleVersion = gradleVersion) {
             addPublishedProjectToRepositories(producer)
