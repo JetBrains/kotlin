@@ -118,6 +118,6 @@ fun loweringsOfTheFirstPhase(
     outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
     validateIrAfterInliningOnlyPrivateFunctions,
-//    inlineAllFunctionsPhase(irMangler),
+    inlineAllFunctionsPhase(irMangler),
 //        validateIrAfterInliningAllFunctions
 )
