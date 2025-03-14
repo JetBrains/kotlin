@@ -291,7 +291,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val enableLocalObjects: Boolean by lazy {
-        configuration.get(BinaryOptions.enableLocalObjects) != false
+        configuration.get(BinaryOptions.enableLocalObjects) == true
     }
 
     val enableDebugTransparentStepping: Boolean
