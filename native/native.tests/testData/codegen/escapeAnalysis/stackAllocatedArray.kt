@@ -4,6 +4,7 @@
  */
 // IGNORE_NATIVE: optimizationMode=DEBUG
 // IGNORE_NATIVE: optimizationMode=NO
+// IGNORE_NATIVE: gcType=CMS
 
 import kotlin.test.*
 import kotlin.native.internal.*
