@@ -31,6 +31,7 @@ private object KlibSourceFile : FirDeclarationDataKey()
 private object EvaluatedValue : FirDeclarationDataKey()
 private object CompilerPluginMetadata : FirDeclarationDataKey()
 private object OriginalReplSnippet : FirDeclarationDataKey()
+private object ReplSnippetTopLevelDeclaration : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -40,6 +41,13 @@ var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataR
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 var FirDeclaration.compilerPluginMetadata: Map<String, ByteArray>? by FirDeclarationDataRegistry.data(CompilerPluginMetadata)
 var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclarationDataRegistry.data(OriginalReplSnippet)
+
+/**
+ * Denotes a declaration on the REPL snippet level - top-level and all nested ones, but not the ones declared inside bodies.
+ * Required to distinguish these declarations from "real" local ones, declared in bodies.
+ * TODO: Revisit along with KT-75301
+ */
+var FirDeclaration.isReplSnippetDeclaration: Boolean? by FirDeclarationDataRegistry.data(ReplSnippetTopLevelDeclaration)
 
 /**
  * @see [FirBasedSymbol.klibSourceFile]

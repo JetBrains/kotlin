@@ -163,7 +163,7 @@ open class FirDeclarationsResolveTransformer(
                         (returnTypeRef as FirResolvedTypeRef)
                             .approximateDeclarationType(
                                 session,
-                                property.visibilityForApproximation().takeUnless { it == Visibilities.Local } ?: Visibilities.Public,
+                                property.visibilityForApproximation(),
                                 isLocal = false
                             )
                     )
@@ -999,7 +999,7 @@ open class FirDeclarationsResolveTransformer(
                     if (context.containers.getOrNull(context.containers.size - 2) is FirReplSnippet)
                         approximateDeclarationType(
                             session,
-                            simpleFunction?.visibilityForApproximation().takeUnless { it == Visibilities.Local } ?: Visibilities.Public,
+                            simpleFunction?.visibilityForApproximation(),
                             isLocal = false, isInlineFunction = simpleFunction?.isInline == true
                         )
                     else

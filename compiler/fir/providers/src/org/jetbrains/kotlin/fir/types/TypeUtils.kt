@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
@@ -479,7 +480,9 @@ fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visib
         if (container == null || container is FirFile || container is FirScript || container is FirReplSnippet) Visibilities.Public
         else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
     if (containerVisibility == Visibilities.Local) return Visibilities.Local
-    return visibility
+    // in case of REPL snippets we want to approximate local declarations as if they were public, because they may leak to the other
+    // snippets, where the anonymous objects referenced here will not be accessible
+    return if (visibility == Visibilities.Local && isReplSnippetDeclaration == true) Visibilities.Public else visibility
 }
 
 
