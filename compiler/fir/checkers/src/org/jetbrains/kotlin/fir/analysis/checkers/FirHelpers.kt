@@ -706,6 +706,8 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
 private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
 
+
+
 fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList {
     val annotated =
         if (container is FirBackingField) {
@@ -724,7 +726,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
             AnnotationTargetList(
                 KotlinTarget.classActualTargets(
                     annotated.classKind, annotated.isInner, annotated.isCompanion,
-                    isLocalClass = annotated.containingReplSymbolAttr == null && annotated.isLocal
+                    isLocalClass = annotated.replSnippetDeclaration != true && annotated.isLocal
                 )
             )
         }
@@ -761,7 +763,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
         }
         is FirSimpleFunction -> {
             when {
-                annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
+                annotated.isLocalInFunction -> TargetLists.T_LOCAL_FUNCTION
                 annotated.isMember -> TargetLists.T_MEMBER_FUNCTION
                 else -> TargetLists.T_TOP_LEVEL_FUNCTION
             }

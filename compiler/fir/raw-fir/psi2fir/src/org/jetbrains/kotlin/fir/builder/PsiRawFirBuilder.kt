@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -1475,11 +1476,13 @@ open class PsiRawFirBuilder(
                                             }
                                             is KtProperty -> {
                                                 val firProperty = convertProperty(declaration, null, forceLocal = true)
+                                                firProperty.accept(snippetDeclarationVisitor)
                                                 statements.add(firProperty)
                                             }
                                             else -> {
                                                 val firStatement = declaration.toFirStatement()
                                                 if (firStatement is FirDeclaration) {
+                                                    firStatement.accept(snippetDeclarationVisitor)
                                                     statements.add(firStatement)
                                                 } else {
                                                     error("unexpected declaration type in script")
@@ -3582,5 +3585,34 @@ enum class BodyBuildingMode {
 
     companion object {
         fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode = if (lazyBodies) LAZY_BODIES else NORMAL
+    }
+}
+
+private val snippetDeclarationVisitor: FirVisitorVoid = object : FirVisitorVoid() {
+    override fun visitElement(element: FirElement) {}
+
+    override fun visitProperty(property: FirProperty) {
+        property.replSnippetDeclaration = true
+        property.getter?.accept(this)
+        property.setter?.accept(this)
+    }
+
+    override fun visitRegularClass(regularClass: FirRegularClass) {
+        regularClass.replSnippetDeclaration = true
+        regularClass.declarations.forEach {
+            if (it is FirClass) it.accept(this)
+        }
+    }
+
+    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+        simpleFunction.replSnippetDeclaration = true
+    }
+
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        propertyAccessor.replSnippetDeclaration = true
+    }
+
+    override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+        typeAlias.replSnippetDeclaration = true
     }
 }
