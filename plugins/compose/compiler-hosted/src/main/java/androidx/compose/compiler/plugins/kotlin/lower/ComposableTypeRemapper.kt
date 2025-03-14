@@ -315,6 +315,7 @@ class ComposableTypeRemapper(
 
     private fun IrType.isComposableFunction(): Boolean =
         isSyntheticComposableFunction() ||
+                isKComposableFunction() ||
                 (isFunction() && hasComposableAnnotation())
 
     override fun remapType(type: IrType): IrType {

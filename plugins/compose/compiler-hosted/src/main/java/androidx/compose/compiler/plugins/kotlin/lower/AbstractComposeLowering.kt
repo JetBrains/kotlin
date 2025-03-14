@@ -19,6 +19,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
+import androidx.compose.compiler.plugins.kotlin.ComposeFqNames.InternalPackage
 import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromObjCClassId
 import org.jetbrains.kotlin.GeneratedDeclarationKey
@@ -1479,7 +1480,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    internal fun IrFunction.copyParametersFrom(original: IrFunction) {
+    internal fun IrFunction.copyParametersFrom(original: IrFunction, copyDefaultValues: Boolean = true) {
         val newFunction = this
         // here generic value parameters will be applied
         newFunction.copyTypeParametersFrom(original)
@@ -1496,7 +1497,11 @@ abstract class AbstractComposeLowering(
                 name = name,
                 type = it.type.remapTypeParameters(original, newFunction),
                 // remapping the type parameters explicitly
-                defaultValue = it.defaultValue?.copyWithNewTypeParams(original, newFunction)
+                defaultValue = if (copyDefaultValues) {
+                    it.defaultValue?.copyWithNewTypeParams(original, newFunction)
+                } else {
+                    null
+                }
             )
         }
         newFunction.dispatchReceiverParameter =
@@ -1504,11 +1509,13 @@ abstract class AbstractComposeLowering(
         newFunction.extensionReceiverParameter =
             original.extensionReceiverParameter?.copyWithNewTypeParams(original, newFunction)
 
-        newFunction.valueParameters.forEach {
-            it.defaultValue?.transformDefaultValue(
-                originalFunction = original,
-                newFunction = newFunction
-            )
+        if (copyDefaultValues) {
+            newFunction.valueParameters.forEach {
+                it.defaultValue?.transformDefaultValue(
+                    originalFunction = original,
+                    newFunction = newFunction
+                )
+            }
         }
     }
 
@@ -1728,9 +1735,14 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     return transform(deepCopy, null).patchDeclarationParents(target) as T
 }
 
-// Stub origin indicates that function should not be transformed in any way
-// and only exists for backwards compatibility.
-object ComposeBackwardsCompatibleStubOrigin : IrDeclarationOrigin {
-    override val name = "ComposeBackwardsCompatibleStubOrigin"
-    override val isSynthetic = true
-}
+fun IrType.isSyntheticComposableFunction() =
+    classOrNull?.owner?.let {
+        it.name.asString().startsWith("ComposableFunction") &&
+                it.packageFqName == InternalPackage
+    } ?: false
+
+fun IrType.isKComposableFunction() =
+    classOrNull?.owner?.let {
+        it.name.asString().startsWith("KComposableFunction") &&
+                it.packageFqName == InternalPackage
+    } ?: false
