@@ -78,25 +78,6 @@ class FromZipMetadataLibraryImpl(zipped: MetadataLibraryLayoutImpl, zipFileSyste
 class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSystem) :
     FromZipBaseLibraryImpl(zipped, zipFileSystem), IrKotlinLibraryLayout
 
-/**
- * This class and its children automatically extracts pieces of the library on first access. Use it if you need
- * to pass extracted files to an external tool. Otherwise, stick to [FromZipBaseLibraryImpl].
- */
-fun KotlinLibraryLayoutImpl.extract(file: File): File = extract(this.klib, file)
-
-private fun extract(zipFile: File, file: File) = zipFile.withZipFileSystem { zipFileSystem ->
-    val innerFile = zipFileSystem.file(file)
-    if (innerFile.exists) {
-        val temporary = org.jetbrains.kotlin.konan.file.createTempFile(file.name)
-        innerFile.copyTo(temporary)
-        temporary.deleteOnExit()
-        temporary
-    } else {
-        // return deliberately nonexistent file name zipFile.name + ! + file.name
-        File(zipFile.path + "!" + file.path)
-    }
-}
-
 fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
 
 private fun extractDir(zipFile: File, directory: File): File {
