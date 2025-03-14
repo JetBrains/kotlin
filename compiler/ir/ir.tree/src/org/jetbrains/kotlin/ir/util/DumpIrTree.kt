@@ -238,7 +238,7 @@ class DumpIrTreeVisitor(
             if (options.printAnnotationsInFakeOverrides || !declaration.isFakeOverride) {
                 dumpAnnotations(declaration)
             }
-            declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
+            declaration.correspondingPropertySymbol?.dumpAsDeclaration("correspondingProperty")
             declaration.overriddenSymbols.dumpFakeOverrideSymbols()
             declaration.body?.accept(this, "")
         }
@@ -360,7 +360,7 @@ class DumpIrTreeVisitor(
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
         inlinedBlock.dumpLabeledElementWith(data) {
-            inlinedBlock.inlinedFunctionSymbol?.dumpInternal("inlinedFunctionSymbol")
+            inlinedBlock.inlinedFunctionSymbol?.dumpAsReference("inlinedFunctionSymbol")
             inlinedBlock.inlinedFunctionFileEntry.dumpInternal("inlinedFunctionFileEntry")
             inlinedBlock.acceptChildren(this, "")
         }
@@ -374,7 +374,7 @@ class DumpIrTreeVisitor(
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: String) {
         expression.dumpLabeledElementWith(data) {
-            expression.overriddenFunctionSymbol.dumpInternal("overriddenFunctionSymbol")
+            expression.overriddenFunctionSymbol.dumpAsReference("overriddenFunctionSymbol")
             val parameterNames = getValueParameterNamesForDebug(expression.invokeFunction, expression.boundValues.size, options)
             expression.boundValues.forEachIndexed { index, value ->
                 val name = parameterNames[index]
@@ -494,19 +494,18 @@ class DumpIrTreeVisitor(
         }
     }
 
-    private fun IrSymbol.dumpInternal(label: String? = null) {
+    private fun IrSymbol.dumpAsDeclaration(label: String) {
         if (isBound)
-            owner.dumpInternal(label)
+            printer.println("$label: ", owner.accept(elementRenderer, null))
         else
             printer.println("$label: UNBOUND ${javaClass.simpleName}")
     }
 
-    private fun IrElement.dumpInternal(label: String? = null) {
-        if (label != null) {
-            printer.println("$label: ", accept(elementRenderer, null))
-        } else {
-            printer.println(accept(elementRenderer, null))
-        }
+    private fun IrSymbol.dumpAsReference(label: String) {
+        if (isBound)
+            dump(label)
+        else
+            printer.println("$label: UNBOUND ${javaClass.simpleName}")
     }
 
     private fun IrFileEntry.dumpInternal(label: String? = null) {
