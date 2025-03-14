@@ -19,13 +19,6 @@ import kotlin.reflect.KClass
 class AbbreviatedTypeAttribute(
     override val coneType: ConeKotlinType,
 ) : ConeAttributeWithConeType<AbbreviatedTypeAttribute>() {
-
-    init {
-        require(coneType.abbreviatedType == null) {
-            "A coneType cannot be used as abbreviation if it is itself abbreviated: ${coneType.renderForDebugging()}"
-        }
-    }
-
     override fun union(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
     override fun intersect(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
     override fun add(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute = other ?: this
