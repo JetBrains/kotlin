@@ -69,10 +69,6 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val sanitizer by option<SanitizerKind>()
 
-    val mimallocUseDefaultOptions by booleanOption()
-
-    val mimallocUseCompaction by booleanOption()
-
     val compileBitcodeWithXcodeLlvm by booleanOption()
 
     val objcDisposeOnMain by booleanOption()

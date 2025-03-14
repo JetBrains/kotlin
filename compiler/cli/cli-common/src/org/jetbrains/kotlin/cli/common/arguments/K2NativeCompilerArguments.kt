@@ -348,7 +348,7 @@ The default value is 1."""
     @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options.")
     var clangOptions: Array<String>? = null
 
-    @Argument(value="-Xallocator", valueDescription = "std | mimalloc | custom", description = "Allocator used at runtime.")
+    @Argument(value="-Xallocator", valueDescription = "std | custom", description = "Allocator used at runtime.")
     var allocator: String? = null
 
     @Argument(

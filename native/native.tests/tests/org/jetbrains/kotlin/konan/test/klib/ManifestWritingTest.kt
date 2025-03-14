@@ -45,13 +45,6 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
 @Tag("klib")
 @TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
-    @BeforeEach
-    fun assumeNotMimalloc() {
-        // Mimalloc is deprecated and will emit a warning, when enabled.
-        // These tests check compiler output, and so will fail because of the extra warning.
-        Assumptions.assumeFalse(testRunSettings.get<Allocator>() == Allocator.MIMALLOC)
-    }
-
     @Test
     @TestMetadata("simpleManifest")
     fun testSimpleManifest(testInfo: TestInfo) {

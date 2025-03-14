@@ -64,32 +64,6 @@ bitcode {
             sourceSets {}
         }
 
-        module("mimalloc") {
-            sourceSets {
-                main {
-                    inputFiles.from(srcRoot.dir("c"))
-                    inputFiles.include("**/*.c")
-                    inputFiles.exclude("**/alloc-override*.c", "**/page-queue.c", "**/static.c", "**/bitmap.inc.c")
-                    headersDirs.setFrom(srcRoot.dir("c/include"))
-                }
-            }
-
-            compiler.set("clang")
-            compilerArgs.set(listOfNotNull(
-                    "-std=gnu11",
-                    if (sanitizer == SanitizerKind.THREAD) { "-O1" } else { "-O3" },
-                    "-DKONAN_MI_MALLOC=1",
-                    "-Wno-unknown-pragmas",
-                    "-ftls-model=initial-exec",
-                    "-Wno-unused-function",
-                    "-Wno-error=atomic-alignment",
-                    "-Wno-unused-parameter", /* for windows 32 */
-                    "-DMI_TSAN=1".takeIf { sanitizer == SanitizerKind.THREAD },
-            ))
-
-            onlyIf { it.supportsMimallocAllocator() }
-        }
-
         module("libbacktrace") {
             val elfSize = when (target.architecture) {
                 TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
@@ -200,16 +174,6 @@ bitcode {
             testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
-        module("mimalloc_alloc") {
-            srcRoot.set(layout.projectDirectory.dir("src/alloc/mimalloc"))
-            headersDirs.from(files("src/mimalloc/c/include", "src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-            }
-
-            compilerArgs.add("-DKONAN_MI_MALLOC=1")
-        }
-
         module("legacy_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/legacy"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
@@ -218,11 +182,6 @@ bitcode {
                 test {}
                 testFixtures {}
             }
-        }
-
-        testsGroup("mimalloc_legacy_alloc_test") {
-            testedModules.addAll("legacy_alloc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "mimalloc_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "mimalloc")
         }
 
         testsGroup("std_legacy_alloc_test") {

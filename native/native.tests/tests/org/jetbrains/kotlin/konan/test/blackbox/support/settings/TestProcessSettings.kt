@@ -182,7 +182,6 @@ enum class GCScheduler(val compilerFlag: String?) {
 enum class Allocator(val compilerFlag: String?) {
     UNSPECIFIED(null),
     STD("-Xallocator=std"),
-    MIMALLOC("-Xallocator=mimalloc"),
     CUSTOM("-Xallocator=custom");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()

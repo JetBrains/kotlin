@@ -70,12 +70,11 @@ class LinkerArguments(
     val debug: Boolean,
     val kind: LinkerOutputKind,
     val outputDsymBundle: String,
-    val mimallocEnabled: Boolean,
     val sanitizer: SanitizerKind? = null,
 )
 
 // TODO: This is for compatibility with CompileToExecutable.kt. Remove after advancing the bootstrap.
-@Suppress("unused")
+@Suppress("unused", "UNUSED_PARAMETER")
 fun LinkerFlags.finalLinkCommands(
     objectFiles: List<ObjectFile>, executable: ExecutableFile,
     libraries: List<String>, linkerArgs: List<String>,
@@ -86,7 +85,7 @@ fun LinkerFlags.finalLinkCommands(
 ): List<Command> = with(this) {
     LinkerArguments(
         TempFiles(),
-        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle, mimallocEnabled, sanitizer
+        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle,sanitizer
     ).finalLinkCommands()
 }
 

@@ -32,13 +32,6 @@ import java.io.File
 import kotlin.test.assertIs
 
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
-    @BeforeEach
-    fun assumeNotMimalloc() {
-        // Mimalloc is deprecated and will emit a warning, when enabled.
-        // These tests check compiler output, and so will fail because of the extra warning.
-        Assumptions.assumeFalse(testRunSettings.get<Allocator>() == Allocator.MIMALLOC)
-    }
-
     @Test
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
         val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
