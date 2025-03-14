@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -221,4 +225,33 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     build(dumpName)
 
     return outputFile.readText()
+}
+
+val Project.propertiesExtension: ExtraPropertiesExtension
+    get() = extensions.getByType(ExtraPropertiesExtension::class.java)
+
+internal fun Project.setUklibPublicationStrategy(strategy: KmpPublicationStrategy = KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_PUBLICATION_STRATEGY,
+        strategy.propertyName,
+    )
+    when (strategy) {
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> enableCrossCompilation()
+        KmpPublicationStrategy.StandardKMPPublication -> Unit
+    }
+}
+
+fun Project.enableCrossCompilation(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION,
+        enable.toString(),
+    )
+}
+
+internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy = KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY,
+        strategy.propertyName,
+    )
+    computeTransformedLibraryChecksum(false)
 }
