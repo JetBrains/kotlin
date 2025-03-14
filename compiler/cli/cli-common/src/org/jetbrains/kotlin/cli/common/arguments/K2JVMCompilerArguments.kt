@@ -10,11 +10,6 @@ import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.config.JvmTarget
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
-    companion object {
-        @JvmStatic
-        private val serialVersionUID = 0L
-    }
-
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated class files.")
     var destination: String? = null
         set(value) {
