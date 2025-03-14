@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.util.OpenAddressLinearProbingHashTable
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 @ThreadSafeMutableState
@@ -219,19 +220,19 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     private val state = State()
 
     private class State {
-        val fileMap: MutableMap<FqName, List<FirFile>> = hashMapOf()
+        val fileMap: MutableMap<FqName, List<FirFile>> = OpenAddressLinearProbingHashTable<FqName, List<FirFile>>()
         val allSubPackages = mutableSetOf<FqName>()
-        val classifierMap = hashMapOf<ClassId, FirClassLikeDeclaration>()
-        val classifierContainerFileMap = hashMapOf<ClassId, FirFile>()
-        val classifierInPackage = hashMapOf<FqName, MutableSet<Name>>()
-        val classesInPackage = hashMapOf<FqName, MutableSet<Name>>()
+        val classifierMap = OpenAddressLinearProbingHashTable<ClassId, FirClassLikeDeclaration>()
+        val classifierContainerFileMap = OpenAddressLinearProbingHashTable<ClassId, FirFile>()
+        val classifierInPackage = OpenAddressLinearProbingHashTable<FqName, MutableSet<Name>>()
+        val classesInPackage = OpenAddressLinearProbingHashTable<FqName, MutableSet<Name>>()
         val functionMap = mutableMapOf<CallableId, List<FirNamedFunctionSymbol>>()
         val propertyMap = mutableMapOf<CallableId, List<FirPropertySymbol>>()
-        val constructorMap = hashMapOf<CallableId, List<FirConstructorSymbol>>()
-        val callableContainerMap = hashMapOf<FirCallableSymbol<*>, FirFile>()
-        val scriptContainerMap = hashMapOf<FirScriptSymbol, FirFile>()
-        val scriptByFilePathMap = hashMapOf<String, FirScriptSymbol>()
-        val snippetContainerMap = hashMapOf<FirReplSnippetSymbol, FirFile>()
+        val constructorMap = OpenAddressLinearProbingHashTable<CallableId, List<FirConstructorSymbol>>()
+        val callableContainerMap = OpenAddressLinearProbingHashTable<FirCallableSymbol<*>, FirFile>()
+        val scriptContainerMap = OpenAddressLinearProbingHashTable<FirScriptSymbol, FirFile>()
+        val scriptByFilePathMap = OpenAddressLinearProbingHashTable<String, FirScriptSymbol>()
+        val snippetContainerMap = OpenAddressLinearProbingHashTable<FirReplSnippetSymbol, FirFile>()
 
         fun setFrom(other: State) {
             fileMap.clear()

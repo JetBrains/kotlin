@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OpenAddressLinearProbingHashTable
 
 abstract class AbstractFirUseSiteMemberScope(
     val ownerClassLookupTag: ConeClassLikeLookupTag,
@@ -32,12 +33,15 @@ abstract class AbstractFirUseSiteMemberScope(
         superTypeScopes, dispatchReceiverType, forClassUseSiteScope = true
     )
 
-    private val functions: MutableMap<Name, Collection<FirNamedFunctionSymbol>> = hashMapOf()
+    private val functions: MutableMap<Name, Collection<FirNamedFunctionSymbol>> =
+        OpenAddressLinearProbingHashTable()
+    private val properties: MutableMap<Name, Collection<FirVariableSymbol<*>>> =
+        OpenAddressLinearProbingHashTable()
 
-    private val properties: MutableMap<Name, Collection<FirVariableSymbol<*>>> = hashMapOf()
     protected val directOverriddenFunctions: MutableMap<FirNamedFunctionSymbol, List<ResultOfIntersection<FirNamedFunctionSymbol>>> =
-        hashMapOf()
-    protected val directOverriddenProperties: MutableMap<FirPropertySymbol, List<ResultOfIntersection<FirPropertySymbol>>> = hashMapOf()
+        OpenAddressLinearProbingHashTable()
+    protected val directOverriddenProperties: MutableMap<FirPropertySymbol, List<ResultOfIntersection<FirPropertySymbol>>> =
+        OpenAddressLinearProbingHashTable()
 
     protected val functionsFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirNamedFunctionSymbol>>> = hashMapOf()
     protected val propertiesFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirPropertySymbol>>> = hashMapOf()

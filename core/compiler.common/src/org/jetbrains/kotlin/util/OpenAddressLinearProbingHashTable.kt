@@ -76,6 +76,10 @@ class OpenAddressLinearProbingHashTable<K : Any, V : Any> : AbstractMutableMap<K
         return null
     }
 
+    override fun containsKey(key: K): Boolean {
+        return get(key) != null
+    }
+
     private fun rehash() {
         val newShift = maxOf(shift - 3, 0)
         val newArraySize = 1 shl (33 - newShift)

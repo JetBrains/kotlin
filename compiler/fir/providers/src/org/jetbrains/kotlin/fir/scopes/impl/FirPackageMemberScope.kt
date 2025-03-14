@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OpenAddressLinearProbingHashTable
 import org.jetbrains.kotlin.utils.SmartList
 
 class FirPackageMemberScope(
@@ -29,9 +31,9 @@ class FirPackageMemberScope(
     private val symbolProvider: FirSymbolProvider = session.symbolProvider,
     private val excludedNames: Set<Name> = emptySet(),
 ) : FirScope() {
-    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = hashMapOf()
-    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = hashMapOf()
-    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = hashMapOf()
+    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>> = OpenAddressLinearProbingHashTable()
+    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = OpenAddressLinearProbingHashTable()
+    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = OpenAddressLinearProbingHashTable()
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
@@ -42,10 +44,10 @@ class FirPackageMemberScope(
 
         val symbol = classifierCache.getOrPut(name) {
             val unambiguousFqName = ClassId(fqName, name)
-            symbolProvider.getClassLikeSymbolByClassId(unambiguousFqName)
+            symbolProvider.getClassLikeSymbolByClassId(unambiguousFqName) ?: ERROR_SYMBOL
         }
 
-        if (symbol != null) {
+        if (symbol !is FirAnonymousObjectSymbol) {
             processor(symbol, ConeSubstitutor.Empty)
         }
     }
@@ -77,6 +79,10 @@ class FirPackageMemberScope(
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirPackageMemberScope {
         return FirPackageMemberScope(fqName, newSession, excludedNames = excludedNames)
+    }
+
+    companion object {
+        val ERROR_SYMBOL: FirClassifierSymbol<*> = FirAnonymousObjectSymbol(FqName.ROOT)
     }
 }
 
