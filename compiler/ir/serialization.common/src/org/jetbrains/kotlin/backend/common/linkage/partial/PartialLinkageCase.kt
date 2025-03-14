@@ -1,23 +1,19 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.linkage.partial
+package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
+import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils
 import org.jetbrains.kotlin.ir.symbols.*
 
 /**
  * Describes a reason why an [IrDeclaration] or an [IrExpression] is partially linked. Subclasses represent various causes of the p.l.
  */
-@Suppress("KDocUnresolvedReference")
 sealed interface PartialLinkageCase {
     /**
      * Unusable (partially linked) classifier.
@@ -149,8 +145,8 @@ sealed interface PartialLinkageCase {
     class ExpressionHasInaccessibleDeclaration(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
-        val declaringModule: PLModule,
-        val useSiteModule: PLModule
+        val declaringModule: PartialLinkageUtils.Module,
+        val useSiteModule: PartialLinkageUtils.Module
     ) : PartialLinkageCase
 
     /**

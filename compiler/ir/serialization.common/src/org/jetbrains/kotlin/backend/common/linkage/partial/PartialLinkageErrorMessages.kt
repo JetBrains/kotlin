@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.IdSignature.*
