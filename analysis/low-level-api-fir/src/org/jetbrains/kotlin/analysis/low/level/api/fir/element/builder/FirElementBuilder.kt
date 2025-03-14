@@ -328,7 +328,7 @@ internal val KtTypeParameter.containingDeclaration: KtDeclaration?
  *
  * @see getNonLocalContainingOrThisElement
  */
-internal val KtElement.isAutonomousDeclaration: Boolean
+internal val KtElement.isAutonomousElement: Boolean
     get() = when (this) {
         is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
         else -> true
