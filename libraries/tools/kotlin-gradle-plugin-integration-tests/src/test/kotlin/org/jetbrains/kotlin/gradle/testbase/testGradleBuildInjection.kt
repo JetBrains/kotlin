@@ -185,18 +185,20 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     if (buildScript.exists()) {
         if (buildScript.readText().contains(buildScriptInjectionsMarker)) return
         buildScript.modify {
-            it.insertBlockToBuildScriptAfterImports("""
-            $buildScriptInjectionsMarker
-            buildscript {
-                println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                dependencies {
-                    classpath(
-                        files(
-            ${escapedBuildScriptClasspathUrlsGroovy()}
+            it.insertBlockToBuildScriptAfterImports(
+                """
+                $buildScriptInjectionsMarker
+                buildscript {
+                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
+                    dependencies {
+                        classpath(
+                            files(
+                                ${escapedBuildScriptClasspathUrlsGroovy()}
+                            )
                         )
-                    )
+                    }
                 }
-            }
+                
                 """.trimIndent()
             )
         }
@@ -205,19 +207,19 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
 
     if (buildScriptKts.exists()) {
         if (buildScriptKts.readText().contains(buildScriptInjectionsMarker)) return
-
         buildScriptKts.modify {
             it.insertBlockToBuildScriptAfterImports("""
-            $buildScriptInjectionsMarker
-            buildscript {
-                println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
-                val classes = files(
-        ${escapedBuildScriptClasspathUrls()}
-                )
-                dependencies {
-                    classpath(classes)
+                $buildScriptInjectionsMarker
+                buildscript {
+                    println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
+                    val classes = files(
+                        ${escapedBuildScriptClasspathUrls()}
+                    )
+                    dependencies {
+                        classpath(classes)
+                    }
                 }
-            }
+            
                 """.trimIndent()
             )
         }
