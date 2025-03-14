@@ -345,21 +345,19 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             }
 
         private fun addOverriddenChildToCoroutineClass(newFunction: IrSimpleFunction, superFunction: IrSimpleFunction?) {
-            if (superFunction != null) {
-                val fakeOverrideIndex = coroutineClass
+            val fakeOverrideIndex = superFunction?.let { function ->
+              coroutineClass
                     .declarations
                     .indexOfFirst {
-                        it is IrOverridableDeclaration<*> && superFunction.symbol in it.overriddenSymbols && it.isFakeOverride
+                        it is IrOverridableDeclaration<*> && function.symbol in it.overriddenSymbols && it.isFakeOverride
                     }
-                if (fakeOverrideIndex >= 0) {
-                    coroutineClass.declarations[fakeOverrideIndex] = newFunction
-                    fakeOverrideIndex
-                } else {
-                    coroutineClass.declarations.add(newFunction)
-                }
+            } ?: -1
+
+            if (fakeOverrideIndex >= 0) {
+                coroutineClass.declarations[fakeOverrideIndex] = newFunction
+                fakeOverrideIndex
             } else {
                 coroutineClass.declarations.add(newFunction)
-            }
         }
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
