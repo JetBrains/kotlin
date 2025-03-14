@@ -64,11 +64,10 @@ fun box() {
 // test.kt:19 box
 // EXPECTATIONS ClassicFrontend JS_IR
 // test.kt:4 <get-z>
-// test.kt:5 <get-z>
 // EXPECTATIONS FIR JS_IR
 // test.kt:5 <get-z>
-// test.kt:5 <get-z>
 // EXPECTATIONS JS_IR
+// test.kt:5 <get-z>
 // test.kt:5 <get-z>
 // test.kt:14 getValue
 // test.kt:6 A$z$delegate$lambda
