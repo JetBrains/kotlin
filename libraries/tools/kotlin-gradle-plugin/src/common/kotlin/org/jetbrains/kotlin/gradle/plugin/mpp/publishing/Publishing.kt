@@ -55,12 +55,6 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         (this as MavenPublicationInternal).publishWithOriginalFileName()
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
-        if (project.kotlinPropertiesProvider.publishUklib) {
-            configureRootComponentForUklibPublication(
-                project,
-                kotlinSoftwareComponent,
-            )
-        }
     }
 }
 
