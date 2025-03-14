@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.internal.artifacts.configurations.ConfigurationInternal
+import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -28,7 +29,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     fun testUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val compilationConfiguredTasks = configuredTasks().buildAndReturn("compileKotlin")
-            if (gradleVersion < GradleVersion.version("8.0")) {
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
                 assertEquals(
                     mapOf(
                         ":" to setOf(
@@ -290,7 +291,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             }
 
             project.gradle.allprojects { project ->
-                // This used to be forEach. Was this intentional?
                 project.configurations.all { configuration ->
                     configuration.incoming.beforeResolve {
                         if (configurationTime.get()) {
