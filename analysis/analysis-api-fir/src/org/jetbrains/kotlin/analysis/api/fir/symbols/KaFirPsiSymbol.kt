@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.realPsi
@@ -141,6 +142,15 @@ private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrOb
     val declarationSiteModule = getModule(declaration)
     val declarationSiteSession = firResolveSession.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.supertypeGenerators.isNotEmpty()
+}
+
+/**
+ * We cannot optimize some declaration creations if at least one compiler plugin may generate additional declarations
+ */
+internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtClassOrObject): Boolean {
+    val declarationSiteModule = getModule(declaration)
+    val declarationSiteSession = firResolveSession.getSessionFor(declarationSiteModule)
+    return declarationSiteSession.extensionService.declarationGenerators.isNotEmpty()
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {

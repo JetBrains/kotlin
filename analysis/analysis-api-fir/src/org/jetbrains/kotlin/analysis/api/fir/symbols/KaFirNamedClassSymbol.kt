@@ -131,6 +131,17 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val companionObject: KaNamedClassSymbol?
         get() = withValidityAssertion {
+            if (backingPsi != null) {
+                backingPsi.companionObjects.firstOrNull()?.let {
+                    return KaFirNamedClassSymbol(it, analysisSession)
+                }
+
+                // No compiler plugin – no new companion object possibility
+                if (!analysisSession.hasDeclarationGeneratorCompilerPlugin(backingPsi)) {
+                    return null
+                }
+            }
+
             firSymbol.companionObjectSymbol?.let {
                 builder.classifierBuilder.buildNamedClassSymbol(it)
             }
