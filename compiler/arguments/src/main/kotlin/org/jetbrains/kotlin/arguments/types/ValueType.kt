@@ -25,7 +25,7 @@ sealed interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
     val defaultValue: ReleaseDependent<T?>
 
-    fun stringRepresentation(value: T?): String
+    fun stringRepresentation(value: T?): String?
 }
 
 @Serializable
@@ -43,8 +43,19 @@ class StringType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<String?> = ReleaseDependent(null),
 ) : KotlinArgumentValueType<String> {
-    override fun stringRepresentation(value: String?): String {
-        return value ?: "null"
+    override fun stringRepresentation(value: String?): String? {
+        if (value == null) return null
+        return "\"$value\""
+    }
+}
+
+@Serializable
+class IntType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<Int?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Int> {
+    override fun stringRepresentation(value: Int?): String {
+        return "\"$value\""
     }
 }
 

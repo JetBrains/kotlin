@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.JvmTarget
 import org.jetbrains.kotlin.arguments.asReleaseDependent
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.defaultFalse
 import org.jetbrains.kotlin.arguments.defaultNull
+import org.jetbrains.kotlin.arguments.defaultOne
 import org.jetbrains.kotlin.arguments.stubLifecycle
 import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.types.IntType
 import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
@@ -22,25 +25,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArguments) {
     compilerArgument {
-        name = "jvm-target"
-        description = "Target version of the generated JVM bytecode (1.6 or 1.8).".asReleaseDependent()
-
-        valueType = KotlinJvmTargetType()
-        valueDescription = "<version>".asReleaseDependent()
-
-        additionalAnnotations(
-            GradleOption(
-                value = DefaultValue.JVM_TARGET_VERSIONS,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
-        )
-
-        stubLifecycle()
-    }
-
-    compilerArgument {
         name = "d"
+        compilerName = "destination"
         description = "Destination for generated class files.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<directory|jar>".asReleaseDependent()
@@ -50,6 +36,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
 
     compilerArgument {
         name = "classpath"
+        shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user class files.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
@@ -108,6 +95,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
 
     compilerArgument {
         name = "expression"
+        shortName = "e"
         description = "Evaluate the given string as a Kotlin script.".asReleaseDependent()
         valueType = StringType.defaultNull
 
@@ -141,6 +129,24 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
     }
 
     compilerArgument {
+        name = "jvm-target"
+        description = "The target version of the generated JVM bytecode (${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}), with 1.8 as the default.".asReleaseDependent()
+
+        valueType = KotlinJvmTargetType()
+        valueDescription = "<version>".asReleaseDependent()
+
+        additionalAnnotations(
+            GradleOption(
+                value = DefaultValue.JVM_TARGET_VERSIONS,
+                gradleInputType = GradleInputTypes.INPUT,
+                shouldGenerateDeprecatedKotlinOptions = true,
+            )
+        )
+
+        stubLifecycle()
+    }
+
+    compilerArgument {
         name = "java-parameters"
         description = "Generate metadata for Java 1.8 reflection on method parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -158,6 +164,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(Levels.jvmCompilerArgum
 
     compilerArgument {
         name = "jvm-default"
+        compilerName = "jvmDefaultStable"
         description = """Emit JVM default methods for interface declarations with bodies. The default is 'enable'.
 -jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes with
                                  static methods for compatibility with code compiled in the 'disable' mode.
@@ -202,6 +209,7 @@ to force diagnostics to be reported.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xir-do-not-clear-binding-context"
+        compilerName = "doNotClearBindingContext"
         description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
@@ -213,7 +221,7 @@ to force diagnostics to be reported.""".asReleaseDependent()
         description = """Run codegen phase in N parallel threads.
 0 means use one thread per processor core.
 The default value is 1.""".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = IntType.defaultOne
         valueDescription = "<N>".asReleaseDependent()
 
         stubLifecycle()
@@ -221,6 +229,7 @@ The default value is 1.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xmodule-path"
+        compilerName = "javaModulePath"
         description = "Paths to Java 9+ modules.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
@@ -230,6 +239,7 @@ The default value is 1.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xadd-modules"
+        compilerName = "additionalJavaModules"
         description = "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<module[,]>".asReleaseDependent()
@@ -271,13 +281,15 @@ The default value is 1.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xassertions"
+        compilerName = "assertionsMode"
         description = """'kotlin.assert' call behavior:
 -Xassertions=always-enable:  enable, ignore JVM assertion settings;
 -Xassertions=always-disable: disable, ignore JVM assertion settings;
 -Xassertions=jvm:            enable, depend on JVM assertion settings;
 -Xassertions=legacy:         calculate the condition on each call, the behavior depends on JVM assertion settings in the kotlin package;
 default: legacy""".asReleaseDependent()
-        valueType = StringType.defaultNull
+        // TODO: change to JVMAssertionsMode type
+        valueType = StringType(defaultValue = "legacy".asReleaseDependent())
         valueDescription = "{always-enable|always-disable|jvm|legacy}".asReleaseDependent()
 
         stubLifecycle()
@@ -285,6 +297,7 @@ default: legacy""".asReleaseDependent()
 
     compilerArgument {
         name = "Xbuild-file"
+        deprecatedName = "module"
         description = "Path to the .xml build file to compile.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
@@ -466,6 +479,7 @@ The default value is 'warn'.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xgenerate-strict-metadata-version"
+        compilerName = "strictMetadataVersionSemantics"
         description = "Generate metadata with strict version semantics (see the KDoc entry on 'Metadata.extraInt').".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
@@ -558,6 +572,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
 
     compilerArgument {
         name = "Xklib"
+        compilerName = "klibLibraries"
         description = "Paths to cross-platform libraries in the .klib format.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
@@ -591,6 +606,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
 
     compilerArgument {
         name = "Xprofile"
+        compilerName = "profileCompilerCommand"
         description = """Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
 `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
 If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
@@ -603,6 +619,7 @@ Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfile
 
     compilerArgument {
         name = "Xuse-14-inline-classes-mangling-scheme"
+        compilerName = "useOldInlineClassesManglingScheme"
         description = "Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
@@ -611,6 +628,7 @@ Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfile
 
     compilerArgument {
         name = "Xjvm-enable-preview"
+        compilerName = "enableJvmPreview"
         description = """Allow using Java features that are in the preview phase.
 This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -629,6 +647,7 @@ This option has no effect and will be deleted in a future version.""".asReleaseD
 
     compilerArgument {
         name = "Xtype-enhancement-improvements-strict-mode"
+        compilerName = "typeEnhancementImprovementsInStrictMode"
         description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
 including the ability to read type-use annotations from class files.
 See KT-45671 for more details.""".asReleaseDependent()
@@ -640,7 +659,10 @@ See KT-45671 for more details.""".asReleaseDependent()
     compilerArgument {
         name = "Xserialize-ir"
         description = "Save the IR to metadata (Experimental).".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = StringType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = "none".asReleaseDependent()
+        )
         valueDescription = "{none|inline|all}".asReleaseDependent()
 
         stubLifecycle()
@@ -675,6 +697,7 @@ It has no effect when -language-version is 2.0 or higher.""".asReleaseDependent(
 
     compilerArgument {
         name = "Xdebug"
+        compilerName = "enableDebugMode"
         description = """Enable debug mode for compilation.
 Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
 If API Level >= 2.2 -- no-op.""".asReleaseDependent()
@@ -701,6 +724,7 @@ If API Level >= 2.2 -- no-op.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xir-inliner"
+        compilerName = "enableIrInliner"
         description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
@@ -725,6 +749,7 @@ If API Level >= 2.2 -- no-op.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xcompile-builtins-as-part-of-stdlib"
+        compilerName = "expectBuiltinsAsPartOfStdlib"
         description = "Enable behaviour needed to compile builtins as part of JVM stdlib".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
