@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable.*
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Usable
+import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Unusable
+import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Unusable.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Usable
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*

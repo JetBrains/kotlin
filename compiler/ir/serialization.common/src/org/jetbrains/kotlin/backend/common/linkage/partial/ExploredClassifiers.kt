@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
 
 internal class ExploredClassifiers {
     private val usableSymbols = HashSet<IrClassifierSymbol>()
