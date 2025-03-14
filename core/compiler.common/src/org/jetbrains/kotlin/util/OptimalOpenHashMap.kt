@@ -17,10 +17,7 @@ import java.util.Objects
  *
  * This version uses lazy deletion via tombstones, cleaning up only when tombstones exceed a threshold (currently 25%)
  */
-class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializable {
-    // Unique tombstone marker.
-    //private val TOMBSTONE = Entry<K?, V?>(null, null, -1)
-
+class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, Serializable {
     private class Entry<K, V>(
         override val key: K, override var value: V, // cached hash value
         val hash: Int
@@ -48,22 +45,19 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private var table = arrayOfNulls<Entry<*, *>>(DEFAULT_INITIAL_CAPACITY) as Array<Entry<K, V>?>
     private var _size = 0
     private var capacity: Int = DEFAULT_INITIAL_CAPACITY
     private val loadFactor: Float = DEFAULT_LOAD_FACTOR
 
-    // Count of tombstones in the table.
-    private var tombstones = 0
-
     /**
-     * Table is a single array but we're filling it using the funnel method, in levels.
+     * Table is a single array, but we're filling it using the funnel method, in levels.
      *
      * @param key the key whose associated value is to be returned
      * @return
      */
     override fun get(key: K): V? {
-//        if (key == null) return null
         val hash: Int = hash(key)
 
         var levelWidth = capacity ushr 1
@@ -77,7 +71,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
             if (entry == null) {
                 return null
             }
-            if (/*entry !== TOMBSTONE && */entry.hash == hash && entry.key == key) {
+            if (entry.hash == hash && entry.key == key) {
                 return entry.value
             }
             // Move to next level
@@ -89,15 +83,12 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
     }
 
     override fun put(key: K, value: V): V? {
-//        if (key == null) throw NullPointerException("key is null")
-        if ((_size + tombstones + 1.0) / capacity > loadFactor) {
+        if ((_size + 1.0) / capacity > loadFactor) {
             check(capacity != MAXIMUM_CAPACITY) { "Cannot resize: maximum capacity reached ($MAXIMUM_CAPACITY)" }
             resize()
         }
         val hash: Int = hash(key)
         val tab = table
-
-        var tombstoneIndex = -1 // fill gaps
 
         var levelWidth = capacity ushr 1
         var offset = 0
@@ -108,14 +99,9 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
 
             // Actual put() logic:
             val entry = table[tableIndex]
-            if (entry == null || (/*entry !== TOMBSTONE && */entry.hash == hash && key == entry.key)) {
+            if (entry == null || (entry.hash == hash && key == entry.key)) {
                 val e = tab[tableIndex]
                 if (e == null) {
-//                    if (tombstoneIndex != -1) {
-//                        // its a new entry, override the last tombstone:
-//                        tableIndex = tombstoneIndex
-//                        tombstones--
-//                    }
                     tab[tableIndex] = Entry<K, V>(key, value, hash)
                     _size++
                     return null
@@ -124,9 +110,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
                     e.value = value
                     return oldVal
                 }
-            } //else if (entry === TOMBSTONE && tombstoneIndex == -1) {
-              // tombstoneIndex = tableIndex
-            //}
+            }
 
             // Move to next level
             offset = offset or levelWidth
@@ -139,28 +123,6 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
     }
 
     override fun remove(key: K): V? = TODO()
-
-    /**
-     * Rehashes the entire table to remove tombstones.
-     */
-    private fun cleanup() {
-        val oldTable = table
-        val newTable = arrayOfNulls<Entry<*, *>>(capacity) as Array<Entry<K, V>?>
-        var newSize = 0
-        for (e in oldTable) {
-            if (e != null/* && e !== TOMBSTONE*/) {
-                val idx = funnelProbe(e.key, e.hash)
-                if (newTable[idx] == null) {
-                    newTable[idx] = e
-                    newSize++
-                    break
-                }
-            }
-        }
-        table = newTable
-        _size = newSize
-        tombstones = 0
-    }
 
     /**
      * Divide the available space into blocks, for example a 128-capacity table in our case will have:
@@ -188,7 +150,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
             val tableIndex = offset + levelIndex
 
             val entry = table[tableIndex]
-            if (entry == null || (/*entry !== TOMBSTONE && */entry.hash == hash && key == entry.key)) {
+            if (entry == null || (entry.hash == hash && key == entry.key)) {
                 // to avoid doing this twice this funnelProbe has been inlined into get(), put(), remove().
                 return tableIndex
             }
@@ -203,16 +165,16 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
     }
 
     private fun resize() {
-        check(capacity < MAXIMUM_CAPACITY) { "Cannot resize: maximum capacity reached (" + MAXIMUM_CAPACITY + ")" }
+        check(capacity < MAXIMUM_CAPACITY) { "Cannot resize: maximum capacity reached ($MAXIMUM_CAPACITY)" }
         var newCapacity = capacity shl 1
         if (newCapacity > MAXIMUM_CAPACITY) newCapacity = MAXIMUM_CAPACITY
         val oldTable = table
+        @Suppress("UNCHECKED_CAST")
         table = arrayOfNulls<Entry<*, *>>(newCapacity) as Array<Entry<K, V>?>
         capacity = newCapacity
         var newSize = 0
-        tombstones = 0
         for (e in oldTable) {
-            if (e != null/* && e !== TOMBSTONE*/) {
+            if (e != null) {
                 val idx = funnelProbe(e.key, e.hash)
                 table[idx] = e
                 newSize++
@@ -222,11 +184,11 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
     }
 
     override fun clear() {
+        @Suppress("UNCHECKED_CAST")
         val newTable = arrayOfNulls<Entry<*, *>>(DEFAULT_INITIAL_CAPACITY) as Array<Entry<K, V>?>
         table = newTable
         _size = 0
         capacity = DEFAULT_INITIAL_CAPACITY
-        tombstones = 0
     }
 
     override val size: Int
@@ -242,7 +204,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
 
     override fun containsValue(value: V): Boolean {
         for (e in table) {
-            if (e != null &&/* e !== TOMBSTONE && */e.value == value) return true
+            if (e != null && e.value == value) return true
         }
         return false
     }
@@ -255,7 +217,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
         get() {
             val set: MutableSet<MutableMap.MutableEntry<K, V>> = HashSet<MutableMap.MutableEntry<K, V>>()
             for (e in table) {
-                if (e != null/* && e !== TOMBSTONE*/) {
+                if (e != null) {
                     set.add(e)
                 }
             }
@@ -266,7 +228,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
         get() {
             val set: MutableSet<K> = HashSet<K>()
             for (e in table) {
-                if (e != null/* && e !== TOMBSTONE*/) {
+                if (e != null) {
                     set.add(e.key)
                 }
             }
@@ -277,7 +239,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
         get() {
             val values: MutableList<V> = ArrayList<V>()
             for (e in table) {
-                if (e != null/* && e !== TOMBSTONE*/) {
+                if (e != null) {
                     values.add(e.value)
                 }
             }
@@ -289,7 +251,7 @@ class OptimalOpenHashMap<K : Any, V : Any> : MutableMap<K, V>, java.io.Serializa
         sb.append("{")
         var first = true
         for (e in table) {
-            if (e != null/* && e !== TOMBSTONE*/) {
+            if (e != null) {
                 if (!first) {
                     sb.append(", ")
                 }
