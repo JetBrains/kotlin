@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -144,20 +143,18 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val classKind: KaClassKind
         get() = withValidityAssertion {
-            val classKind = when (backingPsi) {
-                null -> firSymbol.classKind
-                is KtObjectDeclaration -> ClassKind.OBJECT
+            when (backingPsi) {
+                null -> firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)
+                is KtObjectDeclaration -> if (backingPsi.isCompanion()) KaClassKind.COMPANION_OBJECT else KaClassKind.OBJECT
                 is KtClass -> when {
-                    backingPsi.isInterface() -> ClassKind.INTERFACE
-                    backingPsi.isEnum() -> ClassKind.ENUM_CLASS
-                    backingPsi.isAnnotation() -> ClassKind.ANNOTATION_CLASS
-                    else -> ClassKind.CLASS
+                    backingPsi.isInterface() -> KaClassKind.INTERFACE
+                    backingPsi.isEnum() -> KaClassKind.ENUM_CLASS
+                    backingPsi.isAnnotation() -> KaClassKind.ANNOTATION_CLASS
+                    else -> KaClassKind.CLASS
                 }
+
                 else -> throw AssertionError("Unexpected class or object: ${backingPsi::class.simpleName}")
             }
-
-            val isCompanionObject = (backingPsi as? KtObjectDeclaration)?.isCompanion() ?: firSymbol.isCompanion
-            classKind.toKtClassKind(isCompanionObject = isCompanionObject)
         }
 
     override val location: KaSymbolLocation
