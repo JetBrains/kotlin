@@ -109,6 +109,10 @@ struct ObjHeader {
     return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_LOCAL;
   }
 
+  inline bool stackOrLocal() const {
+      return hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_LOCAL);
+  }
+
   // Unsafe cast to ArrayHeader. Use carefully!
   // TODO: RuntimeAssert on type_info()->IsArray()?
   ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }

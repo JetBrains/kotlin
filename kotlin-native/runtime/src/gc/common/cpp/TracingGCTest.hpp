@@ -40,6 +40,10 @@ struct Payload {
     };
 };
 
+static void setObjectTag(ObjHeader* header, unsigned bits) {
+    header->typeInfoOrMeta_ = setPointerBits(header->typeInfoOrMeta_, bits);
+}
+
 test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
 test_support::TypeInfoHolder typeHolderWithFinalizer{test_support::TypeInfoHolder::ObjectBuilder<Payload>().addFlag(TF_HAS_FINALIZER)};
 
@@ -69,7 +73,7 @@ class GlobalPermanentObjectHolder : private Pinned {
 public:
     explicit GlobalPermanentObjectHolder(mm::ThreadData& threadData) {
         mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &global_);
-        global_->typeInfoOrMeta_ = setPointerBits(global_->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
+        setObjectTag(global_, OBJECT_TAG_PERMANENT);
         RuntimeAssert(global_->permanent(), "Must be permanent");
     }
 
@@ -569,8 +573,7 @@ TYPED_TEST_P(TracingGCTest, PermanentObjects) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
         test_support::Object<Payload> permanentObject{typeHolder.typeInfo()};
-        permanentObject.header()->typeInfoOrMeta_ =
-                setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
+        setObjectTag(permanentObject.header(), OBJECT_TAG_PERMANENT);
         RuntimeAssert(permanentObject.header()->permanent(), "Must be permanent");
 
         global1->field1 = permanentObject.header();
@@ -583,6 +586,201 @@ TYPED_TEST_P(TracingGCTest, PermanentObjects) {
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
         EXPECT_THAT(gc::isMarked(global2.header()), false);
+    });
+}
+
+TYPED_TEST_P(TracingGCTest, LocalObjectsClosure) {
+    RunInNewThread([](mm::ThreadData& threadData) {
+        StackObjectHolder localRoot1{threadData};
+        setObjectTag(localRoot1.header(), OBJECT_TAG_LOCAL);
+        RuntimeAssert(localRoot1.header()->local(), "Must be local");
+
+        test_support::Object<Payload> stackObject1(typeHolder.typeInfo());
+        StackObjectHolder stackRoot1(stackObject1.header());
+        setObjectTag(stackRoot1.header(), OBJECT_TAG_STACK);
+        RuntimeAssert(stackRoot1.header()->stack(), "Must be stack");
+
+        test_support::Object<Payload> stackObject2(typeHolder.typeInfo());
+        StackObjectHolder stackRoot2(stackObject2.header());
+        setObjectTag(stackRoot2.header(), OBJECT_TAG_STACK);
+
+        auto& localObject1 = AllocateObject(threadData);
+        setObjectTag(localObject1.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject2 = AllocateObject(threadData);
+        setObjectTag(localObject2.header(), OBJECT_TAG_LOCAL);
+
+        auto& heapObject1 = AllocateObject(threadData);
+        auto& heapObject2 = AllocateObject(threadData);
+        auto& heapObject3 = AllocateObject(threadData);
+        auto& heapObject4 = AllocateObject(threadData);
+        auto& heapObject5 = AllocateObject(threadData);
+
+        localRoot1->field1 = stackRoot1.header();
+        localRoot1->field2 = localObject1.header();
+        localRoot1->field3 = heapObject1.header();
+
+        localObject1->field1 = localObject2.header();
+        localObject1->field2 = heapObject2.header();
+
+        localObject2->field1 = stackRoot2.header();
+        localObject2->field3 = heapObject3.header();
+
+        stackRoot2->field3 = heapObject4.header();
+
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(localRoot1.header(), localObject1.header(), localObject2.header(),
+                                              heapObject1.header(), heapObject2.header(), heapObject3.header(),
+                                              heapObject4.header(), heapObject5.header())
+        );
+
+        mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(localRoot1.header(), localObject1.header(), localObject2.header(),
+                                              heapObject1.header(), heapObject2.header(), heapObject3.header(),
+                                              heapObject4.header())
+        );
+
+        EXPECT_THAT(gc::isMarked(localRoot1.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject1.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject2.header()), false);
+        EXPECT_THAT(gc::isMarked(heapObject1.header()), false);
+        EXPECT_THAT(gc::isMarked(heapObject2.header()), false);
+        EXPECT_THAT(gc::isMarked(heapObject3.header()), false);
+        EXPECT_THAT(gc::isMarked(heapObject4.header()), false);
+    });
+}
+
+TYPED_TEST_P(TracingGCTest, StackRootReferToLocal) {
+    RunInNewThread([](mm::ThreadData& threadData) {
+        test_support::Object<Payload> stackObject1(typeHolder.typeInfo());
+        StackObjectHolder stackRoot1(stackObject1.header());
+        setObjectTag(stackRoot1.header(), OBJECT_TAG_STACK);
+
+        StackObjectHolder localRoot1{threadData};
+        setObjectTag(localRoot1.header(), OBJECT_TAG_LOCAL);
+
+        test_support::Object<Payload> stackObject2(typeHolder.typeInfo());
+        StackObjectHolder stackRoot2(stackObject2.header());
+        setObjectTag(stackRoot2.header(), OBJECT_TAG_STACK);
+        // Either stackRoot1 or stackRoot2 will be found before localRoot1.
+
+        auto& localObject1 = AllocateObject(threadData);
+        setObjectTag(localObject1.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject2 = AllocateObject(threadData);
+        setObjectTag(localObject2.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject3 = AllocateObject(threadData);
+        setObjectTag(localObject3.header(), OBJECT_TAG_LOCAL);
+
+        auto& heapObject1 = AllocateObject(threadData);
+        auto& heapObject2 = AllocateObject(threadData);
+
+        stackRoot1->field1 = localRoot1.header();
+
+        stackRoot2->field1 = localRoot1.header();
+        stackRoot2->field2 = localObject2.header();
+
+        localRoot1->field1 = localObject1.header();
+        localObject1->field1 = heapObject1.header();
+
+        localObject2->field1 = localObject3.header();
+        localObject3->field1 = heapObject2.header();
+
+
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(localRoot1.header(), localObject1.header(), localObject2.header(),
+                                              localObject3.header(), heapObject1.header(), heapObject2.header())
+        );
+
+        mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(localRoot1.header(), localObject1.header(), localObject2.header(),
+                                              localObject3.header(), heapObject1.header(), heapObject2.header())
+        );
+
+        EXPECT_THAT(gc::isMarked(localRoot1.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject1.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject2.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject3.header()), false);
+        EXPECT_THAT(gc::isMarked(heapObject1.header()), false);
+        EXPECT_THAT(gc::isMarked(heapObject2.header()), false);
+    });
+}
+
+TYPED_TEST_P(TracingGCTest, LocalObjectsLoop) {
+    RunInNewThread([](mm::ThreadData& threadData) {
+        test_support::Object<Payload> stackObject1(typeHolder.typeInfo());
+        StackObjectHolder stackRoot1(stackObject1.header());
+        setObjectTag(stackRoot1.header(), OBJECT_TAG_STACK);
+
+        StackObjectHolder localRoot1{threadData};
+        setObjectTag(localRoot1.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject1 = AllocateObject(threadData);
+        setObjectTag(localObject1.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject2 = AllocateObject(threadData);
+        setObjectTag(localObject2.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject3 = AllocateObject(threadData);
+        setObjectTag(localObject3.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject4 = AllocateObject(threadData);
+        setObjectTag(localObject4.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject5 = AllocateObject(threadData);
+        setObjectTag(localObject5.header(), OBJECT_TAG_LOCAL);
+
+        auto& localObject6 = AllocateObject(threadData);
+        setObjectTag(localObject6.header(), OBJECT_TAG_LOCAL);
+
+        stackRoot1->field1 = localObject1.header();
+        localObject1->field1 = localObject2.header();
+        localObject2->field1 = localObject3.header();
+
+        localObject3->field1 = localObject2.header();
+        localObject3->field2 = localObject1.header();
+        localObject3->field3 = stackRoot1.header();
+
+        localRoot1->field1 = localObject4.header();
+        localObject4->field1 = localObject5.header();
+        localObject5->field1 = localObject6.header();
+
+        localObject6->field1 = localObject4.header();
+        localObject6->field2 = localObject5.header();
+        localObject6->field3 = localRoot1.header();
+
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(localRoot1.header(), localObject1.header(), localObject2.header(),
+                                              localObject3.header(), localObject4.header(), localObject5.header(),
+                                              localObject6.header())
+        );
+
+        mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(localRoot1.header(), localObject1.header(), localObject2.header(),
+                                              localObject3.header(), localObject4.header(), localObject5.header(),
+                                              localObject6.header())
+        );
+
+        EXPECT_THAT(gc::isMarked(localRoot1.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject1.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject2.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject3.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject4.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject5.header()), false);
+        EXPECT_THAT(gc::isMarked(localObject6.header()), false);
     });
 }
 
@@ -1251,6 +1449,9 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionInMark) {
     ObjectsWithCyclesIntoRootSet, \
     RunGCTwice, \
     PermanentObjects, \
+    LocalObjectsClosure, \
+    StackRootReferToLocal, \
+    LocalObjectsLoop, \
     SameObjectInRootSet, \
     MultipleMutatorsCollect, \
     MultipleMutatorsAllCollect, \

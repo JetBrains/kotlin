@@ -83,6 +83,7 @@ public:
     class MarkTraits {
     public:
         using MarkQueue = ParallelProcessor::Worker;
+        using LocalMarkQueue = MarkStackImpl;
 
         static void clear(MarkQueue& queue) noexcept {
             RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
@@ -97,8 +98,33 @@ public:
         }
 
         static PERFORMANCE_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+            RuntimeAssert(object->heapNotLocal(),
+                          "Trying to enqueue non-heap or local object %p[typeInfo=%p] to global queue",
+                          object, object->type_info());
+
             auto& objectData = alloc::objectDataForObject(object);
             return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
+        }
+
+        static PERFORMANCE_INLINE ObjHeader* tryDequeue(LocalMarkQueue& queue) noexcept {
+            auto* obj = queue.try_pop_front();
+            if (obj) {
+                return alloc::objectForObjectData(*obj);
+            }
+            return nullptr;
+        }
+
+        static PERFORMANCE_INLINE bool tryEnqueue(LocalMarkQueue& queue, ObjHeader* object) noexcept {
+            RuntimeAssert(object->local(),
+                          "Trying to enqueue non-local object %p[typeInfo=%p] to local queue",
+                          object, object->type_info());
+
+            auto& objectData = alloc::objectDataForObject(object);
+            return queue.try_push_front(objectData);
+        }
+
+        static PERFORMANCE_INLINE bool isEmpty(LocalMarkQueue& queue) noexcept {
+            return queue.empty();
         }
 
         static PERFORMANCE_INLINE bool tryMark(ObjHeader* object) noexcept {

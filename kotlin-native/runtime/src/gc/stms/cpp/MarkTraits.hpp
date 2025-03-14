@@ -16,6 +16,7 @@ using MarkQueue = intrusive_forward_list<GC::ObjectData>;
 
 struct MarkTraits {
     using MarkQueue = MarkQueue;
+    using LocalMarkQueue = MarkQueue;
 
     static void clear(MarkQueue& queue) noexcept { queue.clear(); }
 
@@ -28,6 +29,10 @@ struct MarkTraits {
 
     static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         return queue.try_push_front(alloc::objectDataForObject(object));
+    }
+
+    static bool isEmpty(LocalMarkQueue& queue) noexcept {
+        return queue.empty();
     }
 
     static bool tryMark(ObjHeader* object) noexcept { return alloc::objectDataForObject(object).tryMark(); }

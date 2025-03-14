@@ -31,10 +31,13 @@ void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexce
     auto& markState = *static_cast<MarkState<Traits>*>(state);
     if (field->heapNotLocal()) {
         Traits::tryEnqueue(markState.globalQueue, field);
-    }
-    if (object->heapNotLocal()) {
-        RuntimeAssert(!field->stack(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
-        RuntimeAssert(!field->local(), "Heap object %p references local object %p[typeInfo=%p]", object, field, field->type_info());
+    } else if (field->local()) {
+        RuntimeAssert(object->stackOrLocal(), "Heap object %p references local object %p[typeInfo=%p]", object, field,
+                      field->type_info());
+        Traits::tryEnqueue(markState.localQueue, field);
+    } else if (field->stack()) {
+        RuntimeAssert(object->stackOrLocal(), "Heap object %p references stack object %p[typeInfo=%p]", object, field,
+                      field->type_info());
     }
 }
 
@@ -64,10 +67,12 @@ bool collectRoot(MarkState<Traits>& markState, ObjHeader* object) noexcept {
     if (object->heapNotLocal()) {
         Traits::tryEnqueue(markState.globalQueue, object);
     } else {
-        bool visitChildren = !object->local() || Traits::tryMark(object);
-        // Each permanent/stack/local object has own entry in the root set, so it's okay to only process objects in heap.
-        if (visitChildren)
+        if (object->local()) {
+            Traits::tryEnqueue(markState.localQueue, object);
+        } else {
+            // Each permanent and stack object has own entry in the root set, so it's okay to only process objects in heap.
             Traits::processInMark(markState, object);
+        }
         RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
     }
     return true;
@@ -100,6 +105,8 @@ void Mark(GCHandle handle, MarkState<Traits>& markState) noexcept {
 
 template <typename Traits>
 void Mark(GCHandle::GCMarkScope& markHandle, MarkState<Traits>& markState) noexcept {
+    RuntimeAssert(Traits::isEmpty(markState.localQueue), "localQueue is not empty before Mark");
+
     while (ObjHeader* top = Traits::tryDequeue(markState.globalQueue)) {
         markHandle.addObject();
         Traits::processInMark(markState, top);
@@ -108,10 +115,14 @@ void Mark(GCHandle::GCMarkScope& markHandle, MarkState<Traits>& markState) noexc
             internal::processExtraObjectData<Traits>(markHandle, markState, *extraObjectData, top);
         }
     }
+
+    RuntimeAssert(Traits::isEmpty(markState.localQueue), "localQueue is not empty after Mark");
 }
 
 template <typename Traits>
 void collectRootSetForThread(GCHandle gcHandle, MarkState<Traits>& markState, mm::ThreadData& thread) {
+    RuntimeAssert(Traits::isEmpty(markState.localQueue), "localQueue is not empty before collectRootSetForThread");
+
     auto handle = gcHandle.collectThreadRoots(thread);
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
@@ -126,10 +137,21 @@ void collectRootSetForThread(GCHandle gcHandle, MarkState<Traits>& markState, mm
             }
         }
     }
+
+    // Local objects go to a separate queue that is handled strictly during STW here.
+    // Otherwise `Mark` can try to scan references from local to stack objects that are already removed.
+    // See also KT-75861.
+    auto markHandle = gcHandle.mark();
+    while (ObjHeader* top = Traits::tryDequeue(markState.localQueue)) {
+        markHandle.addObject();
+        Traits::processInMark(markState, top);
+    }
 }
 
 template <typename Traits>
 void collectRootSetGlobals(GCHandle gcHandle, MarkState<Traits>& markState) noexcept {
+    RuntimeAssert(Traits::isEmpty(markState.localQueue), "localQueue is not empty before collectRootSetGlobals");
+
     auto handle = gcHandle.collectGlobalRoots();
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
@@ -144,6 +166,8 @@ void collectRootSetGlobals(GCHandle gcHandle, MarkState<Traits>& markState) noex
             }
         }
     }
+
+    RuntimeAssert(Traits::isEmpty(markState.localQueue), "localQueue is not empty after collectRootSetGlobals");
 }
 
 // TODO: This needs some tests now.

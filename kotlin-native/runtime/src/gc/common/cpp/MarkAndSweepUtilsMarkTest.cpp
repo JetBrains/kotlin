@@ -74,6 +74,7 @@ public:
 class ScopedMarkTraits : private Pinned {
 public:
     using MarkQueue = std::vector<ObjHeader*>;
+    using LocalMarkQueue = MarkQueue;
 
     ScopedMarkTraits() {
         RuntimeAssert(instance_ == nullptr, "Only one ScopedMarkTraits is allowed");
@@ -104,6 +105,10 @@ public:
             queue.push_back(object);
         }
         return result.second;
+    }
+
+    static bool isEmpty(LocalMarkQueue& queue) noexcept {
+        return queue.empty();
     }
 
     static bool tryMark(ObjHeader* object) noexcept {

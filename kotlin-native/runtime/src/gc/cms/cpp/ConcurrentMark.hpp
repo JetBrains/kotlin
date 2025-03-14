@@ -54,6 +54,8 @@ public:
         using MarkQueue = ParallelProcessor::Worker;
         using AnyQueue = ParallelProcessor::WorkSource;
 
+        using LocalMarkQueue = MarkStackImpl;
+
         ALWAYS_INLINE static void clear(AnyQueue& queue) noexcept { RuntimeAssert(queue.localEmpty(), "Mark queue must be empty"); }
 
         static PERFORMANCE_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
@@ -67,12 +69,43 @@ public:
         }
 
         static PERFORMANCE_INLINE bool tryEnqueue(AnyQueue& queue, ObjHeader* object) noexcept {
+            RuntimeAssert(object->heapNotLocal(),
+                          "Trying to enqueue non-heap or local object %p[typeInfo=%p] to global queue",
+                          object, object->type_info());
+
             auto& objectData = alloc::objectDataForObject(object);
             bool pushed = queue.tryPush(objectData);
             if (pushed) {
                 RuntimeLogDebug({logging::Tag::kGCMark}, "Enqueued %p", object);
             }
             return pushed;
+        }
+
+        static PERFORMANCE_INLINE ObjHeader* tryDequeue(LocalMarkQueue& queue) noexcept {
+            auto* obj = queue.try_pop_front();
+            if (obj) {
+                auto object = alloc::objectForObjectData(*obj);
+                RuntimeLogDebug({logging::Tag::kGCMark}, "Dequeued %p from the local queue", object);
+                return object;
+            }
+            return nullptr;
+        }
+
+        static PERFORMANCE_INLINE bool tryEnqueue(LocalMarkQueue& queue, ObjHeader* object) noexcept {
+            RuntimeAssert(object->local(),
+                          "Trying to enqueue non-local object %p[typeInfo=%p] to local queue",
+                          object, object->type_info());
+
+            auto& objectData = alloc::objectDataForObject(object);
+            bool pushed = queue.try_push_front(objectData);
+            if (pushed) {
+                RuntimeLogDebug({logging::Tag::kGCMark}, "Enqueued %p to the local queue", object);
+            }
+            return pushed;
+        }
+
+        static PERFORMANCE_INLINE bool isEmpty(LocalMarkQueue& queue) noexcept {
+            return queue.empty();
         }
 
         static PERFORMANCE_INLINE bool tryMark(ObjHeader* object) noexcept {
