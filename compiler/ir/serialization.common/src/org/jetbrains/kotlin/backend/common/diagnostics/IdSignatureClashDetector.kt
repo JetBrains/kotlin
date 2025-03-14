@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.diagnostics
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.linkage.SignatureClashDetector
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 class IdSignatureClashDetector : SignatureClashDetector<IdSignature, IrDeclaration>() {
