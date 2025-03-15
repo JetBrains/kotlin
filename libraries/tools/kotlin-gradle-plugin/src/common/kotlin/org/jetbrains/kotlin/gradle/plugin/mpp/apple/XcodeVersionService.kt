@@ -32,6 +32,8 @@ internal abstract class XcodeVersionService : BuildServiceUsingKotlinToolingDiag
         }
     }
 
+    private val logger = Logging.getLogger(this::class.java)
+
     val version: XcodeVersion by lazy {
         Xcode.findCurrent().version.also(::checkVersionCompatibility)
     }
@@ -39,7 +41,7 @@ internal abstract class XcodeVersionService : BuildServiceUsingKotlinToolingDiag
     private fun checkVersionCompatibility(xcodeVersion: XcodeVersion) = with(parameters) {
         if (!ignoreVersionCompatibilityCheck.get() && xcodeVersion > XcodeVersion.maxTested) {
             toolingDiagnosticsCollector.get().report(
-                this,
+                this, logger,
                 XcodeVersionTooHighWarning(
                     xcodeVersionString = xcodeVersion.toString(),
                     maxTested = XcodeVersion.maxTested.toString(),

@@ -39,7 +39,11 @@ internal interface TransformActionUsingKotlinToolingDiagnostics<P : TransformAct
     interface Parameters : TransformParameters, UsesKotlinToolingDiagnosticsParameters
 
     fun reportDiagnostic(diagnostic: ToolingDiagnostic) {
-        parameters.toolingDiagnosticsCollector.get().report(parameters, diagnostic)
+        parameters.toolingDiagnosticsCollector.get().report(parameters, logger, diagnostic)
+    }
+
+    companion object {
+        internal val logger: Logger = Logging.getLogger(Project::class.java)
     }
 }
 
@@ -52,7 +56,11 @@ internal interface BuildServiceUsingKotlinToolingDiagnostics<P : BuildServiceUsi
     interface Parameters : BuildServiceParameters, UsesKotlinToolingDiagnosticsParameters
 
     fun reportDiagnostic(diagnostic: ToolingDiagnostic) {
-        parameters.toolingDiagnosticsCollector.get().report(parameters, diagnostic)
+        parameters.toolingDiagnosticsCollector.get().report(parameters, logger, diagnostic)
+    }
+
+    companion object {
+        internal val logger: Logger = Logging.getLogger(Project::class.java)
     }
 }
 

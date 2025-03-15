@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.utils.newInstance
 
 internal abstract class ProblemsReporterG81 : ProblemsReporter {
-    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
-
-    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions) {
-        val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
+    override fun reportProblemDiagnostic(diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions, logger: Logger) {
+        val renderedDiagnostic: ReportedDiagnostic = renderReportedDiagnostic(diagnostic, logger, options) ?: return
         if (renderedDiagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
             throw diagnostic.createAnExceptionForFatalDiagnostic(options)
         }

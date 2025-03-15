@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.Project
-import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -166,13 +165,13 @@ internal fun Collection<ToolingDiagnostic>.assertContainsSingleDiagnostic(
 }
 
 internal abstract class TestsProblemsReporter : ProblemsReporter {
-    private val logger: Logger by lazy { Logging.getLogger(this.javaClass) }
 
     override fun reportProblemDiagnostic(
         diagnostic: ToolingDiagnostic,
-        options: ToolingDiagnosticRenderingOptions
+        options: ToolingDiagnosticRenderingOptions,
+        logger: Logger,
     ) {
-        val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
+        val renderedDiagnostic: ReportedDiagnostic = renderReportedDiagnostic(diagnostic, logger, options) ?: return
         if (renderedDiagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
             throw diagnostic.createAnExceptionForFatalDiagnostic(options)
         }

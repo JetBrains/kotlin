@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 
 internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     val collectorProvider = kotlinToolingDiagnosticsCollectorProvider
-    val reporterProvider = collectorProvider.flatMap { it.parameters.problemsReporterFactory }.map { it.getInstance(objects) }
     val diagnosticRenderingOptions = ToolingDiagnosticRenderingOptions.forProject(this)
 
     // Setup reporting from tasks
@@ -29,10 +28,14 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     project.locateOrRegisterCheckKotlinGradlePluginErrorsTask()
 
     // Schedule diagnostics rendering
-    project.launch {
+    launch {
         configurationResult.await()
         val diagnostics = collectorProvider.map { it.getDiagnosticsForProject(project) }.get()
-        diagnostics.reportProblems(reporterProvider.get(), diagnosticRenderingOptions)
+        diagnostics.renderReportedDiagnostics(
+            logger,
+            null, //FIXME: passing problemsReporter here leads to YarnGradlePluginIT.testFailingWithLockFileUpdate failure
+            diagnosticRenderingOptions
+        )
     }
 
     // Schedule switching of Collector to transparent mode, so that any diagnostics reported

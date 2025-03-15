@@ -19,8 +19,11 @@ internal abstract class PreparedKotlinToolingDiagnosticsCollector(
     abstract fun report(diagnostic: ToolingDiagnostic, reportOnce: Boolean = true, key: String = diagnostic.id)
 
     companion object {
-        fun create(parameters: UsesKotlinToolingDiagnosticsParameters): PreparedKotlinToolingDiagnosticsCollector =
-            PreparedForExecutionPhaseDiagnosticsCollector(parameters)
+        fun create(task: UsesKotlinToolingDiagnostics): PreparedKotlinToolingDiagnosticsCollector =
+            create(task, task.logger)
+
+        fun create(parameters: UsesKotlinToolingDiagnosticsParameters, logger: Logger): PreparedKotlinToolingDiagnosticsCollector =
+            PreparedForExecutionPhaseDiagnosticsCollector(parameters, logger)
 
         fun create(project: Project): PreparedKotlinToolingDiagnosticsCollector =
             PreparedForConfigurationPhaseDiagnosticCollector(project)
@@ -28,10 +31,11 @@ internal abstract class PreparedKotlinToolingDiagnosticsCollector(
 }
 
 private class PreparedForExecutionPhaseDiagnosticsCollector(
-    private val kotlinToolingDiagnosticsParameters: UsesKotlinToolingDiagnosticsParameters
+    private val kotlinToolingDiagnosticsParameters: UsesKotlinToolingDiagnosticsParameters,
+    private val logger: Logger
 ) : PreparedKotlinToolingDiagnosticsCollector(kotlinToolingDiagnosticsParameters.toolingDiagnosticsCollector.get()) {
     override fun report(diagnostic: ToolingDiagnostic, reportOnce: Boolean, key: String) {
-        collector.report(kotlinToolingDiagnosticsParameters, diagnostic, reportOnce, key)
+        collector.report(kotlinToolingDiagnosticsParameters, logger, diagnostic, reportOnce, key)
     }
 }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -14,7 +15,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -57,14 +58,24 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     }
 
     fun report(
+        task: UsesKotlinToolingDiagnostics,
+        diagnostic: ToolingDiagnostic,
+        reportOnce: Boolean = false,
+        key: ToolingDiagnosticId = diagnostic.id,
+    ) {
+        report(task, task.logger, diagnostic, reportOnce, key)
+    }
+
+    fun report(
         from: UsesKotlinToolingDiagnosticsParameters,
+        logger: Logger,
         diagnostic: ToolingDiagnostic,
         reportOnce: Boolean = false,
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
         if (reportedIds.add(key) || !reportOnce) {
             val options = from.diagnosticRenderingOptions.get()
-            problemsReporter.reportProblemDiagnostic(diagnostic, options)
+            problemsReporter.reportProblemDiagnostic(diagnostic, options, logger)
         }
     }
 
@@ -77,7 +88,7 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         if (diagnostic.isSuppressed(options)) return
 
         if (isTransparent) {
-            problemsReporter.reportProblemDiagnostic(diagnostic, options)
+            problemsReporter.reportProblemDiagnostic(diagnostic, options, project.logger)
             return
         }
 
@@ -133,5 +144,9 @@ internal annotation class ImmediateDiagnosticReporting
 @ImmediateDiagnosticReporting
 internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
     val renderingOptions = ToolingDiagnosticRenderingOptions.forProject(project)
-    diagnostic.renderReportedDiagnostic(logger, renderingOptions)
+    renderReportedDiagnostic(
+        diagnostic,
+        project.logger,
+        renderingOptions
+    )
 }
