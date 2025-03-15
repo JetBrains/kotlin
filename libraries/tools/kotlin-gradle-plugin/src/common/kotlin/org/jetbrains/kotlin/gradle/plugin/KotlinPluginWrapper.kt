@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
@@ -139,11 +137,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     private fun Project.registerDefaultVariantImplementations() {
         val factories = VariantImplementationFactoriesConfigurator.get(project.gradle)
-
-        factories.putIfAbsent(
-            ProblemsReporter.Factory::class,
-            DefaultProblemsReporter.Factory()
-        )
 
         factories.putIfAbsent(
             ProjectIsolationStartParameterAccessor.Factory::class,
