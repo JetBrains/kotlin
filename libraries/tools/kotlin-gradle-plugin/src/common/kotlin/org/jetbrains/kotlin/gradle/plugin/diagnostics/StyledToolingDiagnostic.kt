@@ -62,21 +62,19 @@ internal interface PlainTextToolingDiagnostic : ToolingDiagnosticOutput
  * @constructor Creates an instance of this abstract class.
  * @param diagnostic The [ToolingDiagnostic] instance containing details about the diagnostic issue.
  * @param showEmoji A flag indicating whether to display emoji icons for severity levels.
- * @param severity The severity level, overriding the diagnostic's original severity.
  */
 private abstract class AbstractToolingDiagnostic(
-    val diagnostic: ToolingDiagnostic,
-    val showEmoji: Boolean,
-    val severity: ToolingDiagnostic.Severity
+    protected val diagnostic: ToolingDiagnostic,
+    protected val showEmoji: Boolean,
 ) : ToolingDiagnosticOutput {
     override val name: String by lazy { buildName() }
     override val message: String by lazy { buildMessage() }
     override val solution: String? by lazy { buildSolution() }
     override val documentation: String? by lazy { buildDocumentation() }
 
-    open fun buildName(): String = buildString {
+    protected open fun buildName(): String = buildString {
         if (showEmoji) {
-            val iconSeverity = when (severity) {
+            val iconSeverity = when (diagnostic.severity) {
                 WARNING -> DiagnosticIcon.WARNING
                 ERROR -> DiagnosticIcon.ERROR
                 FATAL -> DiagnosticIcon.FATAL
@@ -87,9 +85,9 @@ private abstract class AbstractToolingDiagnostic(
         append(diagnostic.identifier.displayName)
     }.trimEnd()
 
-    open fun buildMessage(): String = diagnostic.message.trimEnd()
+    protected open fun buildMessage(): String = diagnostic.message.trimEnd()
 
-    open fun buildSolution(): String? {
+    protected open fun buildSolution(): String? {
         val solutions = diagnostic.solutions
         return when (solutions.size) {
             0 -> null
@@ -103,7 +101,7 @@ private abstract class AbstractToolingDiagnostic(
         }
     }
 
-    open fun buildDocumentation(): String? =
+    protected open fun buildDocumentation(): String? =
         diagnostic.documentation?.additionalUrlContext?.trimEnd()
 }
 
@@ -116,7 +114,6 @@ private abstract class AbstractToolingDiagnostic(
  * @constructor Creates an instance of `DefaultStyledToolingDiagnostic` using a `ToolingDiagnostic`.
  * @param diagnostic The `ToolingDiagnostic` instance containing raw diagnostic data.
  * @param showEmoji Indicates whether emoji-based severity icons should be included in the diagnostic output.
- * @param severity The severity level to apply to the styled output, overriding the diagnostic's original severity.
  *
  * The following details are styled:
  * - The `name` is constructed with a severity-based icon and a colored identifier name.
@@ -135,12 +132,11 @@ private abstract class AbstractToolingDiagnostic(
 private class DefaultStyledToolingDiagnostic(
     diagnostic: ToolingDiagnostic,
     showEmoji: Boolean,
-    severity: ToolingDiagnostic.Severity = diagnostic.severity
-) : AbstractToolingDiagnostic(diagnostic, showEmoji, severity), StyledToolingDiagnostic {
+) : AbstractToolingDiagnostic(diagnostic, showEmoji), StyledToolingDiagnostic {
 
     override fun buildName() = super.buildName()
         .bold()
-        .applyColor(severity)
+        .applyColor(diagnostic.severity)
 
     override fun buildMessage() = buildString {
         if (!diagnostic.message.contains("```")) {
@@ -209,25 +205,22 @@ private class DefaultStyledToolingDiagnostic(
 private class DefaultPlainToolingDiagnostic(
     diagnostic: ToolingDiagnostic,
     showEmoji: Boolean,
-    severity: ToolingDiagnostic.Severity = diagnostic.severity
-) : AbstractToolingDiagnostic(diagnostic, showEmoji, severity), PlainTextToolingDiagnostic
+) : AbstractToolingDiagnostic(diagnostic, showEmoji), PlainTextToolingDiagnostic
 
 /**
  * Converts a `ToolingDiagnostic` into a styled representation using the `StyledToolingDiagnostic` interface.
  *
  * @param showEmoji A boolean flag indicating whether emoji-based severity icons should be included in the styled diagnostic output.
  * @return A `StyledToolingDiagnostic` instance containing the styled representation of the `ToolingDiagnostic`.
- * @return A styled diagnostic representation as a [StyledToolingDiagnostic].
  */
-internal fun ToolingDiagnostic.styled(showEmoji: Boolean = true, severity: ToolingDiagnostic.Severity? = null): StyledToolingDiagnostic =
-    DefaultStyledToolingDiagnostic(this, showEmoji, severity ?: this.severity)
+internal fun ToolingDiagnostic.styled(showEmoji: Boolean): StyledToolingDiagnostic =
+    DefaultStyledToolingDiagnostic(this, showEmoji)
 
 /**
  * Converts the current instance of `ToolingDiagnostic` into a plain text diagnostic representation.
  *
  * @param showEmoji Determines whether emoji-based severity icons should be included in the plain text output.
  * @return A `PlainTextToolingDiagnostic` instance representing the diagnostic in plain text format.
- * @return A plain text representation of the [ToolingDiagnostic].
  */
-internal fun ToolingDiagnostic.plain(showEmoji: Boolean = false, severity: ToolingDiagnostic.Severity? = null): PlainTextToolingDiagnostic =
-    DefaultPlainToolingDiagnostic(this, showEmoji, severity ?: this.severity)
+internal fun ToolingDiagnostic.plain(showEmoji: Boolean): PlainTextToolingDiagnostic =
+    DefaultPlainToolingDiagnostic(this, showEmoji)
