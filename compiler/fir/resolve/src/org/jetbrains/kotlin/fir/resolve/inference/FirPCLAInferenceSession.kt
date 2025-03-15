@@ -147,19 +147,6 @@ class FirPCLAInferenceSession(
     override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? =
         semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
 
-    override fun semiFixTypeVariablesAllowingFixationToOuterOnes(
-        type: ConeKotlinType,
-        myCs: NewConstraintSystemImpl,
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType> {
-        val result = mutableMapOf<ConeTypeVariableTypeConstructor, ConeKotlinType>()
-        type.forEachType { internalType ->
-            semiFixCurrentResultIfTypeVariableAndReturnBinding(internalType, myCs, allowFixationToOtherTypeVariables = true)?.let {
-                result += it
-            }
-        }
-        return result
-    }
-
     fun semiFixCurrentResultIfTypeVariableAndReturnBinding(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
