@@ -102,7 +102,7 @@ class FirOverloadByLambdaReturnTypeResolver(
             if (inferenceSession is FirPCLAInferenceSession) {
                 for (inputType in lambda.inputTypes) {
                     inferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
-                        inputType, myCs = candidate.system, allowFixationToOtherTypeVariables = true
+                        inputType, myCs = candidate.system, overloadResolutionMode = true
                     )?.let {
                         additionalBindings += it
                     }

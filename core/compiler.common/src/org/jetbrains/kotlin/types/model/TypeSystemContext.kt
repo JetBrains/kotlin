@@ -372,8 +372,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(this, types)
 
     val isK2: Boolean
-
-    val allowSemiFixationToOtherTypeVariables: Boolean get() = false
 }
 
 

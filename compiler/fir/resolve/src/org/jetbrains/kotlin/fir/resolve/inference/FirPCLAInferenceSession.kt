@@ -150,7 +150,7 @@ class FirPCLAInferenceSession(
     fun semiFixCurrentResultIfTypeVariableAndReturnBinding(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
-        allowFixationToOtherTypeVariables: Boolean = false,
+        overloadResolutionMode: Boolean = false,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
         val coneTypeVariableTypeConstructor = (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeVariableType)?.typeConstructor
             ?: return null
@@ -168,7 +168,7 @@ class FirPCLAInferenceSession(
         ) {
             // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
             // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
-            c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor, allowFixationToOtherTypeVariables) {
+            c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor, overloadResolutionMode) {
                 inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
                     c,
                     variableWithConstraints,
@@ -181,9 +181,7 @@ class FirPCLAInferenceSession(
             return null
         }
 
-        val resultType = c.prepareContextForTypeVariableForSemiFixation(
-            coneTypeVariableTypeConstructor, allowFixationToOtherTypeVariables
-        ) {
+        val resultType = c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor, overloadResolutionMode) {
             inferenceComponents.resultTypeResolver.findResultType(
                 c,
                 variableWithConstraints,
@@ -198,13 +196,17 @@ class FirPCLAInferenceSession(
 
     private fun ConstraintSystemCompletionContext.prepareContextForTypeVariableForSemiFixation(
         coneTypeVariableTypeConstructor: ConeTypeVariableTypeConstructor,
-        allowFixationToOtherTypeVariables: Boolean,
+        overloadResolutionMode: Boolean,
         resultTypeCallback: () -> ConeKotlinType?,
     ): ConeKotlinType? = withTypeVariablesThatAreCountedAsProperTypes(
-        if (is21Mode()) notFixedTypeVariables.keys else outerTypeVariables.orEmpty(),
-        allowSemiFixationToOtherTypeVariables = allowFixationToOtherTypeVariables
+        if (is21Mode())
+            notFixedTypeVariables.keys
+        else
+            outerTypeVariables.orEmpty()
     ) {
-        if (!inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)) {
+        if (!overloadResolutionMode &&
+            !inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)
+        ) {
             return@withTypeVariablesThatAreCountedAsProperTypes null
         }
 
