@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
-import java.util.IdentityHashMap
 
 private typealias Context = TypeSystemInferenceExtensionContext
 
@@ -26,14 +25,6 @@ class MutableVariableWithConstraints private constructor(
     constructor(context: Context, typeVariable: TypeVariableMarker) : this(context, typeVariable, null)
 
     constructor(context: Context, other: VariableWithConstraints) : this(context, other.typeVariable, other.constraints)
-
-    @UnstableSystemMergeMode
-    constructor(context: Context, first: VariableWithConstraints, second: VariableWithConstraints) :
-            this(
-                context,
-                first.typeVariable.also { require(it == second.typeVariable) },
-                identityHashSetFromSum(first.constraints, second.constraints).toList()
-            )
 
     override val constraints: List<Constraint>
         get() {
@@ -321,30 +312,8 @@ internal class MutableConstraintStorage : ConstraintStorage {
     internal var outerCS: ConstraintStorage? = null
 }
 
-fun <T> identityHashSetFromSum(first: List<T>, second: List<T>): Set<T> =
-    IdentityHashMap<T, Boolean>().apply {
-        for (elem in first) {
-            put(elem, true)
-        }
-        for (elem in second) {
-            put(elem, true)
-        }
-    }.keys
-
 /**
  * Annotated member is used only for assertion purposes and does not affect semantics
  */
 @RequiresOptIn
 annotation class AssertionsOnly
-
-/**
- * Annotated member is used during "constraint system merge"
- * only for "overload resolution by lambda return type" mode.
- * Please don't use in other modes
- */
-@RequiresOptIn(
-    message = "This member is a part of unstable constraint system merge mode and " +
-            "is intended to be used exclusively for OverloadResolutionByLambdaReturnType resolve. " +
-            "Please don't use in other modes."
-)
-annotation class UnstableSystemMergeMode
