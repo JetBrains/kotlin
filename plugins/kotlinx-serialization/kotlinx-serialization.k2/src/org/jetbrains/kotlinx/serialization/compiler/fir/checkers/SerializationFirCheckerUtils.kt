@@ -119,7 +119,7 @@ internal fun FirClassSymbol<*>.isSerializableEnumWithMissingSerializer(session: 
     if (!isEnumClass) return false
     if (hasSerializableOrMetaAnnotation(session)) return false
     if (hasAnySerialAnnotation(session)) return true
-    return collectEnumEntries(session).any { it.hasAnySerialAnnotation(session) }
+    return collectEnumEntries().any { it.hasAnySerialAnnotation(session) }
 }
 
 internal fun FirClassSymbol<*>.serializableAnnotationIsUseless(session: FirSession): Boolean = !classKind.isEnumClass &&
