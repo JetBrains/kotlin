@@ -22,8 +22,5 @@ enum class GradlePluginVariant(
     GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/"),
     GRADLE_81("gradle81", "8.1", "8.1", "https://docs.gradle.org/8.1.1/javadoc/"),
     GRADLE_82("gradle82", "8.2", "8.2", "https://docs.gradle.org/8.2.1/javadoc/"),
-    GRADLE_85("gradle85", "8.5", "8.5", "https://docs.gradle.org/8.5/javadoc/"),
-    GRADLE_86("gradle86", "8.6", "8.6", "https://docs.gradle.org/8.6/javadoc/"),
-    GRADLE_88("gradle88", "8.8", "8.8", "https://docs.gradle.org/8.8/javadoc/"),
-    GRADLE_811("gradle811", "8.11", "8.11", "https://docs.gradle.org/current/javadoc/"),
+    GRADLE_85("gradle85", "8.5", "8.5", "https://docs.gradle.org/current/javadoc/"),
 }

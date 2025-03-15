@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG82
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessorG82
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPublicationComponentAccessor
@@ -78,8 +76,6 @@ private fun Project.registerVariantImplementations() {
         ConfigurationCacheStartParameterAccessorG82.Factory()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG82.Factory()
-    factories[ProblemsReporter.Factory::class] =
-        ProblemsReporterG82.Factory()
     if (gradleVersion < GradleVersion.version("8.3")) { // for versions higher than 8.3 use common implementation
         factories[MavenPublicationComponentAccessor.Factory::class] =
             MavenPublicationComponentAccessorG82.Factory()

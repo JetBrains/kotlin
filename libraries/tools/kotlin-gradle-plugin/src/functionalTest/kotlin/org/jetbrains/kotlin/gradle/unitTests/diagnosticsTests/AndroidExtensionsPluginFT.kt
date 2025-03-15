@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
 import kotlin.test.Test
 
 class AndroidExtensionsPluginFT {
 
     @Test
     fun producesErrorSeverityWarningByDefault() {
-        val project = buildProject {
-            gradle.registerMinimalVariantImplementationFactoriesForTests()
-        }
+        val project = buildProject()
         project.plugins.apply("kotlin-android-extensions")
 
         project.evaluate()

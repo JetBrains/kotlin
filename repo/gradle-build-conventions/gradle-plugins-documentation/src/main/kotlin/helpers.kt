@@ -21,10 +21,7 @@ internal fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(
         pluginVariant == GradlePluginVariant.GRADLE_80 ||
         pluginVariant == GradlePluginVariant.GRADLE_81 ||
         pluginVariant == GradlePluginVariant.GRADLE_82 ||
-        pluginVariant == GradlePluginVariant.GRADLE_85 ||
-        pluginVariant == GradlePluginVariant.GRADLE_86 ||
-        pluginVariant == GradlePluginVariant.GRADLE_88 ||
-        pluginVariant == GradlePluginVariant.GRADLE_811
+        pluginVariant == GradlePluginVariant.GRADLE_85
     ) {
         packageListUrl.set(URI("${pluginVariant.gradleApiJavadocUrl}element-list").toURL())
     }
