@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.utils.prettyName
@@ -38,7 +39,7 @@ internal object KotlinToolingDiagnostics {
      *
      * P.s. Some tests also suppress this diagnostic -- these tests should be removed together with the flags support
      */
-    object PreHMPPFlagsError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object PreHMPPFlagsError : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(usedDeprecatedFlags: List<String>) = build {
             title("Deprecated Kotlin Multiplatform Properties")
                 .description {
@@ -56,7 +57,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(usedTargetIds: List<String>) = buildDiagnostic(
             title = "Deprecated Kotlin/Native Targets",
             description = "The following removed Kotlin/Native targets were used in the project: ${usedTargetIds.joinToString()}",
@@ -64,7 +65,7 @@ internal object KotlinToolingDiagnostics {
         )
     }
 
-    object CommonMainOrTestWithDependsOnDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object CommonMainOrTestWithDependsOnDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(suffix: String) = buildDiagnostic(
             title = "Invalid `dependsOn` Configuration in Common Source Set",
             description = "common$suffix can't declare dependsOn on other source sets",
@@ -72,7 +73,7 @@ internal object KotlinToolingDiagnostics {
         )
     }
 
-    object NativeStdlibIsMissingDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object NativeStdlibIsMissingDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(changedKotlinNativeHomeProperty: String?) = build {
             title("Missing Kotlin/Native Standard Library")
                 .description {
@@ -85,7 +86,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object NewNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object NewNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build {
             title("Kotlin/Native and Kotlin Versions Incompatible")
                 .description {
@@ -97,7 +98,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object OldNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object OldNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build {
             title("Kotlin/Native and Kotlin Versions Incompatible")
                 .description {
@@ -109,7 +110,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedJvmWithJavaPresetDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object DeprecatedJvmWithJavaPresetDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'jvmWithJava' Preset")
                 .description {
@@ -135,7 +136,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UnusedSourceSetsWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object UnusedSourceSetsWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSetNames: Collection<String>) = build {
             title("Unused Kotlin Source Sets")
                 .description {
@@ -156,7 +157,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object MultipleSourceSetRootsInCompilation : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object MultipleSourceSetRootsInCompilation : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         private const val DIAGNOSTIC_NAME = "Missing 'dependsOn' in Source Sets"
 
         operator fun invoke(
@@ -236,7 +237,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated Android Source Set Layout V1")
                 .description {
@@ -251,7 +252,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AgpRequirementNotMetForAndroidSourceSetLayoutV2 : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AgpRequirementNotMetForAndroidSourceSetLayoutV2 : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(minimumRequiredAgpVersion: String, currentAgpVersion: String) = build {
             title("Android Gradle Plugin Version Incompatible with Source Set Layout V2")
                 .description {
@@ -266,7 +267,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidStyleSourceDirUsageWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    object AndroidStyleSourceDirUsageWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(androidStyleSourceDirInUse: String, kotlinStyleSourceDirToUse: String) = build {
             title("Deprecated 'Android Style' Source Directory")
                 .description {
@@ -287,7 +288,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object SourceSetLayoutV1StyleDirUsageWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    object SourceSetLayoutV1StyleDirUsageWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(v1StyleSourceDirInUse: String, currentLayoutName: String, v2StyleSourceDirToUse: String) = build {
             title("Deprecated Source Set Layout V1")
                 .description {
@@ -304,7 +305,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IncompatibleGradleVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object IncompatibleGradleVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(
             currentGradleVersion: GradleVersion,
             minimallySupportedGradleVersion: GradleVersion,
@@ -322,7 +323,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IncompatibleAgpVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object IncompatibleAgpVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(
             androidGradlePluginVersionString: String,
             minSupported: String,
@@ -340,7 +341,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object FailedToGetAgpVersionWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object FailedToGetAgpVersionWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(agpPluginId: String) = build {
             title("Failed to Retrieve Android Gradle Plugin Version")
                 .description {
@@ -355,7 +356,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidSourceSetLayoutV1SourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AndroidSourceSetLayoutV1SourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(nameOfRequestedSourceSet: String) = build {
             title("Renamed Android Source Set Not Found")
                 .description {
@@ -377,7 +378,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinJvmMainRunTaskConflict : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinJvmMainRunTaskConflict : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String, taskName: String) = build {
             title("JVM Main Run Task Conflict")
                 .description {
@@ -389,7 +390,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedPropertyWithReplacement : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    object DeprecatedPropertyWithReplacement : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(deprecatedPropertyName: String, replacement: String) = build {
             title("Deprecated Project Property '$deprecatedPropertyName'")
                 .description {
@@ -401,7 +402,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UnrecognizedKotlinNativeDistributionType : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object UnrecognizedKotlinNativeDistributionType : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(actualValue: String) = build {
             title("Unrecognized Kotlin/Native Distribution Type")
                 .description {
@@ -413,7 +414,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidTargetIsMissing : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AndroidTargetIsMissing : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(projectName: String, projectPath: String, androidPluginId: String) = build {
             title("Missing `androidTarget()` in Kotlin Multiplatform Project")
                 .description {
@@ -438,7 +439,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidGradlePluginIsMissing : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AndroidGradlePluginIsMissing : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
             title("Missing Android Gradle Plugin")
                 .description {
@@ -465,7 +466,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object NoKotlinTargetsDeclared : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object NoKotlinTargetsDeclared : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(projectName: String, projectPath: String) = build {
             title("No Kotlin Targets Declared")
                 .description {
@@ -480,7 +481,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DisabledCinteropsCommonizationInHmppProject : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
+    object DisabledCinteropsCommonizationInHmppProject : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
         operator fun invoke(affectedSourceSetsString: String, affectedCinteropsString: String) = build {
             title("CInterop Commonization Disabled")
                 .description {
@@ -509,7 +510,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DisabledKotlinNativeTargets : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object DisabledKotlinNativeTargets : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(disabledTargetNames: Collection<String>): ToolingDiagnostic = build {
             title("Disabled Kotlin/Native Targets")
                 .description {
@@ -524,7 +525,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object InconsistentTargetCompatibilityForKotlinAndJavaTasks : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object InconsistentTargetCompatibilityForKotlinAndJavaTasks : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(
             javaTaskName: String,
             targetCompatibility: String,
@@ -551,7 +552,7 @@ internal object KotlinToolingDiagnostics {
     abstract class JsLikeEnvironmentNotChosenExplicitly(
         private val environmentName: String,
         private val targetType: String,
-    ) : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    ) : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(availableEnvironments: List<String>) = build {
             title("JS Environment Not Selected")
                 .description {
@@ -578,7 +579,7 @@ internal object KotlinToolingDiagnostics {
 
     object WasmWasiEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("WebAssembly WASI", "wasmWasi")
 
-    object PreHmppDependenciesUsedInBuild : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    object PreHmppDependenciesUsedInBuild : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(dependencyName: String) = build {
             title("Deprecated Legacy Mode Dependency")
                 .description {
@@ -593,7 +594,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ExperimentalTryNextWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
+    object ExperimentalTryNextWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
         operator fun invoke() = build {
             title("Experimental 'kotlin.experimental.tryNext' Option Enabled")
                 .description {
@@ -605,7 +606,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinSourceSetTreeDependsOnMismatch : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinSourceSetTreeDependsOnMismatch : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         private fun diagnosticName() = "Invalid Source Set Dependency Across Trees"
 
         operator fun invoke(dependeeName: String, dependencyName: String) = build {
@@ -639,7 +640,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinSourceSetDependsOnDefaultCompilationSourceSet : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinSourceSetDependsOnDefaultCompilationSourceSet : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(dependeeName: String, dependencyName: String) = build {
             title("Invalid Dependency on Default Compilation Source Set")
                 .description {
@@ -654,7 +655,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object PlatformSourceSetConventionUsedWithCustomTargetName : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object PlatformSourceSetConventionUsedWithCustomTargetName : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, target: KotlinTarget, expectedTargetName: String) =
             build(throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt) {
                 title("Source Set used with custom target name")
@@ -683,7 +684,7 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
-    object PlatformSourceSetConventionUsedWithoutCorrespondingTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object PlatformSourceSetConventionUsedWithoutCorrespondingTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, expectedTargetName: String) =
             build(throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt) {
                 title("Source Set Used Without a Corresponding Target")
@@ -705,7 +706,7 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
-    object AndroidMainSourceSetConventionUsedWithoutAndroidTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AndroidMainSourceSetConventionUsedWithoutAndroidTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet) = build(throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt) {
             title("Android Source Set Used Without an Android Target")
                 .description {
@@ -735,7 +736,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IosSourceSetConventionUsedWithoutIosTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object IosSourceSetConventionUsedWithoutIosTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet) = build(throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt) {
             title("iOS Source Set Used Without an iOS Target")
                 .description {
@@ -760,7 +761,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinDefaultHierarchyFallbackDependsOnUsageDetected : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinDefaultHierarchyFallbackDependsOnUsageDetected : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(project: Project, sourceSetsWithDependsOnEdges: Iterable<KotlinSourceSet>) = build {
             title("Default Kotlin Hierarchy Template Not Applied Correctly")
                 .description {
@@ -783,7 +784,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinDefaultHierarchyFallbackIllegalTargetNames : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinDefaultHierarchyFallbackIllegalTargetNames : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(project: Project, illegalTargetNamesUsed: Iterable<String>) = build {
             title("Default Kotlin Hierarchy Template Misconfiguration Due to Illegal Target Names")
                 .description {
@@ -806,7 +807,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object XCFrameworkDifferentInnerFrameworksName : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object XCFrameworkDifferentInnerFrameworksName : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(xcFramework: String, innerFrameworks: String) = build {
             title("XCFramework Name Mismatch with Inner Frameworks")
                 .description {
@@ -818,7 +819,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UnknownAppleFrameworkBuildType : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object UnknownAppleFrameworkBuildType : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(envConfiguration: String) = build {
             title("Unable to Detect Apple Framework Build Type")
                 .description {
@@ -833,7 +834,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ExperimentalArtifactsDslUsed : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
+    object ExperimentalArtifactsDslUsed : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
         operator fun invoke() = build {
             title("Using Experimental 'kotlinArtifacts' DSL")
                 .description {
@@ -847,7 +848,7 @@ internal object KotlinToolingDiagnostics {
 
     private val presetsDeprecationSeverity = ERROR
 
-    object TargetFromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroup.Kgp.Deprecation) {
+    object TargetFromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroups.KGP.Deprecation) {
         const val DEPRECATION_MESSAGE = "The targetFromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
         operator fun invoke() = build {
             title("targetFromPreset() Method Deprecated")
@@ -859,7 +860,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object FromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroup.Kgp.Deprecation) {
+    object FromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroups.KGP.Deprecation) {
         const val DEPRECATION_MESSAGE = "The fromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
         operator fun invoke() = build {
             title("fromPreset() Function Deprecated")
@@ -871,7 +872,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object CreateTarget : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroup.Kgp.Deprecation) {
+    object CreateTarget : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroups.KGP.Deprecation) {
         private const val DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
         operator fun invoke() = build {
             title("KotlinTargetPreset.createTarget() Method Deprecated")
@@ -883,7 +884,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object JvmWithJavaIsIncompatibleWithAndroid : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object JvmWithJavaIsIncompatibleWithAndroid : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(androidPluginId: String, trace: Throwable?) = build(throwable = trace) {
             title("`withJava()` in JVM Target Incompatible with Android Plugins")
                 .description {
@@ -905,7 +906,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     abstract class KotlinTargetAlreadyDeclared(severity: ToolingDiagnostic.Severity) :
-        ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
+        ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetDslFunctionName: String) = build {
             title("`$targetDslFunctionName()` Kotlin Target Already Declared")
                 .description {
@@ -921,7 +922,7 @@ internal object KotlinToolingDiagnostics {
     object KotlinTargetAlreadyDeclaredWarning : KotlinTargetAlreadyDeclared(WARNING)
     object KotlinTargetAlreadyDeclaredError : KotlinTargetAlreadyDeclared(ERROR)
 
-    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(trace: Throwable?) = build(throwable = trace) {
             title("`KotlinCompilation.source(KotlinSourceSet)` Method Deprecated")
                 .description {
@@ -939,7 +940,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object CircularDependsOnEdges : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object CircularDependsOnEdges : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSetsOnCycle: Collection<String>) = build {
             title("Circular dependsOn Relationship Detected in Kotlin Source Sets")
                 .description {
@@ -951,7 +952,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object InternalKotlinGradlePluginPropertiesUsed : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object InternalKotlinGradlePluginPropertiesUsed : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(propertiesUsed: Collection<String>) = build {
             title("Usage of Internal Kotlin Gradle Plugin Properties Detected")
                 .description {
@@ -970,7 +971,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object BuildToolsApiVersionInconsistency : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object BuildToolsApiVersionInconsistency : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(expectedVersion: String, actualVersion: String?) = build {
             title("Build Tools API Version Mismatch Detected")
                 .description {
@@ -987,7 +988,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object WasmSourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object WasmSourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(nameOfRequestedSourceSet: String) = build {
             title("Wasm Source Sets Missing Due to Renaming in Kotlin 1.9.20")
                 .description {
@@ -1006,7 +1007,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DuplicateSourceSetsError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object DuplicateSourceSetsError : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(duplicatedSourceSets: Map<String, List<String>>): ToolingDiagnostic {
             val duplicatesGroupsString = duplicatedSourceSets
                 .map { entry -> entry.value.joinToString(", ") }
@@ -1025,7 +1026,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object CInteropRequiredParametersNotSpecifiedError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object CInteropRequiredParametersNotSpecifiedError : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke() = build {
             title("CInterop Task Missing Required Parameters")
                 .description {
@@ -1040,7 +1041,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IncorrectCompileOnlyDependencyWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object IncorrectCompileOnlyDependencyWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
 
         data class CompilationDependenciesPair(
             val compilation: KotlinCompilation<*>,
@@ -1113,7 +1114,7 @@ internal object KotlinToolingDiagnostics {
     private fun resourcesBugReportRequest(url: String) =
         "This is likely a bug in Kotlin Gradle Plugin configuration. Please report this issue to $url"
 
-    object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Multiple Resource Publications Detected for Target '$targetName'")
                 .description {
@@ -1126,7 +1127,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AssetsPublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AssetsPublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke() = build {
             title("Multiple Assets Publications Detected for Android Target")
                 .description {
@@ -1139,7 +1140,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Resource Publication Not Supported for Target '$targetName'")
                 .description {
@@ -1152,7 +1153,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ResourceMayNotBeResolvedForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object ResourceMayNotBeResolvedForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Resource Resolution Not Supported for Target '$targetName'")
                 .description {
@@ -1165,7 +1166,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ResourceMayNotBeResolvedWithGradleVersion : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object ResourceMayNotBeResolvedWithGradleVersion : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(
             targetName: String, currentGradleVersion: String, minimumRequiredVersion: String,
         ) = build {
@@ -1180,7 +1181,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object MissingRuntimeDependencyConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object MissingRuntimeDependencyConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Missing Runtime Dependency Configuration for Wasm Target '$targetName'")
                 .description {
@@ -1193,7 +1194,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object MissingResourcesConfigurationForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object MissingResourcesConfigurationForTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Missing Resource Configuration for Target '$targetName'")
                 .description {
@@ -1206,7 +1207,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(dependency: File) = build {
             title("Specified Dependency Does Not Exist")
                 .description {
@@ -1218,7 +1219,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object XcodeVersionTooHighWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object XcodeVersionTooHighWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(xcodeVersionString: String, maxTested: String) = build {
             title("Xcode Version Too High for Kotlin Gradle Plugin")
                 .description {
@@ -1236,7 +1237,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object ExperimentalFeatureWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
+    object ExperimentalFeatureWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
         operator fun invoke(featureName: String, youtrackUrl: String) = build {
             title("Experimental Feature Notice")
                 .description {
@@ -1256,7 +1257,7 @@ internal object KotlinToolingDiagnostics {
 
     open class DeprecatedGradleProperties(
         severity: ToolingDiagnostic.Severity,
-    ) : ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Deprecation) {
+    ) : ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(
             usedDeprecatedProperty: String,
             details: String?,
@@ -1272,7 +1273,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         data class RedundantEdge(val from: String, val to: String)
 
         operator fun invoke(redundantEdges: List<RedundantEdge>) = build {
@@ -1297,7 +1298,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object BrokenKotlinNativeBundleError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object BrokenKotlinNativeBundleError : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(kotlinNativeHomePropertyValue: String?, kotlinNativeHomeProperty: String) =
             build {
                 title("Kotlin/Native Distribution Missing Required Subdirectories")
@@ -1310,7 +1311,7 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
-    object KonanHomeConflictDeclaration : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KonanHomeConflictDeclaration : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(konanDataDirPropertyValue: File?, kotlinNativeHomeProperty: String?) =
             build {
                 title("Both ${NativeProperties.KONAN_DATA_DIR.name} and ${NativeProperties.NATIVE_HOME.name} Properties Declared")
@@ -1326,7 +1327,7 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
-    object NoComposeCompilerPluginAppliedWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object NoComposeCompilerPluginAppliedWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke() = build {
             title("Compose Compiler Plugin Not Applied")
                 .description {
@@ -1341,7 +1342,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(): ToolingDiagnostic = build {
             title("History-Based Incremental Compilation Deprecated for JVM Platform")
                 .description {
@@ -1354,7 +1355,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KMPJavaPluginsIncompatibilityDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KMPJavaPluginsIncompatibilityDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
 
         operator fun invoke(
             pluginId: String,
@@ -1404,7 +1405,7 @@ internal object KotlinToolingDiagnostics {
             "$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin."
     }
 
-    internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = WARNING, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(): ToolingDiagnostic {
             val severity = if (GradleVersion.current() >= GradleVersion.version("9.0")) ERROR else WARNING
             return build(severity = severity) {
@@ -1419,7 +1420,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(userScriptSandboxingEnabled: Boolean) = build {
             title("User Script Sandboxing Enabled in Xcode Project")
                 .description {
@@ -1440,7 +1441,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidPublicationNotConfigured : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object AndroidPublicationNotConfigured : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(componentName: String, publicationName: String) = build(throwable = Throwable()) {
             title("Android Publication '$publicationName' Misconfigured for Variant '$componentName'")
                 .description {
@@ -1465,7 +1466,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinCompilerEmbeddableIsPresentInClasspath : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinCompilerEmbeddableIsPresentInClasspath : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke() = build {
             title("'org.jetbrains.kotlin:kotlin-compiler-embeddable' Artifact Present in Build Classpath")
                 .description {
@@ -1481,7 +1482,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object NotCompatibleWithGradle9 : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+    object NotCompatibleWithGradle9 : ToolingDiagnosticFactory(FATAL, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(fixAction: String) = build {
             title("Kotlin Gradle Plugin Not Compatible with Gradle 9")
                 .description {
@@ -1493,7 +1494,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedLegacyCompilationOutputsBackup : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object DeprecatedLegacyCompilationOutputsBackup : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke() = build {
             title("Deprecated Legacy Compilation Outputs Backup")
                 .description {
@@ -1505,7 +1506,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidExtensionPluginRemoval : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
+    object AndroidExtensionPluginRemoval : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(): ToolingDiagnostic = build {
             title("Deprecated 'kotlin-android-extensions' Gradle Plugin")
                 .description {
@@ -1524,7 +1525,7 @@ internal object KotlinToolingDiagnostics {
 
     internal object KotlinScriptingMisconfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = WARNING,
-        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
+        predefinedGroup = DiagnosticGroups.KGP.Misconfiguration
     ) {
         operator fun invoke(
             taskPath: String,
@@ -1540,7 +1541,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(moduleName: String) = build {
             title("Invalid Swift Module Name")
                 .description {
@@ -1554,7 +1555,7 @@ internal object KotlinToolingDiagnostics {
 
     object IcFirMisconfigurationLV : ToolingDiagnosticFactory(
         predefinedSeverity = FATAL,
-        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
+        predefinedGroup = DiagnosticGroups.KGP.Misconfiguration
     ) {
         operator fun invoke(
             taskPath: String,
@@ -1573,7 +1574,7 @@ internal object KotlinToolingDiagnostics {
 
     object IcFirMisconfigurationRequireClasspathSnapshots : ToolingDiagnosticFactory(
         predefinedSeverity = FATAL,
-        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+        predefinedGroup = DiagnosticGroups.KGP.Misconfiguration,
     ) {
         operator fun invoke(
             taskPath: String
@@ -1590,7 +1591,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
+    object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
         operator fun invoke(targetName: String): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")
                 .description {
