@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
+import org.jetbrains.kotlin.incremental.isKotlinFile
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
@@ -164,12 +165,10 @@ internal object CompilationServiceImpl : CompilationService {
         validateArguments(parsedArguments.errors)?.let {
             throw CompilerArgumentsParseException(it)
         }
+        val kotlinFilenameExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
         val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl -> {
-                val kotlinFilenameExtensions =
-                    (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
-
                 @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
                 val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(parsedArguments, kotlinFilenameExtensions) + sources
 
@@ -215,7 +214,7 @@ internal object CompilationServiceImpl : CompilationService {
                 ).asCompilationResult
             }
             else -> {
-                parsedArguments.freeArgs += sources.map { it.absolutePath }
+                parsedArguments.freeArgs += sources.filter { it.isKotlinFile(kotlinFilenameExtensions) }.map { it.absolutePath }
                 compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
             }
         }
