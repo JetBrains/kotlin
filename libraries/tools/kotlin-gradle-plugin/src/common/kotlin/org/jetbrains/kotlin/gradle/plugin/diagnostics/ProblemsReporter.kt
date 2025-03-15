@@ -77,8 +77,8 @@ internal fun ProblemSpec.defaultSpecConfiguration(diagnostic: ToolingDiagnostic,
         }
 }
 
-// Create own implementation of ProblemGroup. In gradle 8.13 there will be a static factory method for creating ProblemGroup
-internal class KgpProblemGroup(val group: DiagnosticGroup) : ProblemGroup {
+// Create own implementation of ProblemGroup. In gradle 18.3 there will be a static factory method for creating ProblemGroup
+internal class KGPProblemGroup(val group: DiagnosticGroup) : ProblemGroup {
     override fun getName() = group.groupId
     override fun getDisplayName() = group.displayName
     override fun getParent() = group.parent?.let { KgpProblemGroup(it) }

@@ -340,7 +340,7 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
 }
 
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
-    if (buildOptions.warningMode != WarningMode.Fail && buildOptions.warningMode != WarningMode.None) {
+    if (buildOptions.warningMode != WarningMode.Fail) {
         assertDeprecationWarningsArePresent(buildOptions.warningMode)
     }
 }
