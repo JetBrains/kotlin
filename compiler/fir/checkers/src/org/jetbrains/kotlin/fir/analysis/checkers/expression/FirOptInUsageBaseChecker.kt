@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInAnnotationCallChecker.getSubclassOptInApplicabilityAndMessage
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -233,9 +233,9 @@ object FirOptInUsageBaseChecker {
             // Handling data class 'componentN' function
             if (parentClassSymbol?.isData == true && DataClassResolver.isComponentLike(this.nameOrSpecialName) && parentClassSymbol.classKind == ClassKind.CLASS) {
                 val componentNIndex = DataClassResolver.getComponentIndex(this.nameOrSpecialName.identifier)
-                val valueParameters = parentClassSymbol.primaryConstructorIfAny(context.session)?.valueParameterSymbols
+                val valueParameters = parentClassSymbol.primaryConstructorSymbol(context.session)?.valueParameterSymbols
                 val valueParameter = valueParameters?.getOrNull(componentNIndex - 1)
-                val properties = parentClassSymbol.properties(context.session)
+                val properties = parentClassSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
                 val property = properties.firstOrNull { it.name == valueParameter?.name }
                 property?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false)
             }

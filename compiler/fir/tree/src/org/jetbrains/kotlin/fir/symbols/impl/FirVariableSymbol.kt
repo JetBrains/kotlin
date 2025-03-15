@@ -140,9 +140,6 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
     ValueParameterSymbolMarker,
     // TODO(KT-72994) stop extending FirThisOwnerSymbol when context receivers are removed
     FirThisOwnerSymbol<FirValueParameter> {
-    val defaultValue: FirExpression?
-        get() = fir.defaultValue
-
     val hasDefaultValue: Boolean
         get() = fir.defaultValue != null
 
