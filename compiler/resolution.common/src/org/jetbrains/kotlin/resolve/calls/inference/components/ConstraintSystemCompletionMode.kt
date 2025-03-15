@@ -40,18 +40,14 @@ enum class ConstraintSystemCompletionMode(
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
     ),
-
-    /**
-     * Actually this mode is used exclusively for OverloadResolutionByLambdaReturnType resolver and,
-     * for some reason, inside low-level-api-fir/AllCandidatesResolver
-     */
     UNTIL_FIRST_LAMBDA(
         allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
         /* See testData/diagnostics/tests/inference/inferenceForkRegressionSimple.kt */
         shouldForkPointConstraintsBeResolved = true,
-        // We shouldn't do it here because of input type semi-fixing
-        fixNotInferredTypeVariablesToErrorType = false,
+        // This one is quite questionable, but should not matter too much
+        // because anyway overload ambiguity would be reported for error candidates
+        fixNotInferredTypeVariablesToErrorType = true,
     );
 
     init {

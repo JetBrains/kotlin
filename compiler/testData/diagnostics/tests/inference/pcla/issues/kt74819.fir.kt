@@ -2,9 +2,9 @@
 // ISSUE: KT-74819
 // WITH_STDLIB
 
-fun foo(x: List<String>) =
+fun foo(x: List<String>) {
     buildList {
         add("")
-        addAll(flatMap { listOf(2) })
-        addAll(flatMap { x })
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>flatMap<!> { x }
     }
+}
