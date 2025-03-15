@@ -446,6 +446,36 @@ class Strings {
     }
 
     @Sample
+    fun lastIndexOf() {
+        fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = inputString.length - 1): String {
+            val matchIndex = inputString.lastIndexOf(whatToFind, startIndex)
+            return "Searching for '$whatToFind' in '$inputString' starting at position $startIndex: " +
+                    if (matchIndex >= 0) "Found at $matchIndex" else "Not found"
+        }
+
+        val inputString = "Never ever give up"
+        val toFind = "ever"
+
+        assertPrints(matchDetails(inputString, toFind), "Searching for 'ever' in 'Never ever give up' starting at position 17: Found at 6")
+        assertPrints(matchDetails(inputString, toFind, 0), "Searching for 'ever' in 'Never ever give up' starting at position 0: Not found")
+        assertPrints(matchDetails(inputString, toFind, 5), "Searching for 'ever' in 'Never ever give up' starting at position 5: Found at 1")
+    }
+
+    @Sample
+    fun contains() {
+        val string = "Kotlin 1.4.0"
+        assertTrue("K" in string)
+        assertFalse("k" in string)
+
+        assertTrue("" in string)
+        assertTrue(string in string)
+        assertTrue("" in "")
+        assertFalse(string in "Kotlin")
+
+        assertTrue(string.contains("k", ignoreCase = true))
+    }
+
+    @Sample
     fun last() {
         val string = "Kotlin 1.4.0"
         assertPrints(string.last(), "0")
