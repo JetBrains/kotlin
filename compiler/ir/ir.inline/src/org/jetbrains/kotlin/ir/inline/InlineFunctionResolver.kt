@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunct
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -37,7 +38,7 @@ interface CallInlinerStrategy {
      * @return new node to insert instead of typeOf call.
      */
     fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression
-    fun at(scope: Scope, expression: IrExpression) {}
+    fun at(container: IrDeclaration, expression: IrExpression) {}
 
     object DEFAULT : CallInlinerStrategy {
         override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {

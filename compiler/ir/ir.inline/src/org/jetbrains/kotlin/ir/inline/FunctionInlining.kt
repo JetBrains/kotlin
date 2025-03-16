@@ -41,7 +41,7 @@ open class FunctionInlining(
     private val insertAdditionalImplicitCasts: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
-) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
+) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
     init {
         require(!produceOuterThisFields || context is CommonBackendContext) {
             "The inliner can generate outer fields only with param `context` of type `CommonBackendContext`"
@@ -49,22 +49,20 @@ open class FunctionInlining(
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        withinScope(container) {
-            irBody.accept(this, null)
-        }
+        irBody.accept(this, container)
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration): IrStatement {
         return when (declaration) {
             is IrFunction, is IrClass, is IrProperty -> context.irFactory.stageController.restrictTo(declaration) {
-                super.visitDeclaration(declaration)
+                super.visitDeclaration(declaration, declaration)
             }
-            else -> super.visitDeclaration(declaration)
+            else -> super.visitDeclaration(declaration, declaration)
         }
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        expression.transformChildrenVoid(this)
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
+        expression.transformChildren(this, data)
 
         if (!inlineFunctionResolver.needsInlining(expression)) return expression
 
@@ -77,28 +75,23 @@ open class FunctionInlining(
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
         if (actualCallee?.body == null) {
             if (expression is IrCall && Symbols.isTypeOfIntrinsic(calleeSymbol)) {
-                inlineFunctionResolver.callInlinerStrategy.at(currentScope!!.scope, expression)
+                inlineFunctionResolver.callInlinerStrategy.at(data, expression)
                 return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
             }
             return expression
         }
 
-        withinScope(actualCallee) {
-            actualCallee.body?.transformChildrenVoid()
-            actualCallee.parameters.forEachIndexed { index, param ->
-                if (expression.arguments[index] == null) {
-                    // Default values can recursively reference [callee] - transform only needed.
-                    param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
-                }
+        actualCallee.body?.transformChildren(this, actualCallee)
+        actualCallee.parameters.forEachIndexed { index, param ->
+            if (expression.arguments[index] == null) {
+                // Default values can recursively reference [callee] - transform only needed.
+                param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, actualCallee)
             }
         }
 
-        val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
-            ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent
-
-        inlineFunctionResolver.callInlinerStrategy.at(currentScope!!.scope, expression)
+        inlineFunctionResolver.callInlinerStrategy.at(data, expression)
         val inliner = CallInlining(
-            expression, actualCallee, parent,
+            expression, actualCallee, data as? IrDeclarationParent ?: data.parent,
             context,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
@@ -128,7 +121,7 @@ open class FunctionInlining(
 private class CallInlining(
     val callSite: IrFunctionAccessExpression,
     val callee: IrFunction,
-    val parent: IrDeclarationParent?,
+    val parent: IrDeclarationParent,
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean,
