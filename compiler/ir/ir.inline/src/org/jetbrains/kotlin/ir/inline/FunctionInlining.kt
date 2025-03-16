@@ -63,8 +63,6 @@ open class FunctionInlining(
         }
     }
 
-    fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
-
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
