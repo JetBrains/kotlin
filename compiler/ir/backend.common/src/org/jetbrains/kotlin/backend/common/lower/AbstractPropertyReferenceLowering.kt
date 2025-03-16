@@ -35,7 +35,10 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
                 val originalPropertySymbol = expression.reflectionTargetSymbol
                 if (originalPropertySymbol is IrLocalDelegatedPropertySymbol) {
-                    return irBuilder.createLocalKProperty(expression, originalPropertySymbol.owner.name.asString(), expression.type)
+                    return irBuilder.createLocalKProperty(
+                        expression, originalPropertySymbol.owner.name.asString(), expression.type,
+                        isMutable = expression.setterFunction != null
+                    )
                 }
                 require(originalPropertySymbol is IrPropertySymbol)
                 val typeArguments = (expression.type as IrSimpleType).arguments.map { it.typeOrNull ?: irBuiltIns.anyNType }
@@ -118,5 +121,6 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
         reference: IrRichPropertyReference,
         propertyName: String,
         propertyType: IrType,
+        isMutable: Boolean,
     ): IrExpression
 }

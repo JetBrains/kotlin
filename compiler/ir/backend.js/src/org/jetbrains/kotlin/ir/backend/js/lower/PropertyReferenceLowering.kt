@@ -55,6 +55,7 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
         reference: IrRichPropertyReference,
         propertyName: String,
         propertyType: IrType,
+        isMutable: Boolean,
     ): IrExpression {
         return irCall(localDelegateBuilderSymbol, reference.type).apply {
             // 0 - name
