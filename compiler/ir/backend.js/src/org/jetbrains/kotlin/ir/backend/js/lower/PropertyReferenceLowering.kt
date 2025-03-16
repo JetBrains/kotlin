@@ -57,6 +57,7 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
         reference: IrRichPropertyReference,
         propertyName: String,
         propertyType: IrType,
+        isMutable: Boolean,
     ): IrExpression {
         val function = context.irFactory.buildFun {
             startOffset = this@createLocalKProperty.startOffset

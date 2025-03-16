@@ -79,11 +79,13 @@ internal class PropertyReferenceLowering(generationState: NativeGenerationState)
     override fun IrBuilderWithScope.createLocalKProperty(
             reference: IrRichPropertyReference,
             propertyName: String,
-            propertyType: IrType
+            propertyType: IrType,
+            isMutable: Boolean,
     ): IrConstantValue {
+        val constructor = (if (isMutable) mutableSymbols else immutableSymbols).local.owner
         return toNativeConstantReflectionBuilder(symbols).run {
             irConstantObject(
-                    symbols.kLocalDelegatedPropertyImpl.owner,
+                    constructor.constructedClass,
                     mapOf(
                             "name" to irConstantPrimitive(irString(propertyName)),
                             "returnType" to irKType(propertyType)
