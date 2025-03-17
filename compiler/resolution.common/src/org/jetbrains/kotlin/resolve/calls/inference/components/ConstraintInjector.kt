@@ -432,6 +432,7 @@ class ConstraintInjector(
             if (!isSubtypeOf(upperType)) {
                 // TODO: Get rid of this additional workarounds for flexible types once KT-59138 is fixed and
                 //  the relevant feature for disabling it will be removed.
+                // Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
                 if (shouldTryUseDifferentFlexibilityForUpperType && upperType.isRigidType()) {
                     /*
                      * Please don't reuse this logic.
