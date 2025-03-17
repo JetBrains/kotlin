@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
-    private val codeFragmentTypes =
-        setOf(KtNodeTypes.BLOCK_CODE_FRAGMENT, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, KtNodeTypes.TYPE_CODE_FRAGMENT)
-
     override fun checkPsiOrLightTree(
         element: FirDeclaration,
         source: KtSourceElement,
@@ -132,7 +129,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         reporter: DiagnosticReporter
     ) {
         if (declaration !is FirCallableDeclaration) return
-        if (!declaration.returnTypeCheckIsApplicable(context)) return
+        if (!declaration.returnTypeCheckIsApplicable()) return
 
         val shouldReport = returnTypeRequired(declaration, context)
         if (shouldReport) {
@@ -145,11 +142,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         }
     }
 
-    private fun FirCallableDeclaration.returnTypeCheckIsApplicable(context: CheckerContext): Boolean {
-        // Do not check if the containing file is not a physical file.
-        val containingFile = context.containingDeclarations.first()
-        if (containingFile.source?.elementType in codeFragmentTypes) return false
-
+    private fun FirCallableDeclaration.returnTypeCheckIsApplicable(): Boolean {
         // It's an explicit type, the check always should be skipped
         if (returnTypeRef.source?.kind == KtRealSourceElementKind) return false
 
