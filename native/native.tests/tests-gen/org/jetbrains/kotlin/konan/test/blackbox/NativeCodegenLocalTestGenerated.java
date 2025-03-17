@@ -1853,6 +1853,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("liveness_analysis_fallback.kt")
+    public void testLiveness_analysis_fallback() {
+      runTest("native/native.tests/testData/codegen/lower/liveness_analysis_fallback.kt");
+    }
+
+    @Test
     @TestMetadata("tailrec.kt")
     public void testTailrec() {
       runTest("native/native.tests/testData/codegen/lower/tailrec.kt");
