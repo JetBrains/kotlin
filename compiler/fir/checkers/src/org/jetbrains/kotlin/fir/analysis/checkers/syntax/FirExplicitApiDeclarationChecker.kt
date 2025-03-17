@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -128,7 +129,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         reporter: DiagnosticReporter
     ) {
         if (declaration !is FirCallableDeclaration) return
-        if (!returnTypeCheckIsApplicable(source, context)) return
+        if (!declaration.returnTypeCheckIsApplicable(source, context)) return
 
         val shouldReport = returnTypeRequired(declaration, context)
         if (shouldReport) {
@@ -141,20 +142,20 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         }
     }
 
-    private fun returnTypeCheckIsApplicable(source: KtSourceElement, context: CheckerContext): Boolean {
+    private fun FirCallableDeclaration.returnTypeCheckIsApplicable(source: KtSourceElement, context: CheckerContext): Boolean {
         // Note that by default getChild uses `depth = -1`, which would find all descendents.
         if (source.getChild(KtNodeTypes.TYPE_REFERENCE, depth = 1) != null) return false
         // Do not check if the containing file is not a physical file.
         val containingFile = context.containingDeclarations.first()
         if (containingFile.source?.elementType in codeFragmentTypes) return false
 
-        return when (source.elementType) {
-            // Only require return type if the function is defined via `=`. If it has a block body or is abstract, we don't require return
-            // type because not declaring means it returns `Unit`.
-            KtNodeTypes.FUN -> source.getChild(KtTokens.EQ, depth = 1) != null
-            KtNodeTypes.PROPERTY -> true
-            else -> false
-        }
+        return this is FirProperty ||
+                this is FirFunction &&
+                // It's allowed to have implicit return type for getters, for setters the return type is always `Unit`.
+                // The return type of the outer property is only worth considering.
+                this !is FirPropertyAccessor &&
+                // Implicit return type can exist only for single-expression functions, unspecified type for regular functions is incorrect.
+                body is FirSingleExpressionBlock
     }
 
     private fun returnTypeRequired(declaration: FirCallableDeclaration, context: CheckerContext): Boolean {
