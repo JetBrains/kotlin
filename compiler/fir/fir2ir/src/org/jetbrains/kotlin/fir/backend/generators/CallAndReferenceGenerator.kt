@@ -861,7 +861,7 @@ class CallAndReferenceGenerator(
             }
         }
             .applyTypeArguments(lValue)
-            .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhs)
+            .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhsWithCast)
     }
 
     /** Wrap an assignment - as needed - with an implicit cast to the left-hand side type. */

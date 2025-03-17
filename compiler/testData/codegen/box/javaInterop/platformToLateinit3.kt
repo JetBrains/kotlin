@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-75649
 // WITH_REFLECT
 
@@ -15,12 +14,14 @@ class C(val j: J) {
         x = j.foo()
         if (this::x.isInitialized) throw IllegalStateException("Initialized")
     }
-
-    fun bar() = x
 }
 
 fun box(): String {
     val c = C(object : J { override fun foo() = null })
-    c.init()
-    return "OK"
+    try {
+        c.init()
+    } catch (e: NullPointerException) {
+        return "OK"
+    }
+    return "FAIL: didn't throw"
 }

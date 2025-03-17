@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-75649
 
 // FILE: J.java
@@ -13,12 +12,14 @@ class C(val j: J) {
     fun init() {
         x = j.foo()
     }
-
-    fun bar() = x
 }
 
 fun box(): String {
     val c = C(object : J { override fun foo() = null })
-    c.init()
-    return "OK"
+    try {
+        c.init()
+    } catch (e: NullPointerException) {
+        return "OK"
+    }
+    return "FAIL: didn't throw"
 }

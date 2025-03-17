@@ -23,6 +23,8 @@ fun returnExplicit(): MyFun {
 val withGetter: MyFun
     get() = { it.length }
 
+lateinit var topLevelLateinit: MyFun
+
 fun box(): String {
     if (topLevel.foo("OK") != 2) return "fail"
     if (baz().foo("OK") != 2) return "fail"
@@ -35,6 +37,9 @@ fun box(): String {
     if (local.foo("OK") != 2) return "fail"
     local = { it.length + 1 }
     if (local.foo("OK") != 3) return "fail"
+
+    topLevelLateinit = { it.length }
+    if (topLevelLateinit.foo("OK") != 2) return "fail"
 
 // TODO: Uncomment it once KT-74899 is fixed
 //    val whenResult: MyFun = when {
