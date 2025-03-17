@@ -148,6 +148,48 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             else buildNewCoroutineClass(function)
         }
 
+        fun build(): BuiltCoroutine {
+            val coroutineConstructor = buildConstructor()
+
+            val implementedMembers = ArrayList<IrSimpleFunction>(2)
+
+            val superInvokeSuspendFunction = coroutineBaseClass.owner.simpleFunctions().single { it.name == stateMachineMethodName }
+            val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction)
+
+            implementedMembers.add(invokeSuspendMethod)
+
+            if (isSuspendLambda) {
+                // Suspend lambda - create factory methods.
+                val createFunction = coroutineBaseClass.owner.simpleFunctions()
+                    .atMostOne {
+                        it.name.asString() == "create" && it.valueParameters.size == function.valueParameters.size + 1
+                    }
+
+                val createMethod = buildCreateMethod(createFunction, coroutineConstructor)
+                implementedMembers.add(createMethod)
+
+                transformInvokeMethod(createMethod, invokeSuspendMethod)
+            } else {
+                coroutineClass.superTypes = coroutineClass.superTypes memoryOptimizedPlus coroutineBaseClass.defaultType
+            }
+
+            coroutineClass.addFakeOverrides(context.typeSystem, implementedMembers)
+
+            // TODO constructing fake overrides on lowered declaration is tricky.
+            coroutineClass.declarations.transformFlat {
+                if (it is IrProperty && it.isFakeOverride) {
+                    listOfNotNull(it.getter, it.setter)
+                } else null
+            }
+
+            return BuiltCoroutine(
+                coroutineClass = coroutineClass,
+                coroutineConstructor = coroutineConstructor,
+                stateMachineFunction = invokeSuspendMethod
+            )
+
+        }
+
         private fun buildConstructor(): IrConstructor {
             if (isSuspendLambda) {
                 return coroutineClass.declarations
@@ -348,48 +390,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                     assert(index == createFunction.valueParameters.size)
                 })
             }.statements)
-        }
-
-        fun build(): BuiltCoroutine {
-            val coroutineConstructor = buildConstructor()
-
-            val implementedMembers = ArrayList<IrSimpleFunction>(2)
-
-            val superInvokeSuspendFunction = coroutineBaseClass.owner.simpleFunctions().single { it.name == stateMachineMethodName }
-            val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction)
-
-            implementedMembers.add(invokeSuspendMethod)
-
-            if (isSuspendLambda) {
-                // Suspend lambda - create factory methods.
-                val createFunction = coroutineBaseClass.owner.simpleFunctions()
-                    .atMostOne {
-                        it.name.asString() == "create" && it.valueParameters.size == function.valueParameters.size + 1
-                    }
-
-                val createMethod = buildCreateMethod(createFunction, coroutineConstructor)
-                implementedMembers.add(createMethod)
-
-                transformInvokeMethod(createMethod, invokeSuspendMethod)
-            } else {
-                coroutineClass.superTypes = coroutineClass.superTypes memoryOptimizedPlus coroutineBaseClass.defaultType
-            }
-
-            coroutineClass.addFakeOverrides(context.typeSystem, implementedMembers)
-
-            // TODO constructing fake overrides on lowered declaration is tricky.
-            coroutineClass.declarations.transformFlat {
-                if (it is IrProperty && it.isFakeOverride) {
-                    listOfNotNull(it.getter, it.setter)
-                } else null
-            }
-
-            return BuiltCoroutine(
-                coroutineClass = coroutineClass,
-                coroutineConstructor = coroutineConstructor,
-                stateMachineFunction = invokeSuspendMethod
-            )
-
         }
     }
 
