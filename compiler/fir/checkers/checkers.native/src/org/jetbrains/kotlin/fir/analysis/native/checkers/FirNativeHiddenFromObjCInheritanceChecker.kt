@@ -63,7 +63,7 @@ private fun checkContainingClassIsHidden(classSymbol: FirClassLikeSymbol<*>, ses
 }
 
 private fun checkIsHiddenFromObjC(classSymbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
-    classSymbol.annotations.forEach { annotation ->
+    classSymbol.resolvedAnnotationsWithClassIds.forEach { annotation ->
         val annotationClass = annotation.toAnnotationClassLikeSymbol(session) ?: return@forEach
 
         // `classSymbol` might be a checked class supertype, so its annotation arguments might stay unresolved.

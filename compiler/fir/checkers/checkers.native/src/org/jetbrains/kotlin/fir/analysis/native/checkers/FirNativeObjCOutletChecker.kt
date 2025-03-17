@@ -54,9 +54,9 @@ object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
         }
 
         fun checkKotlinObjCClass(firClass: FirClass) {
-            firClass.symbol.processAllDeclaredCallables(context.session) { decl ->
-                if (decl is FirPropertySymbol && decl.annotations.hasAnnotation(objCOutletClassId, session))
-                    checkCanGenerateOutletSetterImp(decl)
+            firClass.symbol.processAllDeclaredCallables(context.session) { symbol ->
+                if (symbol is FirPropertySymbol && symbol.hasAnnotation(objCOutletClassId, session))
+                    checkCanGenerateOutletSetterImp(symbol)
             }
         }
 

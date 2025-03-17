@@ -50,6 +50,7 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
     val moduleData: FirModuleData
         get() = fir.moduleData
 
+    @SymbolInternals
     val annotations: List<FirAnnotation>
         get() = fir.annotations
 

@@ -87,9 +87,9 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
         }
 
         fun checkKotlinObjCClass(firClass: FirClass) {
-            firClass.constructors(context.session).forEach { decl ->
-                if (decl.annotations.hasAnnotation(objCOverrideInitClassId, session)) {
-                    checkCanGenerateOverrideInit(firClass, decl)
+            firClass.constructors(context.session).forEach { symbol ->
+                if (symbol.hasAnnotation(objCOverrideInitClassId, session)) {
+                    checkCanGenerateOverrideInit(firClass, symbol)
                 }
             }
         }

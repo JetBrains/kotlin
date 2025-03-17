@@ -492,8 +492,8 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
 ): Boolean {
     if (isAtLeastOneExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
 
-    val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
-    val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
+    val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.resolvedAnnotationsWithClassIds)
+    val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.resolvedAnnotationsWithClassIds)
     if (declarationIsLowPriority != conflictingIsLowPriority) return true
 
     if (declaration !is FirCallableSymbol<*> || conflicting !is FirCallableSymbol<*>) return false

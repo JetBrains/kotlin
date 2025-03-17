@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.resolved
@@ -134,7 +135,8 @@ private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
     }
 }
 
-private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean = annotations.any { it.isIgnorableValue(session) }
+private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
+    hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(session: FirSession): Boolean {
     // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
@@ -143,7 +145,7 @@ private fun FirCallableSymbol<*>.isSubjectToCheck(session: FirSession): Boolean 
     callableId.ifMappedTypeCollection { return it }
 
     val classOrFile = getContainingSymbol(session) ?: return false
-    return classOrFile.annotations.any { it.isMustUseReturnValue(session) }
+    return classOrFile.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)
 }
 
 // TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,

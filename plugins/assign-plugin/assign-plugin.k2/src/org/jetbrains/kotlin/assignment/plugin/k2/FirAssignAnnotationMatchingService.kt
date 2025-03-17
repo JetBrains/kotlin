@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent.Factory
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.FqName
 
 internal class FirAssignAnnotationMatchingService(
@@ -39,6 +40,7 @@ internal class FirAssignAnnotationMatchingService(
         return cache.getValue(symbol)
     }
 
+    @OptIn(SymbolInternals::class)
     private fun FirRegularClassSymbol.annotated(): Boolean {
         if (this.annotations.any { it.toAnnotationClassId(session)?.asSingleFqName() in annotationClassIds }) return true
         return resolvedSuperTypeRefs.any { superTypeRef ->

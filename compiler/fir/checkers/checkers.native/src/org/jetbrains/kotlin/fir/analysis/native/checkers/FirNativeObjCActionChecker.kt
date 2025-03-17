@@ -56,9 +56,9 @@ object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
         }
 
         fun checkKotlinObjCClass(firClass: FirClass) {
-            firClass.symbol.processAllDeclaredCallables(context.session) { decl ->
-                if (decl is FirNamedFunctionSymbol && decl.annotations.hasAnnotation(objCActionClassId, session))
-                    checkCanGenerateActionImp(decl)
+            firClass.symbol.processAllDeclaredCallables(context.session) { symbol ->
+                if (symbol is FirNamedFunctionSymbol && symbol.hasAnnotation(objCActionClassId, session))
+                    checkCanGenerateActionImp(symbol)
             }
         }
 

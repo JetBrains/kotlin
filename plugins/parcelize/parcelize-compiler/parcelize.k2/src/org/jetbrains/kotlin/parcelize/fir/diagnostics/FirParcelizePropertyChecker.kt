@@ -81,7 +81,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             return
         }
 
-        val customParcelerTypes = getCustomParcelerTypes(property.annotations + containingClassSymbol.annotations, session)
+        val customParcelerTypes = getCustomParcelerTypes(
+            property.annotations + containingClassSymbol.resolvedAnnotationsWithClassIds, session
+        )
         val unsupported = checkParcelableType(type, customParcelerTypes, context)
         if (type in unsupported) {
             reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)

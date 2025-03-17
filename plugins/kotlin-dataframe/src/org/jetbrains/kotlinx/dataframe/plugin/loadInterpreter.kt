@@ -196,7 +196,7 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
     val symbol =
         (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
     val argName = Name.identifier("interpreter")
-    return symbol.annotations
+    return symbol.resolvedAnnotationsWithClassIds
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
             val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
@@ -234,7 +234,7 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
     val symbol =
         (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
     val argName = Name.identifier("interpreter")
-    return symbol.annotations
+    return symbol.resolvedAnnotationsWithClassIds
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
             val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String

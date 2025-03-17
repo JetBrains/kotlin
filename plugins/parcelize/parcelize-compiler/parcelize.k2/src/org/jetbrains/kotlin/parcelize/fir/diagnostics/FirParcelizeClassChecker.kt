@@ -118,7 +118,7 @@ fun FirClassSymbol<*>?.isParcelize(session: FirSession, parcelizeAnnotations: Li
 
     if (this == null) return false
     return checkParcelizeClassSymbols(this, session) { symbol ->
-        symbol.annotations.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
+        symbol.resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
     }
 }
 

@@ -25,8 +25,8 @@ object FirWasmJsAssociatedObjectChecker : FirBasicDeclarationChecker(MppCheckerK
         if (!declaration.symbol.isEffectivelyExternal(context.session)) return
 
         for (annotationCall in declaration.annotations) {
-            val annotations = annotationCall.annotationTypeRef.coneType.toSymbol(context.session)?.annotations ?: continue
-            if (annotations.hasAnnotation(StandardClassIds.Annotations.AssociatedObjectKey, context.session)) {
+            val annotationSymbol = annotationCall.annotationTypeRef.coneType.toSymbol(context.session) ?: continue
+            if (annotationSymbol.hasAnnotation(StandardClassIds.Annotations.AssociatedObjectKey, context.session)) {
                 reporter.reportOn(annotationCall.source, ASSOCIATED_OBJECT_INVALID_BINDING, context)
             }
         }

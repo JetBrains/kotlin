@@ -26,7 +26,7 @@ private fun FirProperty.isKotlinxAtomicfu(): Boolean = returnTypeRef.coneType.cl
 
 private fun FirProperty.isPublishedApi(): Boolean = annotations.any(::isMarkedWithPublishedApi)
 
-private fun FirClassLikeSymbol<*>.isPublishedApi(): Boolean = annotations.any(::isMarkedWithPublishedApi)
+private fun FirClassLikeSymbol<*>.isPublishedApi(): Boolean = resolvedAnnotationsWithClassIds.any(::isMarkedWithPublishedApi)
 private fun FirClassLikeSymbol<*>.isPublic(): Boolean = resolvedStatus.visibility.isPublicAPI
 
 private fun isMarkedWithPublishedApi(a: FirAnnotation): Boolean =

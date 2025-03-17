@@ -49,7 +49,7 @@ fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
  * mimics ConstructorDescriptor.getObjCInitMethod()
  */
 fun FirConstructorSymbol.getObjCInitMethod(session: FirSession): FirFunctionSymbol<*>? {
-    this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
+    this.resolvedAnnotationsWithClassIds.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
         val initSelector: String = annotation.constStringArgument("initSelector")
         val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>
         val initSelectors = mutableListOf<FirFunctionSymbol<*>>()
@@ -78,7 +78,7 @@ internal fun List<FirAnnotation>.decodeObjCMethodAnnotation(session: FirSession)
     }
 
 internal fun FirFunctionSymbol<*>.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
-    annotations.decodeObjCMethodAnnotation(session)
+    resolvedAnnotationsWithClassIds.decodeObjCMethodAnnotation(session)
 
 
 private fun FirAnnotation.constStringArgument(argumentName: String): String =
@@ -106,7 +106,7 @@ internal fun FirFunction.isObjCClassMethod(session: FirSession) =
  * mimics ConstructorDescriptor.isObjCConstructor()
  */
 internal fun FirConstructorSymbol.isObjCConstructor(session: FirSession) =
-    this.annotations.hasAnnotation(NativeStandardInteropNames.objCConstructorClassId, session)
+    this.resolvedAnnotationsWithClassIds.hasAnnotation(NativeStandardInteropNames.objCConstructorClassId, session)
 
 /**
  * mimics IrClass.isObjCClass()

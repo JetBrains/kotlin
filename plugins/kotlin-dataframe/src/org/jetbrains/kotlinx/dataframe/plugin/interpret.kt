@@ -519,7 +519,7 @@ private fun KotlinTypeFacade.toKPropertyApproximation(
     val propertyName = firCallableReferenceAccess.calleeReference.name.identifier
     return (firCallableReferenceAccess.calleeReference as FirResolvedCallableReference).let {
         val symbol = it.toResolvedCallableSymbol()!!
-        val columnName = symbol.annotations
+        val columnName = symbol.resolvedAnnotationsWithClassIds
             .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
             ?.let {
                 (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirLiteralExpression).value as String
@@ -557,7 +557,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
         } else {
             resolvedType to it
         }
-        symbol.annotations.firstNotNullOfOrNull {
+        symbol.resolvedAnnotationsWithClassIds.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value
