@@ -11,6 +11,7 @@ fun baz(): String {
 fun foo() {
 }
 
+@Throws(exceptionClasses = [NotImplementedError::class])
 fun qux(): Any {
   throw NotImplementedError()
 }

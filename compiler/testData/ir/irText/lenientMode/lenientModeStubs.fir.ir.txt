@@ -10,6 +10,8 @@ FILE fqName:<root> fileName:/common.kt
   FUN STUB_FOR_LENIENT name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
   FUN STUB_FOR_LENIENT name:qux visibility:public modality:FINAL returnType:kotlin.Any
+    annotations:
+      Throws(exceptionClasses = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:NotImplementedError modality:FINAL visibility:public superTypes:[java.lang.Error]' type=kotlin.reflect.KClass<kotlin.NotImplementedError>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Throwable>> varargElementType=kotlin.reflect.KClass<out kotlin.Throwable>)
     BLOCK_BODY
       THROW type=kotlin.Nothing
         CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String) declared in kotlin.NotImplementedError' type=kotlin.NotImplementedError origin=null
