@@ -2610,6 +2610,37 @@ class IrValidatorTest {
             )
         )
     }
+
+    @Test
+    fun `functions with body of type IrExpressionBody are reported`() {
+        val file = createIrFile("test.kt")
+        val functionWithExpressionBody = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.booleanType
+        }.apply {
+            body = IrFactoryImpl.createExpressionBody(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                expression = createTrueConst()
+            )
+        }
+        file.addChild(functionWithExpressionBody)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: IrFunction body cannot be of type IrExpressionBody. Use IrBlockBody instead.
+                    FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Boolean
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
