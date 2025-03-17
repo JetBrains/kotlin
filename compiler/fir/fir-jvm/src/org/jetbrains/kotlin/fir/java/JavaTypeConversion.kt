@@ -119,6 +119,7 @@ private fun JavaType?.toConeTypeProjection(
             if (mode.insideAnnotation) {
                 return lowerBound
             }
+            // TODO: simplify as a part of KT-76065 (dropping JavaTypeParameterDefaultRepresentationWithDNN)
             val finalLowerBound = when {
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ->
                     lowerBound
