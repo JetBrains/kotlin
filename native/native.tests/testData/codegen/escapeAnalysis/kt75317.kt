@@ -34,6 +34,12 @@ fun left(depth: Int) {
     val tail4 = Node()
     val tail5 = Node()
 
+    check(tail1.isStack())
+    check(tail2.isStack())
+    check(tail3.isStack())
+    check(tail4.isStack())
+    check(tail5.isStack())
+
     repeat(1) {
         val middle = Middle()
         check(!middle.isStack())
