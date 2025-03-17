@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.collectTailSuspendCalls
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -24,7 +21,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -50,40 +48,10 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformDeclarationsFlat(::tryTransformSuspendFunction)
-        irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                declaration.acceptChildrenVoid(this)
-                if (declaration.origin != DECLARATION_ORIGIN_COROUTINE_IMPL)
-                    declaration.transformDeclarationsFlat(::tryTransformSuspendFunction)
-            }
-        })
-    }
-
-    private fun tryTransformSuspendFunction(element: IrElement): List<IrDeclaration>? {
-        val function = (element as? IrSimpleFunction) ?: return null
-        if (!function.isSuspend || function.modality == Modality.ABSTRACT) return null
-
-        val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
-        return if (hasNotTailSuspendCalls) {
-            listOf<IrDeclaration>(buildCoroutine(function).clazz, function)
-        } else {
-            // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
-            // Have to simplify them though (convert them to proper return statements).
-            simplifyTailSuspendCalls(function, tailSuspendCalls)
-            null
-        }
-    }
-
     protected fun IrCall.isReturnIfSuspendedCall() =
         symbol == context.symbols.returnIfSuspended
 
-    private fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
+    protected fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
         if (tailSuspendCalls.isEmpty()) return
 
         val irBuilder = context.createIrBuilder(irFunction.symbol)
@@ -108,7 +76,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
-    private fun buildCoroutine(irFunction: IrSimpleFunction) =
+    protected fun buildCoroutine(irFunction: IrSimpleFunction) =
         CoroutineBuilder(irFunction).build().also { coroutine ->
             // Replace original function with a call to constructor of the built coroutine.
             val irBuilder = context.createIrBuilder(irFunction.symbol, irFunction.startOffset, irFunction.endOffset)
@@ -132,7 +100,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }
         }
 
-    private class BuiltCoroutine(val clazz: IrClass, val constructor: IrConstructor, val stateMachineFunction: IrFunction)
+    protected class BuiltCoroutine(val clazz: IrClass, val constructor: IrConstructor, val stateMachineFunction: IrFunction)
 
     private inner class CoroutineBuilder(val irFunction: IrFunction) {
         private val functionParameters = irFunction.parameters

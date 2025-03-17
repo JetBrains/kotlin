@@ -58,38 +58,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (container is IrSimpleFunction && container.isSuspend) {
-            transformSuspendFunction(container, irBody)?.let {
-                val dc = container.parent as IrDeclarationContainer
-                dc.addChild(it)
-            }
-        }
-    }
-
-    private fun transformSuspendFunction(function: IrSimpleFunction, body: IrBody): IrClass? {
-        assert(function.isSuspend)
-
-        return when (val functionKind = getSuspendFunctionKind(context, function, body)) {
-            is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
-                null                                                            // No suspend function calls - just an ordinary function.
-            }
-
-            is SuspendFunctionKind.DELEGATING -> {                              // Calls another suspend function at the end.
-                removeReturnIfSuspendedCallAndSimplifyDelegatingCall(function, functionKind.delegatingCall)
-                null                                                            // No need in state machine.
-            }
-
-            is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                val coroutine = buildCoroutine(function)      // Coroutine implementation.
-                if (coroutine === function.parent)             // Suspend lambdas are called through factory method <create>,
-                    null
-                else
-                    coroutine
-            }
-        }
-    }
-
     private fun IrBlockBodyBuilder.createCoroutineInstance(function: IrSimpleFunction, parameters: Collection<IrValueParameter>, coroutine: BuiltCoroutine): IrExpression {
         val constructor = coroutine.coroutineConstructor
         val coroutineTypeArgs = function.typeParameters.memoryOptimizedMap {
@@ -111,7 +79,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         }
     }
 
-    private fun buildCoroutine(function: IrSimpleFunction): IrClass {
+    protected fun buildCoroutine(function: IrSimpleFunction): IrClass {
         val coroutine = CoroutineBuilder(function).build()
 
         val isSuspendLambda = coroutine.coroutineClass === function.parent
@@ -422,35 +390,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
-    private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
-        val returnValue =
-            if (delegatingCall.isReturnIfSuspendedCall(context))
-                delegatingCall.getValueArgument(0)!!
-            else delegatingCall
-
-        val body = irFunction.body as IrBlockBody
-        val statements = body.statements
-        val lastStatement = statements.last()
-
-        context.createIrBuilder(
-            irFunction.symbol,
-            startOffset = lastStatement.startOffset,
-            endOffset = lastStatement.endOffset
-        ).run {
-            assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
-
-            // Instead of returning right away, we save the value to a temporary variable and after that return that variable.
-            // This is done solely to improve the debugging experience. Otherwise, a breakpoint set to the closing brace of the function
-            // cannot be hit.
-            val tempVar = scope.createTemporaryVariable(
-                generateDelegatedCall(irFunction.returnType, returnValue),
-                irType = context.irBuiltIns.anyType,
-            )
-            statements[statements.lastIndex] = tempVar
-            statements.add(irReturn(irGet(tempVar)))
-        }
-    }
-
     private class BuiltCoroutine(
         val coroutineClass: IrClass,
         val coroutineConstructor: IrConstructor,
@@ -501,86 +440,3 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         }
     }
 }
-
-sealed class SuspendFunctionKind {
-    object NO_SUSPEND_CALLS : SuspendFunctionKind()
-    class DELEGATING(val delegatingCall: IrCall) : SuspendFunctionKind()
-    object NEEDS_STATE_MACHINE : SuspendFunctionKind()
-}
-
-fun getSuspendFunctionKind(
-    context: CommonBackendContext,
-    function: IrSimpleFunction,
-    body: IrBody,
-    includeSuspendLambda: Boolean = true
-): SuspendFunctionKind {
-
-    fun IrSimpleFunction.isSuspendLambda() =
-        name.asString() == "invoke" && parentClassOrNull?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
-
-    if (function.isSuspendLambda() && includeSuspendLambda)
-        return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
-
-    var numberOfSuspendCalls = 0
-    body.acceptVoid(object : IrVisitorVoid() {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitCall(expression: IrCall) {
-            expression.acceptChildrenVoid(this)
-            if (expression.isSuspend)
-                ++numberOfSuspendCalls
-        }
-    })
-    // It is important to optimize the case where there is only one suspend call and it is the last statement
-    // because we don't need to build a fat coroutine class in that case.
-    // This happens a lot in practice because of suspend functions with default arguments.
-    // TODO: use TailRecursionCallsCollector.
-    val lastCall = when (val lastStatement = (body as IrBlockBody).statements.lastOrNull()) {
-        is IrCall ->
-            // Delegation to call without return can only be performed to Unit-returning function call from Unit-returning function
-            if (lastStatement.type == context.irBuiltIns.unitType && function.returnType == context.irBuiltIns.unitType)
-                lastStatement
-            else
-                null
-        is IrReturn -> {
-            fun IrTypeOperatorCall.isImplicitCast(): Boolean {
-                return this.operator == IrTypeOperator.IMPLICIT_CAST || this.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-            }
-
-            var value: IrElement = lastStatement
-            /*
-             * Check if matches this pattern:
-             * block/return {
-             *     block/return {
-             *         .. suspendCall()
-             *     }
-             * }
-             */
-            loop@ while (true) {
-                value = when {
-                    value is IrBlock && value.statements.size == 1 -> value.statements.first()
-                    value is IrReturn -> value.value
-                    value is IrTypeOperatorCall && value.isImplicitCast() -> value.argument
-                    else -> break@loop
-                }
-            }
-            value as? IrCall
-        }
-        else -> null
-    }
-    val suspendCallAtEnd = lastCall != null && lastCall.isSuspend    // Suspend call.
-    return when {
-        numberOfSuspendCalls == 0 -> SuspendFunctionKind.NO_SUSPEND_CALLS
-        numberOfSuspendCalls == 1
-                && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING(lastCall!!)
-        else -> SuspendFunctionKind.NEEDS_STATE_MACHINE
-    }
-}
-
-// Suppress since it is used in native
-@Suppress("MemberVisibilityCanBePrivate")
-fun IrCall.isReturnIfSuspendedCall(context: JsCommonBackendContext) =
-    symbol == context.symbols.returnIfSuspended
-
