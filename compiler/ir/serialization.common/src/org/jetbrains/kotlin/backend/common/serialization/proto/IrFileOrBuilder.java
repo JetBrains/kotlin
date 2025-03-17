@@ -93,4 +93,32 @@ public interface IrFileOrBuilder extends
    * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
   long getExplicitlyExportedToCompiler(int index);
+
+  /**
+   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
+   *
+   * <pre>
+   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
+   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
+   * </pre>
+   */
+  java.util.List<java.lang.Integer> getOriginalToPreprocessedInlineFunctionsList();
+  /**
+   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
+   *
+   * <pre>
+   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
+   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
+   * </pre>
+   */
+  int getOriginalToPreprocessedInlineFunctionsCount();
+  /**
+   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
+   *
+   * <pre>
+   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
+   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
+   * </pre>
+   */
+  int getOriginalToPreprocessedInlineFunctions(int index);
 }
