@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibPublicationDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -110,6 +111,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             }
 
             register(project, NativeToolchainProjectSetupAction)
+            register(project, UklibPublicationDiagnosticsSetupAction)
             register(project, UklibConsumptionSetupAction)
         }
 
