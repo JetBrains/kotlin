@@ -70,19 +70,14 @@ abstract class LibraryPathFilter {
     }
 
     class LibraryList(libs: Set<Path>) : LibraryPathFilter() {
-        val libs: Set<Path> = libs.mapTo(mutableSetOf()) { it.normalize() }
+        val libs: Set<Path> = libs.mapNotNullTo(mutableSetOf()) {
+            it.normalize().takeIf { it.exists() }?.toRealPath()
+        }
 
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
-            val isPathAbsolute = path.isAbsolute
-            val realPath by lazy(LazyThreadSafetyMode.NONE) { path.toRealPath() }
-            return libs.any {
-                when {
-                    it.isAbsolute && !isPathAbsolute -> realPath.startsWith(it)
-                    !it.isAbsolute && isPathAbsolute && it.exists() -> path.startsWith(it.toRealPath())
-                    else -> path.startsWith(it)
-                }
-            }
+            val realPath = path.toRealPath()
+            return libs.any { realPath.startsWith(it) }
         }
     }
 }

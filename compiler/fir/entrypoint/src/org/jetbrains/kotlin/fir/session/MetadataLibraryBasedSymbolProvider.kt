@@ -70,10 +70,12 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return emptyList()
 
         return librariesWithFragment.flatMap { resolvedLibrary ->
-            resolvedLibrary.packageMetadataParts(packageStringName).mapNotNull {
+
+            val moduleData = moduleData(resolvedLibrary) ?: return@flatMap emptyList()
+
+            resolvedLibrary.packageMetadataParts(packageStringName).map {
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)
 
-                val moduleData = moduleData(resolvedLibrary) ?: return@mapNotNull null
                 val packageProto = fragment.`package`
 
                 val nameResolver = NameResolverImpl(
