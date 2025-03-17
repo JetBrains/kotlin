@@ -47,6 +47,8 @@ annotation class Argument(
         const val default = ","
         const val none = ""
         const val pathSeparator = "<path_separator>"
+        const val space = " "
+        const val semicolon = ";"
     }
 }
 
