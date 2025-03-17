@@ -14,9 +14,17 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
 
     @Argument(value = "-enable-assertions", deprecatedName = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code.")
     var enableAssertions: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-g", description = "Enable the emission of debug information.")
     var debug: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-generate-test-runner",
@@ -24,6 +32,10 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         shortName = "-tr", description = "Produce a runner for unit tests."
     )
     var generateTestRunner = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-generate-worker-test-runner",
@@ -31,6 +43,10 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "Produce a worker runner for unit tests."
     )
     var generateWorkerTestRunner = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-generate-no-exit-test-runner",
@@ -38,12 +54,24 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "Produce a runner for unit tests that doesn't force an exit."
     )
     var generateNoExitTestRunner = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-include-binary", deprecatedName = "-includeBinary", shortName = "-ib", valueDescription = "<path>", description = "Pack the given external binary into the klib.")
     var includeBinaries: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the given library.", delimiter = Argument.Delimiters.none)
     var libraries: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-library-version",
@@ -52,15 +80,31 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "The library version.\nNote: This option is deprecated and will be removed in one of the future releases."
     )
     var libraryVersion: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-list-targets", deprecatedName = "-list_targets", description = "List available hardware targets.")
     var listTargets: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a manifest addend file.")
     var manifestFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value="-memory-model", valueDescription = "<model>", description = "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.")
     var memoryModel: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
@@ -73,6 +117,10 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "Specify a name for the compilation module."
     )
     var moduleName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-native-library",
@@ -82,9 +130,17 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "Include the given native bitcode library.", delimiter = Argument.Delimiters.none
     )
     var nativeLibraries: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-no-default-libs", deprecatedName = "-nodefaultlibs", description = "Don't link the libraries from dist/klib automatically.")
     var nodefaultlibs: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-no-endorsed-libs",
@@ -92,30 +148,66 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
                 "This option has been deprecated, as the dist no longer has any endorsed libraries."
     )
     var noendorsedlibs: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-nomain", description = "Assume the 'main' entry point will be provided by external libraries.")
     var nomain: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-nopack", description = "Don't pack the library into a klib file.")
     var nopack: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-linker-options", deprecatedName = "-linkerOpts", valueDescription = "<arg>", description = "Pass arguments to the linker.", delimiter = " ")
     var linkerArguments: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-linker-option", valueDescription = "<arg>", description = "Pass the given argument to the linker.", delimiter = Argument.Delimiters.none)
     var singleLinkerArguments: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-nostdlib", description = "Don't link with the stdlib.")
     var nostdlib: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-opt", description = "Enable optimizations during compilation.")
     var optimization: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-output", shortName = "-o", valueDescription = "<name>", description = "Output name.")
     var outputName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-entry", shortName = "-e", valueDescription = "<name>", description = "Qualified entry point name.")
     var mainPackage: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-produce", shortName = "-p",
@@ -123,9 +215,17 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "Specify the output file kind."
     )
     var produce: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-target", valueDescription = "<target>", description = "Set the hardware target.")
     var target: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     // The rest of the options are only interesting to the developers.
     // Make sure to prepend them with -X.
@@ -137,6 +237,10 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         description = "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'."
     )
     var bundleId: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xcache-directory",
@@ -145,6 +249,10 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         delimiter = Argument.Delimiters.none
     )
     var cacheDirectories: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xcached-library",
@@ -153,6 +261,10 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
         delimiter = Argument.Delimiters.none
     )
     var cachedLibraries: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xauto-cache-from",
@@ -162,6 +274,10 @@ By default caches will be placed into the kotlin-native system cache directory."
         delimiter = Argument.Delimiters.none
     )
     var autoCacheableFrom: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xauto-cache-dir",
@@ -170,6 +286,10 @@ By default caches will be placed into the kotlin-native system cache directory."
         delimiter = Argument.Delimiters.none
     )
     var autoCacheDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xic-cache-dir",
@@ -178,12 +298,24 @@ By default caches will be placed into the kotlin-native system cache directory."
         delimiter = ""
     )
     var incrementalCacheDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones.")
     var checkDependencies: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xemit-lazy-objc-header", description = "")
     var emitLazyObjCHeader: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xexport-library",
@@ -193,6 +325,10 @@ This library must be one of the ones passed with '-library'.""",
         delimiter = Argument.Delimiters.none
     )
     var exportedLibraries: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xexternal-dependencies",
@@ -202,9 +338,17 @@ External dependencies are required for verbose output in the event of IR linker 
 but they do not affect compilation at all."""
     )
     var externalDependencies: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value="-Xfake-override-validator", description = "Enable the IR fake override validator.")
     var fakeOverrideValidator: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xframework-import-header",
@@ -212,6 +356,10 @@ but they do not affect compilation at all."""
         description = "Add an additional header import to the framework header."
     )
     var frameworkImportHeaders: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xadd-light-debug",
@@ -221,10 +369,18 @@ It's enabled by default on Darwin platforms where collected debug information is
 Currently this option is disabled by default on other platforms."""
     )
     var lightDebugString: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     // TODO: remove after 1.4 release.
     @Argument(value = "-Xg0", description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.")
     var lightDebugDeprecated: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xg-generate-debug-trampoline",
@@ -232,6 +388,10 @@ Currently this option is disabled by default on other platforms."""
         description = """Generate trampolines to make debugger breakpoint resolution more accurate (inlines, 'when', etc.)."""
     )
     var generateDebugTrampolineString: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
 
     @Argument(
@@ -241,6 +401,10 @@ Currently this option is disabled by default on other platforms."""
         delimiter = Argument.Delimiters.none
     )
     var libraryToAddToCache: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xfile-to-cache",
@@ -249,9 +413,17 @@ Currently this option is disabled by default on other platforms."""
         delimiter = Argument.Delimiters.none
     )
     var filesToCache: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xmake-per-file-cache", description = "Force the compiler to produce per-file caches.")
     var makePerFileCache: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xbackend-threads",
@@ -261,24 +433,52 @@ Currently this option is disabled by default on other platforms."""
 The default value is 1."""
     )
     var backendThreads: String = "1"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xexport-kdoc", description = "Export KDoc entries in the framework header.")
     var exportKDoc: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xprint-bitcode", deprecatedName = "--print_bitcode", description = "Print LLVM bitcode.")
     var printBitCode: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xcheck-state-at-external-calls", description = "Ensure that all calls of possibly long external functions are done in the native thread state.")
     var checkExternalCalls: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xprint-ir", deprecatedName = "--print_ir", description = "Print IR.")
     var printIr: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xprint-files", description = "Print files.")
     var printFiles: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-Xpurge-user-libs", deprecatedName = "--purge_user_libs", description = "Don't link unused libraries even if explicitly specified.")
     var purgeUserLibs: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xwrite-dependencies-of-produced-klib-to",
@@ -286,9 +486,17 @@ The default value is 1."""
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path"
     )
     var writeDependenciesOfProducedKlibTo: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xruntime", deprecatedName = "--runtime", valueDescription = "<path>", description = "Override the standard 'runtime.bc' location.")
     var runtimeFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xinclude",
@@ -296,6 +504,10 @@ The default value is 1."""
         description = "A path to an intermediate library that should be processed in the same manner as source files."
     )
     var includes: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xshort-module-name",
@@ -303,21 +515,45 @@ The default value is 1."""
         description = "A short name used to denote this library in the IDE and in a generated Objective-C header."
     )
     var shortModuleName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xstatic-framework", description = "Create a framework with a static library instead of a dynamic one.")
     var staticFramework: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xtemporary-files-dir", deprecatedName = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory.")
     var temporaryFilesDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xsave-llvm-ir-after", description = "Save the result of the Kotlin IR to LLVM IR translation to '-Xsave-llvm-ir-directory'.")
     var saveLlvmIrAfter: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify LLVM bitcode after each method.")
     var verifyBitCode: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xverify-compiler", description = "Verify the compiler.")
     var verifyCompiler: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-friend-modules",
@@ -325,6 +561,10 @@ The default value is 1."""
         description = "Paths to friend modules."
     )
     var friendModules: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     /**
      * @see K2MetadataCompilerArguments.refinesPaths
@@ -335,27 +575,51 @@ The default value is 1."""
         description = "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize)."
     )
     var refinesPaths: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xdebug-info-version", description = "Generate debug info of the given version (1, 2).")
     var debugInfoFormatVersion: String = "1" /* command line parser doesn't accept kotlin.Int type */
 
     @Argument(value = "-Xno-objc-generics", description = "Disable generics support for framework header.")
     var noObjcGenerics: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options.")
     var clangOptions: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-Xallocator", valueDescription = "std | custom", description = "Allocator used at runtime.")
     var allocator: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xheader-klib-path",
         description = "Save a klib that only contains the public ABI to the given path."
     )
     var headerKlibPath: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xdebug-prefix-map", valueDescription = "<old1=new1,old2=new2,...>", description = "Remap file source directory paths in debug info.")
     var debugPrefixMap: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xpre-link-caches",
@@ -363,6 +627,10 @@ The default value is 1."""
         description = "Perform caches pre-linking."
     )
     var preLinkCaches: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     // We use `;` as delimiter because properties may contain comma-separated values.
     // For example, target cpu features.
@@ -373,15 +641,31 @@ The default value is 1."""
         delimiter = ";"
     )
     var overrideKonanProperties: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value="-Xdestroy-runtime-mode", valueDescription = "<mode>", description = "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.")
     var destroyRuntimeMode: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value="-Xgc", valueDescription = "<gc>", description = "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.")
     var gc: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xir-property-lazy-initialization", valueDescription = "{disable|enable}", description = "Initialize top level properties lazily per file.")
     var propertyLazyInitialization: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     // TODO: Remove when legacy MM is gone.
     @Argument(
@@ -390,6 +674,10 @@ The default value is 1."""
         description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'."
     )
     var workerExceptionHandling: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xllvm-variant",
@@ -397,6 +685,10 @@ The default value is 1."""
         description = "Choose the LLVM distribution that will be used during compilation."
     )
     var llvmVariant: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xbinary",
@@ -404,9 +696,17 @@ The default value is 1."""
         description = "Specify a binary option."
     )
     var binaryOptions: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xruntime-logs", valueDescription = "<tag1=level1,tag2=level2,...>", description = "Enable logging of Native runtime internals.")
     var runtimeLogs: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xdump-tests-to",
@@ -414,15 +714,31 @@ The default value is 1."""
         description = "Path to a file for dumping the list of all available tests."
     )
     var testDumpOutputPath: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries.")
     var lazyIrForCaches: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling the framework.")
     var omitFrameworkBinary: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xcompile-from-bitcode", description = "Continue compilation from the given bitcode file.", valueDescription = "<path>")
     var compileFromBitcode: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xread-dependencies-from",
@@ -430,27 +746,55 @@ The default value is 1."""
         valueDescription = "<path>"
     )
     var serializedDependencies: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xwrite-dependencies-to", description = "Path for writing backend dependencies.")
     var saveDependenciesPath: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xsave-llvm-ir-directory", description = "Directory that should contain the results of '-Xsave-llvm-ir-after=<phase>'.")
     var saveLlvmIrDirectory: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xkonan-data-dir", description = "Custom path to the location of konan distributions.")
     var konanDataDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xllvm-module-passes", description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.")
     var llvmModulePasses: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xllvm-lto-passes", description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.")
     var llvmLTOPasses: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xmanifest-native-targets",
         description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded."
     )
     var manifestNativeTargets: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xdump-synthetic-accessors-to",
