@@ -21,7 +21,10 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         project(
             "buildSrcUsingKotlinCompilationAndKotlinPlugin",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            buildOptions = defaultBuildOptions
+                .copy(logLevel = LogLevel.DEBUG)
+                // on Gradle 7 with CC enabled `KotlinBuildStatsBeanService` is being instantiated in another classpath
+                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             build("assemble") {
                 //register build service for buildSrc.
