@@ -79,6 +79,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property printSourceOffsets If source offsets of elements should be printed.
  * @property guessTypeBySignatureOfUnboundClassifierSymbol If an unbound symbol is met in [IrSimpleType], should we try to guess
  *   the fully qualified name of the class by symbol's signature or just render the standard "unbound symbol" text.
+ * @property referenceRenderingStrategy Determines the exact way how [IrSymbol] references are rendered in IR expressions and IR declarations.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -104,6 +105,7 @@ data class DumpIrTreeOptions(
     val filePathRenderer: (IrFile, String) -> String = { _, name -> name },
     val printSourceOffsets: Boolean = false,
     val guessTypeBySignatureOfUnboundClassifierSymbol: Boolean = false,
+    val referenceRenderingStrategy: ReferenceRenderingStrategy = ReferenceRenderingStrategy.Default,
 ) {
     /**
      * A customizable filter to exclude some (or all) flags for declarations or declaration references.
@@ -120,6 +122,22 @@ data class DumpIrTreeOptions(
         companion object {
             val KEEP_ALL_FLAGS = FlagsFilter { _, _, flags -> flags }
             val NO_FLAGS_FOR_REFERENCES = FlagsFilter { _, isReference, flags -> flags.takeUnless { isReference }.orEmpty() }
+        }
+    }
+
+    sealed interface ReferenceRenderingStrategy {
+        /**
+         * Use KT-like text rendered for all references.
+         * See also [RenderIrElementVisitor.BoundSymbolReferenceRenderer].
+         */
+        object Default : ReferenceRenderingStrategy
+
+        /**
+         * Use a custom implementation of reference rendering.
+         * Falls back to [Default] if [renderReference] returns `null`.
+         */
+        fun interface Custom : ReferenceRenderingStrategy {
+            fun renderReference(symbol: IrSymbol): String?
         }
     }
 }

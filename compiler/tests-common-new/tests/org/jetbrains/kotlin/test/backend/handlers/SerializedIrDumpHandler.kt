@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_EXTERNAL_DECLARATION_STUB
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 /**
@@ -57,6 +62,7 @@ class SerializedIrDumpHandler(
         if (module.isSkipped) return
 
         val isFirFrontend = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
+        val signatureComputer = PublicIdSignatureComputer(info.irMangler)
 
         val dumpOptions = DumpIrTreeOptions(
             /** Rename temporary local variables using a stable naming scheme. */
@@ -223,13 +229,38 @@ class SerializedIrDumpHandler(
              * To work around this, we deduce the fully qualified name of the class by the symbol's signature.
              */
             guessTypeBySignatureOfUnboundClassifierSymbol = true,
+
+            /**
+             * It may happen that after running the IR inliner at the 1st phase of compilation, there are unbound symbols in
+             * various flavors of [IrDeclarationReference] expressions. For such expressions, the IR dumper just renders
+             * the standard "unbound symbol" text. Which leads to diverging ID dumps.
+             * To work around this, we use a custom [ReferenceRenderingStrategy] that, for non-private and non-local declarations,
+             * renders signatures instead of KT-like representation of the symbol owner.
+             */
+            referenceRenderingStrategy = ReferenceRenderingStrategy.Custom { symbol ->
+                val declaration = runIf(symbol.isBound) { symbol.owner as? IrDeclaration }
+
+                if (declaration != null && signatureComputer.mangler.run { !declaration.isExported(compatibleMode = false) })
+                    return@Custom null
+
+                if (declaration is IrDeclarationWithVisibility && declaration.isEffectivelyPrivate())
+                    return@Custom null
+
+                val signature = symbol.signature ?: declaration?.let(signatureComputer::computeSignature)
+                if (signature == null || signature.isLocal)
+                    return@Custom null
+
+                signature.render()
+            },
         )
 
         val builder = dumper.builderForModule(module.name)
 
         val irFiles = info.irModuleFragment.files.sortedBy { it.fileEntry.name }
         for (irFile in irFiles) {
-            val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
+            val actualDump = signatureComputer.inFile(irFile.symbol) {
+                irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
+            }
             builder.append(actualDump)
         }
     }

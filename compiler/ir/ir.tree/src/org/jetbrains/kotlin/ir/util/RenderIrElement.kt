@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -70,11 +71,17 @@ open class RenderIrElementVisitor(
     private fun IrType.render(): String =
         this.renderTypeWithRenderer(this@RenderIrElementVisitor, options)
 
-    private fun IrSymbol.renderReference() =
-        if (isBound)
+    private fun IrSymbol.renderReference(): String {
+        fun renderReferenceInClassicWay(): String = if (isBound)
             owner.accept(BoundSymbolReferenceRenderer(variableNameData, hideParameterNames, options.copy(printSourceOffsets = false)), null)
         else
             "UNBOUND ${javaClass.simpleName}"
+
+        return when (val strategy = options.referenceRenderingStrategy) {
+            is ReferenceRenderingStrategy.Default -> renderReferenceInClassicWay()
+            is ReferenceRenderingStrategy.Custom -> strategy.renderReference(this) ?: renderReferenceInClassicWay()
+        }
+    }
 
     private class BoundSymbolReferenceRenderer(
         private val variableNameData: VariableNameData,
