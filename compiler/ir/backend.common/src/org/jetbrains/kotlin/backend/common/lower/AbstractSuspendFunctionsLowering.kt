@@ -193,7 +193,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 isFakeOverride = false
             }.apply {
                 parent = coroutineClass
-                coroutineClass.declarations += this
+                addOverriddenChildToCoroutineClass(this, stateMachineFunction)
 
                 typeParameters = stateMachineFunction.typeParameters.memoryOptimizedMap { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
@@ -212,6 +212,22 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
             buildStateMachine(function, this@CoroutineBuilder.function, argumentToPropertiesMap)
             return function
+        }
+
+        private fun addOverriddenChildToCoroutineClass(newFunction: IrSimpleFunction, superFunction: IrSimpleFunction?) {
+            val fakeOverrideIndex = superFunction?.let { superFunction ->
+                coroutineClass
+                    .declarations
+                    .indexOfFirst {
+                        it is IrOverridableDeclaration<*> && superFunction.symbol in it.overriddenSymbols && it.isFakeOverride
+                    }
+            } ?: -1
+
+            if (fakeOverrideIndex >= 0) {
+                coroutineClass.declarations[fakeOverrideIndex] = newFunction
+            } else {
+                coroutineClass.declarations.add(newFunction)
+            }
         }
     }
 
