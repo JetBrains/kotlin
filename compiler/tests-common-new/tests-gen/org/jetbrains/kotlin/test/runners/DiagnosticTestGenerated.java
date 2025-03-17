@@ -31619,6 +31619,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("nullableSupertype.kt")
+      public void testNullableSupertype() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/nullableSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("redundantNullable.kt")
       public void testRedundantNullable() {
         runTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullable.kt");

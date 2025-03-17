@@ -30435,6 +30435,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("nullableSupertype.kt")
+      public void testNullableSupertype() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/nullableSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("redundantNullable.kt")
       public void testRedundantNullable() {
         runTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullable.kt");

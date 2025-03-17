@@ -970,6 +970,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/nullableTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NullableTypes {
+      @Test
+      @TestMetadata("nullableSupertype.kt")
+      public void testNullableSupertype() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/nullableSupertype.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/objects")
     @TestDataPath("$PROJECT_ROOT")
     public class Objects {
