@@ -448,7 +448,9 @@ private class ExpectActualLinkCollector {
             containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {
             require(expectSymbol is IrSymbol)
-            if (actualSymbolsByIncompatibility.isEmpty() && !expectSymbol.owner.containsOptionalExpectation()) {
+            val isActualMissing = actualSymbolsByIncompatibility.isEmpty() && !expectSymbol.owner.containsOptionalExpectation()
+
+            if (isActualMissing || actualSymbolsByIncompatibility.isNotEmpty()) {
                 val actualSymbolForMissingActual = missingActualProvider?.provideSymbolForMissingActual(
                     expectSymbol = expectSymbol,
                     containingExpectClassSymbol = containingExpectClassSymbol as IrClassSymbol?,
@@ -456,9 +458,12 @@ private class ExpectActualLinkCollector {
                 )
                 if (actualSymbolForMissingActual != null) {
                     onMatchedMembers(expectSymbol, actualSymbolForMissingActual, containingActualClassSymbol, containingActualClassSymbol)
-                } else {
-                    diagnosticsReporter.reportMissingActual(expectSymbol)
+                    return
                 }
+            }
+
+            if (isActualMissing) {
+                diagnosticsReporter.reportMissingActual(expectSymbol)
             }
             for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {

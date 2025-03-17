@@ -41629,6 +41629,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("overloads.kt")
+        public void testOverloads() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/overloads.kt");
+        }
+
+        @Test
         @TestMetadata("returnTypes.kt")
         public void testReturnTypes() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/returnTypes.kt");
