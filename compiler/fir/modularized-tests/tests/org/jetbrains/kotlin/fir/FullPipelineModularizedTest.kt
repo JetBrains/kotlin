@@ -38,6 +38,11 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             args.noReflect = true
         }
 
+        val apiVersion = LanguageVersion.fromVersionString(args.apiVersion)
+        if (apiVersion != null && apiVersion.isUnsupported) {
+            args.apiVersion = LanguageVersion.FIRST_SUPPORTED.versionString
+        }
+
         require(LanguageVersion.fromVersionString(args.languageVersion)!! >= LanguageVersion.KOTLIN_2_0) {
             "Language version misconfiguration for K2 FP: ${args.languageVersion} < 2.0"
         }
