@@ -998,10 +998,11 @@ private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?,
 internal fun List<IrConstructorCall>.filterOutSourceRetentions(options: DumpIrTreeOptions): List<IrConstructorCall> =
     applyIf(!options.printAnnotationsWithSourceRetention) {
         filterNot { it: IrConstructorCall ->
-            (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
-                it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
-                        (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
-            } == true
+            it.symbol.isBound &&
+                    (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
+                        it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
+                                (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
+                    } == true
         }
     }
 
