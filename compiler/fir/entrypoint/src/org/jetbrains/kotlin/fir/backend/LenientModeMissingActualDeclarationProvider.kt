@@ -21,10 +21,13 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.removeAnnotations
+import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -53,6 +56,17 @@ class LenientModeMissingActualDeclarationProvider(
         classifierStorage.getIrClassSymbol(firSymbol).constructors.first()
     }
 
+    private val throwsConstructorSymbol by lazy(LazyThreadSafetyMode.NONE) {
+        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString("kotlin.jvm/Throws")) as FirClassSymbol? ?: return@lazy null
+        classifierStorage.getIrClassSymbol(firSymbol).constructors.first()
+    }
+
+    private val kClassSymbol by lazy(LazyThreadSafetyMode.NONE) {
+        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString("kotlin.reflect/KClass")) as FirClassSymbol
+        classifierStorage.getIrClassSymbol(firSymbol)
+    }
+
+    @Throws()
     override fun provideSymbolForMissingActual(
         expectSymbol: IrSymbol,
         containingExpectClassSymbol: IrClassSymbol?,
@@ -269,10 +283,43 @@ class LenientModeMissingActualDeclarationProvider(
                         constructorTypeArgumentsCount = 0,
                     )
                 )
+
+                addThrowsAnnotation(function)
             }
         }
 
         return symbol
+    }
+
+    private fun addThrowsAnnotation(function: IrSimpleFunction) {
+        throwsConstructorSymbol?.let { throwsConstructorSymbol ->
+            function.annotations +=
+                IrConstructorCallImpl(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    type = throwsConstructorSymbol.owner.returnType,
+                    symbol = throwsConstructorSymbol,
+                    typeArgumentsCount = 0,
+                    constructorTypeArgumentsCount = 0
+                ).apply {
+                    val parameterType = throwsConstructorSymbol.owner.parameters.first()
+                    arguments[0] = IrVarargImpl(
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        type = parameterType.type,
+                        varargElementType = (parameterType.type as IrSimpleType).arguments.first().typeOrFail,
+                        elements = listOf(
+                            IrClassReferenceImpl(
+                                startOffset = UNDEFINED_OFFSET,
+                                endOffset = UNDEFINED_OFFSET,
+                                type = kClassSymbol.typeWith(notImplementedErrorConstructorSymbol.owner.returnType),
+                                symbol = (notImplementedErrorConstructorSymbol.owner.parent as IrClass).symbol,
+                                classType = notImplementedErrorConstructorSymbol.owner.returnType,
+                            )
+                        )
+                    )
+                }
+        }
     }
 
     private fun generateDefaultReturnValue(returnType: IrType): IrConstImpl {
