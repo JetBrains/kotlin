@@ -62,24 +62,40 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UklibFragmentFromUnexpectedTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
+    object UklibFragmentFromUnexpectedTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String) = build {
             title("UklibFragmentFromUnexpectedTarget")
                 .description("Publication of ${Uklib.UKLIB_NAME} with $target is not supported")
-                .solution("FIXME")
+                .solution("FIXME: KT-76659")
         }
     }
 
-    object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
+    data class UklibPublicationWithoutCrossCompilation(val severity: ToolingDiagnostic.Severity) : ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
+        fun get() = build {
+            title("UklibPublicationWithoutCrossCompilation")
+                .description("Publication of ${Uklib.UKLIB_NAME} without cross compilation will not work on non-macOS hosts. Please enable it by specifying ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=true in gradle.properties")
+                .solution("FIXME: KT-76659")
+        }
+    }
+
+    object UklibPublicationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(target: String, interopName: String) = build {
+            title("UklibPublicationWithCinterops")
+                .description("Publication of ${Uklib.UKLIB_NAME} with cinterops is not yet supported. Target $target declares cinterop $interopName")
+                .solution("FIXME: KT-76659")
+        }
+    }
+
+    object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, shouldRefine: List<KotlinSourceSet>, actuallyRefines: List<KotlinSourceSet>) = build {
             title("UklibSourceSetStructureUnderRefinementViolation")
                 .description("Source set '${sourceSet}' should refine source sets ${shouldRefine}, but only refines source sets $actuallyRefines")
-                .solution("FIXME")
+                .solution("FIXME: KT-76659")
         }
     }
 
 
-    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
+    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(usedTargetIds: List<String>) = buildDiagnostic(
             title = "Deprecated Kotlin/Native Targets",
             description = "The following removed Kotlin/Native targets were used in the project: ${usedTargetIds.joinToString()}",

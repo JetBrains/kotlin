@@ -24,6 +24,17 @@ internal val UklibPublicationDiagnosticsSetupAction = KotlinProjectSetupAction {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> Unit
     }
 
+    if (!project.kotlinPropertiesProvider.enableKlibsCrossCompilation) {
+        /**
+         * Uklib must publish with all fragments. Make sure cross compilation is enabled, so that Apple klib compilations run
+         */
+        project.reportDiagnostic(
+            KotlinToolingDiagnostics.UklibPublicationWithoutCrossCompilation(
+                severity = if (HostManager.hostIsMac) WARNING else ERROR
+            ).get()
+        )
+    }
+
     /**
      * Check that KGP model is compliant with Uklib limitations; this function does validations as a side effect
      */
@@ -31,6 +42,22 @@ internal val UklibPublicationDiagnosticsSetupAction = KotlinProjectSetupAction {
         project.multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments()
     }
 
+    /**
+     * Cinterop and commonized metadata uklib publication is not yet ready. For now prohibit publishing uklibs if cinterops were declared
+     */
+    project.multiplatformExtension.targets.matching {
+        it is KotlinNativeTarget
+    }.all { target ->
+        target as KotlinNativeTarget
+        target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.all { interop ->
+            project.reportDiagnostic(
+                KotlinToolingDiagnostics.UklibPublicationWithCinterops(
+                    target.targetName,
+                    interop.name,
+                )
+            )
+        }
+    }
 
     // FIXME: Diagnostic about all dependencies in the root source set
 }
