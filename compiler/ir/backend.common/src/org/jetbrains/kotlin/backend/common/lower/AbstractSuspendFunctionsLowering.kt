@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -36,6 +38,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
     protected abstract fun nameForCoroutineClass(function: IrFunction): Name
+    protected open fun coroutineClassVisibility(function: IrFunction): DescriptorVisibility = function.visibility
 
     protected abstract fun buildStateMachine(
         stateMachineFunction: IrFunction,
@@ -93,7 +96,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             context.irFactory.buildClass {
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = nameForCoroutineClass(function)
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = coroutineClassVisibility(function)
             }.apply {
                 parent = function.parent
                 createThisReceiverParameter()
