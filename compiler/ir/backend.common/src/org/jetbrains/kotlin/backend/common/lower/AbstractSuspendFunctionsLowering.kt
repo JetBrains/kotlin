@@ -102,7 +102,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         return coroutine.coroutineClass
     }
 
-    protected class BuiltCoroutine(val clazz: IrClass, val constructor: IrConstructor, val stateMachineFunction: IrFunction)
+    protected class BuiltCoroutine(
+        val coroutineClass: IrClass,
+        val coroutineConstructor: IrConstructor,
+        val stateMachineFunction: IrFunction,
+    )
 
     private inner class CoroutineBuilder(val irFunction: IrFunction) {
         private val functionParameters = irFunction.parameters

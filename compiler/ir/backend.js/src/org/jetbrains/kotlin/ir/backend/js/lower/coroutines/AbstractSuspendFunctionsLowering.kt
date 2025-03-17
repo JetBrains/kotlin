@@ -100,6 +100,12 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         return coroutine.coroutineClass
     }
 
+    protected class BuiltCoroutine(
+        val coroutineClass: IrClass,
+        val coroutineConstructor: IrConstructor,
+        val stateMachineFunction: IrFunction,
+    )
+
     private inner class CoroutineBuilder(private val function: IrSimpleFunction) {
         private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
             ?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
@@ -389,12 +395,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     private val symbols = context.symbols
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
-
-    private class BuiltCoroutine(
-        val coroutineClass: IrClass,
-        val coroutineConstructor: IrConstructor,
-        val stateMachineFunction: IrFunction
-    )
 
     protected open class VariablesScopeTracker : IrVisitorVoid() {
 

@@ -56,7 +56,7 @@ internal class NativeSuspendFunctionsLowering(
 
         val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
         return if (hasNotTailSuspendCalls) {
-            listOf<IrDeclaration>(buildCoroutine(function).clazz, function)
+            listOf<IrDeclaration>(buildCoroutine(function), function)
         } else {
             // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
             // Have to simplify them though (convert them to proper return statements).
