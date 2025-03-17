@@ -108,35 +108,43 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         val stateMachineFunction: IrFunction,
     )
 
-    private inner class CoroutineBuilder(val irFunction: IrFunction) {
-        private val functionParameters = irFunction.parameters
+    private inner class CoroutineBuilder(val function: IrSimpleFunction) {
+        private val functionParameters = function.parameters
 
-        private val coroutineClass: IrClass =
+        private val coroutineClass: IrClass = getCoroutineClass(function)
+
+        private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
             context.irFactory.buildClass {
-                startOffset = irFunction.startOffset
-                endOffset = irFunction.endOffset
+                startOffset = function.startOffset
+                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
-                name = nameForCoroutineClass(irFunction)
+                name = nameForCoroutineClass(function)
                 visibility = DescriptorVisibilities.PRIVATE
             }.apply {
-                parent = irFunction.parent
+                parent = function.parent
                 createThisReceiverParameter()
-                typeParameters = irFunction.typeParameters.memoryOptimizedMap { typeParam ->
+                typeParameters = function.typeParameters.memoryOptimizedMap { typeParam ->
+                    // TODO: remap types
                     typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }
                 }
             }
 
         private val coroutineClassThis = coroutineClass.thisReceiver!!
 
-        private val continuationType = continuationClassSymbol.typeWith(irFunction.returnType)
+        private val continuationType = continuationClassSymbol.typeWith(function.returnType)
 
         // Save all arguments to fields.
-        private val argumentToPropertiesMap = functionParameters.associateWith { coroutineClass.addField(it.name, it.type, false) }
+        private val argumentToPropertiesMap = functionParameters
+            .associateWith { coroutineClass.addField(it.name, it.type, false) }
 
-        private val coroutineBaseClass = getCoroutineBaseClass(irFunction)
+        private val coroutineBaseClass = getCoroutineBaseClass(function)
         private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.hasShape(regularParameters = 1) }
 
         private val coroutineConstructors = mutableListOf<IrConstructor>()
+
+        private fun getCoroutineClass(function: IrSimpleFunction): IrClass {
+            return buildNewCoroutineClass(function)
+        }
 
         fun build(): BuiltCoroutine {
             coroutineClass.superTypes = mutableListOf(coroutineBaseClass.defaultType)
@@ -153,10 +161,10 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         fun buildConstructor(): IrConstructor =
             context.irFactory.buildConstructor {
-                startOffset = irFunction.startOffset
-                endOffset = irFunction.endOffset
+                startOffset = function.startOffset
+                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
-                visibility = irFunction.visibility
+                visibility = function.visibility
                 returnType = coroutineClass.defaultType
                 isPrimary = true
             }.apply {
@@ -196,8 +204,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             coroutineClass: IrClass
         ): IrSimpleFunction {
             val function = context.irFactory.buildFun {
-                startOffset = irFunction.startOffset
-                endOffset = irFunction.endOffset
+                startOffset = function.startOffset
+                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = stateMachineFunction.name
                 visibility = stateMachineFunction.visibility
@@ -228,7 +236,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 overriddenSymbols = overriddenSymbols memoryOptimizedPlus stateMachineFunction.symbol
             }
 
-            buildStateMachine(function, irFunction, argumentToPropertiesMap)
+            buildStateMachine(function, this@CoroutineBuilder.function, argumentToPropertiesMap)
             return function
         }
     }

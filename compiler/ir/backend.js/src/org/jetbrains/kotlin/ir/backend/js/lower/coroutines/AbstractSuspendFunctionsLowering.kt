@@ -50,7 +50,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     protected abstract fun buildStateMachine(
         stateMachineFunction: IrFunction,
         transformingFunction: IrFunction,
-        argumentToPropertiesMap: Map<IrValueParameter, IrField>
+        argumentToPropertiesMap: Map<IrValueParameter, IrField>,
     )
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
@@ -106,9 +106,10 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         val stateMachineFunction: IrFunction,
     )
 
-    private inner class CoroutineBuilder(private val function: IrSimpleFunction) {
+    private inner class CoroutineBuilder(val function: IrSimpleFunction) {
         private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
             ?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
+
         private val functionParameters = if (isSuspendLambda) function.valueParameters else function.parameters
 
         private val coroutineClass: IrClass = getCoroutineClass(function)
