@@ -1169,6 +1169,9 @@ class ParserTest : KDocTest() {
     fun `Various links`() {
         val kdoc = """
         | [I'm an inline-style link](https://www.google.com)
+        | 
+        | [I'm an inline-style link with 
+        | a newline](https://www.google.com)
         |
         | [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
         |
@@ -1197,6 +1200,14 @@ class ParserTest : KDocTest() {
                                 listOf(
                                     A(
                                         listOf(Text("I'm an inline-style link")),
+                                        mapOf("href" to "https://www.google.com")
+                                    )
+                                )
+                            ),
+                            P(
+                                listOf(
+                                    A(
+                                        listOf(Text("I'm an inline-style link with a newline")),
                                         mapOf("href" to "https://www.google.com")
                                     )
                                 )
@@ -1290,6 +1301,33 @@ class ParserTest : KDocTest() {
                                         mapOf(
                                             "href" to "https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
                                             "alt" to "Sample image"
+                                        )
+                                    )
+                                )
+                            )
+                        ), name = MARKDOWN_ELEMENT_FILE_NAME
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `image with a newline`() {
+        val kdoc = "![Sample\nimage](https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)"
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    CustomDocTag(
+                        listOf(
+                            P(
+                                listOf(
+                                    Img(
+                                        emptyList(),
+                                        mapOf(
+                                            "href" to "https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+                                            "alt" to "Sample\nimage"
                                         )
                                     )
                                 )
