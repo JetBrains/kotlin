@@ -58,8 +58,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
-    private val builtCoroutines = hashMapOf<IrFunction, BuiltCoroutine>()
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrSimpleFunction && container.isSuspend) {
             transformSuspendFunction(container, irBody)?.let {
@@ -135,8 +133,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     }
 
     private inner class CoroutineBuilder(private val function: IrSimpleFunction) {
-        private val startOffset = function.startOffset
-        private val endOffset = function.endOffset
         private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
             ?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
         private val functionParameters = if (isSuspendLambda) function.valueParameters else function.parameters
