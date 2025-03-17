@@ -1,3 +1,4 @@
+// MODULE: library
 // TARGET_PLATFORM: JS
 // MODULE_KIND: LibraryBinary
 
@@ -8,3 +9,5 @@ fun foo() = 42
 // FILE: Other.kt
 package other
 fun bar() = 42
+
+// MODULE: main(library)

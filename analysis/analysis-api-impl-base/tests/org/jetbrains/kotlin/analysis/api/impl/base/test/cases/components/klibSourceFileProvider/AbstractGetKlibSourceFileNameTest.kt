@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSo
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -28,17 +30,18 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
  * Reads through the declarations provided in the .klib and renders their `klibSourceFile`
  */
 abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest() {
-    override fun doTest(testServices: TestServices) {
-        val mainModule = testServices.ktTestModuleStructure.mainModules
-            .let { modules -> if (modules.size == 1) modules.first() else fail("Expected single main module. Found $modules") }
-
-        val libraryModule = mainModule.ktModule as? KaLibraryModule
-            ?: fail("Expected main module '${mainModule.ktModule}' to be '${KaLibraryModule::class.simpleName}'")
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val libraryModule = testServices.ktTestModuleStructure.mainModules
+            .map { it.ktModule }
+            .filterIsInstance<KaLibraryModule>()
+            .singleOrNull()
+            ?: fail("Expected a single library module to be present.")
 
         val actual = StringBuilder()
         actual.appendLine("klib declarations:")
 
-        analyze(libraryModule) {
+        // We have to analyze the KLIB from a source use-site module because `KaLibraryModule`s aren't supported as use sites (KT-76042).
+        analyze(mainModule.ktModule) {
             val binaryRoot = libraryModule.binaryRoots.singleOrNull() ?: fail("Expected single binary root")
             val library = ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) ?: fail("Failed loading klib")
             val headerProto = parseModuleHeader(library.moduleHeaderData)
