@@ -728,6 +728,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_CONTEXT_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS
@@ -1552,6 +1553,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             COMPARE_TO_TYPE_MISMATCH,
             "''compareTo()'' must return ''Int'', but returns ''{0}''.",
             RENDER_TYPE
+        )
+        map.put(
+            HAS_NEXT_FUNCTION_TYPE_MISMATCH,
+            "The ''iterator().hasNext()'' function of the loop range must return ''Boolean'', but returns ''{0}''.",
+            RENDER_TYPE,
         )
 
         map.put(ITERATOR_MISSING, "For-loop range must have an 'iterator()' method.")

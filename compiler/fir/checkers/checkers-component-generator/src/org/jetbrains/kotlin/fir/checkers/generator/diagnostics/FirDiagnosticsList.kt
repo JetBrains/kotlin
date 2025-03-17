@@ -741,6 +741,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPARE_TO_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<ConeKotlinType>("actualType")
         }
+
+        val HAS_NEXT_FUNCTION_TYPE_MISMATCH by error<KtExpression> {
+            parameter<ConeKotlinType>("actualType")
+        }
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {

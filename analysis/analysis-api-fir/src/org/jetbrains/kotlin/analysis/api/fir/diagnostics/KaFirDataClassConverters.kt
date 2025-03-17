@@ -2319,6 +2319,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH) { firDiagnostic ->
+        HasNextFunctionTypeMismatchImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY) { firDiagnostic ->
         OverloadResolutionAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->

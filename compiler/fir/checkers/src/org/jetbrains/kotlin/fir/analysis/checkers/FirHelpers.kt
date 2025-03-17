@@ -625,13 +625,20 @@ internal fun checkCondition(condition: FirExpression, context: CheckerContext, r
     if (coneType !is ConeErrorType &&
         !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.coneType)
     ) {
-        reporter.reportOn(
-            condition.source,
-            FirErrors.CONDITION_TYPE_MISMATCH,
-            coneType,
-            coneType.isNullableBoolean,
-            context
-        )
+        if (condition is FirFunctionCall &&
+            condition.origin == FirFunctionCallOrigin.Operator &&
+            condition.calleeReference.name == OperatorNameConventions.HAS_NEXT
+        ) {
+            reporter.reportOn(condition.source, FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH, coneType, context)
+        } else {
+            reporter.reportOn(
+                condition.source,
+                FirErrors.CONDITION_TYPE_MISMATCH,
+                coneType,
+                coneType.isNullableBoolean,
+                context
+            )
+        }
     }
 }
 
