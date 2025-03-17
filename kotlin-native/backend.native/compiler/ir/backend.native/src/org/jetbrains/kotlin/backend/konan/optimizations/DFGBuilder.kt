@@ -164,7 +164,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         require(body != null) { "No body for ${declaration.render()}" }
 
         // Find all interesting expressions, variables and functions.
-        val visitor = ElementFinderVisitor()
+        val visitor = ElementFinderVisitor(declaration)
         body.acceptVoid(visitor)
 
         context.logMultiple {
@@ -201,7 +201,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         return function
     }
 
-    private inner class ElementFinderVisitor : IrVisitorVoid() {
+    private inner class ElementFinderVisitor(val declaration: IrDeclaration) : IrVisitorVoid() {
         val expressions = mutableMapOf<IrExpression, IrLoop?>()
         val parentLoops = mutableMapOf<IrLoop, IrLoop?>()
         val variableValues = VariableValues()
@@ -311,7 +311,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             }
             if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
-                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]!!)
+                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]
+                        ?: generationState.visibleVariablesAtSuspensionPoints[expression]
+                        ?: error("No live variables for ${declaration.render()} at ${expression.suspensionPointIdParameter.name}"))
             }
             if (expression is IrLoop) {
                 parentLoops[expression] = currentLoop
