@@ -338,13 +338,16 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     @DisplayName("Build reports for native")
     @GradleTest
     @NativeGradlePluginTests
-    @BrokenOnMacosTest
     fun buildReportForNative(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
             nativeProject(
                 "k2-native-intermediate-metadata",
                 gradleVersion,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+                buildOptions = defaultBuildOptions.copy(
+                    logLevel = LogLevel.WARN,
+                    // CC disrupts task order to validate, so it's disabled to ensure the proper task order
+                    configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                ),
             ) {
                 setProjectForTest(port)
                 build(
