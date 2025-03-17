@@ -30,6 +30,7 @@ fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(
     session: FirSession,
     discardErrorTypes: Boolean = false,
     // TODO: Get rid of this parameter once KT-59138 is fixed and the relevant feature for disabling it will be removed
+    // Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
     unwrapExplicitTypeArgumentForMadeFlexibleSynthetically: Boolean = false,
 ): ConeSubstitutor {
     val typeArgumentMap = buildMap {

@@ -15,6 +15,7 @@ import kotlin.reflect.KClass
  * This attribute is expected to decode original non-flexible type arguments if they were lost
  * after [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
  * TODO: Get rid of this class once KT-59138 is fixed and the relevant feature for disabling it will be removed
+ * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
  */
 data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
     val coneType: ConeKotlinType,
