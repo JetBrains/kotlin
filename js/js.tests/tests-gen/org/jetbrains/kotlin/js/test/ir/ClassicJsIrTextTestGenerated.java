@@ -3237,6 +3237,17 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/ir/irText/lenientMode")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class LenientMode {
+    @Test
+    public void testAllFilesPresentInLenientMode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/ir/irText/properties")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")

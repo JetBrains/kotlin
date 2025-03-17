@@ -1,0 +1,21 @@
+// FILE: common.kt
+
+fun bar(): Any? {
+  return null
+}
+
+fun baz(): String {
+  return ""
+}
+
+fun foo() {
+}
+
+fun qux(): Any {
+  throw NotImplementedError()
+}
+
+// FILE: platform.kt
+
+fun main() {
+}

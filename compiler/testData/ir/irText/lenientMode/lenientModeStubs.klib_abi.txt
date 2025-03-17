@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <platform>
+final fun /bar(): kotlin/Any? // /bar|bar(){}[0]
+final fun /baz(): kotlin/String // /baz|baz(){}[0]
+final fun /foo() // /foo|foo(){}[0]
+final fun /main() // /main|main(){}[0]
+final fun /qux(): kotlin/Any // /qux|qux(){}[0]

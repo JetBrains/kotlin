@@ -4548,6 +4548,22 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/ir/irText/lenientMode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LenientMode {
+    @Test
+    public void testAllFilesPresentInLenientMode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("lenientModeStubs.kt")
+    public void testLenientModeStubs() {
+      runTest("compiler/testData/ir/irText/lenientMode/lenientModeStubs.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/ir/irText/properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
