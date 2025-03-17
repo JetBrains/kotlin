@@ -15,7 +15,6 @@ class CleanDataTaskIT : KGPBaseTest() {
 
     @DisplayName("nodejs is deleted from Gradle user home")
     @GradleTest
-    @BrokenOnMacosTest
     fun testDownloadedFolderDeletion(gradleVersion: GradleVersion) {
         project("cleanTask", gradleVersion) {
             build("testCleanTask")

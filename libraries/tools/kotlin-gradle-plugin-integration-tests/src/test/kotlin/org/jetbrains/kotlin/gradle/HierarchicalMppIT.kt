@@ -1082,7 +1082,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-52216: [TYPE_MISMATCH] Caused by unexpected metadata dependencies of leaf source sets")
-    @BrokenOnMacosTest
     fun `test default platform compilation source set has no metadata dependencies`(gradleVersion: GradleVersion) {
         project(
             "kt-52216",

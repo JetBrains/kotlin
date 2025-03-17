@@ -10,14 +10,10 @@ import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
 import java.io.File
-import java.util.*
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @DisplayName("Tests for K/N builds with external dependencies")
 @NativeGradlePluginTests
@@ -25,7 +21,6 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
     @DisplayName("K/N shouldn't contain any external dependencies by default")
     @GradleTest
-    @BrokenOnMacosTest
     fun shouldNotUseExternalDependencies(gradleVersion: GradleVersion) {
         buildProjectWithDependencies(gradleVersion) { externalDependenciesText ->
             assertEquals(
@@ -41,7 +36,6 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
     @DisplayName("Should build with ktor 2.3.3 and coroutines 1.7.2")
     @GradleTest
-    @BrokenOnMacosTest
     fun shouldUseOldKtorAndCoroutinesExternalDependencies(gradleVersion: GradleVersion) {
 
         buildProjectWithDependencies(
@@ -75,7 +69,6 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
     @DisplayName("Should build with ktor 1.6.5 and coroutines 1.5.2-native-mt")
     @GradleTest
-    @BrokenOnMacosTest
     fun shouldUseKtorAndCoroutinesExternalDependencies(gradleVersion: GradleVersion) {
         buildProjectWithDependencies(
             gradleVersion,
