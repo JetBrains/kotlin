@@ -17387,6 +17387,12 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
         public void testEitherInTypePosition() {
           runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/eitherInTypePosition.kt");
         }
+
+        @Test
+        @TestMetadata("otherExpressionKindsPosition.kt")
+        public void testOtherExpressionKindsPosition() {
+          runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/otherExpressionKindsPosition.kt");
+        }
       }
 
       @Nested
