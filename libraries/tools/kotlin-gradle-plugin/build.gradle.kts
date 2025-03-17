@@ -1,5 +1,5 @@
-import gradle.GradlePluginVariant
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import gradle.GradlePluginVariant
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -92,7 +92,7 @@ val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
     ":compiler:config", // for CommonCompilerArguments initialization
     ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
-    ":compiler:ir.tree", // for PartialLinkageMode (K/N)
+    ":compiler:ir.serialization.common", // for PartialLinkageMode (K/N)
     ":compiler:util", // for CommonCompilerArguments initialization, K/N
     ":core:compiler.common", // for FUS statistics parsing all the compiler arguments
     ":core:compiler.common.jvm", // for FUS statistics parsing all the compiler arguments
@@ -299,6 +299,7 @@ tasks {
             "build" to listOf(
                 "org.jetbrains.kotlin.build.report.**",
             ),
+            "backend" to emptyList(),
             "builtins" to emptyList(),
             "config" to listOf(
                 "org.jetbrains.kotlin.config.ApiVersion**", // used a lot in buildscripts

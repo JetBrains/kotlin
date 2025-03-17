@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import java.io.File
