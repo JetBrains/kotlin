@@ -66,7 +66,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
-    put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
+    put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.orEmpty().toList())
 
     if (arguments.optimization && arguments.debug) {
         report(WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
@@ -253,7 +253,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.gc, gcFromArgument)
     }
 
-    if (arguments.checkExternalCalls != null) {
+    if (arguments.checkExternalCalls) {
         report(WARNING, "-Xcheck-state-at-external-calls compiler argument is deprecated. Use -Xbinary=checkStateAtExternalCalls=true instead")
     }
     // TODO: revise priority and/or report conflicting values.
