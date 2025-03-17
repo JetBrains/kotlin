@@ -16,6 +16,7 @@ import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
 import utils.OnlyDescriptors
 import utils.OnlySymbols
+import utils.text
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -1114,6 +1115,39 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(null, module.getLinkDRIFrom("usage"))
+            }
+        }
+    }
+
+    @Test
+    fun `should have a correct KDoc and external links when there is a newline inside link text`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |/**
+            |* Text
+            |* [some 
+            |* link](https://www.google.com/)
+            |*
+            |* Text:
+            |* [some
+            |*  declaration][usage]
+            |*/
+            |fun usage() = 0
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val doc = module.dfs { it.name == "usage" }?.documentation?.values?.single()
+                    ?: throw IllegalStateException("Can't find documentation for declaration 'usage'")
+                val externalLink = doc.firstMemberOfType<A>()
+                assertEquals("some link", externalLink.children.first().text())
+                assertEquals("https://www.google.com/", externalLink.params["href"])
+
+                val docLink = doc.firstMemberOfType<DocumentationLink>()
+                assertEquals("some declaration", docLink.children.first().text())
+                assertEquals(Callable("usage", null, emptyList()), docLink.dri.callable)
             }
         }
     }
