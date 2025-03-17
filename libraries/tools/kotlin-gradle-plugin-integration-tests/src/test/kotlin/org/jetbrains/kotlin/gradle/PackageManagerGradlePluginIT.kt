@@ -133,7 +133,12 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
     @DisplayName("js composite build works with lock file persistence")
     @GradleTest
     fun testJsCompositeBuildWithUpgradeLockFile(gradleVersion: GradleVersion) {
-        project("js-composite-build", gradleVersion) {
+        project(
+            "js-composite-build",
+            gradleVersion,
+            // `:compileKotlinJs` task is not compatible with CC on Gradle 7
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             testJsCompositeBuildWithUpgradeLockFile(
                 upgradeTaskName,
                 storeTaskName
