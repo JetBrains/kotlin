@@ -59,6 +59,10 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
+    private val symbols = context.symbols
+    private val getContinuationSymbol = symbols.getContinuation
+    private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
+
     private fun IrBlockBodyBuilder.createCoroutineInstance(function: IrSimpleFunction, parameters: Collection<IrValueParameter>, coroutine: BuiltCoroutine): IrExpression {
         val constructor = coroutine.coroutineConstructor
         val coroutineTypeArgs = function.typeParameters.memoryOptimizedMap {
@@ -392,10 +396,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             }.statements)
         }
     }
-
-    private val symbols = context.symbols
-    private val getContinuationSymbol = symbols.getContinuation
-    private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
     fun IrClass.addField(name: Name, type: IrType, isMutable: Boolean): IrField {
         val klass = this
