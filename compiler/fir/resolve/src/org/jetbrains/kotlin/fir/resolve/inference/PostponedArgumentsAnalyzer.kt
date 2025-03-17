@@ -178,8 +178,10 @@ class PostponedArgumentsAnalyzer(
         val originalExpression = atom.expression
 
         val newExpression =
-            resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(originalExpression, substitutedExpectedType)
-                ?: return false
+            resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
+                originalExpression,
+                substitutedExpectedType
+            ) ?: return false
 
         atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
 
