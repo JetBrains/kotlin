@@ -59,8 +59,15 @@ internal fun KaSession.translateModule(
 ) {
     val scope = KlibScope(module, useSiteSession)
     extractAllTransitively(scopeToDeclarations(scope), sirSession, useSiteSession)
-        .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
-        .forEach { (parent, declaration) -> parent.addChild { declaration } }
+        .toList()
+        .forEach { (oldParent, children) ->
+            children
+                .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
+                .forEach { (newParent, declaration) ->
+                    (oldParent as? SirMutableDeclarationContainer)?.apply { declarations.remove(declaration) }
+                    newParent.addChild { declaration }
+                }
+        }
 }
 
 private fun extractAllTransitively(

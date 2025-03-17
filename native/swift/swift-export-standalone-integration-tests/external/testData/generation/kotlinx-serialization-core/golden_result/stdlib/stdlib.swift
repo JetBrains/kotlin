@@ -208,8 +208,6 @@ public extension ExportedKotlinPackages.kotlin {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
-}
 public extension ExportedKotlinPackages.kotlin.reflect {
     public protocol KType: KotlinRuntime.KotlinBase {
         var classifier: (any ExportedKotlinPackages.kotlin.reflect.KClassifier)? {
@@ -222,6 +220,8 @@ public extension ExportedKotlinPackages.kotlin.reflect {
             get
         }
     }
+}
+public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension ExportedKotlinPackages.kotlin.reflect.KType where Self : KotlinRuntimeSupport._KotlinBridged {
     public var classifier: (any ExportedKotlinPackages.kotlin.reflect.KClassifier)? {
