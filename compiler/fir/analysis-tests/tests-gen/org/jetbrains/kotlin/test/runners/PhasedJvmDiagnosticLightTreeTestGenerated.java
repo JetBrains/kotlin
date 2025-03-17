@@ -41776,6 +41776,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("extensions.kt")
+      public void testExtensions() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/extensions.kt");
+      }
+
+      @Test
       @TestMetadata("interfaces.kt")
       public void testInterfaces() {
         runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/interfaces.kt");
