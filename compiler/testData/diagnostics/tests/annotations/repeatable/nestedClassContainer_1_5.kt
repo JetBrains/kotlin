@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_PHASE_SUGGESTION: Disabling `RepeatableAnnotations` and `RepeatableAnnotationContainerConstraints` is not normal operation mode
 // FIR_IDENTICAL
 // LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
 // FULL_JDK
