@@ -70,6 +70,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    data class UklibPublicationWithoutCrossCompilation(val severity: ToolingDiagnostic.Severity) : ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Misconfiguration) {
+        fun get() = build {
+            title("UklibPublicationWithoutCrossCompilation")
+                .description("Publication of ${Uklib.UKLIB_NAME} without cross compilation will not work on non-macOS hosts. Please enable it by specifying ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=true in gradle.properties")
+                .solution("FIXME")
+        }
+    }
+
+    object UklibPublicationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
+        operator fun invoke(target: String, interopName: String) = build {
+            title("UklibPublicationWithCinterops")
+                .description("Publication of ${Uklib.UKLIB_NAME} with cinterops is not yet supported. Target $target declares cinterop $interopName")
+                .solution("FIXME")
+        }
+    }
+
     object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, shouldRefine: List<KotlinSourceSet>, actuallyRefines: List<KotlinSourceSet>) = build {
             title("UklibSourceSetStructureUnderRefinementViolation")
