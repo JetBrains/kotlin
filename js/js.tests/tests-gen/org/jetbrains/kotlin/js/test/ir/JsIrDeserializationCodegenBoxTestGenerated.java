@@ -11965,6 +11965,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
         }
 
         @Test
+        @TestMetadata("kt75926.kt")
+        public void testKt75926() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt75926.kt");
+        }
+
+        @Test
         @TestMetadata("lvtWithInlineOnly.kt")
         public void testLvtWithInlineOnly() {
           runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
