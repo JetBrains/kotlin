@@ -128,7 +128,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val coroutineConstructor = buildConstructor()
 
             val superInvokeSuspendFunction = coroutineBaseClass.owner.simpleFunctions().single { it.name == stateMachineMethodName }
-            val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction, coroutineClass)
+            val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction)
 
             coroutineClass.addFakeOverrides(context.typeSystem)
 
@@ -175,10 +175,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 }
             }
 
-        private fun buildInvokeSuspendMethod(
-            stateMachineFunction: IrSimpleFunction,
-            coroutineClass: IrClass
-        ): IrSimpleFunction {
+        private fun buildInvokeSuspendMethod(stateMachineFunction: IrSimpleFunction): IrSimpleFunction {
             val function = context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
