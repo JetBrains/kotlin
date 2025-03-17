@@ -25,9 +25,6 @@ fun box() {
 
 // EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:21 box
-// test.kt:6 <clinit>
-// test.kt:6 <clinit>
-// test.kt:21 box
 // test.kt:4 <init>
 // test.kt:7 <init>
 // test.kt:10 <init>
@@ -53,9 +50,6 @@ fun box() {
 // test.kt:24 box
 
 // EXPECTATIONS FIR JVM_IR
-// test.kt:21 box
-// test.kt:7 <clinit>
-// test.kt:7 <clinit>
 // test.kt:21 box
 // test.kt:4 <init>
 // test.kt:7 <init>

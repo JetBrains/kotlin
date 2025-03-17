@@ -863,7 +863,12 @@ class ExpressionCodegen(
         val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
         val skip = (irFunction is IrConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
-        return if (skip) unitValue else super.visitSetField(expression, data)
+        if (skip) return unitValue
+        val isDelegatedPropertiesInitializer = expression.symbol.owner.name.asString() == JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME
+                && expression.symbol.owner.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+        lineNumberMapper.noLineNumberScopeWithCondition(isDelegatedPropertiesInitializer) {
+            return super.visitSetField(expression, data)
+        }
     }
 
     /**
