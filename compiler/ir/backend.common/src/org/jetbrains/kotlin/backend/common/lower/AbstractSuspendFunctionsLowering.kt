@@ -16,15 +16,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -55,29 +54,34 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
+    private fun IrBlockBodyBuilder.createCoroutineInstance(function: IrSimpleFunction, coroutine: BuiltCoroutine): IrConstructorCall {
+        val constructor = coroutine.coroutineConstructor
+        val coroutineTypeArgs = function.typeParameters.memoryOptimizedMap {
+            it.defaultType.makeNullable()
+        }
+        return irCallConstructor(constructor.symbol, coroutineTypeArgs).apply {
+            val functionParameters = function.parameters
+            functionParameters.forEachIndexed { index, argument ->
+                arguments[index] = irGet(argument)
+            }
+            arguments[functionParameters.size] =
+                irCall(
+                    getContinuationSymbol,
+                    getContinuationSymbol.owner.returnType,
+                    listOf(function.returnType)
+                )
+        }
+    }
+
     protected fun buildCoroutine(function: IrSimpleFunction): IrClass {
         val coroutine = CoroutineBuilder(function).build()
         // Replace original function with a call to constructor of the built coroutine.
-        val irBuilder = context.createIrBuilder(function.symbol, function.startOffset, function.endOffset)
-        function.body = irBuilder.irBlockBody(function) {
-            val constructor = coroutine.coroutineConstructor
-            generateCoroutineStart(
-                coroutine.stateMachineFunction,
-                irCallConstructor(constructor.symbol, function.typeParameters.map {
-                    it.defaultType.makeNullable()
-                }).apply {
-                    val functionParameters = function.parameters
-                    functionParameters.forEachIndexed { index, argument ->
-                        arguments[index] = irGet(argument)
-                    }
-                    arguments[functionParameters.size] =
-                        irCall(
-                            getContinuationSymbol,
-                            getContinuationSymbol.owner.returnType,
-                            listOf(function.returnType)
-                        )
-                })
-        }
+        val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        val functionBody = function.body as IrBlockBody
+        functionBody.statements.clear()
+        functionBody.statements.addAll(irBuilder.irBlockBody {
+            generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(function, coroutine))
+        }.statements)
         return coroutine.coroutineClass
     }
 

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.capturedFields
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
@@ -21,19 +22,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -65,24 +61,22 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
-    private fun IrBlockBodyBuilder.createCoroutineInstance(function: IrSimpleFunction, parameters: Collection<IrValueParameter>, coroutine: BuiltCoroutine): IrExpression {
+    private fun IrBlockBodyBuilder.createCoroutineInstance(function: IrSimpleFunction, coroutine: BuiltCoroutine): IrConstructorCall {
         val constructor = coroutine.coroutineConstructor
         val coroutineTypeArgs = function.typeParameters.memoryOptimizedMap {
-            IrSimpleTypeImpl(it.symbol, true, emptyList(), emptyList())
+            it.defaultType.makeNullable()
         }
-
         return irCallConstructor(constructor.symbol, coroutineTypeArgs).apply {
-            parameters.forEachIndexed { index, argument ->
-                putValueArgument(index, irGet(argument))
+            val functionParameters = function.parameters
+            functionParameters.forEachIndexed { index, argument ->
+                arguments[index] = irGet(argument)
             }
-            putValueArgument(
-                parameters.size,
+            arguments[functionParameters.size] =
                 irCall(
                     getContinuationSymbol,
                     getContinuationSymbol.owner.returnType,
                     listOf(function.returnType)
                 )
-            )
         }
     }
 
@@ -94,16 +88,12 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         if (isSuspendLambda) return coroutine.coroutineClass
 
         // It is not a lambda - replace original function with a call to constructor of the built coroutine.
-
-        with(function) {
-            val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-            val functionBody = body as IrBlockBody
-            functionBody.statements.clear()
-            functionBody.statements.addAll(irBuilder.irBlockBody {
-                generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(this@with, parameters, coroutine))
-            }.statements)
-        }
-
+        val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        val functionBody = function.body as IrBlockBody
+        functionBody.statements.clear()
+        functionBody.statements.addAll(irBuilder.irBlockBody {
+            generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(function, coroutine))
+        }.statements)
         return coroutine.coroutineClass
     }
 
