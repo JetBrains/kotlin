@@ -107,6 +107,20 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
 
         private val coroutineClass: IrClass = getCoroutineClass(function)
 
+        private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
+            context.irFactory.buildClass {
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                name = nameForCoroutineClass(function)
+                visibility = function.visibility
+            }.apply {
+                parent = function.parent
+                createThisReceiverParameter()
+                typeParameters = function.typeParameters.memoryOptimizedMap { typeParam ->
+                    // TODO: remap types
+                    typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }
+                }
+            }
+
         private val coroutineClassThis = coroutineClass.thisReceiver!!
 
         private val continuationType = continuationClassSymbol.typeWith(function.returnType)
@@ -125,20 +139,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             return if (isSuspendLambda) function.parentAsClass
             else buildNewCoroutineClass(function)
         }
-
-        private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
-            context.irFactory.buildClass {
-                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
-                name = nameForCoroutineClass(function)
-                visibility = function.visibility
-            }.apply {
-                parent = function.parent
-                createThisReceiverParameter()
-                typeParameters = function.typeParameters.memoryOptimizedMap { typeParam ->
-                    // TODO: remap types
-                    typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }
-                }
-            }
 
         private fun buildConstructor(): IrConstructor {
             if (isSuspendLambda) {
