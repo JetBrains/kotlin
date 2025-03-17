@@ -671,9 +671,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return (this as? ConeIntersectionType)?.upperBoundForApproximation
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = session.languageVersionSettings.supportsFeature(
-        LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
-    )
+    // TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
+    // Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
+    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean =
+        session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) ||
+                session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)
 
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)
