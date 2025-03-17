@@ -111,7 +111,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
-    put(JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS, arguments.indyAllowAnnotatedLambdas ?: false)
+    put(JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS, arguments.indyAllowAnnotatedLambdas)
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
