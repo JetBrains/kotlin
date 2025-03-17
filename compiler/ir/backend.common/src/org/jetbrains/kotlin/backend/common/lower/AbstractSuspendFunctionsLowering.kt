@@ -48,30 +48,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
-    protected fun IrCall.isReturnIfSuspendedCall() =
-        symbol == context.symbols.returnIfSuspended
-
-    protected fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
-        if (tailSuspendCalls.isEmpty()) return
-
-        val irBuilder = context.createIrBuilder(irFunction.symbol)
-        irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                val shortCut = if (expression.isReturnIfSuspendedCall())
-                    expression.arguments[0]!!
-                else expression
-
-                shortCut.transformChildrenVoid(this)
-
-                return if (!expression.isSuspend || expression !in tailSuspendCalls)
-                    shortCut
-                else irBuilder.at(expression).irReturn(
-                    irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
-                )
-            }
-        })
-    }
-
     private val symbols = context.symbols
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol

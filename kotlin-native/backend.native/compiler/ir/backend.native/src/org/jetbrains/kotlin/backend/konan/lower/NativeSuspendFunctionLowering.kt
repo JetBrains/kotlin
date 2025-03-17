@@ -65,6 +65,30 @@ internal class NativeSuspendFunctionsLowering(
         }
     }
 
+    private fun IrCall.isReturnIfSuspendedCall() =
+            symbol == context.symbols.returnIfSuspended
+
+    private fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
+        if (tailSuspendCalls.isEmpty()) return
+
+        val irBuilder = context.createIrBuilder(irFunction.symbol)
+        irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val shortCut = if (expression.isReturnIfSuspendedCall())
+                    expression.arguments[0]!!
+                else expression
+
+                shortCut.transformChildrenVoid(this)
+
+                return if (!expression.isSuspend || expression !in tailSuspendCalls)
+                    shortCut
+                else irBuilder.at(expression).irReturn(
+                        irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
+                )
+            }
+        })
+    }
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
             if (function.descriptor.isRestrictedSuspendFunction() || function.isRestrictedSuspensionInvokeMethod) {
