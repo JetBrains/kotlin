@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentSelector
+import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
@@ -22,15 +24,19 @@ internal fun Project.createDefaultPomDependenciesRewriterForTargetComponent(
     kotlinComponent: KotlinTargetComponent,
 ): DefaultPomDependenciesRewriter {
     val projectCoordinatesProviders = collectProjectsPublicationCoordinatesFromDependencies(project, kotlinComponent)
-    return DefaultPomDependenciesRewriter(projectCoordinatesProviders)
+    return DefaultPomDependenciesRewriter(project.objects, projectCoordinatesProviders)
 }
 
 internal class DefaultPomDependenciesRewriter(
+    objectFactory: ObjectFactory,
     private val projectCoordinatesProviders: Provider<List<KotlinProjectSharedDataProvider<TargetPublicationCoordinates>>>,
 ) : PomDependenciesRewriter() {
-    override val taskDependencies: Provider<Any> = projectCoordinatesProviders.map { providers ->
-        providers.map { it.files }.takeIf { it.isNotEmpty() } as Any
-    }
+
+    override val inputFiles: FileCollection = objectFactory.fileCollection().from(
+        projectCoordinatesProviders.map { providers ->
+            providers.map { it.files }
+        }
+    )
 
     override fun createDependenciesMappingForEachUsageContext(): List<Map<ModuleCoordinates, ModuleCoordinates>> {
         return projectCoordinatesProviders.get().map {

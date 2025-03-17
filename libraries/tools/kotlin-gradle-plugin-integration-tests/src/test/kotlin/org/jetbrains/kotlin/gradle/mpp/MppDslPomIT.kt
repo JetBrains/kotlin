@@ -87,6 +87,65 @@ class MppDslPomIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `POM dependencies rewriter tracks changes of dependent project coordinates`(
+        gradleVersion: GradleVersion
+    ) {
+        fun GradleProjectBuildScriptInjectionContext.configureKmpProject() {
+            applyMavenPublishPlugin()
+            project.version = "1.0.0"
+            project.group = "sample"
+
+            kotlinMultiplatform.apply {
+                jvm()
+                linuxX64()
+            }
+        }
+
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "libA") {
+                buildScriptInjection {
+                    configureKmpProject()
+                }
+            }
+
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "libB") {
+                buildScriptInjection {
+                    configureKmpProject()
+                }
+            }
+
+            buildScriptInjection {
+                configureKmpProject()
+                kotlinMultiplatform.apply {
+                    sourceSets.commonMain.dependencies {
+                        // add dependency only to lib A
+                        api(project(":libA"))
+                    }
+                }
+            }
+
+            build(":generatePomFileForJvmPublication") {
+                assertTasksExecuted(
+                    ":libA:exportTargetPublicationCoordinatesForJvmApiElements",
+                    ":libA:exportTargetPublicationCoordinatesForJvmRuntimeElements",
+                    ":generatePomFileForJvmPublication"
+                )
+                assertTasksAreNotInTaskGraph(
+                    ":libA:exportTargetPublicationCoordinatesForLinuxX64ApiElements",
+                    ":libB:exportTargetPublicationCoordinatesForJvmApiElements",
+                    ":libB:exportTargetPublicationCoordinatesForJvmRuntimeElements",
+                )
+            }
+
+            /** up-to-date check is not working because [org.gradle.api.publish.maven.tasks.GenerateMavenPom]
+             *  is annotated with [org.gradle.api.tasks.UntrackedTask] */
+            build(":generatePomFileForJvmPublication") {
+                assertTasksExecuted(":generatePomFileForJvmPublication")
+            }
+        }
+    }
+
+    @GradleTest
     fun `KT-75512 user withXml should be invoked after KMP POM rewriter`(
         gradleVersion: GradleVersion
     ) {

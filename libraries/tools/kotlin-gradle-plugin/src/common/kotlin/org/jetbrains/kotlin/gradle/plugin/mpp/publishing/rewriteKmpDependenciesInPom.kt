@@ -11,7 +11,6 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 
 private val Project.pomDependenciesRewriterMap: MutableMap<KotlinTargetComponent, PomDependenciesRewriter>
@@ -37,9 +36,7 @@ internal fun Project.rewriteDependenciesInPom(
     includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>?,
 ) {
     val pom = publication.pom
-    if (pomRewriter.taskDependencies != null) {
-        addTaskDependenciesToPomGenerator(publication, pomRewriter.taskDependencies!!)
-    }
+    trackInputFilesInGenerateMavenPomTask(publication, pomRewriter.inputFiles)
 
     val shouldRewritePomDependencies =
         project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
