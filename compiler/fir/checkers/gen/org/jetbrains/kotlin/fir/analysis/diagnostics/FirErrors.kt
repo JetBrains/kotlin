@@ -464,6 +464,7 @@ object FirErrors {
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val COMPARE_TO_TYPE_MISMATCH: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("COMPARE_TO_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.OPERATOR, KtExpression::class)
 
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("OVERLOAD_RESOLUTION_AMBIGUITY", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)

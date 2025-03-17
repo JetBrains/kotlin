@@ -430,6 +430,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CONTEXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION
@@ -1546,6 +1547,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Function return type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
             RENDER_TYPE,
             RENDER_TYPE,
+        )
+        map.put(
+            COMPARE_TO_TYPE_MISMATCH,
+            "''compareTo()'' must return ''Int'', but returns ''{0}''.",
+            RENDER_TYPE
         )
 
         map.put(ITERATOR_MISSING, "For-loop range must have an 'iterator()' method.")

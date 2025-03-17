@@ -1654,6 +1654,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val symbol: KaClassLikeSymbol
     }
 
+    interface CompareToTypeMismatch : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = CompareToTypeMismatch::class
+        val actualType: KaType
+    }
+
     interface OverloadResolutionAmbiguity : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverloadResolutionAmbiguity::class
         val candidates: List<KaSymbol>
