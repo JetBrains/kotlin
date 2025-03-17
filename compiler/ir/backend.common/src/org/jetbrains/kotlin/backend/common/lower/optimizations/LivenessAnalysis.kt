@@ -182,7 +182,8 @@ object LivenessAnalysis {
             }
             val prevCatchesLV = catchesLV
             catchesLV = currentCatchesLV
-            currentCatchesLV.or(aTry.tryResult.accept(this, data))
+            val lvAfterTry = data.copy().also { it.or(currentCatchesLV) }
+            currentCatchesLV.or(aTry.tryResult.accept(this, lvAfterTry))
             catchesLV = prevCatchesLV
             currentCatchesLV
         }
