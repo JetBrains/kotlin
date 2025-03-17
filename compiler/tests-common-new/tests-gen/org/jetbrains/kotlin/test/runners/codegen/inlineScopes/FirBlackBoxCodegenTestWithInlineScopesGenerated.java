@@ -41394,6 +41394,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
         public void testReturnTypes() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/returnTypes.kt");
         }
+
+        @Test
+        @TestMetadata("typealias.kt")
+        public void testTypealias() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lenientMode/typealias.kt");
+        }
       }
 
       @Nested
