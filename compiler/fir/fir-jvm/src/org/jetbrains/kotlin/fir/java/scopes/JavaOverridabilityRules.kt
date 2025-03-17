@@ -52,10 +52,14 @@ class JavaOverridabilityRules(private val session: FirSession) : PlatformSpecifi
      * the check is unfortunately not symmetrical in a case when the declarations are generic, DNNs are used,
      * and one of them has a flexible upper bound while the other one doesn't.
      *
+     * [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] makes this check also not necessary as
+     * getTypePreservingFlexibilityWrtTypeVariable does not work anymore.
+     *
      * See compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameter.kt
      */
     private fun shouldDoReverseCheck(overrideCandidate: FirSimpleFunction): Boolean {
-        return !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) &&
+        return !session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) &&
+                !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) &&
                 overrideCandidate.typeParameters.isNotEmpty()
     }
 
