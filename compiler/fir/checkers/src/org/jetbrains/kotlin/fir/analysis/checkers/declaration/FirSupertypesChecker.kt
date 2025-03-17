@@ -43,7 +43,6 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         val isInterface = declaration.classKind == ClassKind.INTERFACE
-        var nullableSupertypeReported = false
         var extensionFunctionSupertypeReported = false
         var interfaceWithSuperclassReported = !isInterface
         var finalSupertypeReported = false
@@ -57,9 +56,8 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
             val expandedSupertype = superTypeRef.coneType.fullyExpandedType(context.session)
             val originalSupertype = expandedSupertype.abbreviatedTypeOrSelf
             val supertypeIsDynamic = originalSupertype is ConeDynamicType
-            if (!nullableSupertypeReported && originalSupertype.isMarkedNullable) {
+            if (originalSupertype.isMarkedNullable) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
-                nullableSupertypeReported = true
             }
             if (!extensionFunctionSupertypeReported && originalSupertype.isExtensionFunctionType &&
                 !context.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
