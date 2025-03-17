@@ -52,6 +52,11 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ProjectId {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/ProjectId$Companion;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/ProjectId$Companion {
+	public final fun RandomProjectUUID ()Lorg/jetbrains/kotlin/buildtools/api/ProjectId$ProjectUUID;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/ProjectId$ProjectUUID : org/jetbrains/kotlin/buildtools/api/ProjectId {

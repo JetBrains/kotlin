@@ -21,7 +21,7 @@ class Project(
     val defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
     val projectDirectory: Path,
 ) {
-    val projectId = ProjectId.ProjectUUID(UUID.randomUUID())
+    val projectId = ProjectId.RandomProjectUUID()
     private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
 
     fun module(

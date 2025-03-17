@@ -15,4 +15,10 @@ import java.util.*
  */
 public sealed interface ProjectId {
     public data class ProjectUUID(public val uuid: UUID) : ProjectId
+
+    public companion object {
+        @ExperimentalBuildToolsApi
+        @Suppress("FunctionName") // constructor-like method
+        public fun RandomProjectUUID(): ProjectUUID = ProjectUUID(UUID.randomUUID())
+    }
 }

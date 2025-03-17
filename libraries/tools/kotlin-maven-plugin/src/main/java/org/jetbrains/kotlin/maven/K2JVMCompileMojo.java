@@ -245,7 +245,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             List<File> sourceRoots
     ) throws MojoExecutionException {
         try {
-            ProjectId projectId = new ProjectId.ProjectUUID(UUID.randomUUID());
+            ProjectId projectId = ProjectId.Companion.RandomProjectUUID();
             CompilationService compilationService = getCompilationService();
             CompilerExecutionStrategyConfiguration strategyConfig = compilationService.makeCompilerExecutionStrategyConfiguration();
             strategyConfig.useInProcessStrategy();
