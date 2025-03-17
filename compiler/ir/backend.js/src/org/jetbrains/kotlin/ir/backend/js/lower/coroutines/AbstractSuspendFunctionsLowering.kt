@@ -171,13 +171,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
 
             coroutineClass.addFakeOverrides(context.typeSystem, implementedMembers)
 
-            // TODO constructing fake overrides on lowered declaration is tricky.
-            coroutineClass.declarations.transformFlat {
-                if (it is IrProperty && it.isFakeOverride) {
-                    listOfNotNull(it.getter, it.setter)
-                } else null
-            }
-
             return BuiltCoroutine(coroutineClass, coroutineConstructor, invokeSuspendMethod)
         }
 

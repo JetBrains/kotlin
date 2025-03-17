@@ -212,7 +212,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                     }
 
-                overriddenSymbols = overriddenSymbols memoryOptimizedPlus stateMachineFunction.symbol
+                overriddenSymbols = listOf(stateMachineFunction.symbol)
             }
 
             buildStateMachine(function, this@CoroutineBuilder.function, argumentToPropertiesMap)
