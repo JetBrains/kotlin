@@ -31,7 +31,7 @@ data class BuildOptions(
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
-    val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
+    val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
     val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
@@ -91,26 +91,16 @@ data class BuildOptions(
      */
     val continuousBuild: Boolean? = null,
 ) {
-    enum class ConfigurationCacheValue {
+    enum class ConfigurationCacheValue(val booleanFlag: Boolean?) {
 
         /** Explicitly/forcefully disable Configuration Cache */
-        DISABLED,
+        DISABLED(false),
 
         /** Explicitly/forcefully enable Configuration Cache */
-        ENABLED,
-
-        /** AUTO means unspecified by default, but enabled on macOS with Gradle >= 8.0 */
-        AUTO,
+        ENABLED(true),
 
         /** Gradle, depending on its version, will decide whether to enable Configuration Cache */
-        UNSPECIFIED;
-
-        fun toBooleanFlag(gradleVersion: GradleVersion): Boolean? = when (this) {
-            DISABLED -> false
-            ENABLED -> true
-            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version("8.0")) true else null
-            UNSPECIFIED -> null
-        }
+        UNSPECIFIED(null);
     }
 
     enum class IsolatedProjectsMode {
@@ -193,7 +183,7 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        val configurationCacheFlag = configurationCache.toBooleanFlag(gradleVersion)
+        val configurationCacheFlag = configurationCache.booleanFlag
         if (configurationCacheFlag != null) {
             arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheFlag")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")

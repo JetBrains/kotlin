@@ -117,7 +117,6 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 buildOptions = buildOptions.copy(
                     logLevel = LogLevel.LIFECYCLE,
                     buildCacheEnabled = true,
-                    configurationCache = enableConfigurationCacheSinceGradle("8.5", gradleVersion)
                 )
             ) {
                 assertTasksExecuted(testTasks)
