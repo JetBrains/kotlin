@@ -34,7 +34,9 @@ class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
 
             val usedMemory: List<Int> = (1..buildCount).map {
                 var reportedMemory = 0
-                build(userVariantArg, reportMemoryUsage, "clean", "assemble") {
+                // with CC enabled, `KotlinGradleBuildServices` is not being registered on subsequent builds
+                // TODO: create an issue if needed
+                build(userVariantArg, reportMemoryUsage, "clean", "assemble", "-PinvalidateCC${generateIdentifier()}") {
                     val matches = output
                         .lineSequence()
                         .filter { it.contains("[KOTLIN][PERF]") }
