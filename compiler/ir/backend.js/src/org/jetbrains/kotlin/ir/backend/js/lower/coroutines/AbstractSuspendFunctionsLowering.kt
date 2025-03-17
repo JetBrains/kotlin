@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -137,7 +138,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             .associateWith { coroutineClass.addField(it.name, it.type, false) }
 
         private val coroutineBaseClass = getCoroutineBaseClass(function)
-        private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.valueParameters.size == 1 }
+        private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.hasShape(regularParameters = 1) }
         private val create1Function = coroutineBaseClass.owner.simpleFunctions()
             .single { it.name.asString() == "create" && it.valueParameters.size == 1 }
         private val create1CompletionParameter = create1Function.valueParameters[0]
@@ -159,31 +160,30 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
 
             return context.irFactory.buildConstructor {
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
-                name = coroutineBaseClassConstructor.name
                 visibility = function.visibility
                 returnType = coroutineClass.defaultType
                 isPrimary = true
             }.apply {
                 parent = coroutineClass
-                coroutineClass.addChild(this)
+                coroutineClass.declarations += this
 
-                valueParameters = functionParameters.memoryOptimizedMap { parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, defaultValue = null)
+                parameters = functionParameters.memoryOptimizedMap { parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, defaultValue = null, kind = IrParameterKind.Regular)
                 }
-                val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
-                valueParameters = valueParameters memoryOptimizedPlus continuationParameter.copyTo(
+                val continuationParameter = coroutineBaseClassConstructor.parameters[0]
+                parameters = parameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
                     startOffset = function.startOffset,
                     endOffset = function.endOffset,
                     type = continuationType,
-                    defaultValue = null
+                    defaultValue = null,
                 )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody {
-                    val completionParameter = valueParameters.last()
+                    val completionParameter = parameters.last()
                     +irDelegatingConstructorCall(coroutineBaseClassConstructor).apply {
-                        putValueArgument(0, irGet(completionParameter))
+                        arguments[0] = irGet(completionParameter)
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol, context.irBuiltIns.unitType)
 
@@ -191,7 +191,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                         +irSetField(
                             irGet(coroutineClassThis),
                             argumentToPropertiesMap.getValue(parameter),
-                            irGet(valueParameters[index])
+                            irGet(parameters[index])
                         )
                     }
                 }
@@ -199,7 +199,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         }
 
         private fun buildInvokeSuspendMethod(stateMachineFunction: IrSimpleFunction): IrSimpleFunction {
-            val smFunction = context.irFactory.buildFun {
+            val function = context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
@@ -233,8 +233,8 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                 overriddenSymbols = listOf(stateMachineFunction.symbol)
             }
 
-            buildStateMachine(smFunction, function, argumentToPropertiesMap)
-            return smFunction
+            buildStateMachine(function, this@CoroutineBuilder.function, argumentToPropertiesMap)
+            return function
         }
 
         // val i = $lambdaN(this.f1, this.f2, ..., this.fn, continuation) // bound

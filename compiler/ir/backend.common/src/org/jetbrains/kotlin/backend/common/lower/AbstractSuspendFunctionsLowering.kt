@@ -135,8 +135,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             return BuiltCoroutine(coroutineClass, coroutineConstructor, invokeSuspendMethod)
         }
 
-        fun buildConstructor(): IrConstructor =
-            context.irFactory.buildConstructor {
+        private fun buildConstructor(): IrConstructor {
+            return context.irFactory.buildConstructor {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -154,7 +154,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val continuationParameter = coroutineBaseClassConstructor.parameters[0]
                 parameters = parameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    type = continuationType
+                    type = continuationType,
                 )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
@@ -174,6 +174,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     }
                 }
             }
+        }
 
         private fun buildInvokeSuspendMethod(stateMachineFunction: IrSimpleFunction): IrSimpleFunction {
             val function = context.irFactory.buildFun {
@@ -199,9 +200,9 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                this.parameters += this.createDispatchReceiverParameterWithClassParent()
+                parameters += createDispatchReceiverParameterWithClassParent()
 
-                this.parameters += stateMachineFunction.nonDispatchParameters
+                parameters += stateMachineFunction.nonDispatchParameters
                     .memoryOptimizedMap { parameter ->
                         parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                     }
