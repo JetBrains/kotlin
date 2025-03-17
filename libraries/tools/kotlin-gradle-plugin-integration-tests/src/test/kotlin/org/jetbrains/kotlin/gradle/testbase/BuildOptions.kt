@@ -431,6 +431,14 @@ fun BuildOptions.withBundledKotlinNative() = copy(
     )
 )
 
+fun BuildOptions.disableConfigurationCacheForGradle7(
+    currentGradleVersion: GradleVersion,
+) = if (currentGradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+    copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+} else {
+    this
+}
+
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
