@@ -75,6 +75,9 @@ class PhasedPipelineChecker(
         if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return emptyList()
         val expectedLastPhase = directives[LATEST_PHASE_IN_PIPELINE].first()
         val targetedPhase = getTargetedPhase()
+        if (targetedPhase == expectedLastPhase) {
+            return emptyList()
+        }
         if (targetedPhase != null && targetedPhase > expectedLastPhase) {
             val message = "RUN_PIPELINE_TILL ($targetedPhase) cannot be greater than $LATEST_PHASE_IN_PIPELINE ($expectedLastPhase)"
             return listOf(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))

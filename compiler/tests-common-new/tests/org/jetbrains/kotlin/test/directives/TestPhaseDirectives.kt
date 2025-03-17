@@ -36,7 +36,10 @@ object TestPhaseDirectives : SimpleDirectivesContainer() {
         description = "The last phase of the pipeline in the test"
     )
 
+    /**
+     * Use this directive if the test includes multiple test runners failing at different phases.
+     */
     val DISABLE_NEXT_PHASE_SUGGESTION by stringDirective(
-        description = "Prevents the phased test runners from complaining that the current phase could be upgraded. Use this directive if the test contains something obviously wrong, like disabling of some language features or cringe error suppression, causing failures on higher phase"
+        description = "Prevents the phased test runners from complaining that the current phase could be upgraded."
     )
 }
