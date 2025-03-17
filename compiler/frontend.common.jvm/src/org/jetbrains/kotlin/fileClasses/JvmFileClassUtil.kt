@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fileClasses
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
@@ -17,15 +16,10 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.MULTIFILE_PART_NAME_DELIMIT
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 object JvmFileClassUtil {
     val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
     val JVM_NAME_SHORT: String = JVM_NAME.shortName().asString()
-
-    fun getPartFqNameForDeserialized(descriptor: DeserializedMemberDescriptor): FqName =
-        descriptor.getImplClassNameForDeserialized()?.fqNameForTopLevelClassMaybeWithDollars
-            ?: error("No implClassName for $descriptor")
 
     @JvmStatic
     fun getFileClassInternalName(file: KtFile): String =

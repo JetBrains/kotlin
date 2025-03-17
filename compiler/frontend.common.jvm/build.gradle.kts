@@ -10,10 +10,7 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
-
-    implementation(project(":core:descriptors.jvm"))
     api(project(":compiler:psi"))
-
 }
 
 sourceSets {
