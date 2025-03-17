@@ -42,9 +42,7 @@ internal fun Project.rewriteDependenciesInPom(
     includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>?,
 ) {
     val pom = publication.pom
-    if (pomRewriter.taskDependencies != null) {
-        addTaskDependenciesToPomGenerator(publication, pomRewriter.taskDependencies!!)
-    }
+    trackInputFilesInGenerateMavenPomTask(publication, pomRewriter.inputFiles)
 
     val shouldRewritePomDependencies =
         project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }

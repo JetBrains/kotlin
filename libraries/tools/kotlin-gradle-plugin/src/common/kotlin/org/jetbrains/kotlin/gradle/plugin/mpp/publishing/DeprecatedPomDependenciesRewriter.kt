@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.util.GradleVersion
@@ -34,6 +35,8 @@ internal class DeprecatedPomDependenciesRewriter(
     project: Project,
     component: KotlinTargetComponent,
 ) : PomDependenciesRewriter() {
+
+    override val inputFiles: FileCollection = project.objects.fileCollection()
 
     override fun createDependenciesMappingForEachUsageContext(): List<Map<ModuleCoordinates, ModuleCoordinates>> {
         return dependenciesMappingForEachUsageContext
