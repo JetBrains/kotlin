@@ -1137,12 +1137,6 @@ sealed interface DependencyManagement {
  */
 fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
 
-fun enableConfigurationCacheSinceGradle(
-    sinceGradleVersion: String,
-    currentGradleVersion: GradleVersion,
-): BuildOptions.ConfigurationCacheValue =
-    if (currentGradleVersion >= GradleVersion.version(sinceGradleVersion)) BuildOptions.ConfigurationCacheValue.ENABLED else BuildOptions.ConfigurationCacheValue.AUTO
-
 // https://developer.android.com/studio/intro/update.html#download-with-gradle
 private fun acceptAndroidSdkLicenses(androidHome: File) {
     val sdkLicensesDir = androidHome.resolve("licenses")
