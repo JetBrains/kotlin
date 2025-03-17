@@ -126,8 +126,6 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 "clean",
                 "publish",
                 "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
-                buildOptions = defaultBuildOptions
-                    .copy(configurationCache = enableConfigurationCacheSinceGradle("8.0", gradleVersion))
             ) {
                 assertFileContains(
                     localRepoDir.resolve("com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom"),

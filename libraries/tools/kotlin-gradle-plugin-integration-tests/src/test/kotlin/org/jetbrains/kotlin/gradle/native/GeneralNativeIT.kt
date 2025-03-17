@@ -336,14 +336,12 @@ class GeneralNativeIT : KGPBaseTest() {
         nativeProject(
             "native-binaries/executables",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                /**
-                 * Enable CC since 8.0 for KT-69918:
-                 * - Before 8.0 Gradle doesn't deserialize CC during the first execution and the issue is not visible
-                 * - Before 7.4.2 there is a CC serialization failure because Gradle can't serialize ComponentResult
-                 */
-                configurationCache = enableConfigurationCacheSinceGradle(TestVersions.Gradle.G_8_0, gradleVersion)
-            )
+            /**
+             * Enable CC since 8.0 for KT-69918:
+             * - Before 8.0 Gradle doesn't deserialize CC during the first execution and the issue is not visible
+             * - Before 7.4.2 there is a CC serialization failure because Gradle can't serialize ComponentResult
+             */
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val binaries = listOf(
                 "debugExecutable" to "native-binary",
