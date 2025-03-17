@@ -69,6 +69,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
  *   Otherwise, it will be substituted with some fixed placeholder value.
  * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
+ * @property printMemberAccessExpressionArgumentNames If real names of type and value arguments of [IrMemberAccessExpression]s
+ *   should be printer. By default, this option is turned on. If it's off, then indices are rendered instead of names.
  * @property printSealedSubclasses Whether sealed subclasses of a sealed class/interface should be printed.
  * @property replaceImplicitSetterParameterNameWith If not null, them implicit value parameter name [IMPLICIT_SET_PARAMETER] would be
  *   replaced by the given value.
@@ -95,6 +97,7 @@ data class DumpIrTreeOptions(
     val printAnnotationsInFakeOverrides: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
+    val printMemberAccessExpressionArgumentNames: Boolean = true,
     val printSealedSubclasses: Boolean = true,
     val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
@@ -332,7 +335,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun IrMemberAccessExpression<*>.getTypeParameterNames(expectedCount: Int): List<String> =
-        if (symbol.isBound)
+        if (options.printMemberAccessExpressionArgumentNames && symbol.isBound)
             symbol.owner.getTypeParameterNames(expectedCount)
         else
             getPlaceholderParameterNames(expectedCount)
@@ -552,7 +555,7 @@ class DumpTreeFromSourceLineVisitor(
 }
 
 internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(options: DumpIrTreeOptions): List<String> {
-    val function = if (symbol.isBound) symbol.owner as? IrFunction else null
+    val function = if (options.printMemberAccessExpressionArgumentNames && symbol.isBound) symbol.owner as? IrFunction else null
     return getValueParameterNamesForDebug(function, arguments.size, options)
 }
 
