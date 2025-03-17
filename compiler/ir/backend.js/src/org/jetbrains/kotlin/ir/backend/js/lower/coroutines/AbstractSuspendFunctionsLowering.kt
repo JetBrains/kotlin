@@ -55,12 +55,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
 
-    @Suppress("UNUSED_PARAMETER")
-    protected fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        // Do nothing by default
-        // TODO find out if Kotlin/Native needs this method.
-    }
-
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
@@ -418,9 +412,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                     listOfNotNull(it.getter, it.setter)
                 } else null
             }
-
-            // TODO: find out whether Kotlin/Native needs this call
-            initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)
 
             return BuiltCoroutine(
                 coroutineClass = coroutineClass,

@@ -44,11 +44,6 @@ internal class NativeSuspendFunctionsLowering(
     override fun nameForCoroutineClass(function: IrFunction) =
             fileLowerState.getCoroutineImplUniqueName(function).synthesizedName
 
-    override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        // Nothing to do: it's redundant to initialize the "label" field with null
-        // since all freshly allocated objects are zeroed out.
-    }
-
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         +irReturn(
                 irCall(invokeSuspendFunction).apply {

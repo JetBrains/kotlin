@@ -47,8 +47,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
 
-    protected abstract fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration)
-
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
@@ -175,8 +173,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction, coroutineClass)
 
             coroutineClass.addFakeOverrides(context.typeSystem)
-
-            initializeStateMachine(coroutineConstructors, coroutineClassThis)
 
             return BuiltCoroutine(coroutineClass, coroutineConstructor, invokeSuspendMethod)
         }
