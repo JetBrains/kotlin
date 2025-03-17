@@ -91,8 +91,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
             context.irFactory.buildClass {
-                startOffset = function.startOffset
-                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = nameForCoroutineClass(function)
                 visibility = DescriptorVisibilities.PRIVATE
@@ -137,8 +135,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun buildConstructor(): IrConstructor {
             return context.irFactory.buildConstructor {
-                startOffset = function.startOffset
-                endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 visibility = function.visibility
                 returnType = coroutineClass.defaultType
@@ -154,6 +150,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val continuationParameter = coroutineBaseClassConstructor.parameters[0]
                 parameters = parameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
+                    startOffset = function.startOffset,
+                    endOffset = function.endOffset,
                     type = continuationType,
                 )
 
