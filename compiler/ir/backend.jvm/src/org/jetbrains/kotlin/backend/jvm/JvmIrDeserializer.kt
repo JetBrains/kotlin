@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface JvmIrDeserializer {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.linkage.IrProvider
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 interface Fir2IrComponents {

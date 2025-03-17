@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class DeclarationStubGenerator(
