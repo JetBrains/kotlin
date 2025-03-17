@@ -1,9 +1,14 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.collectTailSuspendCalls
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -25,13 +30,67 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
-) : AbstractSuspendFunctionsLowering<Context>(generationState.context) {
+) : AbstractSuspendFunctionsLowering<Context>(generationState.context), FileLoweringPass {
     private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformDeclarationsFlat(::tryTransformSuspendFunction)
+        irFile.acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
+                if (declaration.origin != DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    declaration.transformDeclarationsFlat(::tryTransformSuspendFunction)
+            }
+        })
+    }
+
+    private fun tryTransformSuspendFunction(element: IrElement): List<IrDeclaration>? {
+        val function = (element as? IrSimpleFunction) ?: return null
+        if (!function.isSuspend || function.modality == Modality.ABSTRACT) return null
+
+        val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
+        return if (hasNotTailSuspendCalls) {
+            listOf<IrDeclaration>(buildCoroutine(function, isSuspendLambdaInvokeMethod = false), function)
+        } else {
+            // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
+            // Have to simplify them though (convert them to proper return statements).
+            simplifyTailSuspendCalls(function, tailSuspendCalls)
+            null
+        }
+    }
+
+    private fun IrCall.isReturnIfSuspendedCall() =
+            symbol == context.symbols.returnIfSuspended
+
+    private fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
+        if (tailSuspendCalls.isEmpty()) return
+
+        val irBuilder = context.createIrBuilder(irFunction.symbol)
+        irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val shortCut = if (expression.isReturnIfSuspendedCall())
+                    expression.arguments[0]!!
+                else expression
+
+                shortCut.transformChildrenVoid(this)
+
+                return if (!expression.isSuspend || expression !in tailSuspendCalls)
+                    shortCut
+                else irBuilder.at(expression).irReturn(
+                        irBuilder.generateDelegatedCall(irFunction.returnType, shortCut)
+                )
+            }
+        })
+    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
@@ -44,10 +103,7 @@ internal class NativeSuspendFunctionsLowering(
     override fun nameForCoroutineClass(function: IrFunction) =
             fileLowerState.getCoroutineImplUniqueName(function).synthesizedName
 
-    override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        // Nothing to do: it's redundant to initialize the "label" field with null
-        // since all freshly allocated objects are zeroed out.
-    }
+    override fun coroutineClassVisibility(function: IrFunction): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         +irReturn(
