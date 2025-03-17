@@ -8,6 +8,7 @@ fun writeTo(): Boolean = false
 fun foo() {
     val _ = writeTo()
     val (a, _) = 1 to 2
+    var (b, _) = 1 to 2
     val (_) = 'a' to 'b'
 
     (<!SYNTAX!><!>val f = <!UNRESOLVED_REFERENCE!>first<!><!SYNTAX!>, val _ = second) = "first" to "second"<!>

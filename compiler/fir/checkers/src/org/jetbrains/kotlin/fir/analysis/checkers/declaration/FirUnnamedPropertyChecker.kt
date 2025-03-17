@@ -24,7 +24,9 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             return
         }
 
-        if (declaration.isVar) {
+        val isDesugaredComponentCall = declaration.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredComponentFunctionCall
+
+        if (declaration.isVar && !isDesugaredComponentCall) {
             reporter.reportOn(declaration.source, FirErrors.UNNAMED_VAR_PROPERTY, context)
         }
 
@@ -32,10 +34,7 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(declaration.delegate?.source, FirErrors.UNNAMED_DELEGATED_PROPERTY, context)
         }
 
-        if (
-            declaration.initializer?.source?.kind != KtFakeSourceElementKind.DesugaredComponentFunctionCall &&
-            declaration.isCatchParameter != true
-        ) {
+        if (!isDesugaredComponentCall && declaration.isCatchParameter != true) {
             declaration.requireFeatureSupport(
                 LanguageFeature.UnnamedLocalVariables, context, reporter,
                 positioningStrategy = SourceElementPositioningStrategies.NAME_IDENTIFIER,
