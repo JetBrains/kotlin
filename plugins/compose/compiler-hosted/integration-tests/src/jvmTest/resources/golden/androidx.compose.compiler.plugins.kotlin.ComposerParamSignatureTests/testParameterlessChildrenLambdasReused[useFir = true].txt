@@ -15,19 +15,10 @@
 public final class ComposableSingletons%TestKt {
   public <init>()V
   public final getLambda%-420233864%test_module()Lkotlin/jvm/functions/Function2;
+  private final static lambda__420233864%lambda%0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   static <clinit>()V
   public final static LComposableSingletons%TestKt; INSTANCE
   private static Lkotlin/jvm/functions/Function2; lambda%-420233864
-  final static INNERCLASS ComposableSingletons%TestKt%lambda%-420233864%1 null null
-}
-final class ComposableSingletons%TestKt%lambda%-420233864%1 implements kotlin/jvm/functions/Function2 {
-  <init>()V
-  public final invoke(Landroidx/compose/runtime/Composer;I)V
-  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  static <clinit>()V
-  public final static LComposableSingletons%TestKt%lambda%-420233864%1; INSTANCE
-  OUTERCLASS ComposableSingletons%TestKt null
-  final static INNERCLASS ComposableSingletons%TestKt%lambda%-420233864%1 null null
 }
 public final class TestKt {
   public final static Foo(Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
