@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInlineModifierOnPrima
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitIntersectionReifiedTypeParameter
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNullableTypeThroughTypealias
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitScriptTopLevelInnerClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSingleNamedFunctionAsExpression
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport
@@ -254,6 +255,7 @@ object FirErrors {
     val SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val SINGLETON_IN_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SINGLETON_IN_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val NULLABLE_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NULLABLE_SUPERTYPE", ERROR, SourceElementPositioningStrategies.QUESTION_MARK_BY_TYPE, KtElement::class)
+    val NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS", ProhibitNullableTypeThroughTypealias, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val MANY_CLASSES_IN_SUPERTYPE_LIST: KtDiagnosticFactory0 = KtDiagnosticFactory0("MANY_CLASSES_IN_SUPERTYPE_LIST", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val SUPERTYPE_APPEARS_TWICE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPERTYPE_APPEARS_TWICE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val CLASS_IN_SUPERTYPE_FOR_ENUM: KtDiagnosticFactory0 = KtDiagnosticFactory0("CLASS_IN_SUPERTYPE_FOR_ENUM", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

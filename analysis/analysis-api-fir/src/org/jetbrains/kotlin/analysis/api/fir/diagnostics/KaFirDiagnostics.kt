@@ -561,6 +561,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NullableSupertype::class
     }
 
+    interface NullableSupertypeThroughTypealiasError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NullableSupertypeThroughTypealiasError::class
+    }
+
+    interface NullableSupertypeThroughTypealiasWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NullableSupertypeThroughTypealiasWarning::class
+    }
+
     interface ManyClassesInSupertypeList : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ManyClassesInSupertypeList::class
     }

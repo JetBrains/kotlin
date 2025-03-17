@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// LANGUAGE: +ProhibitNullableTypeThroughTypealias
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-71002
 
@@ -13,6 +13,7 @@ class Bar2: F
 typealias F1 = Foo
 typealias F2 = F1?
 class Bar3: F2
+class Bar30: F1<!NULLABLE_SUPERTYPE!>?<!>
 
 class Bar4(foo: Foo): F by foo
 
