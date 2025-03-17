@@ -149,23 +149,34 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                         } else {
                             when (statement) {
                                 is IrVariable -> {
-                                    irSnippetClass.addField {
-                                        startOffset = statement.startOffset
-                                        endOffset = statement.endOffset
+                                    irSnippetClass.addProperty {
+                                        updateFrom(statement)
                                         name = statement.name
-                                        type = statement.type
-                                    }.also { field ->
-                                        statement.initializer?.let { initializer ->
-                                            +IrSetFieldImpl(
-                                                initializer.startOffset,
-                                                initializer.endOffset,
-                                                field.symbol,
-                                                irGet(irSnippetClassThisReceiver),
-                                                initializer,
-                                                this.context.irBuiltIns.unitType
-                                            )
+                                    }.also { property ->
+                                        property.backingField = context.irFactory.buildField {
+                                            updateFrom(statement)
+                                            origin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
+                                            name = statement.name
+                                            type = statement.type
+                                        }.also { field ->
+                                            statement.initializer?.let { initializer ->
+                                                +IrSetFieldImpl(
+                                                    initializer.startOffset,
+                                                    initializer.endOffset,
+                                                    field.symbol,
+                                                    irGet(irSnippetClassThisReceiver),
+                                                    initializer,
+                                                    this.context.irBuiltIns.unitType
+                                                )
+                                            }
+                                            field.parent = irSnippetClass
+                                            field.annotations += statement.annotations
+                                            valsToFields[statement.symbol] = field.symbol
                                         }
-                                        valsToFields[statement.symbol] = field.symbol
+                                        property.addDefaultGetter(irSnippetClass, context.irBuiltIns)
+                                        if (statement.isVar) {
+                                            property.addDefaultSetter(irSnippetClass, context.irBuiltIns)
+                                        }
                                     }
                                 }
                                 is IrProperty,

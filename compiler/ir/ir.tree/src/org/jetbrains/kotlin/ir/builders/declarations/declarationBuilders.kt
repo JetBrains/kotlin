@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.copyTo
@@ -174,6 +175,29 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
                             dispatchReceiverParameter!!.symbol
                         )
                     )
+                )
+            )
+        )
+    }
+}
+
+fun IrProperty.addDefaultSetter(parentClass: IrClass, builtIns: IrBuiltIns) {
+    val field = backingField!!
+    addSetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        visibility = this@addDefaultSetter.visibility
+        returnType = builtIns.unitType
+    }.also { setter ->
+        setter.dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(setter)
+        val irValueParameter = setter.addValueParameter("value", field.type)
+        setter.body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrSetFieldImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    field.symbol,
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.dispatchReceiverParameter!!.type, setter.dispatchReceiverParameter!!.symbol),
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
+                    builtIns.unitType,
                 )
             )
         )
