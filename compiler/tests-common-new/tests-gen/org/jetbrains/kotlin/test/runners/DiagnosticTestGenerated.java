@@ -30803,6 +30803,28 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/lenientMode")
+      @TestDataPath("$PROJECT_ROOT")
+      public class LenientMode {
+        @Test
+        public void testAllFilesPresentInLenientMode() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/lenientMode"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("supported.kt")
+        public void testSupported() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/lenientMode/supported.kt");
+        }
+
+        @Test
+        @TestMetadata("unsupported.kt")
+        public void testUnsupported() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/lenientMode/unsupported.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/scopes")
       @TestDataPath("$PROJECT_ROOT")
       public class Scopes {

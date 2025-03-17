@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -78,10 +79,17 @@ class LenientModeMissingActualDeclarationProvider(
         }
     }
 
-    private fun buildClassStub(expectSymbol: IrClassSymbol, parent: IrDeclarationParent): IrClassSymbol {
-        val symbol = IrClassSymbolImpl()
+    private fun buildClassStub(expectSymbol: IrClassSymbol, parent: IrDeclarationParent): IrClassSymbol? {
         val owner = expectSymbol.owner
 
+        if (owner.kind != ClassKind.CLASS && owner.kind != ClassKind.INTERFACE && owner.kind != ClassKind.OBJECT) {
+            return null
+        }
+
+        if (owner.isValue) return null
+        if (owner.superClass.let { it != null && it != builtins.anyClass }) return null
+
+        val symbol = IrClassSymbolImpl()
         val clazz = IrFactoryImpl.createClass(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
@@ -185,7 +193,6 @@ class LenientModeMissingActualDeclarationProvider(
         )
 
         fillFunction(constructor, owner, parent)
-        // TODO handle or forbid cases where class doesn't extend Any
         constructor.body = createConstructorBody(parent)
 
         return symbol
