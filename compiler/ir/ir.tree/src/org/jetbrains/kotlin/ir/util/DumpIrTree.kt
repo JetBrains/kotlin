@@ -213,7 +213,7 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             runIf(options.printSealedSubclasses) {
-                declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
+                declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dumpAsReference() }
             }
             declaration.thisReceiver?.accept(this, "thisReceiver")
             declaration.typeParameters.dumpElements()
@@ -256,13 +256,6 @@ class DumpIrTreeVisitor(
             printer.println(elementRenderer.renderAsAnnotation(irAnnotation))
         }
     }
-
-    private fun IrSymbol.dump(label: String? = null) =
-        printer.println(
-            elementRenderer.renderSymbolReference(this).let {
-                if (label != null) "$label: $it" else it
-            }
-        )
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
         if (declaration.isHidden()) return
@@ -508,12 +501,12 @@ class DumpIrTreeVisitor(
             printer.println("$label: UNBOUND ${javaClass.simpleName}")
     }
 
-    private fun IrSymbol.dumpAsReference(label: String) {
-        if (isBound)
-            dump(label)
-        else
-            printer.println("$label: UNBOUND ${javaClass.simpleName}")
-    }
+    private fun IrSymbol.dumpAsReference(label: String? = null) =
+        printer.println(
+            elementRenderer.renderSymbolReference(this).let {
+                if (label != null) "$label: $it" else it
+            }
+        )
 
     private fun IrFileEntry.dumpInternal(label: String? = null) {
         val prefix = if (label != null) "$label: " else ""
