@@ -188,12 +188,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                 } else null
             }
 
-            return BuiltCoroutine(
-                coroutineClass = coroutineClass,
-                coroutineConstructor = coroutineConstructor,
-                stateMachineFunction = invokeSuspendMethod
-            )
-
+            return BuiltCoroutine(coroutineClass, coroutineConstructor, invokeSuspendMethod)
         }
 
         private fun buildConstructor(): IrConstructor {
