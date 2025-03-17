@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import java.io.IOException
+import java.io.OutputStream
+import java.security.DigestOutputStream
+import java.security.MessageDigest
+import java.util.*
 
 internal class MetadataDependencyTransformationTaskInputs(
     project: Project,
@@ -32,7 +37,7 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    val projectStructureMetadataFileCollection = kotlinSourceSet
+    val projectStructureMetadataFileCollection: FileCollection = kotlinSourceSet
         .internal
         .projectStructureMetadataResolvedConfiguration()
         .files
@@ -85,33 +90,52 @@ internal class MetadataDependencyTransformationTaskInputs(
     private val participatingSourceSets: Set<KotlinSourceSet> = kotlinSourceSet.internal.withDependsOnClosure
 
     @Suppress("unused") // Gradle input
+    @get:Internal
+    @get:Deprecated("TODO add deprecation msg. Scheduled for removal in Kotlin 2.4.")
+    val inputSourceSetsAndCompilations: Map<String, Iterable<String>> = emptyMap()
+
     @get:Input
-    val inputSourceSetsAndCompilations: Map<String, Iterable<String>> by lazy {
-        participatingSourceSets.associate { sourceSet ->
-            sourceSet.name to sourceSet.internal.compilations.map { it.name }.sorted()
-        }
+    @Suppress("unused") // Gradle input
+    val inputSourceSetsAndCompilationsChecksum: String by lazy {
+        val inputSourceSetsAndCompilations: Map<String, Iterable<String>> =
+            participatingSourceSets.associate { sourceSet ->
+                sourceSet.name to sourceSet.internal.compilations.mapTo(sortedSetOf()) { it.name }
+            }
+
+        createChecksum(inputSourceSetsAndCompilations)
     }
 
     @Suppress("unused") // Gradle input
+    @get:Internal
+    @get:Deprecated("TODO add deprecation msg. Scheduled for removal in Kotlin 2.4.")
+    val inputCompilationDependencies: Map<String, Set<String>> = emptyMap()
+
     @get:Input
-    val inputCompilationDependencies: Map<String, Set<String>> by lazy {
-        participatingSourceSets.flatMap { it.internal.compilations }.associate {
-            it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
-                .allDependencies
-                .map { dependency ->
-                    if (dependency is ProjectDependency && keepProjectDependencies) {
-                        if (GradleVersion.current() < GradleVersion.version("8.11")) {
-                            @Suppress("DEPRECATION")
-                            dependency.dependencyProject.path
-                        } else {
-                            dependency.path
+    @Suppress("unused") // Gradle input
+    val inputCompilationDependenciesChecksum: String by lazy {
+        val inputCompilationDependencies: Map<String, Set<String>> =
+            participatingSourceSets
+                .flatMap { it.internal.compilations }
+                .associate { compilation ->
+                    val dependencies = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+                        .allDependencies
+                        .mapTo(mutableSetOf()) { dependency ->
+                            if (dependency is ProjectDependency && keepProjectDependencies) {
+                                if (GradleVersion.current() < GradleVersion.version("8.11")) {
+                                    @Suppress("DEPRECATION")
+                                    dependency.dependencyProject.path
+                                } else {
+                                    dependency.path
+                                }
+                            } else {
+                                dependency.run { "${name}:${group}:${version}" }
+                            }
                         }
-                    } else {
-                        "${dependency.name}:${dependency.group}:${dependency.version}"
-                    }
+
+                    compilation.name to dependencies
                 }
-                .toSet()
-        }
+
+        createChecksum(inputCompilationDependencies)
     }
 
     private fun Configuration.withoutProjectDependencies(): FileCollection {
@@ -119,5 +143,40 @@ internal class MetadataDependencyTransformationTaskInputs(
             view.componentFilter { componentIdentifier -> componentIdentifier !in currentBuild }
         }.files
     }
-
 }
+
+private fun createChecksum(data: Map<String, Iterable<String>>): String {
+    val messageDigester = MessageDigest.getInstance("MD5")
+    DigestOutputStream(nullOutputStream(), messageDigester).writer().use { digestStream ->
+        with(digestStream) {
+            data.forEach { (k, v) ->
+                write("k:")
+                write(k)
+                write("values[")
+                v.forEach {
+                    write(it)
+                    write(",")
+                }
+                write("];")
+            }
+        }
+    }
+    return Base64.getEncoder().encodeToString(messageDigester.digest())
+}
+
+/** Replace with [OutputStream.nullOutputStream] when the minimum JDK is 11+. */
+private fun nullOutputStream(): OutputStream =
+    object : OutputStream() {
+        @Volatile
+        private var closed = false
+
+        override fun write(b: Int) {
+            if (closed) {
+                throw IOException("Stream closed")
+            }
+        }
+
+        override fun close() {
+            closed = true
+        }
+    }
