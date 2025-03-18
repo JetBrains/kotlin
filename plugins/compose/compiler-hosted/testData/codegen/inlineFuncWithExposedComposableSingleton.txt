@@ -32,14 +32,14 @@ public final class compose/ui/ComposableSingletons$BarKt {
     public final static field INSTANCE: compose.ui.ComposableSingletons$BarKt
     private static field lambda$-1754416646: kotlin.jvm.functions.Function2
     private static field lambda$2013108129: kotlin.jvm.functions.Function2
-    inner (anonymous) class compose/ui/ComposableSingletons$BarKt$lambda$-1754416646$1
-    inner (anonymous) class compose/ui/ComposableSingletons$BarKt$lambda$2013108129$1
     static method <clinit>(): void
     public method <init>(): void
     public final method getLambda$-1754416646$main(): kotlin.jvm.functions.Function2
     public final method getLambda$2013108129$main(): kotlin.jvm.functions.Function2
     public final method getLambda-1$main(): kotlin.jvm.functions.Function2
     public final method getLambda-2$main(): kotlin.jvm.functions.Function2
+    private final static method lambda_2013108129$lambda$1(p0: androidx.compose.runtime.Composer, p1: int): kotlin.Unit
+    private final static method lambda__1754416646$lambda$0(p0: androidx.compose.runtime.Composer, p1: int): kotlin.Unit
 }
 
 public final class compose/ui/ComposableSingletons$FooKt$lambda$-1798180840$1 {
@@ -57,11 +57,11 @@ public final class compose/ui/ComposableSingletons$FooKt {
     // source: 'Foo.kt'
     public final static field INSTANCE: compose.ui.ComposableSingletons$FooKt
     private static field lambda$-1798180840: kotlin.jvm.functions.Function2
-    inner (anonymous) class compose/ui/ComposableSingletons$FooKt$lambda$-1798180840$1
     static method <clinit>(): void
     public method <init>(): void
     public final method getLambda$-1798180840$main(): kotlin.jvm.functions.Function2
     public final method getLambda-1$main(): kotlin.jvm.functions.Function2
+    private final static method lambda__1798180840$lambda$0(p0: androidx.compose.runtime.Composer, p1: int): kotlin.Unit
 }
 
 public final class compose/ui/FooKt {
