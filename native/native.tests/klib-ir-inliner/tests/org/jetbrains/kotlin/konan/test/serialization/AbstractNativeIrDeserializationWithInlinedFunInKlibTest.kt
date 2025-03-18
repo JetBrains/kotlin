@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 
-open class AbstractFirNativeSerializationWithInlinedFunInKlibTest : AbstractFirNativeSerializationTest() {
+open class AbstractNativeIrDeserializationWithInlinedFunInKlibTest : AbstractNativeIrDeserializationTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
