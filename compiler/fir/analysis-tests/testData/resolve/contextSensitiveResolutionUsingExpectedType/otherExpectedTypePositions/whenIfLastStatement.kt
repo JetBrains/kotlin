@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75316
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
@@ -44,18 +44,18 @@ fun main(b: Boolean, i: Int) {
 
     foo(
         when (i) {
-            0 -> <!UNRESOLVED_REFERENCE!>X<!>
+            0 -> X
             1 -> {
-                <!UNRESOLVED_REFERENCE!>Y<!>
+                Y
             }
             else -> L
         }
     )
 
     foo(
-        if (i == 0) <!UNRESOLVED_REFERENCE!>X<!>
+        if (i == 0) X
         else if (i == 1) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         }
         else L
     )
@@ -73,11 +73,11 @@ fun main(b: Boolean, i: Int) {
     myRun<MyEnum> {
         when (i) {
             0 -> when (i.hashCode()) {
-                1 -> <!UNRESOLVED_REFERENCE!>X<!>
-                else -> <!UNRESOLVED_REFERENCE!>Y<!>
+                1 -> X
+                else -> Y
             }
             1 -> {
-                <!UNRESOLVED_REFERENCE!>Y<!>
+                Y
             }
             else -> L
         }
@@ -85,26 +85,26 @@ fun main(b: Boolean, i: Int) {
 
     myRun<MyEnum> {
         when (i) {
-            0 -> <!UNRESOLVED_REFERENCE!>X<!>
+            0 -> X
             1 -> {
-                <!UNRESOLVED_REFERENCE!>Y<!>
+                Y
             }
             else -> L
         }
     }
 
     myRun<MyEnum> {
-        if (i == 0) <!UNRESOLVED_REFERENCE!>X<!>
+        if (i == 0) X
         else if (i == 1) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         }
         else L
     }
 
     myRun<MyEnum> {
-        if (i == 0) <!UNRESOLVED_REFERENCE!>X<!>
+        if (i == 0) X
         else if (i == 1) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         }
         else L
     }

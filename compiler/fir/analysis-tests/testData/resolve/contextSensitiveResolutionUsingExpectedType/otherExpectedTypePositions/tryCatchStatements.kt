@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75316
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
@@ -17,20 +17,20 @@ fun main(b: Boolean, i: Int) {
     val L = MyEnum.X
 
     val m1: MyEnum = try {
-        <!UNRESOLVED_REFERENCE!>X<!>
+        X
     } catch(e: Exception) {
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        Y
     } catch (t: Throwable) {
         L
     }
 
     val m2: MyEnum = try {
-        <!UNRESOLVED_REFERENCE!>X<!>
+        X
     } catch(e: Exception) {
         try {
-            <!UNRESOLVED_REFERENCE!>X<!>
+            X
         } catch(e: Exception) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         } catch (t: Throwable) {
             L
         }
@@ -40,9 +40,9 @@ fun main(b: Boolean, i: Int) {
 
     foo(
         try {
-            <!UNRESOLVED_REFERENCE!>X<!>
+            X
         } catch(e: Exception) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         } catch (t: Throwable) {
             L
         }
@@ -50,9 +50,9 @@ fun main(b: Boolean, i: Int) {
 
     myRunWithMyEnum {
         try {
-            <!UNRESOLVED_REFERENCE!>X<!>
+            X
         } catch(e: Exception) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         } catch (t: Throwable) {
             L
         }
@@ -60,9 +60,9 @@ fun main(b: Boolean, i: Int) {
 
     myRun<MyEnum> {
         try {
-            <!UNRESOLVED_REFERENCE!>X<!>
+            X
         } catch(e: Exception) {
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            Y
         } catch (t: Throwable) {
             L
         }

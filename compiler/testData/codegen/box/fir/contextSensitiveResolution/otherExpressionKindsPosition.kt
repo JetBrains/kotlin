@@ -45,5 +45,25 @@ fun box(): String {
     }
     if (t6.toString() != "OK") return "fail 6"
 
+    val b = "".hashCode() == 0
+
+    val t7: MyEnum = when {
+        b -> OK
+        else -> null!!
+    }
+    if (t7.name != "OK") return "fail 7"
+
+    val t8: MySealed = when {
+        b -> Ok
+        else -> null!!
+    }
+    if (t8.toString() != "Ok") return "fail 8"
+
+    val t9: MyClass = when {
+        b -> INSTANCE
+        else -> null!!
+    }
+    if (t9.toString() != "OK") return "fail 9"
+
     return "OK"
 }
