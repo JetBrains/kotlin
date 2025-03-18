@@ -153,16 +153,14 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             destinationProvider.getFile(),
             destinationHashFileProvider.getFile(),
             dist!!,
-            fileHasher,
-            ::extract
         )
     }
 
     private fun <T> withUrlRepo(action: () -> T): T {
-        val repo = downloadBaseUrlProvider.orNull?.let {
+        val repo = downloadBaseUrlProvider.orNull?.let { downloadBaseUrl ->
             project.repositories.ivy { repo ->
-                repo.name = "Distributions at ${it}"
-                repo.url = URI(it)
+                repo.name = "Distributions at $downloadBaseUrl"
+                repo.url = URI(downloadBaseUrl)
 
                 repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
 
@@ -174,38 +172,45 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             }
         }
 
-        return action().also {
-            repo?.let { project.repositories.remove(it) }
+        val result = action()
+
+        if (repo != null) {
+            project.repositories.remove(repo)
         }
+
+        return result
     }
 
     private fun extractWithUpToDate(
         destination: File,
         destinationHashFile: File,
         dist: File,
-        fileHasher: FileHasher,
-        extract: (File) -> Unit,
     ) {
-        var distHash: String? = null
-        val upToDate = destinationHashFile.let { file ->
-            if (file.exists()) {
-                file.useLines { seq ->
-                    val list = seq.first().split(" ")
-                    list.size == 3 &&
-                            list[0] == CACHE_VERSION &&
-                            list[1] == fileHasher.calculateDirHash(destination) &&
-                            list[2] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
-                }
-            } else false
-        }
+        val distHash: String? =
+            if (dist.exists()) {
+                fileHasher.hash(dist).toByteArray().toHex()
+            } else {
+                null
+            }
+
+        val upToDate =
+            if (destinationHashFile.exists()) {
+                val list = destinationHashFile.readLines().firstOrNull()?.split(" ")
+                list?.size == 3 &&
+                        list[0] == CACHE_VERSION &&
+                        list[1] == fileHasher.calculateDirHash(destination) &&
+                        list[2] == distHash
+            } else {
+                false
+            }
 
         if (upToDate) {
             return
         }
 
-            if (destination.isDirectory) {
-                destination.deleteRecursively()
-            }
+        if (destination.isDirectory) {
+            destination.deleteRecursively()
+        }
 
         extract(dist)
 
