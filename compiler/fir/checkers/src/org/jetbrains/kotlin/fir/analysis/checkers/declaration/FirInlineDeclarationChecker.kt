@@ -236,7 +236,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val receiverSymbol =
                 receiverExpression.unwrapErrorExpression()?.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
             if (receiverSymbol in inlinableParameters) {
-                if (!isInvokeOrInlineExtension(targetSymbol)) {
+                if (!isInvokeOrInlineExtension(targetSymbol) || qualifiedAccessExpression is FirCallableReferenceAccess) {
                     reporter.reportOn(
                         receiverExpression.source ?: qualifiedAccessExpression.source,
                         FirErrors.USAGE_IS_NOT_INLINABLE,
