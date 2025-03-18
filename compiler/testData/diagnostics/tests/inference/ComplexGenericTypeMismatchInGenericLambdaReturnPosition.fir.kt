@@ -13,6 +13,6 @@ fun <U> Owner<Pack<U>>.unpack(): U = null!!
 
 fun test(boxOwner: Owner<Box<Interface>>) {
     create<Interface> {
-        <!ARGUMENT_TYPE_MISMATCH!>boxOwner.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>unpack<!>()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>boxOwner<!>.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>unpack<!>()
     }
 }

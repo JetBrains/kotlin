@@ -682,7 +682,8 @@ private fun ConstraintSystemError.toDiagnostic(
                 when (position) {
                     is ConeArgumentConstraintPosition -> position.argument to null
                     is ConeLambdaArgumentConstraintPosition -> position.lambda to null
-                    is ConeReceiverConstraintPosition -> position.argument to position.source
+                    is ConeReceiverConstraintPosition -> position.argument to (position.argument.source.takeIf { it?.kind == KtRealSourceElementKind }
+                        ?: position.source)
                     // ConeExpectedTypeConstraintPosition is processed below,
                     // all others are reported as NEW_INFERENCE_ERROR instead (see mapSystemHasContradictionError);
                     // About calls from mapInapplicableCandidateError:
@@ -698,8 +699,8 @@ private fun ConstraintSystemError.toDiagnostic(
             argument?.let {
                 return diagnosticForArgumentTypeMismatch(
                     source = reportOn ?: it.source ?: source,
-                    expectedType = lowerConeType.substituteTypeVariableTypes(candidate, typeContext),
-                    actualType = upperConeType.substituteTypeVariableTypes(candidate, typeContext),
+                    expectedType = upperConeType.substituteTypeVariableTypes(candidate, typeContext),
+                    actualType = lowerConeType.substituteTypeVariableTypes(candidate, typeContext),
                     isMismatchDueToNullability = typeMismatchDueToNullability,
                     candidate = candidate,
                     anonymousFunctionIfReturnExpression = (position as? ConeLambdaArgumentConstraintPosition)?.lambda,

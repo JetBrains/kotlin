@@ -26,7 +26,7 @@ fun test2() {
             buildList { add("") }
         },
         second = {
-            <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>it.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>myExt<!>()<!> // Note: must be extension to add constraints
+            <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>it<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>myExt<!>() // Note: must be extension to add constraints
         }
     )
 }

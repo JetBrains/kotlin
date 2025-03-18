@@ -53,7 +53,7 @@ val test6 = generate {
 
 val test7 = generate {
     yield("baz")
-    <!ARGUMENT_TYPE_MISMATCH("Int; String"), ARGUMENT_TYPE_MISMATCH("Int; String"), ARGUMENT_TYPE_MISMATCH("Int; String")!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun <S> Controller<S>.genericExtension(): Unit")!>genericExtension<!><Int>()<!>
+    <!ARGUMENT_TYPE_MISMATCH("String; Int"), ARGUMENT_TYPE_MISMATCH("String; Int"), ARGUMENT_TYPE_MISMATCH("String; Int")!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun <S> Controller<S>.genericExtension(): Unit")!>genericExtension<!><Int>()<!>
 }
 
 val test8 = generate {
