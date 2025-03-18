@@ -21,7 +21,6 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class KotlinJavaToolchainJavaVersionConvertTest {
     private lateinit var objects: ObjectFactory
@@ -62,15 +61,21 @@ class KotlinJavaToolchainJavaVersionConvertTest {
 
     @Test
     fun fallbacksToHighestSupportedVersionWithLogMessage() {
-        val jvm = jvm(JavaVersion.VERSION_24)
+        val latestGradle = JavaVersion.values().last()
+        val latestKotlin = JvmTarget.values().last()
+        require(latestGradle.toString().toInt() > latestKotlin.target.toInt()) {
+            "Latest supported Java version in Gradle ($latestGradle) is not greater than the latest Kotlin JVM target ($latestKotlin). \n" +
+                    "This test should be muted until a new Java version is released and is supported in Gradle."
+        }
+
+        val jvm = jvm(latestGradle)
 
         DefaultKotlinJavaToolchain.wireJvmTargetToJvm(jvmCompilerOptions, providers.provider { jvm }, logger)
 
-        val expectedKotlinTarget = JvmTarget.values().last()
-        assertEquals(expectedKotlinTarget, jvmCompilerOptions.jvmTarget.orNull)
+        assertEquals(latestKotlin, jvmCompilerOptions.jvmTarget.orNull)
         assertTrue(logger.loggedWarnings.isNotEmpty())
         assertEquals(
-            "Kotlin does not yet support ${jvm.javaVersion} JDK target, falling back to Kotlin $expectedKotlinTarget JVM target",
+            "Kotlin does not yet support ${jvm.javaVersion} JDK target, falling back to Kotlin $latestKotlin JVM target",
             logger.loggedWarnings.single()
         )
     }
