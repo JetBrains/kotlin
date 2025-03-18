@@ -258,7 +258,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
 
         private fun IrFunction.computeExtensionReceiverFqName(): FqName? =
-            computeParameterFqName(extensionReceiverParameter)
+            computeParameterFqName(parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver })
 
         private fun computeParameterFqName(parameter: IrValueParameter?): FqName? =
             computeParameterFqName(parameter?.type?.classifierOrNull)
@@ -273,7 +273,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
 
         private fun IrFunction.computeValueParameterFqNames(): List<FqName?> =
-            valueParameters.map(::computeParameterFqName)
+            parameters.mapNotNull { if (it.kind == IrParameterKind.Regular) computeParameterFqName(it) else null }
 
         private fun createKeyMapping(
             intrinsic: IntrinsicMethod,
