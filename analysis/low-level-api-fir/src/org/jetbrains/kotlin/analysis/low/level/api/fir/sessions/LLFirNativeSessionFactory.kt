@@ -82,10 +82,10 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
                 this,
                 providers = listOfNotNull(
                     firProvider.symbolProvider,
-                    switchableExtensionDeclarationsSymbolProvider,
-                    syntheticFunctionInterfaceProvider,
+                    context.switchableExtensionDeclarationsSymbolProvider,
+                    context.syntheticFunctionInterfaceProvider,
                 ),
-                computeDependencyProviders,
+                context.computeDependencyProviders,
             )
 
             register(FirSymbolProvider::class, symbolProvider)

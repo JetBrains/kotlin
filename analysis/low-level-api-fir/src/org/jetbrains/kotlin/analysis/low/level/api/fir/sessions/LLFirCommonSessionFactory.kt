@@ -72,13 +72,13 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
     }
 
     override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
-        return doCreateDanglingFileSession(module, contextSession) {
-            val symbolProvider = LLFirModuleWithDependenciesSymbolProvider(
+        return doCreateDanglingFileSession(module, contextSession) { context ->
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
                 this,
                 providers = listOf(
                     firProvider.symbolProvider,
                 ),
-                computeDependencyProviders,
+                context.computeDependencyProviders,
             )
 
             register(FirSymbolProvider::class, symbolProvider)

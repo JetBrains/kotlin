@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.resolve.providers.FirClassDeclarationAwareSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -34,7 +32,7 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 open class JavaSymbolProvider(
     session: FirSession,
     override val javaFacade: FirJavaFacade,
-) : FirSymbolProvider(session), FirJavaAwareSymbolProvider, FirClassDeclarationAwareSymbolProvider<JavaClass> {
+) : FirSymbolProvider(session), FirJavaAwareSymbolProvider {
     private class ClassCacheContext(
         val parentClassSymbol: FirRegularClassSymbol? = null,
         val foundJavaClass: JavaClass? = null,
@@ -51,9 +49,8 @@ open class JavaSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
         if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassIdImpl(classId, null) else null
 
-    @FirSymbolProviderInternals
-    override fun getClassLikeSymbolByClassId(classId: ClassId, declaration: JavaClass): FirRegularClassSymbol? =
-        getClassLikeSymbolByClassIdImpl(classId, declaration)
+    fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: JavaClass): FirRegularClassSymbol? =
+        getClassLikeSymbolByClassIdImpl(classId, classLikeDeclaration)
 
     private fun getClassLikeSymbolByClassIdImpl(classId: ClassId, javaClass: JavaClass?): FirRegularClassSymbol? =
         classCache.getValue(

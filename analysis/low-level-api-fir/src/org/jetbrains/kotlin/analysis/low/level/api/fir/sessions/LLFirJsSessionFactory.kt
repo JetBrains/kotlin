@@ -71,10 +71,10 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
                 this,
                 providers = listOfNotNull(
                     firProvider.symbolProvider,
-                    switchableExtensionDeclarationsSymbolProvider,
-                    syntheticFunctionInterfaceProvider,
+                    context.switchableExtensionDeclarationsSymbolProvider,
+                    context.syntheticFunctionInterfaceProvider,
                 ),
-                computeDependencyProviders,
+                context.computeDependencyProviders,
             )
 
             register(FirSymbolProvider::class, symbolProvider)

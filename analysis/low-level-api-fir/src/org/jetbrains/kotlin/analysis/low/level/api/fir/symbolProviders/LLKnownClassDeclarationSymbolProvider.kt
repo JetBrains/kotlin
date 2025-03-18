@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
  * A [FirSymbolProvider] which is able to provide a class-like symbol for a [ClassId] with an already known class-like declaration [E]. The
  * main purpose is optimization to avoid searching for a PSI declaration which is already known.
  */
-interface LLKnownClassDeclarationSymbolProvider<E : PsiElement> {
+interface LLKnownClassDeclarationSymbolProvider<E> {
     /**
      * Returns the [FirClassLikeSymbol] with the given [classId] for a known [classLikeDeclaration].
      *

@@ -105,6 +105,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration = null)
     }
 
+    @OptIn(FirSymbolProviderInternals::class)
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
         return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration)
     }
@@ -124,7 +125,11 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {
-        require(context == null || context.isPhysical)
+        // This `require` isn't correct when we consider dangling files and unified symbol providers. In a unified symbol provider, even the
+        // "own provider" candidate taken from the dangling file's file-based declaration provider can be dispatched to this function. Such
+        // a `context` definitely won't be physical! There doesn't seem to be a good reason why we require physicality here in the first
+        // place.
+//        require(context == null || context.isPhysical)
         val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
 
         if (ktClass.getClassId() == null) return null
@@ -236,7 +241,8 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         callableId: CallableId,
         context: Collection<KtFile>?,
     ): List<TYPE> {
-        require(context == null || context.all { it.isPhysical })
+        // The same as for the above `require` applies here as well: there are legitimate reasons why we can have non-physical files here.
+//        require(context == null || context.all { it.isPhysical })
 
         val files = if (context != null) {
             context

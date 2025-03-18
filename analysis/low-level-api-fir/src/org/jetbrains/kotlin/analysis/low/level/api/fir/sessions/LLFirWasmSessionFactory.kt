@@ -68,14 +68,14 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
         return doCreateDanglingFileSession(module, contextSession) { context ->
             registerWasmComponents()
 
-            val symbolProvider = LLFirModuleWithDependenciesSymbolProvider(
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
                 this,
                 providers = listOfNotNull(
                     firProvider.symbolProvider,
-                    switchableExtensionDeclarationsSymbolProvider,
-                    syntheticFunctionInterfaceProvider,
+                    context.switchableExtensionDeclarationsSymbolProvider,
+                    context.syntheticFunctionInterfaceProvider,
                 ),
-                computeDependencyProviders,
+                context.computeDependencyProviders,
             )
 
             register(FirSymbolProvider::class, symbolProvider)

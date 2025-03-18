@@ -40,9 +40,9 @@ import org.jetbrains.kotlin.name.Name
 internal class LLCombinedJavaSymbolProvider private constructor(
     session: FirSession,
     project: Project,
-    providers: List<JavaSymbolProvider>,
+    providers: List<LLFirJavaSymbolProvider>,
     private val javaClassFinder: JavaClassFinder,
-) : LLSelectingCombinedSymbolProvider<JavaSymbolProvider>(session, project, providers) {
+) : LLSelectingCombinedSymbolProvider<LLFirJavaSymbolProvider>(session, project, providers) {
     /**
      * The purpose of this cache is to avoid index access for frequently accessed `ClassId`s, including failures. Because Java symbol
      * providers currently cannot benefit from a "name in package" check (see KTIJ-24642), the cache should also store negative results.

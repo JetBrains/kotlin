@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 
 internal class LLFirJavaSymbolProvider(firSession: LLFirSession, val searchScope: GlobalSearchScope) : JavaSymbolProvider(
     firSession,
     FirJavaFacadeForSource(firSession, firSession.moduleData, firSession.project.createJavaClassFinder(searchScope))
-)
+), LLKnownClassDeclarationSymbolProvider<JavaClass>
