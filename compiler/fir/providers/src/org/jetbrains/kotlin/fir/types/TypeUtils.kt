@@ -100,7 +100,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
         is ConeDefinitelyNotNullType -> original
         is ConeFlexibleType -> create(original.lowerBound, typeContext, avoidComprehensiveCheck)
         is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original, avoidComprehensiveCheck)) {
-            ConeDefinitelyNotNullType(original)
+            ConeDefinitelyNotNullType(original.withNullability(nullable = false, typeContext, preserveAttributes = true))
         }
     }
 }

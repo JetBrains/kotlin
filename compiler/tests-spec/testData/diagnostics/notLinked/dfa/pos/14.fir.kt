@@ -46,15 +46,15 @@ fun <T> case_3(vararg x: T?) {
 fun <T : Number?> case_4(vararg x: T?) {
     x[0].apply {
         if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>this<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>this<!>.toByte()
         }
     }
 
     x[0].also {
         if (it != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>it<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>it<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>it<!>.toByte()
         }
     }
 }

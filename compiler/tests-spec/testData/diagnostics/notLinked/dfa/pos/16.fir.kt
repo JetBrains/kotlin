@@ -296,16 +296,16 @@ fun <T> case_21(x: T) {
 // TESTCASE NUMBER: 22
 fun <T> case_22(x: T?) {
     if (x === null) return
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.equals(null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propAny
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propNullableT
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propNullableAny
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funAny()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funNullableT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funNullableAny()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.equals(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propT
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propAny
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propNullableT
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propNullableAny
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funT()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funAny()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funNullableT()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funNullableAny()
 }
 
 // TESTCASE NUMBER: 23
@@ -685,16 +685,16 @@ fun <T> case_45(x: T) {
 fun <T> case_46(x: T?) {
     (l@ {
         if (x === null) return@l
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.funNullableAny()
     })()
 }
 
