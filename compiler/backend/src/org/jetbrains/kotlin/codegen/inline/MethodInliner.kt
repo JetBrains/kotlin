@@ -501,11 +501,8 @@ class MethodInliner(
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
                 if (reorderIrLambdaParameters) {
-                    val contextSize = lambdaInfo.invokeMethod.argumentTypes.slice(0 until lambdaInfo.contextParameterCount).sumOf { it.size }
-                    val extensionSize = contextSize +
-                            if (lambdaInfo.isExtensionLambda)
-                                lambdaInfo.invokeMethod.argumentTypes[lambdaInfo.contextParameterCount].size
-                            else 0
+                    val extensionSize = lambdaInfo.invokeMethod.argumentTypes
+                        .slice(0..<lambdaInfo.nonRegularParametersCount).sumOf { it.size }
                     return when {
                         //                           v-- extensionSize     v-- argsSizeOnStack
                         // - context -|- extension -|- captured -|- real -|- locals -|    old descriptor

@@ -174,9 +174,8 @@ class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null && reference.extensionReceiver == null
-
-    override val contextParameterCount: Int = function.parameters.count { it.kind == IrParameterKind.Context }
+    override val nonRegularParametersCount: Int = (function.parameters zip reference.arguments)
+        .count { (parameter, argument) -> parameter.kind != IrParameterKind.Regular && argument == null }
 
     val function: IrFunction
         get() = reference.symbol.owner
@@ -199,8 +198,7 @@ class IrExpressionLambdaImpl(
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
         val capturedParameters = reference.getArgumentsWithIr()
-        val captureStart =
-            contextParameterCount + if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
+        val captureStart = nonRegularParametersCount
         val captureEnd = captureStart + capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
