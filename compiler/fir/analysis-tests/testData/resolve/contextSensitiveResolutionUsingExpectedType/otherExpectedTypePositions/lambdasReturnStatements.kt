@@ -27,21 +27,21 @@ fun main(b: Boolean) {
     }
 
     myRun<MyEnum> {
-        if (b) return@myRun <!UNRESOLVED_REFERENCE!>X<!>
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        if (b) return@myRun X
+        Y
     }
 
 
     foo(
         myRun {
-            if (b) return@myRun <!UNRESOLVED_REFERENCE!>X<!>
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            if (b) return@myRun X
+            Y
         }
     )
 
     val z: MyEnum = myRun {
-        if (b) return@myRun <!UNRESOLVED_REFERENCE!>X<!>
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        if (b) return@myRun X
+        Y
     }
 
     <!CANNOT_INFER_PARAMETER_TYPE!>myRun<!> {
@@ -52,6 +52,6 @@ fun main(b: Boolean) {
 
     myRun {
         if (b) return@myRun MyEnum.X
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        Y
     }
 }

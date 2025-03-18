@@ -18,6 +18,8 @@ class MyClass {
     override fun toString() = "OK"
 }
 
+fun <T> myRun(b: () -> T): T = b()
+
 fun box(): String {
     val t1: MyEnum = OK
     if (t1.name != "OK") return "fail 1"
@@ -27,6 +29,21 @@ fun box(): String {
 
     val t3: MyClass = INSTANCE
     if (t3.toString() != "OK") return "fail 3"
+
+    val t4: MyEnum = myRun<MyEnum> {
+        OK
+    }
+    if (t4.name != "OK") return "fail 4"
+
+    val t5: MySealed = myRun {
+        Ok
+    }
+    if (t5.toString() != "Ok") return "fail 5"
+
+    val t6: MyClass = myRun {
+        INSTANCE
+    }
+    if (t6.toString() != "OK") return "fail 6"
 
     return "OK"
 }

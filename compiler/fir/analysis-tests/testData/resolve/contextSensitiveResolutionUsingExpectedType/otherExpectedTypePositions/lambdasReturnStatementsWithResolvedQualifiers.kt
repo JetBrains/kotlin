@@ -28,21 +28,21 @@ fun main(b: Boolean) {
     }
 
     myRun<MySealed> {
-        if (b) return@myRun <!UNRESOLVED_REFERENCE!>X<!>
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        if (b) return@myRun X
+        Y
     }
 
 
     foo(
         myRun {
-            if (b) return@myRun <!UNRESOLVED_REFERENCE!>X<!>
-            <!UNRESOLVED_REFERENCE!>Y<!>
+            if (b) return@myRun X
+            Y
         }
     )
 
     val z: MySealed = myRun {
-        if (b) return@myRun <!UNRESOLVED_REFERENCE!>X<!>
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        if (b) return@myRun X
+        Y
     }
 
     <!CANNOT_INFER_PARAMETER_TYPE!>myRun<!> {

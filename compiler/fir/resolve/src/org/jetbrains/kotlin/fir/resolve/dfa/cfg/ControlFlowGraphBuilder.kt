@@ -26,7 +26,13 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-data class FirAnonymousFunctionReturnExpressionInfo(val expression: FirExpression, val isExplicit: Boolean)
+data class FirAnonymousFunctionReturnExpressionInfo(
+    val expression: FirExpression,
+    val isExplicit: Boolean,
+    // FirReturnExpression for explicit return
+    // FirBlock for the last statement of a lambda
+    val containingStatement: FirStatement,
+)
 
 @OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
@@ -120,18 +126,18 @@ class ControlFlowGraphBuilder {
                         else ->
                             (lastStatement as? FirExpression
                                 ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }).let {
-                                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false)
+                                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false, containingStatement = fir)
                             }
                     }
                 }
                 // fun() { terminatingExpression } -> nothing (checker will emit an error if return type is not Unit)
                 // fun() { throw } or fun() { returnsNothing() } -> Nothing-returning stub
                 else -> FirStub.takeIf { _ -> previousNodes.all { it is StubNode } }
-                    ?.let { FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false) }
+                    ?.let { FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false, containingStatement = fir) }
             }
             // lambda@{ return@lambda x } -> x
             is JumpNode -> (fir as? FirReturnExpression)?.takeIf { it.target.labeledElement.symbol == function.symbol }?.result?.let {
-                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = true)
+                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = true, containingStatement = fir)
             }
             else -> null // shouldn't happen? expression bodies are implicitly wrapped in `FirBlock`s
         }

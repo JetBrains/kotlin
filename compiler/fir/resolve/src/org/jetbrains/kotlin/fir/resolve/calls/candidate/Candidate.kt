@@ -223,7 +223,7 @@ class Candidate(
 
     // ------------------------ Context-sensitively resolved arguments ------------------------------------
 
-    private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirPropertyAccessExpression, FirExpression>? =
+    private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirElement, FirExpression>? =
         null
 
     fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
@@ -240,6 +240,9 @@ class Candidate(
     fun getUpdatedArgumentFromContextSensitiveResolution(arg: FirElement): FirExpression? {
         return _updatedArgumentsFromContextSensitiveResolution?.get(arg)
     }
+
+    val contextSensitiveResolutionReplacements: Map<FirElement, FirExpression>?
+        get() = _updatedArgumentsFromContextSensitiveResolution
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
     val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()
