@@ -81,6 +81,9 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
         }
 
         private fun createRawAtom(expression: FirExpression?, allowUnresolvedExpression: Boolean): ConeResolutionAtom? {
+            fun FirExpression.createConeResolutionAtomWithSingleChild(subExpression: FirExpression?): ConeResolutionAtomWithSingleChild {
+                return ConeResolutionAtomWithSingleChild(this, createRawAtom(subExpression, allowUnresolvedExpression))
+            }
             return when (expression) {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
@@ -88,30 +91,19 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                     expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
-                is FirSafeCallExpression -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression(), allowUnresolvedExpression)
-                )
                 is FirPropertyAccessExpression if expression.shouldBeResolvedInContextSensitiveMode() -> {
                     ConeResolutionAtomWithPostponedChild(
                         expression,
                         fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
                     )
                 }
-
                 is FirResolvable -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
-                is FirWrappedArgumentExpression -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom(expression.expression, allowUnresolvedExpression)
+                is FirSafeCallExpression -> expression.createConeResolutionAtomWithSingleChild(
+                    (expression.selector as? FirExpression)?.unwrapSmartcastExpression()
                 )
-                is FirErrorExpression -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom(expression.expression, allowUnresolvedExpression)
-                )
-                is FirBlock -> ConeResolutionAtomWithSingleChild(
-                    expression,
-                    createRawAtom(expression.lastExpression, allowUnresolvedExpression)
-                )
+                is FirWrappedArgumentExpression -> expression.createConeResolutionAtomWithSingleChild(expression.expression)
+                is FirErrorExpression -> expression.createConeResolutionAtomWithSingleChild(expression.expression)
+                is FirBlock -> expression.createConeResolutionAtomWithSingleChild(expression.lastExpression)
                 else -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
             }
         }
