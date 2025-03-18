@@ -29,10 +29,10 @@ import org.jetbrains.org.objectweb.asm.Type
 // lowerings in between.
 object JvmDebuggerInvokeSpecial : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val owner = expression.getStringConstArgument(0)
-        val name = expression.getStringConstArgument(1)
-        val descriptor = expression.getStringConstArgument(2)
-        val isInterface = expression.getBooleanConstArgument(3)
+        val owner = expression.getStringConstArgument(1)
+        val name = expression.getStringConstArgument(2)
+        val descriptor = expression.getStringConstArgument(3)
+        val isInterface = expression.getBooleanConstArgument(4)
         val argsArray = expression.getValueArgument(4) as? IrBlock
 
         expression.dispatchReceiver!!.accept(codegen, data).materialize()
