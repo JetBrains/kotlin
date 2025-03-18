@@ -16,8 +16,12 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
+import java.io.RandomAccessFile
 import java.net.URI
+import java.nio.channels.FileChannel
 import javax.inject.Inject
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @DisableCachingByDefault
 abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
@@ -151,12 +155,11 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
         extractWithUpToDate(
             destinationProvider.getFile(),
-            destinationHashFileProvider.getFile(),
             dist!!,
         )
     }
 
-    private fun <T> withUrlRepo(action: () -> T): T {
+    private fun <T> withUrlRepo(action: () -> T): T = runWithHashFileLock { _ ->
         val repo = downloadBaseUrlProvider.orNull?.let { downloadBaseUrl ->
             project.repositories.ivy { repo ->
                 repo.name = "Distributions at $downloadBaseUrl"
@@ -183,9 +186,8 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
     private fun extractWithUpToDate(
         destination: File,
-        destinationHashFile: File,
         dist: File,
-    ) {
+    ): Unit = runWithHashFileLock { hashFile ->
         val distHash: String? =
             if (dist.exists()) {
                 fileHasher.hash(dist).toByteArray().toHex()
@@ -194,9 +196,9 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             }
 
         val upToDate =
-            if (destinationHashFile.exists()) {
-                val list = destinationHashFile.readLines().firstOrNull()?.split(" ")
-                list?.size == 3 &&
+            if (hashFile.length() > 0) {
+                val list = hashFile.readLine().split(" ")
+                list.size == 3 &&
                         list[0] == CACHE_VERSION &&
                         list[1] == fileHasher.calculateDirHash(destination) &&
                         list[2] == distHash
@@ -214,7 +216,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
         extract(dist)
 
-        destinationHashFile.writeText(
+        hashFile.writeUTF(
             CACHE_VERSION +
                     " " +
                     fileHasher.calculateDirHash(destination)!! +
@@ -224,6 +226,44 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     }
 
     abstract fun extract(archive: File)
+
+    /**
+     * Prevent concurrent execution across threads & JVMs.
+     *
+     * ### The problem
+     *
+     * Concurrent downloading and unpacking tools can cause issues when they are run in parallel.
+     * This can result in the downloaded files having a size of zero,
+     * or the permissions of the unpacked files not being properly configured.
+     *
+     * Concurrent execution happens more often when running KGP integration tests locally,
+     * since the tests are run in parallel with multiple Gradle versions.
+     *
+     * ### The solution
+     *
+     * This function executes [action] under two locks to prevent concurrent execution.
+     *
+     * - Within the same JVM process: use [synchronized].
+     * - Across JVM processes: use [java.nio.channels.FileLock], using [destinationHashFileProvider].
+     */
+    @OptIn(ExperimentalContracts::class)
+    private inline fun <T> runWithHashFileLock(action: (hashFile: RandomAccessFile) -> T): T {
+        contract { callsInPlace(action, kotlin.contracts.InvocationKind.EXACTLY_ONCE) }
+
+        synchronized(Companion) {
+            val lockFile = destinationHashFileProvider.get().asFile.apply {
+                parentFile.mkdirs()
+                createNewFile()
+            }
+
+            RandomAccessFile(lockFile, "rw").use { file ->
+                val channel: FileChannel = file.channel
+                channel.lock().use { _ ->
+                    return action(file)
+                }
+            }
+        }
+    }
 
     companion object {
         const val CACHE_VERSION = "2"
