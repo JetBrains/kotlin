@@ -72,7 +72,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
         else irBuilder.irCall(jvmContext.symbols.unsafeCoerceIntrinsic).apply {
             typeArguments[0] = type
             typeArguments[1] = type.unboxInlineClass()
-            putValueArgument(0, this@transformArrayEqualsArgument)
+            arguments[0] = this@transformArrayEqualsArgument
         }
 
     override fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol {
@@ -82,7 +82,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
             else -> jvmContext.symbols.arrayOfAnyNType
         }
         val requiredSymbol = jvmContext.symbols.arraysClass.owner.findDeclaration<IrFunction> {
-            it.name.asString() == "equals" && it.valueParameters.size == 2 && it.valueParameters.first().type == targetType
+            it.name.asString() == "equals" && it.hasShape(regularParameters = 2, parameterTypes = listOf(targetType, targetType))
         }
         requireNotNull(requiredSymbol) { "Can't find Arrays.equals method for type ${targetType.render()}" }
         return requiredSymbol.symbol
@@ -173,8 +173,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     "size", isMutable = false
                 )
                 val result = createTmpVariable(irCall(arrayOfNulls, jlcArray).apply {
-                    listOf(javaLangClassType)
-                    putValueArgument(0, irGet(size))
+                    arguments[0] = irGet(size)
                 })
                 val comparison = primitiveOp2(
                     startOffset, endOffset,
@@ -192,13 +191,13 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                         val tempIndex = createTmpVariable(irGet(index))
 
                         val getArray = irCall(getArraySymbol).apply {
-                            dispatchReceiver = irGet(sourceArray)
-                            putValueArgument(0, irGet(tempIndex))
+                            arguments[0] = irGet(sourceArray)
+                            arguments[1] = irGet(tempIndex)
                         }
                         +irCall(setArraySymbol).apply {
-                            dispatchReceiver = irGet(result)
-                            putValueArgument(0, irGet(tempIndex))
-                            putValueArgument(1, kClassToJClass(getArray))
+                            arguments[0] = irGet(result)
+                            arguments[1] = irGet(tempIndex)
+                            arguments[2] = kClassToJClass(getArray)
                         }
 
                         +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
@@ -227,7 +226,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                 null,
                 kClassJavaPropertyGetterSymbol
             ).apply {
-                extensionReceiver = irExpression
+                arguments[0] = irExpression
             }
 
         fun implementAnnotationPropertiesAndConstructor(
@@ -252,7 +251,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
             // For annotations defined in Java, IrProperties do not contain initializers in backing fields, as annotation properties are represented as Java methods
             // (that are later converted to synthetic properties w/o fields).
             // However, K2 stores default values in annotation's constructor parameters.
-            val fallbackPrimaryCtorParamsMap = annotationClass.primaryConstructor?.valueParameters?.associateBy { it.name }.orEmpty()
+            val fallbackPrimaryCtorParamsMap = annotationClass.primaryConstructor?.parameters?.associateBy { it.name }.orEmpty()
 
             annotationProperties.forEach { property ->
                 val propType = property.getter!!.returnType
