@@ -21,7 +21,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         fun fail(message: String): Nothing =
             throw AssertionError("$message; expression:\n${expression.dump()}")
 
-        val dynamicCall = expression.getValueArgument(0) as? IrCall
+        val dynamicCall = expression.arguments[0] as? IrCall
             ?: fail("'dynamicCall' is expected to be a call")
         val dynamicCallee = dynamicCall.symbol.owner
         if (dynamicCallee.parent != codegen.context.symbols.kotlinJvmInternalInvokeDynamicPackage ||
@@ -29,11 +29,11 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         )
             fail("Unexpected dynamicCallee: '${dynamicCallee.render()}'")
 
-        val bootstrapMethodHandleArg = expression.getValueArgument(1) as? IrCall
+        val bootstrapMethodHandleArg = expression.arguments[1] as? IrCall
             ?: fail("'bootstrapMethodHandle' should be a call")
         val bootstrapMethodHandle = evalMethodHandle(bootstrapMethodHandleArg)
 
-        val bootstrapMethodArgs = expression.getValueArgument(2) as? IrVararg
+        val bootstrapMethodArgs = expression.arguments[2] as? IrVararg
             ?: fail("'bootstrapMethodArgs' is expected to be a vararg")
         val asmBootstrapMethodArgs = bootstrapMethodArgs.elements
             .map { generateBootstrapMethodArg(it, codegen) }
@@ -42,9 +42,9 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         val dynamicCalleeMethod = codegen.methodSignatureMapper.mapAsmMethod(dynamicCallee)
         val dynamicCallGenerator = IrCallGenerator.DefaultCallGenerator
         val dynamicCalleeArgumentTypes = dynamicCalleeMethod.argumentTypes
-        for (i in dynamicCallee.valueParameters.indices) {
-            val dynamicCalleeParameter = dynamicCallee.valueParameters[i]
-            val dynamicCalleeArgument = dynamicCall.getValueArgument(i)
+        for (i in dynamicCallee.parameters.indices) {
+            val dynamicCalleeParameter = dynamicCallee.parameters[i]
+            val dynamicCalleeArgument = dynamicCall.arguments[i]
                 ?: fail("No argument #$i in 'dynamicCall'")
             val dynamicCalleeArgumentType = dynamicCalleeArgumentTypes.getOrElse(i) {
                 fail("No argument type #$i in dynamic callee: $dynamicCalleeMethod")
@@ -111,7 +111,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         codegen.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
 
     private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
-        val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference
+        val irRawFunRef = irCall.arguments[0] as? IrRawFunctionReference
             ?: throw AssertionError(
                 "Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference:\n" +
                         irCall.dump()
