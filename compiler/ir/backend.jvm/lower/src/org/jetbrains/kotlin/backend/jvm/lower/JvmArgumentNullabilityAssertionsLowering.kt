@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Transforms nullability assertions on arguments according to the compiler settings.
@@ -60,21 +63,23 @@ internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendConte
         // NB there are some members in Kotlin built-in classes which are NOT implemented as platform method calls,
         // and thus break this assertion - e.g., 'Array<T>.iterator()' and similar functions.
         // See KT-30908 for more details.
-        expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, AssertionScope.Disabled)
+        val dispatchReceiverAssertionScope = AssertionScope.Disabled
 
-        val receiverAssertionScope = if (
+        val extensionReceiverAssertionScope = if (
             isReceiverAssertionsDisabled ||
             !isWithUnifiedNullChecks && expression.origin.isOperatorWithNoNullabilityAssertionsOnExtensionReceiver
         ) AssertionScope.Disabled else AssertionScope.Enabled
 
-        expression.extensionReceiver = expression.extensionReceiver?.transform(this, receiverAssertionScope)
-
         val parameterAssertionScope =
             if (isCallToMethodWithTypeCheckBarrier(expression)) AssertionScope.Disabled else AssertionScope.Enabled
-        for (i in 0 until expression.valueArgumentsCount) {
-            expression.getValueArgument(i)?.let { irArgument ->
-                expression.putValueArgument(i, irArgument.transform(this, parameterAssertionScope))
+
+        expression.arguments.assignFrom(expression.getAllArgumentsWithIr()) { (parameter, argument) ->
+            val assertionScope = when (parameter.kind) {
+                IrParameterKind.DispatchReceiver -> dispatchReceiverAssertionScope
+                IrParameterKind.ExtensionReceiver -> extensionReceiverAssertionScope
+                IrParameterKind.Regular, IrParameterKind.Context -> parameterAssertionScope
             }
+            argument?.transform(this, assertionScope)
         }
 
         return expression
