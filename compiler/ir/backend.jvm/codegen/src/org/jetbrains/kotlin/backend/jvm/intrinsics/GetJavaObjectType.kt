@@ -13,18 +13,23 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
 object GetJavaObjectType : IntrinsicMethod() {
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
-        when (val receiver = expression.extensionReceiver) {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val receiver = expression.getAllArgumentsWithIr()
+            .singleOrNull { (parameter, _) -> parameter.kind == IrParameterKind.ExtensionReceiver }
+            ?.let { (_, argument) -> argument }
+        return when (receiver) {
             is IrClassReference -> {
                 val symbol = receiver.symbol
                 if (symbol is IrTypeParameterSymbol) {
@@ -65,4 +70,5 @@ object GetJavaObjectType : IntrinsicMethod() {
             else ->
                 null
         }
+    }
 }
