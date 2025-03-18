@@ -32,3 +32,12 @@ internal class KotlinCompilerArgumentsBuilder() {
         topLevel = topLevel
     )
 }
+
+@KotlinArgumentsDslMarker
+internal fun compilerArguments(
+    config: KotlinCompilerArgumentsBuilder.() -> Unit,
+): KotlinCompilerArguments {
+    val kotlinArguments = KotlinCompilerArgumentsBuilder()
+    config(kotlinArguments)
+    return kotlinArguments.build()
+}
