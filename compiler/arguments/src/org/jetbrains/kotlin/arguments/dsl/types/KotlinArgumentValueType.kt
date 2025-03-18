@@ -17,9 +17,6 @@ sealed interface KotlinArgumentValueType<T : Any> {
 }
 
 @Serializable
-object AllKotlinArgumentTypes
-
-@Serializable
 class BooleanType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<Boolean?> = ReleaseDependent(null),

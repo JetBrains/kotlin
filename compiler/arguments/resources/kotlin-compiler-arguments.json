@@ -68,7 +68,58 @@
             "patch": 0
         }
     ],
-    "types": {},
+    "types": {
+        "kotlinVersions": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinVersionType",
+            "values": [
+                {
+                    "name": "1.0",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.0.0",
+                        "stabilizedVersion": "1.0.0",
+                        "deprecatedVersion": "1.3.0",
+                        "removedVersion": "1.4.0"
+                    }
+                },
+                {
+                    "name": "1.9",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.8.0",
+                        "stabilizedVersion": "1.9.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "2.0",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.9.0",
+                        "stabilizedVersion": "2.0.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "2.1",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.0",
+                        "stabilizedVersion": "2.1.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "2.2",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.1.0",
+                        "stabilizedVersion": "2.2.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
+        }
+    },
     "topLevel": {
         "name": "commonCompilerArguments",
         "arguments": [],
