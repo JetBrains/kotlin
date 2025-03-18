@@ -11,7 +11,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
-fun KotlinSourceSet.addIdentifierClass() = compileSource("class $name")
+fun KotlinSourceSet.compileStubSourceWithSourceSetName() = compileSource("class $name")
 
 fun KotlinSourceSet.compileSource(
     @Language("kotlin")
