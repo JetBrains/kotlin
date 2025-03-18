@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.dsl.base
 
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -101,18 +101,9 @@ class KotlinCompilerArgumentsLevelTest {
     ) = KotlinCompilerArgument(
         name,
         description = "${name}_one".asReleaseDependent(),
-        valueType = StubKotlinArgumentValueType(),
+        valueType = BooleanType(),
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0
         )
     )
-
-    private class StubKotlinArgumentValueType : KotlinArgumentValueType<Unit> {
-        override val isNullable: ReleaseDependent<Boolean> = true.asReleaseDependent()
-        override val defaultValue: ReleaseDependent<Unit?> get() = null.asReleaseDependent()
-        override fun stringRepresentation(value: Unit?): String? {
-            return value?.toString()
-        }
-    }
-
 }

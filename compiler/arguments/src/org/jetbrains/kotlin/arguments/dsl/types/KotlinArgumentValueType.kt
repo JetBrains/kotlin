@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 
-// TODO: make it sealed and update KotlinCompilerArgumentsLevelTest once types will appear
-interface KotlinArgumentValueType<T : Any> {
+sealed interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
     val defaultValue: ReleaseDependent<T?>
 
@@ -18,3 +17,13 @@ interface KotlinArgumentValueType<T : Any> {
 
 @Serializable
 object AllKotlinArgumentTypes
+
+@Serializable
+class BooleanType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<Boolean?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Boolean> {
+    override fun stringRepresentation(value: Boolean?): String? {
+        return value?.toString()
+    }
+}
