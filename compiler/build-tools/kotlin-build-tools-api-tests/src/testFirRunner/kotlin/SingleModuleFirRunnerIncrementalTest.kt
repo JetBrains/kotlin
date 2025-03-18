@@ -4,16 +4,18 @@
  */
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.*
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.*
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithFir
-import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 
 @DisplayName("Single module IC scenarios for FIR runner")
@@ -79,12 +81,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 message = "Compilation does not fail on missing -Xuse-fir-ic"
             ) {
                 // Throws on initial compilation
-                module(
-                    moduleName = "jvm-module-1",
-                    incrementalCompilationOptionsModifier = { incrementalOptions ->
-                        (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
-                    }
-                )
+                moduleWithFir("jvm-module-1")
             }
         }
     }

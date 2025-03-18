@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions
 
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ExecutionOutcome
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 
 /**
  * Basic check that the code execution completed (to avoid false results based on partial output)

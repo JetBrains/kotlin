@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.deleteExisting
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 

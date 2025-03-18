@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 
 interface Scenario {

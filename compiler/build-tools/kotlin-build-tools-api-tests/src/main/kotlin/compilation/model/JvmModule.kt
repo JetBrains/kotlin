@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.*
+import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
+import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import java.util.EnumMap
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class LogEntry(
