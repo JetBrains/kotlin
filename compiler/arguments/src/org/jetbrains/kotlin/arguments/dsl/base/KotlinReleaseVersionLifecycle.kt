@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.arguments.dsl.base
 
+import kotlinx.serialization.Serializable
+
 interface WithKotlinReleaseVersionsMetadata {
     val releaseVersionsMetadata: KotlinReleaseVersionLifecycle
 }
 
+@Serializable
 data class KotlinReleaseVersionLifecycle(
     val introducedVersion: KotlinReleaseVersion,
     val stabilizedVersion: KotlinReleaseVersion? = null,

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.dsl.base
 
+import kotlinx.serialization.Serializable
 import kotlin.properties.ReadOnlyProperty
 
+@Serializable
 data class KotlinCompilerArgumentsLevel(
     val name: String,
     val arguments: Set<KotlinCompilerArgument>,

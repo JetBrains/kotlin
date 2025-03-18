@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 
 // TODO: make it sealed and update KotlinCompilerArgumentsLevelTest once types will appear
@@ -13,4 +14,5 @@ interface KotlinArgumentValueType<T : Any> {
     val defaultValue: ReleaseDependent<T?>
 }
 
+@Serializable
 object AllKotlinArgumentTypes

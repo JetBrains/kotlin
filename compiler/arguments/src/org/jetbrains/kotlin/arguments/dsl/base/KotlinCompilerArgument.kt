@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.arguments.dsl.base
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import kotlin.properties.ReadOnlyProperty
 
+@Serializable
 data class KotlinCompilerArgument(
     val name: String,
     val shortName: String? = null,

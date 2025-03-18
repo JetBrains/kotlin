@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.dsl.base
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.types.AllKotlinArgumentTypes
 
+@Serializable
 data class KotlinCompilerArguments(
     val schemaVersion: Int = 1,
     val releases: Set<KotlinReleaseVersion> = KotlinReleaseVersion.entries.toSet(),
