@@ -17113,6 +17113,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("anonymousFunctionAgainsSuspendFunctionType.kt")
+      public void testAnonymousFunctionAgainsSuspendFunctionType() {
+        runTest("compiler/testData/diagnostics/tests/inference/anonymousFunctionAgainsSuspendFunctionType.kt");
+      }
+
+      @Test
       @TestMetadata("assertThatInNumerousIf.kt")
       public void testAssertThatInNumerousIf() {
         runTest("compiler/testData/diagnostics/tests/inference/assertThatInNumerousIf.kt");
