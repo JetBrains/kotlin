@@ -48,14 +48,13 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
         )
             return
 
-        val handlerDeclaration = newIrFunction.valueParameters.last()
+        val handlerDeclaration = newIrFunction.parameters.last()
         +irIfThen(
             context.irBuiltIns.unitType,
             irNot(irEqualsNull(irGet(handlerDeclaration))),
             irCall(this@JvmDefaultArgumentStubGenerator.context.symbols.throwUnsupportedOperationException).apply {
-                putValueArgument(
-                    0,
-                    irString("Super calls with default arguments not supported in this target, function: ${irFunction.name.asString()}")
+                arguments[0] = irString(
+                    "Super calls with default arguments not supported in this target, function: ${irFunction.name.asString()}"
                 )
             }
         )
