@@ -1,0 +1,19 @@
+{
+    "schemaVersion": 1,
+    "releases": [
+        "v1_0_0",
+        "v1_4_0",
+        "v1_9_20",
+        "v2_0_0",
+        "v2_0_20",
+        "v2_1_0",
+        "v2_1_20",
+        "v2_2_0"
+    ],
+    "types": {},
+    "topLevel": {
+        "name": "commonCompilerArguments",
+        "arguments": [],
+        "nestedLevels": []
+    }
+}

@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.arguments.serialization.json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.dsl.description.kotlinCompilerArguments
+import java.io.File
 
 fun main(args: Array<String>) {
+    val destinationFile = File(args.first())
+
     val format = Json {
         prettyPrint = true
         encodeDefaults = true
     }
 
     val jsonArguments = format.encodeToString(kotlinCompilerArguments)
-    println("Generated json:\n$jsonArguments")
+
+    destinationFile.writeText(jsonArguments)
 }
