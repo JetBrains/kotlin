@@ -165,8 +165,8 @@ public class SirTypeProviderImpl(
         ktAnalysisSession: KaSession,
         processTypeImports: (List<SirImport>) -> Unit,
     ): SirType {
-        if (this is SirNominalType) {
-            when (val origin = typeDeclaration.origin) {
+        fun SirDeclaration.extractImport() {
+            when (val origin = this.origin) {
                 is KotlinSource -> {
                     val ktModule = with(ktAnalysisSession) {
                         origin.symbol.containingModule
@@ -181,9 +181,19 @@ public class SirTypeProviderImpl(
                 }
                 else -> {}
             }
-            for (typeArg in typeArguments) {
-                typeArg.handleImports(ktAnalysisSession, processTypeImports)
+        }
+
+        when (this) {
+            is SirNominalType -> {
+                this.typeDeclaration.extractImport()
+                for (typeArg in typeArguments) {
+                    typeArg.handleImports(ktAnalysisSession, processTypeImports)
+                }
             }
+            is SirExistentialType -> this.protocols.forEach { it.extractImport() }
+            is SirFunctionalType -> this.parameterTypes.forEach { it.handleImports(ktAnalysisSession, processTypeImports) }
+            is SirErrorType -> {}
+            SirUnsupportedType -> {}
         }
         return this
     }
