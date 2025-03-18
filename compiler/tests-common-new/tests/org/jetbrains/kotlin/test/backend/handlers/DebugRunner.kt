@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URL
 
+private val EXCLUDED_PACKAGES = listOf("java.*", "sun.*", "kotlin.*", "jdk.internal.*", "com.azul.*")
+
 abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServices) {
     companion object {
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
@@ -91,18 +93,12 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 // Create line stepping request to get all normal line steps starting now.
                                 val stepReq = manager.createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO)
                                 stepReq.setSuspendPolicy(SUSPEND_ALL)
-                                stepReq.addClassExclusionFilter("java.*")
-                                stepReq.addClassExclusionFilter("sun.*")
-                                stepReq.addClassExclusionFilter("kotlin.*")
-                                stepReq.addClassExclusionFilter("jdk.internal.*")
+                                EXCLUDED_PACKAGES.forEach { stepReq.addClassExclusionFilter(it) }
                                 // Create class prepare request to be able to set breakpoints on class initializer lines.
                                 // There are no line stepping events for class initializers, so we depend on breakpoints.
                                 val prepareReq = manager.createClassPrepareRequest()
                                 prepareReq.setSuspendPolicy(SUSPEND_ALL)
-                                prepareReq.addClassExclusionFilter("java.*")
-                                prepareReq.addClassExclusionFilter("sun.*")
-                                prepareReq.addClassExclusionFilter("kotlin.*")
-                                prepareReq.addClassExclusionFilter("jdk.internal.*")
+                                EXCLUDED_PACKAGES.forEach { prepareReq.addClassExclusionFilter(it) }
                             }
                             manager.stepRequests().map { it.enable() }
                             manager.classPrepareRequests().map { it.enable() }
