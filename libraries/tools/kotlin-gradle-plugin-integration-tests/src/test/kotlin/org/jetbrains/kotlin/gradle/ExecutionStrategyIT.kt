@@ -193,6 +193,33 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @DisplayName("KT-75820: The legacy in-process mode properly reports compilation warnings/errors")
+    @GradleTest
+    fun testInProcessWithCompilationWarning(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinBuiltins",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
+                runViaBuildToolsApi = false,
+            )
+        ) {
+            subProject("app").kotlinSourcesDir().resolve("classes.kt").modify {
+                it.replace(
+                    //language=kotlin
+                    "class A",
+                    //language=kotlin
+                    "@Deprecated(\"deprecated for test\") class A",
+                )
+            }
+            build("build") {
+                val mainKt = subProject("app").kotlinSourcesDir().resolve("main.kt")
+                // ensure warnings are properly parsed
+                assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+            }
+        }
+    }
+
     @DisplayName("Compilation via separate compiler process")
     @GradleTest
     fun testOutOfProcess(gradleVersion: GradleVersion) {
