@@ -199,8 +199,8 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
             }
         }
 
-        val arg0 = expression.getValueArgument(0)!!
-        val arg1 = expression.getValueArgument(1)!!
+        val arg0 = expression.arguments[0]!!
+        val arg1 = expression.arguments[1]!!
 
         val arg0Type = arg0.type.toIrBasedKotlinType()
         if (!arg0Type.isPrimitiveNumberOrNullableType() && !arg0Type.upperBoundedByPrimitiveNumberOrNullableType())
