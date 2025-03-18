@@ -1071,6 +1071,16 @@ internal class WrongAnnotationTargetWithUseSiteTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.WrongAnnotationTargetWithUseSiteTarget
 
+internal class AnnotationWithUseSiteTargetOnExpressionErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationWithUseSiteTargetOnExpressionError
+
+internal class AnnotationWithUseSiteTargetOnExpressionWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationWithUseSiteTargetOnExpressionWarning
+
 internal class InapplicableTargetOnPropertyImpl(
     override val useSiteDescription: String,
     firDiagnostic: KtPsiDiagnostic,

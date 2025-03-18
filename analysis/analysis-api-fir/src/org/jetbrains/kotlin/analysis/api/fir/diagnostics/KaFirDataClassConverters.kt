@@ -1238,6 +1238,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION.errorFactory) { firDiagnostic ->
+        AnnotationWithUseSiteTargetOnExpressionErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION.warningFactory) { firDiagnostic ->
+        AnnotationWithUseSiteTargetOnExpressionWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY) { firDiagnostic ->
         InapplicableTargetOnPropertyImpl(
             firDiagnostic.a,

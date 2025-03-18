@@ -417,6 +417,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("useSiteTarget")
             parameter<Collection<KotlinTarget>>("allowedTargets")
         }
+        val ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION by deprecationError<KtAnnotationEntry>(
+            LanguageFeature.ForbidAnnotationsWithUseSiteTargetOnExpressions
+        )
         val INAPPLICABLE_TARGET_ON_PROPERTY by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }

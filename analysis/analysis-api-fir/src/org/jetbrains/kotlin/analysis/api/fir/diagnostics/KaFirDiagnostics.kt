@@ -896,6 +896,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val allowedTargets: List<KotlinTarget>
     }
 
+    interface AnnotationWithUseSiteTargetOnExpressionError : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationWithUseSiteTargetOnExpressionError::class
+    }
+
+    interface AnnotationWithUseSiteTargetOnExpressionWarning : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationWithUseSiteTargetOnExpressionWarning::class
+    }
+
     interface InapplicableTargetOnProperty : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = InapplicableTargetOnProperty::class
         val useSiteDescription: String

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -30,10 +29,9 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         // Declarations are checked separately
         // See KT-58723 about annotations on non-expression statements
-        if (expression is FirDeclaration ||
-            expression is FirErrorExpression ||
-            expression is FirBlock && expression.source?.kind == KtRealSourceElementKind
-        ) return
+        if (expression is FirDeclaration || expression is FirErrorExpression) {
+            return
+        }
 
         // To prevent double-reporting (we have also a call in this case)
         if (expression is FirVariableAssignment && expression.lValue is FirDesugaredAssignmentValueReferenceExpression) {
@@ -44,14 +42,18 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
         if (annotations.isEmpty()) return
 
         val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+        val inRealBlock = expression is FirBlock && expression.source?.kind == KtRealSourceElementKind
 
         for (annotation in annotations) {
             val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation, context)
             val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
 
             val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
-            if (KotlinTarget.EXPRESSION !in allowedAnnotationTargets) {
+            // We don't want to report WRONG_ANNOTATION_TARGET on a block according to KT-52175
+            if (!inRealBlock && KotlinTarget.EXPRESSION !in allowedAnnotationTargets) {
                 reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", allowedAnnotationTargets, context)
+            } else if (useSiteTarget != null) {
+                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION, context)
             }
 
             checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, annotation.source)
