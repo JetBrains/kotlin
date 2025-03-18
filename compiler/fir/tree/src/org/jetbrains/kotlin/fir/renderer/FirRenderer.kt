@@ -1054,6 +1054,14 @@ class FirRenderer(
             qualifiedAccessExpression.typeArguments.renderTypeArguments()
         }
 
+        override fun visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression) {
+            errorExpressionRenderer?.renderDiagnostic(qualifiedErrorAccessExpression.diagnostic)
+            annotationRenderer?.render(qualifiedErrorAccessExpression)
+            qualifiedErrorAccessExpression.receiver.accept(this)
+            print('.')
+            qualifiedErrorAccessExpression.selector.accept(this)
+        }
+
         override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression) {
             visitQualifiedAccessExpression(superReceiverExpression)
         }
