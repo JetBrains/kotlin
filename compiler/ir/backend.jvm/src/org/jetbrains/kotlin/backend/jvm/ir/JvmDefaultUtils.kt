@@ -57,7 +57,7 @@ fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
 private fun IrSimpleFunction.isCloneableClone(): Boolean =
     name.asString() == "clone" &&
             (parent as? IrClass)?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
-            valueParameters.isEmpty()
+            hasShape(dispatchReceiver = true)
 
 /**
  * Given a fake override in a class, returns an overridden declaration with implementation in interface, such that a method delegating to that
