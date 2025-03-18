@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
-import org.jetbrains.kotlin.ir.util.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -102,7 +101,7 @@ internal class JvmPropertiesLowering(
             irSetField(
                 patchFieldAccessReceiver(expression, irProperty),
                 backingField,
-                expression.getValueArgument(0)!!
+                expression.arguments.last()!!,
             )
         )
     }
@@ -201,17 +200,13 @@ internal class JvmPropertiesLowering(
             this.returnType = returnType
             this.visibility = visibility
         }.apply {
-            if (!isStatic) {
-                dispatchReceiverParameter = declaration.getter?.dispatchReceiverParameter?.let {
+            parameters = declaration.getter?.parameters?.mapNotNull {
+                when (it.kind) {
                     // Synthetic methods don't get generic type signatures anyway, so not exactly useful to preserve type parameters.
-                    it.copyTo(this, type = it.type.eraseTypeParameters())
+                    IrParameterKind.DispatchReceiver -> if (!isStatic) it.copyTo(this, type = it.type.eraseTypeParameters()) else null
+                    else -> it.copyTo(this, type = it.type.eraseTypeParameters(), kind = IrParameterKind.Regular)
                 }
-            }
-            valueParameters = listOfNotNull(
-                declaration.getter?.extensionReceiverParameter?.let {
-                    it.copyTo(this, type = it.type.eraseTypeParameters())
-                }
-            )
+            } ?: emptyList()
             parent = declaration.parent
             metadata = declaration.metadata
         }
@@ -230,7 +225,7 @@ internal class JvmPropertiesLowering(
                     val getter = property.getter
                     if (getter != null) {
                         val needsMangling =
-                            getter.extensionReceiverParameter?.type?.getRequiresMangling(includeInline = true, includeMFVC = false) == true ||
+                            getter.nonDispatchParameters.any { it.type.getRequiresMangling(includeInline = true, includeMFVC = false) } ||
                                     (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
                         val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
                         defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
