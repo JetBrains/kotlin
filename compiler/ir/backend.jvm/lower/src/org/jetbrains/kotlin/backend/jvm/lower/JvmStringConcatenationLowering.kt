@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private val IrClass.toStringFunction: IrSimpleFunction
@@ -36,7 +38,7 @@ private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
     val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
 
     return irCall(backendContext.symbols.typeToStringValueOfFunction(argumentType)).apply {
-        putValueArgument(0, argument)
+        arguments[0] = argument
     }
 }
 
@@ -98,11 +100,11 @@ private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrE
     return if (expression.type.isNullable())
         irLetS(expression) {
             irIfNull(context.irBuiltIns.stringType, irGet(it.owner), irString(null.toString()), irCall(toStringReplacement).apply {
-                putValueArgument(0, irGet(it.owner))
+                arguments[0] = irGet(it.owner)
             })
         }
     else
-        irCall(toStringReplacement).apply { putValueArgument(0, expression) }
+        irCall(toStringReplacement).apply { arguments[0] = expression }
 }
 
 private fun IrExpression.unwrapImplicitNotNull() =
@@ -132,7 +134,7 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
     private val stringBuilder = context.symbols.stringBuilder.owner
 
     private val constructor = stringBuilder.constructors.single {
-        it.valueParameters.isEmpty()
+        it.hasShape(regularParameters = 0)
     }
 
     private val toStringFunction = stringBuilder.toStringFunction
@@ -146,15 +148,15 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
     private val appendFunctionsByParameterType: Map<IrType, IrSimpleFunction> =
         stringBuilder.functions
             .filter { it.isAppendFunction() }
-            .associateBy { it.valueParameters[0].type }
+            .associateBy { it.nonDispatchParameters[0].type }
 
     private inline fun findStringBuilderAppendFunctionWithParameter(predicate: (IrValueParameter) -> Boolean) =
         stringBuilder.functions.find {
-            it.isAppendFunction() && predicate(it.valueParameters[0])
+            it.isAppendFunction() && predicate(it.nonDispatchParameters[0])
         }
 
     private fun IrSimpleFunction.isAppendFunction() =
-        name.asString() == "append" && valueParameters.size == 1
+        name.asString() == "append" && hasShape(regularParameters = 1, dispatchReceiver = true)
 
     private fun typeToAppendFunction(type: IrType): IrSimpleFunction {
         appendFunctionsByParameterType[type]?.let { return it }
@@ -232,10 +234,10 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
             val argument = normalizeArgument(arg)
             val appendFunction = typeToAppendFunction(argument.type)
             irCall(appendFunction).apply {
-                dispatchReceiver = stringBuilder
+                this.arguments[0] = stringBuilder
                 // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
                 // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.
-                putValueArgument(0, lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull())
+                this.arguments[1] = lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull()
             }
         }
     }
