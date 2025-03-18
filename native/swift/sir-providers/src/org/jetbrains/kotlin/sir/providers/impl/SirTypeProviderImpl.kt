@@ -185,9 +185,9 @@ public class SirTypeProviderImpl(
 
         when (this) {
             is SirNominalType -> {
-                this.typeDeclaration.extractImport()
-                for (typeArg in typeArguments) {
-                    typeArg.handleImports(ktAnalysisSession, processTypeImports)
+                generateSequence(this) { this.parent }.forEach {
+                    typeArguments.forEach { it.handleImports(ktAnalysisSession, processTypeImports) }
+                    typeDeclaration.extractImport()
                 }
             }
             is SirExistentialType -> this.protocols.forEach { it.extractImport() }

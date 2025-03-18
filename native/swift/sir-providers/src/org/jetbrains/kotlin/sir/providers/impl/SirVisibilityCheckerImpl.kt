@@ -137,6 +137,9 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isExported, "inline classes are not supported yet.")
             return false
         }
+        if (classId?.asSingleFqName()?.startsWith(FqName("kotlin.reflect")) == true) {
+            return false
+        }
         return true
     }
 
