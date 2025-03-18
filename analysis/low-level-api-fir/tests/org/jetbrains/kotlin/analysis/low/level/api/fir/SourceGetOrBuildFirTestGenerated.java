@@ -1270,6 +1270,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("destructuringInsideCallChain.kt")
+    public void testDestructuringInsideCallChain() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringInsideCallChain.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringNonLocal2.kt")
     public void testDestructuringNonLocal2() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringNonLocal2.kt");

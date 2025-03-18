@@ -374,6 +374,23 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object LambdaReceiver : KtFakeSourceElementKind()
 
     /**
+     * Example:
+     *
+     * ```kotlin
+     * fun foo() {
+     *     val (a, b) = listOf(1, 2)
+     * }
+     * ```
+     *
+     * When constructing the FIR for a destructuring declaration, we initially create an `FirBlock`
+     * containing the properties `<destruct>`, `a`, and `b`.
+     * If the original PSI is well-formed, this block is discarded,
+     * and the properties are added to the outer block (i.e., to the function body).
+     * However, if the PSI is invalid, this synthetic block may persist in the FIR tree.
+     */
+    object DestructuringBlock : KtFakeSourceElementKind()
+
+    /**
      * `{ (a, b) -> foo() }` -> `{ x -> val (a, b) = x; { foo() } }`
      * where the inner block `{ foo() }` has fake source
      */

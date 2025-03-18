@@ -27,6 +27,11 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
+
+    /**
+     * Note: generally, each FIR element with a `KtRealPsiSourceElement` source should be mapped to a unique PSI element.
+     * If multiple FIR elements have the same real source PSI element, it is probably a bug in Raw FIR building code.
+     */
     private fun cache(psi: KtElement, fir: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val existingFir = cache[psi]
         if (existingFir != null && existingFir !== fir) {

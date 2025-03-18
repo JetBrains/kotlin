@@ -527,6 +527,11 @@ public class RawFirBuilderLazyBodiesByAstTestGenerated extends AbstractRawFirBui
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @TestMetadata("destructuringInsideCallChain.kt")
+      public void testDestructuringInsideCallChain() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringInsideCallChain.kt");
+      }
+
       @TestMetadata("duplicatedContextParameter.kt")
       public void testDuplicatedContextParameter() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/duplicatedContextParameter.kt");
