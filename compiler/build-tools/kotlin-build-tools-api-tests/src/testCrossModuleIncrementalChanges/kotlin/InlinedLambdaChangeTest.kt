@@ -5,14 +5,13 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithInlineSnapshotting
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -27,10 +26,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testMainCase(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/lambda-body-change/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/lambda-body-change/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -72,10 +70,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testLocalClassInLocal(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/local-in-local/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/local-in-local/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -101,10 +98,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
          */
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/local-uses-local-deduplication/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/local-uses-local-deduplication/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -124,10 +120,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         // same as [testInlinedClassDeduplication]
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -146,10 +141,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testLocalNamedClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/local-named/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/local-named/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "addNamedClass")
             lib.compile { module, scenarioModule ->
@@ -166,10 +160,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testNoRecompilationNeeded(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/no-recompile/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/no-recompile/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -188,10 +181,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testNestedInlineFunctions(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/nested-inline/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/nested-inline/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -213,10 +205,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testInlineProperty(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/inline-property/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/inline-property/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -235,10 +226,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testMultipleUnusedLambdas(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/no-recompile-lambdas/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/no-recompile-lambdas/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -257,10 +247,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testCrossInlineLambdaChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/inline-crossinline/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/inline-crossinline/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -302,10 +291,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     fun testAnonymousObjectBaseTypeChangeWithOverloads(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -314,6 +302,27 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
 
             lib.compile(expectedDirtySet = setOf("SomeClass.kt", "callable.kt"))
             app.compile(expectedDirtySet = setOf())
+            app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in inline function inside named inner class")
+    @TestMetadata("ic-scenarios/inline-named-inner/lib")
+    fun testNamedInnerClassWithInlineFunction(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-named-inner/lib")
+            val app = moduleWithInlineSnapshotting(
+                "ic-scenarios/inline-named-inner/app",
+                dependencies = listOf(lib),
+            )
+
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
+
+            lib.replaceFileWithVersion("inlinedInnerClass.kt", "modified")
+
+            lib.compile(expectedDirtySet = setOf("inlinedInnerClass.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }

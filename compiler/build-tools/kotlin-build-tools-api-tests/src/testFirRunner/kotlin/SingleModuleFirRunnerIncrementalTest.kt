@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.*
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.*
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithFir
 import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.assertThrows
@@ -87,15 +88,4 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
             }
         }
     }
-
-    private fun Scenario.moduleWithFir(
-        moduleName: String,
-        additionalCompilerArguments: List<String> = emptyList()
-    ) = module(
-        moduleName = moduleName,
-        additionalCompilationArguments = additionalCompilerArguments + listOf("-Xuse-fir-ic"),
-        incrementalCompilationOptionsModifier = { incrementalOptions ->
-            (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
-        }
-    )
 }
