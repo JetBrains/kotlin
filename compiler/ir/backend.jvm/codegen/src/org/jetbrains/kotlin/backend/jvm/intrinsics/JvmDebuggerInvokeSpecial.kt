@@ -33,7 +33,7 @@ object JvmDebuggerInvokeSpecial : IntrinsicMethod() {
         val name = expression.getStringConstArgument(2)
         val descriptor = expression.getStringConstArgument(3)
         val isInterface = expression.getBooleanConstArgument(4)
-        val argsArray = expression.getValueArgument(4) as? IrBlock
+        val argsArray = expression.arguments[5] as? IrBlock
 
         expression.dispatchReceiver!!.accept(codegen, data).materialize()
         argsArray?.let { generateArgs(it, codegen, data) }
@@ -53,7 +53,7 @@ object JvmDebuggerInvokeSpecial : IntrinsicMethod() {
         // ignore first and last statements
         for (i in 1..<array.statements.size - 1) {
             // generate bytecode for expr1, expr2, ..., exprN
-            (array.statements[i] as IrCall).getValueArgument(1)!!.accept(codegen, data).materialize()
+            (array.statements[i] as IrCall).arguments[2]!!.accept(codegen, data).materialize()
         }
     }
 }
