@@ -9,15 +9,15 @@ plugins {
 String nodeJsVersion
 String nodeJsLocation
 
-tasks.create("checkDownloadedFolder") {
+tasks.register("checkDownloadedFolder") {
     description = "updated last modified date for downloaded folder"
     dependsOn "build"
     def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
-        println("check downloaded folder existance")
+        println("check downloaded folder existence")
         def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
-            throw new InvalidUserDataException("Downloaded folder was not found")
+            throw new InvalidUserDataException("Downloaded folder $downloadedFolder was not found")
         }
         println("try to update lastModifiedDate")
         println(downloadedFolder.lastModified())
@@ -29,37 +29,45 @@ tasks.create("checkDownloadedFolder") {
     }
 }
 
-tasks.create("checkIfLastModifiedNotNow") {
+tasks.register("checkIfLastModifiedNotNow") {
     description = "check if last modified is not current date now"
     dependsOn "build"
     def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
-        println("check downloaded folder existance")
+        println("check downloaded folder existence")
         def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
-            throw new InvalidUserDataException("Downloaded folder was not found")
+            throw new InvalidUserDataException("Downloaded folder $downloadedFolder was not found")
         }
 
         def now = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         def lastModified = downloadedFolder.lastModified()
-        def lastModified1 = lastModified + TimeUnit.DAYS.toMillis(1);
-        def lastModified2 = lastModified - TimeUnit.DAYS.toMillis(1);
+        def lastModified1 = lastModified + TimeUnit.DAYS.toMillis(1)
+        def lastModified2 = lastModified - TimeUnit.DAYS.toMillis(1)
 
-        if (now < lastModified1 || now < lastModified2) {
-            throw new InvalidUserDataException("Last modified date was updated")
+        println("[$path] now:\t$now")
+        println("[$path] lastModified:\t$lastModified")
+        println("[$path] lastModified1:\t$lastModified1")
+        println("[$path] lastModified2:\t$lastModified2")
+
+        if (now < lastModified1) {
+            throw new InvalidUserDataException("Last modified date was updated, now ($now) < lastModified1 ($lastModified1)")
+        }
+        if (now < lastModified2) {
+            throw new InvalidUserDataException("Last modified date was updated, now ($now) < lastModified2 ($lastModified2)")
         }
     }
 }
 
-tasks.create("testCleanTask") {
+tasks.register("testCleanTask") {
     description = "check clean task behaviour"
     def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check deletion of downloaded folder")
         def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (downloadedFolder.exists()) {
-            throw new InvalidUserDataException("Folder was not deleted")
+            throw new InvalidUserDataException("Folder $downloadedFolder was not deleted")
         }
     }
 }
@@ -71,6 +79,7 @@ repositories {
 
 class NodeJsPlatform {
     def props = System.getProperties()
+
     String property(String name) {
         return props.getProperty(name) ?: System.getProperty(name)
     }

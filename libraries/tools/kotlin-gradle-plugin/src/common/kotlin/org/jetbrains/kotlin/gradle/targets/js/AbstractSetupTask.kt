@@ -21,6 +21,7 @@ import java.net.URI
 import java.nio.channels.FileChannel
 import javax.inject.Inject
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @DisableCachingByDefault
@@ -188,25 +189,17 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         destination: File,
         dist: File,
     ): Unit = runWithHashFileLock { hashFile ->
-        val distHash: String? =
-            if (dist.exists()) {
-                fileHasher.hash(dist).toByteArray().toHex()
-            } else {
-                null
-            }
+        val currentHash = computeCurrentHash()
 
-        val upToDate =
+        val storedHash =
             if (hashFile.length() > 0) {
-                val list = hashFile.readLine().split(" ")
-                list.size == 3 &&
-                        list[0] == CACHE_VERSION &&
-                        list[1] == fileHasher.calculateDirHash(destination) &&
-                        list[2] == distHash
+                hashFile.readLine().trim()
             } else {
-                false
+                "<hashFile missing>"
             }
 
-        if (upToDate) {
+        if (currentHash == storedHash) {
+            logger.info("[$path] Skipping download. dist:$dist and destination:$destination are up-to-date. ($currentHash == $storedHash).")
             return
         }
 
@@ -216,13 +209,33 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
         extract(dist)
 
-        hashFile.writeUTF(
-            CACHE_VERSION +
-                    " " +
-                    fileHasher.calculateDirHash(destination)!! +
-                    " " +
-                    (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
-        )
+        logger.info("[$path] Extracted distribution to $dist")
+
+        val updatedHash = computeCurrentHash()
+            ?: error("failed to compute hash. destination:$destination, dist:$dist.")
+        hashFile.writeUTF(updatedHash)
+    }
+
+    private fun computeCurrentHash(): String? {
+        val destination = destinationProvider.getFile()
+        val dist = dist ?: return null
+
+        return buildString {
+            val actualDestinationHash = fileHasher.calculateDirHash(destination) ?: return null
+
+            val actualDistHash: String? =
+                if (dist.exists()) {
+                    fileHasher.hash(dist).toByteArray().toHex()
+                } else {
+                    null
+                }
+
+            append(CACHE_VERSION)
+            append(" ")
+            append(actualDestinationHash)
+            append(" ")
+            append(actualDistHash ?: "")
+        }.trim()
     }
 
     abstract fun extract(archive: File)
@@ -248,7 +261,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
      */
     @OptIn(ExperimentalContracts::class)
     private inline fun <T> runWithHashFileLock(action: (hashFile: RandomAccessFile) -> T): T {
-        contract { callsInPlace(action, kotlin.contracts.InvocationKind.EXACTLY_ONCE) }
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
 
         synchronized(Companion) {
             val lockFile = destinationHashFileProvider.get().asFile.apply {

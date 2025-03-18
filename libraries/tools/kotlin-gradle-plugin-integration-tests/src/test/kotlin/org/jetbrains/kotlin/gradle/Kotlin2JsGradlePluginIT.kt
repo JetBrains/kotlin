@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE
+import org.junit.jupiter.api.parallel.ResourceLock
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -1444,8 +1446,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    /**
+     * Note: this test manually changes the [java.io.File.lastModified] date of the install dir.
+     * Use [ResourceLock] to prevent concurrent modification interfering with the test.
+     */
     @DisplayName("nodejs up-to-date check works")
     @GradleTest
+    @ResourceLock("kgp-js node distribution install dir modification", mode = READ_WRITE)
     fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
         project("cleanTask", gradleVersion) {
             build("checkDownloadedFolder")
