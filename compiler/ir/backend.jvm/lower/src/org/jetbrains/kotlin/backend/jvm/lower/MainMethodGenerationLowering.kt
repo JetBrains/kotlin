@@ -88,9 +88,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
     }
 
     private fun IrSimpleFunction.isParameterlessMainMethod(): Boolean =
-        typeParameters.isEmpty() &&
-                extensionReceiverParameter == null &&
-                valueParameters.isEmpty() &&
+        typeParameters.isEmpty() && hasShape(regularParameters = 0) &&
                 returnType.isUnit() &&
                 name.asString() == "main"
 
@@ -166,7 +164,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
                     invoke.body = backendContext.createIrBuilder(invoke.symbol).irBlockBody {
                         +irReturn(irCall(target.symbol).also { call ->
                             if (args != null) {
-                                call.putValueArgument(0, irGetField(irGet(invoke.dispatchReceiverParameter!!), argsField!!))
+                                call.arguments[0] = irGetField(irGet(invoke.dispatchReceiverParameter!!), argsField!!)
                             }
                         })
                     }
@@ -181,7 +179,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
 
                     constructor.body = backendContext.createIrBuilder(constructor.symbol).irBlockBody {
                         +irDelegatingConstructorCall(superClassConstructor).also {
-                            it.putValueArgument(0, irInt(1))
+                            it.arguments[0] = irInt(1)
                         }
                         if (args != null) {
                             +irSetField(irGet(wrapper.thisReceiver!!), argsField!!, irGet(param!!))
@@ -191,18 +189,16 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
             }
 
             +irCall(backendContext.symbols.runSuspendFunction).apply {
-                putValueArgument(
-                    0, IrConstructorCallImpl.fromSymbolOwner(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        wrapperConstructor.returnType,
-                        wrapperConstructor.symbol
-                    ).also {
-                        if (args != null) {
-                            it.putValueArgument(0, irGet(args))
-                        }
+                arguments[0] = IrConstructorCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    wrapperConstructor.returnType,
+                    wrapperConstructor.symbol
+                ).also {
+                    if (args != null) {
+                        it.arguments[0] = irGet(args)
                     }
-                )
+                }
             }
         }
     }
