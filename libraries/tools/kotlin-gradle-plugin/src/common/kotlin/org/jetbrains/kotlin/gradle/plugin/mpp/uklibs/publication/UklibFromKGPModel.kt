@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttrib
 import java.io.File
 
 internal data class KGPUklibFragment(
-    val fragment: UklibFragment,
+    val fragment: Provider<UklibFragment>,
     // These must be transitive because we will filter them at execution time for skipped metadata fragments
     val refineesTransitiveClosure: Set<String>,
     val outputFile: Provider<File>,
@@ -65,7 +65,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                 @Suppress("UNCHECKED_CAST")
                 val jarTask = (project.tasks.named(target.artifactsTaskName) as TaskProvider<Jar>)
-                val jarArtifact = jarTask.map { it.archiveFile.map { it.asFile }.get() }
+                val jarArtifact = jarTask.flatMap { it.archiveFile.map { it.asFile } }
                 fragments.add(kgpUklibFragment(mainCompilation, jarArtifact))
             }
             else -> {
@@ -89,23 +89,23 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
 
     val publishedMetadataCompilations = awaitMetadataTarget().publishedMetadataCompilations()
     publishedMetadataCompilations.forEach { metadataCompilation ->
-        val artifact = metadataCompilation.compileTaskProvider.map {
+        val artifactProvider = metadataCompilation.compileTaskProvider.map {
             metadataCompilation.metadataPublishedArtifacts.singleFile
         }
 
         fragments.add(
             KGPUklibFragment(
-                fragment = UklibFragment(
-                    identifier = metadataCompilation.metadataFragmentIdentifier,
-                    attributes = metadataCompilation.metadataFragmentAttributes.map {
-                        it.convertToStringForPublicationInUmanifest()
-                    }.toSet(),
-                    file = {
-                        artifact.get()
-                    }
-                ),
+                fragment = artifactProvider.map {
+                    UklibFragment(
+                        identifier = metadataCompilation.metadataFragmentIdentifier,
+                        attributes = metadataCompilation.metadataFragmentAttributes.map {
+                            it.convertToStringForPublicationInUmanifest()
+                        }.toSet(),
+                        file = it,
+                    )
+                },
                 refineesTransitiveClosure = metadataCompilation.refineesTransitiveClosure(),
-                outputFile = artifact,
+                outputFile = artifactProvider,
                 compilation = metadataCompilation,
             )
         )
@@ -134,19 +134,23 @@ internal suspend fun KotlinMultiplatformExtension.uklibPublishedPlatformCompilat
 
 private fun kgpUklibFragment(
     mainCompilation: KotlinCompilation<*>,
-    file: Provider<File>,
-) = KGPUklibFragment(
-    fragment = UklibFragment(
-        identifier = mainCompilation.fragmentIdentifier,
-        attributes = setOf(mainCompilation.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()),
-        file = {
-            file.get()
-        }
-    ),
-    refineesTransitiveClosure = mainCompilation.refineesTransitiveClosure(),
-    outputFile = file,
-    compilation = mainCompilation,
-)
+    fileProvider: Provider<File>,
+): KGPUklibFragment {
+    val fragmentIdentifier = mainCompilation.fragmentIdentifier
+    val fragmentAttribute = mainCompilation.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
+    return KGPUklibFragment(
+        fragment = fileProvider.map {
+            UklibFragment(
+                identifier = fragmentIdentifier,
+                attributes = setOf(fragmentAttribute),
+                file = it,
+            )
+        },
+        refineesTransitiveClosure = mainCompilation.refineesTransitiveClosure(),
+        outputFile = fileProvider,
+        compilation = mainCompilation,
+    )
+}
 
 private fun KotlinCompilation<*>.refineesTransitiveClosure(): Set<String> = internal.allKotlinSourceSets
     .filterNot { it == defaultSourceSet }

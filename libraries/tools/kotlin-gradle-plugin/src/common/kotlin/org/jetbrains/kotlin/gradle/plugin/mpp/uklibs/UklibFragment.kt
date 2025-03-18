@@ -10,12 +10,5 @@ import java.io.File
 internal data class UklibFragment(
     val identifier: String,
     val attributes: Set<String>,
-    /**
-     * FIXME: This file is a lambda to
-     * - capture Provider<File> when the fragment is packed in KGP
-     * - return the file on disk when Uklib fragment is deserialized from disk
-     *
-     * Maybe we should just have the Provider<UklibFragment> in KGP and this would then be a File property
-     */
-    val file: () -> File,
+    val file: File,
 )

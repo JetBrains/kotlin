@@ -37,9 +37,7 @@ internal fun deserializeUklibFromDirectory(directory: File): Uklib {
         UklibFragment(
             identifier = fragmentIdentifier,
             attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
-            file = {
-                directory.resolve(fragmentIdentifier)
-            }
+            file = directory.resolve(fragmentIdentifier)
         )
     }.toSet()
 
