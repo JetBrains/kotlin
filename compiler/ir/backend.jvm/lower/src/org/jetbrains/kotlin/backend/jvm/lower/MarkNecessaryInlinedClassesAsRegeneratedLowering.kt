@@ -154,7 +154,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
 
             override fun visitCall(expression: IrCall) {
                 if (expression.symbol == context.symbols.singleArgumentInlineFunction) {
-                    when (val lambda = expression.getValueArgument(0)) {
+                    when (val lambda = expression.arguments[0]) {
                         is IrFunctionExpression -> lambda.function.acceptVoid(this)
                         else -> lambda?.acceptVoid(this) // for example IrFunctionReference
                     }
