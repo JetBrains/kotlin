@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.backend.jvm.codegen.materialize
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullablePrimitiveType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -27,7 +29,10 @@ import org.jetbrains.org.objectweb.asm.Type
 object GetJavaPrimitiveType : IntrinsicMethod() {
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        val receiver = expression.extensionReceiver ?: return null
+        val receiver = expression.getAllArgumentsWithIr()
+            .singleOrNull { (parameter, _) -> parameter.kind == IrParameterKind.ExtensionReceiver }
+            ?.let { (_, argument) -> argument }
+            ?: return null
 
         val argumentType =
             when (receiver) {
