@@ -223,18 +223,18 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         return buildString {
             val actualDestinationHash = fileHasher.calculateDirHash(destination) ?: return null
 
-            val actualDistHash: String? =
+            val actualDistHash =
                 if (dist.exists()) {
                     fileHasher.hash(dist).toByteArray().toHex()
                 } else {
-                    null
+                    return null
                 }
 
             append(CACHE_VERSION)
             append(" ")
             append(actualDestinationHash)
             append(" ")
-            append(actualDistHash ?: "")
+            append(actualDistHash)
         }.trim()
     }
 
