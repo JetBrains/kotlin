@@ -50,14 +50,11 @@ internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrE
     }
 
     private fun postprocessMovedThis(irCall: IrCall) {
-        val movedThisParameter = irCall.symbol.owner.valueParameters
+        val movedThisParameter = irCall.symbol.owner.parameters
             .find { it.origin == IrDeclarationOrigin.Companion.MOVED_DISPATCH_RECEIVER }
             ?: return
-        val movedThisParameterIndex = movedThisParameter.indexInOldValueParameters
-        irCall.putValueArgument(
-            movedThisParameterIndex,
-            irCall.getValueArgument(movedThisParameterIndex)?.reinterpretAsDispatchReceiverOfType(movedThisParameter.type)
-        )
+        irCall.arguments[movedThisParameter] =
+            irCall.arguments[movedThisParameter]?.reinterpretAsDispatchReceiverOfType(movedThisParameter.type)
     }
 }
 
