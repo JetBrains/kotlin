@@ -57,6 +57,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         "Use ivyDependencyProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("DeprecatedCallableAddReplaceWith")
     val ivyDependency: String
         @Internal get() = ivyDependencyProvider.get()
 
@@ -75,6 +76,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         "Use downloadBaseUrlProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("DeprecatedCallableAddReplaceWith")
     val downloadBaseUrl: String?
         @Internal
         get() = downloadBaseUrlProvider.orNull
@@ -90,6 +92,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         "Use destinationProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("DeprecatedCallableAddReplaceWith")
     val destination: File
         @Internal get() = destinationProvider.getFile()
 
@@ -108,6 +111,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         "Use destinationHashFileProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("DeprecatedCallableAddReplaceWith")
     val destinationHashFile: File
         @Internal get() = destinationHashFileProvider.getFile()
 
@@ -134,12 +138,11 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     }
 
     init {
-        onlyIf {
+        super.onlyIf {
             shouldDownload.get()
         }
     }
 
-    @Suppress("unused")
     @TaskAction
     fun exec() {
         if (!shouldDownload.get()) return
@@ -200,9 +203,9 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             return
         }
 
-        if (destination.isDirectory) {
-            destination.deleteRecursively()
-        }
+            if (destination.isDirectory) {
+                destination.deleteRecursively()
+            }
 
         extract(dist)
 
