@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Handles JvmOverloads annotations.
@@ -44,7 +45,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
     }
 
     private fun generateWrappers(target: IrFunction, irClass: IrClass) {
-        val numDefaultParameters = target.valueParameters.count { it.defaultValue != null }
+        val numDefaultParameters = target.parameters.count { it.defaultValue != null }
         for (i in numDefaultParameters - 1 downTo 0) {
             val wrapper = generateWrapper(target, i)
             irClass.addMember(wrapper)
@@ -65,45 +66,17 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
         for (arg in wrapperIrFunction.allTypeParameters) {
             call.typeArguments[arg.index] = arg.defaultType
         }
-        call.dispatchReceiver = wrapperIrFunction.dispatchReceiverParameter?.let { dispatchReceiver ->
-            IrGetValueImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                dispatchReceiver.symbol
-            )
-        }
-        call.extensionReceiver = wrapperIrFunction.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetValueImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                extensionReceiver.symbol
-            )
-        }
 
         var parametersCopied = 0
-        var defaultParametersCopied = 0
-        for ((i, valueParameter) in target.valueParameters.withIndex()) {
-            if (valueParameter.defaultValue != null) {
-                if (defaultParametersCopied < numDefaultParametersToExpect) {
-                    defaultParametersCopied++
-                    call.putValueArgument(
-                        i,
-                        IrGetValueImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            wrapperIrFunction.valueParameters[parametersCopied++].symbol
-                        )
-                    )
-                } else {
-                    call.putValueArgument(i, null)
-                }
-            } else {
-                call.putValueArgument(
-                    i,
-                    IrGetValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        wrapperIrFunction.valueParameters[parametersCopied++].symbol
-                    )
+        call.arguments.assignFrom(target.parameters) { valueParameter ->
+            if (valueParameter.defaultValue == null || parametersCopied < numDefaultParametersToExpect) {
+                IrGetValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    wrapperIrFunction.parameters[parametersCopied++].symbol
                 )
+            } else {
+                null
             }
-
         }
 
         wrapperIrFunction.body = when (target) {
@@ -149,35 +122,29 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
         res.parent = oldFunction.parent
         res.copyAnnotationsFrom(oldFunction)
         res.copyTypeParametersFrom(oldFunction)
-        res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
-        res.extensionReceiverParameter = oldFunction.extensionReceiverParameter?.copyTo(res)
-        res.valueParameters += res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect)
+        res.parameters += res.generateNewParameters(oldFunction, numDefaultParametersToExpect)
         return res
     }
 
-    private fun IrFunction.generateNewValueParameters(
+    private fun IrFunction.generateNewParameters(
         oldFunction: IrFunction,
         numDefaultParametersToExpect: Int
     ): List<IrValueParameter> {
         var defaultParametersCopied = 0
-        val result = mutableListOf<IrValueParameter>()
-        for (oldValueParameter in oldFunction.valueParameters) {
-            if (oldValueParameter.defaultValue != null &&
-                defaultParametersCopied < numDefaultParametersToExpect
-            ) {
-                defaultParametersCopied++
-                result.add(
-                    oldValueParameter.copyTo(
+        return oldFunction.parameters.mapNotNull { oldParameter ->
+            when (oldParameter.defaultValue) {
+                null -> oldParameter.copyTo(this)
+                else if defaultParametersCopied < numDefaultParametersToExpect -> {
+                    defaultParametersCopied++
+                    oldParameter.copyTo(
                         this,
                         defaultValue = null,
-                        isCrossinline = oldValueParameter.isCrossinline,
-                        isNoinline = oldValueParameter.isNoinline
+                        isCrossinline = oldParameter.isCrossinline,
+                        isNoinline = oldParameter.isNoinline
                     )
-                )
-            } else if (oldValueParameter.defaultValue == null) {
-                result.add(oldValueParameter.copyTo(this))
+                }
+                else -> null
             }
         }
-        return result
     }
 }
