@@ -8,9 +8,27 @@
             "patch": 0
         },
         {
+            "name": "1.3.0",
+            "major": 1,
+            "minor": 3,
+            "patch": 0
+        },
+        {
             "name": "1.4.0",
             "major": 1,
             "minor": 4,
+            "patch": 0
+        },
+        {
+            "name": "1.8.0",
+            "major": 1,
+            "minor": 8,
+            "patch": 0
+        },
+        {
+            "name": "1.9.0",
+            "major": 1,
+            "minor": 9,
             "patch": 0
         },
         {
