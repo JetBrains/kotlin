@@ -25,7 +25,7 @@ object HandleResultOfReflectiveAccess : IntrinsicMethod() {
         val typeMapper = codegen.typeMapper
         val mv = codegen.mv
         val type = expression.typeArguments[0]!!
-        expression.getValueArgument(0)!!.accept(codegen, data).materialize()
+        expression.arguments[0]!!.accept(codegen, data).materialize()
         val asmResultType = typeMapper.mapType(type.unboxInlineClass())
         val castToType = AsmUtil.boxType(asmResultType)
         mv.checkcast(castToType)
