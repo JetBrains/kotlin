@@ -52,15 +52,11 @@ class IrInlineCodegen(
         if (!function.isInlineOnly())
             return false
 
-        var actualParametersCount = function.valueParameters.size
-        if (function.dispatchReceiverParameter != null)
-            ++actualParametersCount
-        if (function.extensionReceiverParameter != null)
-            ++actualParametersCount
+        val actualParametersCount = function.parameters.size
         if (actualParametersCount == 0)
             return false
 
-        if (function.valueParameters.any { it.isInlineParameter() })
+        if (function.parameters.any { it.isInlineParameter() })
             return false
 
         return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
@@ -100,7 +96,7 @@ class IrInlineCodegen(
         val inlineLambda = argumentExpression.unwrapInlineLambda()
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
-            rememberClosure(parameterType, irValueParameter.indexInOldValueParameters, lambdaInfo)
+            rememberClosure(parameterType, irValueParameter.indexInParameters, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
@@ -142,7 +138,7 @@ class IrInlineCodegen(
                     // Here we replicate the old backend: reusing the locals for everything except extension receivers.
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
-                    val argValue = if (irValueParameter.indexInOldValueParameters >= 0) {
+                    val argValue = if (irValueParameter.kind == IrParameterKind.Regular) {
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
@@ -156,7 +152,7 @@ class IrInlineCodegen(
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-            putArgumentToLocalVal(expectedType, onStack, irValueParameter.indexInOldValueParameters, kind)
+            putArgumentToLocalVal(expectedType, onStack, irValueParameter.indexInParameters, kind)
         }
     }
 
