@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 @PhaseDescription(name = "JvmBuiltInsLowering")
 internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
@@ -33,7 +34,7 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
                 val parentClassName = callee.parent.fqNameForIrSerialization.asString()
                 val functionName = callee.name.asString()
                 if (parentClassName == "kotlin.CompareToKt" && functionName == "compareTo") {
-                    val operandType = expression.getValueArgument(0)!!.type
+                    val operandType = expression.arguments[0]!!.type
                     when {
                         operandType.isUInt() -> return expression.replaceWithCallTo(context.symbols.compareUnsignedInt)
                         operandType.isULong() -> return expression.replaceWithCallTo(context.symbols.compareUnsignedLong)
@@ -46,7 +47,7 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
 
                 return when {
                     callee.isArrayOf() ->
-                        expression.getValueArgument(0)
+                        expression.arguments[0]
                             ?: throw AssertionError("Argument #0 expected: ${expression.dump()}")
 
                     callee.isEmptyArray() ->
@@ -85,19 +86,8 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
             intrinsicCallType,
             replacement
         ).also { newCall ->
-            var valueArgumentOffset = 0
-
-            fun tryToAddCoercedArgument(expr: IrExpression): Boolean {
-                val coercedExpr = expr.coerceIfPossible(replacement.owner.valueParameters[valueArgumentOffset].type)
-                    ?: return false
-                newCall.putValueArgument(valueArgumentOffset++, coercedExpr)
-                return true
-            }
-
-            this.extensionReceiver?.let { if (!tryToAddCoercedArgument(it)) return this@replaceWithCallTo }
-            this.dispatchReceiver?.let { if (!tryToAddCoercedArgument(it)) return this@replaceWithCallTo }
-            for (index in 0 until valueArgumentsCount) {
-                if (!tryToAddCoercedArgument(getValueArgument(index)!!)) return this@replaceWithCallTo
+            newCall.arguments.assignFrom(replacement.owner.parameters zip arguments) { (parameter, argument) ->
+                argument!!.coerceIfPossible(parameter.type) ?: return this@replaceWithCallTo
             }
         }
 
@@ -121,7 +111,7 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
             IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.symbols.unsafeCoerceIntrinsic).also { call ->
                 call.typeArguments[0] = type
                 call.typeArguments[1] = toType
-                call.putValueArgument(0, this)
+                call.arguments[0] = this
             }
     }
 }
