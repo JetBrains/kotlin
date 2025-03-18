@@ -59,6 +59,7 @@ data class PublishedProject(
         val pom: File get() = path.resolve("${artifactsPrefix}.pom")
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+        val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
         val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
     }
 

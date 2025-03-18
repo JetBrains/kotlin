@@ -69,6 +69,42 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    fun `kmp publication with uklibs - with jvm target`(version: GradleVersion) {
+        val a = kmpProducer(
+            version,
+            withJvm = true,
+        ) {
+            project.setUklibPublicationStrategy()
+        }.publish()
+        assertEquals<PrettyPrint<GradleMetadata>>(
+            GradleMetadata(
+                variants = invariantSubcomponentKmpVariants + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmVariants,
+            ).prettyPrinted,
+            json.decodeFromStream<GradleMetadata>(
+                a.rootComponent.gradleMetadata.inputStream()
+            ).prettyPrinted
+        )
+    }
+
+    @GradleTest
+    fun `kmp publication with uklibs - with stub jvm target`(version: GradleVersion) {
+        val a = kmpProducer(
+            version,
+            withJvm = false,
+        ) {
+            project.setUklibPublicationStrategy()
+        }.publish()
+        assertEquals<PrettyPrint<GradleMetadata>>(
+            GradleMetadata(
+                variants = invariantSubcomponentKmpVariants + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmStubVariants,
+            ).prettyPrinted,
+            json.decodeFromStream<GradleMetadata>(
+                a.rootComponent.gradleMetadata.inputStream()
+            ).prettyPrinted
+        )
+    }
+
     private val invariantSubcomponentKmpVariants = mutableSetOf(
         Variant(
             attributes = mutableMapOf(
@@ -461,6 +497,164 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
             files = mutableListOf(
             ),
             name = "jvmSourcesElements-published",
+        ),
+    )
+
+    private val uklibVariants = mutableSetOf(
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "kotlin-uklib-runtime",
+                "org.jetbrains.kotlin.uklib" to "true",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "library.uklib",
+                    url = "empty-1.0.uklib",
+                ),
+            ),
+            name = "uklibRuntimeElements",
+        ),
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "kotlin-uklib-api",
+                "org.jetbrains.kotlin.uklib" to "true",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "library.uklib",
+                    url = "empty-1.0.uklib",
+                ),
+            ),
+            name = "uklibApiElements",
+        ),
+    )
+
+    private val uklibJvmStubVariants = mutableSetOf(
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "java-api",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-1.0.jar",
+                    url = "empty-1.0.jar",
+                ),
+            ),
+            name = "javaApiElements",
+        ),
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "java-runtime",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-1.0.jar",
+                    url = "empty-1.0.jar",
+                ),
+            ),
+            name = "javaRuntimeElements",
+        ),
+    )
+
+    private val uklibJvmVariants = mutableSetOf(
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.jvm.environment" to "standard-jvm",
+                "org.gradle.libraryelements" to "jar",
+                "org.gradle.usage" to "java-api",
+                "org.jetbrains.kotlin.platform.type" to "jvm",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-jvm-1.0.jar",
+                    url = "empty-1.0.jar",
+                ),
+            ),
+            name = "jvmApiElements",
+        ),
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.jvm.environment" to "standard-jvm",
+                "org.gradle.libraryelements" to "jar",
+                "org.gradle.usage" to "java-runtime",
+                "org.jetbrains.kotlin.platform.type" to "jvm",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-jvm-1.0.jar",
+                    url = "empty-1.0.jar",
+                ),
+            ),
+            name = "jvmRuntimeElements",
+        ),
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "documentation",
+                "org.gradle.dependency.bundling" to "external",
+                "org.gradle.docstype" to "sources",
+                "org.gradle.jvm.environment" to "standard-jvm",
+                "org.gradle.libraryelements" to "jar",
+                "org.gradle.usage" to "java-runtime",
+                "org.jetbrains.kotlin.platform.type" to "jvm",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-jvm-1.0-sources.jar",
+                    url = "empty-1.0-sources.jar",
+                ),
+            ),
+            name = "jvmSourcesElements",
+        ),
+    )
+
+
+    private val uklibCompatibilityMetadataVariants = mutableSetOf(
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.jvm.environment" to "non-jvm",
+                "org.gradle.usage" to "kotlin-metadata",
+                "org.jetbrains.kotlin.platform.type" to "common",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-metadata-1.0-psm.jar",
+                    url = "empty-1.0-psm.jar",
+                ),
+            ),
+            name = "metadataApiElements",
+        ),
+        Variant(
+            attributes = mutableMapOf(
+                "org.gradle.category" to "documentation",
+                "org.gradle.dependency.bundling" to "external",
+                "org.gradle.docstype" to "sources",
+                "org.gradle.jvm.environment" to "non-jvm",
+                "org.gradle.usage" to "kotlin-runtime",
+                "org.jetbrains.kotlin.platform.type" to "common",
+            ),
+            availableAt = null,
+            files = mutableListOf(
+                VariantFile(
+                    name = "empty-kotlin-1.0-sources.jar",
+                    url = "empty-1.0-metadata-sources.jar",
+                ),
+            ),
+            name = "metadataSourcesElements",
         ),
     )
 
