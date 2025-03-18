@@ -122,6 +122,10 @@ open class CompilerCallbackServicesFacadeServer(
         expectActualTracker!!.report(File(expectedFilePath), File(actualFilePath))
     }
 
+    override fun expectActualTracker_reportExpectOfLenientStub(expectedFilePath: String) {
+        expectActualTracker!!.reportExpectOfLenientStub(File(expectedFilePath))
+    }
+
     override fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String) {
         inlineConstTracker?.report(filePath, owner, name, constType) ?: throw NullPointerException("inlineConstTracker was not initialized")
     }
