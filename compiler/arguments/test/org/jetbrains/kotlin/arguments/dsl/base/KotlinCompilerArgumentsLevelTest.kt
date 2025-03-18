@@ -110,6 +110,9 @@ class KotlinCompilerArgumentsLevelTest {
     private class StubKotlinArgumentValueType : KotlinArgumentValueType<Unit> {
         override val isNullable: ReleaseDependent<Boolean> = true.asReleaseDependent()
         override val defaultValue: ReleaseDependent<Unit?> get() = null.asReleaseDependent()
+        override fun stringRepresentation(value: Unit?): String? {
+            return value?.toString()
+        }
     }
 
 }

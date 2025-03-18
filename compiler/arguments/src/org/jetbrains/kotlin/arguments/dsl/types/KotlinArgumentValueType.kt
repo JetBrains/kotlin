@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
     val defaultValue: ReleaseDependent<T?>
+
+    fun stringRepresentation(value: T?): String?
 }
 
 @Serializable
