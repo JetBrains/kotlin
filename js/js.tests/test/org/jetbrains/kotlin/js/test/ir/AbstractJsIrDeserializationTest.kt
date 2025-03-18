@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * Base class for IR deserialization tests, configured with FIR frontend.
  */
-abstract class AbstractFirJsIrDeserializationTest(
+abstract class AbstractJsIrDeserializationTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
     private val useIrInlinerAtFirstCompilationPhase: Boolean
@@ -71,13 +71,13 @@ abstract class AbstractFirJsIrDeserializationTest(
     }
 }
 
-open class AbstractFirJsIrDeserializationCodegenBoxTest : AbstractFirJsIrDeserializationTest(
+open class AbstractJsIrDeserializationCodegenBoxTest : AbstractJsIrDeserializationTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "irDeserialization/codegenBox/",
     useIrInlinerAtFirstCompilationPhase = false,
 )
 
-open class AbstractFirJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsIrDeserializationTest(
+open class AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest : AbstractJsIrDeserializationTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "irDeserialization/codegenBoxWithInlinedFunInKlib/",
     useIrInlinerAtFirstCompilationPhase = true,

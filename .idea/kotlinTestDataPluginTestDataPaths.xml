@@ -238,7 +238,7 @@
             </array>
           </value>
         </entry>
-        <entry key="FirJsIrDeserialization.*">
+        <entry key="JsIrDeserialization.*">
           <value>
             <array>
               <option value="FIR" />

@@ -256,12 +256,12 @@ fun main(args: Array<String>) {
                 model("boxWasmJsInterop")
             }
 
-            testClass<AbstractFirJsIrDeserializationCodegenBoxTest> {
+            testClass<AbstractJsIrDeserializationCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
                 model("boxInline")
             }
