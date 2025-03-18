@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.writeText
 
 /**
  * Touch file with expect fun, target IC adds actual to the build set
@@ -18,9 +19,8 @@ import org.junit.jupiter.api.DisplayName
  * Touch file with actual fun, target IC adds expect to the build set
  * Variants: expect class
  */
-@DisplayName("Incremental scenarios with expect/actual - K2")
 @MppGradlePluginTests
-open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
+abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK2().copy(
             // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
@@ -99,10 +99,89 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             }
         }
     }
+
 }
 
 @DisplayName("Incremental scenarios with expect/actual - K1")
-class ExpectActualIncrementalCompilationK1IT : ExpectActualIncrementalCompilationIT() {
+class ExpectActualIncrementalCompilationK1IT : AbstractExpectActualIncrementalCompilationIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("Incremental scenarios with expect/actual - K2")
+class ExpectActualIncrementalCompilationK2IT : AbstractExpectActualIncrementalCompilationIT() {
+
+    @DisplayName("Incremental compilation with lenient mode")
+    @GradleTest
+    fun testLenientModeIncrementalCompilation(gradleVersion: GradleVersion) {
+        project("lenientMode", gradleVersion) {
+            build("compileKotlinJvm")
+
+            kotlinSourcesDir("jvmMain").resolve("jvm.kt").writeText(
+                """
+                actual fun foo() {}
+            """.trimIndent()
+            )
+
+            build("compileKotlinJvm") {
+                assertIncrementalCompilation(
+                    listOf(
+                        kotlinSourcesDir("commonMain").resolve("common.kt"),
+                        kotlinSourcesDir("jvmMain").resolve("jvm.kt")
+                    ).relativizeTo(projectPath)
+                )
+            }
+
+            kotlinSourcesDir("jvmMain").resolve("jvm2.kt").writeText(
+                """
+                fun bar() {}
+            """.trimIndent()
+            )
+
+            build("compileKotlinJvm") {
+                assertIncrementalCompilation(
+                    listOf(
+                        kotlinSourcesDir("jvmMain").resolve("jvm2.kt")
+                    ).relativizeTo(projectPath)
+                )
+            }
+        }
+    }
+
+    @DisplayName("Incremental compilation with lenient mode 2")
+    @GradleTest
+    fun testLenientModeIncrementalCompilation2(gradleVersion: GradleVersion) {
+        project("lenientMode", gradleVersion) {
+            kotlinSourcesDir("commonMain").resolve("common.kt").writeText(
+                """
+                expect fun foo()
+                expect fun bar()
+            """.trimIndent()
+            )
+
+            kotlinSourcesDir("jvmMain").resolve("jvm.kt").writeText(
+                """
+                actual fun foo() {}
+            """.trimIndent()
+            )
+
+            build("compileKotlinJvm")
+
+            kotlinSourcesDir("commonMain").resolve("common2.kt").writeText(
+                """
+                fun baz() {}
+            """.trimIndent()
+            )
+
+            build("compileKotlinJvm") {
+                assertIncrementalCompilation(
+                    listOf(
+                        kotlinSourcesDir("commonMain").resolve("common.kt"),
+                        kotlinSourcesDir("commonMain").resolve("common2.kt"),
+                        kotlinSourcesDir("jvmMain").resolve("jvm.kt"),
+                    ).relativizeTo(projectPath)
+                )
+            }
+        }
+    }
 }

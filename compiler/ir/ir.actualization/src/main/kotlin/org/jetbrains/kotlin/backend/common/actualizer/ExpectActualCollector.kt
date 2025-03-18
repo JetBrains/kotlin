@@ -475,9 +475,13 @@ private class ExpectActualLinkCollector {
 
         private fun ExpectActualTracker.reportWithCurrentFile(actualSymbol: IrSymbol) {
             if (currentExpectFile != null) {
-                val actualIoFile = classActualizationInfo.actualSymbolsToFile[actualSymbol]?.toIoFile()
-                if (actualIoFile != null) {
-                    report(currentExpectIoFile!!, actualIoFile)
+                if (actualSymbol.owner.let { it is IrDeclaration && it.origin == IrDeclarationOrigin.STUB_FOR_LENIENT }) {
+                    reportExpectOfLenientStub(currentExpectIoFile!!)
+                } else {
+                    val actualIoFile = classActualizationInfo.actualSymbolsToFile[actualSymbol]?.toIoFile()
+                    if (actualIoFile != null) {
+                        report(currentExpectIoFile!!, actualIoFile)
+                    }
                 }
             }
         }

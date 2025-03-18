@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
@@ -392,6 +393,20 @@ class IncrementalCompilationK1JvmMultiProjectIT : IncrementalCompilationJvmMulti
 
 open class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @DisplayName("Incremental compilation with lenient mode")
+    @GradleTest
+    fun testLenientModeIncrementalCompilation(gradleVersion: GradleVersion) {
+        project("lenientMode", gradleVersion) {
+            build("compileKotlinJvm")
+
+            kotlinSourcesDir("jvmMain").resolve("jvm.kt").writeText("""
+                actual fun foo() {}
+            """.trimIndent())
+
+            build("compileKotlinJvm")
+        }
+    }
 }
 
 class IncrementalCompilationK2JvmMultiProjectFirRunnerIT : IncrementalCompilationK2JvmMultiProjectIT() {

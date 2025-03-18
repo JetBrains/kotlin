@@ -22,9 +22,13 @@ import java.io.File
 @DefaultImplementation(ExpectActualTracker.DoNothing::class)
 interface ExpectActualTracker {
     fun report(expectedFile: File, actualFile: File)
+    fun reportExpectOfLenientStub(expectedFile: File)
 
     object DoNothing : ExpectActualTracker {
         override fun report(expectedFile: File, actualFile: File) {
+        }
+
+        override fun reportExpectOfLenientStub(expectedFile: File) {
         }
     }
 }

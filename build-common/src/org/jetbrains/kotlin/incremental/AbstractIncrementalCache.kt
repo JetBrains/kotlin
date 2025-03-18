@@ -60,6 +60,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         private const val SOURCE_TO_TYPEALIAS_FQ_NAME = "source-to-typealias-fq-name"
         private const val TYPEALIAS_FQ_NAME_TO_SOURCE = "typealias-fq-name-to-source"
         private const val COMPLEMENTARY_FILES = "complementary-files"
+        private const val EXPECTS_OF_LENIENT = "expects-of-lenient"
 
         @JvmStatic
         protected val SOURCE_TO_CLASSES = "source-to-classes"
@@ -100,6 +101,15 @@ abstract class AbstractIncrementalCache<ClassName>(
      * TODO: provide a better solution (maintain an index of expect/actual declarations akin to IncrementalPackagePartProvider)
      */
     private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, icContext))
+
+    /**
+     * In lenient mode, we track all files of expect declarations for which we generate stubs. These files are always part of the dirty set.
+     * This is necessary, because of the following situation:
+     * In compilation round 1, we have an expect declaration without actual for which we generate a lenient stub.
+     * In compilation round 2, we add a real actual for this expect declaration.
+     * We have no way of detecting for which expects, an actual was added, so we conservatively add all such expect files to the dirty set.
+     */
+    private val expectOfLenientStubs = registerMap(ComplementarySourceFilesMap(EXPECTS_OF_LENIENT.storageFile, icContext))
 
     override fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
         files.flatMapTo(mutableSetOf()) { sourceToClassesMap.getFqNames(it).orEmpty() }
@@ -301,6 +311,7 @@ abstract class AbstractIncrementalCache<ClassName>(
     override fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File> {
         val complementaryFiles = HashSet<File>()
         val filesQueue = ArrayDeque(dirtyFiles)
+        filesQueue.addAll(expectOfLenientStubs.keys)
 
         val processedClasses = HashSet<FqName>()
         val processedFiles = HashSet<File>()
@@ -334,6 +345,7 @@ abstract class AbstractIncrementalCache<ClassName>(
     override fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl) {
         dirtyFiles.forEach {
             complementaryFilesMap.remove(it)
+            expectOfLenientStubs.remove(it)
         }
 
         val actualToExpect = hashMapOf<File, MutableSet<File>>()
@@ -346,6 +358,11 @@ abstract class AbstractIncrementalCache<ClassName>(
 
         for ((actual, expects) in actualToExpect) {
             complementaryFilesMap[actual] = expects.union(complementaryFilesMap[actual].orEmpty())
+        }
+
+        for (expect in expectActualTracker.expectsOfLenientStubsSet) {
+            // We only need the key
+            expectOfLenientStubs[expect] = emptySet()
         }
     }
 }
