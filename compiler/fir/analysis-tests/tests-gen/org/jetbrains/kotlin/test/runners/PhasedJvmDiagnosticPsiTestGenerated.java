@@ -13049,6 +13049,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("illegalSelectorWithLambdaInReceiverAndSelector.kt")
+      public void testIllegalSelectorWithLambdaInReceiverAndSelector() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/illegalSelectorWithLambdaInReceiverAndSelector.kt");
+      }
+
+      @Test
       @TestMetadata("incorrectCallOnILT.kt")
       public void testIncorrectCallOnILT() {
         runTest("compiler/testData/diagnostics/tests/exceptions/incorrectCallOnILT.kt");

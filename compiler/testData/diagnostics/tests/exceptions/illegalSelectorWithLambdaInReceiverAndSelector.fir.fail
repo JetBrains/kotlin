@@ -1,0 +1,7 @@
+Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected expression 'FirPropertyAccessExpressionImpl' to be resolved
+	at org.jetbrains.kotlin.fir.types.FirTypeUtilsKt.getResolvedType(FirTypeUtils.kt:214)
+	at org.jetbrains.kotlin.fir.analysis.checkers.FirHelpersKt.checkCondition(FirHelpers.kt:624)
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirWhenConditionChecker.check(FirWhenConditionChecker.kt:28)
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirWhenConditionChecker.check(FirWhenConditionChecker.kt:23)
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent.visitWhenExpression(ExpressionCheckersDiagnosticComponent.kt:442)
+	... 87 more

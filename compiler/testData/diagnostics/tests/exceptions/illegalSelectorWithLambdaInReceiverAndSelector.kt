@@ -1,0 +1,8 @@
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-72335
+// FIR_DUMP
+
+fun bar(b: Boolean, i: Int, block: (Int.() -> Unit)) {
+    block({ if (b) "s3" else "s4" }.<!ILLEGAL_SELECTOR!>{ i }<!>)
+}
