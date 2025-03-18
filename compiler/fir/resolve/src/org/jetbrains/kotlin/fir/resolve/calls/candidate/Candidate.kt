@@ -237,10 +237,6 @@ class Candidate(
         }
     }
 
-    fun getUpdatedArgumentFromContextSensitiveResolution(arg: FirElement): FirExpression? {
-        return _updatedArgumentsFromContextSensitiveResolution?.get(arg)
-    }
-
     val contextSensitiveResolutionReplacements: Map<FirElement, FirExpression>?
         get() = _updatedArgumentsFromContextSensitiveResolution
     // ---------------------------------------- PCLA-related parts ----------------------------------------
