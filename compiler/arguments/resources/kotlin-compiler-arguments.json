@@ -1,14 +1,54 @@
 {
     "schemaVersion": 1,
     "releases": [
-        "1.0.0",
-        "1.4.0",
-        "1.9.20",
-        "2.0.0",
-        "2.0.20",
-        "2.1.0",
-        "2.1.20",
-        "2.2.0"
+        {
+            "name": "1.0.0",
+            "major": 1,
+            "minor": 0,
+            "patch": 0
+        },
+        {
+            "name": "1.4.0",
+            "major": 1,
+            "minor": 4,
+            "patch": 0
+        },
+        {
+            "name": "1.9.20",
+            "major": 1,
+            "minor": 9,
+            "patch": 20
+        },
+        {
+            "name": "2.0.0",
+            "major": 2,
+            "minor": 0,
+            "patch": 0
+        },
+        {
+            "name": "2.0.20",
+            "major": 2,
+            "minor": 0,
+            "patch": 20
+        },
+        {
+            "name": "2.1.0",
+            "major": 2,
+            "minor": 1,
+            "patch": 0
+        },
+        {
+            "name": "2.1.20",
+            "major": 2,
+            "minor": 1,
+            "patch": 20
+        },
+        {
+            "name": "2.2.0",
+            "major": 2,
+            "minor": 2,
+            "patch": 0
+        }
     ],
     "types": {},
     "topLevel": {
