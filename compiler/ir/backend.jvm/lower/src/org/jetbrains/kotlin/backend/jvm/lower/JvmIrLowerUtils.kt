@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -48,15 +49,13 @@ internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty():
     fun IrExpression.isInlineable(): Boolean =
         when (this) {
             is IrConst, is IrGetSingletonValue -> true
-            is IrCall ->
-                dispatchReceiver?.isInlineable() != false
-                        && extensionReceiver?.isInlineable() != false
-                        && valueArgumentsCount == 0
-                        && symbol.owner.run {
-                    modality == Modality.FINAL
-                            && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                            && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
-                }
+            is IrCall -> symbol.owner.run {
+                parameters.none { it.kind == IrParameterKind.Regular }
+                        && arguments.all { it == null || it.isInlineable() }
+                        && modality == Modality.FINAL
+                        && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                        && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
+            }
             is IrGetValue ->
                 symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
             else -> false
