@@ -22673,6 +22673,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("annotationArguments.kt")
+      public void testAnnotationArguments() {
+        runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/annotationArguments.kt");
+      }
+
+      @Test
       @TestMetadata("argumentPosition.kt")
       public void testArgumentPosition() {
         runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/argumentPosition.kt");
