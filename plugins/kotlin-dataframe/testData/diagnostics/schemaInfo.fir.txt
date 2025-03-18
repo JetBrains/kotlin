@@ -76,9 +76,6 @@ FILE: schemaInfo.kt
             }
 
             local abstract class Participants_561 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -88,17 +85,14 @@ FILE: schemaInfo.kt
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
                 public constructor(): R|<local>/Participants_561|
 
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_561>|.city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_561>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_561>|.firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -117,16 +111,22 @@ FILE: schemaInfo.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_561>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_561>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_561>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
                 public constructor(): R|<local>/Scope1|
 
             }
 
             local abstract class Group_43 : R|<local>/Group_43I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
                     public get(): R|<local>/Scope1|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/Group_43|
 
@@ -167,9 +167,6 @@ FILE: schemaInfo.kt
             }
 
             local abstract class Participants_181 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -179,17 +176,14 @@ FILE: schemaInfo.kt
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
                 public constructor(): R|<local>/Participants_181|
 
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_181>|.city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_181>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_181>|.firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -208,16 +202,22 @@ FILE: schemaInfo.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_181>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_181>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_181>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
                 public constructor(): R|<local>/Scope1|
 
             }
 
             local abstract class Group_92 : R|<local>/Group_92I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
                     public get(): R|<local>/Scope1|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/Group_92|
 
@@ -261,9 +261,6 @@ FILE: schemaInfo.kt
             }
 
             local abstract class Participants_181 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -273,17 +270,14 @@ FILE: schemaInfo.kt
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
                 public constructor(): R|<local>/Participants_181|
 
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_181>|.city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_181>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_181>|.firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -302,16 +296,22 @@ FILE: schemaInfo.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_181>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Participants_181>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Participants_181>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
                 public constructor(): R|<local>/Scope1|
 
             }
 
             local abstract class Group_92 : R|<local>/Group_92I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
                     public get(): R|<local>/Scope1|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/Group_92|
 
@@ -352,9 +352,6 @@ FILE: schemaInfo.kt
             }
 
             local abstract class GroupParticipants_461 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -364,17 +361,14 @@ FILE: schemaInfo.kt
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
                 public constructor(): R|<local>/GroupParticipants_461|
 
             }
 
             local final class Scope2 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/GroupParticipants_461>|.city: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/GroupParticipants_461>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/GroupParticipants_461>|.firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -392,6 +386,12 @@ FILE: schemaInfo.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/GroupParticipants_461>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/GroupParticipants_461>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/GroupParticipants_461>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
                 public constructor(): R|<local>/Scope2|
 
@@ -444,10 +444,10 @@ FILE: schemaInfo.kt
         local final fun test(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_34>| {
             ^test R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a), String(b))).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_34>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_34>| <inline=Inline, kind=EXACTLY_ONCE>  {
                 local abstract class Invoke_34I : R|kotlin/Any| {
-                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
                         public get(): R|kotlin/Int|
 
-                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
                         public get(): R|kotlin/Int|
 
                     public constructor(): R|<local>/Invoke_34I|
@@ -455,16 +455,16 @@ FILE: schemaInfo.kt
                 }
 
                 local final class Scope0 : R|kotlin/Any| {
-                    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_34I>|.b: R|kotlin/Int|
-                        public get(): R|kotlin/Int|
-
-                    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_34I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
                     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_34I>|.a: R|kotlin/Int|
                         public get(): R|kotlin/Int|
 
                     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_34I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_34I>|.b: R|kotlin/Int|
+                        public get(): R|kotlin/Int|
+
+                    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_34I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                     public constructor(): R|<local>/Scope0|

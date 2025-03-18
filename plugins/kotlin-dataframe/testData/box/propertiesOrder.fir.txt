@@ -5,10 +5,10 @@ FILE: propertiesOrder.kt
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val full_name: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val a: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Invoke_64I|
@@ -22,16 +22,16 @@ FILE: propertiesOrder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_64I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_64I>|.b: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_64I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_64I>|.a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_64I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_64I>|.b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_64I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope0|
