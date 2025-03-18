@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.dsl.base
 
+import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.arguments.serialization.json.KotlinReleaseVersionAsNameSerializer
+
+@Serializable(with = KotlinReleaseVersionAsNameSerializer::class)
 enum class KotlinReleaseVersion(
     val releaseName: String,
     val major: Int,
