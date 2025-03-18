@@ -141,20 +141,6 @@ private class CallInlining(
 ) {
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
-    val inlineFunctionBodyPreprocessor = run {
-        val typeParameters =
-            when (callee) {
-                is IrConstructor -> callee.parentAsClass.typeParameters
-                is IrSimpleFunction -> callee.typeParameters
-            }
-        val typeArguments =
-            callSite.typeArguments.indices.associate {
-                typeParameters[it].symbol to callSite.typeArguments[it]
-            }
-        InlineFunctionBodyPreprocessor(typeArguments, parent, inlineFunctionResolver.callInlinerStrategy)
-    }
-
-
     fun inline() = inlineFunction(callSite, callee, callee.originalFunction)
 
     private fun inlineFunction(
@@ -162,6 +148,20 @@ private class CallInlining(
         callee: IrFunction,
         originalInlinedElement: IrElement,
     ): IrBlock {
+        val inlineFunctionBodyPreprocessor = run {
+            // TODO KT-76105 Please make some decent housekeeping around here
+            val typeParameters =
+                when (callee) {
+                    is IrConstructor -> callee.parentAsClass.typeParameters
+                    is IrSimpleFunction -> callee.typeParameters
+                }
+            val typeArguments =
+                callSite.typeArguments.indices.associate {
+                    typeParameters[it].symbol to callSite.typeArguments[it]
+                }
+            InlineFunctionBodyPreprocessor(typeArguments, parent, inlineFunctionResolver.callInlinerStrategy)
+        }
+
         val copiedCallee = inlineFunctionBodyPreprocessor.preprocess(callee).apply {
             parent = callee.parent
         }
