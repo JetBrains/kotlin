@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: JVM_IR
+// JVM_ABI_K1_K2_DIFF: KT-75944
 annotation class Ann
 
 @Ann open class My
