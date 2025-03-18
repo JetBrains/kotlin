@@ -17197,6 +17197,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt")
+      public void testComplexGenericTypeMismatchInGenericLambdaReturnPosition() {
+        runTest("compiler/testData/diagnostics/tests/inference/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt");
+      }
+
+      @Test
       @TestMetadata("complexInferenceOnParentizedExpression.kt")
       public void testComplexInferenceOnParentizedExpression() {
         runTest("compiler/testData/diagnostics/tests/inference/complexInferenceOnParentizedExpression.kt");
