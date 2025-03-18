@@ -49,7 +49,7 @@ object JavaClassProperty : IntrinsicMethod() {
         }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        invokeWith(expression.extensionReceiver!!.accept(codegen, data), wrapPrimitives = false)
+        invokeWith(expression.arguments[0]!!.accept(codegen, data), wrapPrimitives = false)
         return with(codegen) { expression.onStack }
     }
 }
