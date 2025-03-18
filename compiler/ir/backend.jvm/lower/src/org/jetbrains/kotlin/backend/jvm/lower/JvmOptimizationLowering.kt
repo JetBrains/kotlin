@@ -37,38 +37,23 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
     private companion object {
         private fun isNegation(expression: IrExpression): Boolean =
             expression is IrCall && expression.symbol.owner.let { not ->
-                not.name == OperatorNameConventions.NOT &&
-                        not.extensionReceiverParameter == null &&
-                        not.valueParameters.isEmpty() &&
-                        not.dispatchReceiverParameter.let { receiver ->
-                            receiver != null && receiver.type.isBoolean()
-                        }
+                not.name == OperatorNameConventions.NOT && not.hasShape(dispatchReceiver = true) &&
+                        not.parameters[0].type.isBoolean()
             }
     }
 
     private val IrFunction.isObjectEquals
-        get() = name.asString() == "equals" &&
-                valueParameters.count() == 1 &&
-                valueParameters[0].type.isNullableAny() &&
-                extensionReceiverParameter == null &&
-                dispatchReceiverParameter != null
+        get() = name.asString() == "equals" && hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                parameters[1].type.isNullableAny()
 
 
     private fun getOperandsIfCallToEQEQOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? =
-        when {
-            call.symbol == context.irBuiltIns.eqeqSymbol -> {
-                val left = call.getValueArgument(0)!!
-                val right = call.getValueArgument(1)!!
-                left to right
-            }
-
-            call.symbol.owner.isObjectEquals -> {
-                val left = call.dispatchReceiver!!
-                val right = call.getValueArgument(0)!!
-                left to right
-            }
-
-            else -> null
+        if (call.symbol == context.irBuiltIns.eqeqSymbol || call.symbol.owner.isObjectEquals) {
+            val left = call.arguments[0]!!
+            val right = call.arguments[1]!!
+            left to right
+        } else {
+            null
         }
 
     override fun lower(irFile: IrFile) {
@@ -123,11 +108,11 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                     // If the field is static, evaluate the receiver for potential side effects.
                     +receiver.coerceToUnit(context.irBuiltIns)
                 }
-                if (accessor.valueParameters.isNotEmpty()) {
+                if (accessor.parameters.any { it.kind == IrParameterKind.Regular }) {
                     +irSetField(
                         receiver.takeUnless { backingField.isStatic },
                         backingField,
-                        expression.getValueArgument(expression.valueArgumentsCount - 1)!!
+                        expression.arguments.last()!!
                     )
                 } else {
                     +irGetField(receiver.takeUnless { backingField.isStatic }, backingField, expression.type)
@@ -162,8 +147,8 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                     context.irBuiltIns.booleanType,
                     context.irBuiltIns.andandSymbol
                 ).apply {
-                    putValueArgument(0, expression.branches[0].condition)
-                    putValueArgument(1, expression.branches[0].result)
+                    arguments[0] = expression.branches[0].condition
+                    arguments[1] = expression.branches[0].result
                 }
             }
             if (expression.origin == IrStatementOrigin.OROR) {
@@ -183,8 +168,8 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                     context.irBuiltIns.booleanType,
                     context.irBuiltIns.ororSymbol
                 ).apply {
-                    putValueArgument(0, expression.branches[0].condition)
-                    putValueArgument(1, expression.branches[1].result)
+                    arguments[0] = expression.branches[0].condition
+                    arguments[1] = expression.branches[1].result
                 }
             }
 
@@ -402,8 +387,8 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                 IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, -1)
 
             return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, context.symbols.intPostfixIncrDecr).apply {
-                putValueArgument(0, getIncrVar)
-                putValueArgument(1, delta)
+                arguments[0] = getIncrVar
+                arguments[1] = delta
             }
         }
 
@@ -444,7 +429,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                     return prefixIncr(expression, if (expression.origin == IrStatementOrigin.PREFIX_INCR) 1 else -1)
                 }
                 IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ -> {
-                    val argument = (expression.value as IrCall).getValueArgument(0)!!
+                    val argument = (expression.value as IrCall).arguments[1]!!
                     if (!hasSameLineNumber(argument, expression)) {
                         return null
                     }
@@ -456,14 +441,13 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                         return null
                     }
                     if (value is IrCall) {
-                        val receiver = value.dispatchReceiver
-                            ?: return null
+                        val receiver = value.arguments.getOrNull(0) ?: return null
                         val symbol = expression.symbol
                         if (!hasSameLineNumber(receiver, expression)) {
                             return null
                         }
                         if (value.origin == IrStatementOrigin.PLUS || value.origin == IrStatementOrigin.MINUS) {
-                            val argument = value.getValueArgument(0)!!
+                            val argument = value.arguments[1]!!
                             if (receiver is IrGetValue && receiver.symbol == symbol && hasSameLineNumber(argument, expression)) {
                                 return rewriteCompoundAssignmentAsPrefixIncrDecr(
                                     expression, argument, value.origin == IrStatementOrigin.MINUS
@@ -496,8 +480,8 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             val startOffset = expression.startOffset
             val endOffset = expression.endOffset
             return IrCallImpl.fromSymbolOwner(startOffset, endOffset, context.symbols.intPrefixIncrDecr).apply {
-                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, expression.symbol))
-                putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, delta))
+                arguments[0] = IrGetValueImpl(startOffset, endOffset, expression.symbol)
+                arguments[1] = IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, delta)
             }
         }
 
