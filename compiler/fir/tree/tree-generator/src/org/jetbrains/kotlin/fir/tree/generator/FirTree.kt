@@ -295,8 +295,8 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
         parent(diagnosticHolder)
 
-        +field("selector", errorExpression)
-        +field("receiver", expression)
+        +field("selector", errorExpression, withTransform = true)
+        +field("receiver", expression, withReplace = true)
     }
 
     val literalExpression: Element by element(Expression) {

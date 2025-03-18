@@ -1,8 +1,8 @@
-FILE: illegalSelectorWithLambdaInReceiverAndSelector.kt
+FILE: illegalSelectorWithLambdaInReceiverAndSelector.fir.kt
     public final fun bar(b: R|kotlin/Boolean|, i: R|kotlin/Int|, block: R|kotlin/Int.() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|(ERROR_EXPR(The expression cannot be a selector (occur after a dot))block@fun <ERROR TYPE REF: Cannot infer type w/o CFG>.<anonymous>(): <ERROR TYPE REF: Cannot infer type w/o CFG> <inline=Unknown>  {
-            when () {
-                b# ->  {
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|(ERROR_EXPR(The expression cannot be a selector (occur after a dot))block@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            ^ when () {
+                R|<local>/b| ->  {
                     String(s3)
                 }
                 else ->  {

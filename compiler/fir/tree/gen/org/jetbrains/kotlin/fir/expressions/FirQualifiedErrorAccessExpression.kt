@@ -39,5 +39,9 @@ abstract class FirQualifiedErrorAccessExpression : FirExpression(), FirDiagnosti
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceReceiver(newReceiver: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedErrorAccessExpression
+
+    abstract fun <D> transformSelector(transformer: FirTransformer<D>, data: D): FirQualifiedErrorAccessExpression
 }

@@ -232,6 +232,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return result
     }
 
+    override fun transformQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression, data: ResolutionMode): FirStatement {
+        qualifiedErrorAccessExpression.transformAnnotations(this, data)
+        qualifiedErrorAccessExpression.transformSelector(this, data)
+        qualifiedErrorAccessExpression.replaceReceiver(
+            qualifiedErrorAccessExpression.receiver.transformAsExplicitReceiver(
+                ResolutionMode.ReceiverResolution,
+                isUsedAsGetClassReceiver = false
+            )
+        )
+        return qualifiedErrorAccessExpression
+    }
+
     fun <Q : FirQualifiedAccessExpression> transformExplicitReceiverOf(qualifiedAccessExpression: Q): Q {
         val explicitReceiver = qualifiedAccessExpression.explicitReceiver
         if (explicitReceiver is FirSuperReceiverExpression) {
