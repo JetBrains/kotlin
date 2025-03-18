@@ -47,7 +47,7 @@ FILE: second.kt
             ==($subj$, R|second/ONE|) ->  {
                 Int(1)
             }
-            ==($subj$, R|first/First.TWO|) ->  {
+            ==($subj$, Q|first/First|.R|first/First.TWO|) ->  {
                 Int(2)
             }
         }
@@ -58,7 +58,7 @@ FILE: second.kt
             ==($subj$, R|first/THREE|) ->  {
                 Int(3)
             }
-            ==($subj$, R|second/Second.FOUR|) ->  {
+            ==($subj$, Q|second/Second|.R|second/Second.FOUR|) ->  {
                 Int(4)
             }
         }

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 enum class Outer {
     FIRST, SECOND;
 }

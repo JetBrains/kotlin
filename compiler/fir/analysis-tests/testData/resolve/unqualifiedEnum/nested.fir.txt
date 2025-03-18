@@ -35,15 +35,15 @@ FILE: nested.kt
     }
     public final fun foo(o: R|Outer|, i: R|Inner|): R|kotlin/Int| {
         ^foo when (lval <when-subject>: R|Outer| = R|<local>/o|) {
-            ==($subj$, R|/Outer.FIRST|) ->  {
+            ==($subj$, Q|Outer|.R|/Outer.FIRST|) ->  {
                 Int(1)
             }
-            ==($subj$, R|/Outer.SECOND|) ->  {
+            ==($subj$, Q|Outer|.R|/Outer.SECOND|) ->  {
                 when (lval <when-subject>: R|Inner| = R|<local>/i|) {
-                    ==($subj$, R|/Inner.SECOND|) ->  {
+                    ==($subj$, Q|Inner|.R|/Inner.SECOND|) ->  {
                         Int(2)
                     }
-                    ==($subj$, R|/Inner.THIRD|) ->  {
+                    ==($subj$, Q|Inner|.R|/Inner.THIRD|) ->  {
                         Int(3)
                     }
                 }
@@ -54,16 +54,16 @@ FILE: nested.kt
     }
     public final fun bar(o: R|Outer|, i: R|Inner|): R|kotlin/Int| {
         ^bar when (lval <when-subject>: R|Outer| = R|<local>/o|) {
-            ==($subj$, R|/Outer.FIRST|) ->  {
+            ==($subj$, Q|Outer|.R|/Outer.FIRST|) ->  {
                 Int(1)
             }
-            ==($subj$, R|/Outer.SECOND|) ->  {
+            ==($subj$, Q|Outer|.R|/Outer.SECOND|) ->  {
                 local final fun baz(): R|kotlin/Int| {
                     ^baz when (lval <when-subject>: R|Inner| = R|<local>/i|) {
-                        ==($subj$, R|/Inner.SECOND|) ->  {
+                        ==($subj$, Q|Inner|.R|/Inner.SECOND|) ->  {
                             Int(2)
                         }
-                        ==($subj$, R|/Inner.THIRD|) ->  {
+                        ==($subj$, Q|Inner|.R|/Inner.THIRD|) ->  {
                             Int(3)
                         }
                     }

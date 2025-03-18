@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // FILE: first.kt
 
 package first
@@ -32,4 +32,3 @@ fun bar(s: Second) = <!NO_ELSE_IN_WHEN!>when<!> (s) {
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>THREE<!> -> 3
     FOUR -> 4
 }
-

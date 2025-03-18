@@ -18,10 +18,10 @@ FILE: notInsideBranches.kt
     }
     public final fun foo(s: R|Some|): <ERROR TYPE REF: Cannot infer argument for type parameter K> {
         ^foo when (lval <when-subject>: R|Some| = R|<local>/s|) {
-            ==($subj$, R|/Some.FIRST|) ->  {
+            ==($subj$, Q|Some|.R|/Some.FIRST|) ->  {
                 <Unresolved name: SECOND>#
             }
-            ==($subj$, R|/Some.SECOND|) ->  {
+            ==($subj$, Q|Some|.R|/Some.SECOND|) ->  {
                 <Unresolved name: FIRST>#
             }
         }

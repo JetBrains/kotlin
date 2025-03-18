@@ -4,7 +4,7 @@ FILE: test.kt
             ==($subj$, <Unresolved name: first>#()) ->  {
                 Int(1)
             }
-            ==($subj$, <Unresolved name: second>#) ->  {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.second*s|) ->  {
                 Int(2)
             }
         }

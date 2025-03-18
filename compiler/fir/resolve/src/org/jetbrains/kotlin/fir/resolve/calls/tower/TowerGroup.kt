@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import java.lang.Long.toBinaryString
 import java.lang.Long.compareUnsigned
+import java.lang.Long.toBinaryString
 
 sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
     abstract class WithDepth(index: Byte, val depth: Int) : TowerGroupKind(index) {
@@ -48,8 +48,6 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
     class ContextReceiverGroup(depth: Int) : WithDepth(8, depth)
 
     data object QualifierValue : TowerGroupKind(9)
-
-    class UnqualifiedEnum(depth: Int) : WithDepth(9, depth)
 
     data object Last : TowerGroupKind(0b1111)
 
@@ -179,8 +177,6 @@ private constructor(
         val QualifierValue: TowerGroup = kindOf(TowerGroupKind.QualifierValue)
 
         val Member: TowerGroup = kindOf(TowerGroupKind.Member)
-
-        fun UnqualifiedEnum(depth: Int): TowerGroup = kindOf(TowerGroupKind.UnqualifiedEnum(depth))
 
         fun Local(depth: Int): TowerGroup = kindOf(TowerGroupKind.Local(depth))
 

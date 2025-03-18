@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // FILE: JavaEnum.java
 
 public enum JavaEnum {
@@ -17,5 +17,5 @@ public enum JavaEnum {
 
 fun foo(javaEnum: JavaEnum) = <!NO_ELSE_IN_WHEN!>when<!> (javaEnum) {
     <!UNRESOLVED_REFERENCE!>first<!>() -> 1
-    <!UNRESOLVED_REFERENCE!>second<!> -> 2
+    second -> 2
 }
