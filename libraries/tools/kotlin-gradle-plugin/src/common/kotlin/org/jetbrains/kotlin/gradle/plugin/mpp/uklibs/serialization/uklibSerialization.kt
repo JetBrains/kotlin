@@ -43,9 +43,9 @@ internal fun Uklib.serializeToZipArchive(
     )
     zipUklibContents(
         manifest = manifest,
-        fragmentToArtifact = module.fragments.map {
-            it.identifier to it.file()
-        }.toMap(),
+        fragmentToArtifact = module.fragments.associate {
+            it.identifier to it.file
+        },
         outputZip = outputZip,
         temporariesDirectory = temporariesDirectory,
     )
