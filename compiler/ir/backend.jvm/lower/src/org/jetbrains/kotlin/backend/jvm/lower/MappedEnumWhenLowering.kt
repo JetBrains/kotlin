@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 @PhaseDescription(name = "EnumWhenLowering")
 internal class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
-    private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
+    private val intArrayConstructor = intArray.constructors.single { it.owner.hasShape(regularParameters = 1) }
     private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
     private val intArraySet = intArray.functions.single { it.owner.name == OperatorNameConventions.SET }
     private val refArraySize = context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!
@@ -114,8 +114,8 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
             mapping.isPublicAbi = mapping.isPublicAbi ||
                     (builder.scope.scopeOwnerSymbol.owner as? IrDeclaration)?.isInPublicInlineScope == true
 
-            dispatchReceiver = builder.irGetField(null, mapping.field)
-            putValueArgument(0, super.mapRuntimeEnumEntry(builder, subject))
+            arguments[0] = builder.irGetField(null, mapping.field)
+            arguments[1] = super.mapRuntimeEnumEntry(builder, subject)
         }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
@@ -129,13 +129,13 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
             val builder = context.createIrBuilder(mapping.field.symbol)
             mapping.field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
-                val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })
+                val result = irTemporary(irCall(intArrayConstructor).apply { arguments[0] = enumSize })
                 for ((entry, index) in mapping.ordinals) {
                     val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry.symbol)
                     val writeToMapping = irCall(intArraySet).apply {
-                        dispatchReceiver = irGet(result)
-                        putValueArgument(0, super.mapRuntimeEnumEntry(builder, runtimeEntry)) // <entry>.ordinal()
-                        putValueArgument(1, irInt(index))
+                        arguments[0] = irGet(result)
+                        arguments[1] = super.mapRuntimeEnumEntry(builder, runtimeEntry) // <entry>.ordinal()
+                        arguments[2] = irInt(index)
                     }
                     val noSuchFieldVariable = scope.createTemporaryVariableDeclaration(
                         this@MappedEnumWhenLowering.context.symbols.noSuchFieldErrorType,
