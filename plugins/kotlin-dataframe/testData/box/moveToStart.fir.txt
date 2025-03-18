@@ -32,28 +32,28 @@ FILE: moveToStart.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_56>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_68>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_56>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_68>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Invoke_68I : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val l: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val s: R|kotlin/String|
                     public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val l: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Invoke_68I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_68I>|.l: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_68I>|.l: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_68I>|.s: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_68I>|.s: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_68I>|.l: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_68I>|.l: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope0|
 
@@ -147,28 +147,28 @@ FILE: moveToStart.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_56>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_68>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_56>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_68>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Invoke_68I : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val l: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val s: R|kotlin/String|
                     public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val l: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Invoke_68I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_68I>|.l: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_68I>|.l: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_68I>|.s: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_68I>|.s: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_68I>|.l: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_68I>|.l: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope0|
 
