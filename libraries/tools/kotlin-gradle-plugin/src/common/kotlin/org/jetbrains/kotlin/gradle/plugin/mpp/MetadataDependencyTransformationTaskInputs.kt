@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.IOException
 import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.security.DigestOutputStream
 import java.security.MessageDigest
 import java.util.*
@@ -97,12 +98,23 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:Input
     @Suppress("unused") // Gradle input
     val inputSourceSetsAndCompilationsChecksum: String by lazy {
-        val inputSourceSetsAndCompilations: Map<String, Iterable<String>> =
-            participatingSourceSets.associate { sourceSet ->
-                sourceSet.name to sourceSet.internal.compilations.mapTo(sortedSetOf()) { it.name }
+        Hasher().use { hasher ->
+            participatingSourceSets.forEach { sourceSet ->
+                hasher.write(sourceSet.name)
+
+                hasher.write("[")
+                sourceSet.internal.compilations
+                    .mapTo(sortedSetOf()) { it.name }
+                    .forEach { name ->
+                        hasher.write(name)
+                        hasher.write(",")
+                    }
+
+                hasher.write("]")
             }
 
-        createChecksum(inputSourceSetsAndCompilations)
+            hasher.get()
+        }
     }
 
     @Suppress("unused") // Gradle input
@@ -113,29 +125,35 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:Input
     @Suppress("unused") // Gradle input
     val inputCompilationDependenciesChecksum: String by lazy {
-        val inputCompilationDependencies: Map<String, Set<String>> =
+        Hasher().use { hasher ->
             participatingSourceSets
                 .flatMap { it.internal.compilations }
-                .associate { compilation ->
-                    val dependencies = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+                .forEach { compilation ->
+                    hasher.write(compilation.name)
+                    hasher.write("[")
+                    project.configurations.getByName(compilation.compileDependencyConfigurationName)
                         .allDependencies
-                        .mapTo(mutableSetOf()) { dependency ->
+                        .forEach { dependency ->
                             if (dependency is ProjectDependency && keepProjectDependencies) {
                                 if (GradleVersion.current() < GradleVersion.version("8.11")) {
                                     @Suppress("DEPRECATION")
-                                    dependency.dependencyProject.path
+                                    hasher.write(dependency.dependencyProject.path)
                                 } else {
-                                    dependency.path
+                                    hasher.write(dependency.path)
                                 }
                             } else {
-                                dependency.run { "${name}:${group}:${version}" }
+                                hasher.write(dependency.name)
+                                hasher.write(":")
+                                hasher.write(dependency.group ?: "")
+                                hasher.write(":")
+                                hasher.write(dependency.version ?: "")
                             }
+                            hasher.write(",")
                         }
-
-                    compilation.name to dependencies
+                    hasher.write("]")
                 }
-
-        createChecksum(inputCompilationDependencies)
+            hasher.get()
+        }
     }
 
     private fun Configuration.withoutProjectDependencies(): FileCollection {
@@ -145,23 +163,22 @@ internal class MetadataDependencyTransformationTaskInputs(
     }
 }
 
-private fun createChecksum(data: Map<String, Iterable<String>>): String {
-    val messageDigester = MessageDigest.getInstance("MD5")
-    DigestOutputStream(nullOutputStream(), messageDigester).writer().use { digestStream ->
-        with(digestStream) {
-            data.forEach { (k, v) ->
-                write("k:")
-                write(k)
-                write("values[")
-                v.forEach {
-                    write(it)
-                    write(",")
-                }
-                write("];")
-            }
-        }
+
+private class Hasher : AutoCloseable {
+    private val messageDigester = MessageDigest.getInstance("MD5")
+    private val writer: OutputStreamWriter = DigestOutputStream(nullOutputStream(), messageDigester).writer()
+
+    fun write(value: String) {
+        writer.write(value)
     }
-    return Base64.getEncoder().encodeToString(messageDigester.digest())
+
+    fun get(): String {
+        return Base64.getEncoder().encodeToString(messageDigester.digest())
+    }
+
+    override fun close() {
+        writer.close()
+    }
 }
 
 /** Replace with [OutputStream.nullOutputStream] when the minimum JDK is 11+. */
