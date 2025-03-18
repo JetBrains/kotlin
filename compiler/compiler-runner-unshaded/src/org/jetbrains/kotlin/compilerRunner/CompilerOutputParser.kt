@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -88,14 +87,14 @@ object CompilerOutputParser {
         DefaultHandler() {
 
         private val message = StringBuilder()
-        private val tags = Stack<String>()
+        private val tags = ArrayList<String>()
         private var path: String? = null
         private var line: Int = 0
         private var column: Int = 0
 
         @Throws(SAXException::class)
         override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-            tags.push(qName)
+            tags.add(qName)
 
             message.setLength(0)
 
@@ -136,7 +135,7 @@ object CompilerOutputParser {
             } else {
                 messageCollector.report(category, text, CompilerMessageLocation.create(path, line, column, null))
             }
-            tags.pop()
+            tags.removeAt(tags.size - 1)
         }
 
         private fun reportToCollector(text: String) {
