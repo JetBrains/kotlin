@@ -23127,6 +23127,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("callableReferenceOnInlineParameter.kt")
+      public void testCallableReferenceOnInlineParameter() {
+        runTest("compiler/testData/diagnostics/tests/inline/callableReferenceOnInlineParameter.kt");
+      }
+
+      @Test
       @TestMetadata("capture.kt")
       public void testCapture() {
         runTest("compiler/testData/diagnostics/tests/inline/capture.kt");
