@@ -208,35 +208,5 @@ public extension ExportedKotlinPackages.kotlin {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.reflect {
-    public protocol KType: KotlinRuntime.KotlinBase {
-        var classifier: (any ExportedKotlinPackages.kotlin.reflect.KClassifier)? {
-            get
-        }
-        var arguments: [ExportedKotlinPackages.kotlin.reflect.KTypeProjection] {
-            get
-        }
-        var isMarkedNullable: Swift.Bool {
-            get
-        }
-    }
-}
 public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
-}
-public extension ExportedKotlinPackages.kotlin.reflect.KType where Self : KotlinRuntimeSupport._KotlinBridged {
-    public var classifier: (any ExportedKotlinPackages.kotlin.reflect.KClassifier)? {
-        get {
-            return { switch kotlin_reflect_KType_classifier_get(self.__externalRCRef()) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any ExportedKotlinPackages.kotlin.reflect.KClassifier; } }()
-        }
-    }
-    public var arguments: [ExportedKotlinPackages.kotlin.reflect.KTypeProjection] {
-        get {
-            return kotlin_reflect_KType_arguments_get(self.__externalRCRef()) as! Swift.Array<ExportedKotlinPackages.kotlin.reflect.KTypeProjection>
-        }
-    }
-    public var isMarkedNullable: Swift.Bool {
-        get {
-            return kotlin_reflect_KType_isMarkedNullable_get(self.__externalRCRef())
-        }
-    }
 }

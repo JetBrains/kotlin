@@ -47,7 +47,7 @@ public func serializer(
     ExportedKotlinPackages.kotlinx.serialization.serializer(kClass: kClass, typeArgumentsSerializers: typeArgumentsSerializers, isNullable: isNullable)
 }
 public func serializer(
-    type: any ExportedKotlinPackages.kotlin.reflect.KType
+    type: Swift.Never
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.serializer(type: type)
 }
@@ -66,12 +66,12 @@ public func serializer(
 }
 public func serializer(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-    type: any ExportedKotlinPackages.kotlin.reflect.KType
+    type: Swift.Never
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.serializer(receiver, type: type)
 }
 public func serializerOrNull(
-    type: any ExportedKotlinPackages.kotlin.reflect.KType
+    type: Swift.Never
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(type: type)
 }
@@ -82,7 +82,7 @@ public func serializerOrNull(
 }
 public func serializerOrNull(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-    type: any ExportedKotlinPackages.kotlin.reflect.KType
+    type: Swift.Never
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(receiver, type: type)
 }
@@ -219,7 +219,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         fatalError()
     }
     public static func serializer(
-        type: any ExportedKotlinPackages.kotlin.reflect.KType
+        type: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
@@ -238,12 +238,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
     }
     public static func serializer(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-        type: any ExportedKotlinPackages.kotlin.reflect.KType
+        type: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializerOrNull(
-        type: any ExportedKotlinPackages.kotlin.reflect.KType
+        type: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
@@ -254,7 +254,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
     }
     public static func serializerOrNull(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-        type: any ExportedKotlinPackages.kotlin.reflect.KType
+        type: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
@@ -906,9 +906,9 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         return KotlinRuntime.KotlinBase(__externalRCRef: kotlinx_serialization_descriptors_mapSerialDescriptor__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(keyDescriptor.__externalRCRef(), valueDescriptor.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     public static func serialDescriptor(
-        type: any ExportedKotlinPackages.kotlin.reflect.KType
+        type: Swift.Never
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
-        return KotlinRuntime.KotlinBase(__externalRCRef: kotlinx_serialization_descriptors_serialDescriptor__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_reflect_KType__(type.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+        fatalError()
     }
     public static func setSerialDescriptor(
         elementDescriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor

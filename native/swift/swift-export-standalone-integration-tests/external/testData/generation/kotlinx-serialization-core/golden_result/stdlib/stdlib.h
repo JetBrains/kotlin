@@ -52,9 +52,3 @@ NSString * kotlin_Throwable_message_get(uintptr_t self);
 void kotlin_Throwable_printStackTrace(uintptr_t self);
 
 NSString * kotlin_Throwable_toString(uintptr_t self);
-
-NSArray<id> * kotlin_reflect_KType_arguments_get(uintptr_t self);
-
-uintptr_t kotlin_reflect_KType_classifier_get(uintptr_t self);
-
-_Bool kotlin_reflect_KType_isMarkedNullable_get(uintptr_t self);
