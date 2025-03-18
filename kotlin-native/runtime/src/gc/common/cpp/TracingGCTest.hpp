@@ -141,6 +141,7 @@ private:
 class StackObjectArrayHolder : private Pinned {
 public:
     explicit StackObjectArrayHolder(mm::ThreadData& threadData) { mm::AllocateArray(&threadData, theArrayTypeInfo, 3, holder_.slot()); }
+    explicit StackObjectArrayHolder(test_support::ObjectArray<3>& array) : holder_(array.header()) {}
 
     ObjHeader* header() { return holder_.obj(); }
 
@@ -165,6 +166,12 @@ public:
 private:
     ObjHolder holder_;
 };
+
+test_support::ObjectArray<3>& AllocateObjectArray(mm::ThreadData& threadData) {
+    ObjHolder holder;
+    mm::AllocateArray(&threadData, theArrayTypeInfo, 3, holder.slot());
+    return test_support::ObjectArray<3>::FromArrayHeader(holder.obj()->array());
+}
 
 test_support::Object<Payload>& AllocateObject(mm::ThreadData& threadData) {
     ObjHolder holder;
@@ -591,23 +598,23 @@ TYPED_TEST_P(TracingGCTest, PermanentObjects) {
 
 TYPED_TEST_P(TracingGCTest, LocalObjectsClosure) {
     RunInNewThread([](mm::ThreadData& threadData) {
-        StackObjectHolder localRoot1{threadData};
+        StackObjectArrayHolder localRoot1{threadData};
         setObjectTag(localRoot1.header(), OBJECT_TAG_LOCAL);
         RuntimeAssert(localRoot1.header()->local(), "Must be local");
 
         test_support::Object<Payload> stackObject1(typeHolder.typeInfo());
-        StackObjectHolder stackRoot1(stackObject1.header());
+        StackObjectHolder stackRoot1(stackObject1);
         setObjectTag(stackRoot1.header(), OBJECT_TAG_STACK);
         RuntimeAssert(stackRoot1.header()->stack(), "Must be stack");
 
         test_support::Object<Payload> stackObject2(typeHolder.typeInfo());
-        StackObjectHolder stackRoot2(stackObject2.header());
+        StackObjectHolder stackRoot2(stackObject2);
         setObjectTag(stackRoot2.header(), OBJECT_TAG_STACK);
 
         auto& localObject1 = AllocateObject(threadData);
         setObjectTag(localObject1.header(), OBJECT_TAG_LOCAL);
 
-        auto& localObject2 = AllocateObject(threadData);
+        auto& localObject2 = AllocateObjectArray(threadData);
         setObjectTag(localObject2.header(), OBJECT_TAG_LOCAL);
 
         auto& heapObject1 = AllocateObject(threadData);
@@ -616,15 +623,15 @@ TYPED_TEST_P(TracingGCTest, LocalObjectsClosure) {
         auto& heapObject4 = AllocateObject(threadData);
         auto& heapObject5 = AllocateObject(threadData);
 
-        localRoot1->field1 = stackRoot1.header();
-        localRoot1->field2 = localObject1.header();
-        localRoot1->field3 = heapObject1.header();
+        localRoot1[0] = stackRoot1.header();
+        localRoot1[1] = localObject1.header();
+        localRoot1[2] = heapObject1.header();
 
-        localObject1->field1 = localObject2.header();
-        localObject1->field2 = heapObject2.header();
+        localObject1->field2 = localObject2.header();
+        localObject1->field3 = heapObject2.header();
 
-        localObject2->field1 = stackRoot2.header();
-        localObject2->field3 = heapObject3.header();
+        localObject2.elements()[0] = stackRoot2.header();
+        localObject2.elements()[2] = heapObject3.header();
 
         stackRoot2->field3 = heapObject4.header();
 
@@ -656,22 +663,22 @@ TYPED_TEST_P(TracingGCTest, LocalObjectsClosure) {
 
 TYPED_TEST_P(TracingGCTest, StackRootReferToLocal) {
     RunInNewThread([](mm::ThreadData& threadData) {
-        test_support::Object<Payload> stackObject1(typeHolder.typeInfo());
-        StackObjectHolder stackRoot1(stackObject1.header());
+        test_support::ObjectArray<3> stackObject1;
+        StackObjectArrayHolder stackRoot1(stackObject1);
         setObjectTag(stackRoot1.header(), OBJECT_TAG_STACK);
 
         StackObjectHolder localRoot1{threadData};
         setObjectTag(localRoot1.header(), OBJECT_TAG_LOCAL);
 
         test_support::Object<Payload> stackObject2(typeHolder.typeInfo());
-        StackObjectHolder stackRoot2(stackObject2.header());
+        StackObjectHolder stackRoot2(stackObject2);
         setObjectTag(stackRoot2.header(), OBJECT_TAG_STACK);
         // Either stackRoot1 or stackRoot2 will be found before localRoot1.
 
         auto& localObject1 = AllocateObject(threadData);
         setObjectTag(localObject1.header(), OBJECT_TAG_LOCAL);
 
-        auto& localObject2 = AllocateObject(threadData);
+        auto& localObject2 = AllocateObjectArray(threadData);
         setObjectTag(localObject2.header(), OBJECT_TAG_LOCAL);
 
         auto& localObject3 = AllocateObject(threadData);
@@ -680,15 +687,15 @@ TYPED_TEST_P(TracingGCTest, StackRootReferToLocal) {
         auto& heapObject1 = AllocateObject(threadData);
         auto& heapObject2 = AllocateObject(threadData);
 
-        stackRoot1->field1 = localRoot1.header();
+        stackRoot1[1] = localRoot1.header();
 
-        stackRoot2->field1 = localRoot1.header();
-        stackRoot2->field2 = localObject2.header();
+        stackRoot2->field2 = localRoot1.header();
+        stackRoot2->field3 = localObject2.header();
 
-        localRoot1->field1 = localObject1.header();
-        localObject1->field1 = heapObject1.header();
+        localRoot1->field2 = localObject1.header();
+        localObject1->field3 = heapObject1.header();
 
-        localObject2->field1 = localObject3.header();
+        localObject2.elements()[1] = localObject3.header();
         localObject3->field1 = heapObject2.header();
 
 
@@ -718,7 +725,7 @@ TYPED_TEST_P(TracingGCTest, StackRootReferToLocal) {
 TYPED_TEST_P(TracingGCTest, LocalObjectsLoop) {
     RunInNewThread([](mm::ThreadData& threadData) {
         test_support::Object<Payload> stackObject1(typeHolder.typeInfo());
-        StackObjectHolder stackRoot1(stackObject1.header());
+        StackObjectHolder stackRoot1(stackObject1);
         setObjectTag(stackRoot1.header(), OBJECT_TAG_STACK);
 
         StackObjectHolder localRoot1{threadData};
@@ -730,13 +737,13 @@ TYPED_TEST_P(TracingGCTest, LocalObjectsLoop) {
         auto& localObject2 = AllocateObject(threadData);
         setObjectTag(localObject2.header(), OBJECT_TAG_LOCAL);
 
-        auto& localObject3 = AllocateObject(threadData);
+        auto& localObject3 = AllocateObjectArray(threadData);
         setObjectTag(localObject3.header(), OBJECT_TAG_LOCAL);
 
         auto& localObject4 = AllocateObject(threadData);
         setObjectTag(localObject4.header(), OBJECT_TAG_LOCAL);
 
-        auto& localObject5 = AllocateObject(threadData);
+        auto& localObject5 = AllocateObjectArray(threadData);
         setObjectTag(localObject5.header(), OBJECT_TAG_LOCAL);
 
         auto& localObject6 = AllocateObject(threadData);
@@ -746,13 +753,13 @@ TYPED_TEST_P(TracingGCTest, LocalObjectsLoop) {
         localObject1->field1 = localObject2.header();
         localObject2->field1 = localObject3.header();
 
-        localObject3->field1 = localObject2.header();
-        localObject3->field2 = localObject1.header();
-        localObject3->field3 = stackRoot1.header();
+        localObject3.elements()[0] = localObject2.header();
+        localObject3.elements()[1] = localObject1.header();
+        localObject3.elements()[2] = stackRoot1.header();
 
         localRoot1->field1 = localObject4.header();
-        localObject4->field1 = localObject5.header();
-        localObject5->field1 = localObject6.header();
+        localObject4->field3 = localObject5.header();
+        localObject5.elements()[0] = localObject6.header();
 
         localObject6->field1 = localObject4.header();
         localObject6->field2 = localObject5.header();
