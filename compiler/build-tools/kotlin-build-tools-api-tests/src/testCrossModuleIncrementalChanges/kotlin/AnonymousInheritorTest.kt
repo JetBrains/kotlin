@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfi
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithInlineSnapshotting
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -26,10 +27,9 @@ class AnonymousInheritorTest : BaseCompilationTest() {
     fun testAnonymousObjectBaseTypeChangeWithOverloads(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
-            val app = module(
+            val app = moduleWithInlineSnapshotting(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             lib.changeFile("callable.kt") { it.replace("inline fun", "fun") }
