@@ -1,4 +1,4 @@
-// FILE: JavaClass.java
+// FILE: one/two/JavaClass.java
 package one.two;
 
 public class JavaClass {

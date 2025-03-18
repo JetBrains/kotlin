@@ -1,4 +1,4 @@
-// FILE: BaseClass.java
+// FILE: one/two/BaseClass.java
 package one.two;
 
 public class BaseClass {
@@ -11,7 +11,7 @@ public class BaseClass {
     public static int baseBar = 1;
 }
 
-// FILE: JavaClass.java
+// FILE: one/two/JavaClass.java
 package one.two;
 
 public class JavaClass extends BaseClass {
