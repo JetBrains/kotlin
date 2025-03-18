@@ -40,23 +40,18 @@ abstract class IntrinsicFunction(
     }
 
     private fun loadArguments(codegen: ExpressionCodegen, data: BlockInfo) {
-        var offset = 0
-        expression.dispatchReceiver?.let { genArg(it, codegen, offset++, data) }
-        expression.extensionReceiver?.let { genArg(it, codegen, offset++, data) }
-        for ((i, valueParameter) in expression.symbol.owner.valueParameters.withIndex()) {
-            val argument = expression.getValueArgument(i)
-            when {
-                argument != null ->
-                    genArg(argument, codegen, i + offset, data)
-                valueParameter.isVararg -> {
-                    // TODO: is there an easier way to get the substituted type of an empty vararg argument?
-                    val arrayType = codegen.typeMapper.mapType(
-                        valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments.map { it!! })
-                    )
-                    codegen.mv.aconst(0)
-                    codegen.mv.newarray(AsmUtil.correctElementType(arrayType))
-                }
-                else -> error("Unknown parameter ${valueParameter.name} in: ${expression.dump()}")
+        for ((parameter, argument) in expression.symbol.owner.parameters zip expression.arguments) {
+            if (argument != null) {
+                genArg(argument, codegen, parameter.indexInParameters, data)
+            } else if (parameter.isVararg) {
+                // TODO: is there an easier way to get the substituted type of an empty vararg argument?
+                val arrayType = codegen.typeMapper.mapType(
+                    parameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments.map { it!! })
+                )
+                codegen.mv.aconst(0)
+                codegen.mv.newarray(AsmUtil.correctElementType(arrayType))
+            } else {
+                error("Unknown parameter ${parameter.name} in: ${expression.dump()}")
             }
         }
     }
