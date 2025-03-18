@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+// ^ This is no supposed to work on KLIB-backends, see KT-69681
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // ^ Suppressed errors
 
