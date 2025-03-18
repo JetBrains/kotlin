@@ -343,7 +343,7 @@ fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReference =
 
 fun JvmIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall =
     irGet(irSymbols.javaLangClass.starProjectedType, null, irSymbols.kClassJavaPropertyGetter.symbol).apply {
-        extensionReceiver = kClassReference
+        arguments[0] = kClassReference
     }
 
 fun JvmIrBuilder.javaClassReference(classType: IrType): IrCall =
@@ -371,7 +371,7 @@ fun findSuperDeclaration(function: IrSimpleFunction): IrSimpleFunction {
     return current
 }
 
-fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = getValueArgument(i)?.let {
+fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = arguments[i]?.let {
     if (it is IrConst && it.kind == IrConstKind.Int)
         it.value as Int
     else
@@ -382,7 +382,7 @@ fun IrMemberAccessExpression<*>.getIntConstArgument(i: Int): Int =
     getIntConstArgumentOrNull(i) ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
 
 fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
-    getValueArgument(i)?.let {
+    arguments[i]?.let {
         if (it is IrConst && it.kind == IrConstKind.String)
             it.value as String
         else
@@ -390,7 +390,7 @@ fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
     } ?: throw AssertionError("Value argument #$i should be a String const: ${dump()}")
 
 fun IrMemberAccessExpression<*>.getBooleanConstArgument(i: Int): Boolean =
-    getValueArgument(i)?.let {
+    arguments[i]?.let {
         if (it is IrConst && it.kind == IrConstKind.Boolean)
             it.value as Boolean
         else
@@ -460,7 +460,7 @@ fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
         return AsmUtil.RECEIVER_PARAMETER_NAME
     }
 
-    extensionReceiverParameter?.let {
+    parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.let {
         if (it.name.asString().startsWith(AsmUtil.LABELED_THIS_PARAMETER)) {
             return it.name.asString()
         }
