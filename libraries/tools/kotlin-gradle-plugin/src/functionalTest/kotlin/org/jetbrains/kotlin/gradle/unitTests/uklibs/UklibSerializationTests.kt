@@ -38,7 +38,7 @@ class UklibSerializationTests {
                                 UklibFragment(
                                     "a",
                                     attributes = hashSetOf("a"),
-                                    file = { missing },
+                                    file = missing,
                                 )
                             )
                         ),
@@ -68,7 +68,7 @@ class UklibSerializationTests {
                                 UklibFragment(
                                     "a",
                                     attributes = hashSetOf("a"),
-                                    file = { invalid },
+                                    file = invalid,
                                 )
                             )
                         ),
@@ -96,7 +96,7 @@ class UklibSerializationTests {
                     UklibFragment(
                         "a",
                         attributes = hashSetOf("a"),
-                        file = { dir },
+                        file = dir,
                     )
                 )
             ),

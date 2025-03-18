@@ -65,7 +65,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                 @Suppress("UNCHECKED_CAST")
                 val jarTask = (project.tasks.named(target.artifactsTaskName) as TaskProvider<Jar>)
-                val jarArtifact = jarTask.flatMap { it.archiveFile.map { it.asFile } }
+                val jarArtifact = jarTask.map { it.archiveFile.get().asFile }
                 fragments.add(kgpUklibFragment(mainCompilation, jarArtifact))
             }
             else -> {

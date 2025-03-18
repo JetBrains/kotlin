@@ -23,6 +23,7 @@ import java.util.zip.ZipOutputStream
 
 internal fun Uklib.serializeToZipArchive(
     outputZip: File,
+    // FIXME: Remove rezipping and the temporary directory KT-75395
     temporariesDirectory: File,
 ) {
     val manifest = GsonBuilder().setPrettyPrinting().create().toJson(

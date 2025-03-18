@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinMetadataConfigurationMetrics
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
@@ -24,6 +25,18 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.sharedCommonizerTarge
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
+
+/**
+ * Metadata jar's classifier lived through the following iterations:
+ * - "-all" when HMPP was introduced
+ * - no classifier when per-HMPP metadata jar was dropped
+ * - "-psm" with Uklibs because we want to move JVM jar into root publication and make in declassified for Maven JVM consumption
+ */
+internal val Project.psmJarClassifier: String?
+    get() = when (kotlinPropertiesProvider.kmpPublicationStrategy) {
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> "psm"
+        KmpPublicationStrategy.StandardKMPPublication -> null
+    }
 
 class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<Any>, KotlinMetadataTarget>(createTestCompilation = false) {

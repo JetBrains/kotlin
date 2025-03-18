@@ -351,8 +351,8 @@ class UklibFromKGPFragmentsTests {
     private suspend fun KotlinMultiplatformExtension.testFragments(): List<TestAttributesFragment> =
         validateKgpModelIsUklibCompliantAndCreateKgpFragments().map {
             TestAttributesFragment(
-                identifier = it.fragment.identifier,
-                attributes = it.fragment.attributes,
+                identifier = it.fragment.get().identifier,
+                attributes = it.fragment.get().attributes,
             )
         }
 
@@ -365,7 +365,7 @@ class UklibFromKGPFragmentsTests {
         validateKgpModelIsUklibCompliantAndCreateKgpFragments()
             .map {
                 TestRefineesFragment(
-                    identifier = it.fragment.identifier,
+                    identifier = it.fragment.get().identifier,
                     refinees = it.refineesTransitiveClosure,
                 )
             }

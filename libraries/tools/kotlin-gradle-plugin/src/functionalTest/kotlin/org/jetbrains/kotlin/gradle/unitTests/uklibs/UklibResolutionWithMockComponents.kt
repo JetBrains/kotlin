@@ -872,31 +872,25 @@ class UklibResolutionTestsWithMockComponents {
                         UklibFragment(
                             identifier = "iosArm64Main",
                             attributes = setOf("ios_arm64"),
-                            file = {
-                                temporaryDirectory.resolve("iosArm64Main").also {
-                                    it.createDirectory()
-                                    it.resolve(".keep").createNewFile()
-                                }
+                            file = temporaryDirectory.resolve("iosArm64Main").also {
+                                it.createDirectory()
+                                it.resolve(".keep").createNewFile()
                             }
                         ),
                         UklibFragment(
                             identifier = "commonMain",
                             attributes = setOf("ios_arm64", "jvm"),
-                            file = {
-                                temporaryDirectory.resolve("commonMain").also {
-                                    it.createDirectory()
-                                    it.resolve(".keep").createNewFile()
-                                }
+                            file = temporaryDirectory.resolve("commonMain").also {
+                                it.createDirectory()
+                                it.resolve(".keep").createNewFile()
                             }
                         ),
                         UklibFragment(
                             identifier = "jvmMain",
                             attributes = setOf("jvm"),
-                            file = {
-                                temporaryDirectory.resolve("jvmMain").also {
-                                    it.createDirectory()
-                                    it.resolve(".keep").createNewFile()
-                                }
+                            file = temporaryDirectory.resolve("jvmMain").also {
+                                it.createDirectory()
+                                it.resolve(".keep").createNewFile()
                             }
                         ),
                     )
