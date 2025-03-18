@@ -52703,6 +52703,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestDataPath("$PROJECT_ROOT")
       public class OtherExpectedTypePositions {
         @Test
+        @TestMetadata("basicExampleWithEnumAndWhens.kt")
+        public void testBasicExampleWithEnumAndWhens() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/basicExampleWithEnumAndWhens.kt");
+        }
+
+        @Test
         @TestMetadata("differentTrivialExpectedTypeMismatch.kt")
         public void testDifferentTrivialExpectedTypeMismatch() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/differentTrivialExpectedTypeMismatch.kt");
@@ -52712,6 +52718,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         @TestMetadata("differentTrivialExpectedTypePositions.kt")
         public void testDifferentTrivialExpectedTypePositions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/differentTrivialExpectedTypePositions.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityOperator.kt")
+        public void testEqualityOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/equalityOperator.kt");
         }
 
         @Test

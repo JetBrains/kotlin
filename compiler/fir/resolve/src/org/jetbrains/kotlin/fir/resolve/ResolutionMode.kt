@@ -51,6 +51,7 @@ sealed class ResolutionMode(
          * but it's ok if it's not applicable
          */
         val shouldBeStrictlyEnforced: Boolean = true,
+        val hintForContextSensitiveResolution: ConeKotlinType? = null,
         /** Currently the only case for expected type when we don't force completion are when's branches */
         forceFullCompletion: Boolean = true,
     ) : ResolutionMode(forceFullCompletion) {
@@ -142,11 +143,13 @@ fun withExpectedType(
     expectedTypeRef: FirTypeRef,
     expectedTypeMismatchIsReportedInChecker: Boolean = false,
     arrayLiteralPosition: ArrayLiteralPosition? = null,
+    hintForContextSensitiveResolution: ConeKotlinType? = null,
 ): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
         expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
         arrayLiteralPosition = arrayLiteralPosition,
+        hintForContextSensitiveResolution = hintForContextSensitiveResolution,
     )
     else -> ResolutionMode.ContextIndependent
 }

@@ -238,7 +238,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (originalExpression !is FirPropertyAccessExpression) return null
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) return null
 
-        val expectedType = data.expectedType ?: return null
+        val expectedType =
+            (data as? ResolutionMode.WithExpectedType)?.hintForContextSensitiveResolution ?: data.expectedType ?: return null
 
         if (!originalExpression.shouldBeResolvedInContextSensitiveMode()) return null
 
@@ -1033,7 +1034,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
         val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.exitEqualityOperatorLhs()
-        val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, withExpectedType(builtinTypes.nullableAnyType))
+        val rightArgumentTransformed: FirExpression =
+            arguments[1].transform(
+                transformer,
+                withExpectedType(
+                    // We use `Any?` as a real expected type used for inference and other things
+                    builtinTypes.nullableAnyType,
+                    // But for context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
+                    // Potentially, we might just use LHS type just as a regular expected type which would be used both
+                    // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
+                    hintForContextSensitiveResolution = leftArgumentTransformed.resolvedType,
+                )
+            )
 
         equalityOperatorCall
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
