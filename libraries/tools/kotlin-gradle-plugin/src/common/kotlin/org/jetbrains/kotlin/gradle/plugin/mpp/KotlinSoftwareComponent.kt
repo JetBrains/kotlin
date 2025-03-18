@@ -24,15 +24,15 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -48,10 +48,28 @@ abstract class KotlinSoftwareComponent(
 
     private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
-    private val _variants = project.future {
+    internal val uklibUsages: CompletableFuture<List<DefaultKotlinUsageContext>> = CompletableFuture()
+
+    internal suspend fun subcomponentTargets(): List<KotlinTarget> {
         AfterFinaliseCompilations.await()
-        kotlinTargets
+        return kotlinTargets
             .filter { target -> target !is KotlinMetadataTarget }
+    }
+
+    /**
+     * These are variants pointing to subcomponent variants via available-at pointers
+     */
+    private val _variants = project.future {
+        subcomponentTargets()
+            .filter {
+                when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+                    KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication ->
+                        // Exclude subcomponent pointer from the root component
+                        return@filter it !is KotlinJvmTarget
+                    KmpPublicationStrategy.StandardKMPPublication ->
+                        return@filter true
+                }
+            }
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -64,14 +82,19 @@ abstract class KotlinSoftwareComponent(
 
     override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
 
+    /**
+     * These are variants exposed directly through the root component
+     */
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
 
+        // FIXME: Remove this, for now we definitely want to continue publishing existing KMP publication together with Uklib variants
+        // if (onlyPublishUklib) return
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = ""
+                allMetadataArtifact.classifier = project.psmJarClassifier ?: ""
             }
 
             this += DefaultKotlinUsageContext(
@@ -84,7 +107,13 @@ abstract class KotlinSoftwareComponent(
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {
-                addSourcesJarArtifactToConfiguration(sourcesElements)
+                addSourcesJarArtifactToConfiguration(
+                    sourcesElements,
+                    classifierPrefix = when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+                        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> "metadata"
+                        KmpPublicationStrategy.StandardKMPPublication -> null
+                    },
+                )
                 this += DefaultKotlinUsageContext(
                     compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                     dependencyConfigurationName = sourcesElements,
@@ -97,7 +126,7 @@ abstract class KotlinSoftwareComponent(
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages
+        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + uklibUsages.getOrThrow().toSet()
     }
 
     private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
@@ -115,9 +144,17 @@ abstract class KotlinSoftwareComponent(
         name.toLowerCaseAsciiOnly()
     )
 
-    private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {
+    private fun addSourcesJarArtifactToConfiguration(
+        configurationName: String,
+        classifierPrefix: String?,
+    ): PublishArtifact {
         return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->
-            sourcesJarArtifact.classifier = "sources"
+            sourcesJarArtifact.classifier = dashSeparatedName(
+                listOfNotNull(
+                    classifierPrefix,
+                    "sources",
+                )
+            )
         }
     }
 
