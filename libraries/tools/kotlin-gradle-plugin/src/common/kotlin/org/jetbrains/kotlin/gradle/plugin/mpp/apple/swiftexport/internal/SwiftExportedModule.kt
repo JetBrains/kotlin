@@ -10,8 +10,11 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleVersionMetadata
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import java.io.File
 import java.io.Serializable
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
 internal interface SwiftExportedModule : Serializable {
     val moduleName: String
@@ -59,7 +62,13 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
     }.toList()
 }
 
-private val File.isCinteropKlib get() = name.contains("cinterop-interop")
+private val File.isCinteropKlib
+    get() = run {
+        val klib =
+            resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(this.absolutePath), strategy = ToolingSingleFileKlibResolveStrategy)
+        klib.isCInteropLibrary()
+    }
+
 private fun Collection<File>.filterNotCinteropKlibs(): List<File> = filterNot(File::isCinteropKlib)
 
 private fun Project.findAndCreateSwiftExportedModule(
