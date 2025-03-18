@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConeNoInferSubtyping
@@ -947,11 +945,7 @@ class FirCallCompletionResultsWriterTransformer(
         anonymousFunction: FirAnonymousFunction,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        // The case where we can't find any return expressions not common, and happens when there are anonymous function arguments
-        // that aren't mapped to any parameter in the call. So, we don't run body resolve transformation for them, thus there's
-        // no control flow info either. Example: second lambda in the call like list.filter({}, {})
-        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
-            ?: return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
+        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(anonymousFunction)
 
         /*
          * If the resolved call contains some errors, we want to consider expected type only for calculation of
@@ -1039,37 +1033,6 @@ class FirCallCompletionResultsWriterTransformer(
         val coneClassLikeType = this.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
         val classId = coneClassLikeType.classId ?: return null
         return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, coneClassLikeType.customAnnotations)
-    }
-
-    private fun transformImplicitTypeRefInAnonymousFunction(
-        anonymousFunction: FirAnonymousFunction,
-    ): FirStatement {
-        val implicitTypeTransformer = object : FirDefaultTransformer<Any?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-                @Suppress("UNCHECKED_CAST")
-                return (element.transformChildren(this, data) as E)
-            }
-
-            override fun transformImplicitTypeRef(
-                implicitTypeRef: FirImplicitTypeRef,
-                data: Any?,
-            ): FirTypeRef =
-                buildErrorTypeRef {
-                    source = anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-                    // NB: this error message assumes that it is used only if CFG for the anonymous function is not available
-                    diagnostic = ConeSimpleDiagnostic("Cannot infer type w/o CFG", DiagnosticKind.InferenceError)
-                }
-
-        }
-        anonymousFunction.transformChildren(implicitTypeTransformer, null)
-
-        anonymousFunction.body?.let {
-            if (!it.isResolved) {
-                it.resultType = session.builtinTypes.unitType.coneType
-            }
-        }
-
-        return anonymousFunction
     }
 
     override fun transformReturnExpression(
