@@ -166,16 +166,6 @@ internal class InlineFunctionBodyPreprocessor(
 
         private fun IrType.substituteAll() = typeRemapper.remapType(this, NonReifiedTypeParameterRemappingMode.SUBSTITUTE)
 
-        override fun visitClass(declaration: IrClass): IrClass {
-            // Substitute type argument to make Class::genericSuperclass work as expected (see kt52417.kt)
-            // Substitution to the super types does not lead to reification and therefore is safe
-            return super.visitClass(declaration).apply {
-                superTypes = declaration.superTypes.memoryOptimizedMap {
-                    it.substituteAll()
-                }
-            }
-        }
-
         override fun visitCall(expression: IrCall): IrCall {
             return super.visitCall(expression).also {
                 // We can't do it right now, because we need to return IrCall, and postprocessor for Native
