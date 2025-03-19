@@ -7,7 +7,7 @@ fun foo(x: List<String>) {
         add(null)
         addAll(
             buildList {
-                flatMap { x }
+                <!OVERLOAD_RESOLUTION_AMBIGUITY!>flatMap<!> { x }
             }
         )
     }

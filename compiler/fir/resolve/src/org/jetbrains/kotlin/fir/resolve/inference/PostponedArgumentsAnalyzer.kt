@@ -202,7 +202,7 @@ class PostponedArgumentsAnalyzer(
         candidate: Candidate,
         forOverloadByLambdaReturnType: Boolean,
         withPCLASession: Boolean,
-        additionalBindingsFromOverloadResolution: Map<TypeConstructorMarker, KotlinTypeMarker>? = null,
+        //diagnosticHolder: KotlinDiagnosticsHolder
     ): ReturnArgumentsAnalysisResult {
         // TODO: replace with `require(!lambda.analyzed)` when KT-54767 will be fixed
         if (lambda.analyzed) {
@@ -213,23 +213,11 @@ class PostponedArgumentsAnalyzer(
             (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { pclaInferenceSession ->
                 // TODO: Fix variables for context receivers, too (KT-64859)
                 lambda.receiverType
-                    ?.let {
-                        pclaInferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
-                            it, candidate.system, overloadResolutionMode = additionalBindingsFromOverloadResolution != null
-                        )
-                    }
+                    ?.let { pclaInferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(it, candidate.system) }
             }
 
         val unitType = components.session.builtinTypes.unitType.coneType
-        // TODO: consider storing semi-fixed variables in inference session (KT-75907)
-        val currentSubstitutor = if (additionalBindingsFromOverloadResolution != null) {
-            c.buildCurrentSubstitutor(
-                if (additionalBinding != null) additionalBindingsFromOverloadResolution + additionalBinding
-                else additionalBindingsFromOverloadResolution
-            ) as ConeSubstitutor
-        } else {
-            c.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
-        }
+        val currentSubstitutor = c.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
 
         fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
 
