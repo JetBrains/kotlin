@@ -15,5 +15,5 @@ interface Test1 {
 fun Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>() {}
 fun Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>(s: String) {}
 fun Test1.test1(i: Int) {}
-fun Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>(x: Any, y: Int) {}
+fun Test1.test1(x: Any, y: Int) {}
 fun <T : Number> Test1.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>test1<!>(x: T, y: Int) {}

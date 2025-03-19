@@ -20,7 +20,7 @@ fun <T : Any?> Test3.test3(x: T) {}
 interface Test4 {
     fun <T> test4(x: T) {}
 }
-fun Test4.<!EXTENSION_SHADOWED_BY_MEMBER!>test4<!>(x: String) {}
+fun Test4.test4(x: String) {}
 
 interface Test5 {
     fun <T> test5(x: T) {}

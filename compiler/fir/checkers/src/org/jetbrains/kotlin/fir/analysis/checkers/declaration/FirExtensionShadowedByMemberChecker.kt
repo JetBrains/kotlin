@@ -151,6 +151,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         if (varargParameterPosition != extension.varargParameterPosition) return false
         if (extension.isOperator && !isOperator) return false
         if (extension.isInfix && !isInfix) return false
+        if (extension.typeParameterSymbols.size != typeParameterSymbols.size) return false
 
         val helper = context.session.declarationOverloadabilityHelper
         val memberSignature = helper.createSignature(this)

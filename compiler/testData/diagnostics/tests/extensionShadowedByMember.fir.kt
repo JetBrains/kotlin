@@ -9,7 +9,7 @@ abstract class Cache {
     fun <T : CharSequence> get4(): Int = 10
 }
 
-inline fun <reified T> Cache.<!EXTENSION_SHADOWED_BY_MEMBER!>get<!>() = 10
-fun <T> Cache.<!EXTENSION_SHADOWED_BY_MEMBER!>get2<!>() = 10
-fun <T, R> Cache.<!EXTENSION_SHADOWED_BY_MEMBER!>get3<!>() = 10
+inline fun <reified T> Cache.get() = 10
+fun <T> Cache.get2() = 10
+fun <T, R> Cache.get3() = 10
 fun <T : List<String>> Cache.<!EXTENSION_SHADOWED_BY_MEMBER!>get4<!>() = 10
