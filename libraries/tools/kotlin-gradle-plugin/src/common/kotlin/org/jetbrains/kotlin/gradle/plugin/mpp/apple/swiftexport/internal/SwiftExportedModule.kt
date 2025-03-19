@@ -62,13 +62,7 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
     }.toList()
 }
 
-private val File.isCinteropKlib
-    get() = run {
-        val klib =
-            resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(this.absolutePath), strategy = ToolingSingleFileKlibResolveStrategy)
-        klib.isCInteropLibrary()
-    }
-
+private val File.isCinteropKlib get() = name.contains("-cinterop-")
 private fun Collection<File>.filterNotCinteropKlibs(): List<File> = filterNot(File::isCinteropKlib)
 
 private fun Project.findAndCreateSwiftExportedModule(
