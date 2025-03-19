@@ -986,6 +986,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("delegateForExtPropertyInClass.kt")
+      public void testDelegateForExtPropertyInClass() {
+        runTest("compiler/testData/ir/irText/declarations/delegate/delegateForExtPropertyInClass.kt");
+      }
+
+      @Test
       @TestMetadata("delegationEvaluationOrder1.kt")
       public void testDelegationEvaluationOrder1() {
         runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder1.kt");
