@@ -17,13 +17,13 @@ sealed interface SirAvailability {
      * Hidden.
      * Indicates that the declatation can only be made represented in an incomplete form (e.g. with a stub)
      */
-    class Hidden(val reason: String): SirAvailability
+    class Hidden(val reason: String) : SirAvailability
 
     /**
      * Unavailable.
      * Indicates that the declatation can not be possibly represented
      */
-    class Unavailable(val reason: String): SirAvailability
+    class Unavailable(val reason: String) : SirAvailability
 }
 
 val SirAvailability.visibility: SirVisibility? get() = (this as? SirAvailability.Available)?.visibility

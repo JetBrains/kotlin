@@ -202,6 +202,8 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+}
 public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
         get {

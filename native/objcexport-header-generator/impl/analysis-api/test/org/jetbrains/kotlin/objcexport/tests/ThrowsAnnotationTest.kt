@@ -6,8 +6,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefinedThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasThrowsAnnotation
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
+import org.jetbrains.kotlin.export.test.getClassOrFail
+import org.jetbrains.kotlin.export.test.getFunctionOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

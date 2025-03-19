@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.utils
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildClass
-import org.jetbrains.kotlin.sir.builder.buildInit
-import org.jetbrains.kotlin.sir.builder.buildProtocol
-import org.jetbrains.kotlin.sir.builder.buildStruct
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
@@ -49,6 +46,15 @@ public object KotlinRuntimeModule : SirModule() {
                     )
                 )
             }
+
+            declarations += buildVariable {
+                origin = KotlinRuntimeElement()
+                name = "hash"
+                type = SirNominalType(SirSwiftModule.int)
+                getter = buildGetter {
+                    origin = KotlinRuntimeElement()
+                }
+            }.also { it.getter.parent = it }
         }.also { klass ->
             klass.parent = KotlinRuntimeModule
             klass.declarations.forEach { it.parent = klass }

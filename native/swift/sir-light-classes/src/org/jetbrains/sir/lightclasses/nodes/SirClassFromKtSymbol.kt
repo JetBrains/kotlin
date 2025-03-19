@@ -5,12 +5,10 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.export.utilities.isCloneable
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -184,11 +182,13 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filter { superClassDeclaration?.declaresConformance(it) != true }
     }
 
+    @OptIn(KaExperimentalApi::class)
     private val translatedProtocols: List<SirProtocol> by lazyWithSessions {
         ktSymbol.superTypes
             .filterIsInstance<KaClassType>()
             .mapNotNull { it.expandedSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
+            .filter { it.typeParameters.isEmpty() } //Exclude generics
             .filterNot { it.isCloneable }
             .flatMap {
                 it.toSir().allDeclarations.filterIsInstance<SirProtocol>().also {

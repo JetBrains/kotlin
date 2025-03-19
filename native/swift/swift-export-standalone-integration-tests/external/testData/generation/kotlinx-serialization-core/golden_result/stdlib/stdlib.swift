@@ -52,6 +52,10 @@ public extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    public final class Boolean: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class Char: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
     open class Exception: ExportedKotlinPackages.kotlin.Throwable {
         public override init() {
             let __kt = kotlin_Exception_init_allocate()
@@ -154,6 +158,20 @@ public extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    public final class Byte: ExportedKotlinPackages.kotlin.Number {
+    }
+    public final class Short: ExportedKotlinPackages.kotlin.Number {
+    }
+    public final class Int: ExportedKotlinPackages.kotlin.Number {
+    }
+    public final class Long: ExportedKotlinPackages.kotlin.Number {
+    }
+    public final class Float: ExportedKotlinPackages.kotlin.Number {
+    }
+    public final class Double: ExportedKotlinPackages.kotlin.Number {
+    }
+    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, KotlinRuntimeSupport._KotlinBridged {
+    }
     open class Throwable: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         open var message: Swift.String? {
             get {
@@ -206,6 +224,18 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
+    }
+    public final class UByte: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UInt: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ULong: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UShort: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+}
+public extension ExportedKotlinPackages.kotlin.time {
+    public final class Duration: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     }
 }
 public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.export.utilities.hasTypeParameter
 import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.sir.providers.withSessions
+import org.jetbrains.kotlin.analysis.api.export.utilities.*
+import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
 
 public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
@@ -73,10 +76,10 @@ public class SirVisibilityCheckerImpl(
         }
         visibility.value = when (ktSymbol) {
             is KaNamedClassSymbol -> {
-                if (!ktSymbol.isExported() || ktSymbol.hasHiddenAncestors())
-                    return@withSessions SirAvailability.Unavailable("Type declaration kind isn't supported yet")
-                else
+                val exported = ktSymbol.isExported()
+                if (exported is SirAvailability.Available) {
                     SirVisibility.PUBLIC
+                } else return@withSessions exported
             }
             is KaConstructorSymbol -> {
                 if ((ktSymbol.containingSymbol as? KaClassSymbol)?.modality?.isAbstract() != false) {
@@ -142,39 +145,50 @@ public class SirVisibilityCheckerImpl(
         return@withSessions true
     }
 
-    @OptIn(KaExperimentalApi::class)
-    private fun KaNamedClassSymbol.isExported(): Boolean = sirSession.withSessions {
+    private fun KaNamedClassSymbol.isExported(): SirAvailability = sirSession.withSessions {
+
+        if (hasDeprecatedAncestors()) {
+            return@withSessions SirAvailability.Unavailable("Has deprecated ancestors")
+        }
 
         if (!isAllContainingSymbolsExported()) {
-            return@withSessions false
+            return@withSessions SirAvailability.Hidden("Some containing symbol is hidden")
+        }
+
+        if (isFromTemporarilyIgnoredPackage()) {
+            return@withSessions SirAvailability.Unavailable("From ignored package")
         }
 
         // Any is exported as a KotlinBase class.
         if (classId == DefaultTypeClassIds.ANY) {
-            return@withSessions false
+            return@withSessions SirAvailability.Unavailable("ClassId = Any")
         }
         if (classKind == KaClassKind.ANNOTATION_CLASS || classKind == KaClassKind.ANONYMOUS_OBJECT) {
-            return@withSessions false
+            return@withSessions SirAvailability.Unavailable("Annotation or Anonymous")
         }
         if (classKind == KaClassKind.ENUM_CLASS) {
             if (superTypes.any { it.symbol?.classId?.asSingleFqName() == FqName("kotlinx.cinterop.CEnum") }) {
                 unsupportedDeclarationReporter.report(this@isExported, "C enums are not supported yet.")
-                return@withSessions false
+                return@withSessions SirAvailability.Unavailable("C enums")
             }
-            return@withSessions true
+            return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
         }
-        if (typeParameters.isNotEmpty() || defaultType.allSupertypes.any { it.symbol?.typeParameters?.isNotEmpty() == true }) {
+
+        if (!(isAllSuperTypesExported(this) { this.isExported() is SirAvailability.Available})) {
+            return@withSessions SirAvailability.Hidden("Some super type isn't available")
+        }
+
+        if (hasTypeParameter(this)) {
             unsupportedDeclarationReporter.report(this@isExported, "generics are not supported yet.")
-            return@withSessions false
+            return@withSessions SirAvailability.Unavailable("Has type parameter(s)")
         }
+
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline classes are not supported yet.")
-            return@withSessions false
+            return@withSessions SirAvailability.Unavailable("Inline classes are not supported")
         }
-        if (classId?.asSingleFqName()?.startsWith(FqName("kotlin.reflect")) == true) {
-            return@withSessions false
-        }
-        return@withSessions true
+
+        return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
     }
 
     private fun KaType.availability(): SirAvailability = sirSession.withSessions {
@@ -187,8 +201,8 @@ public class SirVisibilityCheckerImpl(
             it.getter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN || it.setter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN
         } == true
 
-    private fun KaClassSymbol.hasHiddenAncestors(): Boolean = sirSession.withSessions {
-        generateSequence(this@hasHiddenAncestors) {
+    private fun KaClassSymbol.hasDeprecatedAncestors(): Boolean = sirSession.withSessions {
+        generateSequence(this@hasDeprecatedAncestors) {
             it.superTypes.map { it.symbol }.findIsInstanceAnd<KaClassSymbol> { it.classKind != KaClassKind.INTERFACE }
         }.any {
             it.deprecatedAnnotation?.level.let { it == DeprecationLevel.HIDDEN || it == DeprecationLevel.ERROR }
@@ -196,7 +210,7 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaSession.isValueOfOnEnum(function: KaNamedFunctionSymbol): Boolean {
-        with (function) {
+        with(function) {
             val parent = containingSymbol as? KaClassSymbol ?: return false
             return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
         }
@@ -204,7 +218,7 @@ public class SirVisibilityCheckerImpl(
 
     private fun KaNamedClassSymbol.isAllContainingSymbolsExported(): Boolean = sirSession.withSessions {
         if (containingSymbol !is KaNamedClassSymbol) return@withSessions true
-        return@withSessions (containingSymbol as? KaNamedClassSymbol)?.isExported() == true
+        return@withSessions (containingSymbol as? KaNamedClassSymbol)?.isExported() is SirAvailability.Available
     }
 }
 

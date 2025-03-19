@@ -62,7 +62,7 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
     }.toList()
 }
 
-private val File.isCinteropKlib get() = name.contains("-cinterop-")
+private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.contains("Cinterop-")
 private fun Collection<File>.filterNotCinteropKlibs(): List<File> = filterNot(File::isCinteropKlib)
 
 private fun Project.findAndCreateSwiftExportedModule(

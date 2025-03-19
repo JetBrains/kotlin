@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
 import org.jetbrains.kotlin.objcexport.ObjCExportContext
 import org.jetbrains.kotlin.objcexport.mangling.hasMethodConflicts
 import org.jetbrains.kotlin.objcexport.mangling.hasPropertiesConflicts
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
+import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.objcexport.translateToObjCExportStub
 import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.junit.jupiter.api.Test

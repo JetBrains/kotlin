@@ -294,6 +294,10 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         return Foo_foo(self.__externalRCRef())
     }
 }
+open class INHERITANCE_GENERIC: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+}
+public final class INHERITANCE_UNSUPPORTED_BASE: main.INHERITANCE_GENERIC {
+}
 public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class CLASS_INSIDE_CLASS_INSIDE_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -403,6 +407,8 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
     public func foo() -> Swift.Int32 {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
+}
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
 }
 open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public final class C: main.SEALED {

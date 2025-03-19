@@ -1,6 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
+import stdlib
 
 public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
     public static var a: main.Enum {
@@ -41,7 +42,7 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     }
 }
 public func enumId(
-    e: Swift.Never
-) -> Swift.Never {
+    e: ExportedKotlinPackages.kotlin.Enum
+) -> ExportedKotlinPackages.kotlin.Enum {
     fatalError()
 }

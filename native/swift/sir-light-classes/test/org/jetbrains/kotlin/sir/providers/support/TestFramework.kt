@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.sir.providers.support
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.builder.buildModule
@@ -71,5 +73,14 @@ inline fun <R> translate(
         with(sirSessionBuilder(useSiteModule)) {
             action(file.symbol.fileScope.extractDeclarations(useSiteSession).toList())
         }
+    }
+}
+
+inline fun <R> withAnalysisSession(
+    file: KtFile,
+    action: KaSession.(KtFile) -> R
+) {
+    analyze(file) {
+        action(file)
     }
 }

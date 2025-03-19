@@ -33,6 +33,8 @@ object SirSwiftModule : SirModule() {
     val float = struct("Float")
 
     val unsafeMutableRawPointer = struct("UnsafeMutableRawPointer")
+    val int = struct("Int")
+    val uint = struct("UInt")
 
     val void = struct("Void")
     val never = struct("Never")

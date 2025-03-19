@@ -3,9 +3,9 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.getClassIfCategory
-import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
-import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
+import org.jetbrains.kotlin.export.test.getClassOrFail
+import org.jetbrains.kotlin.export.test.getFunctionOrFail
+import org.jetbrains.kotlin.export.test.getPropertyOrFail
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNull
