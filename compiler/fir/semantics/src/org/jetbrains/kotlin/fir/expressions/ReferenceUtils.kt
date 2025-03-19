@@ -70,10 +70,10 @@ private fun FirExpression.toReferenceImpl(session: FirSession?): FirReference? {
     }
 }
 
-private fun FirEnumEntryDeserializedAccessExpression.toReference(session: FirSession): FirReference {
+fun FirEnumEntryDeserializedAccessExpression.toReference(session: FirSession): FirReference {
     val enumSymbol = this.resolvedType.toRegularClassSymbol(session)
         ?: return buildErrorNamedReferenceWithNoName(ConeUnresolvedSymbolError(resolvedType.classId!!))
-    val enumEntrySymbol = enumSymbol.collectEnumEntries(session).firstOrNull { it.name == enumEntryName }
+    val enumEntrySymbol = enumSymbol.collectEnumEntries().firstOrNull { it.name == enumEntryName }
         ?: return buildErrorNamedReference {
             this.diagnostic = ConeUnresolvedNameError(enumEntryName)
             this.name = enumEntryName
