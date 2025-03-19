@@ -1,5 +1,33 @@
 KaJavaFieldSymbol:
   annotations: []
+  callableId: /JavaClass.field2
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: field2
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: kotlin/String!
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaJavaFieldSymbol:
+  annotations: []
   callableId: /JavaClass.field
   compilerVisibility: Public
   contextReceivers: []
@@ -17,34 +45,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: JavaClass
-  getContainingFileSymbol: null
-  getContainingJvmClassName: JavaClass
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-
-KaJavaFieldSymbol:
-  annotations: []
-  callableId: /JavaClass.field2
-  compilerVisibility: Public
-  contextReceivers: []
-  isActual: false
-  isExpect: false
-  isExtension: false
-  isStatic: false
-  isVal: false
-  location: CLASS
-  modality: FINAL
-  name: field2
-  origin: JAVA_SOURCE
-  receiverParameter: null
-  returnType: KaFlexibleType:
-    annotations: []
-    type: kotlin/String!
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
