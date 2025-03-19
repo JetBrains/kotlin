@@ -2853,6 +2853,24 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     public void testLocalFunInLambdaCapturesOuterVariable() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
     }
+
+    @Test
+    @TestMetadata("localFunInLambdaInsideAnonymousObject.kt")
+    public void testLocalFunInLambdaInsideAnonymousObject() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaInsideAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunInLambdaNoInline.kt")
+    public void testLocalFunInLambdaNoInline() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaNoInline.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunInLambdaOutsideAnonymousObject.kt")
+    public void testLocalFunInLambdaOutsideAnonymousObject() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaOutsideAnonymousObject.kt");
+    }
   }
 
   @Nested
@@ -2908,6 +2926,29 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       public void testReceiversAndParametersInLambda() {
         runTest("compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/nestedInline")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class NestedInline {
+    @Test
+    public void testAllFilesPresentInNestedInline() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nestedInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("nestedInlineLetLet.kt")
+    public void testNestedInlineLetLet() {
+      runTest("compiler/testData/codegen/boxInline/nestedInline/nestedInlineLetLet.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedInlineLetLetComplex.kt")
+    public void testNestedInlineLetLetComplex() {
+      runTest("compiler/testData/codegen/boxInline/nestedInline/nestedInlineLetLetComplex.kt");
     }
   }
 
