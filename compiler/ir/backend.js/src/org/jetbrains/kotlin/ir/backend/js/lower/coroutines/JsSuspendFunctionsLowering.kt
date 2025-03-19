@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
@@ -44,7 +45,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 /**
  * Transforms suspend function into a `CoroutineImpl` instance and builds a state machine.
  */
-class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx) {
+class JsSuspendFunctionsLowering(
+    ctx: JsCommonBackendContext
+) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx), BodyLoweringPass {
     private val coroutineSymbols = ctx.symbols.coroutineSymbols
 
     private val coroutineImplExceptionPropertyGetter = coroutineSymbols.coroutineImplExceptionPropertyGetter

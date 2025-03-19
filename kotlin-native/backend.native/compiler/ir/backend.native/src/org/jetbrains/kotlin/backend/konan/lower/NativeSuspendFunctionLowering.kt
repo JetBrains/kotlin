@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailSuspendCalls
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
-) : AbstractSuspendFunctionsLowering<Context>(generationState.context) {
+) : AbstractSuspendFunctionsLowering<Context>(generationState.context), FileLoweringPass {
     private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState
     private val saveCoroutineState = symbols.saveCoroutineState
