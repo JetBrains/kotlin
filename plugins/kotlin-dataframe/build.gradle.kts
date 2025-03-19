@@ -17,6 +17,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
     implementation(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") })
+    embedded(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") })
 
     testRuntimeOnly(libs.dataframe.core.dev)
     testRuntimeOnly(libs.dataframe.csv.dev)
@@ -48,7 +49,14 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
 }
 
 publish()
-standardPublicJars()
+runtimeJarWithRelocation {
+    from(mainSourceSet.output)
+    dependencies {
+        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib:.*"))
+    }
+}
+sourcesJar()
+javadocJar()
 testsJar()
 
 optInToExperimentalCompilerApi()

@@ -114,6 +114,11 @@
         <artifactId>kotlin-assignment</artifactId>
         <version>ArtifactsTest.version</version>
       </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-dataframe</artifactId>
+        <version>ArtifactsTest.version</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

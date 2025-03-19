@@ -26,6 +26,7 @@ dependencies {
         api(project(":kotlin-sam-with-receiver"))
         api(project(":kotlin-serialization"))
         api(project(":kotlin-assignment"))
+        api(project(":kotlin-dataframe"))
     }
 }
 
