@@ -85,6 +85,15 @@ abstract class FunctionTypeKind internal constructor(
         get() = null
 
     /**
+     * Specifies whether the function type kind supports conversion for function references.
+     *
+     * Type resolution will allow function references with a simple function type (e.g. Function0
+     * or KFunction0) to be converted to this function kind if this property is true.
+     */
+    open val supportsConversionFromSimpleFunctionType: Boolean
+        get() = true
+
+    /**
      * @return corresponding non-reflect kind for reflect kind
      * @return [this] if [isReflectType] is false
      *
