@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/delegateForExtPropertyInClass.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:prop$delegate type:<root>.Delegate visibility:private [final] declared in <root>.F' type=<root>.Delegate origin=null
                 receiver: GET_VAR '<this>(index:0): <root>.F declared in <root>.F.<get-prop>' type=<root>.F origin=IMPLICIT_ARGUMENT
               ARG t: GET_VAR '<this>(index:1): <root>.F.A declared in <root>.F.<get-prop>' type=<root>.F.A origin=null
-              ARG p: PROPERTY_REFERENCE 'public final prop: kotlin.Int declared in <root>.F' field=null getter='public final fun <get-prop> (<this>: <root>.F.A): kotlin.Int declared in <root>.F' setter=null type=kotlin.reflect.KProperty2<<root>.F.A, <root>.F, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG p: PROPERTY_REFERENCE 'public final prop: kotlin.Int declared in <root>.F' field=null getter='public final fun <get-prop> (<this>: <root>.F.A): kotlin.Int declared in <root>.F' setter=null type=kotlin.reflect.KProperty2<<root>.F, <root>.F.A, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.F.A
       CONSTRUCTOR visibility:public returnType:<root>.F.A [primary]

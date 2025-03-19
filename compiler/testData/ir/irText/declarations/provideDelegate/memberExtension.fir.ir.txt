@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             ARG <this>(index:0): GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=IMPLICIT_ARGUMENT
             ARG <this>(index:1): CONST String type=kotlin.String value="K"
             ARG host: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
-            ARG p: PROPERTY_REFERENCE 'public final plusK: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-plusK> (<this>: kotlin.String): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG p: PROPERTY_REFERENCE 'public final plusK: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-plusK> (<this>: kotlin.String): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<<root>.Host, kotlin.String, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
         VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.String
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final] declared in <root>.Host' type=<root>.Host.StringDelegate origin=null
                 receiver: GET_VAR '<this>(index:0): <root>.Host declared in <root>.Host.<get-plusK>' type=<root>.Host origin=IMPLICIT_ARGUMENT
               ARG receiver: GET_VAR '<this>(index:1): kotlin.String declared in <root>.Host.<get-plusK>' type=kotlin.String origin=null
-              ARG p: PROPERTY_REFERENCE 'public final plusK: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-plusK> (<this>: kotlin.String): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG p: PROPERTY_REFERENCE 'public final plusK: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-plusK> (<this>: kotlin.String): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<<root>.Host, kotlin.String, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:ok visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]
         EXPRESSION_BODY

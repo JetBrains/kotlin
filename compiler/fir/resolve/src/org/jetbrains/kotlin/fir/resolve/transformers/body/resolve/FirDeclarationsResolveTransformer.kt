@@ -326,8 +326,8 @@ open class FirDeclarationsResolveTransformer(
                     typeArguments.mapIndexed { index, argument ->
                         when (index) {
                             typeArguments.lastIndex -> property.returnTypeRef.coneType
-                            0 -> extensionType ?: dispatchType
-                            else -> dispatchType
+                            0 -> dispatchType ?: extensionType
+                            else -> extensionType
                         } ?: argument
                     }.toTypedArray(),
                 ).also {
