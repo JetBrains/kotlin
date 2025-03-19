@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.types.model.*
 
@@ -30,10 +29,6 @@ interface PostponedArgumentsAnalyzerContext : TypeSystemInferenceExtensionContex
 
     // mutable operations
     fun addOtherSystem(otherSystem: ConstraintStorage)
-
-    @K2Only
-    @UnstableSystemMergeMode
-    fun mergeOtherSystem(otherSystem: ConstraintStorage)
 
     fun getBuilder(): ConstraintSystemBuilder
     fun resolveForkPointsConstraints()
