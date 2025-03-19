@@ -128,8 +128,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val coroutineBaseClass = getCoroutineBaseClass(function)
         private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.hasShape(regularParameters = 1) }
 
-        private val coroutineConstructors = mutableListOf<IrConstructor>()
-
         private fun getCoroutineClass(function: IrSimpleFunction): IrClass {
             return if (isSuspendLambda) function.parentAsClass
             else buildNewCoroutineClass(function)
@@ -183,7 +181,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }.apply {
                 parent = coroutineClass
                 coroutineClass.declarations += this
-                coroutineConstructors += this
 
                 parameters = functionParameters.memoryOptimizedMap { parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, kind = IrParameterKind.Regular)
