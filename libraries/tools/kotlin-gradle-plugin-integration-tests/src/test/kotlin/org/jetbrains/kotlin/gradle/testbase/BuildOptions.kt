@@ -91,16 +91,26 @@ data class BuildOptions(
      */
     val continuousBuild: Boolean? = null,
 ) {
-    enum class ConfigurationCacheValue(val booleanFlag: Boolean?) {
+    enum class ConfigurationCacheValue {
 
         /** Explicitly/forcefully disable Configuration Cache */
-        DISABLED(false),
+        DISABLED,
 
         /** Explicitly/forcefully enable Configuration Cache */
-        ENABLED(true),
+        ENABLED,
+
+        /** AUTO means unspecified by default, but enabled on macOS with Gradle >= 8.0 */
+        AUTO,
 
         /** Gradle, depending on its version, will decide whether to enable Configuration Cache */
-        UNSPECIFIED(null);
+        UNSPECIFIED;
+
+        fun toBooleanFlag(gradleVersion: GradleVersion): Boolean? = when (this) {
+            DISABLED -> false
+            ENABLED -> true
+            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version("8.0")) true else null
+            UNSPECIFIED -> null
+        }
     }
 
     enum class IsolatedProjectsMode {
@@ -183,7 +193,7 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        val configurationCacheFlag = configurationCache.booleanFlag
+        val configurationCacheFlag = configurationCache.toBooleanFlag(gradleVersion)
         if (configurationCacheFlag != null) {
             arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheFlag")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")

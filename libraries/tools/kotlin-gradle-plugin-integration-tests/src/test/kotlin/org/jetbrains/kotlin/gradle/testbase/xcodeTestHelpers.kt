@@ -129,7 +129,7 @@ internal fun TestProject.prepareForXcodebuild(appendToProperties: () -> String =
             buildOptions.konanDataDir?.let { konanDataDir ->
                 it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
             }
-            val configurationCacheFlag = buildOptions.configurationCache.booleanFlag
+            val configurationCacheFlag = buildOptions.configurationCache.toBooleanFlag(gradleVersion)
             if (configurationCacheFlag != null) {
                 it.append("org.gradle.unsafe.configuration-cache=$configurationCacheFlag")
                 it.append("org.gradle.unsafe.configuration-cache-problems=${buildOptions.configurationCacheProblems.name.lowercase(Locale.getDefault())}")
