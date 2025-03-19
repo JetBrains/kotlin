@@ -30,11 +30,6 @@ import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private data class TestKtFile(
-    val name: String,
-    val content: String
-)
-
 private val classNotFound = TestKtFile("C.kt", "class C : ClassNotFound")
 private val repeatedAnalysis = TestKtFile("D.kt", "class D : Generated")
 

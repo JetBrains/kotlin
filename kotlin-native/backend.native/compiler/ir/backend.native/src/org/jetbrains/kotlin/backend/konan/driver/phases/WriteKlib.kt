@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.*
 
@@ -25,6 +25,7 @@ internal data class KlibWriterInput(
         val produceHeaderKlib: Boolean,
         val customAbiVersion: KotlinAbiVersion?,
 )
+
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
         "WriteKlib",
 ) { context, input ->
@@ -50,6 +51,9 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     if (input.produceHeaderKlib) {
         manifestProperties.setProperty(KLIB_PROPERTY_HEADER, "true")
     }
+
+    addLanguageFeaturesToManifest(manifestProperties, configuration.languageVersionSettings)
+
     val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName } ?: listOf(target.visibleName)
 
     if (!nopack) {

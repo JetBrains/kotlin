@@ -36,6 +36,12 @@ data class CompilerTestLanguageVersionSettings(
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
         extraLanguageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
+    override fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature> =
+        delegate.getManuallyEnabledLanguageFeatures()
+
+    override fun getManuallyDisabledLanguageFeatures(): List<LanguageFeature> =
+        delegate.getManuallyDisabledLanguageFeatures()
+
     override fun isPreRelease(): Boolean = KotlinCompilerVersion.isPreRelease()
 
     @Suppress("UNCHECKED_CAST")
