@@ -103,6 +103,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                 )
                 is FirWrappedArgumentExpression -> expression.createConeResolutionAtomWithSingleChild(expression.expression)
                 is FirErrorExpression -> expression.createConeResolutionAtomWithSingleChild(expression.expression)
+                is FirQualifiedErrorAccessExpression -> expression.createConeResolutionAtomWithSingleChild(expression.selector)
                 is FirBlock -> expression.createConeResolutionAtomWithSingleChild(expression.lastExpression)
                 else -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
             }
