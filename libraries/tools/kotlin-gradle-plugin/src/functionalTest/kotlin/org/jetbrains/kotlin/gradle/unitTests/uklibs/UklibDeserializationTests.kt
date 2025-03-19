@@ -55,31 +55,25 @@ class UklibDeserializationTests {
                     UklibFragment(
                         identifier = "iosArm64Main",
                         attributes = setOf("ios_arm64"),
-                        file = {
-                            temporaryDirectory.resolve("iosArm64Main").also {
-                                it.createDirectory()
-                                it.resolve("file").writeText("iosArm64MainContent")
-                            }
+                        file = temporaryDirectory.resolve("iosArm64Main").also {
+                            it.createDirectory()
+                            it.resolve("file").writeText("iosArm64MainContent")
                         }
                     ),
                     UklibFragment(
                         identifier = "commonMain",
                         attributes = setOf("ios_arm64", "jvm"),
-                        file = {
-                            temporaryDirectory.resolve("commonMain").also {
-                                it.createDirectory()
-                                it.resolve("file").writeText("commonMainContent")
-                            }
+                        file = temporaryDirectory.resolve("commonMain").also {
+                            it.createDirectory()
+                            it.resolve("file").writeText("commonMainContent")
                         }
                     ),
                     UklibFragment(
                         identifier = "jvmMain",
                         attributes = setOf("jvm"),
-                        file = {
-                            temporaryDirectory.resolve("jvmMain").also {
-                                it.createDirectory()
-                                it.resolve("file").writeText("jvmMainContent")
-                            }
+                        file = temporaryDirectory.resolve("jvmMain").also {
+                            it.createDirectory()
+                            it.resolve("file").writeText("jvmMainContent")
                         }
                     ),
                 )
@@ -109,7 +103,7 @@ class UklibDeserializationTests {
                 TestFragment(
                     it.identifier,
                     it.attributes,
-                    it.file().resolve("file").readText(),
+                    it.file.resolve("file").readText(),
                 )
             }.prettyPrinted, mutableListOf<TestFragment>(
                 TestFragment(
