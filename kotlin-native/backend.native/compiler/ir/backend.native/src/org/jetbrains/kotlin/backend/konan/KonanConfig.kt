@@ -530,6 +530,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val systemCacheFlavorString = buildString {
         appendCommonCacheFlavor()
+        append("-system")
 
         if (useDebugInfoInNativeLibs)
             append("-runtime_debug")
@@ -553,6 +554,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
+        append("-user")
         if (partialLinkageConfig.isEnabled) append("-pl")
     }
 
