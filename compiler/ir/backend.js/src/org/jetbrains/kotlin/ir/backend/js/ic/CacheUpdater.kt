@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
@@ -137,7 +135,7 @@ class CacheUpdater(
         val signatureHashCalculator = IdSignatureHashCalculator(icHasher)
 
         // libraries in topological order: [stdlib, ..., main]
-        val libraryDependencies = stopwatch.measure("Resolving and loading klib dependencies") {
+        val orderedLibraries = stopwatch.measure("Resolving and loading klib dependencies") {
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
             val allResolvedDependencies = CommonKLibResolver.resolve(
                 allModules,
@@ -149,7 +147,7 @@ class CacheUpdater(
                 ),
             )
 
-            val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
+            allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
                 val mainLibraryIndex = resolvedLibraries.indexOfLast {
                     KotlinLibraryFile(it) == mainLibraryFile
                 }.takeIf { it >= 0 } ?: notFoundIcError("main library", mainLibraryFile)
@@ -161,22 +159,14 @@ class CacheUpdater(
                     }.apply { add(resolvedLibraries[mainLibraryIndex]) }
                 }
             }
-
-            val nameToKotlinLibrary = libraries.associateBy { it.moduleName }
-
-            libraries.associateWith {
-                it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).memoryOptimizedMap { depName ->
-                    nameToKotlinLibrary[depName] ?: notFoundIcError("library $depName")
-                }
-            }
         }
 
-        val mainModuleFriendLibraries = libraryDependencies.keys.let { libs ->
+        val mainModuleFriendLibraries = orderedLibraries.let { libs ->
             val friendPaths = mainModuleFriends.mapTo(newHashSetWithExpectedSize(mainModuleFriends.size)) { File(it).canonicalPath }
             libs.memoryOptimizedFilter { it.libraryFile.canonicalPath in friendPaths }
         }
 
-        private val incrementalCaches = libraryDependencies.keys.associate { lib ->
+        private val incrementalCaches = orderedLibraries.associate { lib ->
             val libFile = KotlinLibraryFile(lib)
             val file = File(libFile.path)
             val pathHash = file.absolutePath.cityHash64String()
@@ -644,7 +634,7 @@ class CacheUpdater(
             }
 
             val stubbedSignatures = loadedIr.collectSymbolsReplacedWithStubs().mapNotNullTo(hashSetOf()) { it.signature }
-            return libraryDependencies.keys.associate { library ->
+            return orderedLibraries.associate { library ->
                 val libFile = KotlinLibraryFile(library)
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val providers = loadedIr.getSignatureProvidersForLib(libFile)
@@ -740,7 +730,7 @@ class CacheUpdater(
         stopwatch.startNext("Modified files - loading and linking IR")
         val jsIrLinkerLoader = JsIrLinkerLoader(
             compilerConfiguration = compilerConfiguration,
-            dependencyGraph = updater.libraryDependencies,
+            orderedLibraries = updater.orderedLibraries,
             mainModuleFriends = updater.mainModuleFriendLibraries,
             irFactory = icContext.createIrFactory(),
             stubbedSignatures = stubbedSignatures
@@ -857,7 +847,7 @@ class CacheUpdater(
 fun rebuildCacheForDirtyFiles(
     library: KotlinLibrary,
     configuration: CompilerConfiguration,
-    dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
+    orderedLibraries: List<KotlinLibrary>,
     dirtyFiles: Collection<String>?,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
@@ -875,7 +865,7 @@ fun rebuildCacheForDirtyFiles(
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, emptyList(), irFactory, emptySet())
+    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), irFactory, emptySet())
     val loadedIr = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = loadedIr.loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)

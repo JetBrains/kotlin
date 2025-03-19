@@ -100,12 +100,12 @@ internal data class LoadedJsIr(
 
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
-    private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
+    private val orderedLibraries: List<KotlinLibrary>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
     private val irFactory: IrFactory,
     private val stubbedSignatures: Set<IdSignature>,
 ) {
-    private val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
+    private val mainLibrary = orderedLibraries.lastOrNull() ?: notFoundIcError("main library")
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private class LinkerContext(
@@ -177,7 +177,7 @@ internal class JsIrLinkerLoader(
             return md
         }
 
-        val moduleDescriptorToKotlinLibrary = dependencyGraph.keys.associateBy { klib -> getModuleDescriptor(klib) }
+        val moduleDescriptorToKotlinLibrary = orderedLibraries.associateBy { klib -> getModuleDescriptor(klib) }
         return moduleDescriptorToKotlinLibrary
             .onEach { (key, _) -> key.setDependencies(moduleDescriptorToKotlinLibrary.keys.toList()) }
             .map<ModuleDescriptorImpl, KotlinLibrary, Pair<ModuleDescriptor, KotlinLibrary>> { it.key to it.value }

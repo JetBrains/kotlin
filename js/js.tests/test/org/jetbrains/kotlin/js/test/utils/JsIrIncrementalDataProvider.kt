@@ -111,7 +111,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     private fun recordIncrementalData(
         path: String,
         dirtyFiles: List<String>?,
-        allDependencies: List<KotlinLibrary>,
+        orderedLibraries: List<KotlinLibrary>,
         configuration: CompilerConfiguration,
         mainArguments: List<String>?,
     ) {
@@ -122,24 +122,16 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             return
         }
 
-        val libs = allDependencies.associateBy { File(it.libraryFile.path).canonicalPath }
-
-        val nameToKotlinLibrary: Map<String, KotlinLibrary> = libs.values.associateBy { it.moduleName }
-
-        val dependencyGraph = libs.values.associateWith {
-            it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
-                nameToKotlinLibrary[depName] ?: error("No Library found for $depName")
-            }
-        }
-
-        val currentLib = libs[File(canonicalPath).canonicalPath] ?: error("Expected library at $canonicalPath")
+        val currentLib = orderedLibraries.firstOrNull {
+            File(it.libraryFile.path).canonicalPath == canonicalPath
+        } ?: error("Expected library at $canonicalPath")
 
         val testPackage = extractTestPackage(testServices)
 
         val (mainModuleIr, rebuiltFiles) = rebuildCacheForDirtyFiles(
             currentLib,
             configuration,
-            dependencyGraph,
+            orderedLibraries,
             dirtyFiles,
             IrFactoryImplForJsIC(WholeWorldStageController()),
             setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
