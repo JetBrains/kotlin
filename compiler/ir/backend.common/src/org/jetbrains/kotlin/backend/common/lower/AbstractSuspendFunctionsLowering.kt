@@ -34,9 +34,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : FileLoweringPass {
-    protected companion object {
+    companion object {
         val STATEMENT_ORIGIN_COROUTINE_IMPL = IrStatementOriginImpl("COROUTINE_IMPL")
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
+        val DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE = IrDeclarationOriginImpl("COROUTINE_IMPL_INVOKE")
     }
 
     protected abstract val stateMachineMethodName: Name
@@ -217,7 +218,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val function = context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
-                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
                 name = stateMachineFunction.name
                 visibility = stateMachineFunction.visibility
                 modality = Modality.FINAL
