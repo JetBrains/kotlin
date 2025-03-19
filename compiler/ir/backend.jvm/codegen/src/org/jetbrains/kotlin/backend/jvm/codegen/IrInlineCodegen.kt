@@ -181,11 +181,16 @@ class IrInlineCodegen(
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                         StackValue.OnStack(parameterType, irValueParameter.type.toIrBasedKotlinType())
                     }
-                    if (inlineArgumentsInPlace) {
+                    // StackValue.Local hasn't materialized on the stack yet, postpone adding END marker
+                    if (inlineArgumentsInPlace && argValue !is StackValue.Local) {
                         codegen.visitor.addInplaceArgumentEndMarker()
                     }
                     argValue
                 }
+            }
+
+            fun addInplaceArgumentEndMarkerIfPostponed() {
+                if (onStack is StackValue.Local) codegen.visitor.addInplaceArgumentEndMarker()
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
@@ -225,12 +230,17 @@ class IrInlineCodegen(
             }
 
             when {
-                kind === ValueKind.DEFAULT_PARAMETER || kind === ValueKind.DEFAULT_INLINE_PARAMETER ->
+                kind === ValueKind.DEFAULT_PARAMETER || kind === ValueKind.DEFAULT_INLINE_PARAMETER -> {
                     codegen.frameMap.enterTemp(info.type) // the inline function will put the value into this slot
-                onStack.isLocalWithNoBoxing(expectedType) ->
+                    addInplaceArgumentEndMarkerIfPostponed()
+                }
+                onStack.isLocalWithNoBoxing(expectedType) -> {
                     info.remapValue = onStack
+                    addInplaceArgumentEndMarkerIfPostponed()
+                }
                 else -> {
                     onStack.put(info.type, expectedType.kotlinType, codegen.visitor)
+                    addInplaceArgumentEndMarkerIfPostponed()
                     codegen.visitor.store(codegen.frameMap.enterTemp(info.type), info.type)
                 }
             }
