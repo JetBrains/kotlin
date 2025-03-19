@@ -3431,27 +3431,31 @@ open class PsiRawFirBuilder(
                 }
 
             val firSelector = selector.toFirExpression("Incorrect selector expression")
-            if (firSelector is FirQualifiedAccessExpression) {
-                if (expression is KtSafeQualifiedExpression) {
-                    @OptIn(FirImplementationDetail::class)
-                    firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
-                    return firSelector.createSafeCall(
-                        receiver,
-                        expression.toFirSourceElement()
-                    )
-                }
+            return when (firSelector) {
+                is FirQualifiedAccessExpression -> {
+                    if (expression is KtSafeQualifiedExpression) {
+                        @OptIn(FirImplementationDetail::class)
+                        firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
+                        return firSelector.createSafeCall(
+                            receiver,
+                            expression.toFirSourceElement()
+                        )
+                    }
 
-                return convertFirSelector(firSelector, expression.toFirSourceElement(), receiver)
-            }
-            if (firSelector is FirErrorExpression) {
-                return buildQualifiedErrorAccessExpression {
-                    this.receiver = receiver
-                    this.selector = firSelector
-                    source = expression.toFirSourceElement()
-                    diagnostic = ConeSyntaxDiagnostic("Qualified expression with unexpected selector")
+                    convertFirSelector(firSelector, expression.toFirSourceElement(), receiver)
+                }
+                is FirErrorExpression -> {
+                    buildQualifiedErrorAccessExpression {
+                        this.receiver = receiver
+                        this.selector = firSelector
+                        source = expression.toFirSourceElement()
+                        diagnostic = ConeSyntaxDiagnostic("Qualified expression with unexpected selector")
+                    }
+                }
+                else -> {
+                    firSelector
                 }
             }
-            return firSelector
         }
 
         override fun visitThisExpression(expression: KtThisExpression, data: FirElement?): FirElement {

@@ -685,38 +685,35 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        var result = firSelector
-        (firSelector as? FirQualifiedAccessExpression)?.let {
-            if (isSafe) {
-                @OptIn(FirImplementationDetail::class)
-                it.replaceSource(dotQualifiedExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
-                return it.createSafeCall(
-                    firReceiver!!,
-                    dotQualifiedExpression.toFirSourceElement()
-                )
+        return when (firSelector) {
+            is FirQualifiedAccessExpression -> {
+                if (isSafe) {
+                    @OptIn(FirImplementationDetail::class)
+                    firSelector.replaceSource(dotQualifiedExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
+                    return firSelector.createSafeCall(
+                        firReceiver!!,
+                        dotQualifiedExpression.toFirSourceElement()
+                    )
+                }
+                convertFirSelector(firSelector, dotQualifiedExpression.toFirSourceElement(), firReceiver!!)
             }
-
-            result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!)
-        }
-
-        val receiver = firReceiver
-        if (receiver != null) {
-            (firSelector as? FirErrorExpression)?.let { errorExpression ->
-                return buildQualifiedErrorAccessExpression {
-                    this.receiver = receiver
-                    this.selector = errorExpression
+            is FirErrorExpression if firReceiver != null -> {
+                buildQualifiedErrorAccessExpression {
+                    this.receiver = firReceiver
+                    this.selector = firSelector
                     source = dotQualifiedExpression.toFirSourceElement()
                     diagnostic = ConeSyntaxDiagnostic("Qualified expression with unexpected selector")
                 }
             }
-        }
+            else -> {
+                buildErrorExpression {
+                    source = dotQualifiedExpression.toFirSourceElement()
+                    diagnostic = ConeSyntaxDiagnostic("Qualified expression without selector")
 
-        return result ?: buildErrorExpression {
-            source = dotQualifiedExpression.toFirSourceElement()
-            diagnostic = ConeSyntaxDiagnostic("Qualified expression without selector")
-
-            // if there is no selector, we still want to resolve the receiver
-            expression = firReceiver
+                    // if there is no selector, we still want to resolve the receiver
+                    expression = firReceiver
+                }
+            }
         }
     }
 
