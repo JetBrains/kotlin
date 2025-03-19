@@ -183,7 +183,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
 
                 parameters = functionParameters.memoryOptimizedMap { parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, kind = IrParameterKind.Regular)
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, defaultValue = null, kind = IrParameterKind.Regular)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.parameters[0]
                 parameters = parameters memoryOptimizedPlus continuationParameter.copyTo(
@@ -191,6 +191,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     startOffset = function.startOffset,
                     endOffset = function.endOffset,
                     type = continuationType,
+                    defaultValue = null,
                 )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
