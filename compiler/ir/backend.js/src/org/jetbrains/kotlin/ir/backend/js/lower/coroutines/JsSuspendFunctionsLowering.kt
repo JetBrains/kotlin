@@ -103,7 +103,7 @@ class JsSuspendFunctionsLowering(
     private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
         val returnValue =
             if (delegatingCall.isReturnIfSuspendedCall(context))
-                delegatingCall.getValueArgument(0)!!
+                delegatingCall.arguments[0]!!
             else delegatingCall
 
         val body = irFunction.body as IrBlockBody
