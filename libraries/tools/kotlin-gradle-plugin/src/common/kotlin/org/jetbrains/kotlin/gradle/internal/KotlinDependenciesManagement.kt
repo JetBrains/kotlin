@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
-import org.jetbrains.kotlin.gradle.utils.withType
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
@@ -64,8 +63,8 @@ private fun ConfigurationContainer.configureDefaultVersionsResolutionStrategy(
 ) = configureEach { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
-            .withType<ExternalDependency>()
-            .all { dependency ->
+            .filterIsInstance<ExternalDependency>()
+            .forEach { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     dependency.version.isNullOrEmpty()
                 ) {
