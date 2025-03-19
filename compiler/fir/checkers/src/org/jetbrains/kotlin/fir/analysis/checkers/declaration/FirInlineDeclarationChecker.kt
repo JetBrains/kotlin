@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.inlineCheckerExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
@@ -613,4 +612,4 @@ fun createInlineFunctionBodyContext(function: FirFunction, session: FirSession):
 fun FirBasedSymbol<*>.unwrapDataClassCopyWithPrimaryConstructorOrNull(session: FirSession): FirCallableSymbol<*>? =
     (this as? FirCallableSymbol<*>)?.containingClassLookupTag()?.toClassSymbol(session)
         ?.takeIf { containingClass -> isDataClassCopy(containingClass, session) }
-        ?.primaryConstructorIfAny(session)
+        ?.primaryConstructorSymbol(session)

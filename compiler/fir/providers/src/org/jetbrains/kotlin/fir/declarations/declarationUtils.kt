@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
@@ -27,75 +28,7 @@ fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     return result
 }
 
-fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymbol> {
-    val result = mutableListOf<FirConstructorSymbol>()
-    session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
-    return result
-}
-
-fun FirClassSymbol<*>.processAllCallables(
-    session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    processor: (FirCallableSymbol<*>) -> Unit
-) {
-    session.declaredMemberScope(this, memberRequiredPhase).processAllCallables(processor)
-}
-
-fun FirClassSymbol<*>.properties(
-    session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-): List<FirPropertySymbol> {
-    val result = mutableListOf<FirPropertySymbol>()
-    processAllCallables(session, memberRequiredPhase) {
-        if (it is FirPropertySymbol) {
-            result += it
-        }
-    }
-    return result
-}
-
-fun FirClassSymbol<*>.functions(
-    session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-): List<FirNamedFunctionSymbol> {
-    val result = mutableListOf<FirNamedFunctionSymbol>()
-    processAllCallables(session, memberRequiredPhase) {
-        if (it is FirNamedFunctionSymbol) {
-            result += it
-        }
-    }
-    return result
-}
-
-fun FirClassSymbol<*>.processAllClassifiers(
-    session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    processor: (FirClassifierSymbol<*>) -> Unit
-) {
-    session.declaredMemberScope(this, memberRequiredPhase).processAllClassifiers(processor)
-}
-
-fun FirClass.processAllDeclarations(
-    session: FirSession,
-    memberRequiredPhase: FirResolvePhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    processor: (FirBasedSymbol<*>) -> Unit
-) {
-    session.declaredMemberScope(this, memberRequiredPhase).let {
-        it.processAllClassifiers(processor)
-        it.processAllCallables(processor)
-        it.processDeclaredConstructors(processor)
-    }
-    declarations.forEach {
-        if (it !is FirAnonymousInitializer) return@forEach
-        processor(it.symbol)
-    }
-}
-
 fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
-    return constructors(session).find(FirConstructorSymbol::isPrimary)
-}
-
-fun FirClassSymbol<*>.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
     return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
@@ -190,13 +123,13 @@ private fun FirFunction.containsDefaultValue(index: Int): Boolean = valueParamet
 fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
     containsDefaultValue(index) || symbol.getSingleMatchedExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
 
-fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
+fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
     if (name != OperatorNameConventions.EQUALS) return false
-    if (valueParameterSymbols.size != 1) return false
-    if (contextParameterSymbols.isNotEmpty()) return false
-    if (receiverParameterSymbol != null) return false
-    val parameter = valueParameterSymbols.first()
-    return parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isNullableAny
+    if (valueParameters.size != 1) return false
+    if (contextParameters.isNotEmpty()) return false
+    if (receiverParameter != null) return false
+    val parameter = valueParameters.first()
+    return parameter.returnTypeRef.coneType.fullyExpandedType(session).isNullableAny
 }
 
 /**

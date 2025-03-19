@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
@@ -36,7 +35,7 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
         if (objectSymbol.getContainingClassSymbol() != objectSymbol.getSuperClassSymbolOrAny(context.session))
             return
 
-        objectSymbol.primaryConstructorIfAny(context.session)?.resolvedDelegatedConstructorCall
+        objectSymbol.primaryConstructorSymbol(context.session)?.resolvedDelegatedConstructorCall
             ?.accept(objectRefVisitor, Data(objectSymbol, context, reporter))
     }
 
