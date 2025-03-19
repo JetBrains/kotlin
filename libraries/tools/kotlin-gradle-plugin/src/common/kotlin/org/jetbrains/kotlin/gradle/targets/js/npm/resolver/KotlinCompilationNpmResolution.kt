@@ -15,6 +15,13 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompila
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.Serializable
 
+/**
+ * _This is an internal KGP utility and should not be used in user buildscripts._
+ *
+ * Contains details about the npm dependencies that can affect a Kotlin Compilation.
+ *
+ * The resolution is produced by [KotlinCompilationNpmResolver].
+ */
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
     var internalCompositeDependencies: Collection<CompositeDependency>,
