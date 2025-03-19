@@ -37,6 +37,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         val STATEMENT_ORIGIN_COROUTINE_IMPL = IrStatementOriginImpl("COROUTINE_IMPL")
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
         val DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE = IrDeclarationOriginImpl("COROUTINE_IMPL_INVOKE")
+
+        private val CREATE_METHOD_NAME = Name.identifier("create")
     }
 
     protected abstract val stateMachineMethodName: Name
@@ -146,9 +148,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             if (isSuspendLambda) {
                 // Suspend lambda - create factory methods.
                 val createFunction = coroutineBaseClass.owner.simpleFunctions()
-                    .atMostOne {
-                        it.name.asString() == "create" && it.valueParameters.size == function.valueParameters.size + 1
-                    }
+                    .atMostOne { it.name == CREATE_METHOD_NAME && it.parameters.size == function.parameters.size + 1 }
 
                 val createMethod = buildCreateMethod(createFunction, coroutineConstructor)
                 implementedMembers.add(createMethod)
@@ -262,7 +262,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 startOffset = UNDEFINED_OFFSET
                 endOffset = UNDEFINED_OFFSET
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
-                name = Name.identifier("create")
+                name = CREATE_METHOD_NAME
                 visibility = DescriptorVisibilities.PROTECTED
                 returnType = coroutineClass.defaultType
             }.apply {
@@ -274,11 +274,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                val unboundArgs = function.valueParameters
+                val unboundArgs = functionParameters
 
                 val create1Function = coroutineBaseClass.owner.simpleFunctions()
-                    .single { it.name.asString() == "create" && it.valueParameters.size == 1 }
-                val create1CompletionParameter = create1Function.valueParameters[0]
+                    .single { it.name == CREATE_METHOD_NAME && it.parameters.size == 2 }
+                val create1CompletionParameter = create1Function.parameters[1]
 
                 val createValueParameters = (unboundArgs + create1CompletionParameter).memoryOptimizedMap { parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
@@ -308,10 +308,10 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     val instanceCreate = irCall(constructor).apply {
                         var unboundIndex = 0
                         for (f in boundFields) {
-                            putValueArgument(unboundIndex++, irGetField(irGet(thisReceiver), f))
+                            arguments[unboundIndex++] = irGetField(irGet(thisReceiver), f)
                         }
-                        putValueArgument(unboundIndex++, irGet(createValueParameters.last()))
-                        assert(unboundIndex == constructor.valueParameters.size) {
+                        arguments[unboundIndex++] = irGet(createValueParameters.last())
+                        assert(unboundIndex == constructor.parameters.size) {
                             "Not all arguments of <create> are used"
                         }
                     }
@@ -346,25 +346,16 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
             val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-            val thisReceiver = function.dispatchReceiverParameter
-                ?: compilationException(
-                    "Expected dispatch receiver for invoke",
-                    function
-                )
             val functionBody = function.body as IrBlockBody
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 generateCoroutineStart(stateMachineFunction, irCall(createFunction).apply {
-                    dispatchReceiver = irGet(thisReceiver)
                     var index = 0
-                    for (parameter in function.valueParameters) {
-                        putValueArgument(index++, irGet(parameter))
+                    for (parameter in function.parameters) {
+                        arguments[index++] = irGet(parameter)
                     }
-                    putValueArgument(
-                        index++,
-                        irCall(getContinuationSymbol, getContinuationSymbol.owner.returnType, listOf(function.returnType))
-                    )
-                    assert(index == createFunction.valueParameters.size)
+                    arguments[index++] = irCall(getContinuationSymbol, getContinuationSymbol.owner.returnType, listOf(function.returnType))
+                    assert(index == createFunction.parameters.size)
                 })
             }.statements)
         }
