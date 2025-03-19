@@ -781,9 +781,45 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("kt75317.kt")
+    public void testKt75317() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75317.kt");
+    }
+
+    @Test
+    @TestMetadata("kt75317_2.kt")
+    public void testKt75317_2() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75317_2.kt");
+    }
+
+    @Test
+    @TestMetadata("kt75317_2_nocms.kt")
+    public void testKt75317_2_nocms() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75317_2_nocms.kt");
+    }
+
+    @Test
     @TestMetadata("kt75861.kt")
     public void testKt75861() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/kt75861.kt");
+    }
+
+    @Test
+    @TestMetadata("kt76104.kt")
+    public void testKt76104() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt76104.kt");
+    }
+
+    @Test
+    @TestMetadata("kt76104_2.kt")
+    public void testKt76104_2() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/kt76104_2.kt");
+    }
+
+    @Test
+    @TestMetadata("localAllocatedArray.kt")
+    public void testLocalAllocatedArray() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/localAllocatedArray.kt");
     }
 
     @Test
