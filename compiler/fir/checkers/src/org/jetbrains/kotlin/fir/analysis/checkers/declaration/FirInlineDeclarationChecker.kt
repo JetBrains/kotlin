@@ -236,7 +236,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val receiverSymbol =
                 receiverExpression.unwrapErrorExpression()?.toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
             if (receiverSymbol in inlinableParameters) {
-                if (!isInvokeOrInlineExtension(targetSymbol) || qualifiedAccessExpression is FirCallableReferenceAccess) {
+                if (targetSymbol?.isInvokeOfSomeFunctionType() != true || qualifiedAccessExpression is FirCallableReferenceAccess) {
                     reporter.reportOn(
                         receiverExpression.source ?: qualifiedAccessExpression.source,
                         FirErrors.USAGE_IS_NOT_INLINABLE,
@@ -254,12 +254,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             }
         }
 
-        private fun isInvokeOrInlineExtension(targetSymbol: FirBasedSymbol<*>?): Boolean {
-            if (targetSymbol !is FirNamedFunctionSymbol) return false
-            // TODO: receivers are currently not inline (KT-5837)
-            // if (targetSymbol.isInline) return true
-            return targetSymbol.name == OperatorNameConventions.INVOKE &&
-                    targetSymbol.dispatchReceiverType?.isSomeFunctionType(session) == true
+        private fun FirBasedSymbol<*>.isInvokeOfSomeFunctionType(): Boolean {
+            if (this !is FirNamedFunctionSymbol) return false
+            return this.name == OperatorNameConventions.INVOKE &&
+                    this.dispatchReceiverType?.isSomeFunctionType(session) == true
         }
 
         internal fun checkQualifiedAccess(
