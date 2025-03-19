@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -80,20 +78,17 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         }
     }
 
-    protected fun buildCoroutine(function: IrSimpleFunction): IrClass {
-        val coroutine = CoroutineBuilder(function).build()
-
-        val isSuspendLambda = coroutine.coroutineClass === function.parent
-
-        if (isSuspendLambda) return coroutine.coroutineClass
-
-        // It is not a lambda - replace original function with a call to constructor of the built coroutine.
-        val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-        val functionBody = function.body as IrBlockBody
-        functionBody.statements.clear()
-        functionBody.statements.addAll(irBuilder.irBlockBody {
-            generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(function, coroutine))
-        }.statements)
+    protected fun buildCoroutine(function: IrSimpleFunction, isSuspendLambdaInvokeMethod: Boolean): IrClass {
+        val coroutine = CoroutineBuilder(function, isSuspendLambdaInvokeMethod).build()
+        if (!isSuspendLambdaInvokeMethod) {
+            // Replace the original function with a call to the constructor of the built coroutine class.
+            val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+            val functionBody = function.body as IrBlockBody
+            functionBody.statements.clear()
+            functionBody.statements.addAll(irBuilder.irBlockBody {
+                generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(function, coroutine))
+            }.statements)
+        }
         return coroutine.coroutineClass
     }
 
@@ -103,11 +98,8 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         val stateMachineFunction: IrFunction,
     )
 
-    private inner class CoroutineBuilder(val function: IrSimpleFunction) {
-        private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
-            ?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
-
-        private val functionParameters = if (isSuspendLambda) function.valueParameters else function.parameters
+    private inner class CoroutineBuilder(val function: IrSimpleFunction, private val isSuspendLambda: Boolean) {
+        private val functionParameters = if (isSuspendLambda) function.nonDispatchParameters else function.parameters
 
         private val coroutineClass: IrClass = getCoroutineClass(function)
 
@@ -135,9 +127,6 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
 
         private val coroutineBaseClass = getCoroutineBaseClass(function)
         private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.hasShape(regularParameters = 1) }
-        private val create1Function = coroutineBaseClass.owner.simpleFunctions()
-            .single { it.name.asString() == "create" && it.valueParameters.size == 1 }
-        private val create1CompletionParameter = create1Function.valueParameters[0]
 
         private fun getCoroutineClass(function: IrSimpleFunction): IrClass {
             return if (isSuspendLambda) function.parentAsClass
@@ -286,6 +275,10 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                 }
 
                 val unboundArgs = function.valueParameters
+
+                val create1Function = coroutineBaseClass.owner.simpleFunctions()
+                    .single { it.name.asString() == "create" && it.valueParameters.size == 1 }
+                val create1CompletionParameter = create1Function.valueParameters[0]
 
                 val createValueParameters = (unboundArgs + create1CompletionParameter).memoryOptimizedMap { parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
@@ -83,8 +84,11 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
             }
 
             is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                val coroutine = buildCoroutine(function)      // Coroutine implementation.
-                if (coroutine === function.parent)             // Suspend lambdas are called through factory method <create>,
+                val isLoweredSuspendLambda = function.isOperator &&
+                        function.name == OperatorNameConventions.INVOKE &&
+                        function.parentClassOrNull?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
+                val coroutine = buildCoroutine(function, isLoweredSuspendLambda)      // Coroutine implementation.
+                if (isLoweredSuspendLambda)             // Suspend lambdas are called through factory method <create>,
                     null
                 else
                     coroutine
