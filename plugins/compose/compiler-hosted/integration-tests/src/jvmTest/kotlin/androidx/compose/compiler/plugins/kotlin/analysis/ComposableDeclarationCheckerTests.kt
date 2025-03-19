@@ -42,14 +42,23 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 import androidx.compose.runtime.Composable
     
                 @Composable fun A() {}
+                
                 val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
                 val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
                 val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+                
                 fun doSomething(fn: () -> Unit) { print(fn) }
+                
                 @Composable fun B(content: @Composable () -> Unit) {
                     content()
                     doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
+                    doSomething(aCallable)
+                    doSomething(<!TYPE_MISMATCH!>bCallable<!>)
+                    doSomething(cCallable)
                     B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
+                    B(<!TYPE_MISMATCH!>aCallable<!>)
+                    B(bCallable)
+                    B(<!TYPE_MISMATCH!>cCallable<!>)
                 }
             """
         )
@@ -63,17 +72,21 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 import androidx.compose.runtime.Composable
     
                 @Composable fun A() {}
-                fun F() {}
+                
                 val aCallable: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>::A<!>
                 val bCallable: @Composable () -> Unit = ::A
                 val cCallable = ::A
-                fun doSomething(fn: () -> Unit) { print(fn) }
+
+                fun doSomething(fn: () -> Unit) { }
+                
                 @Composable fun B(content: @Composable () -> Unit) {
                     content()
                     doSomething(::<!INAPPLICABLE_CANDIDATE!>A<!>)
+                    doSomething(aCallable)
+                    doSomething(<!ARGUMENT_TYPE_MISMATCH!>bCallable<!>)
                     doSomething(<!ARGUMENT_TYPE_MISMATCH!>cCallable<!>)
                     B(::A)
-                    B(::<!INAPPLICABLE_CANDIDATE!>F<!>)
+                    B(<!ARGUMENT_TYPE_MISMATCH!>aCallable<!>)
                     B(bCallable)
                     B(cCallable)
                 }
@@ -86,19 +99,26 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
         assumeFalse(useFir)
         check(
             """
+            
             import androidx.compose.runtime.Composable
 
             fun A() {}
+                
             val aCallable: () -> Unit = ::A
             val bCallable: @Composable () -> Unit = <!TYPE_MISMATCH!>::A<!>
             val cCallable = ::A
-            val compCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::B<!>
+            
             fun doSomething(fn: () -> Unit) { print(fn) }
+            
             @Composable fun B(content: @Composable () -> Unit) {
                 content()
                 doSomething(::A)
+                doSomething(aCallable)
+                doSomething(<!TYPE_MISMATCH!>bCallable<!>)
+                doSomething(cCallable)
                 B(<!TYPE_MISMATCH!>::A<!>)
-                B(<!TYPE_MISMATCH!>compCallable<!>)
+                B(<!TYPE_MISMATCH!>aCallable<!>)
+                B(bCallable)
                 B(<!TYPE_MISMATCH!>cCallable<!>)
             }
         """
@@ -113,16 +133,22 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             import androidx.compose.runtime.Composable
 
             fun A() {}
+                
             val aCallable: () -> Unit = ::A
             val bCallable: @Composable () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>::A<!>
             val cCallable = ::A
-            val compCallable = ::B
+
             fun doSomething(fn: () -> Unit) { print(fn) }
+            
             @Composable fun B(content: @Composable () -> Unit) {
                 content()
                 doSomething(::A)
+                doSomething(aCallable)
+                doSomething(<!ARGUMENT_TYPE_MISMATCH!>bCallable<!>)
+                doSomething(cCallable)
                 B(::<!INAPPLICABLE_CANDIDATE!>A<!>)
-                B(<!ARGUMENT_TYPE_MISMATCH!>compCallable<!>)
+                B(<!ARGUMENT_TYPE_MISMATCH!>aCallable<!>)
+                B(bCallable)
                 B(<!ARGUMENT_TYPE_MISMATCH!>cCallable<!>)
             }
         """

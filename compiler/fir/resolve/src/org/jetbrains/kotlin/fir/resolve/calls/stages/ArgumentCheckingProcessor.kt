@@ -471,7 +471,12 @@ internal object ArgumentCheckingProcessor {
         if (expectedTypeKind.isBasicFunctionOrKFunction) return null
 
         // We want to check the argument type against non-suspend functional type.
-        val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
+        val expectedFunctionType =
+            if (expectedTypeKind.supportsConversionFromSimpleFunctionType) {
+                expectedType.customFunctionTypeToSimpleFunctionType(session)
+            } else {
+                return null
+            }
 
         val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
         val functionType = argumentTypeWithInvoke.unwrapLowerBound()

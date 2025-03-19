@@ -287,7 +287,11 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     val expectedTypeFunctionKind = expectedType.functionTypeKind(session)?.takeUnless { it.isBasicFunctionOrKFunction }
     val functionKind = function.specialFunctionTypeKind(session)
 
-    val conversionStrategy = if (expectedTypeFunctionKind != null && functionKind == null) {
+    val conversionStrategy = if (
+        expectedTypeFunctionKind != null &&
+        expectedTypeFunctionKind.supportsConversionFromSimpleFunctionType &&
+        functionKind == null
+    ) {
         CallableReferenceConversionStrategy.CustomConversion(expectedTypeFunctionKind)
     } else {
         CallableReferenceConversionStrategy.NoConversion

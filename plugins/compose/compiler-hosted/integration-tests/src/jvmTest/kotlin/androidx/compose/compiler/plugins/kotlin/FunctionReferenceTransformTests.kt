@@ -613,24 +613,6 @@ class FunctionReferenceTransformTests(useFir: Boolean) : AbstractIrTransformTest
     )
 
     @Test
-    fun reference_getter() = verifyGoldenComposeIrTransform(
-        extra = """
-            import androidx.compose.runtime.*
-
-            val property: Int
-                @Composable get() = 0
-        """,
-        source = """
-            import androidx.compose.runtime.*
-
-            @Composable
-            fun Ref(content: @Composable () -> Int) {
-                Ref(::property::get)
-            }
-        """,
-    )
-
-    @Test
     fun reference_different_nullability() = verifyGoldenComposeIrTransform(
         extra = """
             import androidx.compose.runtime.*
@@ -675,6 +657,7 @@ class FunctionReferenceTransformTests(useFir: Boolean) : AbstractIrTransformTest
             
             @Composable
             fun <T> Fn(t: T) {}
+            @Composable
             fun IntFn(t: Int) {}
         """,
         source = """
