@@ -156,22 +156,27 @@ internal class LLModuleWithDependenciesSymbolProvider(
     //               cache and filter the result then fall back to indices (probably the smartest move). Currently, this is a naive
     //               implementation which essentially duplicates the unified symbol provider!
     //               `dependenciesSymbolProvider` is used heavily in dangling file sessions as the dependency symbol provider.
-    val dependenciesSymbolProvider: FirSymbolProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        LLUnifiedSymbolProvider(session, module.project, dependencyProviders, emptyList(), dependencyProviders)
-    }
-
-    /* val dependenciesSymbolProvider: FirSymbolProvider = object : FirSymbolProvider(session) {
-        // Can't use composite symbol provider because dependency providers need to be accessed lazily.
-
-        override val symbolNamesProvider: FirSymbolNamesProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            FirCompositeCachedSymbolNamesProvider(
+    val dependenciesSymbolProvider: FirSymbolProvider = object : FirSymbolProvider(session) {
+        /**
+         * [dependenciesSymbolProvider] is accessed during session creation, so the calculation of the [dependencyProviders] must be lazy.
+         * Hence, we cannot expose the unified symbol provider directly as the [dependenciesSymbolProvider].
+         */
+        private val underlyingSymbolProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            LLUnifiedSymbolProvider(
                 session,
-                dependencyProviders.map { it.symbolNamesProvider },
+                module.project,
+                dependencyProviders,
+                emptyList(),
+                dependencyProviders,
             )
         }
 
+        override val symbolNamesProvider: FirSymbolNamesProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            underlyingSymbolProvider.symbolNamesProvider
+        }
+
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            return dependencyProviders.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+            return underlyingSymbolProvider.getClassLikeSymbolByClassId(classId)
         }
 
         @FirSymbolProviderInternals
@@ -180,7 +185,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
             packageFqName: FqName,
             name: Name,
         ) {
-            dependencyProviders.forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
+            underlyingSymbolProvider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
         }
 
         @FirSymbolProviderInternals
@@ -189,7 +194,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
             packageFqName: FqName,
             name: Name,
         ) {
-            dependencyProviders.forEach { it.getTopLevelFunctionSymbolsTo(destination, packageFqName, name) }
+            underlyingSymbolProvider.getTopLevelFunctionSymbolsTo(destination, packageFqName, name)
         }
 
         @FirSymbolProviderInternals
@@ -198,11 +203,11 @@ internal class LLModuleWithDependenciesSymbolProvider(
             packageFqName: FqName,
             name: Name,
         ) {
-            dependencyProviders.forEach { it.getTopLevelPropertySymbolsTo(destination, packageFqName, name) }
+            underlyingSymbolProvider.getTopLevelPropertySymbolsTo(destination, packageFqName, name)
         }
 
-        override fun hasPackage(fqName: FqName): Boolean = dependencyProviders.any { it.hasPackage(fqName) }
-    } */
+        override fun hasPackage(fqName: FqName): Boolean = underlyingSymbolProvider.hasPackage(fqName)
+    }
 }
 
 // TODO (marco): Document. Basic idea: combine own providers and dependency providers into a single unified symbol provider.
