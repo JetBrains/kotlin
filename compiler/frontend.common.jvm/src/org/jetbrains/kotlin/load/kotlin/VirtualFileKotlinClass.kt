@@ -67,8 +67,10 @@ class VirtualFileKotlinClass private constructor(
                         return@tryMeasureSideTime kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
                             ?: KotlinClassFinder.Result.ClassFileContent(byteContent)
                     }
-                } catch (e: FileNotFoundException) {
+                } catch (_: FileNotFoundException) {
                     // Valid situation. User can delete jar file.
+                } catch (_: java.nio.file.NoSuchFileException) {
+                    // Same (see FL-32618 as an exception example)
                 } catch (e: Throwable) {
                     if (e is ControlFlowException) throw e
                     throw logFileReadingErrorMessage(e, file)
