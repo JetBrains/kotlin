@@ -48,6 +48,8 @@ internal class LLModuleWithDependenciesSymbolProvider(
     val providers: List<FirSymbolProvider>,
     val computeDependencyProviders: () -> List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
+    private val module = session.llFirModuleData.ktModule
+
     val dependencyProviders: List<FirSymbolProvider> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeDependencyProviders().also { providers ->
             require(providers.all { it !is LLModuleWithDependenciesSymbolProvider }) {
@@ -60,9 +62,6 @@ internal class LLModuleWithDependenciesSymbolProvider(
     // We need this separate symbol provider because everything here is lazy.... :(
     // Lazily calculating everything in this `LLFirModuleWithDependenciesSymbolProvider` would be a mess.
     private val underlyingSymbolProvider: FirSymbolProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val module = session.llFirModuleData.ktModule
-        val project = module.project
-
         // Unified symbol providers aren't supported for resolvable library sessions because the `KaModule`-based selection mechanism
         // doesn't work with rest library symbol providers.
         // TODO (marco): This would be a NONISSUE if the rest libraries symbol provider wasn't a regular Java symbol provider...
@@ -73,7 +72,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
             return@lazy FirCompositeSymbolProvider(session, providers + dependencyProviders)
         }
 
-        LLUnifiedSymbolProvider(session, project, providers, dependencyProviders, providers + dependencyProviders)
+        LLUnifiedSymbolProvider(session, module.project, providers, dependencyProviders, providers + dependencyProviders)
     }
 
     /**
@@ -155,9 +154,13 @@ internal class LLModuleWithDependenciesSymbolProvider(
 
     // TODO (marco): A view on this symbol provider which only provides dependencies. Needs to bypass caches, or separate caches, or try the
     //               cache and filter the result then fall back to indices (probably the smartest move). Currently, this is a naive
-    //               implementation which hits all dependency symbol providers individually. (Saving grace: this symbol provider should not
-    //               be used often.)
-    val dependenciesSymbolProvider: FirSymbolProvider = object : FirSymbolProvider(session) {
+    //               implementation which essentially duplicates the unified symbol provider!
+    //               `dependenciesSymbolProvider` is used heavily in dangling file sessions as the dependency symbol provider.
+    val dependenciesSymbolProvider: FirSymbolProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLUnifiedSymbolProvider(session, module.project, dependencyProviders, emptyList(), dependencyProviders)
+    }
+
+    /* val dependenciesSymbolProvider: FirSymbolProvider = object : FirSymbolProvider(session) {
         // Can't use composite symbol provider because dependency providers need to be accessed lazily.
 
         override val symbolNamesProvider: FirSymbolNamesProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -199,7 +202,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
         }
 
         override fun hasPackage(fqName: FqName): Boolean = dependencyProviders.any { it.hasPackage(fqName) }
-    }
+    } */
 }
 
 // TODO (marco): Document. Basic idea: combine own providers and dependency providers into a single unified symbol provider.
