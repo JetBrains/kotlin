@@ -1,1 +1,0 @@
-/extensionShadowedByMember.kt:(262,265): warning: This extension is shadowed by a member: 'fun get(key: Any): Int' defined in '/Cache'.
