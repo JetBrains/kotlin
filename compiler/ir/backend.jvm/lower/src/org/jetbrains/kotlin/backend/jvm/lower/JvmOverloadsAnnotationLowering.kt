@@ -68,14 +68,18 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
         }
 
         var parametersCopied = 0
+        var defaultParametersCopied = 0
         call.arguments.assignFrom(target.parameters) { valueParameter ->
-            if (valueParameter.defaultValue == null || parametersCopied < numDefaultParametersToExpect) {
-                IrGetValueImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    wrapperIrFunction.parameters[parametersCopied++].symbol
-                )
-            } else {
-                null
+            fun irGetParameter() =
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, wrapperIrFunction.parameters[parametersCopied++].symbol)
+
+            when {
+                valueParameter.defaultValue == null -> irGetParameter()
+                defaultParametersCopied < numDefaultParametersToExpect -> {
+                    defaultParametersCopied++
+                    irGetParameter()
+                }
+                else -> null
             }
         }
 
