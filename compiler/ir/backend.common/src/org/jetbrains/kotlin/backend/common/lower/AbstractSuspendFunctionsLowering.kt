@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -221,6 +222,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = stateMachineFunction.name
                 visibility = stateMachineFunction.visibility
+                modality = Modality.FINAL
                 returnType = context.irBuiltIns.anyNType
                 isInline = stateMachineFunction.isInline
                 isExternal = stateMachineFunction.isExternal
