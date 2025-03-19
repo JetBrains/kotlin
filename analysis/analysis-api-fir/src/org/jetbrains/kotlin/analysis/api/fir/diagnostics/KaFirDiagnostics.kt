@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
@@ -788,11 +787,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CycleInAnnotationParameterWarning::class
     }
 
-    interface AnnotationClassConstructorCall : KaFirDiagnostic<KtCallExpression> {
+    interface AnnotationClassConstructorCall : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = AnnotationClassConstructorCall::class
     }
 
-    interface EnumClassConstructorCall : KaFirDiagnostic<KtCallExpression> {
+    interface EnumClassConstructorCall : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = EnumClassConstructorCall::class
     }
 

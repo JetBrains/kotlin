@@ -93,7 +93,6 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
@@ -307,8 +306,8 @@ object FirErrors {
     val MISSING_VAL_ON_ANNOTATION_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_VAL_ON_ANNOTATION_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
     val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val CYCLE_IN_ANNOTATION_PARAMETER: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("CYCLE_IN_ANNOTATION_PARAMETER", ProhibitCyclesInAnnotations, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
-    val ANNOTATION_CLASS_CONSTRUCTOR_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_CLASS_CONSTRUCTOR_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtCallExpression::class)
-    val ENUM_CLASS_CONSTRUCTOR_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("ENUM_CLASS_CONSTRUCTOR_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtCallExpression::class)
+    val ANNOTATION_CLASS_CONSTRUCTOR_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_CLASS_CONSTRUCTOR_CALL", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtElement::class)
+    val ENUM_CLASS_CONSTRUCTOR_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("ENUM_CLASS_CONSTRUCTOR_CALL", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtElement::class)
     val NOT_AN_ANNOTATION_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NOT_AN_ANNOTATION_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val NULLABLE_TYPE_OF_ANNOTATION_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("NULLABLE_TYPE_OF_ANNOTATION_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val VAR_ANNOTATION_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("VAR_ANNOTATION_PARAMETER", ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtParameter::class)

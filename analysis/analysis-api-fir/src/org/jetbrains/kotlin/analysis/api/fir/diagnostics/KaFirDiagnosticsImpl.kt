@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
@@ -942,12 +941,12 @@ internal class CycleInAnnotationParameterWarningImpl(
 internal class AnnotationClassConstructorCallImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtCallExpression>(firDiagnostic, token), KaFirDiagnostic.AnnotationClassConstructorCall
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.AnnotationClassConstructorCall
 
 internal class EnumClassConstructorCallImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtCallExpression>(firDiagnostic, token), KaFirDiagnostic.EnumClassConstructorCall
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.EnumClassConstructorCall
 
 internal class NotAnAnnotationClassImpl(
     override val annotationName: String,
