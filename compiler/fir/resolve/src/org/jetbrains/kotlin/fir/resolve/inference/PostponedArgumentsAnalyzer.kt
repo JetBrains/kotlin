@@ -215,7 +215,7 @@ class PostponedArgumentsAnalyzer(
                 lambda.receiverType
                     ?.let {
                         pclaInferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
-                            it, candidate.system, allowFixationToOtherTypeVariables = additionalBindingsFromOverloadResolution != null
+                            it, candidate.system, overloadResolutionMode = additionalBindingsFromOverloadResolution != null
                         )
                     }
             }

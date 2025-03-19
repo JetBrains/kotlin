@@ -51,34 +51,25 @@ class NewConstraintSystemImpl(
 
     override var atCompletionState: Boolean = false
 
-    override var allowSemiFixationToOtherTypeVariables: Boolean = false
-
     /**
      * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
     @K2Only
-    override fun <R> withTypeVariablesThatAreCountedAsProperTypes(
-        typeVariables: Set<TypeConstructorMarker>,
-        allowSemiFixationToOtherTypeVariables: Boolean,
-        block: () -> R,
-    ): R {
+    override fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
         checkState(State.BUILDING)
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
         properTypesCache.clear()
         notProperTypesCache.clear()
-        val previousAllowSemiFixationToOtherTypeVariables = this.allowSemiFixationToOtherTypeVariables
 
         require(typeVariablesThatAreCountedAsProperTypes == null) {
             "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
         }
 
         typeVariablesThatAreCountedAsProperTypes = typeVariables
-        this.allowSemiFixationToOtherTypeVariables = allowSemiFixationToOtherTypeVariables
 
         val result = block()
 
-        this.allowSemiFixationToOtherTypeVariables = previousAllowSemiFixationToOtherTypeVariables
         typeVariablesThatAreCountedAsProperTypes = null
         properTypesCache.clear()
         notProperTypesCache.clear()
