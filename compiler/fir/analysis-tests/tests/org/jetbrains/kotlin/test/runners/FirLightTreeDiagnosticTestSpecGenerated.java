@@ -85,31 +85,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.2.kt");
                 }
 
                 @Test
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.3.kt");
                 }
 
                 @Test
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.4.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/2.1.kt");
                 }
 
                 @Test
@@ -125,19 +125,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.2.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/2.1.kt");
                 }
 
                 @Test
@@ -203,13 +203,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/2.1.kt");
                 }
 
                 @Test
@@ -225,7 +225,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos/2.1.kt");
                 }
 
                 @Test
@@ -251,61 +251,61 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.10.kt")
                 public void test1_10() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.10.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.10.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.2.kt");
                 }
 
                 @Test
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.3.kt");
                 }
 
                 @Test
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.4.kt");
                 }
 
                 @Test
                 @TestMetadata("1.5.kt")
                 public void test1_5() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.5.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.5.kt");
                 }
 
                 @Test
                 @TestMetadata("1.6.kt")
                 public void test1_6() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.6.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.6.kt");
                 }
 
                 @Test
                 @TestMetadata("1.7.kt")
                 public void test1_7() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.7.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.7.kt");
                 }
 
                 @Test
                 @TestMetadata("1.8.kt")
                 public void test1_8() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.8.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.8.kt");
                 }
 
                 @Test
                 @TestMetadata("1.9.kt")
                 public void test1_9() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.9.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.9.kt");
                 }
 
                 @Test
@@ -321,25 +321,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.2.kt");
                 }
 
                 @Test
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.3.kt");
                 }
 
                 @Test
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.4.kt");
                 }
 
                 @Test
@@ -375,7 +375,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt");
                 }
 
                 @Test
@@ -401,25 +401,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt");
                 }
 
                 @Test
                 @TestMetadata("3.1.kt")
                 public void test3_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt");
                 }
 
                 @Test
@@ -435,79 +435,79 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt");
                 }
 
                 @Test
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt");
                 }
 
                 @Test
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.4.kt");
                 }
 
                 @Test
                 @TestMetadata("1.5.kt")
                 public void test1_5() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.5.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.5.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt");
                 }
 
                 @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt");
                 }
 
                 @Test
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.4.kt");
                 }
 
                 @Test
                 @TestMetadata("3.1.kt")
                 public void test3_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt");
                 }
 
                 @Test
                 @TestMetadata("3.2.kt")
                 public void test3_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.2.kt");
                 }
 
                 @Test
                 @TestMetadata("3.3.kt")
                 public void test3_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.3.kt");
                 }
 
                 @Test
                 @TestMetadata("3.4.kt")
                 public void test3_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt");
                 }
 
                 @Test
@@ -554,7 +554,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg/1.1.kt");
               }
 
               @Test
@@ -601,7 +601,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt");
             }
 
             @Test
@@ -646,7 +646,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -682,7 +682,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -719,7 +719,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg/2.1.kt");
             }
 
             @Test
@@ -745,7 +745,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg/1.1.kt");
             }
 
             @Test
@@ -771,7 +771,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos/1.1.kt");
             }
 
             @Test
@@ -807,7 +807,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg/1.1.kt");
             }
 
             @Test
@@ -823,7 +823,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos/1.1.kt");
             }
 
             @Test
@@ -868,13 +868,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/2.1.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/3.1.kt");
               }
 
               @Test
@@ -890,19 +890,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.1.kt");
               }
 
               @Test
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.2.kt");
               }
 
               @Test
@@ -938,7 +938,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg/1.1.kt");
               }
 
               @Test
@@ -954,7 +954,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -980,7 +980,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg/1.1.kt");
               }
 
               @Test
@@ -996,13 +996,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.2.kt");
               }
 
               @Test
@@ -1047,25 +1047,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.2.kt");
                 }
 
                 @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.3.kt");
                 }
 
                 @Test
@@ -1101,19 +1101,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.2.kt");
                 }
 
                 @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.3.kt");
                 }
 
                 @Test
@@ -1149,31 +1149,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.2.kt");
                 }
 
                 @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.3.kt");
                 }
 
                 @Test
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.4.kt");
                 }
 
                 @Test
@@ -1210,13 +1210,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg/3.1.kt");
               }
 
               @Test
@@ -1232,25 +1232,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
               }
 
               @Test
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/3.2.kt");
               }
 
               @Test
@@ -1276,25 +1276,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt");
               }
 
               @Test
@@ -1310,13 +1310,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
               }
 
               @Test
@@ -1342,19 +1342,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/2.1.kt");
               }
 
               @Test
@@ -1370,49 +1370,49 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
               }
 
               @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.5.kt");
               }
 
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
               }
 
               @Test
@@ -1438,31 +1438,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.3.kt");
               }
 
               @Test
@@ -1478,31 +1478,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
               }
 
               @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
               }
 
               @Test
@@ -1528,31 +1528,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.4.kt");
               }
 
               @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.5.kt");
               }
 
               @Test
@@ -1588,49 +1588,49 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt");
               }
 
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.5.kt");
               }
 
               @Test
@@ -1646,31 +1646,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.5.kt");
               }
 
               @Test
@@ -1707,7 +1707,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos/1.1.kt");
             }
 
             @Test
@@ -1752,7 +1752,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos/1.1.kt");
               }
 
               @Test
@@ -1798,7 +1798,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg/1.1.kt");
               }
 
               @Test
@@ -1834,7 +1834,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg/1.1.kt");
               }
 
               @Test
@@ -1861,7 +1861,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos/1.1.kt");
             }
 
             @Test
@@ -1896,7 +1896,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -1922,7 +1922,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg/1.1.kt");
               }
 
               @Test
@@ -1959,7 +1959,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg/1.1.kt");
             }
 
             @Test
@@ -1975,7 +1975,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos/1.1.kt");
             }
 
             @Test
@@ -2011,7 +2011,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg/1.1.kt");
             }
 
             @Test
@@ -2027,7 +2027,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos/1.1.kt");
             }
 
             @Test
@@ -2063,7 +2063,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos/1.1.kt");
             }
 
             @Test
@@ -2099,7 +2099,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.1.kt");
             }
 
             @Test
@@ -2125,7 +2125,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos/1.1.kt");
             }
 
             @Test
@@ -2170,7 +2170,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos/1.1.kt");
               }
 
               @Test
@@ -2206,7 +2206,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg/1.1.kt");
               }
 
               @Test
@@ -2232,7 +2232,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg/2.1.kt");
               }
 
               @Test
@@ -2268,7 +2268,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg/1.1.kt");
               }
 
               @Test
@@ -2294,7 +2294,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg/2.1.kt");
               }
 
               @Test
@@ -2330,7 +2330,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos/1.1.kt");
               }
 
               @Test
@@ -2366,7 +2366,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos/1.1.kt");
               }
 
               @Test
@@ -2403,7 +2403,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos/1.1.kt");
             }
 
             @Test
@@ -2439,25 +2439,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/1.1.kt");
             }
 
             @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/3.1.kt");
             }
 
             @Test
             @TestMetadata("4.1.kt")
             public void test4_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/4.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/4.1.kt");
             }
 
             @Test
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/5.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/5.1.kt");
             }
 
             @Test
@@ -2473,31 +2473,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt");
             }
 
             @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.1.kt");
             }
 
             @Test
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.2.kt");
             }
 
             @Test
             @TestMetadata("4.1.kt")
             public void test4_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.1.kt");
             }
 
             @Test
             @TestMetadata("4.2.kt")
             public void test4_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.2.kt");
             }
 
             @Test
@@ -2523,7 +2523,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos/2.1.kt");
             }
 
             @Test
@@ -2549,13 +2549,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/1.1.kt");
             }
 
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/2.1.kt");
             }
 
             @Test
@@ -2581,7 +2581,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt");
             }
 
             @Test
@@ -2597,7 +2597,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos/1.1.kt");
             }
 
             @Test
@@ -2642,7 +2642,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos/2.1.kt");
               }
 
               @Test
@@ -2678,7 +2678,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt");
               }
 
               @Test
@@ -2724,43 +2724,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("11.1.kt")
               public void test11_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.1.kt");
               }
 
               @Test
               @TestMetadata("11.2.kt")
               public void test11_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.2.kt");
               }
 
               @Test
               @TestMetadata("11.3.kt")
               public void test11_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.3.kt");
               }
 
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/3.1.kt");
               }
 
               @Test
               @TestMetadata("9.1.kt")
               public void test9_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/9.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/9.1.kt");
               }
 
               @Test
@@ -2776,55 +2776,55 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("10.1.kt")
               public void test10_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.1.kt");
               }
 
               @Test
               @TestMetadata("11.1.kt")
               public void test11_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.1.kt");
               }
 
               @Test
               @TestMetadata("11.2.kt")
               public void test11_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.2.kt");
               }
 
               @Test
               @TestMetadata("11.3.kt")
               public void test11_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.3.kt");
               }
 
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/3.1.kt");
               }
 
               @Test
               @TestMetadata("7.1.kt")
               public void test7_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/7.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/7.1.kt");
               }
 
               @Test
@@ -2851,13 +2851,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.1.kt");
             }
 
             @Test
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.2.kt");
             }
 
             @Test
@@ -2883,13 +2883,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.1.kt");
             }
 
             @Test
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.2.kt");
             }
 
             @Test
@@ -2905,31 +2905,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.1.kt");
             }
 
             @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.2.kt");
             }
 
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.1.kt");
             }
 
             @Test
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.2.kt");
             }
 
             @Test
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.3.kt");
             }
 
             @Test
@@ -2955,7 +2955,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg/2.1.kt");
             }
 
             @Test
@@ -2981,7 +2981,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg/1.1.kt");
             }
 
             @Test
@@ -2997,7 +2997,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos/1.1.kt");
             }
 
             @Test
@@ -3023,7 +3023,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg/1.1.kt");
             }
 
             @Test
@@ -3039,13 +3039,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt");
             }
 
             @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.2.kt");
             }
 
             @Test
@@ -3071,49 +3071,49 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.1.kt");
             }
 
             @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.2.kt");
             }
 
             @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.1.kt");
             }
 
             @Test
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.2.kt");
             }
 
             @Test
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.1.kt");
             }
 
             @Test
             @TestMetadata("5.2.kt")
             public void test5_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.2.kt");
             }
 
             @Test
             @TestMetadata("7.1.kt")
             public void test7_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.1.kt");
             }
 
             @Test
             @TestMetadata("7.2.kt")
             public void test7_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.2.kt");
             }
 
             @Test
@@ -3129,67 +3129,67 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.1.kt");
             }
 
             @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.2.kt");
             }
 
             @Test
             @TestMetadata("1.3.kt")
             public void test1_3() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.3.kt");
             }
 
             @Test
             @TestMetadata("1.4.kt")
             public void test1_4() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.4.kt");
             }
 
             @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.1.kt");
             }
 
             @Test
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.2.kt");
             }
 
             @Test
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.1.kt");
             }
 
             @Test
             @TestMetadata("5.2.kt")
             public void test5_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.2.kt");
             }
 
             @Test
             @TestMetadata("6.1.kt")
             public void test6_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/6.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/6.1.kt");
             }
 
             @Test
             @TestMetadata("7.1.kt")
             public void test7_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.1.kt");
             }
 
             @Test
             @TestMetadata("7.2.kt")
             public void test7_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.2.kt");
             }
 
             @Test
@@ -3253,7 +3253,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos/2.1.kt");
                 }
 
                 @Test
@@ -3280,97 +3280,97 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt");
               }
 
               @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt");
               }
 
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt");
               }
 
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt");
               }
 
               @Test
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt");
               }
 
               @Test
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.1.kt");
               }
 
               @Test
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt");
               }
 
               @Test
               @TestMetadata("5.1.kt")
               public void test5_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.1.kt");
               }
 
               @Test
               @TestMetadata("5.2.kt")
               public void test5_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.2.kt");
               }
 
               @Test
               @TestMetadata("6.1.kt")
               public void test6_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/6.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/6.1.kt");
               }
 
               @Test
@@ -3406,97 +3406,97 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.10.kt")
               public void test2_10() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.10.kt");
               }
 
               @Test
               @TestMetadata("2.11.kt")
               public void test2_11() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.11.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.11.kt");
               }
 
               @Test
               @TestMetadata("2.12.kt")
               public void test2_12() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.12.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.12.kt");
               }
 
               @Test
               @TestMetadata("2.13.kt")
               public void test2_13() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.13.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.13.kt");
               }
 
               @Test
               @TestMetadata("2.14.kt")
               public void test2_14() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.14.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.14.kt");
               }
 
               @Test
               @TestMetadata("2.15.kt")
               public void test2_15() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.15.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.15.kt");
               }
 
               @Test
               @TestMetadata("2.16.kt")
               public void test2_16() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.16.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.16.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.5.kt");
               }
 
               @Test
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.6.kt");
               }
 
               @Test
               @TestMetadata("2.7.kt")
               public void test2_7() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.7.kt");
               }
 
               @Test
               @TestMetadata("2.8.kt")
               public void test2_8() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.8.kt");
               }
 
               @Test
               @TestMetadata("2.9.kt")
               public void test2_9() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.9.kt");
               }
 
               @Test
@@ -3552,7 +3552,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos/1.1.kt");
               }
 
               @Test
@@ -3588,127 +3588,127 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.10.kt")
               public void test2_10() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.10.kt");
               }
 
               @Test
               @TestMetadata("2.11.kt")
               public void test2_11() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.11.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.11.kt");
               }
 
               @Test
               @TestMetadata("2.12.kt")
               public void test2_12() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.12.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.12.kt");
               }
 
               @Test
               @TestMetadata("2.13.kt")
               public void test2_13() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.13.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.13.kt");
               }
 
               @Test
               @TestMetadata("2.14.kt")
               public void test2_14() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.14.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.14.kt");
               }
 
               @Test
               @TestMetadata("2.15.kt")
               public void test2_15() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.15.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.15.kt");
               }
 
               @Test
               @TestMetadata("2.16.kt")
               public void test2_16() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.16.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.16.kt");
               }
 
               @Test
               @TestMetadata("2.17.kt")
               public void test2_17() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt");
               }
 
               @Test
               @TestMetadata("2.18.kt")
               public void test2_18() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt");
               }
 
               @Test
               @TestMetadata("2.19.kt")
               public void test2_19() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.20.kt")
               public void test2_20() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt");
               }
 
               @Test
               @TestMetadata("2.21.kt")
               public void test2_21() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.5.kt");
               }
 
               @Test
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.6.kt");
               }
 
               @Test
               @TestMetadata("2.7.kt")
               public void test2_7() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.7.kt");
               }
 
               @Test
               @TestMetadata("2.8.kt")
               public void test2_8() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.8.kt");
               }
 
               @Test
               @TestMetadata("2.9.kt")
               public void test2_9() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.9.kt");
               }
 
               @Test
@@ -3744,43 +3744,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt");
               }
 
               @Test
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt");
               }
 
               @Test
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt");
               }
 
               @Test
               @TestMetadata("6.1.kt")
               public void test6_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.1.kt");
               }
 
               @Test
               @TestMetadata("6.4.kt")
               public void test6_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.4.kt");
               }
 
               @Test
@@ -3796,97 +3796,97 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt");
               }
 
               @Test
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt");
               }
 
               @Test
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt");
               }
 
               @Test
               @TestMetadata("4.3.kt")
               public void test4_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt");
               }
 
               @Test
               @TestMetadata("4.4.kt")
               public void test4_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt");
               }
 
               @Test
               @TestMetadata("4.5.kt")
               public void test4_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt");
               }
 
               @Test
               @TestMetadata("4.6.kt")
               public void test4_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt");
               }
 
               @Test
               @TestMetadata("5.1.kt")
               public void test5_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt");
               }
 
               @Test
               @TestMetadata("6.1.kt")
               public void test6_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt");
               }
 
               @Test
               @TestMetadata("6.2.kt")
               public void test6_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.2.kt");
               }
 
               @Test
               @TestMetadata("6.3.kt")
               public void test6_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.3.kt");
               }
 
               @Test
               @TestMetadata("7.1.kt")
               public void test7_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt");
               }
 
               @Test
@@ -3922,31 +3922,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt");
               }
 
               @Test
               @TestMetadata("4.5.kt")
               public void test4_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt");
               }
 
               @Test
@@ -3962,31 +3962,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt");
               }
 
               @Test
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt");
               }
 
               @Test
               @TestMetadata("4.3.kt")
               public void test4_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt");
               }
 
               @Test
               @TestMetadata("4.4.kt")
               public void test4_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt");
               }
 
               @Test
               @TestMetadata("4.5.kt")
               public void test4_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt");
               }
 
               @Test
@@ -4022,49 +4022,49 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
               }
 
               @Test
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
               }
 
               @Test
               @TestMetadata("2.7.kt")
               public void test2_7() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.7.kt");
               }
 
               @Test
               @TestMetadata("2.8.kt")
               public void test2_8() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.8.kt");
               }
 
               @Test
               @TestMetadata("2.9.kt")
               public void test2_9() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt");
               }
 
               @Test
@@ -4080,19 +4080,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.3.kt");
               }
 
               @Test
@@ -4118,37 +4118,37 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt");
               }
 
               @Test
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt");
               }
 
               @Test
               @TestMetadata("3.3.kt")
               public void test3_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt");
               }
 
               @Test
               @TestMetadata("3.4.kt")
               public void test3_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt");
               }
 
               @Test
               @TestMetadata("3.5.kt")
               public void test3_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt");
               }
 
               @Test
               @TestMetadata("3.6.kt")
               public void test3_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt");
               }
 
               @Test
@@ -4174,7 +4174,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg/1.1.kt");
               }
 
               @Test
@@ -4190,7 +4190,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos/1.1.kt");
               }
 
               @Test
@@ -4227,19 +4227,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("10.1.kt")
             public void test10_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/10.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/10.1.kt");
             }
 
             @Test
             @TestMetadata("8.1.kt")
             public void test8_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/8.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/8.1.kt");
             }
 
             @Test
             @TestMetadata("9.1.kt")
             public void test9_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/9.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/9.1.kt");
             }
 
             @Test
@@ -4284,49 +4284,49 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.1.kt");
               }
 
               @Test
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.2.kt");
               }
 
               @Test
               @TestMetadata("4.3.kt")
               public void test4_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.3.kt");
               }
 
               @Test
               @TestMetadata("4.4.kt")
               public void test4_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.4.kt");
               }
 
               @Test
               @TestMetadata("4.5.kt")
               public void test4_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.5.kt");
               }
 
               @Test
               @TestMetadata("5.1.kt")
               public void test5_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/5.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/5.1.kt");
               }
 
               @Test
@@ -4352,43 +4352,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.3.kt");
               }
 
               @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.4.kt");
               }
 
               @Test
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.5.kt");
               }
 
               @Test
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.6.kt");
               }
 
               @Test
               @TestMetadata("2.7.kt")
               public void test2_7() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.7.kt");
               }
 
               @Test
@@ -4414,43 +4414,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.4.kt");
               }
 
               @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.5.kt");
               }
 
               @Test
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.6.kt");
               }
 
               @Test
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.7.kt");
               }
 
               @Test
@@ -4476,13 +4476,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.2.kt");
               }
 
               @Test
@@ -4508,25 +4508,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt");
               }
 
               @Test
@@ -4552,19 +4552,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.1.kt");
               }
 
               @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.2.kt");
               }
 
               @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.3.kt");
               }
 
               @Test
@@ -4580,7 +4580,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos/1.1.kt");
               }
 
               @Test
@@ -4616,7 +4616,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos/1.1.kt");
               }
 
               @Test
@@ -4642,7 +4642,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg/1.1.kt");
               }
 
               @Test
@@ -4688,7 +4688,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt");
               }
 
               @Test
@@ -4725,19 +4725,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/2.1.kt");
             }
 
             @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/3.1.kt");
             }
 
             @Test
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/5.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/5.1.kt");
             }
 
             @Test
@@ -4782,7 +4782,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -4808,7 +4808,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt");
               }
 
               @Test
@@ -4824,25 +4824,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt");
               }
 
               @Test
@@ -4869,7 +4869,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos/2.1.kt");
             }
 
             @Test
@@ -4904,31 +4904,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt");
               }
 
               @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt");
               }
 
               @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt");
               }
 
               @Test
@@ -4944,19 +4944,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt");
               }
 
               @Test
@@ -5012,7 +5012,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt");
               }
 
               @Test
@@ -5028,7 +5028,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt");
               }
 
               @Test
@@ -5055,7 +5055,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg/2.1.kt");
             }
 
             @Test
@@ -5081,13 +5081,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.1.kt");
             }
 
             @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.2.kt");
             }
 
             @Test
@@ -5132,7 +5132,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -5158,7 +5158,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg/1.1.kt");
               }
 
               @Test
@@ -5194,7 +5194,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos/1.1.kt");
               }
 
               @Test
@@ -5220,7 +5220,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt");
               }
 
               @Test
@@ -5276,7 +5276,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt");
               }
 
               @Test
@@ -5292,7 +5292,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt");
               }
 
               @Test
@@ -5339,19 +5339,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.1.kt");
             }
 
             @Test
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.2.kt");
             }
 
             @Test
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.3.kt");
             }
 
             @Test
@@ -5377,13 +5377,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/1.1.kt");
             }
 
             @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/2.1.kt");
             }
 
             @Test
@@ -5428,19 +5428,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.2.kt");
               }
 
               @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.3.kt");
               }
 
               @Test
@@ -5476,7 +5476,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt");
               }
 
               @Test
@@ -5522,19 +5522,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.2.kt");
               }
 
               @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/2.1.kt");
               }
 
               @Test
@@ -5550,13 +5550,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.1.kt");
               }
 
               @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.2.kt");
               }
 
               @Test
@@ -5611,13 +5611,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.2.kt");
                 }
 
                 @Test
@@ -5653,7 +5653,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg/2.1.kt");
                 }
 
                 @Test
@@ -5669,13 +5669,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt");
                 }
 
                 @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt");
                 }
 
                 @Test
@@ -5724,7 +5724,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
           @Test
           @TestMetadata("1.kt")
           public void test1() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg/1.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg/1.kt");
           }
 
           @Test
@@ -5750,67 +5750,67 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
           @Test
           @TestMetadata("1.kt")
           public void test1() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/1.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/1.kt");
           }
 
           @Test
           @TestMetadata("10.kt")
           public void test10() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/10.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/10.kt");
           }
 
           @Test
           @TestMetadata("11.kt")
           public void test11() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/11.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/11.kt");
           }
 
           @Test
           @TestMetadata("2.kt")
           public void test2() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/2.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/2.kt");
           }
 
           @Test
           @TestMetadata("3.kt")
           public void test3() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/3.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/3.kt");
           }
 
           @Test
           @TestMetadata("4.kt")
           public void test4() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/4.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/4.kt");
           }
 
           @Test
           @TestMetadata("5.kt")
           public void test5() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/5.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/5.kt");
           }
 
           @Test
           @TestMetadata("6.kt")
           public void test6() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/6.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/6.kt");
           }
 
           @Test
           @TestMetadata("7.kt")
           public void test7() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/7.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/7.kt");
           }
 
           @Test
           @TestMetadata("8.kt")
           public void test8() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/8.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/8.kt");
           }
 
           @Test
           @TestMetadata("9.kt")
           public void test9() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/9.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/9.kt");
           }
 
           @Test
@@ -5837,7 +5837,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
         @Test
         @TestMetadata("1.kt")
         public void test1() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg/1.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg/1.kt");
         }
 
         @Test
@@ -5881,7 +5881,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg/1.kt");
             }
 
             @Test
@@ -5897,13 +5897,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos/1.kt");
             }
 
             @Test
             @TestMetadata("2.kt")
             public void test2() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos/2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos/2.kt");
             }
 
             @Test
@@ -5938,31 +5938,31 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.kt")
               public void test1() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/1.kt");
               }
 
               @Test
               @TestMetadata("2.kt")
               public void test2() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/2.kt");
               }
 
               @Test
               @TestMetadata("3.kt")
               public void test3() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/3.kt");
               }
 
               @Test
               @TestMetadata("4.kt")
               public void test4() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/4.kt");
               }
 
               @Test
               @TestMetadata("5.kt")
               public void test5() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/5.kt");
               }
 
               @Test
@@ -5978,43 +5978,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.kt")
               public void test1() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/1.kt");
               }
 
               @Test
               @TestMetadata("2.kt")
               public void test2() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/2.kt");
               }
 
               @Test
               @TestMetadata("3.kt")
               public void test3() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/3.kt");
               }
 
               @Test
               @TestMetadata("4.kt")
               public void test4() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/4.kt");
               }
 
               @Test
               @TestMetadata("5.kt")
               public void test5() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/5.kt");
               }
 
               @Test
               @TestMetadata("6.kt")
               public void test6() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/6.kt");
               }
 
               @Test
               @TestMetadata("7.kt")
               public void test7() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/7.kt");
               }
 
               @Test
@@ -6040,7 +6040,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.kt")
               public void test1() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg/1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg/1.kt");
               }
 
               @Test
@@ -6056,43 +6056,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.kt")
               public void test1() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/1.kt");
               }
 
               @Test
               @TestMetadata("2.kt")
               public void test2() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/2.kt");
               }
 
               @Test
               @TestMetadata("3.kt")
               public void test3() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/3.kt");
               }
 
               @Test
               @TestMetadata("4.kt")
               public void test4() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/4.kt");
               }
 
               @Test
               @TestMetadata("5.kt")
               public void test5() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/5.kt");
               }
 
               @Test
               @TestMetadata("6.kt")
               public void test6() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/6.kt");
               }
 
               @Test
               @TestMetadata("7.kt")
               public void test7() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/7.kt");
               }
 
               @Test
@@ -6119,91 +6119,91 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/1.kt");
             }
 
             @Test
             @TestMetadata("10.kt")
             public void test10() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/10.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/10.kt");
             }
 
             @Test
             @TestMetadata("11.kt")
             public void test11() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/11.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/11.kt");
             }
 
             @Test
             @TestMetadata("12.kt")
             public void test12() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/12.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/12.kt");
             }
 
             @Test
             @TestMetadata("13.kt")
             public void test13() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/13.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/13.kt");
             }
 
             @Test
             @TestMetadata("14.kt")
             public void test14() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/14.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/14.kt");
             }
 
             @Test
             @TestMetadata("15.kt")
             public void test15() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/15.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/15.kt");
             }
 
             @Test
             @TestMetadata("2.kt")
             public void test2() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/2.kt");
             }
 
             @Test
             @TestMetadata("3.kt")
             public void test3() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/3.kt");
             }
 
             @Test
             @TestMetadata("4.kt")
             public void test4() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/4.kt");
             }
 
             @Test
             @TestMetadata("5.kt")
             public void test5() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/5.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/5.kt");
             }
 
             @Test
             @TestMetadata("6.kt")
             public void test6() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/6.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/6.kt");
             }
 
             @Test
             @TestMetadata("7.kt")
             public void test7() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/7.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/7.kt");
             }
 
             @Test
             @TestMetadata("8.kt")
             public void test8() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/8.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/8.kt");
             }
 
             @Test
             @TestMetadata("9.kt")
             public void test9() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/9.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/9.kt");
             }
 
             @Test
@@ -6219,85 +6219,85 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/1.kt");
             }
 
             @Test
             @TestMetadata("10.kt")
             public void test10() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/10.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/10.kt");
             }
 
             @Test
             @TestMetadata("11.kt")
             public void test11() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/11.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/11.kt");
             }
 
             @Test
             @TestMetadata("12.kt")
             public void test12() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/12.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/12.kt");
             }
 
             @Test
             @TestMetadata("13.kt")
             public void test13() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/13.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/13.kt");
             }
 
             @Test
             @TestMetadata("14.kt")
             public void test14() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/14.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/14.kt");
             }
 
             @Test
             @TestMetadata("2.kt")
             public void test2() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/2.kt");
             }
 
             @Test
             @TestMetadata("3.kt")
             public void test3() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/3.kt");
             }
 
             @Test
             @TestMetadata("4.kt")
             public void test4() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/4.kt");
             }
 
             @Test
             @TestMetadata("5.kt")
             public void test5() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/5.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/5.kt");
             }
 
             @Test
             @TestMetadata("6.kt")
             public void test6() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/6.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/6.kt");
             }
 
             @Test
             @TestMetadata("7.kt")
             public void test7() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/7.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/7.kt");
             }
 
             @Test
             @TestMetadata("8.kt")
             public void test8() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/8.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/8.kt");
             }
 
             @Test
             @TestMetadata("9.kt")
             public void test9() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/9.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/9.kt");
             }
 
             @Test
@@ -6342,109 +6342,109 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.kt")
               public void test1() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/1.kt");
               }
 
               @Test
               @TestMetadata("10.kt")
               public void test10() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/10.kt");
               }
 
               @Test
               @TestMetadata("11.kt")
               public void test11() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/11.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/11.kt");
               }
 
               @Test
               @TestMetadata("12.kt")
               public void test12() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/12.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/12.kt");
               }
 
               @Test
               @TestMetadata("13.kt")
               public void test13() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/13.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/13.kt");
               }
 
               @Test
               @TestMetadata("14.kt")
               public void test14() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/14.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/14.kt");
               }
 
               @Test
               @TestMetadata("15.kt")
               public void test15() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/15.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/15.kt");
               }
 
               @Test
               @TestMetadata("16.kt")
               public void test16() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/16.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/16.kt");
               }
 
               @Test
               @TestMetadata("17.kt")
               public void test17() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/17.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/17.kt");
               }
 
               @Test
               @TestMetadata("19.kt")
               public void test19() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/19.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/19.kt");
               }
 
               @Test
               @TestMetadata("2.kt")
               public void test2() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/2.kt");
               }
 
               @Test
               @TestMetadata("3.kt")
               public void test3() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/3.kt");
               }
 
               @Test
               @TestMetadata("4.kt")
               public void test4() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/4.kt");
               }
 
               @Test
               @TestMetadata("5.kt")
               public void test5() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/5.kt");
               }
 
               @Test
               @TestMetadata("6.kt")
               public void test6() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/6.kt");
               }
 
               @Test
               @TestMetadata("7.kt")
               public void test7() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/7.kt");
               }
 
               @Test
               @TestMetadata("8.kt")
               public void test8() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/8.kt");
               }
 
               @Test
               @TestMetadata("9.kt")
               public void test9() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/9.kt");
               }
 
               @Test
@@ -6460,13 +6460,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
               @Test
               @TestMetadata("1.kt")
               public void test1() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/1.kt");
               }
 
               @Test
               @TestMetadata("2.kt")
               public void test2() {
-                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/2.kt");
               }
 
               @Test
@@ -6501,13 +6501,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.kt")
                 public void test2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/2.kt");
                 }
 
                 @Test
@@ -6523,19 +6523,19 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.kt")
                 public void test2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/2.kt");
                 }
 
                 @Test
                 @TestMetadata("3.kt")
                 public void test3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/3.kt");
                 }
 
                 @Test
@@ -6561,7 +6561,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg/1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg/1.kt");
                 }
 
                 @Test
@@ -6587,43 +6587,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.kt")
                 public void test2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/2.kt");
                 }
 
                 @Test
                 @TestMetadata("3.kt")
                 public void test3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/3.kt");
                 }
 
                 @Test
                 @TestMetadata("4.kt")
                 public void test4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/4.kt");
                 }
 
                 @Test
                 @TestMetadata("5.kt")
                 public void test5() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/5.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/5.kt");
                 }
 
                 @Test
                 @TestMetadata("6.kt")
                 public void test6() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/6.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/6.kt");
                 }
 
                 @Test
                 @TestMetadata("7.kt")
                 public void test7() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/7.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/7.kt");
                 }
 
                 @Test
@@ -6639,25 +6639,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/1.kt");
                 }
 
                 @Test
                 @TestMetadata("2.kt")
                 public void test2() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/2.kt");
                 }
 
                 @Test
                 @TestMetadata("3.kt")
                 public void test3() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/3.kt");
                 }
 
                 @Test
                 @TestMetadata("4.kt")
                 public void test4() {
-                  runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/4.kt");
                 }
 
                 @Test
@@ -6685,25 +6685,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/1.kt");
             }
 
             @Test
             @TestMetadata("2.kt")
             public void test2() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/2.kt");
             }
 
             @Test
             @TestMetadata("3.kt")
             public void test3() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/3.kt");
             }
 
             @Test
             @TestMetadata("4.kt")
             public void test4() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/4.kt");
             }
 
             @Test
@@ -6719,13 +6719,13 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos/1.kt");
             }
 
             @Test
             @TestMetadata("2.kt")
             public void test2() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos/2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos/2.kt");
             }
 
             @Test
@@ -6753,271 +6753,271 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
         @Test
         @TestMetadata("1.kt")
         public void test1() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/1.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/1.kt");
         }
 
         @Test
         @TestMetadata("10.kt")
         public void test10() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/10.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/10.kt");
         }
 
         @Test
         @TestMetadata("11.kt")
         public void test11() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/11.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/11.kt");
         }
 
         @Test
         @TestMetadata("12.kt")
         public void test12() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/12.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/12.kt");
         }
 
         @Test
         @TestMetadata("13.kt")
         public void test13() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/13.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/13.kt");
         }
 
         @Test
         @TestMetadata("14.kt")
         public void test14() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/14.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/14.kt");
         }
 
         @Test
         @TestMetadata("15.kt")
         public void test15() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/15.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/15.kt");
         }
 
         @Test
         @TestMetadata("16.kt")
         public void test16() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/16.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/16.kt");
         }
 
         @Test
         @TestMetadata("17.kt")
         public void test17() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/17.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/17.kt");
         }
 
         @Test
         @TestMetadata("18.kt")
         public void test18() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/18.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/18.kt");
         }
 
         @Test
         @TestMetadata("19.kt")
         public void test19() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/19.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/19.kt");
         }
 
         @Test
         @TestMetadata("2.kt")
         public void test2() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/2.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/2.kt");
         }
 
         @Test
         @TestMetadata("20.kt")
         public void test20() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/20.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/20.kt");
         }
 
         @Test
         @TestMetadata("21.kt")
         public void test21() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/21.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/21.kt");
         }
 
         @Test
         @TestMetadata("22.kt")
         public void test22() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/22.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/22.kt");
         }
 
         @Test
         @TestMetadata("23.kt")
         public void test23() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/23.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/23.kt");
         }
 
         @Test
         @TestMetadata("24.kt")
         public void test24() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/24.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/24.kt");
         }
 
         @Test
         @TestMetadata("25.kt")
         public void test25() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/25.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/25.kt");
         }
 
         @Test
         @TestMetadata("26.kt")
         public void test26() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/26.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/26.kt");
         }
 
         @Test
         @TestMetadata("27.kt")
         public void test27() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/27.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/27.kt");
         }
 
         @Test
         @TestMetadata("28.kt")
         public void test28() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/28.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/28.kt");
         }
 
         @Test
         @TestMetadata("29.kt")
         public void test29() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/29.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/29.kt");
         }
 
         @Test
         @TestMetadata("3.kt")
         public void test3() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/3.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/3.kt");
         }
 
         @Test
         @TestMetadata("30.kt")
         public void test30() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/30.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/30.kt");
         }
 
         @Test
         @TestMetadata("31.kt")
         public void test31() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/31.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/31.kt");
         }
 
         @Test
         @TestMetadata("32.kt")
         public void test32() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/32.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/32.kt");
         }
 
         @Test
         @TestMetadata("33.kt")
         public void test33() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/33.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/33.kt");
         }
 
         @Test
         @TestMetadata("34.kt")
         public void test34() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/34.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/34.kt");
         }
 
         @Test
         @TestMetadata("35.kt")
         public void test35() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/35.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/35.kt");
         }
 
         @Test
         @TestMetadata("36.kt")
         public void test36() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/36.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/36.kt");
         }
 
         @Test
         @TestMetadata("37.kt")
         public void test37() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/37.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/37.kt");
         }
 
         @Test
         @TestMetadata("38.kt")
         public void test38() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/38.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/38.kt");
         }
 
         @Test
         @TestMetadata("39.kt")
         public void test39() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/39.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/39.kt");
         }
 
         @Test
         @TestMetadata("4.kt")
         public void test4() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/4.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/4.kt");
         }
 
         @Test
         @TestMetadata("40.kt")
         public void test40() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/40.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/40.kt");
         }
 
         @Test
         @TestMetadata("41.kt")
         public void test41() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/41.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/41.kt");
         }
 
         @Test
         @TestMetadata("42.kt")
         public void test42() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/42.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/42.kt");
         }
 
         @Test
         @TestMetadata("43.kt")
         public void test43() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/43.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/43.kt");
         }
 
         @Test
         @TestMetadata("44.kt")
         public void test44() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/44.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/44.kt");
         }
 
         @Test
         @TestMetadata("45.kt")
         public void test45() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/45.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/45.kt");
         }
 
         @Test
         @TestMetadata("5.kt")
         public void test5() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/5.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/5.kt");
         }
 
         @Test
         @TestMetadata("6.kt")
         public void test6() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/6.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/6.kt");
         }
 
         @Test
         @TestMetadata("7.kt")
         public void test7() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/7.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/7.kt");
         }
 
         @Test
         @TestMetadata("8.kt")
         public void test8() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/8.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/8.kt");
         }
 
         @Test
         @TestMetadata("9.kt")
         public void test9() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/9.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/9.kt");
         }
 
         @Test
@@ -7033,439 +7033,439 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
         @Test
         @TestMetadata("1.kt")
         public void test1() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/1.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/1.kt");
         }
 
         @Test
         @TestMetadata("10.kt")
         public void test10() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/10.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/10.kt");
         }
 
         @Test
         @TestMetadata("11.kt")
         public void test11() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/11.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/11.kt");
         }
 
         @Test
         @TestMetadata("12.kt")
         public void test12() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/12.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/12.kt");
         }
 
         @Test
         @TestMetadata("13.kt")
         public void test13() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/13.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/13.kt");
         }
 
         @Test
         @TestMetadata("14.kt")
         public void test14() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/14.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/14.kt");
         }
 
         @Test
         @TestMetadata("15.kt")
         public void test15() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/15.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/15.kt");
         }
 
         @Test
         @TestMetadata("16.kt")
         public void test16() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/16.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/16.kt");
         }
 
         @Test
         @TestMetadata("17.kt")
         public void test17() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/17.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/17.kt");
         }
 
         @Test
         @TestMetadata("18.kt")
         public void test18() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/18.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/18.kt");
         }
 
         @Test
         @TestMetadata("19.kt")
         public void test19() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/19.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/19.kt");
         }
 
         @Test
         @TestMetadata("2.kt")
         public void test2() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/2.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/2.kt");
         }
 
         @Test
         @TestMetadata("20.kt")
         public void test20() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/20.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/20.kt");
         }
 
         @Test
         @TestMetadata("21.kt")
         public void test21() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/21.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/21.kt");
         }
 
         @Test
         @TestMetadata("22.kt")
         public void test22() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/22.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/22.kt");
         }
 
         @Test
         @TestMetadata("23.kt")
         public void test23() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/23.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/23.kt");
         }
 
         @Test
         @TestMetadata("24.kt")
         public void test24() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/24.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/24.kt");
         }
 
         @Test
         @TestMetadata("25.kt")
         public void test25() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/25.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/25.kt");
         }
 
         @Test
         @TestMetadata("26.kt")
         public void test26() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/26.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/26.kt");
         }
 
         @Test
         @TestMetadata("27.kt")
         public void test27() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/27.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/27.kt");
         }
 
         @Test
         @TestMetadata("28.kt")
         public void test28() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/28.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/28.kt");
         }
 
         @Test
         @TestMetadata("29.kt")
         public void test29() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/29.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/29.kt");
         }
 
         @Test
         @TestMetadata("3.kt")
         public void test3() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/3.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/3.kt");
         }
 
         @Test
         @TestMetadata("30.kt")
         public void test30() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/30.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/30.kt");
         }
 
         @Test
         @TestMetadata("31.kt")
         public void test31() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/31.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/31.kt");
         }
 
         @Test
         @TestMetadata("32.kt")
         public void test32() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/32.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/32.kt");
         }
 
         @Test
         @TestMetadata("33.kt")
         public void test33() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/33.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/33.kt");
         }
 
         @Test
         @TestMetadata("34.kt")
         public void test34() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/34.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/34.kt");
         }
 
         @Test
         @TestMetadata("35.kt")
         public void test35() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/35.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/35.kt");
         }
 
         @Test
         @TestMetadata("36.kt")
         public void test36() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/36.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/36.kt");
         }
 
         @Test
         @TestMetadata("37.kt")
         public void test37() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/37.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/37.kt");
         }
 
         @Test
         @TestMetadata("38.kt")
         public void test38() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/38.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/38.kt");
         }
 
         @Test
         @TestMetadata("39.kt")
         public void test39() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/39.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/39.kt");
         }
 
         @Test
         @TestMetadata("4.kt")
         public void test4() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/4.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/4.kt");
         }
 
         @Test
         @TestMetadata("40.kt")
         public void test40() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/40.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/40.kt");
         }
 
         @Test
         @TestMetadata("41.kt")
         public void test41() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/41.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/41.kt");
         }
 
         @Test
         @TestMetadata("42.kt")
         public void test42() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/42.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/42.kt");
         }
 
         @Test
         @TestMetadata("43.kt")
         public void test43() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/43.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/43.kt");
         }
 
         @Test
         @TestMetadata("44.kt")
         public void test44() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/44.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/44.kt");
         }
 
         @Test
         @TestMetadata("45.kt")
         public void test45() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/45.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/45.kt");
         }
 
         @Test
         @TestMetadata("46.kt")
         public void test46() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/46.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/46.kt");
         }
 
         @Test
         @TestMetadata("47.kt")
         public void test47() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/47.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/47.kt");
         }
 
         @Test
         @TestMetadata("48.kt")
         public void test48() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/48.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/48.kt");
         }
 
         @Test
         @TestMetadata("49.kt")
         public void test49() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/49.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/49.kt");
         }
 
         @Test
         @TestMetadata("5.kt")
         public void test5() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/5.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/5.kt");
         }
 
         @Test
         @TestMetadata("50.kt")
         public void test50() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/50.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/50.kt");
         }
 
         @Test
         @TestMetadata("51.kt")
         public void test51() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/51.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/51.kt");
         }
 
         @Test
         @TestMetadata("52.kt")
         public void test52() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/52.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/52.kt");
         }
 
         @Test
         @TestMetadata("53.kt")
         public void test53() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/53.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/53.kt");
         }
 
         @Test
         @TestMetadata("54.kt")
         public void test54() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/54.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/54.kt");
         }
 
         @Test
         @TestMetadata("55.kt")
         public void test55() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/55.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/55.kt");
         }
 
         @Test
         @TestMetadata("56.kt")
         public void test56() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/56.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/56.kt");
         }
 
         @Test
         @TestMetadata("57.kt")
         public void test57() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/57.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/57.kt");
         }
 
         @Test
         @TestMetadata("58.kt")
         public void test58() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/58.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/58.kt");
         }
 
         @Test
         @TestMetadata("59.kt")
         public void test59() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/59.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/59.kt");
         }
 
         @Test
         @TestMetadata("6.kt")
         public void test6() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/6.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/6.kt");
         }
 
         @Test
         @TestMetadata("60.kt")
         public void test60() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/60.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/60.kt");
         }
 
         @Test
         @TestMetadata("61.kt")
         public void test61() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/61.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/61.kt");
         }
 
         @Test
         @TestMetadata("62.kt")
         public void test62() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/62.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/62.kt");
         }
 
         @Test
         @TestMetadata("63.kt")
         public void test63() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/63.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/63.kt");
         }
 
         @Test
         @TestMetadata("64.kt")
         public void test64() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/64.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/64.kt");
         }
 
         @Test
         @TestMetadata("65.kt")
         public void test65() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/65.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/65.kt");
         }
 
         @Test
         @TestMetadata("66.kt")
         public void test66() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/66.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/66.kt");
         }
 
         @Test
         @TestMetadata("67.kt")
         public void test67() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/67.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/67.kt");
         }
 
         @Test
         @TestMetadata("68.kt")
         public void test68() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/68.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/68.kt");
         }
 
         @Test
         @TestMetadata("69.kt")
         public void test69() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/69.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/69.kt");
         }
 
         @Test
         @TestMetadata("7.kt")
         public void test7() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/7.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/7.kt");
         }
 
         @Test
         @TestMetadata("70.kt")
         public void test70() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/70.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/70.kt");
         }
 
         @Test
         @TestMetadata("71.kt")
         public void test71() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/71.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/71.kt");
         }
 
         @Test
         @TestMetadata("72.kt")
         public void test72() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/72.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/72.kt");
         }
 
         @Test
         @TestMetadata("73.kt")
         public void test73() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/73.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/73.kt");
         }
 
         @Test
         @TestMetadata("8.kt")
         public void test8() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/8.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/8.kt");
         }
 
         @Test
         @TestMetadata("9.kt")
         public void test9() {
-          runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/9.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/9.kt");
         }
 
         @Test
@@ -7500,7 +7500,7 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
           @Test
           @TestMetadata("1.kt")
           public void test1() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg/1.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg/1.kt");
           }
 
           @Test
@@ -7536,43 +7536,43 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
           @Test
           @TestMetadata("1.kt")
           public void test1() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/1.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/1.kt");
           }
 
           @Test
           @TestMetadata("2.kt")
           public void test2() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/2.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/2.kt");
           }
 
           @Test
           @TestMetadata("3.kt")
           public void test3() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/3.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/3.kt");
           }
 
           @Test
           @TestMetadata("4.kt")
           public void test4() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/4.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/4.kt");
           }
 
           @Test
           @TestMetadata("5.kt")
           public void test5() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/5.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/5.kt");
           }
 
           @Test
           @TestMetadata("6.kt")
           public void test6() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/6.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/6.kt");
           }
 
           @Test
           @TestMetadata("7.kt")
           public void test7() {
-            runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/7.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/7.kt");
           }
 
           @Test
@@ -7617,25 +7617,25 @@ public class FirLightTreeDiagnosticTestSpecGenerated extends AbstractFirLightTre
             @Test
             @TestMetadata("1.kt")
             public void test1() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/1.kt");
             }
 
             @Test
             @TestMetadata("2.kt")
             public void test2() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/2.kt");
             }
 
             @Test
             @TestMetadata("3.kt")
             public void test3() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/3.kt");
             }
 
             @Test
             @TestMetadata("4.kt")
             public void test4() {
-              runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/4.kt");
             }
 
             @Test

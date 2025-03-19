@@ -87,7 +87,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
             ?: JavaForeignAnnotationType.Java8Annotations
         val javaFilesDir = createTempDirectory().toFile().also {
-            File(annotationPath.path).copyRecursively(it)
+            File("/Users/ilya.goncharov/repos/kotlin-amper", annotationPath.path).copyRecursively(it)
         }
         val jsr305JarFile = createJsr305Jar(configuration)
         val useJava11ToCompileIncludedJavaFiles =
@@ -105,7 +105,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
             val jsr305AnnotationsDir = createTempDirectory().toFile().also {
-                File(JSR_305_TEST_ANNOTATIONS_PATH).copyRecursively(it)
+                File("/Users/ilya.goncharov/repos/kotlin-amper", JSR_305_TEST_ANNOTATIONS_PATH).copyRecursively(it)
             }
             configuration.addJvmClasspathRoot(
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
@@ -121,7 +121,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
     private fun createJsr305Jar(configuration: CompilerConfiguration): File {
         val jsr305FilesDir = createTempDirectory().toFile().also {
-            File(JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
+            File("/Users/ilya.goncharov/repos/kotlin-amper", JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
         }
 
         return MockLibraryUtil.compileJavaFilesLibraryToJar(

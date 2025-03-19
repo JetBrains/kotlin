@@ -27,7 +27,7 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
   @Test
   @TestMetadata("kt60638.kt")
   public void testKt60638() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFir/kt60638.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/kt60638.kt");
   }
 
   @Nested
@@ -42,199 +42,199 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @Test
     @TestMetadata("annotationApplicationArgument.kt")
     public void testAnnotationApplicationArgument() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgument.kt");
     }
 
     @Test
     @TestMetadata("annotationApplicationArgumentList.kt")
     public void testAnnotationApplicationArgumentList() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgumentList.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgumentList.kt");
     }
 
     @Test
     @TestMetadata("annotationApplicationCallExpression.kt")
     public void testAnnotationApplicationCallExpression() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationCallExpression.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationCallExpression.kt");
     }
 
     @Test
     @TestMetadata("annotationApplicationVarargArgument.kt")
     public void testAnnotationApplicationVarargArgument() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationVarargArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationVarargArgument.kt");
     }
 
     @Test
     @TestMetadata("annotationApplicationWithArguments.kt")
     public void testAnnotationApplicationWithArguments() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
     }
 
     @Test
     @TestMetadata("annotationApplicationWithArgumentsOnCallSite.kt")
     public void testAnnotationApplicationWithArgumentsOnCallSite() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationWithArgumentsOnCallSite.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationWithArgumentsOnCallSite.kt");
     }
 
     @Test
     @TestMetadata("annotationInsideWhereClass.kt")
     public void testAnnotationInsideWhereClass() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereClass.kt");
     }
 
     @Test
     @TestMetadata("annotationInsideWhereFunction.kt")
     public void testAnnotationInsideWhereFunction() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereFunction.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereFunction.kt");
     }
 
     @Test
     @TestMetadata("annotationInsideWhereProperty.kt")
     public void testAnnotationInsideWhereProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereProperty.kt");
     }
 
     @Test
     @TestMetadata("annotationOnConstructorProperty.kt")
     public void testAnnotationOnConstructorProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnConstructorProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnConstructorProperty.kt");
     }
 
     @Test
     @TestMetadata("annotationOnEnumClass.kt")
     public void testAnnotationOnEnumClass() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnEnumClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnEnumClass.kt");
     }
 
     @Test
     @TestMetadata("annotationOnReturnType.kt")
     public void testAnnotationOnReturnType() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnReturnType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnReturnType.kt");
     }
 
     @Test
     @TestMetadata("danglingAnnotation.kt")
     public void testDanglingAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingAnnotation.kt");
     }
 
     @Test
     @TestMetadata("danglingAnnotationInClass.kt")
     public void testDanglingAnnotationInClass() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingAnnotationInClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingAnnotationInClass.kt");
     }
 
     @Test
     @TestMetadata("fileAnnotation.kt")
     public void testFileAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation.kt");
     }
 
     @Test
     @TestMetadata("fileAnnotation2.kt")
     public void testFileAnnotation2() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation2.kt");
     }
 
     @Test
     @TestMetadata("jvmFieldAnnotationOnConstructorProperty.kt")
     public void testJvmFieldAnnotationOnConstructorProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/jvmFieldAnnotationOnConstructorProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/jvmFieldAnnotationOnConstructorProperty.kt");
     }
 
     @Test
     @TestMetadata("retentionValue.kt")
     public void testRetentionValue() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/retentionValue.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/retentionValue.kt");
     }
 
     @Test
     @TestMetadata("superCallAnnotation.kt")
     public void testSuperCallAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/superCallAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/superCallAnnotation.kt");
     }
 
     @Test
     @TestMetadata("superCallAnnotation2.kt")
     public void testSuperCallAnnotation2() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/superCallAnnotation2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/superCallAnnotation2.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnConstructorParameter.kt")
     public void testTypeOnAnnotationOnConstructorParameter() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameter.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnConstructorParameterExpression.kt")
     public void testTypeOnAnnotationOnConstructorParameterExpression() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameterExpression.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameterExpression.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnConstructorProperty.kt")
     public void testTypeOnAnnotationOnConstructorProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorProperty.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnConstructorPropertyAndParameter.kt")
     public void testTypeOnAnnotationOnConstructorPropertyAndParameter() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyAndParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyAndParameter.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnConstructorPropertyWithArguments.kt")
     public void testTypeOnAnnotationOnConstructorPropertyWithArguments() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyWithArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyWithArguments.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnFunctionParameter.kt")
     public void testTypeOnAnnotationOnFunctionParameter() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameter.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnFunctionParameterWithArguments.kt")
     public void testTypeOnAnnotationOnFunctionParameterWithArguments() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameterWithArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameterWithArguments.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnReceiverFunction.kt")
     public void testTypeOnAnnotationOnReceiverFunction() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverFunction.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverFunction.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnReceiverParameter.kt")
     public void testTypeOnAnnotationOnReceiverParameter() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverParameter.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnReceiverProperty.kt")
     public void testTypeOnAnnotationOnReceiverProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverProperty.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnReceiverPropertyCall.kt")
     public void testTypeOnAnnotationOnReceiverPropertyCall() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverPropertyCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverPropertyCall.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnReturnFunction.kt")
     public void testTypeOnAnnotationOnReturnFunction() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReturnFunction.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReturnFunction.kt");
     }
 
     @Test
     @TestMetadata("typeOnAnnotationOnReturnProperty.kt")
     public void testTypeOnAnnotationOnReturnProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReturnProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReturnProperty.kt");
     }
 
     @Nested
@@ -249,49 +249,49 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
       @Test
       @TestMetadata("delegate.kt")
       public void testDelegate() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/delegate.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/delegate.kt");
       }
 
       @Test
       @TestMetadata("field.kt")
       public void testField() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/field.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/field.kt");
       }
 
       @Test
       @TestMetadata("file.kt")
       public void testFile() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/file.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/file.kt");
       }
 
       @Test
       @TestMetadata("getter.kt")
       public void testGetter() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/getter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/getter.kt");
       }
 
       @Test
       @TestMetadata("param.kt")
       public void testParam() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/param.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/param.kt");
       }
 
       @Test
       @TestMetadata("property.kt")
       public void testProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/property.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/property.kt");
       }
 
       @Test
       @TestMetadata("setParam.kt")
       public void testSetParam() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/setParam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/setParam.kt");
       }
 
       @Test
       @TestMetadata("setter.kt")
       public void testSetter() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/setter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/setter.kt");
       }
     }
   }
@@ -308,103 +308,103 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @Test
     @TestMetadata("arrayAssignOperatorAsSingleExpressionInIf.kt")
     public void testArrayAssignOperatorAsSingleExpressionInIf() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInIf.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInIf.kt");
     }
 
     @Test
     @TestMetadata("arrayAssignOperatorAsSingleExpressionInWhen.kt")
     public void testArrayAssignOperatorAsSingleExpressionInWhen() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInWhen.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInWhen.kt");
     }
 
     @Test
     @TestMetadata("arrayMinusAssignOperatorsInVariousScopes.kt")
     public void testArrayMinusAssignOperatorsInVariousScopes() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayMinusAssignOperatorsInVariousScopes.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayMinusAssignOperatorsInVariousScopes.kt");
     }
 
     @Test
     @TestMetadata("arrayTimesAssignOperatorsInVariousScopes.kt")
     public void testArrayTimesAssignOperatorsInVariousScopes() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayTimesAssignOperatorsInVariousScopes.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayTimesAssignOperatorsInVariousScopes.kt");
     }
 
     @Test
     @TestMetadata("callArgument.kt")
     public void testCallArgument() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/callArgument.kt");
     }
 
     @Test
     @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructor.kt")
     public void testCallInsideLambdaInsideSuperCallAndExplicitConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
     }
 
     @Test
     @TestMetadata("callInsideLambdaInsideSuperCallAndImplicitConstructor.kt")
     public void testCallInsideLambdaInsideSuperCallAndImplicitConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndImplicitConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndImplicitConstructor.kt");
     }
 
     @Test
     @TestMetadata("callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt")
     public void testCallInsideLambdaInsideSuperCallFromSecondaryConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt");
     }
 
     @Test
     @TestMetadata("callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt")
     public void testCallInsideLambdaInsideSuperCallFromSingleSecondaryConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
     }
 
     @Test
     @TestMetadata("callInsideLambdaInsideSuperCallInsideImplicitConstructor.kt")
     public void testCallInsideLambdaInsideSuperCallInsideImplicitConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallInsideImplicitConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallInsideImplicitConstructor.kt");
     }
 
     @Test
     @TestMetadata("calllTypeArguments.kt")
     public void testCalllTypeArguments() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/calllTypeArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/calllTypeArguments.kt");
     }
 
     @Test
     @TestMetadata("compoundAssignOnVal.kt")
     public void testCompoundAssignOnVal() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVal.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVal.kt");
     }
 
     @Test
     @TestMetadata("compoundAssignOnVal_lhs.kt")
     public void testCompoundAssignOnVal_lhs() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVal_lhs.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVal_lhs.kt");
     }
 
     @Test
     @TestMetadata("compoundAssignOnVar.kt")
     public void testCompoundAssignOnVar() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVar.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVar.kt");
     }
 
     @Test
     @TestMetadata("compoundAssignOnVar_lhs.kt")
     public void testCompoundAssignOnVar_lhs() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVar_lhs.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVar_lhs.kt");
     }
 
     @Test
     @TestMetadata("compoundAssignWithArrayAccessConvention.kt")
     public void testCompoundAssignWithArrayAccessConvention() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention.kt");
     }
 
     @Test
     @TestMetadata("compoundAssignWithArrayAccessConvention_lhs.kt")
     public void testCompoundAssignWithArrayAccessConvention_lhs() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention_lhs.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention_lhs.kt");
     }
 
     @Test

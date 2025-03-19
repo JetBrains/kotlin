@@ -32,31 +32,31 @@ public class IrCustomScriptCodegenTestGenerated extends AbstractIrCustomScriptCo
 
   @TestMetadata("captureImplicitReceiverInDefaultValue.kts")
   public void testCaptureImplicitReceiverInDefaultValue_kts() {
-    runTest("compiler/testData/codegen/customScript/captureImplicitReceiverInDefaultValue.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/customScript/captureImplicitReceiverInDefaultValue.kts");
   }
 
   @TestMetadata("pathPattern5.kts")
   public void testPathPattern5_kts() {
-    runTest("compiler/testData/codegen/customScript/pathPattern5.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/customScript/pathPattern5.kts");
   }
 
   @TestMetadata("providedPropsInLambda.kts")
   public void testProvidedPropsInLambda_kts() {
-    runTest("compiler/testData/codegen/customScript/providedPropsInLambda.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/customScript/providedPropsInLambda.kts");
   }
 
   @TestMetadata("simpleEnvVars.kts")
   public void testSimpleEnvVars_kts() {
-    runTest("compiler/testData/codegen/customScript/simpleEnvVars.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/customScript/simpleEnvVars.kts");
   }
 
   @TestMetadata("simple.customext")
   public void testSimple_customext() {
-    runTest("compiler/testData/codegen/customScript/simple.customext");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/customScript/simple.customext");
   }
 
   @TestMetadata("stringReceiver.kts")
   public void testStringReceiver_kts() {
-    runTest("compiler/testData/codegen/customScript/stringReceiver.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/customScript/stringReceiver.kts");
   }
 }

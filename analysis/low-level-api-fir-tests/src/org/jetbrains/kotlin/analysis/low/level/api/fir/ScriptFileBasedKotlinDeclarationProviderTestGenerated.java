@@ -26,6 +26,6 @@ public class ScriptFileBasedKotlinDeclarationProviderTestGenerated extends Abstr
   @Test
   @TestMetadata("script.kts")
   public void testScript() {
-    runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/script.kts");
   }
 }

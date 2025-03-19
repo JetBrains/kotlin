@@ -26,36 +26,36 @@ public class FirCustomScriptDefinitionLazyDeclarationResolveTestGenerated extend
   @Test
   @TestMetadata("initWithProvidedProperties.test.kts")
   public void testInitWithProvidedProperties_test() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/initWithProvidedProperties.test.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/initWithProvidedProperties.test.kts");
   }
 
   @Test
   @TestMetadata("providedPropertyWithDefaultImport.test.kts")
   public void testProvidedPropertyWithDefaultImport_test() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedPropertyWithDefaultImport.test.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedPropertyWithDefaultImport.test.kts");
   }
 
   @Test
   @TestMetadata("providedPropertyWithoutDefaultImport.test.kts")
   public void testProvidedPropertyWithoutDefaultImport_test() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedPropertyWithoutDefaultImport.test.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedPropertyWithoutDefaultImport.test.kts");
   }
 
   @Test
   @TestMetadata("providedProperty.test.kts")
   public void testProvidedProperty_test() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedProperty.test.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedProperty.test.kts");
   }
 
   @Test
   @TestMetadata("resultWithProvidedProperties.test.kts")
   public void testResultWithProvidedProperties_test() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/resultWithProvidedProperties.test.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/resultWithProvidedProperties.test.kts");
   }
 
   @Test
   @TestMetadata("scriptWithProvidedProperties.test.kts")
   public void testScriptWithProvidedProperties_test() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/scriptWithProvidedProperties.test.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/scriptWithProvidedProperties.test.kts");
   }
 }

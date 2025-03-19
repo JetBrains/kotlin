@@ -87,12 +87,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/1.1.kt");
             }
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/2.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -148,52 +148,52 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.10.kt")
               public void test1_10() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.10.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.5.kt");
               }
 
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.6.kt");
               }
 
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.7.kt");
               }
 
               @TestMetadata("1.8.kt")
               public void test1_8() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.8.kt");
               }
 
               @TestMetadata("1.9.kt")
               public void test1_9() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.9.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -237,7 +237,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -282,7 +282,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -326,22 +326,22 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt");
             }
 
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt");
             }
 
             @TestMetadata("2.4.kt")
             public void test2_4() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -385,42 +385,42 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.2.kt");
             }
 
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.3.kt");
             }
 
             @TestMetadata("2.4.kt")
             public void test2_4() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.4.kt");
             }
 
             @TestMetadata("2.5.kt")
             public void test2_5() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.5.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.5.kt");
             }
 
             @TestMetadata("2.6.kt")
             public void test2_6() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.6.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.6.kt");
             }
 
             @TestMetadata("2.7.kt")
             public void test2_7() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.7.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.7.kt");
             }
 
             @TestMetadata("2.8.kt")
             public void test2_8() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.8.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos/2.8.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -451,7 +451,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -482,7 +482,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -538,132 +538,132 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt");
               }
 
               @TestMetadata("2.10.kt")
               public void test2_10() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.10.kt");
               }
 
               @TestMetadata("2.11.kt")
               public void test2_11() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.11.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.11.kt");
               }
 
               @TestMetadata("2.12.kt")
               public void test2_12() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.12.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.12.kt");
               }
 
               @TestMetadata("2.13.kt")
               public void test2_13() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.13.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.13.kt");
               }
 
               @TestMetadata("2.14.kt")
               public void test2_14() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.14.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.14.kt");
               }
 
               @TestMetadata("2.15.kt")
               public void test2_15() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.15.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.15.kt");
               }
 
               @TestMetadata("2.16.kt")
               public void test2_16() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.16.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.16.kt");
               }
 
               @TestMetadata("2.17.kt")
               public void test2_17() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.17.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.17.kt");
               }
 
               @TestMetadata("2.18.kt")
               public void test2_18() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.18.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.18.kt");
               }
 
               @TestMetadata("2.19.kt")
               public void test2_19() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.19.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.19.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.2.kt");
               }
 
               @TestMetadata("2.20.kt")
               public void test2_20() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.20.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.20.kt");
               }
 
               @TestMetadata("2.21.kt")
               public void test2_21() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.21.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.21.kt");
               }
 
               @TestMetadata("2.22.kt")
               public void test2_22() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.22.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.22.kt");
               }
 
               @TestMetadata("2.23.kt")
               public void test2_23() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.23.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.23.kt");
               }
 
               @TestMetadata("2.24.kt")
               public void test2_24() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.24.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.24.kt");
               }
 
               @TestMetadata("2.25.kt")
               public void test2_25() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.25.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.25.kt");
               }
 
               @TestMetadata("2.26.kt")
               public void test2_26() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.26.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.26.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.3.kt");
               }
 
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.4.kt");
               }
 
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.5.kt");
               }
 
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.6.kt");
               }
 
               @TestMetadata("2.7.kt")
               public void test2_7() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.7.kt");
               }
 
               @TestMetadata("2.8.kt")
               public void test2_8() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.8.kt");
               }
 
               @TestMetadata("2.9.kt")
               public void test2_9() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.9.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -707,7 +707,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4/pos/2.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -763,12 +763,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.1.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -812,12 +812,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.1.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -861,12 +861,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.1.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -911,12 +911,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -947,12 +947,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -983,37 +983,37 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1044,27 +1044,27 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1108,17 +1108,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1163,7 +1163,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1/pos/2.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1219,32 +1219,32 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.3.kt");
               }
 
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.4.kt");
               }
 
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/2.5.kt");
               }
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/3.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1275,17 +1275,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/1.1.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos/2.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1329,52 +1329,52 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.5.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.3.kt");
               }
 
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.4.kt");
               }
 
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.5.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1419,27 +1419,27 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.1.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.2.kt");
             }
 
             @TestMetadata("1.3.kt")
             public void test1_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.3.kt");
             }
 
             @TestMetadata("1.4.kt")
             public void test1_4() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.4.kt");
             }
 
             @TestMetadata("1.5.kt")
             public void test1_5() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.5.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos/1.5.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1495,22 +1495,22 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/1.2.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos/2.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1554,22 +1554,22 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/1.2.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos/2.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1613,17 +1613,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.3.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1654,12 +1654,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos/2.1.kt");
               }
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos/3.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1704,17 +1704,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.2.kt");
             }
 
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.3.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1758,17 +1758,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos/2.2.kt");
             }
 
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos/2.3.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1812,17 +1812,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/1.1.kt");
             }
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/2.1.kt");
             }
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos/3.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1866,17 +1866,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/2.2.kt");
             }
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos/3.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1932,12 +1932,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1968,12 +1968,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2004,7 +2004,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2035,12 +2035,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2084,12 +2084,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2120,12 +2120,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2156,7 +2156,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2187,12 +2187,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2249,7 +2249,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2293,12 +2293,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2329,12 +2329,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2365,7 +2365,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2396,12 +2396,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2445,12 +2445,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2481,12 +2481,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2517,7 +2517,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2548,12 +2548,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2597,7 +2597,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2641,7 +2641,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2686,7 +2686,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -2730,7 +2730,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/neg/2.1.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -2748,27 +2748,27 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/2.2.kt");
             }
 
             @TestMetadata("2.3.kt")
             public void test2_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/2.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/2.3.kt");
             }
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/3.1.kt");
             }
 
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos/3.2.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -2799,7 +2799,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/neg/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/neg/3.1.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -2817,17 +2817,17 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/1.1.kt");
             }
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/2.1.kt");
             }
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos/3.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -2858,7 +2858,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -2889,7 +2889,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -2945,12 +2945,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -2981,12 +2981,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3017,7 +3017,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/neg/1.1.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -3074,12 +3074,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos/3.1.kt");
               }
 
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos/3.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3110,7 +3110,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg/1.1.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -3141,7 +3141,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3186,22 +3186,22 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.1.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.2.kt");
             }
 
             @TestMetadata("1.3.kt")
             public void test1_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.3.kt");
             }
 
             @TestMetadata("1.4.kt")
             public void test1_4() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg/1.4.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -3219,22 +3219,22 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.1.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.2.kt");
             }
 
             @TestMetadata("1.3.kt")
             public void test1_3() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.3.kt");
             }
 
             @TestMetadata("1.4.kt")
             public void test1_4() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos/1.4.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -3265,7 +3265,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg/2.1.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -3283,7 +3283,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos/1.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -3352,7 +3352,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/2.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3396,32 +3396,32 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.3.kt");
               }
 
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
               }
 
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
               }
 
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -3439,52 +3439,52 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
               }
 
               @TestMetadata("2.10.kt")
               public void test2_10() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.10.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.3.kt");
               }
 
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.4.kt");
               }
 
               @TestMetadata("2.5.kt")
               public void test2_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.5.kt");
               }
 
               @TestMetadata("2.6.kt")
               public void test2_6() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.6.kt");
               }
 
               @TestMetadata("2.7.kt")
               public void test2_7() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.7.kt");
               }
 
               @TestMetadata("2.8.kt")
               public void test2_8() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.8.kt");
               }
 
               @TestMetadata("2.9.kt")
               public void test2_9() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.9.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3515,52 +3515,52 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt");
               }
 
               @TestMetadata("3.10.kt")
               public void test3_10() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.10.kt");
               }
 
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt");
               }
 
               @TestMetadata("3.3.kt")
               public void test3_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt");
               }
 
               @TestMetadata("3.4.kt")
               public void test3_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt");
               }
 
               @TestMetadata("3.5.kt")
               public void test3_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt");
               }
 
               @TestMetadata("3.6.kt")
               public void test3_6() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt");
               }
 
               @TestMetadata("3.7.kt")
               public void test3_7() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.7.kt");
               }
 
               @TestMetadata("3.8.kt")
               public void test3_8() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.8.kt");
               }
 
               @TestMetadata("3.9.kt")
               public void test3_9() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.9.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3605,47 +3605,47 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.1.kt");
             }
 
             @TestMetadata("1.10.kt")
             public void test1_10() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.10.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.10.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.2.kt");
             }
 
             @TestMetadata("1.4.kt")
             public void test1_4() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.4.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.4.kt");
             }
 
             @TestMetadata("1.5.kt")
             public void test1_5() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.5.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.5.kt");
             }
 
             @TestMetadata("1.6.kt")
             public void test1_6() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.6.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.6.kt");
             }
 
             @TestMetadata("1.7.kt")
             public void test1_7() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.7.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.7.kt");
             }
 
             @TestMetadata("1.8.kt")
             public void test1_8() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.8.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.8.kt");
             }
 
             @TestMetadata("1.9.kt")
             public void test1_9() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.9.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos/1.9.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -3701,12 +3701,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3751,27 +3751,27 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.2.kt");
             }
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/3.1.kt");
             }
 
             @TestMetadata("4.2.kt")
             public void test4_2() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/4.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/4.2.kt");
             }
 
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/5.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/5.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -3840,52 +3840,52 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("10.1.kt")
               public void test10_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/10.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/10.1.kt");
               }
 
               @TestMetadata("10.2.kt")
               public void test10_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/10.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/10.2.kt");
               }
 
               @TestMetadata("13.1.kt")
               public void test13_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/13.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/13.1.kt");
               }
 
               @TestMetadata("13.2.kt")
               public void test13_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/13.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/13.2.kt");
               }
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/1.2.kt");
               }
 
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/4.1.kt");
               }
 
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/4.2.kt");
               }
 
               @TestMetadata("7.1.kt")
               public void test7_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/7.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/7.1.kt");
               }
 
               @TestMetadata("7.2.kt")
               public void test7_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/7.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg/7.2.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -3903,52 +3903,52 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("10.1.kt")
               public void test10_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/10.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/10.1.kt");
               }
 
               @TestMetadata("10.2.kt")
               public void test10_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/10.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/10.2.kt");
               }
 
               @TestMetadata("13.1.kt")
               public void test13_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/13.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/13.1.kt");
               }
 
               @TestMetadata("13.2.kt")
               public void test13_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/13.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/13.2.kt");
               }
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/1.2.kt");
               }
 
               @TestMetadata("4.1.kt")
               public void test4_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/4.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/4.1.kt");
               }
 
               @TestMetadata("4.2.kt")
               public void test4_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/4.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/4.2.kt");
               }
 
               @TestMetadata("7.1.kt")
               public void test7_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/7.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/7.1.kt");
               }
 
               @TestMetadata("7.2.kt")
               public void test7_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/7.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos/7.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -3992,57 +3992,57 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.5.kt");
               }
 
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.6.kt");
               }
 
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.7.kt");
               }
 
               @TestMetadata("1.8.kt")
               public void test1_8() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/1.8.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos/2.3.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -4073,7 +4073,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6/pos/1.1.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -4130,12 +4130,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt");
               }
 
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -4179,12 +4179,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos/2.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -4242,7 +4242,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5/pos/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5/pos/2.1.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -4310,12 +4310,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -4363,12 +4363,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
         @TestMetadata("1.kt")
         public void test1() {
-          runTest("compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg/1.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() {
-          runTest("compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg/2.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg/2.kt");
         }
 
         public void testAllFilesPresentInNeg() {
@@ -4411,62 +4411,62 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
           @TestMetadata("1.kt")
           public void test1() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/1.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/1.kt");
           }
 
           @TestMetadata("10.kt")
           public void test10() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/10.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/10.kt");
           }
 
           @TestMetadata("11.kt")
           public void test11() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/11.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/11.kt");
           }
 
           @TestMetadata("12.kt")
           public void test12() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/12.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/12.kt");
           }
 
           @TestMetadata("2.kt")
           public void test2() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/2.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/2.kt");
           }
 
           @TestMetadata("3.kt")
           public void test3() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/3.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/3.kt");
           }
 
           @TestMetadata("4.kt")
           public void test4() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/4.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/4.kt");
           }
 
           @TestMetadata("5.kt")
           public void test5() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/5.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/5.kt");
           }
 
           @TestMetadata("6.kt")
           public void test6() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/6.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/6.kt");
           }
 
           @TestMetadata("7.kt")
           public void test7() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/7.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/7.kt");
           }
 
           @TestMetadata("8.kt")
           public void test8() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/8.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/8.kt");
           }
 
           @TestMetadata("9.kt")
           public void test9() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/9.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/9.kt");
           }
 
           public void testAllFilesPresentInNeg() {
@@ -4484,12 +4484,12 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
           @TestMetadata("1.kt")
           public void test1() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos/1.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos/1.kt");
           }
 
           @TestMetadata("2.kt")
           public void test2() {
-            runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos/2.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos/2.kt");
           }
 
           public void testAllFilesPresentInPos() {

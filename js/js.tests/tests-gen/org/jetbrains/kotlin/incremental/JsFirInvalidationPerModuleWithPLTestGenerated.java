@@ -27,48 +27,48 @@ public class JsFirInvalidationPerModuleWithPLTestGenerated extends AbstractJsFir
   @Test
   @TestMetadata("changeFunctionSignature")
   public void testChangeFunctionSignature() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/changeFunctionSignature/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/changeFunctionSignature/");
   }
 
   @Test
   @TestMetadata("interfaceBecomeClass")
   public void testInterfaceBecomeClass() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/");
   }
 
   @Test
   @TestMetadata("removeFunction")
   public void testRemoveFunction() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunction/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/removeFunction/");
   }
 
   @Test
   @TestMetadata("removeFunctionFromBlock")
   public void testRemoveFunctionFromBlock() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromBlock/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromBlock/");
   }
 
   @Test
   @TestMetadata("removeFunctionFromChainCall")
   public void testRemoveFunctionFromChainCall() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCall/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCall/");
   }
 
   @Test
   @TestMetadata("removeFunctionFromElvis")
   public void testRemoveFunctionFromElvis() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvis/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvis/");
   }
 
   @Test
   @TestMetadata("removeFunctionFromInline")
   public void testRemoveFunctionFromInline() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromInline/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromInline/");
   }
 
   @Test
   @TestMetadata("removeInlineFunction")
   public void testRemoveInlineFunction() {
-    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunction/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunction/");
   }
 }

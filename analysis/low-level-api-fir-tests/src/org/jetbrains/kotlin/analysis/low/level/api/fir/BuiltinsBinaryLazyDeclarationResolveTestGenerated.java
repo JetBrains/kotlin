@@ -26,6 +26,6 @@ public class BuiltinsBinaryLazyDeclarationResolveTestGenerated extends AbstractB
   @Test
   @TestMetadata("Int.kt")
   public void testInt() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolveBuiltinsBinary/Int.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolveBuiltinsBinary/Int.kt");
   }
 }

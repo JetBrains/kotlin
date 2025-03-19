@@ -38,67 +38,67 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("annotationWithDefaultArgInDifferentModule.kt")
     public void testAnnotationWithDefaultArgInDifferentModule() {
-      runTest("compiler/testData/codegen/box/annotations/annotationWithDefaultArgInDifferentModule.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/annotationWithDefaultArgInDifferentModule.kt");
     }
 
     @Test
     @TestMetadata("annotations0.kt")
     public void testAnnotations0() {
-      runTest("compiler/testData/codegen/box/annotations/annotations0.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/annotations0.kt");
     }
 
     @Test
     @TestMetadata("deserializedLocalClassArgument.kt")
     public void testDeserializedLocalClassArgument() {
-      runTest("compiler/testData/codegen/box/annotations/deserializedLocalClassArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/deserializedLocalClassArgument.kt");
     }
 
     @Test
     @TestMetadata("genericAnnotations.kt")
     public void testGenericAnnotations() {
-      runTest("compiler/testData/codegen/box/annotations/genericAnnotations.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/genericAnnotations.kt");
     }
 
     @Test
     @TestMetadata("intrinsicConstEvaluationInSources.kt")
     public void testIntrinsicConstEvaluationInSources() {
-      runTest("compiler/testData/codegen/box/annotations/intrinsicConstEvaluationInSources.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/intrinsicConstEvaluationInSources.kt");
     }
 
     @Test
     @TestMetadata("nestedAnnotation.kt")
     public void testNestedAnnotation() {
-      runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
     }
 
     @Test
     @TestMetadata("nestedClassesInAnnotations.kt")
     public void testNestedClassesInAnnotations() {
-      runTest("compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
     }
 
     @Test
     @TestMetadata("platformDependent.kt")
     public void testPlatformDependent() {
-      runTest("compiler/testData/codegen/box/annotations/platformDependent.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/platformDependent.kt");
     }
 
     @Test
     @TestMetadata("resolveWithLowPriorityAnnotation.kt")
     public void testResolveWithLowPriorityAnnotation() {
-      runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
     }
 
     @Test
     @TestMetadata("selfReferentialAnnotation.kt")
     public void testSelfReferentialAnnotation() {
-      runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
     }
 
     @Test
     @TestMetadata("spreadOperatorInAnnotationArguments.kt")
     public void testSpreadOperatorInAnnotationArguments() {
-      runTest("compiler/testData/codegen/box/annotations/spreadOperatorInAnnotationArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/spreadOperatorInAnnotationArguments.kt");
     }
 
     @Nested
@@ -123,85 +123,85 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("annotationEqHc.kt")
       public void testAnnotationEqHc() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationEqHc.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationEqHc.kt");
       }
 
       @Test
       @TestMetadata("annotationFromStdlib.kt")
       public void testAnnotationFromStdlib() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationFromStdlib.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationFromStdlib.kt");
       }
 
       @Test
       @TestMetadata("annotationInstances.kt")
       public void testAnnotationInstances() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationInstances.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationInstances.kt");
       }
 
       @Test
       @TestMetadata("annotationInstancesEmptyDefault.kt")
       public void testAnnotationInstancesEmptyDefault() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
       }
 
       @Test
       @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
       public void testAnnotationInstancesEmptyDefaultLowered() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
       }
 
       @Test
       @TestMetadata("annotationToString.kt")
       public void testAnnotationToString() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
       }
 
       @Test
       @TestMetadata("annotationWithTypeParameters.kt")
       public void testAnnotationWithTypeParameters() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationWithTypeParameters.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationWithTypeParameters.kt");
       }
 
       @Test
       @TestMetadata("annotationsUnsignedTypes.kt")
       public void testAnnotationsUnsignedTypes() {
-        runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
       }
 
       @Test
       @TestMetadata("inInlineFunction.kt")
       public void testInInlineFunction() {
-        runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
       }
 
       @Test
       @TestMetadata("multifileEqHc.kt")
       public void testMultifileEqHc() {
-        runTest("compiler/testData/codegen/box/annotations/instances/multifileEqHc.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/multifileEqHc.kt");
       }
 
       @Test
       @TestMetadata("multimoduleTypeParams.kt")
       public void testMultimoduleTypeParams() {
-        runTest("compiler/testData/codegen/box/annotations/instances/multimoduleTypeParams.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/multimoduleTypeParams.kt");
       }
 
       @Test
       @TestMetadata("multiplatformInstantiation.kt")
       public void testMultiplatformInstantiation() {
-        runTest("compiler/testData/codegen/box/annotations/instances/multiplatformInstantiation.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/multiplatformInstantiation.kt");
       }
 
       @Test
       @TestMetadata("nestedAnnotationInstances.kt")
       public void testNestedAnnotationInstances() {
-        runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
       }
 
       @Test
       @TestMetadata("varargInAnnotationParameterInstantiation.kt")
       public void testVarargInAnnotationParameterInstantiation() {
-        runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
       }
     }
 
@@ -237,13 +237,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("checkingNotincorporatedInputTypes.kt")
       public void testCheckingNotincorporatedInputTypes() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/checkingNotincorporatedInputTypes.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/typeAnnotations/checkingNotincorporatedInputTypes.kt");
       }
 
       @Test
       @TestMetadata("unsafeVarianceInDependency.kt")
       public void testUnsafeVarianceInDependency() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/unsafeVarianceInDependency.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/annotations/typeAnnotations/unsafeVarianceInDependency.kt");
       }
     }
   }
@@ -260,91 +260,91 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("argumentOrderInObjectSuperCall.kt")
     public void testArgumentOrderInObjectSuperCall() {
-      runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/argumentOrderInObjectSuperCall.kt");
     }
 
     @Test
     @TestMetadata("argumentOrderInSuperCall.kt")
     public void testArgumentOrderInSuperCall() {
-      runTest("compiler/testData/codegen/box/argumentOrder/argumentOrderInSuperCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/argumentOrderInSuperCall.kt");
     }
 
     @Test
     @TestMetadata("arguments.kt")
     public void testArguments() {
-      runTest("compiler/testData/codegen/box/argumentOrder/arguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/arguments.kt");
     }
 
     @Test
     @TestMetadata("captured.kt")
     public void testCaptured() {
-      runTest("compiler/testData/codegen/box/argumentOrder/captured.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/captured.kt");
     }
 
     @Test
     @TestMetadata("capturedInExtension.kt")
     public void testCapturedInExtension() {
-      runTest("compiler/testData/codegen/box/argumentOrder/capturedInExtension.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/capturedInExtension.kt");
     }
 
     @Test
     @TestMetadata("defaults.kt")
     public void testDefaults() {
-      runTest("compiler/testData/codegen/box/argumentOrder/defaults.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/defaults.kt");
     }
 
     @Test
     @TestMetadata("extension.kt")
     public void testExtension() {
-      runTest("compiler/testData/codegen/box/argumentOrder/extension.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/extension.kt");
     }
 
     @Test
     @TestMetadata("extensionInClass.kt")
     public void testExtensionInClass() {
-      runTest("compiler/testData/codegen/box/argumentOrder/extensionInClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/extensionInClass.kt");
     }
 
     @Test
     @TestMetadata("kt17691WithEnabledFeature.kt")
     public void testKt17691WithEnabledFeature() {
-      runTest("compiler/testData/codegen/box/argumentOrder/kt17691WithEnabledFeature.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/kt17691WithEnabledFeature.kt");
     }
 
     @Test
     @TestMetadata("kt9277.kt")
     public void testKt9277() {
-      runTest("compiler/testData/codegen/box/argumentOrder/kt9277.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/kt9277.kt");
     }
 
     @Test
     @TestMetadata("lambdaMigration.kt")
     public void testLambdaMigration() {
-      runTest("compiler/testData/codegen/box/argumentOrder/lambdaMigration.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/lambdaMigration.kt");
     }
 
     @Test
     @TestMetadata("lambdaMigrationInClass.kt")
     public void testLambdaMigrationInClass() {
-      runTest("compiler/testData/codegen/box/argumentOrder/lambdaMigrationInClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/lambdaMigrationInClass.kt");
     }
 
     @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
-      runTest("compiler/testData/codegen/box/argumentOrder/simple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/simple.kt");
     }
 
     @Test
     @TestMetadata("simpleInClass.kt")
     public void testSimpleInClass() {
-      runTest("compiler/testData/codegen/box/argumentOrder/simpleInClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/simpleInClass.kt");
     }
 
     @Test
     @TestMetadata("singleSideEffect.kt")
     public void testSingleSideEffect() {
-      runTest("compiler/testData/codegen/box/argumentOrder/singleSideEffect.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/argumentOrder/singleSideEffect.kt");
     }
   }
 
@@ -360,67 +360,67 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("basic_charConversions.kt")
     public void testBasic_charConversions() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_charConversions.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_charConversions.kt");
     }
 
     @Test
     @TestMetadata("basic_charCornerCases.kt")
     public void testBasic_charCornerCases() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_charCornerCases.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_charCornerCases.kt");
     }
 
     @Test
     @TestMetadata("basic_compareIntToFloat.kt")
     public void testBasic_compareIntToFloat() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_compareIntToFloat.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_compareIntToFloat.kt");
     }
 
     @Test
     @TestMetadata("basic_doubleBasic.kt")
     public void testBasic_doubleBasic() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_doubleBasic.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_doubleBasic.kt");
     }
 
     @Test
     @TestMetadata("basic_integralToFloat.kt")
     public void testBasic_integralToFloat() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_integralToFloat.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_integralToFloat.kt");
     }
 
     @Test
     @TestMetadata("basic_kt37412.kt")
     public void testBasic_kt37412() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_kt37412.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_kt37412.kt");
     }
 
     @Test
     @TestMetadata("basic_selfComparison.kt")
     public void testBasic_selfComparison() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_selfComparison.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_selfComparison.kt");
     }
 
     @Test
     @TestMetadata("basic_shifts.kt")
     public void testBasic_shifts() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_shifts.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_shifts.kt");
     }
 
     @Test
     @TestMetadata("basic_uintTests.kt")
     public void testBasic_uintTests() {
-      runTest("compiler/testData/codegen/box/arithmetic/basic_uintTests.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/basic_uintTests.kt");
     }
 
     @Test
     @TestMetadata("division.kt")
     public void testDivision() {
-      runTest("compiler/testData/codegen/box/arithmetic/division.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/division.kt");
     }
 
     @Test
     @TestMetadata("github1856.kt")
     public void testGithub1856() {
-      runTest("compiler/testData/codegen/box/arithmetic/github1856.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arithmetic/github1856.kt");
     }
   }
 
@@ -436,367 +436,367 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("arrayConstructorWithNonInlineLambda.kt")
     public void testArrayConstructorWithNonInlineLambda() {
-      runTest("compiler/testData/codegen/box/arrays/arrayConstructorWithNonInlineLambda.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arrayConstructorWithNonInlineLambda.kt");
     }
 
     @Test
     @TestMetadata("arrayConstructorsSimple.kt")
     public void testArrayConstructorsSimple() {
-      runTest("compiler/testData/codegen/box/arrays/arrayConstructorsSimple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arrayConstructorsSimple.kt");
     }
 
     @Test
     @TestMetadata("arrayGetAssignMultiIndex.kt")
     public void testArrayGetAssignMultiIndex() {
-      runTest("compiler/testData/codegen/box/arrays/arrayGetAssignMultiIndex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arrayGetAssignMultiIndex.kt");
     }
 
     @Test
     @TestMetadata("arrayGetMultiIndex.kt")
     public void testArrayGetMultiIndex() {
-      runTest("compiler/testData/codegen/box/arrays/arrayGetMultiIndex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arrayGetMultiIndex.kt");
     }
 
     @Test
     @TestMetadata("arrayInstanceOf.kt")
     public void testArrayInstanceOf() {
-      runTest("compiler/testData/codegen/box/arrays/arrayInstanceOf.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arrayInstanceOf.kt");
     }
 
     @Test
     @TestMetadata("arrayPlusAssign.kt")
     public void testArrayPlusAssign() {
-      runTest("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
     }
 
     @Test
     @TestMetadata("collectionAssignGetMultiIndex.kt")
     public void testCollectionAssignGetMultiIndex() {
-      runTest("compiler/testData/codegen/box/arrays/collectionAssignGetMultiIndex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/collectionAssignGetMultiIndex.kt");
     }
 
     @Test
     @TestMetadata("collectionGetMultiIndex.kt")
     public void testCollectionGetMultiIndex() {
-      runTest("compiler/testData/codegen/box/arrays/collectionGetMultiIndex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/collectionGetMultiIndex.kt");
     }
 
     @Test
     @TestMetadata("constantArrayOfAny.kt")
     public void testConstantArrayOfAny() {
-      runTest("compiler/testData/codegen/box/arrays/constantArrayOfAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/constantArrayOfAny.kt");
     }
 
     @Test
     @TestMetadata("forEachBooleanArray.kt")
     public void testForEachBooleanArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
     }
 
     @Test
     @TestMetadata("forEachByteArray.kt")
     public void testForEachByteArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachByteArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachByteArray.kt");
     }
 
     @Test
     @TestMetadata("forEachCharArray.kt")
     public void testForEachCharArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachCharArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachCharArray.kt");
     }
 
     @Test
     @TestMetadata("forEachDoubleArray.kt")
     public void testForEachDoubleArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachDoubleArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachDoubleArray.kt");
     }
 
     @Test
     @TestMetadata("forEachFloatArray.kt")
     public void testForEachFloatArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachFloatArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachFloatArray.kt");
     }
 
     @Test
     @TestMetadata("forEachIntArray.kt")
     public void testForEachIntArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachIntArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachIntArray.kt");
     }
 
     @Test
     @TestMetadata("forEachLongArray.kt")
     public void testForEachLongArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachLongArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachLongArray.kt");
     }
 
     @Test
     @TestMetadata("forEachShortArray.kt")
     public void testForEachShortArray() {
-      runTest("compiler/testData/codegen/box/arrays/forEachShortArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forEachShortArray.kt");
     }
 
     @Test
     @TestMetadata("genericArrayInObjectLiteralConstructor.kt")
     public void testGenericArrayInObjectLiteralConstructor() {
-      runTest("compiler/testData/codegen/box/arrays/genericArrayInObjectLiteralConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/genericArrayInObjectLiteralConstructor.kt");
     }
 
     @Test
     @TestMetadata("hashMap.kt")
     public void testHashMap() {
-      runTest("compiler/testData/codegen/box/arrays/hashMap.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/hashMap.kt");
     }
 
     @Test
     @TestMetadata("inProjectionAsParameter.kt")
     public void testInProjectionAsParameter() {
-      runTest("compiler/testData/codegen/box/arrays/inProjectionAsParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/inProjectionAsParameter.kt");
     }
 
     @Test
     @TestMetadata("inProjectionOfArray.kt")
     public void testInProjectionOfArray() {
-      runTest("compiler/testData/codegen/box/arrays/inProjectionOfArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/inProjectionOfArray.kt");
     }
 
     @Test
     @TestMetadata("inProjectionOfList.kt")
     public void testInProjectionOfList() {
-      runTest("compiler/testData/codegen/box/arrays/inProjectionOfList.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/inProjectionOfList.kt");
     }
 
     @Test
     @TestMetadata("indices.kt")
     public void testIndices() {
-      runTest("compiler/testData/codegen/box/arrays/indices.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/indices.kt");
     }
 
     @Test
     @TestMetadata("indicesChar.kt")
     public void testIndicesChar() {
-      runTest("compiler/testData/codegen/box/arrays/indicesChar.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/indicesChar.kt");
     }
 
     @Test
     @TestMetadata("inlineInitializer.kt")
     public void testInlineInitializer() {
-      runTest("compiler/testData/codegen/box/arrays/inlineInitializer.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/inlineInitializer.kt");
     }
 
     @Test
     @TestMetadata("iterator.kt")
     public void testIterator() {
-      runTest("compiler/testData/codegen/box/arrays/iterator.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iterator.kt");
     }
 
     @Test
     @TestMetadata("iteratorBooleanArray.kt")
     public void testIteratorBooleanArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorBooleanArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorBooleanArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorByteArray.kt")
     public void testIteratorByteArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorByteArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorByteArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorByteArrayNextByte.kt")
     public void testIteratorByteArrayNextByte() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorByteArrayNextByte.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorByteArrayNextByte.kt");
     }
 
     @Test
     @TestMetadata("iteratorCharArray.kt")
     public void testIteratorCharArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorCharArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorCharArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorDoubleArray.kt")
     public void testIteratorDoubleArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorDoubleArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorDoubleArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorFloatArray.kt")
     public void testIteratorFloatArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorFloatArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorFloatArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorIntArray.kt")
     public void testIteratorIntArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorIntArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorIntArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorLongArray.kt")
     public void testIteratorLongArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorLongArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorLongArray.kt");
     }
 
     @Test
     @TestMetadata("iteratorLongArrayNextLong.kt")
     public void testIteratorLongArrayNextLong() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorLongArrayNextLong.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorLongArrayNextLong.kt");
     }
 
     @Test
     @TestMetadata("iteratorShortArray.kt")
     public void testIteratorShortArray() {
-      runTest("compiler/testData/codegen/box/arrays/iteratorShortArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/iteratorShortArray.kt");
     }
 
     @Test
     @TestMetadata("kt1291.kt")
     public void testKt1291() {
-      runTest("compiler/testData/codegen/box/arrays/kt1291.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt1291.kt");
     }
 
     @Test
     @TestMetadata("kt238.kt")
     public void testKt238() {
-      runTest("compiler/testData/codegen/box/arrays/kt238.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt238.kt");
     }
 
     @Test
     @TestMetadata("kt2997.kt")
     public void testKt2997() {
-      runTest("compiler/testData/codegen/box/arrays/kt2997.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt2997.kt");
     }
 
     @Test
     @TestMetadata("kt33.kt")
     public void testKt33() {
-      runTest("compiler/testData/codegen/box/arrays/kt33.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt33.kt");
     }
 
     @Test
     @TestMetadata("kt34291_16dimensions.kt")
     public void testKt34291_16dimensions() {
-      runTest("compiler/testData/codegen/box/arrays/kt34291_16dimensions.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt34291_16dimensions.kt");
     }
 
     @Test
     @TestMetadata("kt3771.kt")
     public void testKt3771() {
-      runTest("compiler/testData/codegen/box/arrays/kt3771.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt3771.kt");
     }
 
     @Test
     @TestMetadata("kt4118.kt")
     public void testKt4118() {
-      runTest("compiler/testData/codegen/box/arrays/kt4118.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt4118.kt");
     }
 
     @Test
     @TestMetadata("kt42932.kt")
     public void testKt42932() {
-      runTest("compiler/testData/codegen/box/arrays/kt42932.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt42932.kt");
     }
 
     @Test
     @TestMetadata("kt4348.kt")
     public void testKt4348() {
-      runTest("compiler/testData/codegen/box/arrays/kt4348.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt4348.kt");
     }
 
     @Test
     @TestMetadata("kt4357.kt")
     public void testKt4357() {
-      runTest("compiler/testData/codegen/box/arrays/kt4357.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt4357.kt");
     }
 
     @Test
     @TestMetadata("kt47483.kt")
     public void testKt47483() {
-      runTest("compiler/testData/codegen/box/arrays/kt47483.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt47483.kt");
     }
 
     @Test
     @TestMetadata("kt503.kt")
     public void testKt503() {
-      runTest("compiler/testData/codegen/box/arrays/kt503.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt503.kt");
     }
 
     @Test
     @TestMetadata("kt55984.kt")
     public void testKt55984() {
-      runTest("compiler/testData/codegen/box/arrays/kt55984.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt55984.kt");
     }
 
     @Test
     @TestMetadata("kt594.kt")
     public void testKt594() {
-      runTest("compiler/testData/codegen/box/arrays/kt594.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt594.kt");
     }
 
     @Test
     @TestMetadata("kt7009.kt")
     public void testKt7009() {
-      runTest("compiler/testData/codegen/box/arrays/kt7009.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt7009.kt");
     }
 
     @Test
     @TestMetadata("kt7288.kt")
     public void testKt7288() {
-      runTest("compiler/testData/codegen/box/arrays/kt7288.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt7288.kt");
     }
 
     @Test
     @TestMetadata("kt779.kt")
     public void testKt779() {
-      runTest("compiler/testData/codegen/box/arrays/kt779.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt779.kt");
     }
 
     @Test
     @TestMetadata("kt945.kt")
     public void testKt945() {
-      runTest("compiler/testData/codegen/box/arrays/kt945.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt945.kt");
     }
 
     @Test
     @TestMetadata("kt950.kt")
     public void testKt950() {
-      runTest("compiler/testData/codegen/box/arrays/kt950.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/kt950.kt");
     }
 
     @Test
     @TestMetadata("longAsIndex.kt")
     public void testLongAsIndex() {
-      runTest("compiler/testData/codegen/box/arrays/longAsIndex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/longAsIndex.kt");
     }
 
     @Test
     @TestMetadata("multiArrayConstructors.kt")
     public void testMultiArrayConstructors() {
-      runTest("compiler/testData/codegen/box/arrays/multiArrayConstructors.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiArrayConstructors.kt");
     }
 
     @Test
     @TestMetadata("nonLocalReturnArrayConstructor.kt")
     public void testNonLocalReturnArrayConstructor() {
-      runTest("compiler/testData/codegen/box/arrays/nonLocalReturnArrayConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/nonLocalReturnArrayConstructor.kt");
     }
 
     @Test
     @TestMetadata("nonNullArray.kt")
     public void testNonNullArray() {
-      runTest("compiler/testData/codegen/box/arrays/nonNullArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/nonNullArray.kt");
     }
 
     @Test
     @TestMetadata("primitiveArrays.kt")
     public void testPrimitiveArrays() {
-      runTest("compiler/testData/codegen/box/arrays/primitiveArrays.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/primitiveArrays.kt");
     }
 
     @Test
     @TestMetadata("stdlib.kt")
     public void testStdlib() {
-      runTest("compiler/testData/codegen/box/arrays/stdlib.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/stdlib.kt");
     }
 
     @Nested
@@ -806,13 +806,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("accessArrayOfInlineClass.kt")
       public void testAccessArrayOfInlineClass() {
-        runTest("compiler/testData/codegen/box/arrays/arraysOfInlineClass/accessArrayOfInlineClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arraysOfInlineClass/accessArrayOfInlineClass.kt");
       }
 
       @Test
       @TestMetadata("accessArrayOfUnsigned.kt")
       public void testAccessArrayOfUnsigned() {
-        runTest("compiler/testData/codegen/box/arrays/arraysOfInlineClass/accessArrayOfUnsigned.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arraysOfInlineClass/accessArrayOfUnsigned.kt");
       }
 
       @Test
@@ -823,7 +823,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("arrayOfInlineClassOfArrayOfInlineClass.kt")
       public void testArrayOfInlineClassOfArrayOfInlineClass() {
-        runTest("compiler/testData/codegen/box/arrays/arraysOfInlineClass/arrayOfInlineClassOfArrayOfInlineClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/arraysOfInlineClass/arrayOfInlineClassOfArrayOfInlineClass.kt");
       }
     }
 
@@ -839,25 +839,25 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("reversedArrayOriginalUpdatedInLoopBody.kt")
       public void testReversedArrayOriginalUpdatedInLoopBody() {
-        runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedArrayOriginalUpdatedInLoopBody.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInReversed/reversedArrayOriginalUpdatedInLoopBody.kt");
       }
 
       @Test
       @TestMetadata("reversedArrayReversedArrayOriginalUpdatedInLoopBody.kt")
       public void testReversedArrayReversedArrayOriginalUpdatedInLoopBody() {
-        runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedArrayReversedArrayOriginalUpdatedInLoopBody.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInReversed/reversedArrayReversedArrayOriginalUpdatedInLoopBody.kt");
       }
 
       @Test
       @TestMetadata("reversedOriginalUpdatedInLoopBody.kt")
       public void testReversedOriginalUpdatedInLoopBody() {
-        runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedOriginalUpdatedInLoopBody.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInReversed/reversedOriginalUpdatedInLoopBody.kt");
       }
 
       @Test
       @TestMetadata("reversedReversedOriginalUpdatedInLoopBody.kt")
       public void testReversedReversedOriginalUpdatedInLoopBody() {
-        runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedReversedOriginalUpdatedInLoopBody.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInReversed/reversedReversedOriginalUpdatedInLoopBody.kt");
       }
     }
 
@@ -873,49 +873,49 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("forInUnsignedArray.kt")
       public void testForInUnsignedArray() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArray.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayIndices.kt")
       public void testForInUnsignedArrayIndices() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndices.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndices.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayIndicesReversed.kt")
       public void testForInUnsignedArrayIndicesReversed() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndicesReversed.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayIndicesReversed.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayReversed.kt")
       public void testForInUnsignedArrayReversed() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayReversed.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayReversed.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayWithIndex.kt")
       public void testForInUnsignedArrayWithIndex() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndex.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndex.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayWithIndexNoElementVar.kt")
       public void testForInUnsignedArrayWithIndexNoElementVar() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoElementVar.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoElementVar.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayWithIndexNoIndexVar.kt")
       public void testForInUnsignedArrayWithIndexNoIndexVar() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoIndexVar.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexNoIndexVar.kt");
       }
 
       @Test
       @TestMetadata("forInUnsignedArrayWithIndexReversed.kt")
       public void testForInUnsignedArrayWithIndexReversed() {
-        runTest("compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexReversed.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/forInUnsignedArray/forInUnsignedArrayWithIndexReversed.kt");
       }
     }
 
@@ -931,49 +931,49 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("kt15560.kt")
       public void testKt15560() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/kt15560.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/kt15560.kt");
       }
 
       @Test
       @TestMetadata("kt15568.kt")
       public void testKt15568() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/kt15568.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/kt15568.kt");
       }
 
       @Test
       @TestMetadata("kt15575.kt")
       public void testKt15575() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/kt15575.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/kt15575.kt");
       }
 
       @Test
       @TestMetadata("MultiDeclFor.kt")
       public void testMultiDeclFor() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/MultiDeclFor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/MultiDeclFor.kt");
       }
 
       @Test
       @TestMetadata("MultiDeclForComponentExtensions.kt")
       public void testMultiDeclForComponentExtensions() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForComponentExtensions.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForComponentExtensions.kt");
       }
 
       @Test
       @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
       public void testMultiDeclForComponentMemberExtensions() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForComponentMemberExtensions.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForComponentMemberExtensions.kt");
       }
 
       @Test
       @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
       public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
       }
 
       @Test
       @TestMetadata("MultiDeclForValCaptured.kt")
       public void testMultiDeclForValCaptured() {
-        runTest("compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForValCaptured.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/MultiDeclForValCaptured.kt");
       }
 
       @Nested
@@ -988,25 +988,25 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @Test
         @TestMetadata("MultiDeclForComponentExtensions.kt")
         public void testMultiDeclForComponentExtensions() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentExtensions.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentExtensions.kt");
         }
 
         @Test
         @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
         public void testMultiDeclForComponentExtensionsValCaptured() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentExtensionsValCaptured.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentExtensionsValCaptured.kt");
         }
 
         @Test
         @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
         public void testMultiDeclForComponentMemberExtensions() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentMemberExtensions.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentMemberExtensions.kt");
         }
 
         @Test
         @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
         public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
         }
       }
 
@@ -1022,25 +1022,25 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @Test
         @TestMetadata("MultiDeclForComponentExtensions.kt")
         public void testMultiDeclForComponentExtensions() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentExtensions.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentExtensions.kt");
         }
 
         @Test
         @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
         public void testMultiDeclForComponentExtensionsValCaptured() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentExtensionsValCaptured.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentExtensionsValCaptured.kt");
         }
 
         @Test
         @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
         public void testMultiDeclForComponentMemberExtensions() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentMemberExtensions.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentMemberExtensions.kt");
         }
 
         @Test
         @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
         public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() {
-          runTest("compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/arrays/multiDecl/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
         }
       }
     }
@@ -1058,13 +1058,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("alwaysDisable.kt")
     public void testAlwaysDisable() {
-      runTest("compiler/testData/codegen/box/assert/alwaysDisable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/assert/alwaysDisable.kt");
     }
 
     @Test
     @TestMetadata("alwaysEnable.kt")
     public void testAlwaysEnable() {
-      runTest("compiler/testData/codegen/box/assert/alwaysEnable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/assert/alwaysEnable.kt");
     }
 
     @Nested
@@ -1090,235 +1090,235 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("array_to_any.kt")
     public void testArray_to_any() {
-      runTest("compiler/testData/codegen/box/basics/array_to_any.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/array_to_any.kt");
     }
 
     @Test
     @TestMetadata("canonical_name.kt")
     public void testCanonical_name() {
-      runTest("compiler/testData/codegen/box/basics/canonical_name.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/canonical_name.kt");
     }
 
     @Test
     @TestMetadata("cast_null.kt")
     public void testCast_null() {
-      runTest("compiler/testData/codegen/box/basics/cast_null.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/cast_null.kt");
     }
 
     @Test
     @TestMetadata("cast_simple.kt")
     public void testCast_simple() {
-      runTest("compiler/testData/codegen/box/basics/cast_simple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/cast_simple.kt");
     }
 
     @Test
     @TestMetadata("check_type.kt")
     public void testCheck_type() {
-      runTest("compiler/testData/codegen/box/basics/check_type.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/check_type.kt");
     }
 
     @Test
     @TestMetadata("companion.kt")
     public void testCompanion() {
-      runTest("compiler/testData/codegen/box/basics/companion.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/companion.kt");
     }
 
     @Test
     @TestMetadata("concatenation.kt")
     public void testConcatenation() {
-      runTest("compiler/testData/codegen/box/basics/concatenation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/concatenation.kt");
     }
 
     @Test
     @TestMetadata("const_infinity.kt")
     public void testConst_infinity() {
-      runTest("compiler/testData/codegen/box/basics/const_infinity.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/const_infinity.kt");
     }
 
     @Test
     @TestMetadata("expression_as_statement.kt")
     public void testExpression_as_statement() {
-      runTest("compiler/testData/codegen/box/basics/expression_as_statement.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/expression_as_statement.kt");
     }
 
     @Test
     @TestMetadata("k42000_1.kt")
     public void testK42000_1() {
-      runTest("compiler/testData/codegen/box/basics/k42000_1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/k42000_1.kt");
     }
 
     @Test
     @TestMetadata("k42000_2.kt")
     public void testK42000_2() {
-      runTest("compiler/testData/codegen/box/basics/k42000_2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/k42000_2.kt");
     }
 
     @Test
     @TestMetadata("kt7972.kt")
     public void testKt7972() {
-      runTest("compiler/testData/codegen/box/basics/kt7972.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/kt7972.kt");
     }
 
     @Test
     @TestMetadata("local_variable.kt")
     public void testLocal_variable() {
-      runTest("compiler/testData/codegen/box/basics/local_variable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/local_variable.kt");
     }
 
     @Test
     @TestMetadata("null_check.kt")
     public void testNull_check() {
-      runTest("compiler/testData/codegen/box/basics/null_check.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/null_check.kt");
     }
 
     @Test
     @TestMetadata("safe_cast.kt")
     public void testSafe_cast() {
-      runTest("compiler/testData/codegen/box/basics/safe_cast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/safe_cast.kt");
     }
 
     @Test
     @TestMetadata("spread_operator_0.kt")
     public void testSpread_operator_0() {
-      runTest("compiler/testData/codegen/box/basics/spread_operator_0.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/spread_operator_0.kt");
     }
 
     @Test
     @TestMetadata("statements0.kt")
     public void testStatements0() {
-      runTest("compiler/testData/codegen/box/basics/statements0.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/statements0.kt");
     }
 
     @Test
     @TestMetadata("superFunCall.kt")
     public void testSuperFunCall() {
-      runTest("compiler/testData/codegen/box/basics/superFunCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/superFunCall.kt");
     }
 
     @Test
     @TestMetadata("superGetterCall.kt")
     public void testSuperGetterCall() {
-      runTest("compiler/testData/codegen/box/basics/superGetterCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/superGetterCall.kt");
     }
 
     @Test
     @TestMetadata("superSetterCall.kt")
     public void testSuperSetterCall() {
-      runTest("compiler/testData/codegen/box/basics/superSetterCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/superSetterCall.kt");
     }
 
     @Test
     @TestMetadata("typealias1.kt")
     public void testTypealias1() {
-      runTest("compiler/testData/codegen/box/basics/typealias1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/typealias1.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast1.kt")
     public void testUnchecked_cast1() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast1.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast10.kt")
     public void testUnchecked_cast10() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast10.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast10.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast11.kt")
     public void testUnchecked_cast11() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast11.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast11.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast12.kt")
     public void testUnchecked_cast12() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast12.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast12.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast13.kt")
     public void testUnchecked_cast13() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast13.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast13.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast2.kt")
     public void testUnchecked_cast2() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast2.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast3.kt")
     public void testUnchecked_cast3() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast3.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast3.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast4.kt")
     public void testUnchecked_cast4() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast4.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast5.kt")
     public void testUnchecked_cast5() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast5.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast5.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast6.kt")
     public void testUnchecked_cast6() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast6.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast6.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast6x.kt")
     public void testUnchecked_cast6x() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast6x.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast6x.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast7.kt")
     public void testUnchecked_cast7() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast7.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast7.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast8.kt")
     public void testUnchecked_cast8() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast8.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast8.kt");
     }
 
     @Test
     @TestMetadata("unchecked_cast9.kt")
     public void testUnchecked_cast9() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast9.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unchecked_cast9.kt");
     }
 
     @Test
     @TestMetadata("unit1.kt")
     public void testUnit1() {
-      runTest("compiler/testData/codegen/box/basics/unit1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unit1.kt");
     }
 
     @Test
     @TestMetadata("unit2.kt")
     public void testUnit2() {
-      runTest("compiler/testData/codegen/box/basics/unit2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unit2.kt");
     }
 
     @Test
     @TestMetadata("unit3.kt")
     public void testUnit3() {
-      runTest("compiler/testData/codegen/box/basics/unit3.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unit3.kt");
     }
 
     @Test
     @TestMetadata("unit4.kt")
     public void testUnit4() {
-      runTest("compiler/testData/codegen/box/basics/unit4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/basics/unit4.kt");
     }
   }
 
@@ -1334,109 +1334,109 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("bceCases.kt")
     public void testBceCases() {
-      runTest("compiler/testData/codegen/box/bce/bceCases.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/bceCases.kt");
     }
 
     @Test
     @TestMetadata("customGetter.kt")
     public void testCustomGetter() {
-      runTest("compiler/testData/codegen/box/bce/customGetter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/customGetter.kt");
     }
 
     @Test
     @TestMetadata("delegatedProperty.kt")
     public void testDelegatedProperty() {
-      runTest("compiler/testData/codegen/box/bce/delegatedProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/delegatedProperty.kt");
     }
 
     @Test
     @TestMetadata("differentArrays.kt")
     public void testDifferentArrays() {
-      runTest("compiler/testData/codegen/box/bce/differentArrays.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/differentArrays.kt");
     }
 
     @Test
     @TestMetadata("differentObjects.kt")
     public void testDifferentObjects() {
-      runTest("compiler/testData/codegen/box/bce/differentObjects.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/differentObjects.kt");
     }
 
     @Test
     @TestMetadata("forDownToSize.kt")
     public void testForDownToSize() {
-      runTest("compiler/testData/codegen/box/bce/forDownToSize.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forDownToSize.kt");
     }
 
     @Test
     @TestMetadata("forDownToWithStep.kt")
     public void testForDownToWithStep() {
-      runTest("compiler/testData/codegen/box/bce/forDownToWithStep.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forDownToWithStep.kt");
     }
 
     @Test
     @TestMetadata("forEachIndexedTest.kt")
     public void testForEachIndexedTest() {
-      runTest("compiler/testData/codegen/box/bce/forEachIndexedTest.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forEachIndexedTest.kt");
     }
 
     @Test
     @TestMetadata("forEachIndicies.kt")
     public void testForEachIndicies() {
-      runTest("compiler/testData/codegen/box/bce/forEachIndicies.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forEachIndicies.kt");
     }
 
     @Test
     @TestMetadata("forIndiciesWithStep.kt")
     public void testForIndiciesWithStep() {
-      runTest("compiler/testData/codegen/box/bce/forIndiciesWithStep.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forIndiciesWithStep.kt");
     }
 
     @Test
     @TestMetadata("forRangeToSize.kt")
     public void testForRangeToSize() {
-      runTest("compiler/testData/codegen/box/bce/forRangeToSize.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forRangeToSize.kt");
     }
 
     @Test
     @TestMetadata("forRangeToWithStep.kt")
     public void testForRangeToWithStep() {
-      runTest("compiler/testData/codegen/box/bce/forRangeToWithStep.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forRangeToWithStep.kt");
     }
 
     @Test
     @TestMetadata("forReversed.kt")
     public void testForReversed() {
-      runTest("compiler/testData/codegen/box/bce/forReversed.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forReversed.kt");
     }
 
     @Test
     @TestMetadata("forUntilSize.kt")
     public void testForUntilSize() {
-      runTest("compiler/testData/codegen/box/bce/forUntilSize.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forUntilSize.kt");
     }
 
     @Test
     @TestMetadata("forUntilWithStep.kt")
     public void testForUntilWithStep() {
-      runTest("compiler/testData/codegen/box/bce/forUntilWithStep.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forUntilWithStep.kt");
     }
 
     @Test
     @TestMetadata("forWithIndex.kt")
     public void testForWithIndex() {
-      runTest("compiler/testData/codegen/box/bce/forWithIndex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/forWithIndex.kt");
     }
 
     @Test
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
-      runTest("compiler/testData/codegen/box/bce/inheritance.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/inheritance.kt");
     }
 
     @Test
     @TestMetadata("withGetter.kt")
     public void testWithGetter() {
-      runTest("compiler/testData/codegen/box/bce/withGetter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bce/withGetter.kt");
     }
   }
 
@@ -1452,157 +1452,157 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("bitwiseOp.kt")
     public void testBitwiseOp() {
-      runTest("compiler/testData/codegen/box/binaryOp/bitwiseOp.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/bitwiseOp.kt");
     }
 
     @Test
     @TestMetadata("bitwiseOpAny.kt")
     public void testBitwiseOpAny() {
-      runTest("compiler/testData/codegen/box/binaryOp/bitwiseOpAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/bitwiseOpAny.kt");
     }
 
     @Test
     @TestMetadata("bitwiseOpNullable.kt")
     public void testBitwiseOpNullable() {
-      runTest("compiler/testData/codegen/box/binaryOp/bitwiseOpNullable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/bitwiseOpNullable.kt");
     }
 
     @Test
     @TestMetadata("call.kt")
     public void testCall() {
-      runTest("compiler/testData/codegen/box/binaryOp/call.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/call.kt");
     }
 
     @Test
     @TestMetadata("callAny.kt")
     public void testCallAny() {
-      runTest("compiler/testData/codegen/box/binaryOp/callAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/callAny.kt");
     }
 
     @Test
     @TestMetadata("callNullable.kt")
     public void testCallNullable() {
-      runTest("compiler/testData/codegen/box/binaryOp/callNullable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/callNullable.kt");
     }
 
     @Test
     @TestMetadata("compareBoxedChars.kt")
     public void testCompareBoxedChars() {
-      runTest("compiler/testData/codegen/box/binaryOp/compareBoxedChars.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/compareBoxedChars.kt");
     }
 
     @Test
     @TestMetadata("divisionByZero.kt")
     public void testDivisionByZero() {
-      runTest("compiler/testData/codegen/box/binaryOp/divisionByZero.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/divisionByZero.kt");
     }
 
     @Test
     @TestMetadata("eqNullableDoubles.kt")
     public void testEqNullableDoubles() {
-      runTest("compiler/testData/codegen/box/binaryOp/eqNullableDoubles.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/eqNullableDoubles.kt");
     }
 
     @Test
     @TestMetadata("eqNullableDoublesToInt.kt")
     public void testEqNullableDoublesToInt() {
-      runTest("compiler/testData/codegen/box/binaryOp/eqNullableDoublesToInt.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/eqNullableDoublesToInt.kt");
     }
 
     @Test
     @TestMetadata("eqNullableDoublesToIntWithTP.kt")
     public void testEqNullableDoublesToIntWithTP() {
-      runTest("compiler/testData/codegen/box/binaryOp/eqNullableDoublesToIntWithTP.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/eqNullableDoublesToIntWithTP.kt");
     }
 
     @Test
     @TestMetadata("eqNullableDoublesWithTP.kt")
     public void testEqNullableDoublesWithTP() {
-      runTest("compiler/testData/codegen/box/binaryOp/eqNullableDoublesWithTP.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/eqNullableDoublesWithTP.kt");
     }
 
     @Test
     @TestMetadata("eqNullableShortToShort.kt")
     public void testEqNullableShortToShort() {
-      runTest("compiler/testData/codegen/box/binaryOp/eqNullableShortToShort.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/eqNullableShortToShort.kt");
     }
 
     @Test
     @TestMetadata("eqNullableToPrimitiveWithSideEffects.kt")
     public void testEqNullableToPrimitiveWithSideEffects() {
-      runTest("compiler/testData/codegen/box/binaryOp/eqNullableToPrimitiveWithSideEffects.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/eqNullableToPrimitiveWithSideEffects.kt");
     }
 
     @Test
     @TestMetadata("intrinsic.kt")
     public void testIntrinsic() {
-      runTest("compiler/testData/codegen/box/binaryOp/intrinsic.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/intrinsic.kt");
     }
 
     @Test
     @TestMetadata("intrinsicAny.kt")
     public void testIntrinsicAny() {
-      runTest("compiler/testData/codegen/box/binaryOp/intrinsicAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/intrinsicAny.kt");
     }
 
     @Test
     @TestMetadata("intrinsicNullable.kt")
     public void testIntrinsicNullable() {
-      runTest("compiler/testData/codegen/box/binaryOp/intrinsicNullable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/intrinsicNullable.kt");
     }
 
     @Test
     @TestMetadata("kt11163.kt")
     public void testKt11163() {
-      runTest("compiler/testData/codegen/box/binaryOp/kt11163.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/kt11163.kt");
     }
 
     @Test
     @TestMetadata("kt11163_properIeee754comparisons.kt")
     public void testKt11163_properIeee754comparisons() {
-      runTest("compiler/testData/codegen/box/binaryOp/kt11163_properIeee754comparisons.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/kt11163_properIeee754comparisons.kt");
     }
 
     @Test
     @TestMetadata("kt23030_properIeee754comparisons.kt")
     public void testKt23030_properIeee754comparisons() {
-      runTest("compiler/testData/codegen/box/binaryOp/kt23030_properIeee754comparisons.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/kt23030_properIeee754comparisons.kt");
     }
 
     @Test
     @TestMetadata("kt44402.kt")
     public void testKt44402() {
-      runTest("compiler/testData/codegen/box/binaryOp/kt44402.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/kt44402.kt");
     }
 
     @Test
     @TestMetadata("kt6747_identityEquals.kt")
     public void testKt6747_identityEquals() {
-      runTest("compiler/testData/codegen/box/binaryOp/kt6747_identityEquals.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/kt6747_identityEquals.kt");
     }
 
     @Test
     @TestMetadata("overflowChar.kt")
     public void testOverflowChar() {
-      runTest("compiler/testData/codegen/box/binaryOp/overflowChar.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/overflowChar.kt");
     }
 
     @Test
     @TestMetadata("overflowInt.kt")
     public void testOverflowInt() {
-      runTest("compiler/testData/codegen/box/binaryOp/overflowInt.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/overflowInt.kt");
     }
 
     @Test
     @TestMetadata("overflowLong.kt")
     public void testOverflowLong() {
-      runTest("compiler/testData/codegen/box/binaryOp/overflowLong.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/overflowLong.kt");
     }
 
     @Test
     @TestMetadata("primitiveEqualsSafeCall.kt")
     public void testPrimitiveEqualsSafeCall() {
-      runTest("compiler/testData/codegen/box/binaryOp/primitiveEqualsSafeCall.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/binaryOp/primitiveEqualsSafeCall.kt");
     }
   }
 
@@ -1618,115 +1618,115 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("box_cache0.kt")
     public void testBox_cache0() {
-      runTest("compiler/testData/codegen/box/boxing/box_cache0.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/box_cache0.kt");
     }
 
     @Test
     @TestMetadata("boxing0.kt")
     public void testBoxing0() {
-      runTest("compiler/testData/codegen/box/boxing/boxing0.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing0.kt");
     }
 
     @Test
     @TestMetadata("boxing1.kt")
     public void testBoxing1() {
-      runTest("compiler/testData/codegen/box/boxing/boxing1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing1.kt");
     }
 
     @Test
     @TestMetadata("boxing10.kt")
     public void testBoxing10() {
-      runTest("compiler/testData/codegen/box/boxing/boxing10.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing10.kt");
     }
 
     @Test
     @TestMetadata("boxing11.kt")
     public void testBoxing11() {
-      runTest("compiler/testData/codegen/box/boxing/boxing11.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing11.kt");
     }
 
     @Test
     @TestMetadata("boxing12.kt")
     public void testBoxing12() {
-      runTest("compiler/testData/codegen/box/boxing/boxing12.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing12.kt");
     }
 
     @Test
     @TestMetadata("boxing13.kt")
     public void testBoxing13() {
-      runTest("compiler/testData/codegen/box/boxing/boxing13.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing13.kt");
     }
 
     @Test
     @TestMetadata("boxing14.kt")
     public void testBoxing14() {
-      runTest("compiler/testData/codegen/box/boxing/boxing14.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing14.kt");
     }
 
     @Test
     @TestMetadata("boxing15.kt")
     public void testBoxing15() {
-      runTest("compiler/testData/codegen/box/boxing/boxing15.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing15.kt");
     }
 
     @Test
     @TestMetadata("boxing2.kt")
     public void testBoxing2() {
-      runTest("compiler/testData/codegen/box/boxing/boxing2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing2.kt");
     }
 
     @Test
     @TestMetadata("boxing3.kt")
     public void testBoxing3() {
-      runTest("compiler/testData/codegen/box/boxing/boxing3.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing3.kt");
     }
 
     @Test
     @TestMetadata("boxing4.kt")
     public void testBoxing4() {
-      runTest("compiler/testData/codegen/box/boxing/boxing4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing4.kt");
     }
 
     @Test
     @TestMetadata("boxing5.kt")
     public void testBoxing5() {
-      runTest("compiler/testData/codegen/box/boxing/boxing5.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing5.kt");
     }
 
     @Test
     @TestMetadata("boxing6.kt")
     public void testBoxing6() {
-      runTest("compiler/testData/codegen/box/boxing/boxing6.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing6.kt");
     }
 
     @Test
     @TestMetadata("boxing7.kt")
     public void testBoxing7() {
-      runTest("compiler/testData/codegen/box/boxing/boxing7.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing7.kt");
     }
 
     @Test
     @TestMetadata("boxing8.kt")
     public void testBoxing8() {
-      runTest("compiler/testData/codegen/box/boxing/boxing8.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing8.kt");
     }
 
     @Test
     @TestMetadata("boxing9.kt")
     public void testBoxing9() {
-      runTest("compiler/testData/codegen/box/boxing/boxing9.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/boxing9.kt");
     }
 
     @Test
     @TestMetadata("kt53100_casts.kt")
     public void testKt53100_casts() {
-      runTest("compiler/testData/codegen/box/boxing/kt53100_casts.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/kt53100_casts.kt");
     }
 
     @Test
     @TestMetadata("missingValueClassUnboxing.kt")
     public void testMissingValueClassUnboxing() {
-      runTest("compiler/testData/codegen/box/boxing/missingValueClassUnboxing.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxing/missingValueClassUnboxing.kt");
     }
   }
 
@@ -1742,241 +1742,241 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("boxedBooleanIdentity.kt")
     public void testBoxedBooleanIdentity() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/boxedBooleanIdentity.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/boxedBooleanIdentity.kt");
     }
 
     @Test
     @TestMetadata("boxedIntegersCmp.kt")
     public void testBoxedIntegersCmp() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/boxedIntegersCmp.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/boxedIntegersCmp.kt");
     }
 
     @Test
     @TestMetadata("boxedPrimitivesAreEqual.kt")
     public void testBoxedPrimitivesAreEqual() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/boxedPrimitivesAreEqual.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/boxedPrimitivesAreEqual.kt");
     }
 
     @Test
     @TestMetadata("boxedRealsCmp.kt")
     public void testBoxedRealsCmp() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/boxedRealsCmp.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/boxedRealsCmp.kt");
     }
 
     @Test
     @TestMetadata("casts.kt")
     public void testCasts() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/casts.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/casts.kt");
     }
 
     @Test
     @TestMetadata("checkcastAndInstanceOf2.kt")
     public void testCheckcastAndInstanceOf2() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/checkcastAndInstanceOf2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/checkcastAndInstanceOf2.kt");
     }
 
     @Test
     @TestMetadata("explicitEqualsOnDouble.kt")
     public void testExplicitEqualsOnDouble() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/explicitEqualsOnDouble.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/explicitEqualsOnDouble.kt");
     }
 
     @Test
     @TestMetadata("fold.kt")
     public void testFold() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/fold.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/fold.kt");
     }
 
     @Test
     @TestMetadata("foldRange.kt")
     public void testFoldRange() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/foldRange.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/foldRange.kt");
     }
 
     @Test
     @TestMetadata("intCompareTo.kt")
     public void testIntCompareTo() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/intCompareTo.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/intCompareTo.kt");
     }
 
     @Test
     @TestMetadata("kt15871.kt")
     public void testKt15871() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt15871.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt15871.kt");
     }
 
     @Test
     @TestMetadata("kt19767.kt")
     public void testKt19767() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt19767.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt19767.kt");
     }
 
     @Test
     @TestMetadata("kt19767_2.kt")
     public void testKt19767_2() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt19767_2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt19767_2.kt");
     }
 
     @Test
     @TestMetadata("kt19767_chain.kt")
     public void testKt19767_chain() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt19767_chain.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt19767_chain.kt");
     }
 
     @Test
     @TestMetadata("kt46859.kt")
     public void testKt46859() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt46859.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt46859.kt");
     }
 
     @Test
     @TestMetadata("kt48394.kt")
     public void testKt48394() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt48394.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt48394.kt");
     }
 
     @Test
     @TestMetadata("kt49092a.kt")
     public void testKt49092a() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49092a.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49092a.kt");
     }
 
     @Test
     @TestMetadata("kt49092b.kt")
     public void testKt49092b() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49092b.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49092b.kt");
     }
 
     @Test
     @TestMetadata("kt49092c.kt")
     public void testKt49092c() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49092c.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49092c.kt");
     }
 
     @Test
     @TestMetadata("kt49092d.kt")
     public void testKt49092d() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49092d.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49092d.kt");
     }
 
     @Test
     @TestMetadata("kt49092e.kt")
     public void testKt49092e() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49092e.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49092e.kt");
     }
 
     @Test
     @TestMetadata("kt49092f.kt")
     public void testKt49092f() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49092f.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49092f.kt");
     }
 
     @Test
     @TestMetadata("kt49548.kt")
     public void testKt49548() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49548.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49548.kt");
     }
 
     @Test
     @TestMetadata("kt49548a.kt")
     public void testKt49548a() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt49548a.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt49548a.kt");
     }
 
     @Test
     @TestMetadata("kt5493.kt")
     public void testKt5493() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt5493.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt5493.kt");
     }
 
     @Test
     @TestMetadata("kt5588.kt")
     public void testKt5588() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt5588.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt5588.kt");
     }
 
     @Test
     @TestMetadata("kt5844.kt")
     public void testKt5844() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt5844.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt5844.kt");
     }
 
     @Test
     @TestMetadata("kt6842.kt")
     public void testKt6842() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/kt6842.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/kt6842.kt");
     }
 
     @Test
     @TestMetadata("maxMinByOrNull.kt")
     public void testMaxMinByOrNull() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/maxMinByOrNull.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/maxMinByOrNull.kt");
     }
 
     @Test
     @TestMetadata("nullCheck.kt")
     public void testNullCheck() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/nullCheck.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/nullCheck.kt");
     }
 
     @Test
     @TestMetadata("progressions.kt")
     public void testProgressions() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/progressions.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/progressions.kt");
     }
 
     @Test
     @TestMetadata("safeCallWithElvis.kt")
     public void testSafeCallWithElvis() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvis.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/safeCallWithElvis.kt");
     }
 
     @Test
     @TestMetadata("safeCallWithElvisMultipleFiles.kt")
     public void testSafeCallWithElvisMultipleFiles() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvisMultipleFiles.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/safeCallWithElvisMultipleFiles.kt");
     }
 
     @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/simple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/simple.kt");
     }
 
     @Test
     @TestMetadata("simpleUninitializedMerge.kt")
     public void testSimpleUninitializedMerge() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/simpleUninitializedMerge.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/simpleUninitializedMerge.kt");
     }
 
     @Test
     @TestMetadata("taintedValues.kt")
     public void testTaintedValues() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/taintedValues.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/taintedValues.kt");
     }
 
     @Test
     @TestMetadata("taintedValuesBox.kt")
     public void testTaintedValuesBox() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/taintedValuesBox.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/taintedValuesBox.kt");
     }
 
     @Test
     @TestMetadata("unsafeRemoving.kt")
     public void testUnsafeRemoving() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/unsafeRemoving.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/unsafeRemoving.kt");
     }
 
     @Test
     @TestMetadata("unsignedArrayForEach.kt")
     public void testUnsignedArrayForEach() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/unsignedArrayForEach.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/unsignedArrayForEach.kt");
     }
 
     @Test
     @TestMetadata("variables.kt")
     public void testVariables() {
-      runTest("compiler/testData/codegen/box/boxingOptimization/variables.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/boxingOptimization/variables.kt");
     }
   }
 
@@ -1987,13 +1987,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("advanced_when2.kt")
     public void testAdvanced_when2() {
-      runTest("compiler/testData/codegen/box/branching/advanced_when2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/advanced_when2.kt");
     }
 
     @Test
     @TestMetadata("advanced_when5.kt")
     public void testAdvanced_when5() {
-      runTest("compiler/testData/codegen/box/branching/advanced_when5.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/advanced_when5.kt");
     }
 
     @Test
@@ -2004,61 +2004,61 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("if_else.kt")
     public void testIf_else() {
-      runTest("compiler/testData/codegen/box/branching/if_else.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/if_else.kt");
     }
 
     @Test
     @TestMetadata("when2.kt")
     public void testWhen2() {
-      runTest("compiler/testData/codegen/box/branching/when2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when2.kt");
     }
 
     @Test
     @TestMetadata("when4.kt")
     public void testWhen4() {
-      runTest("compiler/testData/codegen/box/branching/when4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when4.kt");
     }
 
     @Test
     @TestMetadata("when5.kt")
     public void testWhen5() {
-      runTest("compiler/testData/codegen/box/branching/when5.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when5.kt");
     }
 
     @Test
     @TestMetadata("when6.kt")
     public void testWhen6() {
-      runTest("compiler/testData/codegen/box/branching/when6.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when6.kt");
     }
 
     @Test
     @TestMetadata("when7.kt")
     public void testWhen7() {
-      runTest("compiler/testData/codegen/box/branching/when7.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when7.kt");
     }
 
     @Test
     @TestMetadata("when8.kt")
     public void testWhen8() {
-      runTest("compiler/testData/codegen/box/branching/when8.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when8.kt");
     }
 
     @Test
     @TestMetadata("when9.kt")
     public void testWhen9() {
-      runTest("compiler/testData/codegen/box/branching/when9.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when9.kt");
     }
 
     @Test
     @TestMetadata("when_through.kt")
     public void testWhen_through() {
-      runTest("compiler/testData/codegen/box/branching/when_through.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when_through.kt");
     }
 
     @Test
     @TestMetadata("when_with_try1.kt")
     public void testWhen_with_try1() {
-      runTest("compiler/testData/codegen/box/branching/when_with_try1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/branching/when_with_try1.kt");
     }
   }
 
@@ -2069,7 +2069,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("abstractOverrideBridge.kt")
     public void testAbstractOverrideBridge() {
-      runTest("compiler/testData/codegen/box/bridges/abstractOverrideBridge.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/abstractOverrideBridge.kt");
     }
 
     @Test
@@ -2080,571 +2080,571 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("complexMultiInheritance.kt")
     public void testComplexMultiInheritance() {
-      runTest("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
     }
 
     @Test
     @TestMetadata("complexTraitImpl.kt")
     public void testComplexTraitImpl() {
-      runTest("compiler/testData/codegen/box/bridges/complexTraitImpl.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/complexTraitImpl.kt");
     }
 
     @Test
     @TestMetadata("covariantGenericDiamond.kt")
     public void testCovariantGenericDiamond() {
-      runTest("compiler/testData/codegen/box/bridges/covariantGenericDiamond.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/covariantGenericDiamond.kt");
     }
 
     @Test
     @TestMetadata("delegation.kt")
     public void testDelegation() {
-      runTest("compiler/testData/codegen/box/bridges/delegation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/delegation.kt");
     }
 
     @Test
     @TestMetadata("delegationComplex.kt")
     public void testDelegationComplex() {
-      runTest("compiler/testData/codegen/box/bridges/delegationComplex.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/delegationComplex.kt");
     }
 
     @Test
     @TestMetadata("delegationComplexWithList.kt")
     public void testDelegationComplexWithList() {
-      runTest("compiler/testData/codegen/box/bridges/delegationComplexWithList.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/delegationComplexWithList.kt");
     }
 
     @Test
     @TestMetadata("delegationProperty.kt")
     public void testDelegationProperty() {
-      runTest("compiler/testData/codegen/box/bridges/delegationProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/delegationProperty.kt");
     }
 
     @Test
     @TestMetadata("diamond.kt")
     public void testDiamond() {
-      runTest("compiler/testData/codegen/box/bridges/diamond.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/diamond.kt");
     }
 
     @Test
     @TestMetadata("fakeCovariantOverride.kt")
     public void testFakeCovariantOverride() {
-      runTest("compiler/testData/codegen/box/bridges/fakeCovariantOverride.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeCovariantOverride.kt");
     }
 
     @Test
     @TestMetadata("fakeGenericCovariantOverride.kt")
     public void testFakeGenericCovariantOverride() {
-      runTest("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverride.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeGenericCovariantOverride.kt");
     }
 
     @Test
     @TestMetadata("fakeGenericCovariantOverrideWithDelegation.kt")
     public void testFakeGenericCovariantOverrideWithDelegation() {
-      runTest("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverrideWithDelegation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeGenericCovariantOverrideWithDelegation.kt");
     }
 
     @Test
     @TestMetadata("fakeOverrideFromInterfaceThroughIntermediateClass.kt")
     public void testFakeOverrideFromInterfaceThroughIntermediateClass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideFromInterfaceThroughIntermediateClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeOverrideFromInterfaceThroughIntermediateClass.kt");
     }
 
     @Test
     @TestMetadata("fakeOverrideMultiFile.kt")
     public void testFakeOverrideMultiFile() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideMultiFile.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeOverrideMultiFile.kt");
     }
 
     @Test
     @TestMetadata("fakeOverrideOfTraitImpl.kt")
     public void testFakeOverrideOfTraitImpl() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
     }
 
     @Test
     @TestMetadata("fakeOverrideThroughGenericSuperclass.kt")
     public void testFakeOverrideThroughGenericSuperclass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideThroughGenericSuperclass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeOverrideThroughGenericSuperclass.kt");
     }
 
     @Test
     @TestMetadata("fakeOverrideWithSeveralSuperDeclarations.kt")
     public void testFakeOverrideWithSeveralSuperDeclarations() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideWithSeveralSuperDeclarations.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeOverrideWithSeveralSuperDeclarations.kt");
     }
 
     @Test
     @TestMetadata("fakeOverrideWithSynthesizedImplementation.kt")
     public void testFakeOverrideWithSynthesizedImplementation() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideWithSynthesizedImplementation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/fakeOverrideWithSynthesizedImplementation.kt");
     }
 
     @Test
     @TestMetadata("genericProperty.kt")
     public void testGenericProperty() {
-      runTest("compiler/testData/codegen/box/bridges/genericProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/genericProperty.kt");
     }
 
     @Test
     @TestMetadata("innerClassTypeParameters.kt")
     public void testInnerClassTypeParameters() {
-      runTest("compiler/testData/codegen/box/bridges/innerClassTypeParameters.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/innerClassTypeParameters.kt");
     }
 
     @Test
     @TestMetadata("internalMethodFakeOverrideInFriendModule.kt")
     public void testInternalMethodFakeOverrideInFriendModule() {
-      runTest("compiler/testData/codegen/box/bridges/internalMethodFakeOverrideInFriendModule.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/internalMethodFakeOverrideInFriendModule.kt");
     }
 
     @Test
     @TestMetadata("internalMethodOverrideInFriendModule.kt")
     public void testInternalMethodOverrideInFriendModule() {
-      runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideInFriendModule.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/internalMethodOverrideInFriendModule.kt");
     }
 
     @Test
     @TestMetadata("internalMethodOverrideInOtherModule.kt")
     public void testInternalMethodOverrideInOtherModule() {
-      runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideInOtherModule.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/internalMethodOverrideInOtherModule.kt");
     }
 
     @Test
     @TestMetadata("internalMethodOverrideMultipleInheritance.kt")
     public void testInternalMethodOverrideMultipleInheritance() {
-      runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideMultipleInheritance.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/internalMethodOverrideMultipleInheritance.kt");
     }
 
     @Test
     @TestMetadata("internalMethodOverridePublishedApi.kt")
     public void testInternalMethodOverridePublishedApi() {
-      runTest("compiler/testData/codegen/box/bridges/internalMethodOverridePublishedApi.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/internalMethodOverridePublishedApi.kt");
     }
 
     @Test
     @TestMetadata("jsName.kt")
     public void testJsName() {
-      runTest("compiler/testData/codegen/box/bridges/jsName.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/jsName.kt");
     }
 
     @Test
     @TestMetadata("jsNative.kt")
     public void testJsNative() {
-      runTest("compiler/testData/codegen/box/bridges/jsNative.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/jsNative.kt");
     }
 
     @Test
     @TestMetadata("kt12416.kt")
     public void testKt12416() {
-      runTest("compiler/testData/codegen/box/bridges/kt12416.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt12416.kt");
     }
 
     @Test
     @TestMetadata("kt1939.kt")
     public void testKt1939() {
-      runTest("compiler/testData/codegen/box/bridges/kt1939.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt1939.kt");
     }
 
     @Test
     @TestMetadata("kt1959.kt")
     public void testKt1959() {
-      runTest("compiler/testData/codegen/box/bridges/kt1959.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt1959.kt");
     }
 
     @Test
     @TestMetadata("kt2498.kt")
     public void testKt2498() {
-      runTest("compiler/testData/codegen/box/bridges/kt2498.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt2498.kt");
     }
 
     @Test
     @TestMetadata("kt2702.kt")
     public void testKt2702() {
-      runTest("compiler/testData/codegen/box/bridges/kt2702.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt2702.kt");
     }
 
     @Test
     @TestMetadata("kt2833.kt")
     public void testKt2833() {
-      runTest("compiler/testData/codegen/box/bridges/kt2833.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt2833.kt");
     }
 
     @Test
     @TestMetadata("kt2920.kt")
     public void testKt2920() {
-      runTest("compiler/testData/codegen/box/bridges/kt2920.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt2920.kt");
     }
 
     @Test
     @TestMetadata("kt318.kt")
     public void testKt318() {
-      runTest("compiler/testData/codegen/box/bridges/kt318.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt318.kt");
     }
 
     @Test
     @TestMetadata("kt42137.kt")
     public void testKt42137() {
-      runTest("compiler/testData/codegen/box/bridges/kt42137.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt42137.kt");
     }
 
     @Test
     @TestMetadata("kt46389.kt")
     public void testKt46389() {
-      runTest("compiler/testData/codegen/box/bridges/kt46389.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt46389.kt");
     }
 
     @Test
     @TestMetadata("kt46389_jvmDefault.kt")
     public void testKt46389_jvmDefault() {
-      runTest("compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
     }
 
     @Test
     @TestMetadata("longChainOneBridge.kt")
     public void testLongChainOneBridge() {
-      runTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
     }
 
     @Test
     @TestMetadata("manyTypeArgumentsSubstitutedSuccessively.kt")
     public void testManyTypeArgumentsSubstitutedSuccessively() {
-      runTest("compiler/testData/codegen/box/bridges/manyTypeArgumentsSubstitutedSuccessively.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/manyTypeArgumentsSubstitutedSuccessively.kt");
     }
 
     @Test
     @TestMetadata("methodFromTrait.kt")
     public void testMethodFromTrait() {
-      runTest("compiler/testData/codegen/box/bridges/methodFromTrait.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/methodFromTrait.kt");
     }
 
     @Test
     @TestMetadata("methodWithDefaultParameter.kt")
     public void testMethodWithDefaultParameter() {
-      runTest("compiler/testData/codegen/box/bridges/methodWithDefaultParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/methodWithDefaultParameter.kt");
     }
 
     @Test
     @TestMetadata("multipleModules1.kt")
     public void testMultipleModules1() {
-      runTest("compiler/testData/codegen/box/bridges/multipleModules1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/multipleModules1.kt");
     }
 
     @Test
     @TestMetadata("multipleModules2.kt")
     public void testMultipleModules2() {
-      runTest("compiler/testData/codegen/box/bridges/multipleModules2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/multipleModules2.kt");
     }
 
     @Test
     @TestMetadata("nestedClassTypeParameters.kt")
     public void testNestedClassTypeParameters() {
-      runTest("compiler/testData/codegen/box/bridges/nestedClassTypeParameters.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/nestedClassTypeParameters.kt");
     }
 
     @Test
     @TestMetadata("noBridgeOnMutableCollectionInheritance.kt")
     public void testNoBridgeOnMutableCollectionInheritance() {
-      runTest("compiler/testData/codegen/box/bridges/noBridgeOnMutableCollectionInheritance.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/noBridgeOnMutableCollectionInheritance.kt");
     }
 
     @Test
     @TestMetadata("overrideAbstractProperty.kt")
     public void testOverrideAbstractProperty() {
-      runTest("compiler/testData/codegen/box/bridges/overrideAbstractProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/overrideAbstractProperty.kt");
     }
 
     @Test
     @TestMetadata("overrideReturnType.kt")
     public void testOverrideReturnType() {
-      runTest("compiler/testData/codegen/box/bridges/overrideReturnType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/overrideReturnType.kt");
     }
 
     @Test
     @TestMetadata("overrideWithValueClassReturn.kt")
     public void testOverrideWithValueClassReturn() {
-      runTest("compiler/testData/codegen/box/bridges/overrideWithValueClassReturn.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/overrideWithValueClassReturn.kt");
     }
 
     @Test
     @TestMetadata("propertyAccessorsWithoutBody.kt")
     public void testPropertyAccessorsWithoutBody() {
-      runTest("compiler/testData/codegen/box/bridges/propertyAccessorsWithoutBody.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/propertyAccessorsWithoutBody.kt");
     }
 
     @Test
     @TestMetadata("propertyDiamond.kt")
     public void testPropertyDiamond() {
-      runTest("compiler/testData/codegen/box/bridges/propertyDiamond.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/propertyDiamond.kt");
     }
 
     @Test
     @TestMetadata("propertyDiamondFakeOverride.kt")
     public void testPropertyDiamondFakeOverride() {
-      runTest("compiler/testData/codegen/box/bridges/propertyDiamondFakeOverride.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/propertyDiamondFakeOverride.kt");
     }
 
     @Test
     @TestMetadata("propertyInConstructor.kt")
     public void testPropertyInConstructor() {
-      runTest("compiler/testData/codegen/box/bridges/propertyInConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/propertyInConstructor.kt");
     }
 
     @Test
     @TestMetadata("propertySetter.kt")
     public void testPropertySetter() {
-      runTest("compiler/testData/codegen/box/bridges/propertySetter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/propertySetter.kt");
     }
 
     @Test
     @TestMetadata("returnTypeSignature.kt")
     public void testReturnTypeSignature() {
-      runTest("compiler/testData/codegen/box/bridges/returnTypeSignature.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/returnTypeSignature.kt");
     }
 
     @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
-      runTest("compiler/testData/codegen/box/bridges/simple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simple.kt");
     }
 
     @Test
     @TestMetadata("simpleEnum.kt")
     public void testSimpleEnum() {
-      runTest("compiler/testData/codegen/box/bridges/simpleEnum.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simpleEnum.kt");
     }
 
     @Test
     @TestMetadata("simpleGenericMethod.kt")
     public void testSimpleGenericMethod() {
-      runTest("compiler/testData/codegen/box/bridges/simpleGenericMethod.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simpleGenericMethod.kt");
     }
 
     @Test
     @TestMetadata("simpleObject.kt")
     public void testSimpleObject() {
-      runTest("compiler/testData/codegen/box/bridges/simpleObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simpleObject.kt");
     }
 
     @Test
     @TestMetadata("simpleReturnType.kt")
     public void testSimpleReturnType() {
-      runTest("compiler/testData/codegen/box/bridges/simpleReturnType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simpleReturnType.kt");
     }
 
     @Test
     @TestMetadata("simpleTraitImpl.kt")
     public void testSimpleTraitImpl() {
-      runTest("compiler/testData/codegen/box/bridges/simpleTraitImpl.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simpleTraitImpl.kt");
     }
 
     @Test
     @TestMetadata("simpleUpperBound.kt")
     public void testSimpleUpperBound() {
-      runTest("compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
     }
 
     @Test
     @TestMetadata("special.kt")
     public void testSpecial() {
-      runTest("compiler/testData/codegen/box/bridges/special.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/special.kt");
     }
 
     @Test
     @TestMetadata("specialGeneric.kt")
     public void testSpecialGeneric() {
-      runTest("compiler/testData/codegen/box/bridges/specialGeneric.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/specialGeneric.kt");
     }
 
     @Test
     @TestMetadata("strListContains.kt")
     public void testStrListContains() {
-      runTest("compiler/testData/codegen/box/bridges/strListContains.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/strListContains.kt");
     }
 
     @Test
     @TestMetadata("test0.kt")
     public void testTest0() {
-      runTest("compiler/testData/codegen/box/bridges/test0.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test0.kt");
     }
 
     @Test
     @TestMetadata("test1.kt")
     public void testTest1() {
-      runTest("compiler/testData/codegen/box/bridges/test1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test1.kt");
     }
 
     @Test
     @TestMetadata("test10.kt")
     public void testTest10() {
-      runTest("compiler/testData/codegen/box/bridges/test10.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test10.kt");
     }
 
     @Test
     @TestMetadata("test11.kt")
     public void testTest11() {
-      runTest("compiler/testData/codegen/box/bridges/test11.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test11.kt");
     }
 
     @Test
     @TestMetadata("test12.kt")
     public void testTest12() {
-      runTest("compiler/testData/codegen/box/bridges/test12.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test12.kt");
     }
 
     @Test
     @TestMetadata("test13.kt")
     public void testTest13() {
-      runTest("compiler/testData/codegen/box/bridges/test13.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test13.kt");
     }
 
     @Test
     @TestMetadata("test14.kt")
     public void testTest14() {
-      runTest("compiler/testData/codegen/box/bridges/test14.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test14.kt");
     }
 
     @Test
     @TestMetadata("test15.kt")
     public void testTest15() {
-      runTest("compiler/testData/codegen/box/bridges/test15.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test15.kt");
     }
 
     @Test
     @TestMetadata("test16.kt")
     public void testTest16() {
-      runTest("compiler/testData/codegen/box/bridges/test16.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test16.kt");
     }
 
     @Test
     @TestMetadata("test17.kt")
     public void testTest17() {
-      runTest("compiler/testData/codegen/box/bridges/test17.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test17.kt");
     }
 
     @Test
     @TestMetadata("test18.kt")
     public void testTest18() {
-      runTest("compiler/testData/codegen/box/bridges/test18.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test18.kt");
     }
 
     @Test
     @TestMetadata("test19.kt")
     public void testTest19() {
-      runTest("compiler/testData/codegen/box/bridges/test19.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test19.kt");
     }
 
     @Test
     @TestMetadata("test2.kt")
     public void testTest2() {
-      runTest("compiler/testData/codegen/box/bridges/test2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test2.kt");
     }
 
     @Test
     @TestMetadata("test20.kt")
     public void testTest20() {
-      runTest("compiler/testData/codegen/box/bridges/test20.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test20.kt");
     }
 
     @Test
     @TestMetadata("test21.kt")
     public void testTest21() {
-      runTest("compiler/testData/codegen/box/bridges/test21.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test21.kt");
     }
 
     @Test
     @TestMetadata("test22.kt")
     public void testTest22() {
-      runTest("compiler/testData/codegen/box/bridges/test22.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test22.kt");
     }
 
     @Test
     @TestMetadata("test23.kt")
     public void testTest23() {
-      runTest("compiler/testData/codegen/box/bridges/test23.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test23.kt");
     }
 
     @Test
     @TestMetadata("test24.kt")
     public void testTest24() {
-      runTest("compiler/testData/codegen/box/bridges/test24.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test24.kt");
     }
 
     @Test
     @TestMetadata("test25.kt")
     public void testTest25() {
-      runTest("compiler/testData/codegen/box/bridges/test25.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test25.kt");
     }
 
     @Test
     @TestMetadata("test3.kt")
     public void testTest3() {
-      runTest("compiler/testData/codegen/box/bridges/test3.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test3.kt");
     }
 
     @Test
     @TestMetadata("test4.kt")
     public void testTest4() {
-      runTest("compiler/testData/codegen/box/bridges/test4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test4.kt");
     }
 
     @Test
     @TestMetadata("test5.kt")
     public void testTest5() {
-      runTest("compiler/testData/codegen/box/bridges/test5.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test5.kt");
     }
 
     @Test
     @TestMetadata("test6.kt")
     public void testTest6() {
-      runTest("compiler/testData/codegen/box/bridges/test6.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test6.kt");
     }
 
     @Test
     @TestMetadata("test7.kt")
     public void testTest7() {
-      runTest("compiler/testData/codegen/box/bridges/test7.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test7.kt");
     }
 
     @Test
     @TestMetadata("test8.kt")
     public void testTest8() {
-      runTest("compiler/testData/codegen/box/bridges/test8.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test8.kt");
     }
 
     @Test
     @TestMetadata("test9.kt")
     public void testTest9() {
-      runTest("compiler/testData/codegen/box/bridges/test9.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/test9.kt");
     }
 
     @Test
     @TestMetadata("traitImplInheritsTraitImpl.kt")
     public void testTraitImplInheritsTraitImpl() {
-      runTest("compiler/testData/codegen/box/bridges/traitImplInheritsTraitImpl.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/traitImplInheritsTraitImpl.kt");
     }
 
     @Test
     @TestMetadata("twoParentsWithDifferentMethodsTwoBridges.kt")
     public void testTwoParentsWithDifferentMethodsTwoBridges() {
-      runTest("compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges.kt");
     }
 
     @Test
     @TestMetadata("twoParentsWithDifferentMethodsTwoBridges2.kt")
     public void testTwoParentsWithDifferentMethodsTwoBridges2() {
-      runTest("compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges2.kt");
     }
 
     @Test
     @TestMetadata("twoParentsWithTheSameMethodOneBridge.kt")
     public void testTwoParentsWithTheSameMethodOneBridge() {
-      runTest("compiler/testData/codegen/box/bridges/twoParentsWithTheSameMethodOneBridge.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/twoParentsWithTheSameMethodOneBridge.kt");
     }
 
     @Test
     @TestMetadata("typeParameterInExtensionReceiver.kt")
     public void testTypeParameterInExtensionReceiver() {
-      runTest("compiler/testData/codegen/box/bridges/typeParameterInExtensionReceiver.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/typeParameterInExtensionReceiver.kt");
     }
 
     @Nested
@@ -2654,7 +2654,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("abstractFun.kt")
       public void testAbstractFun() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/abstractFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/abstractFun.kt");
       }
 
       @Test
@@ -2665,61 +2665,61 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("boundedTypeArguments.kt")
       public void testBoundedTypeArguments() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/boundedTypeArguments.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/boundedTypeArguments.kt");
       }
 
       @Test
       @TestMetadata("delegation.kt")
       public void testDelegation() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/delegation.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/delegation.kt");
       }
 
       @Test
       @TestMetadata("differentErasureInSuperClass.kt")
       public void testDifferentErasureInSuperClass() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClass.kt");
       }
 
       @Test
       @TestMetadata("differentErasureInSuperClassComplex.kt")
       public void testDifferentErasureInSuperClassComplex() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClassComplex.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClassComplex.kt");
       }
 
       @Test
       @TestMetadata("enum.kt")
       public void testEnum() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/enum.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/enum.kt");
       }
 
       @Test
       @TestMetadata("genericMethod.kt")
       public void testGenericMethod() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/genericMethod.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/genericMethod.kt");
       }
 
       @Test
       @TestMetadata("object.kt")
       public void testObject() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/object.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/object.kt");
       }
 
       @Test
       @TestMetadata("property.kt")
       public void testProperty() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/property.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/property.kt");
       }
 
       @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/simple.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/simple.kt");
       }
 
       @Test
       @TestMetadata("upperBound.kt")
       public void testUpperBound() {
-        runTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/upperBound.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/bridges/substitutionInSuperClass/upperBound.kt");
       }
     }
   }
@@ -2736,7 +2736,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("customReadOnlyIterator.kt")
     public void testCustomReadOnlyIterator() {
-      runTest("compiler/testData/codegen/box/builtinStubMethods/customReadOnlyIterator.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/customReadOnlyIterator.kt");
     }
 
     @Nested
@@ -2756,7 +2756,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("abstractSet.kt")
       public void testAbstractSet() {
-        runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractSet.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractSet.kt");
       }
 
       @Test
@@ -2767,31 +2767,31 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("arrayList.kt")
       public void testArrayList() {
-        runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/arrayList.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/arrayList.kt");
       }
 
       @Test
       @TestMetadata("extendArrayListThroughKotlin.kt")
       public void testExtendArrayListThroughKotlin() {
-        runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/extendArrayListThroughKotlin.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/extendArrayListThroughKotlin.kt");
       }
 
       @Test
       @TestMetadata("hashMap.kt")
       public void testHashMap() {
-        runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashMap.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashMap.kt");
       }
 
       @Test
       @TestMetadata("hashSet.kt")
       public void testHashSet() {
-        runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
       }
 
       @Test
       @TestMetadata("overrideAbstractSetMethod.kt")
       public void testOverrideAbstractSetMethod() {
-        runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/overrideAbstractSetMethod.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/overrideAbstractSetMethod.kt");
       }
     }
 
@@ -2828,181 +2828,181 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("arrayConstructor.kt")
     public void testArrayConstructor() {
-      runTest("compiler/testData/codegen/box/callableReference/arrayConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/arrayConstructor.kt");
     }
 
     @Test
     @TestMetadata("arrayConstructorArgument.kt")
     public void testArrayConstructorArgument() {
-      runTest("compiler/testData/codegen/box/callableReference/arrayConstructorArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/arrayConstructorArgument.kt");
     }
 
     @Test
     @TestMetadata("arrayOf.kt")
     public void testArrayOf() {
-      runTest("compiler/testData/codegen/box/callableReference/arrayOf.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/arrayOf.kt");
     }
 
     @Test
     @TestMetadata("arrayOfNulls.kt")
     public void testArrayOfNulls() {
-      runTest("compiler/testData/codegen/box/callableReference/arrayOfNulls.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/arrayOfNulls.kt");
     }
 
     @Test
     @TestMetadata("callableReferenceOfCompanionConst.kt")
     public void testCallableReferenceOfCompanionConst() {
-      runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionConst.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionConst.kt");
     }
 
     @Test
     @TestMetadata("callableReferenceOfCompanionMethod.kt")
     public void testCallableReferenceOfCompanionMethod() {
-      runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionMethod.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionMethod.kt");
     }
 
     @Test
     @TestMetadata("callableReferenceOfCompanionProperty.kt")
     public void testCallableReferenceOfCompanionProperty() {
-      runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/callableReferenceOfCompanionProperty.kt");
     }
 
     @Test
     @TestMetadata("callableReferenceOfKotlinNestedClass.kt")
     public void testCallableReferenceOfKotlinNestedClass() {
-      runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfKotlinNestedClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/callableReferenceOfKotlinNestedClass.kt");
     }
 
     @Test
     @TestMetadata("callableReferenceOfObjectMethod.kt")
     public void testCallableReferenceOfObjectMethod() {
-      runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfObjectMethod.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/callableReferenceOfObjectMethod.kt");
     }
 
     @Test
     @TestMetadata("callableReferencetoInnerAndLocal.kt")
     public void testCallableReferencetoInnerAndLocal() {
-      runTest("compiler/testData/codegen/box/callableReference/callableReferencetoInnerAndLocal.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/callableReferencetoInnerAndLocal.kt");
     }
 
     @Test
     @TestMetadata("charArrayOf.kt")
     public void testCharArrayOf() {
-      runTest("compiler/testData/codegen/box/callableReference/charArrayOf.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/charArrayOf.kt");
     }
 
     @Test
     @TestMetadata("genericConstructorReference.kt")
     public void testGenericConstructorReference() {
-      runTest("compiler/testData/codegen/box/callableReference/genericConstructorReference.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/genericConstructorReference.kt");
     }
 
     @Test
     @TestMetadata("genericLocalClassConstructorReference.kt")
     public void testGenericLocalClassConstructorReference() {
-      runTest("compiler/testData/codegen/box/callableReference/genericLocalClassConstructorReference.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/genericLocalClassConstructorReference.kt");
     }
 
     @Test
     @TestMetadata("inlineArrayConstructors.kt")
     public void testInlineArrayConstructors() {
-      runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
     }
 
     @Test
     @TestMetadata("interfaceMethodReference.kt")
     public void testInterfaceMethodReference() {
-      runTest("compiler/testData/codegen/box/callableReference/interfaceMethodReference.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/interfaceMethodReference.kt");
     }
 
     @Test
     @TestMetadata("kt21014.kt")
     public void testKt21014() {
-      runTest("compiler/testData/codegen/box/callableReference/kt21014.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt21014.kt");
     }
 
     @Test
     @TestMetadata("kt21092a.kt")
     public void testKt21092a() {
-      runTest("compiler/testData/codegen/box/callableReference/kt21092a.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt21092a.kt");
     }
 
     @Test
     @TestMetadata("kt37604.kt")
     public void testKt37604() {
-      runTest("compiler/testData/codegen/box/callableReference/kt37604.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt37604.kt");
     }
 
     @Test
     @TestMetadata("kt44483.kt")
     public void testKt44483() {
-      runTest("compiler/testData/codegen/box/callableReference/kt44483.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt44483.kt");
     }
 
     @Test
     @TestMetadata("kt46902.kt")
     public void testKt46902() {
-      runTest("compiler/testData/codegen/box/callableReference/kt46902.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt46902.kt");
     }
 
     @Test
     @TestMetadata("kt47988.kt")
     public void testKt47988() {
-      runTest("compiler/testData/codegen/box/callableReference/kt47988.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt47988.kt");
     }
 
     @Test
     @TestMetadata("kt49526.kt")
     public void testKt49526() {
-      runTest("compiler/testData/codegen/box/callableReference/kt49526.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt49526.kt");
     }
 
     @Test
     @TestMetadata("kt49526_sam.kt")
     public void testKt49526_sam() {
-      runTest("compiler/testData/codegen/box/callableReference/kt49526_sam.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt49526_sam.kt");
     }
 
     @Test
     @TestMetadata("kt49526a.kt")
     public void testKt49526a() {
-      runTest("compiler/testData/codegen/box/callableReference/kt49526a.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt49526a.kt");
     }
 
     @Test
     @TestMetadata("kt49526b.kt")
     public void testKt49526b() {
-      runTest("compiler/testData/codegen/box/callableReference/kt49526b.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt49526b.kt");
     }
 
     @Test
     @TestMetadata("kt50172.kt")
     public void testKt50172() {
-      runTest("compiler/testData/codegen/box/callableReference/kt50172.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt50172.kt");
     }
 
     @Test
     @TestMetadata("kt51844.kt")
     public void testKt51844() {
-      runTest("compiler/testData/codegen/box/callableReference/kt51844.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt51844.kt");
     }
 
     @Test
     @TestMetadata("kt52270.kt")
     public void testKt52270() {
-      runTest("compiler/testData/codegen/box/callableReference/kt52270.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/kt52270.kt");
     }
 
     @Test
     @TestMetadata("nested.kt")
     public void testNested() {
-      runTest("compiler/testData/codegen/box/callableReference/nested.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/nested.kt");
     }
 
     @Test
     @TestMetadata("starProjectionCallableReference.kt")
     public void testStarProjectionCallableReference() {
-      runTest("compiler/testData/codegen/box/callableReference/starProjectionCallableReference.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/starProjectionCallableReference.kt");
     }
 
     @Nested
@@ -3012,13 +3012,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("adaptedArrayOf.kt")
       public void testAdaptedArrayOf() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedArrayOf.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedArrayOf.kt");
       }
 
       @Test
       @TestMetadata("adaptedVarargFunImportedFromObject.kt")
       public void testAdaptedVarargFunImportedFromObject() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedVarargFunImportedFromObject.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/adaptedVarargFunImportedFromObject.kt");
       }
 
       @Test
@@ -3029,229 +3029,229 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("bothWithCoercionToUnit.kt")
       public void testBothWithCoercionToUnit() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/bothWithCoercionToUnit.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/bothWithCoercionToUnit.kt");
       }
 
       @Test
       @TestMetadata("boundReferences.kt")
       public void testBoundReferences() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/boundReferences.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/boundReferences.kt");
       }
 
       @Test
       @TestMetadata("defaultAfterVararg.kt")
       public void testDefaultAfterVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/defaultAfterVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/defaultAfterVararg.kt");
       }
 
       @Test
       @TestMetadata("defaultWithGenericExpectedType.kt")
       public void testDefaultWithGenericExpectedType() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/defaultWithGenericExpectedType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/defaultWithGenericExpectedType.kt");
       }
 
       @Test
       @TestMetadata("emptyVarargAndDefault.kt")
       public void testEmptyVarargAndDefault() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/emptyVarargAndDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/emptyVarargAndDefault.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionAdaptedReferences.kt")
       public void testExtensionFunctionAdaptedReferences() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionAdaptedReferences.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionAdaptedReferences.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionAnonymous.kt")
       public void testExtensionFunctionAnonymous() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionAnonymous.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionAnonymous.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionWithNestedReceiver.kt")
       public void testExtensionFunctionWithNestedReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithNestedReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithNestedReceiver.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionWithPassedSupertype.kt")
       public void testExtensionFunctionWithPassedSupertype() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithPassedSupertype.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionFunctionWithPassedSupertype.kt");
       }
 
       @Test
       @TestMetadata("extensionInSamWithPassedSupertype.kt")
       public void testExtensionInSamWithPassedSupertype() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionInSamWithPassedSupertype.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionInSamWithPassedSupertype.kt");
       }
 
       @Test
       @TestMetadata("extensionParameterToValueParameter.kt")
       public void testExtensionParameterToValueParameter() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionParameterToValueParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionParameterToValueParameter.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyToFun.kt")
       public void testExtensionPropertyToFun() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyToFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyToFun.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyWithAnonymousExtensionFun.kt")
       public void testExtensionPropertyWithAnonymousExtensionFun() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyWithAnonymousExtensionFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyWithAnonymousExtensionFun.kt");
       }
 
       @Test
       @TestMetadata("inlineBound.kt")
       public void testInlineBound() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineBound.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/inlineBound.kt");
       }
 
       @Test
       @TestMetadata("inlineDefault.kt")
       public void testInlineDefault() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/inlineDefault.kt");
       }
 
       @Test
       @TestMetadata("inlineVararg.kt")
       public void testInlineVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVararg.kt");
       }
 
       @Test
       @TestMetadata("inlineVarargAndDefault.kt")
       public void testInlineVarargAndDefault() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVarargAndDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVarargAndDefault.kt");
       }
 
       @Test
       @TestMetadata("inlineVarargInts.kt")
       public void testInlineVarargInts() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVarargInts.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/inlineVarargInts.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorToExtensionFun.kt")
       public void testInnerConstructorToExtensionFun() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorToExtensionFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorToExtensionFun.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorToExtensionWithTypeParam.kt")
       public void testInnerConstructorToExtensionWithTypeParam() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorToExtensionWithTypeParam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorToExtensionWithTypeParam.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorWithVararg.kt")
       public void testInnerConstructorWithVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorWithVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/innerConstructorWithVararg.kt");
       }
 
       @Test
       @TestMetadata("largeVararg.kt")
       public void testLargeVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/largeVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/largeVararg.kt");
       }
 
       @Test
       @TestMetadata("localFunctionWithDefault.kt")
       public void testLocalFunctionWithDefault() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/localFunctionWithDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/localFunctionWithDefault.kt");
       }
 
       @Test
       @TestMetadata("manyDefaultsAndVararg.kt")
       public void testManyDefaultsAndVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/manyDefaultsAndVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/manyDefaultsAndVararg.kt");
       }
 
       @Test
       @TestMetadata("nestedClassConstructorWithDefault.kt")
       public void testNestedClassConstructorWithDefault() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/nestedClassConstructorWithDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/nestedClassConstructorWithDefault.kt");
       }
 
       @Test
       @TestMetadata("noNameClashForReferencesToSameFunction.kt")
       public void testNoNameClashForReferencesToSameFunction() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noNameClashForReferencesToSameFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/noNameClashForReferencesToSameFunction.kt");
       }
 
       @Test
       @TestMetadata("referenceToFakeOverrideWithTypeParameter.kt")
       public void testReferenceToFakeOverrideWithTypeParameter() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToFakeOverrideWithTypeParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToFakeOverrideWithTypeParameter.kt");
       }
 
       @Test
       @TestMetadata("referenceToVarargWithDefaults.kt")
       public void testReferenceToVarargWithDefaults() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToVarargWithDefaults.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToVarargWithDefaults.kt");
       }
 
       @Test
       @TestMetadata("simpleDefaultArgument.kt")
       public void testSimpleDefaultArgument() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleDefaultArgument.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/simpleDefaultArgument.kt");
       }
 
       @Test
       @TestMetadata("simpleEmptyVararg.kt")
       public void testSimpleEmptyVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/simpleEmptyVararg.kt");
       }
 
       @Test
       @TestMetadata("suspendUnitConversion.kt")
       public void testSuspendUnitConversion() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendUnitConversion.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendUnitConversion.kt");
       }
 
       @Test
       @TestMetadata("unboundReferences.kt")
       public void testUnboundReferences() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
       }
 
       @Test
       @TestMetadata("unitCoercionOverloads.kt")
       public void testUnitCoercionOverloads() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unitCoercionOverloads.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/unitCoercionOverloads.kt");
       }
 
       @Test
       @TestMetadata("varargFromBaseClass.kt")
       public void testVarargFromBaseClass() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargFromBaseClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/varargFromBaseClass.kt");
       }
 
       @Test
       @TestMetadata("varargOverloads.kt")
       public void testVarargOverloads() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargOverloads.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/varargOverloads.kt");
       }
 
       @Test
       @TestMetadata("varargViewedAsArray.kt")
       public void testVarargViewedAsArray() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargViewedAsArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/varargViewedAsArray.kt");
       }
 
       @Test
       @TestMetadata("varargViewedAsPrimitiveArray.kt")
       public void testVarargViewedAsPrimitiveArray() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargViewedAsPrimitiveArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/varargViewedAsPrimitiveArray.kt");
       }
 
       @Test
       @TestMetadata("varargWithDefaultValue.kt")
       public void testVarargWithDefaultValue() {
-        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargWithDefaultValue.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/varargWithDefaultValue.kt");
       }
 
       @Nested
@@ -3261,19 +3261,19 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @Test
         @TestMetadata("adaptedWithCoercionToUnit.kt")
         public void testAdaptedWithCoercionToUnit() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/adaptedWithCoercionToUnit.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/adaptedWithCoercionToUnit.kt");
         }
 
         @Test
         @TestMetadata("adaptedWithDefaultArguments.kt")
         public void testAdaptedWithDefaultArguments() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/adaptedWithDefaultArguments.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/adaptedWithDefaultArguments.kt");
         }
 
         @Test
         @TestMetadata("adaptedWithVarargs.kt")
         public void testAdaptedWithVarargs() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/adaptedWithVarargs.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/adaptedWithVarargs.kt");
         }
 
         @Test
@@ -3284,157 +3284,157 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @Test
         @TestMetadata("bound.kt")
         public void testBound() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/bound.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/bound.kt");
         }
 
         @Test
         @TestMetadata("boundExtension.kt")
         public void testBoundExtension() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/boundExtension.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/boundExtension.kt");
         }
 
         @Test
         @TestMetadata("crossInline.kt")
         public void testCrossInline() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/crossInline.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/crossInline.kt");
         }
 
         @Test
         @TestMetadata("extensionFunction.kt")
         public void testExtensionFunction() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/extensionFunction.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/extensionFunction.kt");
         }
 
         @Test
         @TestMetadata("extensionFunctionAsASuperType.kt")
         public void testExtensionFunctionAsASuperType() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/extensionFunctionAsASuperType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/extensionFunctionAsASuperType.kt");
         }
 
         @Test
         @TestMetadata("extensionTypeProperty.kt")
         public void testExtensionTypeProperty() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/extensionTypeProperty.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/extensionTypeProperty.kt");
         }
 
         @Test
         @TestMetadata("inlineAdaptedWithCoercionToUnit.kt")
         public void testInlineAdaptedWithCoercionToUnit() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineAdaptedWithCoercionToUnit.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineAdaptedWithCoercionToUnit.kt");
         }
 
         @Test
         @TestMetadata("inlineAdaptedWithDefaultArguments.kt")
         public void testInlineAdaptedWithDefaultArguments() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineAdaptedWithDefaultArguments.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineAdaptedWithDefaultArguments.kt");
         }
 
         @Test
         @TestMetadata("inlineAdaptedWithVarargs.kt")
         public void testInlineAdaptedWithVarargs() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineAdaptedWithVarargs.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineAdaptedWithVarargs.kt");
         }
 
         @Test
         @TestMetadata("inlineBound.kt")
         public void testInlineBound() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineBound.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineBound.kt");
         }
 
         @Test
         @TestMetadata("inlineSimple.kt")
         public void testInlineSimple() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineSimple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineSimple.kt");
         }
 
         @Test
         @TestMetadata("inlineWithContextParameter.kt")
         public void testInlineWithContextParameter() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameter.kt");
         }
 
         @Test
         @TestMetadata("inlineWithContextParameterAsAPropertyType.kt")
         public void testInlineWithContextParameterAsAPropertyType() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameterAsAPropertyType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameterAsAPropertyType.kt");
         }
 
         @Test
         @TestMetadata("inlineWithContextParameterAsASupertype.kt")
         public void testInlineWithContextParameterAsASupertype() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameterAsASupertype.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameterAsASupertype.kt");
         }
 
         @Test
         @TestMetadata("inlineWithExtensionAsASuperType.kt")
         public void testInlineWithExtensionAsASuperType() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionAsASuperType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionAsASuperType.kt");
         }
 
         @Test
         @TestMetadata("inlineWithExtensionFunction.kt")
         public void testInlineWithExtensionFunction() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionFunction.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionFunction.kt");
         }
 
         @Test
         @TestMetadata("inlineWithExtensionProperty.kt")
         public void testInlineWithExtensionProperty() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionProperty.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionProperty.kt");
         }
 
         @Test
         @TestMetadata("inlineWithParameters.kt")
         public void testInlineWithParameters() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithParameters.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithParameters.kt");
         }
 
         @Test
         @TestMetadata("isAs.kt")
         public void testIsAs() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/isAs.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/isAs.kt");
         }
 
         @Test
         @TestMetadata("nullableParameter.kt")
         public void testNullableParameter() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/nullableParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/nullableParameter.kt");
         }
 
         @Test
         @TestMetadata("propertyReferenceToSuspendFunction.kt")
         public void testPropertyReferenceToSuspendFunction() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/propertyReferenceToSuspendFunction.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/propertyReferenceToSuspendFunction.kt");
         }
 
         @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/simple.kt");
         }
 
         @Test
         @TestMetadata("withContextParameterAsAPropertyType.kt")
         public void testWithContextParameterAsAPropertyType() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameterAsAPropertyType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameterAsAPropertyType.kt");
         }
 
         @Test
         @TestMetadata("withContextParameters.kt")
         public void testWithContextParameters() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameters.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameters.kt");
         }
 
         @Test
         @TestMetadata("withContextParametersAsASupertype.kt")
         public void testWithContextParametersAsASupertype() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParametersAsASupertype.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParametersAsASupertype.kt");
         }
 
         @Test
         @TestMetadata("withParameters.kt")
         public void testWithParameters() {
-          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withParameters.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withParameters.kt");
         }
       }
     }
@@ -3446,7 +3446,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("adapted.kt")
       public void testAdapted() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/adapted.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/adapted.kt");
       }
 
       @Test
@@ -3457,163 +3457,163 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("array.kt")
       public void testArray() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/array.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/array.kt");
       }
 
       @Test
       @TestMetadata("arrayConstructorArgument.kt")
       public void testArrayConstructorArgument() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/arrayConstructorArgument.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/arrayConstructorArgument.kt");
       }
 
       @Test
       @TestMetadata("arrayGetIntrinsic.kt")
       public void testArrayGetIntrinsic() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/arrayGetIntrinsic.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/arrayGetIntrinsic.kt");
       }
 
       @Test
       @TestMetadata("boundReferenceToOverloadedFunction.kt")
       public void testBoundReferenceToOverloadedFunction() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/boundReferenceToOverloadedFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/boundReferenceToOverloadedFunction.kt");
       }
 
       @Test
       @TestMetadata("captureVarInInitBlock.kt")
       public void testCaptureVarInInitBlock() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/captureVarInInitBlock.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/captureVarInInitBlock.kt");
       }
 
       @Test
       @TestMetadata("captureVarInPropertyInit.kt")
       public void testCaptureVarInPropertyInit() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/captureVarInPropertyInit.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/captureVarInPropertyInit.kt");
       }
 
       @Test
       @TestMetadata("coercionToUnit.kt")
       public void testCoercionToUnit() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/coercionToUnit.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/coercionToUnit.kt");
       }
 
       @Test
       @TestMetadata("companionObjectReceiver.kt")
       public void testCompanionObjectReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
       }
 
       @Test
       @TestMetadata("companionObjectReceiverInheritsFromOuter.kt")
       public void testCompanionObjectReceiverInheritsFromOuter() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiverInheritsFromOuter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/companionObjectReceiverInheritsFromOuter.kt");
       }
 
       @Test
       @TestMetadata("dontShareReceiver.kt")
       public void testDontShareReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/dontShareReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/dontShareReceiver.kt");
       }
 
       @Test
       @TestMetadata("emptyLHS.kt")
       public void testEmptyLHS() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/emptyLHS.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/emptyLHS.kt");
       }
 
       @Test
       @TestMetadata("enumEntryMember.kt")
       public void testEnumEntryMember() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/enumEntryMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/enumEntryMember.kt");
       }
 
       @Test
       @TestMetadata("genericBoundPropertyAsCrossinline.kt")
       public void testGenericBoundPropertyAsCrossinline() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/genericBoundPropertyAsCrossinline.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/genericBoundPropertyAsCrossinline.kt");
       }
 
       @Test
       @TestMetadata("genericValOnLHS.kt")
       public void testGenericValOnLHS() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
       }
 
       @Test
       @TestMetadata("kCallableNameIntrinsic.kt")
       public void testKCallableNameIntrinsic() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/kCallableNameIntrinsic.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/kCallableNameIntrinsic.kt");
       }
 
       @Test
       @TestMetadata("kt12738.kt")
       public void testKt12738() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/kt12738.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/kt12738.kt");
       }
 
       @Test
       @TestMetadata("kt15446.kt")
       public void testKt15446() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/kt15446.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/kt15446.kt");
       }
 
       @Test
       @TestMetadata("kt44636_localExtension.kt")
       public void testKt44636_localExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/kt44636_localExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/kt44636_localExtension.kt");
       }
 
       @Test
       @TestMetadata("multiCase.kt")
       public void testMultiCase() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/multiCase.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/multiCase.kt");
       }
 
       @Test
       @TestMetadata("nullReceiver.kt")
       public void testNullReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/nullReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/nullReceiver.kt");
       }
 
       @Test
       @TestMetadata("objectReceiver.kt")
       public void testObjectReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/objectReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/objectReceiver.kt");
       }
 
       @Test
       @TestMetadata("primitiveReceiver.kt")
       public void testPrimitiveReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/primitiveReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/primitiveReceiver.kt");
       }
 
       @Test
       @TestMetadata("receiverEvaluatedOnce.kt")
       public void testReceiverEvaluatedOnce() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/receiverEvaluatedOnce.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/receiverEvaluatedOnce.kt");
       }
 
       @Test
       @TestMetadata("simpleFunction.kt")
       public void testSimpleFunction() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/simpleFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/simpleFunction.kt");
       }
 
       @Test
       @TestMetadata("simpleProperty.kt")
       public void testSimpleProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/simpleProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/simpleProperty.kt");
       }
 
       @Test
       @TestMetadata("smartCastForExtensionReceiver.kt")
       public void testSmartCastForExtensionReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/smartCastForExtensionReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/smartCastForExtensionReceiver.kt");
       }
 
       @Test
       @TestMetadata("typeAliasObjectBoundReference.kt")
       public void testTypeAliasObjectBoundReference() {
-        runTest("compiler/testData/codegen/box/callableReference/bound/typeAliasObjectBoundReference.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/typeAliasObjectBoundReference.kt");
       }
 
       @Nested
@@ -3628,13 +3628,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @Test
         @TestMetadata("nullableReceiverInEquals.kt")
         public void testNullableReceiverInEquals() {
-          runTest("compiler/testData/codegen/box/callableReference/bound/equals/nullableReceiverInEquals.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/equals/nullableReceiverInEquals.kt");
         }
 
         @Test
         @TestMetadata("receiverInEquals.kt")
         public void testReceiverInEquals() {
-          runTest("compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
         }
       }
     }
@@ -3651,97 +3651,97 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("capturedDefaults.kt")
       public void testCapturedDefaults() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/capturedDefaults.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/capturedDefaults.kt");
       }
 
       @Test
       @TestMetadata("capturedVararg.kt")
       public void testCapturedVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/capturedVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/capturedVararg.kt");
       }
 
       @Test
       @TestMetadata("coercionToUnit.kt")
       public void testCoercionToUnit() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/coercionToUnit.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/coercionToUnit.kt");
       }
 
       @Test
       @TestMetadata("coercionToUnitWithDefaults.kt")
       public void testCoercionToUnitWithDefaults() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/coercionToUnitWithDefaults.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/coercionToUnitWithDefaults.kt");
       }
 
       @Test
       @TestMetadata("coercionToUnitWithVararg.kt")
       public void testCoercionToUnitWithVararg() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/coercionToUnitWithVararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/coercionToUnitWithVararg.kt");
       }
 
       @Test
       @TestMetadata("conversionCombinations.kt")
       public void testConversionCombinations() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/conversionCombinations.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/conversionCombinations.kt");
       }
 
       @Test
       @TestMetadata("extensionReceiverVsDefault.kt")
       public void testExtensionReceiverVsDefault() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/extensionReceiverVsDefault.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/extensionReceiverVsDefault.kt");
       }
 
       @Test
       @TestMetadata("kproperty.kt")
       public void testKproperty() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/kproperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/kproperty.kt");
       }
 
       @Test
       @TestMetadata("kpropertyWithCapturingEquality.kt")
       public void testKpropertyWithCapturingEquality() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingEquality.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingEquality.kt");
       }
 
       @Test
       @TestMetadata("kpropertyWithCapturingInequality.kt")
       public void testKpropertyWithCapturingInequality() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingInequality.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingInequality.kt");
       }
 
       @Test
       @TestMetadata("noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt")
       public void testNoCoercionToUnitIfFunctionAlreadyReturnsUnit() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt");
       }
 
       @Test
       @TestMetadata("simpleEquality.kt")
       public void testSimpleEquality() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/simpleEquality.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/simpleEquality.kt");
       }
 
       @Test
       @TestMetadata("suspendConversion.kt")
       public void testSuspendConversion() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/suspendConversion.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/suspendConversion.kt");
       }
 
       @Test
       @TestMetadata("varargAsArrayMemberOrExtension.kt")
       public void testVarargAsArrayMemberOrExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/varargAsArrayMemberOrExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/varargAsArrayMemberOrExtension.kt");
       }
 
       @Test
       @TestMetadata("varargAsArrayWithDefaults.kt")
       public void testVarargAsArrayWithDefaults() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/varargAsArrayWithDefaults.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/varargAsArrayWithDefaults.kt");
       }
 
       @Test
       @TestMetadata("varargWithDefaults.kt")
       public void testVarargWithDefaults() {
-        runTest("compiler/testData/codegen/box/callableReference/equality/varargWithDefaults.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/equality/varargWithDefaults.kt");
       }
     }
 
@@ -3757,31 +3757,31 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("funInterfaceConstructedObjectsEquality.kt")
       public void testFunInterfaceConstructedObjectsEquality() {
-        runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructedObjectsEquality.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructedObjectsEquality.kt");
       }
 
       @Test
       @TestMetadata("funInterfaceConstructor.kt")
       public void testFunInterfaceConstructor() {
-        runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
       }
 
       @Test
       @TestMetadata("funInterfaceConstructorEquality.kt")
       public void testFunInterfaceConstructorEquality() {
-        runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
       }
 
       @Test
       @TestMetadata("funInterfaceConstructorIsKFunction.kt")
       public void testFunInterfaceConstructorIsKFunction() {
-        runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorIsKFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorIsKFunction.kt");
       }
 
       @Test
       @TestMetadata("funInterfaceConstructorOfImplicitKFunctionType.kt")
       public void testFunInterfaceConstructorOfImplicitKFunctionType() {
-        runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
       }
     }
 
@@ -3792,7 +3792,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("abstractClassMember.kt")
       public void testAbstractClassMember() {
-        runTest("compiler/testData/codegen/box/callableReference/function/abstractClassMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/abstractClassMember.kt");
       }
 
       @Test
@@ -3803,409 +3803,409 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("argumentTypes.kt")
       public void testArgumentTypes() {
-        runTest("compiler/testData/codegen/box/callableReference/function/argumentTypes.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/argumentTypes.kt");
       }
 
       @Test
       @TestMetadata("argumentTypesNoinline.kt")
       public void testArgumentTypesNoinline() {
-        runTest("compiler/testData/codegen/box/callableReference/function/argumentTypesNoinline.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/argumentTypesNoinline.kt");
       }
 
       @Test
       @TestMetadata("booleanNotIntrinsic.kt")
       public void testBooleanNotIntrinsic() {
-        runTest("compiler/testData/codegen/box/callableReference/function/booleanNotIntrinsic.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/booleanNotIntrinsic.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromClass.kt")
       public void testClassMemberFromClass() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromClass.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromCompanionObject.kt")
       public void testClassMemberFromCompanionObject() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromCompanionObject.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromCompanionObject.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromExtension.kt")
       public void testClassMemberFromExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromExtension.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromTopLevelStringNoArgs.kt")
       public void testClassMemberFromTopLevelStringNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelStringNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelStringNoArgs.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromTopLevelStringOneStringArg.kt")
       public void testClassMemberFromTopLevelStringOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelStringOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelStringOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromTopLevelUnitNoArgs.kt")
       public void testClassMemberFromTopLevelUnitNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelUnitNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelUnitNoArgs.kt");
       }
 
       @Test
       @TestMetadata("classMemberFromTopLevelUnitOneStringArg.kt")
       public void testClassMemberFromTopLevelUnitOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelUnitOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/classMemberFromTopLevelUnitOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("coercionToUnit.kt")
       public void testCoercionToUnit() {
-        runTest("compiler/testData/codegen/box/callableReference/function/coercionToUnit.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/coercionToUnit.kt");
       }
 
       @Test
       @TestMetadata("constructorFromInnerClass.kt")
       public void testConstructorFromInnerClass() {
-        runTest("compiler/testData/codegen/box/callableReference/function/constructorFromInnerClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/constructorFromInnerClass.kt");
       }
 
       @Test
       @TestMetadata("constructorFromInnerClassWithTypeParam.kt")
       public void testConstructorFromInnerClassWithTypeParam() {
-        runTest("compiler/testData/codegen/box/callableReference/function/constructorFromInnerClassWithTypeParam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/constructorFromInnerClassWithTypeParam.kt");
       }
 
       @Test
       @TestMetadata("constructorFromTopLevelNoArgs.kt")
       public void testConstructorFromTopLevelNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/constructorFromTopLevelNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/constructorFromTopLevelNoArgs.kt");
       }
 
       @Test
       @TestMetadata("constructorFromTopLevelOneStringArg.kt")
       public void testConstructorFromTopLevelOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/constructorFromTopLevelOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/constructorFromTopLevelOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("enumValueOfMethod.kt")
       public void testEnumValueOfMethod() {
-        runTest("compiler/testData/codegen/box/callableReference/function/enumValueOfMethod.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/enumValueOfMethod.kt");
       }
 
       @Test
       @TestMetadata("equalsIntrinsic.kt")
       public void testEqualsIntrinsic() {
-        runTest("compiler/testData/codegen/box/callableReference/function/equalsIntrinsic.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/equalsIntrinsic.kt");
       }
 
       @Test
       @TestMetadata("extensionFromClass.kt")
       public void testExtensionFromClass() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromClass.kt");
       }
 
       @Test
       @TestMetadata("extensionFromCompanion.kt")
       public void testExtensionFromCompanion() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromCompanion.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromCompanion.kt");
       }
 
       @Test
       @TestMetadata("extensionFromExtension.kt")
       public void testExtensionFromExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromExtension.kt");
       }
 
       @Test
       @TestMetadata("extensionFromTopLevelStringNoArgs.kt")
       public void testExtensionFromTopLevelStringNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelStringNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelStringNoArgs.kt");
       }
 
       @Test
       @TestMetadata("extensionFromTopLevelStringOneStringArg.kt")
       public void testExtensionFromTopLevelStringOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelStringOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelStringOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("extensionFromTopLevelUnitNoArgs.kt")
       public void testExtensionFromTopLevelUnitNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelUnitNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelUnitNoArgs.kt");
       }
 
       @Test
       @TestMetadata("extensionFromTopLevelUnitOneStringArg.kt")
       public void testExtensionFromTopLevelUnitOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelUnitOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFromTopLevelUnitOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionAsASuperTypePassToSAMInterface.kt")
       public void testExtensionFunctionAsASuperTypePassToSAMInterface() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionAsASuperTypePassToSAMInterface.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFunctionAsASuperTypePassToSAMInterface.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionInSAMInterface.kt")
       public void testExtensionFunctionInSAMInterface() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionInSAMInterface.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFunctionInSAMInterface.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionLocal.kt")
       public void testExtensionFunctionLocal() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionLocal.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFunctionLocal.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionPassToSAMInterface.kt")
       public void testExtensionFunctionPassToSAMInterface() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionPassToSAMInterface.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFunctionPassToSAMInterface.kt");
       }
 
       @Test
       @TestMetadata("extensionFunctionWithExtensionInSAMInterface.kt")
       public void testExtensionFunctionWithExtensionInSAMInterface() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionFunctionWithExtensionInSAMInterface.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionFunctionWithExtensionInSAMInterface.kt");
       }
 
       @Test
       @TestMetadata("extensionInDelegatedSam.kt")
       public void testExtensionInDelegatedSam() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionInDelegatedSam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionInDelegatedSam.kt");
       }
 
       @Test
       @TestMetadata("extensionPassedToDelegatedSam.kt")
       public void testExtensionPassedToDelegatedSam() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionPassedToDelegatedSam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionPassedToDelegatedSam.kt");
       }
 
       @Test
       @TestMetadata("extensionWithNestedFunction.kt")
       public void testExtensionWithNestedFunction() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionWithNestedFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionWithNestedFunction.kt");
       }
 
       @Test
       @TestMetadata("extensionWithTypeParam.kt")
       public void testExtensionWithTypeParam() {
-        runTest("compiler/testData/codegen/box/callableReference/function/extensionWithTypeParam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/extensionWithTypeParam.kt");
       }
 
       @Test
       @TestMetadata("genericCallableReferenceArgumentsNonJVM.kt")
       public void testGenericCallableReferenceArgumentsNonJVM() {
-        runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArgumentsNonJVM.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArgumentsNonJVM.kt");
       }
 
       @Test
       @TestMetadata("genericCallableReferenceWithReifiedTypeParam.kt")
       public void testGenericCallableReferenceWithReifiedTypeParam() {
-        runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceWithReifiedTypeParam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/genericCallableReferenceWithReifiedTypeParam.kt");
       }
 
       @Test
       @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
       public void testGenericCallableReferencesWithNullableTypes() {
-        runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
       }
 
       @Test
       @TestMetadata("genericCallableReferencesWithOverload.kt")
       public void testGenericCallableReferencesWithOverload() {
-        runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithOverload.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithOverload.kt");
       }
 
       @Test
       @TestMetadata("genericMember.kt")
       public void testGenericMember() {
-        runTest("compiler/testData/codegen/box/callableReference/function/genericMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/genericMember.kt");
       }
 
       @Test
       @TestMetadata("genericWithDependentType.kt")
       public void testGenericWithDependentType() {
-        runTest("compiler/testData/codegen/box/callableReference/function/genericWithDependentType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/genericWithDependentType.kt");
       }
 
       @Test
       @TestMetadata("innerClassConstructorWithTwoReceivers.kt")
       public void testInnerClassConstructorWithTwoReceivers() {
-        runTest("compiler/testData/codegen/box/callableReference/function/innerClassConstructorWithTwoReceivers.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/innerClassConstructorWithTwoReceivers.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorFromClass.kt")
       public void testInnerConstructorFromClass() {
-        runTest("compiler/testData/codegen/box/callableReference/function/innerConstructorFromClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/innerConstructorFromClass.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorFromExtension.kt")
       public void testInnerConstructorFromExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/function/innerConstructorFromExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/innerConstructorFromExtension.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorFromTopLevelNoArgs.kt")
       public void testInnerConstructorFromTopLevelNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/innerConstructorFromTopLevelNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/innerConstructorFromTopLevelNoArgs.kt");
       }
 
       @Test
       @TestMetadata("innerConstructorFromTopLevelOneStringArg.kt")
       public void testInnerConstructorFromTopLevelOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/innerConstructorFromTopLevelOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/innerConstructorFromTopLevelOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("kt21787.kt")
       public void testKt21787() {
-        runTest("compiler/testData/codegen/box/callableReference/function/kt21787.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/kt21787.kt");
       }
 
       @Test
       @TestMetadata("kt32462.kt")
       public void testKt32462() {
-        runTest("compiler/testData/codegen/box/callableReference/function/kt32462.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/kt32462.kt");
       }
 
       @Test
       @TestMetadata("kt47741.kt")
       public void testKt47741() {
-        runTest("compiler/testData/codegen/box/callableReference/function/kt47741.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/kt47741.kt");
       }
 
       @Test
       @TestMetadata("nestedConstructorFromClass.kt")
       public void testNestedConstructorFromClass() {
-        runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/nestedConstructorFromClass.kt");
       }
 
       @Test
       @TestMetadata("nestedConstructorFromTopLevelNoArgs.kt")
       public void testNestedConstructorFromTopLevelNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromTopLevelNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/nestedConstructorFromTopLevelNoArgs.kt");
       }
 
       @Test
       @TestMetadata("nestedConstructorFromTopLevelOneStringArg.kt")
       public void testNestedConstructorFromTopLevelOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromTopLevelOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/nestedConstructorFromTopLevelOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("nestedExtensionInSAMInterface.kt")
       public void testNestedExtensionInSAMInterface() {
-        runTest("compiler/testData/codegen/box/callableReference/function/nestedExtensionInSAMInterface.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/nestedExtensionInSAMInterface.kt");
       }
 
       @Test
       @TestMetadata("newArray.kt")
       public void testNewArray() {
-        runTest("compiler/testData/codegen/box/callableReference/function/newArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/newArray.kt");
       }
 
       @Test
       @TestMetadata("nullableExtension.kt")
       public void testNullableExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/function/nullableExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/nullableExtension.kt");
       }
 
       @Test
       @TestMetadata("overloadedFun.kt")
       public void testOverloadedFun() {
-        runTest("compiler/testData/codegen/box/callableReference/function/overloadedFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/overloadedFun.kt");
       }
 
       @Test
       @TestMetadata("overloadedFunVsVal.kt")
       public void testOverloadedFunVsVal() {
-        runTest("compiler/testData/codegen/box/callableReference/function/overloadedFunVsVal.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/overloadedFunVsVal.kt");
       }
 
       @Test
       @TestMetadata("privateClassMember.kt")
       public void testPrivateClassMember() {
-        runTest("compiler/testData/codegen/box/callableReference/function/privateClassMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/privateClassMember.kt");
       }
 
       @Test
       @TestMetadata("referenceToCompanionMember.kt")
       public void testReferenceToCompanionMember() {
-        runTest("compiler/testData/codegen/box/callableReference/function/referenceToCompanionMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/referenceToCompanionMember.kt");
       }
 
       @Test
       @TestMetadata("sortListOfStrings.kt")
       public void testSortListOfStrings() {
-        runTest("compiler/testData/codegen/box/callableReference/function/sortListOfStrings.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/sortListOfStrings.kt");
       }
 
       @Test
       @TestMetadata("specialCalls.kt")
       public void testSpecialCalls() {
-        runTest("compiler/testData/codegen/box/callableReference/function/specialCalls.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/specialCalls.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromClass.kt")
       public void testTopLevelFromClass() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromClass.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromExtension.kt")
       public void testTopLevelFromExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromExtension.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromTopLevelStringNoArgs.kt")
       public void testTopLevelFromTopLevelStringNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelStringNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelStringNoArgs.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromTopLevelStringOneStringArg.kt")
       public void testTopLevelFromTopLevelStringOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelStringOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelStringOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromTopLevelUnitManyArgs.kt")
       public void testTopLevelFromTopLevelUnitManyArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitManyArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitManyArgs.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromTopLevelUnitNoArgs.kt")
       public void testTopLevelFromTopLevelUnitNoArgs() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitNoArgs.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitNoArgs.kt");
       }
 
       @Test
       @TestMetadata("topLevelFromTopLevelUnitOneStringArg.kt")
       public void testTopLevelFromTopLevelUnitOneStringArg() {
-        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitOneStringArg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitOneStringArg.kt");
       }
 
       @Test
       @TestMetadata("traitImplMethodWithClassReceiver.kt")
       public void testTraitImplMethodWithClassReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/function/traitImplMethodWithClassReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/traitImplMethodWithClassReceiver.kt");
       }
 
       @Test
       @TestMetadata("traitMember.kt")
       public void testTraitMember() {
-        runTest("compiler/testData/codegen/box/callableReference/function/traitMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/traitMember.kt");
       }
 
       @Nested
@@ -4220,127 +4220,127 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @Test
         @TestMetadata("captureOuter.kt")
         public void testCaptureOuter() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/captureOuter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/captureOuter.kt");
         }
 
         @Test
         @TestMetadata("classMember.kt")
         public void testClassMember() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/classMember.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/classMember.kt");
         }
 
         @Test
         @TestMetadata("closureWithSideEffect.kt")
         public void testClosureWithSideEffect() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/closureWithSideEffect.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/closureWithSideEffect.kt");
         }
 
         @Test
         @TestMetadata("constructor.kt")
         public void testConstructor() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/constructor.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/constructor.kt");
         }
 
         @Test
         @TestMetadata("constructorWithInitializer.kt")
         public void testConstructorWithInitializer() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/constructorWithInitializer.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/constructorWithInitializer.kt");
         }
 
         @Test
         @TestMetadata("enumExtendsTrait.kt")
         public void testEnumExtendsTrait() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/enumExtendsTrait.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/enumExtendsTrait.kt");
         }
 
         @Test
         @TestMetadata("equalsHashCode.kt")
         public void testEqualsHashCode() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/equalsHashCode.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/equalsHashCode.kt");
         }
 
         @Test
         @TestMetadata("extension.kt")
         public void testExtension() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/extension.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/extension.kt");
         }
 
         @Test
         @TestMetadata("extensionToLocalClass.kt")
         public void testExtensionToLocalClass() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/extensionToLocalClass.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/extensionToLocalClass.kt");
         }
 
         @Test
         @TestMetadata("extensionToPrimitive.kt")
         public void testExtensionToPrimitive() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/extensionToPrimitive.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/extensionToPrimitive.kt");
         }
 
         @Test
         @TestMetadata("extensionWithClosure.kt")
         public void testExtensionWithClosure() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/extensionWithClosure.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/extensionWithClosure.kt");
         }
 
         @Test
         @TestMetadata("genericMember.kt")
         public void testGenericMember() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/genericMember.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/genericMember.kt");
         }
 
         @Test
         @TestMetadata("localClassMember.kt")
         public void testLocalClassMember() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/localClassMember.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/localClassMember.kt");
         }
 
         @Test
         @TestMetadata("localFunctionName.kt")
         public void testLocalFunctionName() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/localFunctionName.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/localFunctionName.kt");
         }
 
         @Test
         @TestMetadata("localLocal.kt")
         public void testLocalLocal() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/localLocal.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/localLocal.kt");
         }
 
         @Test
         @TestMetadata("recursiveClosure.kt")
         public void testRecursiveClosure() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/recursiveClosure.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/recursiveClosure.kt");
         }
 
         @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/simple.kt");
         }
 
         @Test
         @TestMetadata("simpleClosure.kt")
         public void testSimpleClosure() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/simpleClosure.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/simpleClosure.kt");
         }
 
         @Test
         @TestMetadata("simpleWithArg.kt")
         public void testSimpleWithArg() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/simpleWithArg.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/simpleWithArg.kt");
         }
 
         @Test
         @TestMetadata("unitWithSideEffect.kt")
         public void testUnitWithSideEffect() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/unitWithSideEffect.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/unitWithSideEffect.kt");
         }
 
         @Test
         @TestMetadata("withValueArguments.kt")
         public void testWithValueArguments() {
-          runTest("compiler/testData/codegen/box/callableReference/function/local/withValueArguments.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/function/local/withValueArguments.kt");
         }
       }
     }
@@ -4352,13 +4352,13 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("accessViaSubclass.kt")
       public void testAccessViaSubclass() {
-        runTest("compiler/testData/codegen/box/callableReference/property/accessViaSubclass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/accessViaSubclass.kt");
       }
 
       @Test
       @TestMetadata("accessorForPropertyWithPrivateSetter.kt")
       public void testAccessorForPropertyWithPrivateSetter() {
-        runTest("compiler/testData/codegen/box/callableReference/property/accessorForPropertyWithPrivateSetter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/accessorForPropertyWithPrivateSetter.kt");
       }
 
       @Test
@@ -4369,223 +4369,223 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("delegated.kt")
       public void testDelegated() {
-        runTest("compiler/testData/codegen/box/callableReference/property/delegated.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/delegated.kt");
       }
 
       @Test
       @TestMetadata("delegatedMutable.kt")
       public void testDelegatedMutable() {
-        runTest("compiler/testData/codegen/box/callableReference/property/delegatedMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/delegatedMutable.kt");
       }
 
       @Test
       @TestMetadata("enumNameOrdinal.kt")
       public void testEnumNameOrdinal() {
-        runTest("compiler/testData/codegen/box/callableReference/property/enumNameOrdinal.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/enumNameOrdinal.kt");
       }
 
       @Test
       @TestMetadata("extensionProperty.kt")
       public void testExtensionProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionProperty.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyInDelegatedSam.kt")
       public void testExtensionPropertyInDelegatedSam() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyInDelegatedSam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyInDelegatedSam.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyInSamInterface.kt")
       public void testExtensionPropertyInSamInterface() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyInSamInterface.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyInSamInterface.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyPassedToDelegatedSam.kt")
       public void testExtensionPropertyPassedToDelegatedSam() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyPassedToDelegatedSam.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyPassedToDelegatedSam.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyReferenceWithExplicitType.kt")
       public void testExtensionPropertyReferenceWithExplicitType() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyReferenceWithExplicitType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyReferenceWithExplicitType.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyReferenceWithTypeParameter.kt")
       public void testExtensionPropertyReferenceWithTypeParameter() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyReferenceWithTypeParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyReferenceWithTypeParameter.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyWithExtensionReceiver.kt")
       public void testExtensionPropertyWithExtensionReceiver() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyWithExtensionReceiver.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyWithExtensionReceiver.kt");
       }
 
       @Test
       @TestMetadata("extensionPropertyWithExtensionType.kt")
       public void testExtensionPropertyWithExtensionType() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyWithExtensionType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionPropertyWithExtensionType.kt");
       }
 
       @Test
       @TestMetadata("extensionToArray.kt")
       public void testExtensionToArray() {
-        runTest("compiler/testData/codegen/box/callableReference/property/extensionToArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/extensionToArray.kt");
       }
 
       @Test
       @TestMetadata("genericProperty.kt")
       public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/property/genericProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/genericProperty.kt");
       }
 
       @Test
       @TestMetadata("inEnum.kt")
       public void testInEnum() {
-        runTest("compiler/testData/codegen/box/callableReference/property/inEnum.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/inEnum.kt");
       }
 
       @Test
       @TestMetadata("inReceiverOfAnother.kt")
       public void testInReceiverOfAnother() {
-        runTest("compiler/testData/codegen/box/callableReference/property/inReceiverOfAnother.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/inReceiverOfAnother.kt");
       }
 
       @Test
       @TestMetadata("invokePropertyReference.kt")
       public void testInvokePropertyReference() {
-        runTest("compiler/testData/codegen/box/callableReference/property/invokePropertyReference.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/invokePropertyReference.kt");
       }
 
       @Test
       @TestMetadata("javaBeanConvention.kt")
       public void testJavaBeanConvention() {
-        runTest("compiler/testData/codegen/box/callableReference/property/javaBeanConvention.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/javaBeanConvention.kt");
       }
 
       @Test
       @TestMetadata("kClassInstanceIsInitializedFirst.kt")
       public void testKClassInstanceIsInitializedFirst() {
-        runTest("compiler/testData/codegen/box/callableReference/property/kClassInstanceIsInitializedFirst.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/kClassInstanceIsInitializedFirst.kt");
       }
 
       @Test
       @TestMetadata("kt12044.kt")
       public void testKt12044() {
-        runTest("compiler/testData/codegen/box/callableReference/property/kt12044.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/kt12044.kt");
       }
 
       @Test
       @TestMetadata("kt12982_protectedPropertyReference.kt")
       public void testKt12982_protectedPropertyReference() {
-        runTest("compiler/testData/codegen/box/callableReference/property/kt12982_protectedPropertyReference.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/kt12982_protectedPropertyReference.kt");
       }
 
       @Test
       @TestMetadata("kt14330.kt")
       public void testKt14330() {
-        runTest("compiler/testData/codegen/box/callableReference/property/kt14330.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/kt14330.kt");
       }
 
       @Test
       @TestMetadata("kt14330_2.kt")
       public void testKt14330_2() {
-        runTest("compiler/testData/codegen/box/callableReference/property/kt14330_2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/kt14330_2.kt");
       }
 
       @Test
       @TestMetadata("kt15447.kt")
       public void testKt15447() {
-        runTest("compiler/testData/codegen/box/callableReference/property/kt15447.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/kt15447.kt");
       }
 
       @Test
       @TestMetadata("listOfStringsMapLength.kt")
       public void testListOfStringsMapLength() {
-        runTest("compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");
       }
 
       @Test
       @TestMetadata("localClassVar.kt")
       public void testLocalClassVar() {
-        runTest("compiler/testData/codegen/box/callableReference/property/localClassVar.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/localClassVar.kt");
       }
 
       @Test
       @TestMetadata("nullableExtensionProperty.kt")
       public void testNullableExtensionProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/property/nullableExtensionProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/nullableExtensionProperty.kt");
       }
 
       @Test
       @TestMetadata("overriddenInSubclass.kt")
       public void testOverriddenInSubclass() {
-        runTest("compiler/testData/codegen/box/callableReference/property/overriddenInSubclass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/overriddenInSubclass.kt");
       }
 
       @Test
       @TestMetadata("privateSetOuterClass.kt")
       public void testPrivateSetOuterClass() {
-        runTest("compiler/testData/codegen/box/callableReference/property/privateSetOuterClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/privateSetOuterClass.kt");
       }
 
       @Test
       @TestMetadata("privateSetterInsideClass.kt")
       public void testPrivateSetterInsideClass() {
-        runTest("compiler/testData/codegen/box/callableReference/property/privateSetterInsideClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/privateSetterInsideClass.kt");
       }
 
       @Test
       @TestMetadata("privateSetterOutsideClass.kt")
       public void testPrivateSetterOutsideClass() {
-        runTest("compiler/testData/codegen/box/callableReference/property/privateSetterOutsideClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/privateSetterOutsideClass.kt");
       }
 
       @Test
       @TestMetadata("receiverEvaluatedOnce.kt")
       public void testReceiverEvaluatedOnce() {
-        runTest("compiler/testData/codegen/box/callableReference/property/receiverEvaluatedOnce.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/receiverEvaluatedOnce.kt");
       }
 
       @Test
       @TestMetadata("simpleExtension.kt")
       public void testSimpleExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/property/simpleExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/simpleExtension.kt");
       }
 
       @Test
       @TestMetadata("simpleMember.kt")
       public void testSimpleMember() {
-        runTest("compiler/testData/codegen/box/callableReference/property/simpleMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/simpleMember.kt");
       }
 
       @Test
       @TestMetadata("simpleMutableExtension.kt")
       public void testSimpleMutableExtension() {
-        runTest("compiler/testData/codegen/box/callableReference/property/simpleMutableExtension.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/simpleMutableExtension.kt");
       }
 
       @Test
       @TestMetadata("simpleMutableMember.kt")
       public void testSimpleMutableMember() {
-        runTest("compiler/testData/codegen/box/callableReference/property/simpleMutableMember.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/simpleMutableMember.kt");
       }
 
       @Test
       @TestMetadata("simpleMutableTopLevel.kt")
       public void testSimpleMutableTopLevel() {
-        runTest("compiler/testData/codegen/box/callableReference/property/simpleMutableTopLevel.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/simpleMutableTopLevel.kt");
       }
 
       @Test
       @TestMetadata("simpleTopLevel.kt")
       public void testSimpleTopLevel() {
-        runTest("compiler/testData/codegen/box/callableReference/property/simpleTopLevel.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/property/simpleTopLevel.kt");
       }
     }
 
@@ -4601,7 +4601,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("referenceToCompanionFunction.kt")
       public void testReferenceToCompanionFunction() {
-        runTest("compiler/testData/codegen/box/callableReference/serializability/referenceToCompanionFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/callableReference/serializability/referenceToCompanionFunction.kt");
       }
     }
   }
@@ -4618,187 +4618,187 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("asForConstants.kt")
     public void testAsForConstants() {
-      runTest("compiler/testData/codegen/box/casts/asForConstants.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/asForConstants.kt");
     }
 
     @Test
     @TestMetadata("asSafeFail.kt")
     public void testAsSafeFail() {
-      runTest("compiler/testData/codegen/box/casts/asSafeFail.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/asSafeFail.kt");
     }
 
     @Test
     @TestMetadata("asSafeForConstants.kt")
     public void testAsSafeForConstants() {
-      runTest("compiler/testData/codegen/box/casts/asSafeForConstants.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/asSafeForConstants.kt");
     }
 
     @Test
     @TestMetadata("asUnit.kt")
     public void testAsUnit() {
-      runTest("compiler/testData/codegen/box/casts/asUnit.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/asUnit.kt");
     }
 
     @Test
     @TestMetadata("asWithGeneric.kt")
     public void testAsWithGeneric() {
-      runTest("compiler/testData/codegen/box/casts/asWithGeneric.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/asWithGeneric.kt");
     }
 
     @Test
     @TestMetadata("castGenericNull.kt")
     public void testCastGenericNull() {
-      runTest("compiler/testData/codegen/box/casts/castGenericNull.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/castGenericNull.kt");
     }
 
     @Test
     @TestMetadata("castToDefinitelyNotNullType.kt")
     public void testCastToDefinitelyNotNullType() {
-      runTest("compiler/testData/codegen/box/casts/castToDefinitelyNotNullType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/castToDefinitelyNotNullType.kt");
     }
 
     @Test
     @TestMetadata("dontCreateInconsistentTypeDuringStarProjectionSubstitution.kt")
     public void testDontCreateInconsistentTypeDuringStarProjectionSubstitution() {
-      runTest("compiler/testData/codegen/box/casts/dontCreateInconsistentTypeDuringStarProjectionSubstitution.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/dontCreateInconsistentTypeDuringStarProjectionSubstitution.kt");
     }
 
     @Test
     @TestMetadata("genericReturnCast.kt")
     public void testGenericReturnCast() {
-      runTest("compiler/testData/codegen/box/casts/genericReturnCast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/genericReturnCast.kt");
     }
 
     @Test
     @TestMetadata("intersectionTypeMultipleBounds.kt")
     public void testIntersectionTypeMultipleBounds() {
-      runTest("compiler/testData/codegen/box/casts/intersectionTypeMultipleBounds.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/intersectionTypeMultipleBounds.kt");
     }
 
     @Test
     @TestMetadata("intersectionTypeMultipleBoundsImplicitReceiver.kt")
     public void testIntersectionTypeMultipleBoundsImplicitReceiver() {
-      runTest("compiler/testData/codegen/box/casts/intersectionTypeMultipleBoundsImplicitReceiver.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/intersectionTypeMultipleBoundsImplicitReceiver.kt");
     }
 
     @Test
     @TestMetadata("intersectionTypeSmartcast.kt")
     public void testIntersectionTypeSmartcast() {
-      runTest("compiler/testData/codegen/box/casts/intersectionTypeSmartcast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/intersectionTypeSmartcast.kt");
     }
 
     @Test
     @TestMetadata("intersectionTypeWithMultipleBoundsAsReceiver.kt")
     public void testIntersectionTypeWithMultipleBoundsAsReceiver() {
-      runTest("compiler/testData/codegen/box/casts/intersectionTypeWithMultipleBoundsAsReceiver.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/intersectionTypeWithMultipleBoundsAsReceiver.kt");
     }
 
     @Test
     @TestMetadata("intersectionTypeWithoutGenericsAsReceiver.kt")
     public void testIntersectionTypeWithoutGenericsAsReceiver() {
-      runTest("compiler/testData/codegen/box/casts/intersectionTypeWithoutGenericsAsReceiver.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/intersectionTypeWithoutGenericsAsReceiver.kt");
     }
 
     @Test
     @TestMetadata("isNullablePrimitive.kt")
     public void testIsNullablePrimitive() {
-      runTest("compiler/testData/codegen/box/casts/isNullablePrimitive.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/isNullablePrimitive.kt");
     }
 
     @Test
     @TestMetadata("kt22714.kt")
     public void testKt22714() {
-      runTest("compiler/testData/codegen/box/casts/kt22714.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt22714.kt");
     }
 
     @Test
     @TestMetadata("kt48927_privateMethodOnDerivedCastToBase.kt")
     public void testKt48927_privateMethodOnDerivedCastToBase() {
-      runTest("compiler/testData/codegen/box/casts/kt48927_privateMethodOnDerivedCastToBase.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt48927_privateMethodOnDerivedCastToBase.kt");
     }
 
     @Test
     @TestMetadata("kt50577.kt")
     public void testKt50577() {
-      runTest("compiler/testData/codegen/box/casts/kt50577.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt50577.kt");
     }
 
     @Test
     @TestMetadata("kt53677.kt")
     public void testKt53677() {
-      runTest("compiler/testData/codegen/box/casts/kt53677.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt53677.kt");
     }
 
     @Test
     @TestMetadata("kt54707.kt")
     public void testKt54707() {
-      runTest("compiler/testData/codegen/box/casts/kt54707.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt54707.kt");
     }
 
     @Test
     @TestMetadata("kt54802.kt")
     public void testKt54802() {
-      runTest("compiler/testData/codegen/box/casts/kt54802.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt54802.kt");
     }
 
     @Test
     @TestMetadata("kt58707.kt")
     public void testKt58707() {
-      runTest("compiler/testData/codegen/box/casts/kt58707.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt58707.kt");
     }
 
     @Test
     @TestMetadata("kt59022.kt")
     public void testKt59022() {
-      runTest("compiler/testData/codegen/box/casts/kt59022.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt59022.kt");
     }
 
     @Test
     @TestMetadata("kt65197.kt")
     public void testKt65197() {
-      runTest("compiler/testData/codegen/box/casts/kt65197.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt65197.kt");
     }
 
     @Test
     @TestMetadata("kt68509.kt")
     public void testKt68509() {
-      runTest("compiler/testData/codegen/box/casts/kt68509.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/kt68509.kt");
     }
 
     @Test
     @TestMetadata("lambdaToUnitCast.kt")
     public void testLambdaToUnitCast() {
-      runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
     }
 
     @Test
     @TestMetadata("nullableSafeCastToTypeParameterWithInterfaceUpperBound.kt")
     public void testNullableSafeCastToTypeParameterWithInterfaceUpperBound() {
-      runTest("compiler/testData/codegen/box/casts/nullableSafeCastToTypeParameterWithInterfaceUpperBound.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/nullableSafeCastToTypeParameterWithInterfaceUpperBound.kt");
     }
 
     @Test
     @TestMetadata("objectToPrimitiveWithAssertion.kt")
     public void testObjectToPrimitiveWithAssertion() {
-      runTest("compiler/testData/codegen/box/casts/objectToPrimitiveWithAssertion.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/objectToPrimitiveWithAssertion.kt");
     }
 
     @Test
     @TestMetadata("unitAsAny.kt")
     public void testUnitAsAny() {
-      runTest("compiler/testData/codegen/box/casts/unitAsAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/unitAsAny.kt");
     }
 
     @Test
     @TestMetadata("unitAsSafeAny.kt")
     public void testUnitAsSafeAny() {
-      runTest("compiler/testData/codegen/box/casts/unitAsSafeAny.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/unitAsSafeAny.kt");
     }
 
     @Test
     @TestMetadata("unitNullableCast.kt")
     public void testUnitNullableCast() {
-      runTest("compiler/testData/codegen/box/casts/unitNullableCast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/unitNullableCast.kt");
     }
 
     @Nested
@@ -4813,79 +4813,79 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("asFunKBig.kt")
       public void testAsFunKBig() {
-        runTest("compiler/testData/codegen/box/casts/functions/asFunKBig.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/asFunKBig.kt");
       }
 
       @Test
       @TestMetadata("asFunKSmall.kt")
       public void testAsFunKSmall() {
-        runTest("compiler/testData/codegen/box/casts/functions/asFunKSmall.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/asFunKSmall.kt");
       }
 
       @Test
       @TestMetadata("isFunKBig.kt")
       public void testIsFunKBig() {
-        runTest("compiler/testData/codegen/box/casts/functions/isFunKBig.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/isFunKBig.kt");
       }
 
       @Test
       @TestMetadata("isFunKSmall.kt")
       public void testIsFunKSmall() {
-        runTest("compiler/testData/codegen/box/casts/functions/isFunKSmall.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/isFunKSmall.kt");
       }
 
       @Test
       @TestMetadata("isFunKSmallJS.kt")
       public void testIsFunKSmallJS() {
-        runTest("compiler/testData/codegen/box/casts/functions/isFunKSmallJS.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/isFunKSmallJS.kt");
       }
 
       @Test
       @TestMetadata("reifiedAsFunKBig.kt")
       public void testReifiedAsFunKBig() {
-        runTest("compiler/testData/codegen/box/casts/functions/reifiedAsFunKBig.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/reifiedAsFunKBig.kt");
       }
 
       @Test
       @TestMetadata("reifiedAsFunKSmall.kt")
       public void testReifiedAsFunKSmall() {
-        runTest("compiler/testData/codegen/box/casts/functions/reifiedAsFunKSmall.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/reifiedAsFunKSmall.kt");
       }
 
       @Test
       @TestMetadata("reifiedIsFunKBig.kt")
       public void testReifiedIsFunKBig() {
-        runTest("compiler/testData/codegen/box/casts/functions/reifiedIsFunKBig.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/reifiedIsFunKBig.kt");
       }
 
       @Test
       @TestMetadata("reifiedIsFunKSmall.kt")
       public void testReifiedIsFunKSmall() {
-        runTest("compiler/testData/codegen/box/casts/functions/reifiedIsFunKSmall.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/reifiedIsFunKSmall.kt");
       }
 
       @Test
       @TestMetadata("reifiedSafeAsFunKBig.kt")
       public void testReifiedSafeAsFunKBig() {
-        runTest("compiler/testData/codegen/box/casts/functions/reifiedSafeAsFunKBig.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/reifiedSafeAsFunKBig.kt");
       }
 
       @Test
       @TestMetadata("reifiedSafeAsFunKSmall.kt")
       public void testReifiedSafeAsFunKSmall() {
-        runTest("compiler/testData/codegen/box/casts/functions/reifiedSafeAsFunKSmall.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/reifiedSafeAsFunKSmall.kt");
       }
 
       @Test
       @TestMetadata("safeAsFunKBig.kt")
       public void testSafeAsFunKBig() {
-        runTest("compiler/testData/codegen/box/casts/functions/safeAsFunKBig.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/safeAsFunKBig.kt");
       }
 
       @Test
       @TestMetadata("safeAsFunKSmall.kt")
       public void testSafeAsFunKSmall() {
-        runTest("compiler/testData/codegen/box/casts/functions/safeAsFunKSmall.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/functions/safeAsFunKSmall.kt");
       }
     }
 
@@ -4911,37 +4911,37 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("binaryExpressionCast.kt")
       public void testBinaryExpressionCast() {
-        runTest("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/binaryExpressionCast.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/binaryExpressionCast.kt");
       }
 
       @Test
       @TestMetadata("labeledExpressionCast.kt")
       public void testLabeledExpressionCast() {
-        runTest("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/labeledExpressionCast.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/labeledExpressionCast.kt");
       }
 
       @Test
       @TestMetadata("parenthesizedExpressionCast.kt")
       public void testParenthesizedExpressionCast() {
-        runTest("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.kt");
       }
 
       @Test
       @TestMetadata("superConstructor.kt")
       public void testSuperConstructor() {
-        runTest("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/superConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/superConstructor.kt");
       }
 
       @Test
       @TestMetadata("unaryExpressionCast.kt")
       public void testUnaryExpressionCast() {
-        runTest("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/unaryExpressionCast.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/unaryExpressionCast.kt");
       }
 
       @Test
       @TestMetadata("vararg.kt")
       public void testVararg() {
-        runTest("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/vararg.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/vararg.kt");
       }
     }
 
@@ -4957,43 +4957,43 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("asWithMutable.kt")
       public void testAsWithMutable() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/asWithMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/asWithMutable.kt");
       }
 
       @Test
       @TestMetadata("isWithMutable.kt")
       public void testIsWithMutable() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/isWithMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/isWithMutable.kt");
       }
 
       @Test
       @TestMetadata("reifiedAsWithMutable.kt")
       public void testReifiedAsWithMutable() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/reifiedAsWithMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/reifiedAsWithMutable.kt");
       }
 
       @Test
       @TestMetadata("reifiedIsWithMutable.kt")
       public void testReifiedIsWithMutable() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/reifiedIsWithMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/reifiedIsWithMutable.kt");
       }
 
       @Test
       @TestMetadata("reifiedSafeAsWithMutable.kt")
       public void testReifiedSafeAsWithMutable() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/reifiedSafeAsWithMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/reifiedSafeAsWithMutable.kt");
       }
 
       @Test
       @TestMetadata("safeAsWithMutable.kt")
       public void testSafeAsWithMutable() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/safeAsWithMutable.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/safeAsWithMutable.kt");
       }
 
       @Test
       @TestMetadata("weirdMutableCasts.kt")
       public void testWeirdMutableCasts() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/weirdMutableCasts.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/casts/mutableCollections/weirdMutableCasts.kt");
       }
     }
 
@@ -5020,25 +5020,25 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("kt19128.kt")
     public void testKt19128() {
-      runTest("compiler/testData/codegen/box/checkcastOptimization/kt19128.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/checkcastOptimization/kt19128.kt");
     }
 
     @Test
     @TestMetadata("kt19246.kt")
     public void testKt19246() {
-      runTest("compiler/testData/codegen/box/checkcastOptimization/kt19246.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/checkcastOptimization/kt19246.kt");
     }
 
     @Test
     @TestMetadata("kt47851.kt")
     public void testKt47851() {
-      runTest("compiler/testData/codegen/box/checkcastOptimization/kt47851.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/checkcastOptimization/kt47851.kt");
     }
 
     @Test
     @TestMetadata("kt50215.kt")
     public void testKt50215() {
-      runTest("compiler/testData/codegen/box/checkcastOptimization/kt50215.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/checkcastOptimization/kt50215.kt");
     }
   }
 
@@ -5054,73 +5054,73 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("delegationToInOutTypeParameters.kt")
     public void testDelegationToInOutTypeParameters() {
-      runTest("compiler/testData/codegen/box/classDelegation/delegationToInOutTypeParameters.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/delegationToInOutTypeParameters.kt");
     }
 
     @Test
     @TestMetadata("delegationToInTypeParameter.kt")
     public void testDelegationToInTypeParameter() {
-      runTest("compiler/testData/codegen/box/classDelegation/delegationToInTypeParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/delegationToInTypeParameter.kt");
     }
 
     @Test
     @TestMetadata("delegationToOutTypeParameter.kt")
     public void testDelegationToOutTypeParameter() {
-      runTest("compiler/testData/codegen/box/classDelegation/delegationToOutTypeParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/delegationToOutTypeParameter.kt");
     }
 
     @Test
     @TestMetadata("delegationToStarProjectedType.kt")
     public void testDelegationToStarProjectedType() {
-      runTest("compiler/testData/codegen/box/classDelegation/delegationToStarProjectedType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/delegationToStarProjectedType.kt");
     }
 
     @Test
     @TestMetadata("delegationToTypeParameter.kt")
     public void testDelegationToTypeParameter() {
-      runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
     }
 
     @Test
     @TestMetadata("delegationToTypeParameterWithRecursiveBond.kt")
     public void testDelegationToTypeParameterWithRecursiveBond() {
-      runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameterWithRecursiveBond.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/delegationToTypeParameterWithRecursiveBond.kt");
     }
 
     @Test
     @TestMetadata("generic.kt")
     public void testGeneric() {
-      runTest("compiler/testData/codegen/box/classDelegation/generic.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/generic.kt");
     }
 
     @Test
     @TestMetadata("hiddenDelegateAndLateinitVar.kt")
     public void testHiddenDelegateAndLateinitVar() {
-      runTest("compiler/testData/codegen/box/classDelegation/hiddenDelegateAndLateinitVar.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/hiddenDelegateAndLateinitVar.kt");
     }
 
     @Test
     @TestMetadata("method.kt")
     public void testMethod() {
-      runTest("compiler/testData/codegen/box/classDelegation/method.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/method.kt");
     }
 
     @Test
     @TestMetadata("multipleModules.kt")
     public void testMultipleModules() {
-      runTest("compiler/testData/codegen/box/classDelegation/multipleModules.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/multipleModules.kt");
     }
 
     @Test
     @TestMetadata("property.kt")
     public void testProperty() {
-      runTest("compiler/testData/codegen/box/classDelegation/property.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/property.kt");
     }
 
     @Test
     @TestMetadata("withBridge.kt")
     public void testWithBridge() {
-      runTest("compiler/testData/codegen/box/classDelegation/withBridge.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classDelegation/withBridge.kt");
     }
   }
 
@@ -5136,19 +5136,19 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("bareArray.kt")
     public void testBareArray() {
-      runTest("compiler/testData/codegen/box/classLiteral/bareArray.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/bareArray.kt");
     }
 
     @Test
     @TestMetadata("classEquality.kt")
     public void testClassEquality() {
-      runTest("compiler/testData/codegen/box/classLiteral/classEquality.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/classEquality.kt");
     }
 
     @Test
     @TestMetadata("primitiveClassEquality.kt")
     public void testPrimitiveClassEquality() {
-      runTest("compiler/testData/codegen/box/classLiteral/primitiveClassEquality.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/primitiveClassEquality.kt");
     }
 
     @Nested
@@ -5163,25 +5163,25 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("primitives.kt")
       public void testPrimitives() {
-        runTest("compiler/testData/codegen/box/classLiteral/bound/primitives.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/bound/primitives.kt");
       }
 
       @Test
       @TestMetadata("sideEffect.kt")
       public void testSideEffect() {
-        runTest("compiler/testData/codegen/box/classLiteral/bound/sideEffect.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/bound/sideEffect.kt");
       }
 
       @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
-        runTest("compiler/testData/codegen/box/classLiteral/bound/simple.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/bound/simple.kt");
       }
 
       @Test
       @TestMetadata("smartCast.kt")
       public void testSmartCast() {
-        runTest("compiler/testData/codegen/box/classLiteral/bound/smartCast.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classLiteral/bound/smartCast.kt");
       }
     }
 
@@ -5208,667 +5208,667 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("boxPrimitiveTypeInClinitOfClassObject.kt")
     public void testBoxPrimitiveTypeInClinitOfClassObject() {
-      runTest("compiler/testData/codegen/box/classes/boxPrimitiveTypeInClinitOfClassObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/boxPrimitiveTypeInClinitOfClassObject.kt");
     }
 
     @Test
     @TestMetadata("classNamedAsOldPackageFacade.kt")
     public void testClassNamedAsOldPackageFacade() {
-      runTest("compiler/testData/codegen/box/classes/classNamedAsOldPackageFacade.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classNamedAsOldPackageFacade.kt");
     }
 
     @Test
     @TestMetadata("classObject.kt")
     public void testClassObject() {
-      runTest("compiler/testData/codegen/box/classes/classObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObject.kt");
     }
 
     @Test
     @TestMetadata("classObjectAsExtensionReceiver.kt")
     public void testClassObjectAsExtensionReceiver() {
-      runTest("compiler/testData/codegen/box/classes/classObjectAsExtensionReceiver.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectAsExtensionReceiver.kt");
     }
 
     @Test
     @TestMetadata("classObjectAsStaticInitializer.kt")
     public void testClassObjectAsStaticInitializer() {
-      runTest("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
     }
 
     @Test
     @TestMetadata("classObjectField.kt")
     public void testClassObjectField() {
-      runTest("compiler/testData/codegen/box/classes/classObjectField.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectField.kt");
     }
 
     @Test
     @TestMetadata("classObjectInTrait.kt")
     public void testClassObjectInTrait() {
-      runTest("compiler/testData/codegen/box/classes/classObjectInTrait.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectInTrait.kt");
     }
 
     @Test
     @TestMetadata("classObjectNotOfEnum.kt")
     public void testClassObjectNotOfEnum() {
-      runTest("compiler/testData/codegen/box/classes/classObjectNotOfEnum.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectNotOfEnum.kt");
     }
 
     @Test
     @TestMetadata("classObjectWithPrivateGenericMember.kt")
     public void testClassObjectWithPrivateGenericMember() {
-      runTest("compiler/testData/codegen/box/classes/classObjectWithPrivateGenericMember.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectWithPrivateGenericMember.kt");
     }
 
     @Test
     @TestMetadata("classObjectsWithParentClasses.kt")
     public void testClassObjectsWithParentClasses() {
-      runTest("compiler/testData/codegen/box/classes/classObjectsWithParentClasses.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/classObjectsWithParentClasses.kt");
     }
 
     @Test
     @TestMetadata("comanionObjectFieldVsClassField.kt")
     public void testComanionObjectFieldVsClassField() {
-      runTest("compiler/testData/codegen/box/classes/comanionObjectFieldVsClassField.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/comanionObjectFieldVsClassField.kt");
     }
 
     @Test
     @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
     public void testDefaultObjectSameNamesAsInOuter() {
-      runTest("compiler/testData/codegen/box/classes/defaultObjectSameNamesAsInOuter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/defaultObjectSameNamesAsInOuter.kt");
     }
 
     @Test
     @TestMetadata("delegateConstructorCallWithKeywords.kt")
     public void testDelegateConstructorCallWithKeywords() {
-      runTest("compiler/testData/codegen/box/classes/delegateConstructorCallWithKeywords.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegateConstructorCallWithKeywords.kt");
     }
 
     @Test
     @TestMetadata("delegation2.kt")
     public void testDelegation2() {
-      runTest("compiler/testData/codegen/box/classes/delegation2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegation2.kt");
     }
 
     @Test
     @TestMetadata("delegation3.kt")
     public void testDelegation3() {
-      runTest("compiler/testData/codegen/box/classes/delegation3.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegation3.kt");
     }
 
     @Test
     @TestMetadata("delegation4.kt")
     public void testDelegation4() {
-      runTest("compiler/testData/codegen/box/classes/delegation4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegation4.kt");
     }
 
     @Test
     @TestMetadata("delegationGenericArg.kt")
     public void testDelegationGenericArg() {
-      runTest("compiler/testData/codegen/box/classes/delegationGenericArg.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegationGenericArg.kt");
     }
 
     @Test
     @TestMetadata("delegationGenericArgUpperBound.kt")
     public void testDelegationGenericArgUpperBound() {
-      runTest("compiler/testData/codegen/box/classes/delegationGenericArgUpperBound.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegationGenericArgUpperBound.kt");
     }
 
     @Test
     @TestMetadata("delegationGenericLongArg.kt")
     public void testDelegationGenericLongArg() {
-      runTest("compiler/testData/codegen/box/classes/delegationGenericLongArg.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegationGenericLongArg.kt");
     }
 
     @Test
     @TestMetadata("delegationMethodsWithArgs.kt")
     public void testDelegationMethodsWithArgs() {
-      runTest("compiler/testData/codegen/box/classes/delegationMethodsWithArgs.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/delegationMethodsWithArgs.kt");
     }
 
     @Test
     @TestMetadata("exceptionConstructor.kt")
     public void testExceptionConstructor() {
-      runTest("compiler/testData/codegen/box/classes/exceptionConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/exceptionConstructor.kt");
     }
 
     @Test
     @TestMetadata("extensionFunWithDefaultParam.kt")
     public void testExtensionFunWithDefaultParam() {
-      runTest("compiler/testData/codegen/box/classes/extensionFunWithDefaultParam.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/extensionFunWithDefaultParam.kt");
     }
 
     @Test
     @TestMetadata("extensionOnNamedClassObject.kt")
     public void testExtensionOnNamedClassObject() {
-      runTest("compiler/testData/codegen/box/classes/extensionOnNamedClassObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/extensionOnNamedClassObject.kt");
     }
 
     @Test
     @TestMetadata("funDelegation.kt")
     public void testFunDelegation() {
-      runTest("compiler/testData/codegen/box/classes/funDelegation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/funDelegation.kt");
     }
 
     @Test
     @TestMetadata("implementComparableInSubclass.kt")
     public void testImplementComparableInSubclass() {
-      runTest("compiler/testData/codegen/box/classes/implementComparableInSubclass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/implementComparableInSubclass.kt");
     }
 
     @Test
     @TestMetadata("inheritSetAndHashSet.kt")
     public void testInheritSetAndHashSet() {
-      runTest("compiler/testData/codegen/box/classes/inheritSetAndHashSet.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inheritSetAndHashSet.kt");
     }
 
     @Test
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
-      runTest("compiler/testData/codegen/box/classes/inheritance.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inheritance.kt");
     }
 
     @Test
     @TestMetadata("inheritedInnerClass.kt")
     public void testInheritedInnerClass() {
-      runTest("compiler/testData/codegen/box/classes/inheritedInnerClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inheritedInnerClass.kt");
     }
 
     @Test
     @TestMetadata("inheritedMethod.kt")
     public void testInheritedMethod() {
-      runTest("compiler/testData/codegen/box/classes/inheritedMethod.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inheritedMethod.kt");
     }
 
     @Test
     @TestMetadata("initializerBlock.kt")
     public void testInitializerBlock() {
-      runTest("compiler/testData/codegen/box/classes/initializerBlock.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/initializerBlock.kt");
     }
 
     @Test
     @TestMetadata("initializerBlockDImpl.kt")
     public void testInitializerBlockDImpl() {
-      runTest("compiler/testData/codegen/box/classes/initializerBlockDImpl.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/initializerBlockDImpl.kt");
     }
 
     @Test
     @TestMetadata("initializerBlockResetToDefault.kt")
     public void testInitializerBlockResetToDefault() {
-      runTest("compiler/testData/codegen/box/classes/initializerBlockResetToDefault.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/initializerBlockResetToDefault.kt");
     }
 
     @Test
     @TestMetadata("innerClass.kt")
     public void testInnerClass() {
-      runTest("compiler/testData/codegen/box/classes/innerClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/innerClass.kt");
     }
 
     @Test
     @TestMetadata("kt1018.kt")
     public void testKt1018() {
-      runTest("compiler/testData/codegen/box/classes/kt1018.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1018.kt");
     }
 
     @Test
     @TestMetadata("kt1157.kt")
     public void testKt1157() {
-      runTest("compiler/testData/codegen/box/classes/kt1157.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1157.kt");
     }
 
     @Test
     @TestMetadata("kt1247.kt")
     public void testKt1247() {
-      runTest("compiler/testData/codegen/box/classes/kt1247.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1247.kt");
     }
 
     @Test
     @TestMetadata("kt1345.kt")
     public void testKt1345() {
-      runTest("compiler/testData/codegen/box/classes/kt1345.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1345.kt");
     }
 
     @Test
     @TestMetadata("kt1439.kt")
     public void testKt1439() {
-      runTest("compiler/testData/codegen/box/classes/kt1439.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1439.kt");
     }
 
     @Test
     @TestMetadata("kt1535.kt")
     public void testKt1535() {
-      runTest("compiler/testData/codegen/box/classes/kt1535.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1535.kt");
     }
 
     @Test
     @TestMetadata("kt1538.kt")
     public void testKt1538() {
-      runTest("compiler/testData/codegen/box/classes/kt1538.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1538.kt");
     }
 
     @Test
     @TestMetadata("kt1578.kt")
     public void testKt1578() {
-      runTest("compiler/testData/codegen/box/classes/kt1578.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1578.kt");
     }
 
     @Test
     @TestMetadata("kt1611.kt")
     public void testKt1611() {
-      runTest("compiler/testData/codegen/box/classes/kt1611.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1611.kt");
     }
 
     @Test
     @TestMetadata("kt1721.kt")
     public void testKt1721() {
-      runTest("compiler/testData/codegen/box/classes/kt1721.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1721.kt");
     }
 
     @Test
     @TestMetadata("kt1726.kt")
     public void testKt1726() {
-      runTest("compiler/testData/codegen/box/classes/kt1726.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1726.kt");
     }
 
     @Test
     @TestMetadata("kt1759.kt")
     public void testKt1759() {
-      runTest("compiler/testData/codegen/box/classes/kt1759.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1759.kt");
     }
 
     @Test
     @TestMetadata("kt1891.kt")
     public void testKt1891() {
-      runTest("compiler/testData/codegen/box/classes/kt1891.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1891.kt");
     }
 
     @Test
     @TestMetadata("kt1918.kt")
     public void testKt1918() {
-      runTest("compiler/testData/codegen/box/classes/kt1918.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1918.kt");
     }
 
     @Test
     @TestMetadata("kt1976.kt")
     public void testKt1976() {
-      runTest("compiler/testData/codegen/box/classes/kt1976.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1976.kt");
     }
 
     @Test
     @TestMetadata("kt1980.kt")
     public void testKt1980() {
-      runTest("compiler/testData/codegen/box/classes/kt1980.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt1980.kt");
     }
 
     @Test
     @TestMetadata("kt2224.kt")
     public void testKt2224() {
-      runTest("compiler/testData/codegen/box/classes/kt2224.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2224.kt");
     }
 
     @Test
     @TestMetadata("kt2384.kt")
     public void testKt2384() {
-      runTest("compiler/testData/codegen/box/classes/kt2384.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2384.kt");
     }
 
     @Test
     @TestMetadata("kt2390.kt")
     public void testKt2390() {
-      runTest("compiler/testData/codegen/box/classes/kt2390.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2390.kt");
     }
 
     @Test
     @TestMetadata("kt2391.kt")
     public void testKt2391() {
-      runTest("compiler/testData/codegen/box/classes/kt2391.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2391.kt");
     }
 
     @Test
     @TestMetadata("kt2417.kt")
     public void testKt2417() {
-      runTest("compiler/testData/codegen/box/classes/kt2417.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2417.kt");
     }
 
     @Test
     @TestMetadata("kt2477.kt")
     public void testKt2477() {
-      runTest("compiler/testData/codegen/box/classes/kt2477.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2477.kt");
     }
 
     @Test
     @TestMetadata("kt2480.kt")
     public void testKt2480() {
-      runTest("compiler/testData/codegen/box/classes/kt2480.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2480.kt");
     }
 
     @Test
     @TestMetadata("kt2482.kt")
     public void testKt2482() {
-      runTest("compiler/testData/codegen/box/classes/kt2482.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2482.kt");
     }
 
     @Test
     @TestMetadata("kt2485.kt")
     public void testKt2485() {
-      runTest("compiler/testData/codegen/box/classes/kt2485.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2485.kt");
     }
 
     @Test
     @TestMetadata("kt249.kt")
     public void testKt249() {
-      runTest("compiler/testData/codegen/box/classes/kt249.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt249.kt");
     }
 
     @Test
     @TestMetadata("kt2532.kt")
     public void testKt2532() {
-      runTest("compiler/testData/codegen/box/classes/kt2532.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2532.kt");
     }
 
     @Test
     @TestMetadata("kt2566.kt")
     public void testKt2566() {
-      runTest("compiler/testData/codegen/box/classes/kt2566.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2566.kt");
     }
 
     @Test
     @TestMetadata("kt2566_2.kt")
     public void testKt2566_2() {
-      runTest("compiler/testData/codegen/box/classes/kt2566_2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2566_2.kt");
     }
 
     @Test
     @TestMetadata("kt2607.kt")
     public void testKt2607() {
-      runTest("compiler/testData/codegen/box/classes/kt2607.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2607.kt");
     }
 
     @Test
     @TestMetadata("kt2626.kt")
     public void testKt2626() {
-      runTest("compiler/testData/codegen/box/classes/kt2626.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2626.kt");
     }
 
     @Test
     @TestMetadata("kt2711.kt")
     public void testKt2711() {
-      runTest("compiler/testData/codegen/box/classes/kt2711.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2711.kt");
     }
 
     @Test
     @TestMetadata("kt2784.kt")
     public void testKt2784() {
-      runTest("compiler/testData/codegen/box/classes/kt2784.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt2784.kt");
     }
 
     @Test
     @TestMetadata("kt285.kt")
     public void testKt285() {
-      runTest("compiler/testData/codegen/box/classes/kt285.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt285.kt");
     }
 
     @Test
     @TestMetadata("kt3001.kt")
     public void testKt3001() {
-      runTest("compiler/testData/codegen/box/classes/kt3001.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt3001.kt");
     }
 
     @Test
     @TestMetadata("kt3114.kt")
     public void testKt3114() {
-      runTest("compiler/testData/codegen/box/classes/kt3114.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt3114.kt");
     }
 
     @Test
     @TestMetadata("kt3414.kt")
     public void testKt3414() {
-      runTest("compiler/testData/codegen/box/classes/kt3414.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt3414.kt");
     }
 
     @Test
     @TestMetadata("kt343.kt")
     public void testKt343() {
-      runTest("compiler/testData/codegen/box/classes/kt343.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt343.kt");
     }
 
     @Test
     @TestMetadata("kt3546.kt")
     public void testKt3546() {
-      runTest("compiler/testData/codegen/box/classes/kt3546.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt3546.kt");
     }
 
     @Test
     @TestMetadata("kt40332.kt")
     public void testKt40332() {
-      runTest("compiler/testData/codegen/box/classes/kt40332.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt40332.kt");
     }
 
     @Test
     @TestMetadata("kt454.kt")
     public void testKt454() {
-      runTest("compiler/testData/codegen/box/classes/kt454.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt454.kt");
     }
 
     @Test
     @TestMetadata("kt471.kt")
     public void testKt471() {
-      runTest("compiler/testData/codegen/box/classes/kt471.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt471.kt");
     }
 
     @Test
     @TestMetadata("kt48.kt")
     public void testKt48() {
-      runTest("compiler/testData/codegen/box/classes/kt48.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt48.kt");
     }
 
     @Test
     @TestMetadata("kt496.kt")
     public void testKt496() {
-      runTest("compiler/testData/codegen/box/classes/kt496.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt496.kt");
     }
 
     @Test
     @TestMetadata("kt500.kt")
     public void testKt500() {
-      runTest("compiler/testData/codegen/box/classes/kt500.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt500.kt");
     }
 
     @Test
     @TestMetadata("kt501.kt")
     public void testKt501() {
-      runTest("compiler/testData/codegen/box/classes/kt501.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt501.kt");
     }
 
     @Test
     @TestMetadata("kt504.kt")
     public void testKt504() {
-      runTest("compiler/testData/codegen/box/classes/kt504.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt504.kt");
     }
 
     @Test
     @TestMetadata("kt508.kt")
     public void testKt508() {
-      runTest("compiler/testData/codegen/box/classes/kt508.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt508.kt");
     }
 
     @Test
     @TestMetadata("kt5347.kt")
     public void testKt5347() {
-      runTest("compiler/testData/codegen/box/classes/kt5347.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt5347.kt");
     }
 
     @Test
     @TestMetadata("kt6136.kt")
     public void testKt6136() {
-      runTest("compiler/testData/codegen/box/classes/kt6136.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt6136.kt");
     }
 
     @Test
     @TestMetadata("kt633.kt")
     public void testKt633() {
-      runTest("compiler/testData/codegen/box/classes/kt633.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt633.kt");
     }
 
     @Test
     @TestMetadata("kt6816.kt")
     public void testKt6816() {
-      runTest("compiler/testData/codegen/box/classes/kt6816.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt6816.kt");
     }
 
     @Test
     @TestMetadata("kt707.kt")
     public void testKt707() {
-      runTest("compiler/testData/codegen/box/classes/kt707.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt707.kt");
     }
 
     @Test
     @TestMetadata("kt723.kt")
     public void testKt723() {
-      runTest("compiler/testData/codegen/box/classes/kt723.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt723.kt");
     }
 
     @Test
     @TestMetadata("kt725.kt")
     public void testKt725() {
-      runTest("compiler/testData/codegen/box/classes/kt725.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt725.kt");
     }
 
     @Test
     @TestMetadata("kt8011.kt")
     public void testKt8011() {
-      runTest("compiler/testData/codegen/box/classes/kt8011.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt8011.kt");
     }
 
     @Test
     @TestMetadata("kt8011a.kt")
     public void testKt8011a() {
-      runTest("compiler/testData/codegen/box/classes/kt8011a.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt8011a.kt");
     }
 
     @Test
     @TestMetadata("kt940.kt")
     public void testKt940() {
-      runTest("compiler/testData/codegen/box/classes/kt940.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt940.kt");
     }
 
     @Test
     @TestMetadata("kt9642.kt")
     public void testKt9642() {
-      runTest("compiler/testData/codegen/box/classes/kt9642.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/kt9642.kt");
     }
 
     @Test
     @TestMetadata("namedClassObject.kt")
     public void testNamedClassObject() {
-      runTest("compiler/testData/codegen/box/classes/namedClassObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/namedClassObject.kt");
     }
 
     @Test
     @TestMetadata("nestedInitBlocksWithLambda.kt")
     public void testNestedInitBlocksWithLambda() {
-      runTest("compiler/testData/codegen/box/classes/nestedInitBlocksWithLambda.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/nestedInitBlocksWithLambda.kt");
     }
 
     @Test
     @TestMetadata("outerThis.kt")
     public void testOuterThis() {
-      runTest("compiler/testData/codegen/box/classes/outerThis.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/outerThis.kt");
     }
 
     @Test
     @TestMetadata("overloadBinaryOperator.kt")
     public void testOverloadBinaryOperator() {
-      runTest("compiler/testData/codegen/box/classes/overloadBinaryOperator.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/overloadBinaryOperator.kt");
     }
 
     @Test
     @TestMetadata("overloadPlusAssign.kt")
     public void testOverloadPlusAssign() {
-      runTest("compiler/testData/codegen/box/classes/overloadPlusAssign.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/overloadPlusAssign.kt");
     }
 
     @Test
     @TestMetadata("overloadPlusAssignReturn.kt")
     public void testOverloadPlusAssignReturn() {
-      runTest("compiler/testData/codegen/box/classes/overloadPlusAssignReturn.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/overloadPlusAssignReturn.kt");
     }
 
     @Test
     @TestMetadata("overloadPlusToPlusAssign.kt")
     public void testOverloadPlusToPlusAssign() {
-      runTest("compiler/testData/codegen/box/classes/overloadPlusToPlusAssign.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/overloadPlusToPlusAssign.kt");
     }
 
     @Test
     @TestMetadata("overloadUnaryOperator.kt")
     public void testOverloadUnaryOperator() {
-      runTest("compiler/testData/codegen/box/classes/overloadUnaryOperator.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/overloadUnaryOperator.kt");
     }
 
     @Test
     @TestMetadata("privateOuterFunctions.kt")
     public void testPrivateOuterFunctions() {
-      runTest("compiler/testData/codegen/box/classes/privateOuterFunctions.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/privateOuterFunctions.kt");
     }
 
     @Test
     @TestMetadata("privateOuterProperty.kt")
     public void testPrivateOuterProperty() {
-      runTest("compiler/testData/codegen/box/classes/privateOuterProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/privateOuterProperty.kt");
     }
 
     @Test
     @TestMetadata("privateToThis.kt")
     public void testPrivateToThis() {
-      runTest("compiler/testData/codegen/box/classes/privateToThis.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/privateToThis.kt");
     }
 
     @Test
     @TestMetadata("propertyDelegation.kt")
     public void testPropertyDelegation() {
-      runTest("compiler/testData/codegen/box/classes/propertyDelegation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/propertyDelegation.kt");
     }
 
     @Test
     @TestMetadata("propertyInInitializer.kt")
     public void testPropertyInInitializer() {
-      runTest("compiler/testData/codegen/box/classes/propertyInInitializer.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/propertyInInitializer.kt");
     }
 
     @Test
     @TestMetadata("quotedClassName.kt")
     public void testQuotedClassName() {
-      runTest("compiler/testData/codegen/box/classes/quotedClassName.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/quotedClassName.kt");
     }
 
     @Test
     @TestMetadata("rightHandOverride.kt")
     public void testRightHandOverride() {
-      runTest("compiler/testData/codegen/box/classes/rightHandOverride.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/rightHandOverride.kt");
     }
 
     @Test
     @TestMetadata("selfcreate.kt")
     public void testSelfcreate() {
-      runTest("compiler/testData/codegen/box/classes/selfcreate.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/selfcreate.kt");
     }
 
     @Test
     @TestMetadata("simpleBox.kt")
     public void testSimpleBox() {
-      runTest("compiler/testData/codegen/box/classes/simpleBox.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/simpleBox.kt");
     }
 
     @Test
     @TestMetadata("superConstructorCallWithComplexArg.kt")
     public void testSuperConstructorCallWithComplexArg() {
-      runTest("compiler/testData/codegen/box/classes/superConstructorCallWithComplexArg.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/superConstructorCallWithComplexArg.kt");
     }
 
     @Test
     @TestMetadata("typedDelegation.kt")
     public void testTypedDelegation() {
-      runTest("compiler/testData/codegen/box/classes/typedDelegation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/typedDelegation.kt");
     }
 
     @Nested
@@ -5883,43 +5883,43 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("extensionWithOuter.kt")
       public void testExtensionWithOuter() {
-        runTest("compiler/testData/codegen/box/classes/inner/extensionWithOuter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/extensionWithOuter.kt");
       }
 
       @Test
       @TestMetadata("instantiateInDerived.kt")
       public void testInstantiateInDerived() {
-        runTest("compiler/testData/codegen/box/classes/inner/instantiateInDerived.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/instantiateInDerived.kt");
       }
 
       @Test
       @TestMetadata("instantiateInDerivedLabeled.kt")
       public void testInstantiateInDerivedLabeled() {
-        runTest("compiler/testData/codegen/box/classes/inner/instantiateInDerivedLabeled.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/instantiateInDerivedLabeled.kt");
       }
 
       @Test
       @TestMetadata("instantiateInSameClass.kt")
       public void testInstantiateInSameClass() {
-        runTest("compiler/testData/codegen/box/classes/inner/instantiateInSameClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/instantiateInSameClass.kt");
       }
 
       @Test
       @TestMetadata("kt6708.kt")
       public void testKt6708() {
-        runTest("compiler/testData/codegen/box/classes/inner/kt6708.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/kt6708.kt");
       }
 
       @Test
       @TestMetadata("properOuter.kt")
       public void testProperOuter() {
-        runTest("compiler/testData/codegen/box/classes/inner/properOuter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/properOuter.kt");
       }
 
       @Test
       @TestMetadata("properSuperLinking.kt")
       public void testProperSuperLinking() {
-        runTest("compiler/testData/codegen/box/classes/inner/properSuperLinking.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/classes/inner/properSuperLinking.kt");
       }
     }
   }
@@ -5936,283 +5936,283 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("anonymousObjectAsLastExpressionInLambda.kt")
     public void testAnonymousObjectAsLastExpressionInLambda() {
-      runTest("compiler/testData/codegen/box/closures/anonymousObjectAsLastExpressionInLambda.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/anonymousObjectAsLastExpressionInLambda.kt");
     }
 
     @Test
     @TestMetadata("captureExtensionReceiver.kt")
     public void testCaptureExtensionReceiver() {
-      runTest("compiler/testData/codegen/box/closures/captureExtensionReceiver.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureExtensionReceiver.kt");
     }
 
     @Test
     @TestMetadata("captureExtensionReceiverX2.kt")
     public void testCaptureExtensionReceiverX2() {
-      runTest("compiler/testData/codegen/box/closures/captureExtensionReceiverX2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureExtensionReceiverX2.kt");
     }
 
     @Test
     @TestMetadata("capturedLocalGenericFun.kt")
     public void testCapturedLocalGenericFun() {
-      runTest("compiler/testData/codegen/box/closures/capturedLocalGenericFun.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedLocalGenericFun.kt");
     }
 
     @Test
     @TestMetadata("closureCapturingGenericParam.kt")
     public void testClosureCapturingGenericParam() {
-      runTest("compiler/testData/codegen/box/closures/closureCapturingGenericParam.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureCapturingGenericParam.kt");
     }
 
     @Test
     @TestMetadata("closureInsideConstrucor.kt")
     public void testClosureInsideConstrucor() {
-      runTest("compiler/testData/codegen/box/closures/closureInsideConstrucor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideConstrucor.kt");
     }
 
     @Test
     @TestMetadata("closureOnTopLevel1.kt")
     public void testClosureOnTopLevel1() {
-      runTest("compiler/testData/codegen/box/closures/closureOnTopLevel1.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureOnTopLevel1.kt");
     }
 
     @Test
     @TestMetadata("closureOnTopLevel2.kt")
     public void testClosureOnTopLevel2() {
-      runTest("compiler/testData/codegen/box/closures/closureOnTopLevel2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureOnTopLevel2.kt");
     }
 
     @Test
     @TestMetadata("closureWithParameter.kt")
     public void testClosureWithParameter() {
-      runTest("compiler/testData/codegen/box/closures/closureWithParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureWithParameter.kt");
     }
 
     @Test
     @TestMetadata("closureWithParameterAndBoxing.kt")
     public void testClosureWithParameterAndBoxing() {
-      runTest("compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
     }
 
     @Test
     @TestMetadata("closuresAsSingleton.kt")
     public void testClosuresAsSingleton() {
-      runTest("compiler/testData/codegen/box/closures/closuresAsSingleton.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closuresAsSingleton.kt");
     }
 
     @Test
     @TestMetadata("crossinlineLocalDeclaration.kt")
     public void testCrossinlineLocalDeclaration() {
-      runTest("compiler/testData/codegen/box/closures/crossinlineLocalDeclaration.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/crossinlineLocalDeclaration.kt");
     }
 
     @Test
     @TestMetadata("doubleEnclosedLocalVariable.kt")
     public void testDoubleEnclosedLocalVariable() {
-      runTest("compiler/testData/codegen/box/closures/doubleEnclosedLocalVariable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/doubleEnclosedLocalVariable.kt");
     }
 
     @Test
     @TestMetadata("enclosingLocalVariable.kt")
     public void testEnclosingLocalVariable() {
-      runTest("compiler/testData/codegen/box/closures/enclosingLocalVariable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/enclosingLocalVariable.kt");
     }
 
     @Test
     @TestMetadata("enclosingThis.kt")
     public void testEnclosingThis() {
-      runTest("compiler/testData/codegen/box/closures/enclosingThis.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/enclosingThis.kt");
     }
 
     @Test
     @TestMetadata("extensionClosure.kt")
     public void testExtensionClosure() {
-      runTest("compiler/testData/codegen/box/closures/extensionClosure.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/extensionClosure.kt");
     }
 
     @Test
     @TestMetadata("kt10044.kt")
     public void testKt10044() {
-      runTest("compiler/testData/codegen/box/closures/kt10044.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt10044.kt");
     }
 
     @Test
     @TestMetadata("kt11634.kt")
     public void testKt11634() {
-      runTest("compiler/testData/codegen/box/closures/kt11634.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt11634.kt");
     }
 
     @Test
     @TestMetadata("kt11634_2.kt")
     public void testKt11634_2() {
-      runTest("compiler/testData/codegen/box/closures/kt11634_2.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt11634_2.kt");
     }
 
     @Test
     @TestMetadata("kt11634_3.kt")
     public void testKt11634_3() {
-      runTest("compiler/testData/codegen/box/closures/kt11634_3.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt11634_3.kt");
     }
 
     @Test
     @TestMetadata("kt11634_4.kt")
     public void testKt11634_4() {
-      runTest("compiler/testData/codegen/box/closures/kt11634_4.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt11634_4.kt");
     }
 
     @Test
     @TestMetadata("kt19389.kt")
     public void testKt19389() {
-      runTest("compiler/testData/codegen/box/closures/kt19389.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt19389.kt");
     }
 
     @Test
     @TestMetadata("kt19389_set.kt")
     public void testKt19389_set() {
-      runTest("compiler/testData/codegen/box/closures/kt19389_set.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt19389_set.kt");
     }
 
     @Test
     @TestMetadata("kt2151.kt")
     public void testKt2151() {
-      runTest("compiler/testData/codegen/box/closures/kt2151.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt2151.kt");
     }
 
     @Test
     @TestMetadata("kt3152.kt")
     public void testKt3152() {
-      runTest("compiler/testData/codegen/box/closures/kt3152.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt3152.kt");
     }
 
     @Test
     @TestMetadata("kt3523.kt")
     public void testKt3523() {
-      runTest("compiler/testData/codegen/box/closures/kt3523.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt3523.kt");
     }
 
     @Test
     @TestMetadata("kt3738.kt")
     public void testKt3738() {
-      runTest("compiler/testData/codegen/box/closures/kt3738.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt3738.kt");
     }
 
     @Test
     @TestMetadata("kt3905.kt")
     public void testKt3905() {
-      runTest("compiler/testData/codegen/box/closures/kt3905.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt3905.kt");
     }
 
     @Test
     @TestMetadata("kt4106.kt")
     public void testKt4106() {
-      runTest("compiler/testData/codegen/box/closures/kt4106.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt4106.kt");
     }
 
     @Test
     @TestMetadata("kt4137.kt")
     public void testKt4137() {
-      runTest("compiler/testData/codegen/box/closures/kt4137.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt4137.kt");
     }
 
     @Test
     @TestMetadata("kt47840.kt")
     public void testKt47840() {
-      runTest("compiler/testData/codegen/box/closures/kt47840.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt47840.kt");
     }
 
     @Test
     @TestMetadata("kt47894_inlineFunWithObjectWithNothing.kt")
     public void testKt47894_inlineFunWithObjectWithNothing() {
-      runTest("compiler/testData/codegen/box/closures/kt47894_inlineFunWithObjectWithNothing.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt47894_inlineFunWithObjectWithNothing.kt");
     }
 
     @Test
     @TestMetadata("kt5589.kt")
     public void testKt5589() {
-      runTest("compiler/testData/codegen/box/closures/kt5589.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/kt5589.kt");
     }
 
     @Test
     @TestMetadata("localClassFunClosure.kt")
     public void testLocalClassFunClosure() {
-      runTest("compiler/testData/codegen/box/closures/localClassFunClosure.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localClassFunClosure.kt");
     }
 
     @Test
     @TestMetadata("localClassLambdaClosure.kt")
     public void testLocalClassLambdaClosure() {
-      runTest("compiler/testData/codegen/box/closures/localClassLambdaClosure.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localClassLambdaClosure.kt");
     }
 
     @Test
     @TestMetadata("localFunInInit.kt")
     public void testLocalFunInInit() {
-      runTest("compiler/testData/codegen/box/closures/localFunInInit.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localFunInInit.kt");
     }
 
     @Test
     @TestMetadata("localFunctionInFunction.kt")
     public void testLocalFunctionInFunction() {
-      runTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
     }
 
     @Test
     @TestMetadata("localFunctionInInitBlock.kt")
     public void testLocalFunctionInInitBlock() {
-      runTest("compiler/testData/codegen/box/closures/localFunctionInInitBlock.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localFunctionInInitBlock.kt");
     }
 
     @Test
     @TestMetadata("localFunctionInInitializer.kt")
     public void testLocalFunctionInInitializer() {
-      runTest("compiler/testData/codegen/box/closures/localFunctionInInitializer.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localFunctionInInitializer.kt");
     }
 
     @Test
     @TestMetadata("localGenericFun.kt")
     public void testLocalGenericFun() {
-      runTest("compiler/testData/codegen/box/closures/localGenericFun.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localGenericFun.kt");
     }
 
     @Test
     @TestMetadata("localReturn.kt")
     public void testLocalReturn() {
-      runTest("compiler/testData/codegen/box/closures/localReturn.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localReturn.kt");
     }
 
     @Test
     @TestMetadata("localReturnWithAutolabel.kt")
     public void testLocalReturnWithAutolabel() {
-      runTest("compiler/testData/codegen/box/closures/localReturnWithAutolabel.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/localReturnWithAutolabel.kt");
     }
 
     @Test
     @TestMetadata("recursiveClosure.kt")
     public void testRecursiveClosure() {
-      runTest("compiler/testData/codegen/box/closures/recursiveClosure.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/recursiveClosure.kt");
     }
 
     @Test
     @TestMetadata("simplestClosure.kt")
     public void testSimplestClosure() {
-      runTest("compiler/testData/codegen/box/closures/simplestClosure.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/simplestClosure.kt");
     }
 
     @Test
     @TestMetadata("simplestClosureAndBoxing.kt")
     public void testSimplestClosureAndBoxing() {
-      runTest("compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
     }
 
     @Test
     @TestMetadata("subclosuresWithinInitializers.kt")
     public void testSubclosuresWithinInitializers() {
-      runTest("compiler/testData/codegen/box/closures/subclosuresWithinInitializers.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/subclosuresWithinInitializers.kt");
     }
 
     @Test
     @TestMetadata("underscoreParameters.kt")
     public void testUnderscoreParameters() {
-      runTest("compiler/testData/codegen/box/closures/underscoreParameters.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/underscoreParameters.kt");
     }
 
     @Nested
@@ -6227,193 +6227,193 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("constructorParameterAndLocalCapturedInLambdaInLocalClass.kt")
       public void testConstructorParameterAndLocalCapturedInLambdaInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/constructorParameterAndLocalCapturedInLambdaInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/constructorParameterAndLocalCapturedInLambdaInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("constructorParameterCapturedInLambdaInLocalClass.kt")
       public void testConstructorParameterCapturedInLambdaInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/constructorParameterCapturedInLambdaInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/constructorParameterCapturedInLambdaInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("constructorParameterCapturedInLambdaInLocalClass2.kt")
       public void testConstructorParameterCapturedInLambdaInLocalClass2() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/constructorParameterCapturedInLambdaInLocalClass2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/constructorParameterCapturedInLambdaInLocalClass2.kt");
       }
 
       @Test
       @TestMetadata("kt13454.kt")
       public void testKt13454() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt13454.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt13454.kt");
       }
 
       @Test
       @TestMetadata("kt14148.kt")
       public void testKt14148() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt14148.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt14148.kt");
       }
 
       @Test
       @TestMetadata("kt4174.kt")
       public void testKt4174() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt4174.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt4174.kt");
       }
 
       @Test
       @TestMetadata("kt4174a.kt")
       public void testKt4174a() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt4174a.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/kt4174a.kt");
       }
 
       @Test
       @TestMetadata("localCapturedInAnonymousObjectInLocalClass.kt")
       public void testLocalCapturedInAnonymousObjectInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInAnonymousObjectInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInAnonymousObjectInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("localCapturedInAnonymousObjectInLocalClass2.kt")
       public void testLocalCapturedInAnonymousObjectInLocalClass2() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInAnonymousObjectInLocalClass2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInAnonymousObjectInLocalClass2.kt");
       }
 
       @Test
       @TestMetadata("localCapturedInLambdaInInnerClassInLocalClass.kt")
       public void testLocalCapturedInLambdaInInnerClassInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInLambdaInInnerClassInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInLambdaInInnerClassInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("localCapturedInLambdaInLocalClass.kt")
       public void testLocalCapturedInLambdaInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInLambdaInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localCapturedInLambdaInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("localFunctionCapturedInLambda.kt")
       public void testLocalFunctionCapturedInLambda() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localFunctionCapturedInLambda.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/localFunctionCapturedInLambda.kt");
       }
 
       @Test
       @TestMetadata("outerAndLocalCapturedInLocalClass.kt")
       public void testOuterAndLocalCapturedInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerAndLocalCapturedInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerAndLocalCapturedInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedAsImplicitThisInBoundReference.kt")
       public void testOuterCapturedAsImplicitThisInBoundReference() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedAsImplicitThisInBoundReference.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedAsImplicitThisInBoundReference.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInFunctionLiteral.kt")
       public void testOuterCapturedInFunctionLiteral() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInFunctionLiteral.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInFunctionLiteral.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInInlineLambda.kt")
       public void testOuterCapturedInInlineLambda() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInInlineLambda.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInInlineLambda.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInInlineLambda2.kt")
       public void testOuterCapturedInInlineLambda2() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInInlineLambda2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInInlineLambda2.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInLambda.kt")
       public void testOuterCapturedInLambda() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambda.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambda.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInLambda2.kt")
       public void testOuterCapturedInLambda2() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambda2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambda2.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInLambdaInSecondaryConstructor.kt")
       public void testOuterCapturedInLambdaInSecondaryConstructor() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambdaInSecondaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambdaInSecondaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInLambdaInSubExpression.kt")
       public void testOuterCapturedInLambdaInSubExpression() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambdaInSubExpression.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLambdaInSubExpression.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInLocalClass.kt")
       public void testOuterCapturedInLocalClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLocalClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInLocalClass.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInNestedLambda.kt")
       public void testOuterCapturedInNestedLambda() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInNestedLambda.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInNestedLambda.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInNestedObject.kt")
       public void testOuterCapturedInNestedObject() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInNestedObject.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInNestedObject.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInObject.kt")
       public void testOuterCapturedInObject() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInObject.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInObject.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInObject2.kt")
       public void testOuterCapturedInObject2() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInObject2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInObject2.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInPrimaryConstructorDefaultParameter.kt")
       public void testOuterCapturedInPrimaryConstructorDefaultParameter() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInPrimaryConstructorDefaultParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInPrimaryConstructorDefaultParameter.kt");
       }
 
       @Test
       @TestMetadata("outerCapturedInSecondaryConstructorDefaultParameter.kt")
       public void testOuterCapturedInSecondaryConstructorDefaultParameter() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInSecondaryConstructorDefaultParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInSecondaryConstructorDefaultParameter.kt");
       }
 
       @Test
       @TestMetadata("outerEnumEntryCapturedInLambdaInInnerClass.kt")
       public void testOuterEnumEntryCapturedInLambdaInInnerClass() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerEnumEntryCapturedInLambdaInInnerClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerEnumEntryCapturedInLambdaInInnerClass.kt");
       }
 
       @Test
       @TestMetadata("properValueCapturedByClosure1.kt")
       public void testProperValueCapturedByClosure1() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/properValueCapturedByClosure1.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/properValueCapturedByClosure1.kt");
       }
 
       @Test
       @TestMetadata("properValueCapturedByClosure2.kt")
       public void testProperValueCapturedByClosure2() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/properValueCapturedByClosure2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/properValueCapturedByClosure2.kt");
       }
 
       @Test
       @TestMetadata("referenceToCapturedVariablesInMultipleLambdas.kt")
       public void testReferenceToCapturedVariablesInMultipleLambdas() {
-        runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/referenceToCapturedVariablesInMultipleLambdas.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureInSuperConstructorCall/referenceToCapturedVariablesInMultipleLambdas.kt");
       }
     }
 
@@ -6429,49 +6429,49 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("captureFunctionInProperty.kt")
       public void testCaptureFunctionInProperty() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/captureFunctionInProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/captureFunctionInProperty.kt");
       }
 
       @Test
       @TestMetadata("inFunction.kt")
       public void testInFunction() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/inFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/inFunction.kt");
       }
 
       @Test
       @TestMetadata("inProperty.kt")
       public void testInProperty() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/inProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/inProperty.kt");
       }
 
       @Test
       @TestMetadata("inPropertyDeepObjectChain.kt")
       public void testInPropertyDeepObjectChain() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyDeepObjectChain.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyDeepObjectChain.kt");
       }
 
       @Test
       @TestMetadata("inPropertyFromSuperClass.kt")
       public void testInPropertyFromSuperClass() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyFromSuperClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyFromSuperClass.kt");
       }
 
       @Test
       @TestMetadata("inPropertyFromSuperSuperClass.kt")
       public void testInPropertyFromSuperSuperClass() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyFromSuperSuperClass.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyFromSuperSuperClass.kt");
       }
 
       @Test
       @TestMetadata("kt4176.kt")
       public void testKt4176() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/kt4176.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/kt4176.kt");
       }
 
       @Test
       @TestMetadata("kt4656.kt")
       public void testKt4656() {
-        runTest("compiler/testData/codegen/box/closures/captureOuterProperty/kt4656.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/captureOuterProperty/kt4656.kt");
       }
     }
 
@@ -6487,79 +6487,79 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("capturedInCrossinline.kt")
       public void testCapturedInCrossinline() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInCrossinline.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInCrossinline.kt");
       }
 
       @Test
       @TestMetadata("capturedInInlineOnlyAssign.kt")
       public void testCapturedInInlineOnlyAssign() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyAssign.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyAssign.kt");
       }
 
       @Test
       @TestMetadata("capturedInInlineOnlyCAO.kt")
       public void testCapturedInInlineOnlyCAO() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyCAO.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyCAO.kt");
       }
 
       @Test
       @TestMetadata("capturedInInlineOnlyIncrDecr.kt")
       public void testCapturedInInlineOnlyIncrDecr() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyIncrDecr.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyIncrDecr.kt");
       }
 
       @Test
       @TestMetadata("capturedInInlineOnlyIndexedCAO.kt")
       public void testCapturedInInlineOnlyIndexedCAO() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyIndexedCAO.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyIndexedCAO.kt");
       }
 
       @Test
       @TestMetadata("capturedVarsOfSize2.kt")
       public void testCapturedVarsOfSize2() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedVarsOfSize2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedVarsOfSize2.kt");
       }
 
       @Test
       @TestMetadata("kt17200.kt")
       public void testKt17200() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17200.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17200.kt");
       }
 
       @Test
       @TestMetadata("kt17588.kt")
       public void testKt17588() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17588.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17588.kt");
       }
 
       @Test
       @TestMetadata("kt44347.kt")
       public void testKt44347() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt44347.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/kt44347.kt");
       }
 
       @Test
       @TestMetadata("kt45446.kt")
       public void testKt45446() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt45446.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/kt45446.kt");
       }
 
       @Test
       @TestMetadata("sharedSlotsWithCapturedVars.kt")
       public void testSharedSlotsWithCapturedVars() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
       }
 
       @Test
       @TestMetadata("withCoroutines.kt")
       public void testWithCoroutines() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt");
       }
 
       @Test
       @TestMetadata("withCoroutinesNoStdLib.kt")
       public void testWithCoroutinesNoStdLib() {
-        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt");
       }
     }
 
@@ -6575,37 +6575,37 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       @Test
       @TestMetadata("localFunInsideLocalFun.kt")
       public void testLocalFunInsideLocalFun() {
-        runTest("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFun.kt");
       }
 
       @Test
       @TestMetadata("localFunInsideLocalFunDifferentSignatures.kt")
       public void testLocalFunInsideLocalFunDifferentSignatures() {
-        runTest("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFunDifferentSignatures.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFunDifferentSignatures.kt");
       }
 
       @Test
       @TestMetadata("propertyAndFunctionNameClash.kt")
       public void testPropertyAndFunctionNameClash() {
-        runTest("compiler/testData/codegen/box/closures/closureInsideClosure/propertyAndFunctionNameClash.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideClosure/propertyAndFunctionNameClash.kt");
       }
 
       @Test
       @TestMetadata("threeLevels.kt")
       public void testThreeLevels() {
-        runTest("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevels.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideClosure/threeLevels.kt");
       }
 
       @Test
       @TestMetadata("threeLevelsDifferentSignatures.kt")
       public void testThreeLevelsDifferentSignatures() {
-        runTest("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevelsDifferentSignatures.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideClosure/threeLevelsDifferentSignatures.kt");
       }
 
       @Test
       @TestMetadata("varAsFunInsideLocalFun.kt")
       public void testVarAsFunInsideLocalFun() {
-        runTest("compiler/testData/codegen/box/closures/closureInsideClosure/varAsFunInsideLocalFun.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/closures/closureInsideClosure/varAsFunInsideLocalFun.kt");
       }
     }
   }
@@ -6627,7 +6627,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("addCollectionStubWithCovariantOverride.kt")
     public void testAddCollectionStubWithCovariantOverride() {
-      runTest("compiler/testData/codegen/box/collections/addCollectionStubWithCovariantOverride.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/addCollectionStubWithCovariantOverride.kt");
     }
 
     @Test
@@ -6638,37 +6638,37 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("clashWithInternalMapMethod.kt")
     public void testClashWithInternalMapMethod() {
-      runTest("compiler/testData/codegen/box/collections/clashWithInternalMapMethod.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/clashWithInternalMapMethod.kt");
     }
 
     @Test
     @TestMetadata("inSetWithSmartCast.kt")
     public void testInSetWithSmartCast() {
-      runTest("compiler/testData/codegen/box/collections/inSetWithSmartCast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/inSetWithSmartCast.kt");
     }
 
     @Test
     @TestMetadata("inheritFromAbstractMutableListInt.kt")
     public void testInheritFromAbstractMutableListInt() {
-      runTest("compiler/testData/codegen/box/collections/inheritFromAbstractMutableListInt.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/inheritFromAbstractMutableListInt.kt");
     }
 
     @Test
     @TestMetadata("internalRemove.kt")
     public void testInternalRemove() {
-      runTest("compiler/testData/codegen/box/collections/internalRemove.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/internalRemove.kt");
     }
 
     @Test
     @TestMetadata("kt41123.kt")
     public void testKt41123() {
-      runTest("compiler/testData/codegen/box/collections/kt41123.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/kt41123.kt");
     }
 
     @Test
     @TestMetadata("removeClash.kt")
     public void testRemoveClash() {
-      runTest("compiler/testData/codegen/box/collections/removeClash.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/collections/removeClash.kt");
     }
   }
 
@@ -6684,25 +6684,25 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("delegatedPropertyOnCompanion.kt")
     public void testDelegatedPropertyOnCompanion() {
-      runTest("compiler/testData/codegen/box/companion/delegatedPropertyOnCompanion.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/companion/delegatedPropertyOnCompanion.kt");
     }
 
     @Test
     @TestMetadata("genericLambdaOnStringCompanion.kt")
     public void testGenericLambdaOnStringCompanion() {
-      runTest("compiler/testData/codegen/box/companion/genericLambdaOnStringCompanion.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/companion/genericLambdaOnStringCompanion.kt");
     }
 
     @Test
     @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
     public void testInlineFunctionCompanionPropertyAccess() {
-      runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
     }
 
     @Test
     @TestMetadata("protectedConstValFromSuperCompanion.kt")
     public void testProtectedConstValFromSuperCompanion() {
-      runTest("compiler/testData/codegen/box/companion/protectedConstValFromSuperCompanion.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/companion/protectedConstValFromSuperCompanion.kt");
     }
   }
 
@@ -6718,7 +6718,7 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("privateCompanionObject.kt")
     public void testPrivateCompanionObject() {
-      runTest("compiler/testData/codegen/box/compatibility/privateCompanionObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/compatibility/privateCompanionObject.kt");
     }
   }
 
@@ -6734,79 +6734,79 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("comparisonFalse.kt")
     public void testComparisonFalse() {
-      runTest("compiler/testData/codegen/box/constants/comparisonFalse.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/comparisonFalse.kt");
     }
 
     @Test
     @TestMetadata("comparisonTrue.kt")
     public void testComparisonTrue() {
-      runTest("compiler/testData/codegen/box/constants/comparisonTrue.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/comparisonTrue.kt");
     }
 
     @Test
     @TestMetadata("constValFromAnotherModuleInConsVal.kt")
     public void testConstValFromAnotherModuleInConsVal() {
-      runTest("compiler/testData/codegen/box/constants/constValFromAnotherModuleInConsVal.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/constValFromAnotherModuleInConsVal.kt");
     }
 
     @Test
     @TestMetadata("constantsInWhen.kt")
     public void testConstantsInWhen() {
-      runTest("compiler/testData/codegen/box/constants/constantsInWhen.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/constantsInWhen.kt");
     }
 
     @Test
     @TestMetadata("divisionByZero.kt")
     public void testDivisionByZero() {
-      runTest("compiler/testData/codegen/box/constants/divisionByZero.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/divisionByZero.kt");
     }
 
     @Test
     @TestMetadata("doNotTriggerInit.kt")
     public void testDoNotTriggerInit() {
-      runTest("compiler/testData/codegen/box/constants/doNotTriggerInit.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/doNotTriggerInit.kt");
     }
 
     @Test
     @TestMetadata("float.kt")
     public void testFloat() {
-      runTest("compiler/testData/codegen/box/constants/float.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/float.kt");
     }
 
     @Test
     @TestMetadata("foldingBinaryOpsUnsigned.kt")
     public void testFoldingBinaryOpsUnsigned() {
-      runTest("compiler/testData/codegen/box/constants/foldingBinaryOpsUnsigned.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/foldingBinaryOpsUnsigned.kt");
     }
 
     @Test
     @TestMetadata("foldingBinaryOpsUnsignedConst.kt")
     public void testFoldingBinaryOpsUnsignedConst() {
-      runTest("compiler/testData/codegen/box/constants/foldingBinaryOpsUnsignedConst.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/foldingBinaryOpsUnsignedConst.kt");
     }
 
     @Test
     @TestMetadata("kt9532.kt")
     public void testKt9532() {
-      runTest("compiler/testData/codegen/box/constants/kt9532.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/kt9532.kt");
     }
 
     @Test
     @TestMetadata("literalToLongConversion.kt")
     public void testLiteralToLongConversion() {
-      runTest("compiler/testData/codegen/box/constants/literalToLongConversion.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/literalToLongConversion.kt");
     }
 
     @Test
     @TestMetadata("long.kt")
     public void testLong() {
-      runTest("compiler/testData/codegen/box/constants/long.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/long.kt");
     }
 
     @Test
     @TestMetadata("privateConst.kt")
     public void testPrivateConst() {
-      runTest("compiler/testData/codegen/box/constants/privateConst.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/constants/privateConst.kt");
     }
   }
 
@@ -6842,37 +6842,37 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("contextParameterToDefaultArgument.kt")
     public void testContextParameterToDefaultArgument() {
-      runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
     }
 
     @Test
     @TestMetadata("sameNameWithGlobalProperty.kt")
     public void testSameNameWithGlobalProperty() {
-      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");
     }
 
     @Test
     @TestMetadata("sameNameWithLocalArguments.kt")
     public void testSameNameWithLocalArguments() {
-      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contextParameters/sameNameWithLocalArguments.kt");
     }
 
     @Test
     @TestMetadata("sameNameWithLocalProperty.kt")
     public void testSameNameWithLocalProperty() {
-      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contextParameters/sameNameWithLocalProperty.kt");
     }
 
     @Test
     @TestMetadata("sameNameWithMemberProperty.kt")
     public void testSameNameWithMemberProperty() {
-      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
     }
 
     @Test
     @TestMetadata("sameNameWithPropertyName.kt")
     public void testSameNameWithPropertyName() {
-      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
     }
   }
 
@@ -6888,127 +6888,127 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("constructorArgument.kt")
     public void testConstructorArgument() {
-      runTest("compiler/testData/codegen/box/contracts/constructorArgument.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/constructorArgument.kt");
     }
 
     @Test
     @TestMetadata("contractForCast.kt")
     public void testContractForCast() {
-      runTest("compiler/testData/codegen/box/contracts/contractForCast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/contractForCast.kt");
     }
 
     @Test
     @TestMetadata("destructuredVariable.kt")
     public void testDestructuredVariable() {
-      runTest("compiler/testData/codegen/box/contracts/destructuredVariable.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/destructuredVariable.kt");
     }
 
     @Test
     @TestMetadata("exactlyOnceNotInline.kt")
     public void testExactlyOnceNotInline() {
-      runTest("compiler/testData/codegen/box/contracts/exactlyOnceNotInline.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/exactlyOnceNotInline.kt");
     }
 
     @Test
     @TestMetadata("exception.kt")
     public void testException() {
-      runTest("compiler/testData/codegen/box/contracts/exception.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/exception.kt");
     }
 
     @Test
     @TestMetadata("fieldInConstructorParens.kt")
     public void testFieldInConstructorParens() {
-      runTest("compiler/testData/codegen/box/contracts/fieldInConstructorParens.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/fieldInConstructorParens.kt");
     }
 
     @Test
     @TestMetadata("fieldReadInConstructor.kt")
     public void testFieldReadInConstructor() {
-      runTest("compiler/testData/codegen/box/contracts/fieldReadInConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/fieldReadInConstructor.kt");
     }
 
     @Test
     @TestMetadata("forLoop.kt")
     public void testForLoop() {
-      runTest("compiler/testData/codegen/box/contracts/forLoop.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/forLoop.kt");
     }
 
     @Test
     @TestMetadata("functionParameter.kt")
     public void testFunctionParameter() {
-      runTest("compiler/testData/codegen/box/contracts/functionParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/functionParameter.kt");
     }
 
     @Test
     @TestMetadata("isNullString.kt")
     public void testIsNullString() {
-      runTest("compiler/testData/codegen/box/contracts/isNullString.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/isNullString.kt");
     }
 
     @Test
     @TestMetadata("kt39374.kt")
     public void testKt39374() {
-      runTest("compiler/testData/codegen/box/contracts/kt39374.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/kt39374.kt");
     }
 
     @Test
     @TestMetadata("kt45236.kt")
     public void testKt45236() {
-      runTest("compiler/testData/codegen/box/contracts/kt45236.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/kt45236.kt");
     }
 
     @Test
     @TestMetadata("kt47168.kt")
     public void testKt47168() {
-      runTest("compiler/testData/codegen/box/contracts/kt47168.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/kt47168.kt");
     }
 
     @Test
     @TestMetadata("kt47300.kt")
     public void testKt47300() {
-      runTest("compiler/testData/codegen/box/contracts/kt47300.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/kt47300.kt");
     }
 
     @Test
     @TestMetadata("lambdaParameter.kt")
     public void testLambdaParameter() {
-      runTest("compiler/testData/codegen/box/contracts/lambdaParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/lambdaParameter.kt");
     }
 
     @Test
     @TestMetadata("listAppend.kt")
     public void testListAppend() {
-      runTest("compiler/testData/codegen/box/contracts/listAppend.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/listAppend.kt");
     }
 
     @Test
     @TestMetadata("nestedLambdaInNonInlineCallExactlyOnce.kt")
     public void testNestedLambdaInNonInlineCallExactlyOnce() {
-      runTest("compiler/testData/codegen/box/contracts/nestedLambdaInNonInlineCallExactlyOnce.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/nestedLambdaInNonInlineCallExactlyOnce.kt");
     }
 
     @Test
     @TestMetadata("nonNullSmartCast.kt")
     public void testNonNullSmartCast() {
-      runTest("compiler/testData/codegen/box/contracts/nonNullSmartCast.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/nonNullSmartCast.kt");
     }
 
     @Test
     @TestMetadata("require.kt")
     public void testRequire() {
-      runTest("compiler/testData/codegen/box/contracts/require.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/require.kt");
     }
 
     @Test
     @TestMetadata("runLambdaForVal.kt")
     public void testRunLambdaForVal() {
-      runTest("compiler/testData/codegen/box/contracts/runLambdaForVal.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/runLambdaForVal.kt");
     }
 
     @Test
     @TestMetadata("valInWhen.kt")
     public void testValInWhen() {
-      runTest("compiler/testData/codegen/box/contracts/valInWhen.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/contracts/valInWhen.kt");
     }
   }
 
@@ -7024,79 +7024,79 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     @Test
     @TestMetadata("bottles.kt")
     public void testBottles() {
-      runTest("compiler/testData/codegen/box/controlStructures/bottles.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/bottles.kt");
     }
 
     @Test
     @TestMetadata("breakInDoWhile.kt")
     public void testBreakInDoWhile() {
-      runTest("compiler/testData/codegen/box/controlStructures/breakInDoWhile.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/breakInDoWhile.kt");
     }
 
     @Test
     @TestMetadata("breakInFinally.kt")
     public void testBreakInFinally() {
-      runTest("compiler/testData/codegen/box/controlStructures/breakInFinally.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/breakInFinally.kt");
     }
 
     @Test
     @TestMetadata("breakInWhen.kt")
     public void testBreakInWhen() {
-      runTest("compiler/testData/codegen/box/controlStructures/breakInWhen.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/breakInWhen.kt");
     }
 
     @Test
     @TestMetadata("compareBoxedIntegerToZero.kt")
     public void testCompareBoxedIntegerToZero() {
-      runTest("compiler/testData/codegen/box/controlStructures/compareBoxedIntegerToZero.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/compareBoxedIntegerToZero.kt");
     }
 
     @Test
     @TestMetadata("conditionOfEmptyIf.kt")
     public void testConditionOfEmptyIf() {
-      runTest("compiler/testData/codegen/box/controlStructures/conditionOfEmptyIf.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/conditionOfEmptyIf.kt");
     }
 
     @Test
     @TestMetadata("continueInExpr.kt")
     public void testContinueInExpr() {
-      runTest("compiler/testData/codegen/box/controlStructures/continueInExpr.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/continueInExpr.kt");
     }
 
     @Test
     @TestMetadata("continueInFor.kt")
     public void testContinueInFor() {
-      runTest("compiler/testData/codegen/box/controlStructures/continueInFor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/continueInFor.kt");
     }
 
     @Test
     @TestMetadata("continueInForCondition.kt")
     public void testContinueInForCondition() {
-      runTest("compiler/testData/codegen/box/controlStructures/continueInForCondition.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/continueInForCondition.kt");
     }
 
     @Test
     @TestMetadata("continueInWhen.kt")
     public void testContinueInWhen() {
-      runTest("compiler/testData/codegen/box/controlStructures/continueInWhen.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/continueInWhen.kt");
     }
 
     @Test
     @TestMetadata("continueInWhile.kt")
     public void testContinueInWhile() {
-      runTest("compiler/testData/codegen/box/controlStructures/continueInWhile.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/continueInWhile.kt");
     }
 
     @Test
     @TestMetadata("continueToLabelInFor.kt")
     public void testContinueToLabelInFor() {
-      runTest("compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
     }
 
     @Test
     @TestMetadata("doWhile.kt")
     public void testDoWhile() {
-      runTest("compiler/testData/codegen/box/controlStructures/doWhile.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/codegen/box/controlStructures/doWhile.kt");
     }
 
     @Test

@@ -189,7 +189,7 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk21Home());
         }
         else if (JavaVersion.current().compareTo(JavaVersion.compose(9)) >= 0) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
+            configuration.put(JVMConfigurationKeys.JDK_HOME, new File("/Users/ilya.goncharov/Library/Java/JavaVirtualMachines/corretto-1.8.0_432/Contents/Home"));
         }
 
         if (configurationKind.getWithRuntime()) {

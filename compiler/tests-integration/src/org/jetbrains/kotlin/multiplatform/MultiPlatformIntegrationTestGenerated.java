@@ -31,107 +31,107 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
   @TestMetadata("compatibleProperties")
   public void testCompatibleProperties() {
-    runTest("compiler/testData/multiplatform/compatibleProperties/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/compatibleProperties/");
   }
 
   @TestMetadata("contracts")
   public void testContracts() {
-    runTest("compiler/testData/multiplatform/contracts/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/contracts/");
   }
 
   @TestMetadata("createImplClassInPlatformModule")
   public void testCreateImplClassInPlatformModule() {
-    runTest("compiler/testData/multiplatform/createImplClassInPlatformModule/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/createImplClassInPlatformModule/");
   }
 
   @TestMetadata("explicitActualOnOverrideOfAbstractMethod")
   public void testExplicitActualOnOverrideOfAbstractMethod() {
-    runTest("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/");
   }
 
   @TestMetadata("funInterfaces")
   public void testFunInterfaces() {
-    runTest("compiler/testData/multiplatform/funInterfaces/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/funInterfaces/");
   }
 
   @TestMetadata("genericDeclarations")
   public void testGenericDeclarations() {
-    runTest("compiler/testData/multiplatform/genericDeclarations/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/genericDeclarations/");
   }
 
   @TestMetadata("incompatibleCallables")
   public void testIncompatibleCallables() {
-    runTest("compiler/testData/multiplatform/incompatibleCallables/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/incompatibleCallables/");
   }
 
   @TestMetadata("incompatibleClasses")
   public void testIncompatibleClasses() {
-    runTest("compiler/testData/multiplatform/incompatibleClasses/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/incompatibleClasses/");
   }
 
   @TestMetadata("incompatibleFunctions")
   public void testIncompatibleFunctions() {
-    runTest("compiler/testData/multiplatform/incompatibleFunctions/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/incompatibleFunctions/");
   }
 
   @TestMetadata("incompatibleNestedClasses")
   public void testIncompatibleNestedClasses() {
-    runTest("compiler/testData/multiplatform/incompatibleNestedClasses/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/incompatibleNestedClasses/");
   }
 
   @TestMetadata("incompatibleProperties")
   public void testIncompatibleProperties() {
-    runTest("compiler/testData/multiplatform/incompatibleProperties/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/incompatibleProperties/");
   }
 
   @TestMetadata("incorrectImplInClass")
   public void testIncorrectImplInClass() {
-    runTest("compiler/testData/multiplatform/incorrectImplInClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/incorrectImplInClass/");
   }
 
   @TestMetadata("inlineClasses")
   public void testInlineClasses() {
-    runTest("compiler/testData/multiplatform/inlineClasses/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/inlineClasses/");
   }
 
   @TestMetadata("innerGenericClass")
   public void testInnerGenericClass() {
-    runTest("compiler/testData/multiplatform/innerGenericClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/innerGenericClass/");
   }
 
   @TestMetadata("jsNameClash")
   public void testJsNameClash() {
-    runTest("compiler/testData/multiplatform/jsNameClash/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/jsNameClash/");
   }
 
   @TestMetadata("jvmMultifileClass")
   public void testJvmMultifileClass() {
-    runTest("compiler/testData/multiplatform/jvmMultifileClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/jvmMultifileClass/");
   }
 
   @TestMetadata("missingOverload")
   public void testMissingOverload() {
-    runTest("compiler/testData/multiplatform/missingOverload/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/missingOverload/");
   }
 
   @TestMetadata("optionalExpectation")
   public void testOptionalExpectation() {
-    runTest("compiler/testData/multiplatform/optionalExpectation/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/optionalExpectation/");
   }
 
   @TestMetadata("simple")
   public void testSimple() {
-    runTest("compiler/testData/multiplatform/simple/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/simple/");
   }
 
   @TestMetadata("simpleNoImplKeywordOnTopLevelFunction")
   public void testSimpleNoImplKeywordOnTopLevelFunction() {
-    runTest("compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/");
   }
 
   @TestMetadata("weakIncompatibilityWithoutActualModifier")
   public void testWeakIncompatibilityWithoutActualModifier() {
-    runTest("compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/");
   }
 
   @TestMetadata("compiler/testData/multiplatform/classScopes")
@@ -148,47 +148,47 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
     @TestMetadata("constructorIncorrectSignature")
     public void testConstructorIncorrectSignature() {
-      runTest("compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/constructorIncorrectSignature/");
     }
 
     @TestMetadata("enumsWithDifferentEntries")
     public void testEnumsWithDifferentEntries() {
-      runTest("compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/");
     }
 
     @TestMetadata("fakeOverrides")
     public void testFakeOverrides() {
-      runTest("compiler/testData/multiplatform/classScopes/fakeOverrides/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/fakeOverrides/");
     }
 
     @TestMetadata("functionAndPropertyWithSameName")
     public void testFunctionAndPropertyWithSameName() {
-      runTest("compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName/");
     }
 
     @TestMetadata("functionIncorrectSignature")
     public void testFunctionIncorrectSignature() {
-      runTest("compiler/testData/multiplatform/classScopes/functionIncorrectSignature/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/functionIncorrectSignature/");
     }
 
     @TestMetadata("functionIncorrectSignatureFromSuperclass")
     public void testFunctionIncorrectSignatureFromSuperclass() {
-      runTest("compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/");
     }
 
     @TestMetadata("missingConstructor")
     public void testMissingConstructor() {
-      runTest("compiler/testData/multiplatform/classScopes/missingConstructor/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/missingConstructor/");
     }
 
     @TestMetadata("missingFunction")
     public void testMissingFunction() {
-      runTest("compiler/testData/multiplatform/classScopes/missingFunction/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/missingFunction/");
     }
 
     @TestMetadata("simple")
     public void testSimple() {
-      runTest("compiler/testData/multiplatform/classScopes/simple/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/classScopes/simple/");
     }
 
     @TestMetadata("compiler/testData/multiplatform/classScopes/constructorIncorrectSignature")
@@ -362,12 +362,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
     @TestMetadata("methodDefaultArgsViaTypealias")
     public void testMethodDefaultArgsViaTypealias() {
-      runTest("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/");
     }
 
     @TestMetadata("useDefaultArgumentsInDependency")
     public void testUseDefaultArgumentsInDependency() {
-      runTest("compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency/");
     }
 
     @TestMetadata("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias")
@@ -446,12 +446,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
     @TestMetadata("actualTypealiasToNothing")
     public void testActualTypealiasToNothing() {
-      runTest("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/");
     }
 
     @TestMetadata("actualTypealiasToNullableType")
     public void testActualTypealiasToNullableType() {
-      runTest("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/");
     }
 
     public void testAllFilesPresentInImplTypeAlias() {
@@ -460,17 +460,17 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
     @TestMetadata("discriminateHeaderClassInFavorOfTypeAlias")
     public void testDiscriminateHeaderClassInFavorOfTypeAlias() {
-      runTest("compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias/");
     }
 
     @TestMetadata("generic")
     public void testGeneric() {
-      runTest("compiler/testData/multiplatform/implTypeAlias/generic/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/implTypeAlias/generic/");
     }
 
     @TestMetadata("nestedClassesViaTypeAlias")
     public void testNestedClassesViaTypeAlias() {
-      runTest("compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/");
     }
 
     @TestMetadata("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing")
@@ -709,17 +709,17 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
     @TestMetadata("incompatibleClassScopesWithImplTypeAlias")
     public void testIncompatibleClassScopesWithImplTypeAlias() {
-      runTest("compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/");
     }
 
     @TestMetadata("kt17001")
     public void testKt17001() {
-      runTest("compiler/testData/multiplatform/regressions/kt17001/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/regressions/kt17001/");
     }
 
     @TestMetadata("kt28385")
     public void testKt28385() {
-      runTest("compiler/testData/multiplatform/regressions/kt28385/");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/multiplatform/regressions/kt28385/");
     }
 
     @TestMetadata("compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias")

@@ -26,36 +26,36 @@ public class ScriptClassIdConsistencyTestGenerated extends AbstractScriptClassId
   @Test
   @TestMetadata("classWithMembers.kts")
   public void testClassWithMembers() {
-    runTest("analysis/low-level-api-fir/testData/classId/classWithMembers.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/classWithMembers.kts");
   }
 
   @Test
   @TestMetadata("classWithMembersWithPackage.kts")
   public void testClassWithMembersWithPackage() {
-    runTest("analysis/low-level-api-fir/testData/classId/classWithMembersWithPackage.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/classWithMembersWithPackage.kts");
   }
 
   @Test
   @TestMetadata("enum.kts")
   public void testEnum() {
-    runTest("analysis/low-level-api-fir/testData/classId/enum.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/enum.kts");
   }
 
   @Test
   @TestMetadata("enumEntry.kts")
   public void testEnumEntry() {
-    runTest("analysis/low-level-api-fir/testData/classId/enumEntry.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/enumEntry.kts");
   }
 
   @Test
   @TestMetadata("namelessClasses.kts")
   public void testNamelessClasses() {
-    runTest("analysis/low-level-api-fir/testData/classId/namelessClasses.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/namelessClasses.kts");
   }
 
   @Test
   @TestMetadata("namelessInsideNamelessClasses.kts")
   public void testNamelessInsideNamelessClasses() {
-    runTest("analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kts");
   }
 }

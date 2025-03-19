@@ -355,7 +355,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     }
 
     companion object {
-        private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers"
+        private const val HELPERS_PATH = "/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/helpers"
         val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
         val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([+\\-!])(\\w+)\\s*")
         val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(

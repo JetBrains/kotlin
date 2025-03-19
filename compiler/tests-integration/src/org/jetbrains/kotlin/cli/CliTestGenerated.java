@@ -33,27 +33,27 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("appendingArgs.args")
     public void testAppendingArgs() {
-      runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.args");
     }
 
     @TestMetadata("overridingArgs.args")
     public void testOverridingArgs() {
-      runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingArgs.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingArgs.args");
     }
 
     @TestMetadata("overridingLv.args")
     public void testOverridingLv() {
-      runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingLv.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingLv.args");
     }
 
     @TestMetadata("overridingXx.args")
     public void testOverridingXx() {
-      runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.args");
     }
 
     @TestMetadata("simple.args")
     public void testSimple() {
-      runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.args");
     }
   }
 
@@ -71,42 +71,42 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("emptyPlugin.args")
     public void testEmptyPlugin() {
-      runTest("compiler/testData/cli/jvm/plugins/emptyPlugin.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/emptyPlugin.args");
     }
 
     @TestMetadata("firAllOpenPlugin_legacy.args")
     public void testFirAllOpenPlugin_legacy() {
-      runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin_legacy.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/firAllOpenPlugin_legacy.args");
     }
 
     @TestMetadata("firAllOpenPlugin_modern.args")
     public void testFirAllOpenPlugin_modern() {
-      runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin_modern.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/firAllOpenPlugin_modern.args");
     }
 
     @TestMetadata("mixingModernAndLegacyArgs.args")
     public void testMixingModernAndLegacyArgs() {
-      runTest("compiler/testData/cli/jvm/plugins/mixingModernAndLegacyArgs.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/mixingModernAndLegacyArgs.args");
     }
 
     @TestMetadata("multipleOptionsForOnePlugin.args")
     public void testMultipleOptionsForOnePlugin() {
-      runTest("compiler/testData/cli/jvm/plugins/multipleOptionsForOnePlugin.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/multipleOptionsForOnePlugin.args");
     }
 
     @TestMetadata("multiplePlugins.args")
     public void testMultiplePlugins() {
-      runTest("compiler/testData/cli/jvm/plugins/multiplePlugins.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/multiplePlugins.args");
     }
 
     @TestMetadata("multiplePluginsInSameArg.args")
     public void testMultiplePluginsInSameArg() {
-      runTest("compiler/testData/cli/jvm/plugins/multiplePluginsInSameArg.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/multiplePluginsInSameArg.args");
     }
 
     @TestMetadata("noPluginInClasspath.args")
     public void testNoPluginInClasspath() {
-      runTest("compiler/testData/cli/jvm/plugins/noPluginInClasspath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/plugins/noPluginInClasspath.args");
     }
   }
 
@@ -124,72 +124,72 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("cycleInDependencies.args")
     public void testCycleInDependencies() {
-      runTest("compiler/testData/cli/jvm/hmpp/cycleInDependencies.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/cycleInDependencies.args");
     }
 
     @TestMetadata("duplicatedFragments.args")
     public void testDuplicatedFragments() {
-      runTest("compiler/testData/cli/jvm/hmpp/duplicatedFragments.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/duplicatedFragments.args");
     }
 
     @TestMetadata("fragmentSourcesIncorrectSyntax.args")
     public void testFragmentSourcesIncorrectSyntax() {
-      runTest("compiler/testData/cli/jvm/hmpp/fragmentSourcesIncorrectSyntax.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/fragmentSourcesIncorrectSyntax.args");
     }
 
     @TestMetadata("fragmentWithoutSources.args")
     public void testFragmentWithoutSources() {
-      runTest("compiler/testData/cli/jvm/hmpp/fragmentWithoutSources.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/fragmentWithoutSources.args");
     }
 
     @TestMetadata("lowLanguageVersion.args")
     public void testLowLanguageVersion() {
-      runTest("compiler/testData/cli/jvm/hmpp/lowLanguageVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/lowLanguageVersion.args");
     }
 
     @TestMetadata("missingFragment.args")
     public void testMissingFragment() {
-      runTest("compiler/testData/cli/jvm/hmpp/missingFragment.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/missingFragment.args");
     }
 
     @TestMetadata("refinesSingleModule.args")
     public void testRefinesSingleModule() {
-      runTest("compiler/testData/cli/jvm/hmpp/refinesSingleModule.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/refinesSingleModule.args");
     }
 
     @TestMetadata("refinesWithoutFragments.args")
     public void testRefinesWithoutFragments() {
-      runTest("compiler/testData/cli/jvm/hmpp/refinesWithoutFragments.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/refinesWithoutFragments.args");
     }
 
     @TestMetadata("sameSourceInDifferentFragments.args")
     public void testSameSourceInDifferentFragments() {
-      runTest("compiler/testData/cli/jvm/hmpp/sameSourceInDifferentFragments.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/sameSourceInDifferentFragments.args");
     }
 
     @TestMetadata("scriptInCommonFragment.args")
     public void testScriptInCommonFragment() {
-      runTest("compiler/testData/cli/jvm/hmpp/scriptInCommonFragment.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/scriptInCommonFragment.args");
     }
 
     @TestMetadata("sourceNotInAnyFragment.args")
     public void testSourceNotInAnyFragment() {
-      runTest("compiler/testData/cli/jvm/hmpp/sourceNotInAnyFragment.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/sourceNotInAnyFragment.args");
     }
 
     @TestMetadata("successfulCompilation.args")
     public void testSuccessfulCompilation() {
-      runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/successfulCompilation.args");
     }
 
     @TestMetadata("successfulCompilation2.args")
     public void testSuccessfulCompilation2() {
-      runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/successfulCompilation2.args");
     }
 
     @TestMetadata("successfulCompilationWithScript.args")
     public void testSuccessfulCompilationWithScript() {
-      runTest("compiler/testData/cli/jvm/hmpp/successfulCompilationWithScript.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/hmpp/successfulCompilationWithScript.args");
     }
   }
 
@@ -207,52 +207,52 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("apiVersion.args")
     public void testApiVersion() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersion.args");
     }
 
     @TestMetadata("apiVersionAndSinceNewerKotlin.args")
     public void testApiVersionAndSinceNewerKotlin() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionAndSinceNewerKotlin.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionAndSinceNewerKotlin.args");
     }
 
     @TestMetadata("apiVersionGreaterThanLanguage.args")
     public void testApiVersionGreaterThanLanguage() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionGreaterThanLanguage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionGreaterThanLanguage.args");
     }
 
     @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
     public void testApiVersionGreaterThanLanguageSuppress() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionGreaterThanLanguageSuppress.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionGreaterThanLanguageSuppress.args");
     }
 
     @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
     public void testApiVersionGreaterThanLanguageSuppressUseless() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionGreaterThanLanguageSuppressUseless.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionGreaterThanLanguageSuppressUseless.args");
     }
 
     @TestMetadata("apiVersionInvalid.args")
     public void testApiVersionInvalid() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionInvalid.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionInvalid.args");
     }
 
     @TestMetadata("apiVersionLessThanLanguage.args")
     public void testApiVersionLessThanLanguage() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionLessThanLanguage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionLessThanLanguage.args");
     }
 
     @TestMetadata("apiVersionLessThanLanguageUsingArgfile.args")
     public void testApiVersionLessThanLanguageUsingArgfile() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionLessThanLanguageUsingArgfile.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionLessThanLanguageUsingArgfile.args");
     }
 
     @TestMetadata("apiVersionUnsupported.args")
     public void testApiVersionUnsupported() {
-      runTest("compiler/testData/cli/jvm/apiVersion/apiVersionUnsupported.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/apiVersionUnsupported.args");
     }
 
     @TestMetadata("deprecatedApiVersion.args")
     public void testDeprecatedApiVersion() {
-      runTest("compiler/testData/cli/jvm/apiVersion/deprecatedApiVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiVersion/deprecatedApiVersion.args");
     }
   }
 
@@ -270,27 +270,27 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("argfileWithEmptyArgument.args")
     public void testArgfileWithEmptyArgument() {
-      runTest("compiler/testData/cli/jvm/argFileCommonChecks/argfileWithEmptyArgument.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/argFileCommonChecks/argfileWithEmptyArgument.args");
     }
 
     @TestMetadata("argfileWithEscaping.args")
     public void testArgfileWithEscaping() {
-      runTest("compiler/testData/cli/jvm/argFileCommonChecks/argfileWithEscaping.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/argFileCommonChecks/argfileWithEscaping.args");
     }
 
     @TestMetadata("argfileWithUnfinishedQuoteAndEscape.args")
     public void testArgfileWithUnfinishedQuoteAndEscape() {
-      runTest("compiler/testData/cli/jvm/argFileCommonChecks/argfileWithUnfinishedQuoteAndEscape.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/argFileCommonChecks/argfileWithUnfinishedQuoteAndEscape.args");
     }
 
     @TestMetadata("mixingArgfilesAndUsualArgs.args")
     public void testMixingArgfilesAndUsualArgs() {
-      runTest("compiler/testData/cli/jvm/argFileCommonChecks/mixingArgfilesAndUsualArgs.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/argFileCommonChecks/mixingArgfilesAndUsualArgs.args");
     }
 
     @TestMetadata("nonexistingArgfile.args")
     public void testNonexistingArgfile() {
-      runTest("compiler/testData/cli/jvm/argFileCommonChecks/nonexistingArgfile.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/argFileCommonChecks/nonexistingArgfile.args");
     }
   }
 
@@ -308,212 +308,212 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("classAndFileClassClash.args")
     public void testClassAndFileClassClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/classAndFileClassClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/classAndFileClassClash.args");
     }
 
     @TestMetadata("classAndOtherFileClassClash.args")
     public void testClassAndOtherFileClassClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/classAndOtherFileClassClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/classAndOtherFileClassClash.args");
     }
 
     @TestMetadata("classAndPartClash.args")
     public void testClassAndPartClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/classAndPartClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/classAndPartClash.args");
     }
 
     @TestMetadata("classAndTraitClash.args")
     public void testClassAndTraitClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/classAndTraitClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/classAndTraitClash.args");
     }
 
     @TestMetadata("classpath.args")
     public void testClasspath() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/classpath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/classpath.args");
     }
 
     @TestMetadata("conflictingJvmDeclarations.args")
     public void testConflictingJvmDeclarations() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarations.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarations.args");
     }
 
     @TestMetadata("conflictingJvmDeclarationsK2.args")
     public void testConflictingJvmDeclarationsK2() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarationsK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarationsK2.args");
     }
 
     @TestMetadata("conflictingOverloads.args")
     public void testConflictingOverloads() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/conflictingOverloads.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/conflictingOverloads.args");
     }
 
     @TestMetadata("conflictingProjection.args")
     public void testConflictingProjection() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.args");
     }
 
     @TestMetadata("diagnosticsOrder.args")
     public void testDiagnosticsOrder() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder.args");
     }
 
     @TestMetadata("fileClassAndMultifileClassClash.args")
     public void testFileClassAndMultifileClassClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/fileClassAndMultifileClassClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/fileClassAndMultifileClassClash.args");
     }
 
     @TestMetadata("fileClassAndTImplClash.args")
     public void testFileClassAndTImplClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/fileClassAndTImplClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/fileClassAndTImplClash.args");
     }
 
     @TestMetadata("fileClassClashMultipleFiles.args")
     public void testFileClassClashMultipleFiles() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/fileClassClashMultipleFiles.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/fileClassClashMultipleFiles.args");
     }
 
     @TestMetadata("firDeprecationJava.args")
     public void testFirDeprecationJava() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/firDeprecationJava.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/firDeprecationJava.args");
     }
 
     @TestMetadata("firDfa.args")
     public void testFirDfa() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/firDfa.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/firDfa.args");
     }
 
     @TestMetadata("firError.args")
     public void testFirError() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/firError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/firError.args");
     }
 
     @TestMetadata("forbidKotlinPackageK1.args")
     public void testForbidKotlinPackageK1() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/forbidKotlinPackageK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/forbidKotlinPackageK1.args");
     }
 
     @TestMetadata("forbidKotlinPackageK2.args")
     public void testForbidKotlinPackageK2() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/forbidKotlinPackageK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/forbidKotlinPackageK2.args");
     }
 
     @TestMetadata("fullyQualifiedDeepJavaIndividual.args")
     public void testFullyQualifiedDeepJavaIndividual() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/fullyQualifiedDeepJavaIndividual.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/fullyQualifiedDeepJavaIndividual.args");
     }
 
     @TestMetadata("fullyQualifiedDeepJavaWholeRoot.args")
     public void testFullyQualifiedDeepJavaWholeRoot() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/fullyQualifiedDeepJavaWholeRoot.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/fullyQualifiedDeepJavaWholeRoot.args");
     }
 
     @TestMetadata("inapplicableLateinitModifier.args")
     public void testInapplicableLateinitModifier() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/inapplicableLateinitModifier.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/inapplicableLateinitModifier.args");
     }
 
     @TestMetadata("inlineCycle.args")
     public void testInlineCycle() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/inlineCycle.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/inlineCycle.args");
     }
 
     @TestMetadata("instanceAccessBeforeSuperCall.args")
     public void testInstanceAccessBeforeSuperCall() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.args");
     }
 
     @TestMetadata("javaSealedClass.args")
     public void testJavaSealedClass() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/javaSealedClass.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/javaSealedClass.args");
     }
 
     @TestMetadata("javaSrcWrongPackage.args")
     public void testJavaSrcWrongPackage() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.args");
     }
 
     @TestMetadata("javacKotlinJavaInterdependency.args")
     public void testJavacKotlinJavaInterdependency() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/javacKotlinJavaInterdependency.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/javacKotlinJavaInterdependency.args");
     }
 
     @TestMetadata("kotlinPackage.args")
     public void testKotlinPackage() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/kotlinPackage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/kotlinPackage.args");
     }
 
     @TestMetadata("kt19628_13.args")
     public void testKt19628_13() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/kt19628_13.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/kt19628_13.args");
     }
 
     @TestMetadata("kt22304.args")
     public void testKt22304() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/kt22304.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/kt22304.args");
     }
 
     @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
     public void testMultipleTextRangesInDiagnosticsOrder() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.args");
     }
 
     @TestMetadata("newLineInPackage.args")
     public void testNewLineInPackage() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/newLineInPackage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/newLineInPackage.args");
     }
 
     @TestMetadata("recordAsSingleFileRoot.args")
     public void testRecordAsSingleFileRoot() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/recordAsSingleFileRoot.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/recordAsSingleFileRoot.args");
     }
 
     @TestMetadata("requireKotlinCompilerVersion.args")
     public void testRequireKotlinCompilerVersion() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/requireKotlinCompilerVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/requireKotlinCompilerVersion.args");
     }
 
     @TestMetadata("requireKotlinCompilerVersionK2.args")
     public void testRequireKotlinCompilerVersionK2() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/requireKotlinCompilerVersionK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/requireKotlinCompilerVersionK2.args");
     }
 
     @TestMetadata("resultInReturnTypeSupportedByDefault15.args")
     public void testResultInReturnTypeSupportedByDefault15() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/resultInReturnTypeSupportedByDefault15.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/resultInReturnTypeSupportedByDefault15.args");
     }
 
     @TestMetadata("returnAsWhenKey.args")
     public void testReturnAsWhenKey() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/returnAsWhenKey.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/returnAsWhenKey.args");
     }
 
     @TestMetadata("sanitized-name.clash.args")
     public void testSanitized_name_clash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/sanitized-name.clash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/sanitized-name.clash.args");
     }
 
     @TestMetadata("signatureClash.args")
     public void testSignatureClash() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/signatureClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/signatureClash.args");
     }
 
     @TestMetadata("singleJavaFileRoots.args")
     public void testSingleJavaFileRoots() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/singleJavaFileRoots.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/singleJavaFileRoots.args");
     }
 
     @TestMetadata("suspensionPointInMonitor.args")
     public void testSuspensionPointInMonitor() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/suspensionPointInMonitor.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/suspensionPointInMonitor.args");
     }
 
     @TestMetadata("warningsInDummy.args")
     public void testWarningsInDummy() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/warningsInDummy.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/warningsInDummy.args");
     }
 
     @TestMetadata("wrongAnnotationArgumentInCtor.args")
     public void testWrongAnnotationArgumentInCtor() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.args");
     }
   }
 
@@ -531,62 +531,62 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("extraArgumentEmpty.args")
     public void testExtraArgumentEmpty() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentEmpty.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentEmpty.args");
     }
 
     @TestMetadata("extraArgumentEscaping.args")
     public void testExtraArgumentEscaping() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentEscaping.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentEscaping.args");
     }
 
     @TestMetadata("extraArgumentInvalidValue.args")
     public void testExtraArgumentInvalidValue() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentInvalidValue.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentInvalidValue.args");
     }
 
     @TestMetadata("extraArgumentMultiple.args")
     public void testExtraArgumentMultiple() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentMultiple.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentMultiple.args");
     }
 
     @TestMetadata("extraArgumentNoValue.args")
     public void testExtraArgumentNoValue() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentNoValue.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentNoValue.args");
     }
 
     @TestMetadata("extraArgumentPassedInObsoleteForm.args")
     public void testExtraArgumentPassedInObsoleteForm() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentPassedInObsoleteForm.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentPassedInObsoleteForm.args");
     }
 
     @TestMetadata("extraBooleanArgOverrideOn.args")
     public void testExtraBooleanArgOverrideOn() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgOverrideOn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgOverrideOn.args");
     }
 
     @TestMetadata("extraBooleanArgumentEqualsFalse.args")
     public void testExtraBooleanArgumentEqualsFalse() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsFalse.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsFalse.args");
     }
 
     @TestMetadata("extraBooleanArgumentEqualsNonsense.args")
     public void testExtraBooleanArgumentEqualsNonsense() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsNonsense.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsNonsense.args");
     }
 
     @TestMetadata("extraBooleanArgumentEqualsTrue.args")
     public void testExtraBooleanArgumentEqualsTrue() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsTrue.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsTrue.args");
     }
 
     @TestMetadata("extraBooleanArgumentOverrideOff.args")
     public void testExtraBooleanArgumentOverrideOff() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentOverrideOff.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentOverrideOff.args");
     }
 
     @TestMetadata("unknownExtraFlags.args")
     public void testUnknownExtraFlags() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/unknownExtraFlags.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraArgCommonChecks/unknownExtraFlags.args");
     }
   }
 
@@ -604,52 +604,52 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("internalArgDisableLanguageFeature.args")
     public void testInternalArgDisableLanguageFeature() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgDisableLanguageFeature.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgDisableLanguageFeature.args");
     }
 
     @TestMetadata("internalArgEmptyFeatureName.args")
     public void testInternalArgEmptyFeatureName() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgEmptyFeatureName.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgEmptyFeatureName.args");
     }
 
     @TestMetadata("internalArgEnableLanguageFeature.args")
     public void testInternalArgEnableLanguageFeature() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgEnableLanguageFeature.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgEnableLanguageFeature.args");
     }
 
     @TestMetadata("internalArgMissingModificator.args")
     public void testInternalArgMissingModificator() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgMissingModificator.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgMissingModificator.args");
     }
 
     @TestMetadata("internalArgNoWarningForEnablingBugfix.args")
     public void testInternalArgNoWarningForEnablingBugfix() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgNoWarningForEnablingBugfix.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgNoWarningForEnablingBugfix.args");
     }
 
     @TestMetadata("internalArgOverrideLanguageFeature.args")
     public void testInternalArgOverrideLanguageFeature() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgOverrideLanguageFeature.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgOverrideLanguageFeature.args");
     }
 
     @TestMetadata("internalArgOverrideOffLanguageFeature.args")
     public void testInternalArgOverrideOffLanguageFeature() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgOverrideOffLanguageFeature.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgOverrideOffLanguageFeature.args");
     }
 
     @TestMetadata("internalArgPassValue.args")
     public void testInternalArgPassValue() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgPassValue.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgPassValue.args");
     }
 
     @TestMetadata("internalArgUnrecognizedFeature.args")
     public void testInternalArgUnrecognizedFeature() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgUnrecognizedFeature.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgUnrecognizedFeature.args");
     }
 
     @TestMetadata("internalArgWrongPrefix.args")
     public void testInternalArgWrongPrefix() {
-      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgWrongPrefix.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/internalArgCommonChecks/internalArgWrongPrefix.args");
     }
   }
 
@@ -667,32 +667,32 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("emptyJdkHome.args")
     public void testEmptyJdkHome() {
-      runTest("compiler/testData/cli/jvm/jdkHome/emptyJdkHome.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jdkHome/emptyJdkHome.args");
     }
 
     @TestMetadata("invalidMultipleJdkHome.args")
     public void testInvalidMultipleJdkHome() {
-      runTest("compiler/testData/cli/jvm/jdkHome/invalidMultipleJdkHome.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jdkHome/invalidMultipleJdkHome.args");
     }
 
     @TestMetadata("jdkHome.args")
     public void testJdkHome() {
-      runTest("compiler/testData/cli/jvm/jdkHome/jdkHome.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jdkHome/jdkHome.args");
     }
 
     @TestMetadata("jdkPathDoesNotExist.args")
     public void testJdkPathDoesNotExist() {
-      runTest("compiler/testData/cli/jvm/jdkHome/jdkPathDoesNotExist.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jdkHome/jdkPathDoesNotExist.args");
     }
 
     @TestMetadata("warningJdkWithNoJdk.args")
     public void testWarningJdkWithNoJdk() {
-      runTest("compiler/testData/cli/jvm/jdkHome/warningJdkWithNoJdk.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jdkHome/warningJdkWithNoJdk.args");
     }
 
     @TestMetadata("wrongJdkPath.args")
     public void testWrongJdkPath() {
-      runTest("compiler/testData/cli/jvm/jdkHome/wrongJdkPath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jdkHome/wrongJdkPath.args");
     }
   }
 
@@ -710,42 +710,42 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("deprecatedLanguageUnsupportedApi.args")
     public void testDeprecatedLanguageUnsupportedApi() {
-      runTest("compiler/testData/cli/jvm/languageVersion/deprecatedLanguageUnsupportedApi.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/deprecatedLanguageUnsupportedApi.args");
     }
 
     @TestMetadata("deprecatedLanguageVersion.args")
     public void testDeprecatedLanguageVersion() {
-      runTest("compiler/testData/cli/jvm/languageVersion/deprecatedLanguageVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/deprecatedLanguageVersion.args");
     }
 
     @TestMetadata("languageVersion.args")
     public void testLanguageVersion() {
-      runTest("compiler/testData/cli/jvm/languageVersion/languageVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/languageVersion.args");
     }
 
     @TestMetadata("languageVersionEmpty.args")
     public void testLanguageVersionEmpty() {
-      runTest("compiler/testData/cli/jvm/languageVersion/languageVersionEmpty.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/languageVersionEmpty.args");
     }
 
     @TestMetadata("languageVersionExperimental.args")
     public void testLanguageVersionExperimental() {
-      runTest("compiler/testData/cli/jvm/languageVersion/languageVersionExperimental.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/languageVersionExperimental.args");
     }
 
     @TestMetadata("languageVersionInvalid.args")
     public void testLanguageVersionInvalid() {
-      runTest("compiler/testData/cli/jvm/languageVersion/languageVersionInvalid.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/languageVersionInvalid.args");
     }
 
     @TestMetadata("languageVersionMultiple.args")
     public void testLanguageVersionMultiple() {
-      runTest("compiler/testData/cli/jvm/languageVersion/languageVersionMultiple.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/languageVersionMultiple.args");
     }
 
     @TestMetadata("languageVersionUnsupported.args")
     public void testLanguageVersionUnsupported() {
-      runTest("compiler/testData/cli/jvm/languageVersion/languageVersionUnsupported.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/languageVersion/languageVersionUnsupported.args");
     }
   }
 
@@ -763,97 +763,97 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("experimentalDeprecated.args")
     public void testExperimentalDeprecated() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecated.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalDeprecated.args");
     }
 
     @TestMetadata("experimentalDeprecatedK1.args")
     public void testExperimentalDeprecatedK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecatedK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalDeprecatedK1.args");
     }
 
     @TestMetadata("experimentalDeprecatedWarning.args")
     public void testExperimentalDeprecatedWarning() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecatedWarning.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalDeprecatedWarning.args");
     }
 
     @TestMetadata("experimentalDeprecatedWarningK1.args")
     public void testExperimentalDeprecatedWarningK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecatedWarningK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalDeprecatedWarningK1.args");
     }
 
     @TestMetadata("experimentalIsNotAnnotation.args")
     public void testExperimentalIsNotAnnotation() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotAnnotation.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalIsNotAnnotation.args");
     }
 
     @TestMetadata("experimentalIsNotAnnotationK1.args")
     public void testExperimentalIsNotAnnotationK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotAnnotationK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalIsNotAnnotationK1.args");
     }
 
     @TestMetadata("experimentalIsNotMarker.args")
     public void testExperimentalIsNotMarker() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotMarker.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalIsNotMarker.args");
     }
 
     @TestMetadata("experimentalIsNotMarkerK1.args")
     public void testExperimentalIsNotMarkerK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotMarkerK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalIsNotMarkerK1.args");
     }
 
     @TestMetadata("experimentalNested.args")
     public void testExperimentalNested() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalNested.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalNested.args");
     }
 
     @TestMetadata("experimentalNestedK1.args")
     public void testExperimentalNestedK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalNestedK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalNestedK1.args");
     }
 
     @TestMetadata("experimentalUnresolved.args")
     public void testExperimentalUnresolved() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalUnresolved.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalUnresolved.args");
     }
 
     @TestMetadata("experimentalUnresolvedK1.args")
     public void testExperimentalUnresolvedK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalUnresolvedK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/experimentalUnresolvedK1.args");
     }
 
     @TestMetadata("optInEmptyMessage.args")
     public void testOptInEmptyMessage() {
-      runTest("compiler/testData/cli/jvm/optIn/optInEmptyMessage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/optInEmptyMessage.args");
     }
 
     @TestMetadata("optInEmptyMessageFir.args")
     public void testOptInEmptyMessageFir() {
-      runTest("compiler/testData/cli/jvm/optIn/optInEmptyMessageFir.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/optInEmptyMessageFir.args");
     }
 
     @TestMetadata("optInOverrideMessage.args")
     public void testOptInOverrideMessage() {
-      runTest("compiler/testData/cli/jvm/optIn/optInOverrideMessage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/optInOverrideMessage.args");
     }
 
     @TestMetadata("optInOverrideMessageFir.args")
     public void testOptInOverrideMessageFir() {
-      runTest("compiler/testData/cli/jvm/optIn/optInOverrideMessageFir.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/optInOverrideMessageFir.args");
     }
 
     @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImport.args")
     public void testUseDeclarationThatWasExperimentalWithoutExplicitImport() {
-      runTest("compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.args");
     }
 
     @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args")
     public void testUseDeclarationThatWasExperimentalWithoutExplicitImportCommandLine() {
-      runTest("compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args");
     }
 
     @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker.args")
     public void testUseDeclarationThatWasExperimentalWithoutMarker() {
-      runTest("compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutMarker.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutMarker.args");
     }
   }
 
@@ -871,97 +871,97 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("dirWithKotlinAndJavaFiles.args")
     public void testDirWithKotlinAndJavaFiles() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinAndJavaFiles.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinAndJavaFiles.args");
     }
 
     @TestMetadata("dirWithKotlinAndNonKotlinFiles.args")
     public void testDirWithKotlinAndNonKotlinFiles() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinAndNonKotlinFiles.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinAndNonKotlinFiles.args");
     }
 
     @TestMetadata("dirWithKotlinFile.args")
     public void testDirWithKotlinFile() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinFile.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinFile.args");
     }
 
     @TestMetadata("dirWithKotlinFileRecursive.args")
     public void testDirWithKotlinFileRecursive() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinFileRecursive.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinFileRecursive.args");
     }
 
     @TestMetadata("dirWithKotlinScript.args")
     public void testDirWithKotlinScript() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinScript.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinScript.args");
     }
 
     @TestMetadata("dirWithKotlinScriptPsi.args")
     public void testDirWithKotlinScriptPsi() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinScriptPsi.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithKotlinScriptPsi.args");
     }
 
     @TestMetadata("dirWithOnlyNonKotlinFile.args")
     public void testDirWithOnlyNonKotlinFile() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/dirWithOnlyNonKotlinFile.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/dirWithOnlyNonKotlinFile.args");
     }
 
     @TestMetadata("duplicateSources.args")
     public void testDuplicateSources() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/duplicateSources.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/duplicateSources.args");
     }
 
     @TestMetadata("duplicateSourcesInModule.args")
     public void testDuplicateSourcesInModule() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/duplicateSourcesInModule.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/duplicateSourcesInModule.args");
     }
 
     @TestMetadata("duplicateSourcesNormalized.args")
     public void testDuplicateSourcesNormalized() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/duplicateSourcesNormalized.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/duplicateSourcesNormalized.args");
     }
 
     @TestMetadata("emptySources.args")
     public void testEmptySources() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/emptySources.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/emptySources.args");
     }
 
     @TestMetadata("emptySourcesWithModuleInfo.args")
     public void testEmptySourcesWithModuleInfo() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/emptySourcesWithModuleInfo.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/emptySourcesWithModuleInfo.args");
     }
 
     @TestMetadata("nonExistingClassPathAndAnnotationsPath.args")
     public void testNonExistingClassPathAndAnnotationsPath() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingClassPathAndAnnotationsPath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingClassPathAndAnnotationsPath.args");
     }
 
     @TestMetadata("nonExistingPluginClassPath.args")
     public void testNonExistingPluginClassPath() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingPluginClassPath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingPluginClassPath.args");
     }
 
     @TestMetadata("nonExistingSourcePath.args")
     public void testNonExistingSourcePath() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingSourcePath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingSourcePath.args");
     }
 
     @TestMetadata("nonExistingSourcePathK2.args")
     public void testNonExistingSourcePathK2() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingSourcePathK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingSourcePathK2.args");
     }
 
     @TestMetadata("nonexistentPathInModule.args")
     public void testNonexistentPathInModule() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonexistentPathInModule.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/nonexistentPathInModule.args");
     }
 
     @TestMetadata("nonexistentScript.args")
     public void testNonexistentScript() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonexistentScript.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/nonexistentScript.args");
     }
 
     @TestMetadata("withNonKotlinFile.args")
     public void testWithNonKotlinFile() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/withNonKotlinFile.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/sourcesCommonChecks/withNonKotlinFile.args");
     }
   }
 
@@ -979,7 +979,7 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("explicitApiAndExplicitReturnTypesAtTheSameTime.args")
     public void testExplicitApiAndExplicitReturnTypesAtTheSameTime() {
-      runTest("compiler/testData/cli/jvm/XexplicitApi/explicitApiAndExplicitReturnTypesAtTheSameTime.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XexplicitApi/explicitApiAndExplicitReturnTypesAtTheSameTime.args");
     }
   }
 
@@ -997,47 +997,47 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("jdkRelease.args")
     public void testJdkRelease() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease.args");
     }
 
     @TestMetadata("jdkRelease20WithCorruptedClass.args")
     public void testJdkRelease20WithCorruptedClass() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease20WithCorruptedClass.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease20WithCorruptedClass.args");
     }
 
     @TestMetadata("jdkRelease6WithJvmTarget8Jdk11.args")
     public void testJdkRelease6WithJvmTarget8Jdk11() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithJvmTarget8Jdk11.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithJvmTarget8Jdk11.args");
     }
 
     @TestMetadata("jdkRelease6WithJvmTarget8Jdk8.args")
     public void testJdkRelease6WithJvmTarget8Jdk8() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithJvmTarget8Jdk8.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithJvmTarget8Jdk8.args");
     }
 
     @TestMetadata("jdkRelease6WithJvmTarget9.args")
     public void testJdkRelease6WithJvmTarget9() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithJvmTarget9.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithJvmTarget9.args");
     }
 
     @TestMetadata("jdkRelease6WithoutExplicitJvmTarget.args")
     public void testJdkRelease6WithoutExplicitJvmTarget() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithoutExplicitJvmTarget.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease6WithoutExplicitJvmTarget.args");
     }
 
     @TestMetadata("jdkRelease7WithJvmTarget8Jdk11.args")
     public void testJdkRelease7WithJvmTarget8Jdk11() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease7WithJvmTarget8Jdk11.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease7WithJvmTarget8Jdk11.args");
     }
 
     @TestMetadata("jdkRelease7WithJvmTarget8Jdk8.args")
     public void testJdkRelease7WithJvmTarget8Jdk8() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease7WithJvmTarget8Jdk8.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease7WithJvmTarget8Jdk8.args");
     }
 
     @TestMetadata("jdkRelease8.args")
     public void testJdkRelease8() {
-      runTest("compiler/testData/cli/jvm/XjdkRelease/jdkRelease8.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjdkRelease/jdkRelease8.args");
     }
   }
 
@@ -1055,27 +1055,27 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("jspecifyByLv16.args")
     public void testJspecifyByLv16() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyByLv16.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyByLv16.args");
     }
 
     @TestMetadata("jspecifyDefault.args")
     public void testJspecifyDefault() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyDefault.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyDefault.args");
     }
 
     @TestMetadata("jspecifyIgnore.args")
     public void testJspecifyIgnore() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyIgnore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyIgnore.args");
     }
 
     @TestMetadata("jspecifyStrict.args")
     public void testJspecifyStrict() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyStrict.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyStrict.args");
     }
 
     @TestMetadata("jspecifyWarn.args")
     public void testJspecifyWarn() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyWarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyWarn.args");
     }
   }
 
@@ -1093,77 +1093,77 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("jsr305AllIgnore.args")
     public void testJsr305AllIgnore() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305AllIgnore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305AllIgnore.args");
     }
 
     @TestMetadata("jsr305DefaultMigration.args")
     public void testJsr305DefaultMigration() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305DefaultMigration.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305DefaultMigration.args");
     }
 
     @TestMetadata("jsr305DeprecatedEnable.args")
     public void testJsr305DeprecatedEnable() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305DeprecatedEnable.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305DeprecatedEnable.args");
     }
 
     @TestMetadata("jsr305DeprecatedIgnore.args")
     public void testJsr305DeprecatedIgnore() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305DeprecatedIgnore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305DeprecatedIgnore.args");
     }
 
     @TestMetadata("jsr305DeprecatedWarn.args")
     public void testJsr305DeprecatedWarn() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305DeprecatedWarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305DeprecatedWarn.args");
     }
 
     @TestMetadata("jsr305FqNameIgnore.args")
     public void testJsr305FqNameIgnore() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305FqNameIgnore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305FqNameIgnore.args");
     }
 
     @TestMetadata("jsr305FqNameStrict.args")
     public void testJsr305FqNameStrict() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305FqNameStrict.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305FqNameStrict.args");
     }
 
     @TestMetadata("jsr305Ignore.args")
     public void testJsr305Ignore() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305Ignore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305Ignore.args");
     }
 
     @TestMetadata("jsr305MigrationDefault.args")
     public void testJsr305MigrationDefault() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305MigrationDefault.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305MigrationDefault.args");
     }
 
     @TestMetadata("jsr305MigrationFqNameIgnore.args")
     public void testJsr305MigrationFqNameIgnore() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305MigrationFqNameIgnore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305MigrationFqNameIgnore.args");
     }
 
     @TestMetadata("jsr305MigrationIgnore.args")
     public void testJsr305MigrationIgnore() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305MigrationIgnore.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305MigrationIgnore.args");
     }
 
     @TestMetadata("jsr305MigrationWarn.args")
     public void testJsr305MigrationWarn() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305MigrationWarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305MigrationWarn.args");
     }
 
     @TestMetadata("jsr305NoFlag.args")
     public void testJsr305NoFlag() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305NoFlag.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305NoFlag.args");
     }
 
     @TestMetadata("jsr305Strict.args")
     public void testJsr305Strict() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305Strict.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305Strict.args");
     }
 
     @TestMetadata("jsr305Warn.args")
     public void testJsr305Warn() {
-      runTest("compiler/testData/cli/jvm/Xjsr305/jsr305Warn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/Xjsr305/jsr305Warn.args");
     }
   }
 
@@ -1181,22 +1181,22 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args")
     public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference() {
-      runTest("compiler/testData/cli/jvm/XnewInference/functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XnewInference/functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args");
     }
 
     @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args")
     public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference() {
-      runTest("compiler/testData/cli/jvm/XnewInference/functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XnewInference/functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args");
     }
 
     @TestMetadata("standaloneSamConversionsAreEnabledWithNewInference.args")
     public void testStandaloneSamConversionsAreEnabledWithNewInference() {
-      runTest("compiler/testData/cli/jvm/XnewInference/standaloneSamConversionsAreEnabledWithNewInference.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XnewInference/standaloneSamConversionsAreEnabledWithNewInference.args");
     }
 
     @TestMetadata("standaloneSamConversionsAreEnabledWithNewInferenceInternalFlag.args")
     public void testStandaloneSamConversionsAreEnabledWithNewInferenceInternalFlag() {
-      runTest("compiler/testData/cli/jvm/XnewInference/standaloneSamConversionsAreEnabledWithNewInferenceInternalFlag.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XnewInference/standaloneSamConversionsAreEnabledWithNewInferenceInternalFlag.args");
     }
   }
 
@@ -1214,42 +1214,42 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("multipleWarningSuppression.args")
     public void testMultipleWarningSuppression() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/multipleWarningSuppression.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/multipleWarningSuppression.args");
     }
 
     @TestMetadata("suppressAllWarningsJvm.args")
     public void testSuppressAllWarningsJvm() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/suppressAllWarningsJvm.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/suppressAllWarningsJvm.args");
     }
 
     @TestMetadata("warningSuppression.args")
     public void testWarningSuppression() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppression.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/warningSuppression.args");
     }
 
     @TestMetadata("warningSuppressionInvalid.args")
     public void testWarningSuppressionInvalid() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionInvalid.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionInvalid.args");
     }
 
     @TestMetadata("warningSuppressionWithError.args")
     public void testWarningSuppressionWithError() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionWithError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionWithError.args");
     }
 
     @TestMetadata("warningSuppressionWithNowarn.args")
     public void testWarningSuppressionWithNowarn() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionWithNowarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionWithNowarn.args");
     }
 
     @TestMetadata("warningSuppressionWithReportAllWarnings.args")
     public void testWarningSuppressionWithReportAllWarnings() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionWithReportAllWarnings.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/warningSuppressionWithReportAllWarnings.args");
     }
 
     @TestMetadata("warningsSuppressionDisablesErrors_Jvm.args")
     public void testWarningsSuppressionDisablesErrors_Jvm() {
-      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningsSuppressionDisablesErrors_Jvm.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XsupressWarnings/warningsSuppressionDisablesErrors_Jvm.args");
     }
   }
 
@@ -1267,27 +1267,27 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("firMultiplatformCompilationWithError.args")
     public void testFirMultiplatformCompilationWithError() {
-      runTest("compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithError.args");
     }
 
     @TestMetadata("firMultiplatformCompilationWithPsiWithoutErrors.args")
     public void testFirMultiplatformCompilationWithPsiWithoutErrors() {
-      runTest("compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithPsiWithoutErrors.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithPsiWithoutErrors.args");
     }
 
     @TestMetadata("firMultiplatformCompilationWithoutErrors.args")
     public void testFirMultiplatformCompilationWithoutErrors() {
-      runTest("compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithoutErrors.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithoutErrors.args");
     }
 
     @TestMetadata("multiplatformCompilationWithCommonScript.args")
     public void testMultiplatformCompilationWithCommonScript() {
-      runTest("compiler/testData/cli/jvm/XXmultiPlatformProject/multiplatformCompilationWithCommonScript.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XXmultiPlatformProject/multiplatformCompilationWithCommonScript.args");
     }
 
     @TestMetadata("multiplatformCompilationWithScript.args")
     public void testMultiplatformCompilationWithScript() {
-      runTest("compiler/testData/cli/jvm/XXmultiPlatformProject/multiplatformCompilationWithScript.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/XXmultiPlatformProject/multiplatformCompilationWithScript.args");
     }
   }
 
@@ -1301,7 +1301,7 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("abiStabilityIncorrectValue.args")
     public void testAbiStabilityIncorrectValue() {
-      runTest("compiler/testData/cli/jvm/abiStabilityIncorrectValue.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/abiStabilityIncorrectValue.args");
     }
 
     public void testAllFilesPresentInJvm() {
@@ -1310,502 +1310,502 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("annotationDefaultTargetFirstOnly.args")
     public void testAnnotationDefaultTargetFirstOnly() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnly.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetFirstOnly.args");
     }
 
     @TestMetadata("annotationDefaultTargetFirstOnlyWarn.args")
     public void testAnnotationDefaultTargetFirstOnlyWarn() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnlyWarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetFirstOnlyWarn.args");
     }
 
     @TestMetadata("annotationDefaultTargetParamProperty.args")
     public void testAnnotationDefaultTargetParamProperty() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetParamProperty.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetParamProperty.args");
     }
 
     @TestMetadata("annotationDefaultTargetWithOptInFirstOnly.args")
     public void testAnnotationDefaultTargetWithOptInFirstOnly() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithOptInFirstOnly.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetWithOptInFirstOnly.args");
     }
 
     @TestMetadata("annotationDefaultTargetWithOptInParamProperty.args")
     public void testAnnotationDefaultTargetWithOptInParamProperty() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithOptInParamProperty.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetWithOptInParamProperty.args");
     }
 
     @TestMetadata("annotationDefaultTargetWithSuppressedOptInFirstOnly.args")
     public void testAnnotationDefaultTargetWithSuppressedOptInFirstOnly() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInFirstOnly.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInFirstOnly.args");
     }
 
     @TestMetadata("annotationDefaultTargetWithSuppressedOptInParamProperty.args")
     public void testAnnotationDefaultTargetWithSuppressedOptInParamProperty() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInParamProperty.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInParamProperty.args");
     }
 
     @TestMetadata("apiAndLanguageVersionsUnsupported.args")
     public void testApiAndLanguageVersionsUnsupported() {
-      runTest("compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
     }
 
     @TestMetadata("argumentPassedMultipleTimes.args")
     public void testArgumentPassedMultipleTimes() {
-      runTest("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
     }
 
     @TestMetadata("builderInferenceByDefault.args")
     public void testBuilderInferenceByDefault() {
-      runTest("compiler/testData/cli/jvm/builderInferenceByDefault.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/builderInferenceByDefault.args");
     }
 
     @TestMetadata("builderInferenceErrors.args")
     public void testBuilderInferenceErrors() {
-      runTest("compiler/testData/cli/jvm/builderInferenceErrors.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/builderInferenceErrors.args");
     }
 
     @TestMetadata("compatqualDefault.args")
     public void testCompatqualDefault() {
-      runTest("compiler/testData/cli/jvm/compatqualDefault.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/compatqualDefault.args");
     }
 
     @TestMetadata("compatqualDisable.args")
     public void testCompatqualDisable() {
-      runTest("compiler/testData/cli/jvm/compatqualDisable.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/compatqualDisable.args");
     }
 
     @TestMetadata("compatqualEnable.args")
     public void testCompatqualEnable() {
-      runTest("compiler/testData/cli/jvm/compatqualEnable.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/compatqualEnable.args");
     }
 
     @TestMetadata("compatqualWrong.args")
     public void testCompatqualWrong() {
-      runTest("compiler/testData/cli/jvm/compatqualWrong.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/compatqualWrong.args");
     }
 
     @TestMetadata("contextParameters.args")
     public void testContextParameters() {
-      runTest("compiler/testData/cli/jvm/contextParameters.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/contextParameters.args");
     }
 
     @TestMetadata("contextReceiversAndParametersAtTheSameTime.args")
     public void testContextReceiversAndParametersAtTheSameTime() {
-      runTest("compiler/testData/cli/jvm/contextReceiversAndParametersAtTheSameTime.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/contextReceiversAndParametersAtTheSameTime.args");
     }
 
     @TestMetadata("contextReceiversDeprecated.args")
     public void testContextReceiversDeprecated() {
-      runTest("compiler/testData/cli/jvm/contextReceiversDeprecated.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/contextReceiversDeprecated.args");
     }
 
     @TestMetadata("coroutinesEnable.args")
     public void testCoroutinesEnable() {
-      runTest("compiler/testData/cli/jvm/coroutinesEnable.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/coroutinesEnable.args");
     }
 
     @TestMetadata("coroutinesError.args")
     public void testCoroutinesError() {
-      runTest("compiler/testData/cli/jvm/coroutinesError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/coroutinesError.args");
     }
 
     @TestMetadata("coroutinesErrorAndEnable.args")
     public void testCoroutinesErrorAndEnable() {
-      runTest("compiler/testData/cli/jvm/coroutinesErrorAndEnable.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/coroutinesErrorAndEnable.args");
     }
 
     @TestMetadata("coroutinesWarn.args")
     public void testCoroutinesWarn() {
-      runTest("compiler/testData/cli/jvm/coroutinesWarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/coroutinesWarn.args");
     }
 
     @TestMetadata("disabledFeatureFromUnsupportedVersion.args")
     public void testDisabledFeatureFromUnsupportedVersion() {
-      runTest("compiler/testData/cli/jvm/disabledFeatureFromUnsupportedVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/disabledFeatureFromUnsupportedVersion.args");
     }
 
     @TestMetadata("enumEntriesForJavaNotEnabled.args")
     public void testEnumEntriesForJavaNotEnabled() {
-      runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
     }
 
     @TestMetadata("enumEntriesNotEnabled.args")
     public void testEnumEntriesNotEnabled() {
-      runTest("compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
     }
 
     @TestMetadata("errorSuppressionNoWarning.args")
     public void testErrorSuppressionNoWarning() {
-      runTest("compiler/testData/cli/jvm/errorSuppressionNoWarning.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/errorSuppressionNoWarning.args");
     }
 
     @TestMetadata("errorSuppressionWarning.args")
     public void testErrorSuppressionWarning() {
-      runTest("compiler/testData/cli/jvm/errorSuppressionWarning.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/errorSuppressionWarning.args");
     }
 
     @TestMetadata("experimentalCheckers.args")
     public void testExperimentalCheckers() {
-      runTest("compiler/testData/cli/jvm/experimentalCheckers.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/experimentalCheckers.args");
     }
 
     @TestMetadata("explicitReturnTypesEnabled.args")
     public void testExplicitReturnTypesEnabled() {
-      runTest("compiler/testData/cli/jvm/explicitReturnTypesEnabled.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/explicitReturnTypesEnabled.args");
     }
 
     @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
     public void testExplicitlyDisableSamConversionsWithOldFlag() {
-      runTest("compiler/testData/cli/jvm/explicitlyDisableSamConversionsWithOldFlag.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/explicitlyDisableSamConversionsWithOldFlag.args");
     }
 
     @TestMetadata("explicitlyDisabledSamConversions.args")
     public void testExplicitlyDisabledSamConversions() {
-      runTest("compiler/testData/cli/jvm/explicitlyDisabledSamConversions.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/explicitlyDisabledSamConversions.args");
     }
 
     @TestMetadata("expression1.args")
     public void testExpression1() {
-      runTest("compiler/testData/cli/jvm/expression1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/expression1.args");
     }
 
     @TestMetadata("extraCheckers.args")
     public void testExtraCheckers() {
-      runTest("compiler/testData/cli/jvm/extraCheckers.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraCheckers.args");
     }
 
     @TestMetadata("extraHelp.args")
     public void testExtraHelp() {
-      runTest("compiler/testData/cli/jvm/extraHelp.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/extraHelp.args");
     }
 
     @TestMetadata("fastJarFsDisabledAfterK2.args")
     public void testFastJarFsDisabledAfterK2() {
-      runTest("compiler/testData/cli/jvm/fastJarFsDisabledAfterK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/fastJarFsDisabledAfterK2.args");
     }
 
     @TestMetadata("fastJarFsEnabledBeforeK2.args")
     public void testFastJarFsEnabledBeforeK2() {
-      runTest("compiler/testData/cli/jvm/fastJarFsEnabledBeforeK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/fastJarFsEnabledBeforeK2.args");
     }
 
     @TestMetadata("firErrorOnLastLine.args")
     public void testFirErrorOnLastLine() {
-      runTest("compiler/testData/cli/jvm/firErrorOnLastLine.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firErrorOnLastLine.args");
     }
 
     @TestMetadata("firErrorOnLastLineNoEol.args")
     public void testFirErrorOnLastLineNoEol() {
-      runTest("compiler/testData/cli/jvm/firErrorOnLastLineNoEol.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firErrorOnLastLineNoEol.args");
     }
 
     @TestMetadata("firFriendlyErrorIfNoJdkOptionIsSet.args")
     public void testFirFriendlyErrorIfNoJdkOptionIsSet() {
-      runTest("compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.args");
     }
 
     @TestMetadata("firHello.args")
     public void testFirHello() {
-      runTest("compiler/testData/cli/jvm/firHello.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firHello.args");
     }
 
     @TestMetadata("firHello20.args")
     public void testFirHello20() {
-      runTest("compiler/testData/cli/jvm/firHello20.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firHello20.args");
     }
 
     @TestMetadata("firHello20WithFlag.args")
     public void testFirHello20WithFlag() {
-      runTest("compiler/testData/cli/jvm/firHello20WithFlag.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firHello20WithFlag.args");
     }
 
     @TestMetadata("firLightTreeOff.args")
     public void testFirLightTreeOff() {
-      runTest("compiler/testData/cli/jvm/firLightTreeOff.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firLightTreeOff.args");
     }
 
     @TestMetadata("firLightTreeOn.args")
     public void testFirLightTreeOn() {
-      runTest("compiler/testData/cli/jvm/firLightTreeOn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firLightTreeOn.args");
     }
 
     @TestMetadata("firStdlibDependency.args")
     public void testFirStdlibDependency() {
-      runTest("compiler/testData/cli/jvm/firStdlibDependency.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firStdlibDependency.args");
     }
 
     @TestMetadata("firSyntaxError.args")
     public void testFirSyntaxError() {
-      runTest("compiler/testData/cli/jvm/firSyntaxError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firSyntaxError.args");
     }
 
     @TestMetadata("firVsClassicAnnotation.args")
     public void testFirVsClassicAnnotation() {
-      runTest("compiler/testData/cli/jvm/firVsClassicAnnotation.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/firVsClassicAnnotation.args");
     }
 
     @TestMetadata("globalWarningSuppression_correct.args")
     public void testGlobalWarningSuppression_correct() {
-      runTest("compiler/testData/cli/jvm/globalWarningSuppression_correct.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/globalWarningSuppression_correct.args");
     }
 
     @TestMetadata("globalWarningSuppression_incorrect.args")
     public void testGlobalWarningSuppression_incorrect() {
-      runTest("compiler/testData/cli/jvm/globalWarningSuppression_incorrect.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/globalWarningSuppression_incorrect.args");
     }
 
     @TestMetadata("help.args")
     public void testHelp() {
-      runTest("compiler/testData/cli/jvm/help.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/help.args");
     }
 
     @TestMetadata("invalidMetadataVersion.args")
     public void testInvalidMetadataVersion() {
-      runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/invalidMetadataVersion.args");
     }
 
     @TestMetadata("jvm6Target.args")
     public void testJvm6Target() {
-      runTest("compiler/testData/cli/jvm/jvm6Target.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jvm6Target.args");
     }
 
     @TestMetadata("jvm8Target.args")
     public void testJvm8Target() {
-      runTest("compiler/testData/cli/jvm/jvm8Target.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jvm8Target.args");
     }
 
     @TestMetadata("jvmDefaultIncorrectValue.args")
     public void testJvmDefaultIncorrectValue() {
-      runTest("compiler/testData/cli/jvm/jvmDefaultIncorrectValue.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jvmDefaultIncorrectValue.args");
     }
 
     @TestMetadata("jvmRecordOk.args")
     public void testJvmRecordOk() {
-      runTest("compiler/testData/cli/jvm/jvmRecordOk.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jvmRecordOk.args");
     }
 
     @TestMetadata("jvmRecordWrongTarget.args")
     public void testJvmRecordWrongTarget() {
-      runTest("compiler/testData/cli/jvm/jvmRecordWrongTarget.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/jvmRecordWrongTarget.args");
     }
 
     @TestMetadata("k2SimpleMultiplatformGenericClass.args")
     public void testK2SimpleMultiplatformGenericClass() {
-      runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
     }
 
     @TestMetadata("kmpMissingActual.args")
     public void testKmpMissingActual() {
-      runTest("compiler/testData/cli/jvm/kmpMissingActual.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kmpMissingActual.args");
     }
 
     @TestMetadata("kotlinHomeWithoutStdlib.args")
     public void testKotlinHomeWithoutStdlib() {
-      runTest("compiler/testData/cli/jvm/kotlinHomeWithoutStdlib.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kotlinHomeWithoutStdlib.args");
     }
 
     @TestMetadata("kt19628_progressive.args")
     public void testKt19628_progressive() {
-      runTest("compiler/testData/cli/jvm/kt19628_progressive.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kt19628_progressive.args");
     }
 
     @TestMetadata("kt48833_doNotSuppressVersionErrors.args")
     public void testKt48833_doNotSuppressVersionErrors() {
-      runTest("compiler/testData/cli/jvm/kt48833_doNotSuppressVersionErrors.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kt48833_doNotSuppressVersionErrors.args");
     }
 
     @TestMetadata("kt49209.args")
     public void testKt49209() {
-      runTest("compiler/testData/cli/jvm/kt49209.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kt49209.args");
     }
 
     @TestMetadata("kt51846_backendThreadsValidation1.args")
     public void testKt51846_backendThreadsValidation1() {
-      runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kt51846_backendThreadsValidation1.args");
     }
 
     @TestMetadata("kt51846_backendThreadsValidation2.args")
     public void testKt51846_backendThreadsValidation2() {
-      runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kt51846_backendThreadsValidation2.args");
     }
 
     @TestMetadata("kt51846_backendThreadsValidation3.args")
     public void testKt51846_backendThreadsValidation3() {
-      runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation3.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/kt51846_backendThreadsValidation3.args");
     }
 
     @TestMetadata("legacySmartCastsAfterTry.args")
     public void testLegacySmartCastsAfterTry() {
-      runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
     }
 
     @TestMetadata("modulesWithDependencyCycle.args")
     public void testModulesWithDependencyCycle() {
-      runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
     }
 
     @TestMetadata("noJdkAvoidFailure.args")
     public void testNoJdkAvoidFailure() {
-      runTest("compiler/testData/cli/jvm/noJdkAvoidFailure.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/noJdkAvoidFailure.args");
     }
 
     @TestMetadata("noReflect.args")
     public void testNoReflect() {
-      runTest("compiler/testData/cli/jvm/noReflect.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/noReflect.args");
     }
 
     @TestMetadata("noStdlibK1.args")
     public void testNoStdlibK1() {
-      runTest("compiler/testData/cli/jvm/noStdlibK1.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/noStdlibK1.args");
     }
 
     @TestMetadata("noStdlibK2.args")
     public void testNoStdlibK2() {
-      runTest("compiler/testData/cli/jvm/noStdlibK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/noStdlibK2.args");
     }
 
     @TestMetadata("nonLocalDisabled.args")
     public void testNonLocalDisabled() {
-      runTest("compiler/testData/cli/jvm/nonLocalDisabled.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/nonLocalDisabled.args");
     }
 
     @TestMetadata("nullabilityAnnotations.args")
     public void testNullabilityAnnotations() {
-      runTest("compiler/testData/cli/jvm/nullabilityAnnotations.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/nullabilityAnnotations.args");
     }
 
     @TestMetadata("oldBackend.args")
     public void testOldBackend() {
-      runTest("compiler/testData/cli/jvm/oldBackend.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/oldBackend.args");
     }
 
     @TestMetadata("oldBackendWithScript.args")
     public void testOldBackendWithScript() {
-      runTest("compiler/testData/cli/jvm/oldBackendWithScript.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/oldBackendWithScript.args");
     }
 
     @TestMetadata("progressiveModeOff.args")
     public void testProgressiveModeOff() {
-      runTest("compiler/testData/cli/jvm/progressiveModeOff.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/progressiveModeOff.args");
     }
 
     @TestMetadata("progressiveModeOn.args")
     public void testProgressiveModeOn() {
-      runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/progressiveModeOn.args");
     }
 
     @TestMetadata("reportAllWarnings.args")
     public void testReportAllWarnings() {
-      runTest("compiler/testData/cli/jvm/reportAllWarnings.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/reportAllWarnings.args");
     }
 
     @TestMetadata("reportInternalDiagnosticNames.args")
     public void testReportInternalDiagnosticNames() {
-      runTest("compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");
     }
 
     @TestMetadata("selfUpperBoundInference.args")
     public void testSelfUpperBoundInference() {
-      runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/selfUpperBoundInference.args");
     }
 
     @TestMetadata("simple.args")
     public void testSimple() {
-      runTest("compiler/testData/cli/jvm/simple.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/simple.args");
     }
 
     @TestMetadata("syntheticAccessorForPropertiesSignatureClash.args")
     public void testSyntheticAccessorForPropertiesSignatureClash() {
-      runTest("compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.args");
     }
 
     @TestMetadata("syntheticAccessorPropertyAndFunSignatureClash.args")
     public void testSyntheticAccessorPropertyAndFunSignatureClash() {
-      runTest("compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.args");
     }
 
     @TestMetadata("syntheticAccessorSignatureClash.args")
     public void testSyntheticAccessorSignatureClash() {
-      runTest("compiler/testData/cli/jvm/syntheticAccessorSignatureClash.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/syntheticAccessorSignatureClash.args");
     }
 
     @TestMetadata("twoDiagnosticsOnSingleElement.args")
     public void testTwoDiagnosticsOnSingleElement() {
-      runTest("compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.args");
     }
 
     @TestMetadata("unrestrictedBuilderInference.args")
     public void testUnrestrictedBuilderInference() {
-      runTest("compiler/testData/cli/jvm/unrestrictedBuilderInference.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/unrestrictedBuilderInference.args");
     }
 
     @TestMetadata("version.args")
     public void testVersion() {
-      runTest("compiler/testData/cli/jvm/version.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/version.args");
     }
 
     @TestMetadata("werror.args")
     public void testWerror() {
-      runTest("compiler/testData/cli/jvm/werror.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/werror.args");
     }
 
     @TestMetadata("werrorWithExplicitError.args")
     public void testWerrorWithExplicitError() {
-      runTest("compiler/testData/cli/jvm/werrorWithExplicitError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/werrorWithExplicitError.args");
     }
 
     @TestMetadata("werrorWithNoWarn.args")
     public void testWerrorWithNoWarn() {
-      runTest("compiler/testData/cli/jvm/werrorWithNoWarn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/werrorWithNoWarn.args");
     }
 
     @TestMetadata("werrorWithStrongWarning.args")
     public void testWerrorWithStrongWarning() {
-      runTest("compiler/testData/cli/jvm/werrorWithStrongWarning.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/werrorWithStrongWarning.args");
     }
 
     @TestMetadata("whenGuardsEnable.args")
     public void testWhenGuardsEnable() {
-      runTest("compiler/testData/cli/jvm/whenGuardsEnable.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/whenGuardsEnable.args");
     }
 
     @TestMetadata("whenGuardsError.args")
     public void testWhenGuardsError() {
-      runTest("compiler/testData/cli/jvm/whenGuardsError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/whenGuardsError.args");
     }
 
     @TestMetadata("wrongAbiVersion.args")
     public void testWrongAbiVersion() {
-      runTest("compiler/testData/cli/jvm/wrongAbiVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongAbiVersion.args");
     }
 
     @TestMetadata("wrongArgument.args")
     public void testWrongArgument() {
-      runTest("compiler/testData/cli/jvm/wrongArgument.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongArgument.args");
     }
 
     @TestMetadata("wrongJvmTargetVersion.args")
     public void testWrongJvmTargetVersion() {
-      runTest("compiler/testData/cli/jvm/wrongJvmTargetVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongJvmTargetVersion.args");
     }
 
     @TestMetadata("wrongScriptWithDirectory.args")
     public void testWrongScriptWithDirectory() {
-      runTest("compiler/testData/cli/jvm/wrongScriptWithDirectory.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongScriptWithDirectory.args");
     }
 
     @TestMetadata("wrongScriptWithKtSource.args")
     public void testWrongScriptWithKtSource() {
-      runTest("compiler/testData/cli/jvm/wrongScriptWithKtSource.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongScriptWithKtSource.args");
     }
 
     @TestMetadata("wrongScriptWithNoSource.args")
     public void testWrongScriptWithNoSource() {
-      runTest("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
     }
 
     @TestMetadata("wrongXjsr305.args")
     public void testWrongXjsr305() {
-      runTest("compiler/testData/cli/jvm/wrongXjsr305.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/jvm/wrongXjsr305.args");
     }
   }
 
@@ -1823,207 +1823,207 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("compilationErrorConstDivByZero.args")
     public void testCompilationErrorConstDivByZero() {
-      runTest("compiler/testData/cli/js/compilationErrorConstDivByZero.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/compilationErrorConstDivByZero.args");
     }
 
     @TestMetadata("compilationErrorK2.args")
     public void testCompilationErrorK2() {
-      runTest("compiler/testData/cli/js/compilationErrorK2.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/compilationErrorK2.args");
     }
 
     @TestMetadata("createMetadata.args")
     public void testCreateMetadata() {
-      runTest("compiler/testData/cli/js/createMetadata.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/createMetadata.args");
     }
 
     @TestMetadata("emptySources.args")
     public void testEmptySources() {
-      runTest("compiler/testData/cli/js/emptySources.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/emptySources.args");
     }
 
     @TestMetadata("experimentalCheckers.args")
     public void testExperimentalCheckers() {
-      runTest("compiler/testData/cli/js/experimentalCheckers.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/experimentalCheckers.args");
     }
 
     @TestMetadata("experimentalCheckersWasm.args")
     public void testExperimentalCheckersWasm() {
-      runTest("compiler/testData/cli/js/experimentalCheckersWasm.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/experimentalCheckersWasm.args");
     }
 
     @TestMetadata("extraCheckers.args")
     public void testExtraCheckers() {
-      runTest("compiler/testData/cli/js/extraCheckers.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/extraCheckers.args");
     }
 
     @TestMetadata("extraCheckersWasm.args")
     public void testExtraCheckersWasm() {
-      runTest("compiler/testData/cli/js/extraCheckersWasm.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/extraCheckersWasm.args");
     }
 
     @TestMetadata("fir.args")
     public void testFir() {
-      runTest("compiler/testData/cli/js/fir.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/fir.args");
     }
 
     @TestMetadata("firLightTreeOn.args")
     public void testFirLightTreeOn() {
-      runTest("compiler/testData/cli/js/firLightTreeOn.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/firLightTreeOn.args");
     }
 
     @TestMetadata("firMpp.args")
     public void testFirMpp() {
-      runTest("compiler/testData/cli/js/firMpp.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/firMpp.args");
     }
 
     @TestMetadata("firMppWithKlib.args")
     public void testFirMppWithKlib() {
-      runTest("compiler/testData/cli/js/firMppWithKlib.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/firMppWithKlib.args");
     }
 
     @TestMetadata("firMultiplatformCompilationWithError.args")
     public void testFirMultiplatformCompilationWithError() {
-      runTest("compiler/testData/cli/js/firMultiplatformCompilationWithError.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/firMultiplatformCompilationWithError.args");
     }
 
     @TestMetadata("jsExtraHelp.args")
     public void testJsExtraHelp() {
-      runTest("compiler/testData/cli/js/jsExtraHelp.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/jsExtraHelp.args");
     }
 
     @TestMetadata("jsHelp.args")
     public void testJsHelp() {
-      runTest("compiler/testData/cli/js/jsHelp.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/jsHelp.args");
     }
 
     @TestMetadata("kotlinPackage.args")
     public void testKotlinPackage() {
-      runTest("compiler/testData/cli/js/kotlinPackage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/kotlinPackage.args");
     }
 
     @TestMetadata("languageVersion.args")
     public void testLanguageVersion() {
-      runTest("compiler/testData/cli/js/languageVersion.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/languageVersion.args");
     }
 
     @TestMetadata("libraryDirNotFound.args")
     public void testLibraryDirNotFound() {
-      runTest("compiler/testData/cli/js/libraryDirNotFound.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/libraryDirNotFound.args");
     }
 
     @TestMetadata("noStdlib.args")
     public void testNoStdlib() {
-      runTest("compiler/testData/cli/js/noStdlib.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/noStdlib.args");
     }
 
     @TestMetadata("nonExistingKotlinHome.args")
     public void testNonExistingKotlinHome() {
-      runTest("compiler/testData/cli/js/nonExistingKotlinHome.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/nonExistingKotlinHome.args");
     }
 
     @TestMetadata("nonExistingSourcePath.args")
     public void testNonExistingSourcePath() {
-      runTest("compiler/testData/cli/js/nonExistingSourcePath.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/nonExistingSourcePath.args");
     }
 
     @TestMetadata("notValidLibraryDir.args")
     public void testNotValidLibraryDir() {
-      runTest("compiler/testData/cli/js/notValidLibraryDir.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/notValidLibraryDir.args");
     }
 
     @TestMetadata("perFileWithValidModuleKind.args")
     public void testPerFileWithValidModuleKind() {
-      runTest("compiler/testData/cli/js/perFileWithValidModuleKind.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/perFileWithValidModuleKind.args");
     }
 
     @TestMetadata("perFileWithWrongModuleKind.args")
     public void testPerFileWithWrongModuleKind() {
-      runTest("compiler/testData/cli/js/perFileWithWrongModuleKind.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/perFileWithWrongModuleKind.args");
     }
 
     @TestMetadata("reifiedIntersectionType.args")
     public void testReifiedIntersectionType() {
-      runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/reifiedIntersectionType.args");
     }
 
     @TestMetadata("simple2js.args")
     public void testSimple2js() {
-      runTest("compiler/testData/cli/js/simple2js.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/simple2js.args");
     }
 
     @TestMetadata("sourceMap.args")
     public void testSourceMap() {
-      runTest("compiler/testData/cli/js/sourceMap.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMap.args");
     }
 
     @TestMetadata("sourceMapCharEscape.args")
     public void testSourceMapCharEscape() {
-      runTest("compiler/testData/cli/js/sourceMapCharEscape.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapCharEscape.args");
     }
 
     @TestMetadata("sourceMapDuplicateRelativePaths.args")
     public void testSourceMapDuplicateRelativePaths() {
-      runTest("compiler/testData/cli/js/sourceMapDuplicateRelativePaths.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapDuplicateRelativePaths.args");
     }
 
     @TestMetadata("sourceMapEmbedSources.args")
     public void testSourceMapEmbedSources() {
-      runTest("compiler/testData/cli/js/sourceMapEmbedSources.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapEmbedSources.args");
     }
 
     @TestMetadata("sourceMapPrefix.args")
     public void testSourceMapPrefix() {
-      runTest("compiler/testData/cli/js/sourceMapPrefix.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapPrefix.args");
     }
 
     @TestMetadata("sourceMapRelativeRoot.args")
     public void testSourceMapRelativeRoot() {
-      runTest("compiler/testData/cli/js/sourceMapRelativeRoot.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapRelativeRoot.args");
     }
 
     @TestMetadata("sourceMapRootManual.args")
     public void testSourceMapRootManual() {
-      runTest("compiler/testData/cli/js/sourceMapRootManual.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapRootManual.args");
     }
 
     @TestMetadata("sourceMapRootMissing.args")
     public void testSourceMapRootMissing() {
-      runTest("compiler/testData/cli/js/sourceMapRootMissing.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapRootMissing.args");
     }
 
     @TestMetadata("sourceMapRootMultiple.args")
     public void testSourceMapRootMultiple() {
-      runTest("compiler/testData/cli/js/sourceMapRootMultiple.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/sourceMapRootMultiple.args");
     }
 
     @TestMetadata("successfulHmpp.args")
     public void testSuccessfulHmpp() {
-      runTest("compiler/testData/cli/js/successfulHmpp.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/successfulHmpp.args");
     }
 
     @TestMetadata("suppressAllWarningsJS.args")
     public void testSuppressAllWarningsJS() {
-      runTest("compiler/testData/cli/js/suppressAllWarningsJS.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/suppressAllWarningsJS.args");
     }
 
     @TestMetadata("warningsSuppressionDisablesErrors_Js.args")
     public void testWarningsSuppressionDisablesErrors_Js() {
-      runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Js.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/warningsSuppressionDisablesErrors_Js.args");
     }
 
     @TestMetadata("warningsSuppressionDisablesErrors_Wasm.args")
     public void testWarningsSuppressionDisablesErrors_Wasm() {
-      runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Wasm.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/warningsSuppressionDisablesErrors_Wasm.args");
     }
 
     @TestMetadata("withFolderAsLib.args")
     public void testWithFolderAsLib() {
-      runTest("compiler/testData/cli/js/withFolderAsLib.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/withFolderAsLib.args");
     }
 
     @TestMetadata("withLib.args")
     public void testWithLib() {
-      runTest("compiler/testData/cli/js/withLib.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/js/withLib.args");
     }
   }
 
@@ -2041,77 +2041,77 @@ public class CliTestGenerated extends AbstractCliTest {
 
     @TestMetadata("anonymousObjectType.args")
     public void testAnonymousObjectType() {
-      runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/anonymousObjectType.args");
     }
 
     @TestMetadata("complexAnnotationArgument.args")
     public void testComplexAnnotationArgument() {
-      runTest("compiler/testData/cli/metadata/complexAnnotationArgument.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/complexAnnotationArgument.args");
     }
 
     @TestMetadata("experimentalCheckers.args")
     public void testExperimentalCheckers() {
-      runTest("compiler/testData/cli/metadata/experimentalCheckers.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/experimentalCheckers.args");
     }
 
     @TestMetadata("extraCheckers.args")
     public void testExtraCheckers() {
-      runTest("compiler/testData/cli/metadata/extraCheckers.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/extraCheckers.args");
     }
 
     @TestMetadata("getOrDefault.args")
     public void testGetOrDefault() {
-      runTest("compiler/testData/cli/metadata/getOrDefault.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/getOrDefault.args");
     }
 
     @TestMetadata("hmppModules.args")
     public void testHmppModules() {
-      runTest("compiler/testData/cli/metadata/hmppModules.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/hmppModules.args");
     }
 
     @TestMetadata("inheritorOfExpectSealedClass.args")
     public void testInheritorOfExpectSealedClass() {
-      runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
     }
 
     @TestMetadata("kotlinPackage.args")
     public void testKotlinPackage() {
-      runTest("compiler/testData/cli/metadata/kotlinPackage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/kotlinPackage.args");
     }
 
     @TestMetadata("kt58139.args")
     public void testKt58139() {
-      runTest("compiler/testData/cli/metadata/kt58139.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/kt58139.args");
     }
 
     @TestMetadata("lambdaWithReceiver.args")
     public void testLambdaWithReceiver() {
-      runTest("compiler/testData/cli/metadata/lambdaWithReceiver.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/lambdaWithReceiver.args");
     }
 
     @TestMetadata("moduleName.args")
     public void testModuleName() {
-      runTest("compiler/testData/cli/metadata/moduleName.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/moduleName.args");
     }
 
     @TestMetadata("noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args")
     public void testNoVirtualFileHiddenForMemberWithPlatformDependentAnnotation() {
-      runTest("compiler/testData/cli/metadata/noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args");
     }
 
     @TestMetadata("optionalAnnotationsFromMetadata.args")
     public void testOptionalAnnotationsFromMetadata() {
-      runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");
     }
 
     @TestMetadata("optionalExpectationUsage.args")
     public void testOptionalExpectationUsage() {
-      runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/optionalExpectationUsage.args");
     }
 
     @TestMetadata("unsignedDeclarationsFromStdlib.args")
     public void testUnsignedDeclarationsFromStdlib() {
-      runTest("compiler/testData/cli/metadata/unsignedDeclarationsFromStdlib.args");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/cli/metadata/unsignedDeclarationsFromStdlib.args");
     }
   }
 }

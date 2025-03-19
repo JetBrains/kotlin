@@ -26,330 +26,330 @@ public class ClsStubBuilderK2CompilerTestGenerated extends AbstractClsStubBuilde
   @Test
   @TestMetadata("AnnotatedFlexibleTypes")
   public void testAnnotatedFlexibleTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedFlexibleTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedFlexibleTypes/");
   }
 
   @Test
   @TestMetadata("AnnotatedParameterInEnumConstructor")
   public void testAnnotatedParameterInEnumConstructor() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInEnumConstructor/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInEnumConstructor/");
   }
 
   @Test
   @TestMetadata("AnnotatedParameterInInnerClassConstructor")
   public void testAnnotatedParameterInInnerClassConstructor() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInInnerClassConstructor/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotatedParameterInInnerClassConstructor/");
   }
 
   @Test
   @TestMetadata("AnnotationClass")
   public void testAnnotationClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationClass/");
   }
 
   @Test
   @TestMetadata("AnnotationValues")
   public void testAnnotationValues() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationValues/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationValues/");
   }
 
   @Test
   @TestMetadata("Annotations")
   public void testAnnotations() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Annotations/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Annotations/");
   }
 
   @Test
   @TestMetadata("AnnotationsOnNullableTypes")
   public void testAnnotationsOnNullableTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnNullableTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnNullableTypes/");
   }
 
   @Test
   @TestMetadata("AnnotationsOnParenthesizedTypes")
   public void testAnnotationsOnParenthesizedTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnParenthesizedTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnnotationsOnParenthesizedTypes/");
   }
 
   @Test
   @TestMetadata("AnonymousReturnWithGenericType")
   public void testAnonymousReturnWithGenericType() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnonymousReturnWithGenericType/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/AnonymousReturnWithGenericType/");
   }
 
   @Test
   @TestMetadata("ClassMembers")
   public void testClassMembers() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassMembers/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassMembers/");
   }
 
   @Test
   @TestMetadata("ClassObject")
   public void testClassObject() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassObject/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ClassObject/");
   }
 
   @Test
   @TestMetadata("Const")
   public void testConst() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Const/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Const/");
   }
 
   @Test
   @TestMetadata("ContextReceiversCallableMembers")
   public void testContextReceiversCallableMembers() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
   }
 
   @Test
   @TestMetadata("ContextReceiversOnClass")
   public void testContextReceiversOnClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnClass/");
   }
 
   @Test
   @TestMetadata("ContextReceiversOnFunctionType")
   public void testContextReceiversOnFunctionType() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnFunctionType/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnFunctionType/");
   }
 
   @Test
   @TestMetadata("ContextReceiversOnTopLevelCallables")
   public void testContextReceiversOnTopLevelCallables() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
   }
 
   @Test
   @TestMetadata("Contracts")
   public void testContracts() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Contracts/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Contracts/");
   }
 
   @Test
   @TestMetadata("DataClass")
   public void testDataClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DataClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DataClass/");
   }
 
   @Test
   @TestMetadata("DefaultImplsInInterface")
   public void testDefaultImplsInInterface() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefaultImplsInInterface/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefaultImplsInInterface/");
   }
 
   @Test
   @TestMetadata("DefinitelyNotNullTypes")
   public void testDefinitelyNotNullTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefinitelyNotNullTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefinitelyNotNullTypes/");
   }
 
   @Test
   @TestMetadata("Delegation")
   public void testDelegation() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Delegation/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Delegation/");
   }
 
   @Test
   @TestMetadata("DependencyOnNestedClasses")
   public void testDependencyOnNestedClasses() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DependencyOnNestedClasses/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DependencyOnNestedClasses/");
   }
 
   @Test
   @TestMetadata("Enum")
   public void testEnum() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Enum/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Enum/");
   }
 
   @Test
   @TestMetadata("FlexibleTypes")
   public void testFlexibleTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleTypes/");
   }
 
   @Test
   @TestMetadata("FunInterfaceDeclaration")
   public void testFunInterfaceDeclaration() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FunInterfaceDeclaration/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FunInterfaceDeclaration/");
   }
 
   @Test
   @TestMetadata("InheritingClasses")
   public void testInheritingClasses() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InheritingClasses/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InheritingClasses/");
   }
 
   @Test
   @TestMetadata("InnerClassEnumEntry")
   public void testInnerClassEnumEntry() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerClassEnumEntry/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerClassEnumEntry/");
   }
 
   @Test
   @TestMetadata("InnerTypes")
   public void testInnerTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/InnerTypes/");
   }
 
   @Test
   @TestMetadata("LocalClass")
   public void testLocalClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/LocalClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/LocalClass/");
   }
 
   @Test
   @TestMetadata("Modifiers")
   public void testModifiers() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Modifiers/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Modifiers/");
   }
 
   @Test
   @TestMetadata("MultifileClass")
   public void testMultifileClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass/");
   }
 
   @Test
   @TestMetadata("MultifileClass__PartKt")
   public void testMultifileClass__PartKt() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass__PartKt/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass__PartKt/");
   }
 
   @Test
   @TestMetadata("NamedCompanionObject")
   public void testNamedCompanionObject() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NamedCompanionObject/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NamedCompanionObject/");
   }
 
   @Test
   @TestMetadata("NestedClasses")
   public void testNestedClasses() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NestedClasses/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NestedClasses/");
   }
 
   @Test
   @TestMetadata("Objects")
   public void testObjects() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Objects/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Objects/");
   }
 
   @Test
   @TestMetadata("PrivateConstField")
   public void testPrivateConstField() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateConstField/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateConstField/");
   }
 
   @Test
   @TestMetadata("PrivateToThis")
   public void testPrivateToThis() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateToThis/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/PrivateToThis/");
   }
 
   @Test
   @TestMetadata("RepeatableAnnotation")
   public void testRepeatableAnnotation() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/RepeatableAnnotation/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/RepeatableAnnotation/");
   }
 
   @Test
   @TestMetadata("RepeatableAnnotationClass")
   public void testRepeatableAnnotationClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/RepeatableAnnotationClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/RepeatableAnnotationClass/");
   }
 
   @Test
   @TestMetadata("Sealed")
   public void testSealed() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Sealed/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Sealed/");
   }
 
   @Test
   @TestMetadata("SealedInterface")
   public void testSealedInterface() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SealedInterface/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SealedInterface/");
   }
 
   @Test
   @TestMetadata("SecondaryConstructors")
   public void testSecondaryConstructors() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SecondaryConstructors/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SecondaryConstructors/");
   }
 
   @Test
   @TestMetadata("SpecialNames")
   public void testSpecialNames() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SpecialNames/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SpecialNames/");
   }
 
   @Test
   @TestMetadata("SuspendLambda")
   public void testSuspendLambda() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SuspendLambda/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SuspendLambda/");
   }
 
   @Test
   @TestMetadata("TopJvmPackageName")
   public void testTopJvmPackageName() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopJvmPackageName/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopJvmPackageName/");
   }
 
   @Test
   @TestMetadata("TopLevelMembersAnnotatedKt")
   public void testTopLevelMembersAnnotatedKt() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersAnnotatedKt/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersAnnotatedKt/");
   }
 
   @Test
   @TestMetadata("TopLevelMembersKt")
   public void testTopLevelMembersKt() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersKt/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TopLevelMembersKt/");
   }
 
   @Test
   @TestMetadata("TypeAliasExpansion")
   public void testTypeAliasExpansion() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliasExpansion/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliasExpansion/");
   }
 
   @Test
   @TestMetadata("TypeAliases")
   public void testTypeAliases() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliases/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliases/");
   }
 
   @Test
   @TestMetadata("TypeBoundsAndDelegationSpecifiers")
   public void testTypeBoundsAndDelegationSpecifiers() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeBoundsAndDelegationSpecifiers/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeBoundsAndDelegationSpecifiers/");
   }
 
   @Test
   @TestMetadata("TypeModifiers")
   public void testTypeModifiers() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeModifiers/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeModifiers/");
   }
 
   @Test
   @TestMetadata("TypeParams")
   public void testTypeParams() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeParams/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeParams/");
   }
 
   @Test
   @TestMetadata("Types")
   public void testTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Types/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Types/");
   }
 
   @Test
   @TestMetadata("UnderscoreParameterName")
   public void testUnderscoreParameterName() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/UnderscoreParameterName/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/UnderscoreParameterName/");
   }
 
   @Test
   @TestMetadata("VarargArgumentWithFunctionalType")
   public void testVarargArgumentWithFunctionalType() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/VarargArgumentWithFunctionalType/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/VarargArgumentWithFunctionalType/");
   }
 }

@@ -26,90 +26,90 @@ public class AdditionalStubInfoKnmTestGenerated extends AbstractAdditionalStubIn
   @Test
   @TestMetadata("AnnotatedFlexibleTypes")
   public void testAnnotatedFlexibleTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotatedFlexibleTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotatedFlexibleTypes/");
   }
 
   @Test
   @TestMetadata("AnnotationValues")
   public void testAnnotationValues() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotationValues/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotationValues/");
   }
 
   @Test
   @TestMetadata("Contracts")
   public void testContracts() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/Contracts/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/Contracts/");
   }
 
   @Test
   @TestMetadata("MultiFieldValueClassWithTypeAlias")
   public void testMultiFieldValueClassWithTypeAlias() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/MultiFieldValueClassWithTypeAlias/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/MultiFieldValueClassWithTypeAlias/");
   }
 
   @Test
   @TestMetadata("NestedMultiFieldValueClass")
   public void testNestedMultiFieldValueClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/NestedMultiFieldValueClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/NestedMultiFieldValueClass/");
   }
 
   @Test
   @TestMetadata("OuterClassesWithFlexibleArgs")
   public void testOuterClassesWithFlexibleArgs() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/OuterClassesWithFlexibleArgs/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/OuterClassesWithFlexibleArgs/");
   }
 
   @Test
   @TestMetadata("ParameterName")
   public void testParameterName() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ParameterName/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ParameterName/");
   }
 
   @Test
   @TestMetadata("PropertyInitializer")
   public void testPropertyInitializer() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/PropertyInitializer/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/PropertyInitializer/");
   }
 
   @Test
   @TestMetadata("TypeAliasExpansion")
   public void testTypeAliasExpansion() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeAliasExpansion/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeAliasExpansion/");
   }
 
   @Test
   @TestMetadata("TypeParametersInFlexibleTypes")
   public void testTypeParametersInFlexibleTypes() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeParametersInFlexibleTypes/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeParametersInFlexibleTypes/");
   }
 
   @Test
   @TestMetadata("ValueClassWithAnotherValueClass")
   public void testValueClassWithAnotherValueClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithAnotherValueClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithAnotherValueClass/");
   }
 
   @Test
   @TestMetadata("ValueClassWithMultiFieldValueClass")
   public void testValueClassWithMultiFieldValueClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithMultiFieldValueClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithMultiFieldValueClass/");
   }
 
   @Test
   @TestMetadata("ValueClassWithNestedClass")
   public void testValueClassWithNestedClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithNestedClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithNestedClass/");
   }
 
   @Test
   @TestMetadata("ValueClassWithNullableMultiFieldValueClass")
   public void testValueClassWithNullableMultiFieldValueClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithNullableMultiFieldValueClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithNullableMultiFieldValueClass/");
   }
 
   @Test
   @TestMetadata("ValueClassWithTypeAliasOnAnotherValueClass")
   public void testValueClassWithTypeAliasOnAnotherValueClass() {
-    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithTypeAliasOnAnotherValueClass/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ValueClassWithTypeAliasOnAnotherValueClass/");
   }
 }

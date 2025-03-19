@@ -36,25 +36,25 @@ public class ScriptLazyAnnotationsResolveTestGenerated extends AbstractScriptLaz
     @Test
     @TestMetadata("functionWithRegularAnnotationScript.kts")
     public void testFunctionWithRegularAnnotationScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/functionWithRegularAnnotationScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/annotations/functionWithRegularAnnotationScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithoutAnnotationsScript.kts")
     public void testFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/functionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/annotations/functionWithoutAnnotationsScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithRegularAnnotationScript.kts")
     public void testLocalFunctionWithRegularAnnotationScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/localFunctionWithRegularAnnotationScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/annotations/localFunctionWithRegularAnnotationScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithoutAnnotationsScript.kts")
     public void testLocalFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/localFunctionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/annotations/localFunctionWithoutAnnotationsScript.kts");
     }
   }
 
@@ -70,25 +70,25 @@ public class ScriptLazyAnnotationsResolveTestGenerated extends AbstractScriptLaz
     @Test
     @TestMetadata("functionWithRegularAnnotationScript.kts")
     public void testFunctionWithRegularAnnotationScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/functionWithRegularAnnotationScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/classIds/functionWithRegularAnnotationScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithoutAnnotationsScript.kts")
     public void testFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/functionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/classIds/functionWithoutAnnotationsScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithRegularAnnotationScript.kts")
     public void testLocalFunctionWithRegularAnnotationScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/localFunctionWithRegularAnnotationScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/classIds/localFunctionWithRegularAnnotationScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithoutAnnotationsScript.kts")
     public void testLocalFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/localFunctionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/classIds/localFunctionWithoutAnnotationsScript.kts");
     }
   }
 
@@ -104,37 +104,37 @@ public class ScriptLazyAnnotationsResolveTestGenerated extends AbstractScriptLaz
     @Test
     @TestMetadata("functionWithRegularAnnotationFalseScript.kts")
     public void testFunctionWithRegularAnnotationFalseScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/functionWithRegularAnnotationFalseScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/contains/functionWithRegularAnnotationFalseScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithRegularAnnotationTrueScript.kts")
     public void testFunctionWithRegularAnnotationTrueScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/functionWithRegularAnnotationTrueScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/contains/functionWithRegularAnnotationTrueScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithoutAnnotationsScript.kts")
     public void testFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/functionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/contains/functionWithoutAnnotationsScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithRegularAnnotationFalseScript.kts")
     public void testLocalFunctionWithRegularAnnotationFalseScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/localFunctionWithRegularAnnotationFalseScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/contains/localFunctionWithRegularAnnotationFalseScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithRegularAnnotationTrueScript.kts")
     public void testLocalFunctionWithRegularAnnotationTrueScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/localFunctionWithRegularAnnotationTrueScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/contains/localFunctionWithRegularAnnotationTrueScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithoutAnnotationsScript.kts")
     public void testLocalFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/localFunctionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/contains/localFunctionWithoutAnnotationsScript.kts");
     }
   }
 
@@ -150,37 +150,37 @@ public class ScriptLazyAnnotationsResolveTestGenerated extends AbstractScriptLaz
     @Test
     @TestMetadata("functionWithRegularAnnotationFalseScript.kts")
     public void testFunctionWithRegularAnnotationFalseScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/functionWithRegularAnnotationFalseScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/get/functionWithRegularAnnotationFalseScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithRegularAnnotationTrueScript.kts")
     public void testFunctionWithRegularAnnotationTrueScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/functionWithRegularAnnotationTrueScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/get/functionWithRegularAnnotationTrueScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithoutAnnotationsScript.kts")
     public void testFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/functionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/get/functionWithoutAnnotationsScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithRegularAnnotationFalseScript.kts")
     public void testLocalFunctionWithRegularAnnotationFalseScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/localFunctionWithRegularAnnotationFalseScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/get/localFunctionWithRegularAnnotationFalseScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithRegularAnnotationTrueScript.kts")
     public void testLocalFunctionWithRegularAnnotationTrueScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/localFunctionWithRegularAnnotationTrueScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/get/localFunctionWithRegularAnnotationTrueScript.kts");
     }
 
     @Test
     @TestMetadata("localFunctionWithoutAnnotationsScript.kts")
     public void testLocalFunctionWithoutAnnotationsScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/localFunctionWithoutAnnotationsScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyAnnotations/get/localFunctionWithoutAnnotationsScript.kts");
     }
   }
 }

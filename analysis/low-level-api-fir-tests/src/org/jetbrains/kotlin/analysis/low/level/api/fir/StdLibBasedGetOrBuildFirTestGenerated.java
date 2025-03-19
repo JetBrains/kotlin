@@ -26,18 +26,18 @@ public class StdLibBasedGetOrBuildFirTestGenerated extends AbstractStdLibBasedGe
   @Test
   @TestMetadata("emptyArray.kt")
   public void testEmptyArray() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/emptyArray.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/emptyArray.kt");
   }
 
   @Test
   @TestMetadata("flattenArray.kt")
   public void testFlattenArray() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/flattenArray.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/flattenArray.kt");
   }
 
   @Test
   @TestMetadata("fromBits.kt")
   public void testFromBits() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/fromBits.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/fromBits.kt");
   }
 }

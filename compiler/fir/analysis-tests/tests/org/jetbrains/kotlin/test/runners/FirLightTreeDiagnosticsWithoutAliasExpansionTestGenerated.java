@@ -24,61 +24,61 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     @Test
     @TestMetadata("catchParameter.kt")
     public void testCatchParameter() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/catchParameter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/catchParameter.kt");
     }
 
     @Test
     @TestMetadata("delegatingConstructorsAndTypeAliases.kt")
     public void testDelegatingConstructorsAndTypeAliases() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/delegatingConstructorsAndTypeAliases.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/delegatingConstructorsAndTypeAliases.kt");
     }
 
     @Test
     @TestMetadata("fakeRecursiveTypealias.kt")
     public void testFakeRecursiveTypealias() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/fakeRecursiveTypealias.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/fakeRecursiveTypealias.kt");
     }
 
     @Test
     @TestMetadata("functionTypeAlias.kt")
     public void testFunctionTypeAlias() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/functionTypeAlias.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/functionTypeAlias.kt");
     }
 
     @Test
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/NestedOfAliasedType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/NestedOfAliasedType.kt");
     }
 
     @Test
     @TestMetadata("recursiveTypeAlias.kt")
     public void testRecursiveTypeAlias() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
     }
 
     @Test
     @TestMetadata("simpleTypeAlias.kt")
     public void testSimpleTypeAlias() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/simpleTypeAlias.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/simpleTypeAlias.kt");
     }
 
     @Test
     @TestMetadata("statusResolveForTypealiasAsSuperClass.kt")
     public void testStatusResolveForTypealiasAsSuperClass() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/statusResolveForTypealiasAsSuperClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/statusResolveForTypealiasAsSuperClass.kt");
     }
 
     @Test
     @TestMetadata("typeAliasWithGeneric.kt")
     public void testTypeAliasWithGeneric() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/typeAliasWithGeneric.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/typeAliasWithGeneric.kt");
     }
 
     @Test
     @TestMetadata("typeAliasWithTypeArguments.kt")
     public void testTypeAliasWithTypeArguments() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/typeAliasWithTypeArguments.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/typeAliasWithTypeArguments.kt");
     }
 
     @Nested
@@ -88,13 +88,13 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("safeCallOnTypeAlias.kt")
       public void testSafeCallOnTypeAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
       }
 
       @Test
       @TestMetadata("typeAliasWithNotNullBound.kt")
       public void testTypeAliasWithNotNullBound() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
       }
     }
 
@@ -105,13 +105,13 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("cyclicSupertypeWithAlias.kt")
       public void testCyclicSupertypeWithAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeWithAlias.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeWithAlias.kt");
       }
 
       @Test
       @TestMetadata("cyclicSupertypeWithAlias2.kt")
       public void testCyclicSupertypeWithAlias2() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeWithAlias2.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeWithAlias2.kt");
       }
     }
 
@@ -122,7 +122,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("constValWithTypealiasType.kt")
       public void testConstValWithTypealiasType() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithTypealiasType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/constVal/constValWithTypealiasType.kt");
       }
     }
 
@@ -133,7 +133,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("noSuperCallInSupertypes.kt")
       public void testNoSuperCallInSupertypes() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/constructors/noSuperCallInSupertypes.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/constructors/noSuperCallInSupertypes.kt");
       }
     }
 
@@ -148,7 +148,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         @Test
         @TestMetadata("unsupportedContextParameters.kt")
         public void testUnsupportedContextParameters() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
         }
       }
     }
@@ -160,31 +160,31 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("conflictingOverloads.kt")
       public void testConflictingOverloads() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingOverloads.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingOverloads.kt");
       }
 
       @Test
       @TestMetadata("conflictingProjection.kt")
       public void testConflictingProjection() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingProjection.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingProjection.kt");
       }
 
       @Test
       @TestMetadata("infixFunctions.kt")
       public void testInfixFunctions() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
       }
 
       @Test
       @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
       public void testQualifiedSupertypeExtendedByOtherSupertype() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
       }
 
       @Test
       @TestMetadata("upperBoundViolated.kt")
       public void testUpperBoundViolated() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");
       }
     }
 
@@ -201,7 +201,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("typeAliasConstructor.kt")
       public void testTypeAliasConstructor() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/typeAliasConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/expresssions/typeAliasConstructor.kt");
       }
 
       @Nested
@@ -218,19 +218,19 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("ArrayEqualityCanBeReplacedWithEquals.kt")
       public void testArrayEqualityCanBeReplacedWithEquals() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/extraCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
       }
 
       @Test
       @TestMetadata("RedundantExplicitTypeChecker.kt")
       public void testRedundantExplicitTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantSingleExpressionStringTemplateChecker.kt")
       public void testRedundantSingleExpressionStringTemplateChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
       }
 
       @Nested
@@ -240,7 +240,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         @Test
         @TestMetadata("int.kt")
         public void testInt() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/int.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/int.kt");
         }
       }
     }
@@ -252,7 +252,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("typeParameters.kt")
       public void testTypeParameters() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/fromBuilder/typeParameters.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/fromBuilder/typeParameters.kt");
       }
     }
 
@@ -263,7 +263,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("typeDepthForTypeAlias.kt")
       public void testTypeDepthForTypeAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/inference/typeDepthForTypeAlias.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/inference/typeDepthForTypeAlias.kt");
       }
     }
 
@@ -274,13 +274,13 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("Annotations.kt")
       public void testAnnotations() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/multifile/Annotations.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/multifile/Annotations.kt");
       }
 
       @Test
       @TestMetadata("TypeAliasExpansion.kt")
       public void testTypeAliasExpansion() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/multifile/TypeAliasExpansion.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/multifile/TypeAliasExpansion.kt");
       }
     }
 
@@ -291,19 +291,19 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("nestedTypeAliasVisibility.kt")
       public void testNestedTypeAliasVisibility() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasVisibility.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasVisibility.kt");
       }
 
       @Test
       @TestMetadata("nestedTypeAliasWithInnerRHS.kt")
       public void testNestedTypeAliasWithInnerRHS() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasWithInnerRHS.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasWithInnerRHS.kt");
       }
 
       @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
       }
     }
 
@@ -326,7 +326,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("withSuppression.kt")
       public void testWithSuppression() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression.kt");
       }
     }
 
@@ -337,13 +337,13 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("bareWithSubjectTypeAlias.kt")
       public void testBareWithSubjectTypeAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithSubjectTypeAlias.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/types/bareWithSubjectTypeAlias.kt");
       }
 
       @Test
       @TestMetadata("typeAliasInArguments.kt")
       public void testTypeAliasInArguments() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/types/typeAliasInArguments.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/types/typeAliasInArguments.kt");
       }
     }
 
@@ -354,7 +354,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("typeAlias.kt")
       public void testTypeAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/typeAlias.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/typeAlias.kt");
       }
     }
 
@@ -371,13 +371,13 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("exposedTypeAlias.kt")
       public void testExposedTypeAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedTypeAlias.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/visibility/exposedTypeAlias.kt");
       }
 
       @Test
       @TestMetadata("privateAliasInSamePackage.kt")
       public void testPrivateAliasInSamePackage() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/visibility/privateAliasInSamePackage.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolve/visibility/privateAliasInSamePackage.kt");
       }
     }
   }
@@ -389,25 +389,25 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     @Test
     @TestMetadata("ClassIdDiagnosticRendering.kt")
     public void testClassIdDiagnosticRendering() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/ClassIdDiagnosticRendering.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/ClassIdDiagnosticRendering.kt");
     }
 
     @Test
     @TestMetadata("concurrentMapOfAliases.kt")
     public void testConcurrentMapOfAliases() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/concurrentMapOfAliases.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/concurrentMapOfAliases.kt");
     }
 
     @Test
     @TestMetadata("hashMapTypeAlias.kt")
     public void testHashMapTypeAlias() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/hashMapTypeAlias.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/hashMapTypeAlias.kt");
     }
 
     @Test
     @TestMetadata("typeAliasWithForEach.kt")
     public void testTypeAliasWithForEach() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasWithForEach.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasWithForEach.kt");
     }
 
     @Nested
@@ -462,7 +462,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("typeAliasAmbiguity.kt")
       public void testTypeAliasAmbiguity() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/typeAliasAmbiguity.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/typeAliasAmbiguity.kt");
       }
     }
 
@@ -473,7 +473,7 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("flexibleTypeAliases.kt")
       public void testFlexibleTypeAliases() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/flexibleTypeAliases.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/flexibleTypeAliases.kt");
       }
     }
 
@@ -484,19 +484,19 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       @Test
       @TestMetadata("EnumMapGet.kt")
       public void testEnumMapGet() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
       }
 
       @Test
       @TestMetadata("exceptionInRepeatedAnnotation.kt")
       public void testExceptionInRepeatedAnnotation() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/exceptionInRepeatedAnnotation.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/exceptionInRepeatedAnnotation.kt");
       }
 
       @Test
       @TestMetadata("WithValidityAssertion.kt")
       public void testWithValidityAssertion() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/WithValidityAssertion.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/WithValidityAssertion.kt");
       }
     }
 

@@ -25,7 +25,7 @@ public class JsKlibCompatibilityNoICES6TestCaseGenerated extends AbstractJsKlibC
   @Test
   @TestMetadata("addEnumEntry")
   public void testAddEnumEntry() {
-    runTest("compiler/testData/klib/versionCompatibility/addEnumEntry/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/klib/versionCompatibility/addEnumEntry/");
   }
 
   @Test
@@ -36,12 +36,12 @@ public class JsKlibCompatibilityNoICES6TestCaseGenerated extends AbstractJsKlibC
   @Test
   @TestMetadata("kt51302")
   public void testKt51302() {
-    runTest("compiler/testData/klib/versionCompatibility/kt51302/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/klib/versionCompatibility/kt51302/");
   }
 
   @Test
   @TestMetadata("varargUsage")
   public void testVarargUsage() {
-    runTest("compiler/testData/klib/versionCompatibility/varargUsage/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/klib/versionCompatibility/varargUsage/");
   }
 }

@@ -27,661 +27,661 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @Test
   @TestMetadata("annotationArgumentsMixScript.kts")
   public void testAnnotationArgumentsMixScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationArgumentsMixScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/annotationArgumentsMixScript.kts");
   }
 
   @Test
   @TestMetadata("annotationClassWithJavaTargetScript.kts")
   public void testAnnotationClassWithJavaTargetScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationClassWithJavaTargetScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/annotationClassWithJavaTargetScript.kts");
   }
 
   @Test
   @TestMetadata("annotationOnLocalClassScript.kts")
   public void testAnnotationOnLocalClassScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationOnLocalClassScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/annotationOnLocalClassScript.kts");
   }
 
   @Test
   @TestMetadata("annotationParametersScript.kts")
   public void testAnnotationParametersScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationParametersScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/annotationParametersScript.kts");
   }
 
   @Test
   @TestMetadata("annotationWithTypeArgumentScript.kts")
   public void testAnnotationWithTypeArgumentScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithTypeArgumentScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/annotationWithTypeArgumentScript.kts");
   }
 
   @Test
   @TestMetadata("annotationsScript.kts")
   public void testAnnotationsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/annotationsScript.kts");
   }
 
   @Test
   @TestMetadata("anonymousFunctionWithAnnotatedParameter2Script.kts")
   public void testAnonymousFunctionWithAnnotatedParameter2Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameter2Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameter2Script.kts");
   }
 
   @Test
   @TestMetadata("anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts")
   public void testAnonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts");
   }
 
   @Test
   @TestMetadata("anonymousFunctionWithAnnotatedParameterScript.kts")
   public void testAnonymousFunctionWithAnnotatedParameterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterScript.kts");
   }
 
   @Test
   @TestMetadata("classMembersScript.kts")
   public void testClassMembersScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/classMembersScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classMembersScript.kts");
   }
 
   @Test
   @TestMetadata("compilerRequiredAnnotationOnLocalClassScript.kts")
   public void testCompilerRequiredAnnotationOnLocalClassScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationOnLocalClassScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationOnLocalClassScript.kts");
   }
 
   @Test
   @TestMetadata("compilerRequiredAnnotationsOnConstructorPropertyScript.kts")
   public void testCompilerRequiredAnnotationsOnConstructorPropertyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorPropertyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorPropertyScript.kts");
   }
 
   @Test
   @TestMetadata("compilerRequiredAnnotationsOnConstructorScript.kts")
   public void testCompilerRequiredAnnotationsOnConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("compilerRequiredAnnotationsOnFunctionScript.kts")
   public void testCompilerRequiredAnnotationsOnFunctionScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnFunctionScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnFunctionScript.kts");
   }
 
   @Test
   @TestMetadata("compilerRequiredAnnotationsOnPropertyDelegateScript.kts")
   public void testCompilerRequiredAnnotationsOnPropertyDelegateScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyDelegateScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyDelegateScript.kts");
   }
 
   @Test
   @TestMetadata("compilerRequiredAnnotationsOnPropertyScript.kts")
   public void testCompilerRequiredAnnotationsOnPropertyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyScript.kts");
   }
 
   @Test
   @TestMetadata("complexLocalHierarchyScript.kts")
   public void testComplexLocalHierarchyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/complexLocalHierarchyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/complexLocalHierarchyScript.kts");
   }
 
   @Test
   @TestMetadata("complexRedeclarationScript.kts")
   public void testComplexRedeclarationScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/complexRedeclarationScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/complexRedeclarationScript.kts");
   }
 
   @Test
   @TestMetadata("cyclicHierarchy2Script.kts")
   public void testCyclicHierarchy2Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy2Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy2Script.kts");
   }
 
   @Test
   @TestMetadata("cyclicHierarchy3Script.kts")
   public void testCyclicHierarchy3Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy3Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy3Script.kts");
   }
 
   @Test
   @TestMetadata("cyclicHierarchyScript.kts")
   public void testCyclicHierarchyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchyScript.kts");
   }
 
   @Test
   @TestMetadata("cyclicNestedHierarchy2Script.kts")
   public void testCyclicNestedHierarchy2Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchy2Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchy2Script.kts");
   }
 
   @Test
   @TestMetadata("cyclicNestedHierarchyScript.kts")
   public void testCyclicNestedHierarchyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchyScript.kts");
   }
 
   @Test
   @TestMetadata("dataClassCopyScript.kts")
   public void testDataClassCopyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/dataClassCopyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/dataClassCopyScript.kts");
   }
 
   @Test
   @TestMetadata("dataComponent2Script.kts")
   public void testDataComponent2Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/dataComponent2Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/dataComponent2Script.kts");
   }
 
   @Test
   @TestMetadata("delegateWithImplicitTypeScript.kts")
   public void testDelegateWithImplicitTypeScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitTypeScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitTypeScript.kts");
   }
 
   @Test
   @TestMetadata("delegatedFieldNestedNameClashScript.kts")
   public void testDelegatedFieldNestedNameClashScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashScript.kts");
   }
 
   @Test
   @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesScript.kts")
   public void testDelegatedFieldNestedNameClashWithNestedTypesScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypesScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypesScript.kts");
   }
 
   @Test
   @TestMetadata("delegatedFieldScript.kts")
   public void testDelegatedFieldScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldScript.kts");
   }
 
   @Test
   @TestMetadata("delegatesScript.kts")
   public void testDelegatesScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatesScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/delegatesScript.kts");
   }
 
   @Test
   @TestMetadata("destructuring.kts")
   public void testDestructuring() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuring.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/destructuring.kts");
   }
 
   @Test
   @TestMetadata("destructuringFirstEntry.kts")
   public void testDestructuringFirstEntry() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuringFirstEntry.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/destructuringFirstEntry.kts");
   }
 
   @Test
   @TestMetadata("destructuringSecondEntry.kts")
   public void testDestructuringSecondEntry() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuringSecondEntry.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/destructuringSecondEntry.kts");
   }
 
   @Test
   @TestMetadata("entryInScriptDestructuringDeclarationMutable.kts")
   public void testEntryInScriptDestructuringDeclarationMutable() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/entryInScriptDestructuringDeclarationMutable.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/entryInScriptDestructuringDeclarationMutable.kts");
   }
 
   @Test
   @TestMetadata("enumEntriesScript.kts")
   public void testEnumEntriesScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntriesScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/enumEntriesScript.kts");
   }
 
   @Test
   @TestMetadata("enumEntryScript.kts")
   public void testEnumEntryScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntryScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/enumEntryScript.kts");
   }
 
   @Test
   @TestMetadata("enumValueOfScript.kts")
   public void testEnumValueOfScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/enumValueOfScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/enumValueOfScript.kts");
   }
 
   @Test
   @TestMetadata("enumValuesScript.kts")
   public void testEnumValuesScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/enumValuesScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/enumValuesScript.kts");
   }
 
   @Test
   @TestMetadata("explicitSubstitutionOverridePropertyScript.kts")
   public void testExplicitSubstitutionOverridePropertyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/explicitSubstitutionOverridePropertyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/explicitSubstitutionOverridePropertyScript.kts");
   }
 
   @Test
   @TestMetadata("fakeOverrideScript.kts")
   public void testFakeOverrideScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeOverrideScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/fakeOverrideScript.kts");
   }
 
   @Test
   @TestMetadata("fakePrimaryConstructorScript.kts")
   public void testFakePrimaryConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/fakePrimaryConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/fakePrimaryConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("fileAnnotationsScript.kts")
   public void testFileAnnotationsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/fileAnnotationsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/fileAnnotationsScript.kts");
   }
 
   @Test
   @TestMetadata("fromLocalHierarchyToOuterScript.kts")
   public void testFromLocalHierarchyToOuterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/fromLocalHierarchyToOuterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/fromLocalHierarchyToOuterScript.kts");
   }
 
   @Test
   @TestMetadata("functionWithImplicitTypeAndAnnotationsScript.kts")
   public void testFunctionWithImplicitTypeAndAnnotationsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndAnnotationsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndAnnotationsScript.kts");
   }
 
   @Test
   @TestMetadata("functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts")
   public void testFunctionWithImplicitTypeAndStringTemplateAsDefaultValueScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts");
   }
 
   @Test
   @TestMetadata("functionWithParameterScript.kts")
   public void testFunctionWithParameterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithParameterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functionWithParameterScript.kts");
   }
 
   @Test
   @TestMetadata("implicitSubstitutionOverridePropertyScript.kts")
   public void testImplicitSubstitutionOverridePropertyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutionOverridePropertyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutionOverridePropertyScript.kts");
   }
 
   @Test
   @TestMetadata("lambdaAsSAMInterfaceScript.kts")
   public void testLambdaAsSAMInterfaceScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterfaceScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterfaceScript.kts");
   }
 
   @Test
   @TestMetadata("lastStatementWithDestructuringDeclarationReference.kts")
   public void testLastStatementWithDestructuringDeclarationReference() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/lastStatementWithDestructuringDeclarationReference.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/lastStatementWithDestructuringDeclarationReference.kts");
   }
 
   @Test
   @TestMetadata("lazyPropertyScript.kts")
   public void testLazyPropertyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/lazyPropertyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/lazyPropertyScript.kts");
   }
 
   @Test
   @TestMetadata("localConstructorScript.kts")
   public void testLocalConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("localFunctionInsideAnnotationCallScript.kts")
   public void testLocalFunctionInsideAnnotationCallScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideAnnotationCallScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideAnnotationCallScript.kts");
   }
 
   @Test
   @TestMetadata("localFunctionInsideFunctionLiteralScript.kts")
   public void testLocalFunctionInsideFunctionLiteralScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideFunctionLiteralScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideFunctionLiteralScript.kts");
   }
 
   @Test
   @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplateScript.kts")
   public void testLocalFunctionInsideLambdaCallInsideStringTemplateScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideLambdaCallInsideStringTemplateScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideLambdaCallInsideStringTemplateScript.kts");
   }
 
   @Test
   @TestMetadata("localFunctionInsideStatement.kts")
   public void testLocalFunctionInsideStatement() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStatement.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStatement.kts");
   }
 
   @Test
   @TestMetadata("localFunctionInsideStringTemplateScript.kts")
   public void testLocalFunctionInsideStringTemplateScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStringTemplateScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStringTemplateScript.kts");
   }
 
   @Test
   @TestMetadata("localFunctionInsideSuperEntryCallScript.kts")
   public void testLocalFunctionInsideSuperEntryCallScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideSuperEntryCallScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideSuperEntryCallScript.kts");
   }
 
   @Test
   @TestMetadata("localNestedClassScript.kts")
   public void testLocalNestedClassScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localNestedClassScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localNestedClassScript.kts");
   }
 
   @Test
   @TestMetadata("localParameterInsideSuperEntryCallScript.kts")
   public void testLocalParameterInsideSuperEntryCallScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/localParameterInsideSuperEntryCallScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/localParameterInsideSuperEntryCallScript.kts");
   }
 
   @Test
   @TestMetadata("nestedCompilerRequiredAnnotationsForMemberScript.kts")
   public void testNestedCompilerRequiredAnnotationsForMemberScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsForMemberScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsForMemberScript.kts");
   }
 
   @Test
   @TestMetadata("nestedCompilerRequiredAnnotationsInsideBodyScript.kts")
   public void testNestedCompilerRequiredAnnotationsInsideBodyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsInsideBodyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsInsideBodyScript.kts");
   }
 
   @Test
   @TestMetadata("nestedCompilerRequiredAnnotationsScript.kts")
   public void testNestedCompilerRequiredAnnotationsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsScript.kts");
   }
 
   @Test
   @TestMetadata("nestedTypeAlias2Script.kts")
   public void testNestedTypeAlias2Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAlias2Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAlias2Script.kts");
   }
 
   @Test
   @TestMetadata("nestedTypeAliasScript.kts")
   public void testNestedTypeAliasScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAliasScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAliasScript.kts");
   }
 
   @Test
   @TestMetadata("parameterOfNonLocalSetterScript.kts")
   public void testParameterOfNonLocalSetterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/parameterOfNonLocalSetterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/parameterOfNonLocalSetterScript.kts");
   }
 
   @Test
   @TestMetadata("parameterOfTopSetterScript.kts")
   public void testParameterOfTopSetterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/parameterOfTopSetterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/parameterOfTopSetterScript.kts");
   }
 
   @Test
   @TestMetadata("primaryConstructorParameterScript.kts")
   public void testPrimaryConstructorParameterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorParameterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorParameterScript.kts");
   }
 
   @Test
   @TestMetadata("primaryConstructorPropertyScript.kts")
   public void testPrimaryConstructorPropertyScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorPropertyScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorPropertyScript.kts");
   }
 
   @Test
   @TestMetadata("primaryConstructorScript.kts")
   public void testPrimaryConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("propertyDelegateWithImplicitTypeScript.kts")
   public void testPropertyDelegateWithImplicitTypeScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyDelegateWithImplicitTypeScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/propertyDelegateWithImplicitTypeScript.kts");
   }
 
   @Test
   @TestMetadata("propertyWithGetterAndSetterScript.kts")
   public void testPropertyWithGetterAndSetterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterAndSetterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterAndSetterScript.kts");
   }
 
   @Test
   @TestMetadata("propertyWithGetterScript.kts")
   public void testPropertyWithGetterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterScript.kts");
   }
 
   @Test
   @TestMetadata("propertyWithImplicitTypeAndAnnotationsScript.kts")
   public void testPropertyWithImplicitTypeAndAnnotationsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndAnnotationsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndAnnotationsScript.kts");
   }
 
   @Test
   @TestMetadata("propertyWithImplicitTypeAndFieldAnnotationsScript.kts")
   public void testPropertyWithImplicitTypeAndFieldAnnotationsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndFieldAnnotationsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndFieldAnnotationsScript.kts");
   }
 
   @Test
   @TestMetadata("propertyWithInitializerScript.kts")
   public void testPropertyWithInitializerScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithInitializerScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/propertyWithInitializerScript.kts");
   }
 
   @Test
   @TestMetadata("redeclarationScript.kts")
   public void testRedeclarationScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/redeclarationScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/redeclarationScript.kts");
   }
 
   @Test
   @TestMetadata("resolveSuperTypeFromLocalClassScript.kts")
   public void testResolveSuperTypeFromLocalClassScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveSuperTypeFromLocalClassScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/resolveSuperTypeFromLocalClassScript.kts");
   }
 
   @Test
   @TestMetadata("resolveTypeFromLocalClassConstructorScript.kts")
   public void testResolveTypeFromLocalClassConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalClassConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalClassConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("resolveTypeFromLocalFunctionScript.kts")
   public void testResolveTypeFromLocalFunctionScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalFunctionScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalFunctionScript.kts");
   }
 
   @Test
   @TestMetadata("script.kts")
   public void testScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/script.kts");
   }
 
   @Test
   @TestMetadata("script2.kts")
   public void testScript2() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/script2.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/script2.kts");
   }
 
   @Test
   @TestMetadata("script3.kts")
   public void testScript3() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/script3.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/script3.kts");
   }
 
   @Test
   @TestMetadata("script4.kts")
   public void testScript4() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/script4.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/script4.kts");
   }
 
   @Test
   @TestMetadata("scriptArgument.kts")
   public void testScriptArgument() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/scriptArgument.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/scriptArgument.kts");
   }
 
   @Test
   @TestMetadata("scriptDestructuringDeclarationMutable.kts")
   public void testScriptDestructuringDeclarationMutable() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/scriptDestructuringDeclarationMutable.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/scriptDestructuringDeclarationMutable.kts");
   }
 
   @Test
   @TestMetadata("secondaryConstructorParameterScript.kts")
   public void testSecondaryConstructorParameterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorParameterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorParameterScript.kts");
   }
 
   @Test
   @TestMetadata("secondaryConstructorScript.kts")
   public void testSecondaryConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("statement.kts")
   public void testStatement() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/statement.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/statement.kts");
   }
 
   @Test
   @TestMetadata("statement2.kts")
   public void testStatement2() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/statement2.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/statement2.kts");
   }
 
   @Test
   @TestMetadata("statementTransformation.kts")
   public void testStatementTransformation() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/statementTransformation.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/statementTransformation.kts");
   }
 
   @Test
   @TestMetadata("substitutionFakeOverrideConstructorScript.kts")
   public void testSubstitutionFakeOverrideConstructorScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideConstructorScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideConstructorScript.kts");
   }
 
   @Test
   @TestMetadata("substitutionFakeOverrideFunctionScript.kts")
   public void testSubstitutionFakeOverrideFunctionScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionScript.kts");
   }
 
   @Test
   @TestMetadata("substitutionFakeOverrideFunctionWithImplicitTypeScript.kts")
   public void testSubstitutionFakeOverrideFunctionWithImplicitTypeScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionWithImplicitTypeScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionWithImplicitTypeScript.kts");
   }
 
   @Test
   @TestMetadata("substitutionFakeOverrideScript.kts")
   public void testSubstitutionFakeOverrideScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideScript.kts");
   }
 
   @Test
   @TestMetadata("substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts")
   public void testSubstitutionFakeOverrideWithImplicitTypeAndReceiverScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts");
   }
 
   @Test
   @TestMetadata("substitutionFakeOverrideWithImplicitTypeScript.kts")
   public void testSubstitutionFakeOverrideWithImplicitTypeScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeScript.kts");
   }
 
   @Test
   @TestMetadata("superTypesLoopScript.kts")
   public void testSuperTypesLoopScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypesLoopScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/superTypesLoopScript.kts");
   }
 
   @Test
   @TestMetadata("superTypesScript.kts")
   public void testSuperTypesScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypesScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/superTypesScript.kts");
   }
 
   @Test
   @TestMetadata("syntheticResultDeclaration.kts")
   public void testSyntheticResultDeclaration() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticResultDeclaration.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/syntheticResultDeclaration.kts");
   }
 
   @Test
   @TestMetadata("syntheticResultDeclarationWithBigBody.kts")
   public void testSyntheticResultDeclarationWithBigBody() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticResultDeclarationWithBigBody.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/syntheticResultDeclarationWithBigBody.kts");
   }
 
   @Test
   @TestMetadata("topLevelFunctionsScript.kts")
   public void testTopLevelFunctionsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsScript.kts");
   }
 
   @Test
   @TestMetadata("topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts")
   public void testTopLevelFunctionsWithExpressionBodyAndExplicitTypeScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts");
   }
 
   @Test
   @TestMetadata("topLevelFunctionsWithImplicitTypeScript.kts")
   public void testTopLevelFunctionsWithImplicitTypeScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithImplicitTypeScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithImplicitTypeScript.kts");
   }
 
   @Test
   @TestMetadata("typeParameterBoundsScript.kts")
   public void testTypeParameterBoundsScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterBoundsScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterBoundsScript.kts");
   }
 
   @Test
   @TestMetadata("typeParameterOfClass2Script.kts")
   public void testTypeParameterOfClass2Script() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClass2Script.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClass2Script.kts");
   }
 
   @Test
   @TestMetadata("typeParameterOfClassScript.kts")
   public void testTypeParameterOfClassScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClassScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClassScript.kts");
   }
 
   @Test
   @TestMetadata("typeParameterOfNonLocalFunctionScript.kts")
   public void testTypeParameterOfNonLocalFunctionScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfNonLocalFunctionScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfNonLocalFunctionScript.kts");
   }
 
   @Test
   @TestMetadata("typeParameterOfTopFunctionScript.kts")
   public void testTypeParameterOfTopFunctionScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopFunctionScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopFunctionScript.kts");
   }
 
   @Test
   @TestMetadata("typeParameterOfTopSetterScript.kts")
   public void testTypeParameterOfTopSetterScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopSetterScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopSetterScript.kts");
   }
 
   @Test
   @TestMetadata("typeParameterOfTypeAliasScript.kts")
   public void testTypeParameterOfTypeAliasScript() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTypeAliasScript.kts");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTypeAliasScript.kts");
   }
 
   @Nested
@@ -696,97 +696,97 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @Test
     @TestMetadata("annotationWithTargetScript.kts")
     public void testAnnotationWithTargetScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithTargetScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithTargetScript.kts");
     }
 
     @Test
     @TestMetadata("classWithTypeParametersScript.kts")
     public void testClassWithTypeParametersScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classWithTypeParametersScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/classWithTypeParametersScript.kts");
     }
 
     @Test
     @TestMetadata("functionInValueClassScript.kts")
     public void testFunctionInValueClassScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClassScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClassScript.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass2Script.kts")
     public void testHierarchyWithOverrideAndNestedClass2Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass2Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass2Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass3Script.kts")
     public void testHierarchyWithOverrideAndNestedClass3Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass3Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass3Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass4Script.kts")
     public void testHierarchyWithOverrideAndNestedClass4Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass4Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass4Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClassScript.kts")
     public void testHierarchyWithOverrideAndNestedClassScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClassScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClassScript.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideScript.kts")
     public void testHierarchyWithOverrideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideScript.kts");
     }
 
     @Test
     @TestMetadata("nestedClassScript.kts")
     public void testNestedClassScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassScript.kts");
     }
 
     @Test
     @TestMetadata("nestedClassWithPropertiesOverridesScript.kts")
     public void testNestedClassWithPropertiesOverridesScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassWithPropertiesOverridesScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassWithPropertiesOverridesScript.kts");
     }
 
     @Test
     @TestMetadata("simpleLoopInOverride2Script.kts")
     public void testSimpleLoopInOverride2Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverride2Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverride2Script.kts");
     }
 
     @Test
     @TestMetadata("simpleLoopInOverrideScript.kts")
     public void testSimpleLoopInOverrideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverrideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverrideScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNameClashImplicitConstructorScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashImplicitConstructorScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashImplicitConstructorScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNameClashScript.kts")
     public void testSuperTypeCallNameClashScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNestedNameClashImplicitConstructorScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructorScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructorScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNestedNameClashScript.kts")
     public void testSuperTypeCallNestedNameClashScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashScript.kts");
     }
 
     @Nested
@@ -801,25 +801,25 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
       @Test
       @TestMetadata("component1TypeCollisionScript.kts")
       public void testComponent1TypeCollisionScript() {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionScript.kts");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionScript.kts");
       }
 
       @Test
       @TestMetadata("copyTypeCollisionScript.kts")
       public void testCopyTypeCollisionScript() {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollisionScript.kts");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollisionScript.kts");
       }
 
       @Test
       @TestMetadata("parameterTypeCollisionScript.kts")
       public void testParameterTypeCollisionScript() {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionScript.kts");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionScript.kts");
       }
 
       @Test
       @TestMetadata("propertyTypeCollisionScript.kts")
       public void testPropertyTypeCollisionScript() {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollisionScript.kts");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollisionScript.kts");
       }
     }
   }
@@ -846,97 +846,97 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @Test
     @TestMetadata("contractScript.kts")
     public void testContractScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript.kts");
     }
 
     @Test
     @TestMetadata("contractScript2.kts")
     public void testContractScript2() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript2.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript2.kts");
     }
 
     @Test
     @TestMetadata("functionCallWithGenericResultScript.kts")
     public void testFunctionCallWithGenericResultScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionCallWithGenericResultScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/functionCallWithGenericResultScript.kts");
     }
 
     @Test
     @TestMetadata("functionParameterScript.kts")
     public void testFunctionParameterScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionParameterScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/functionParameterScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithGenericExpectedTypeInsideScript.kts")
     public void testFunctionWithGenericExpectedTypeInsideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithGenericExpectedTypeInsideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithGenericExpectedTypeInsideScript.kts");
     }
 
     @Test
     @TestMetadata("functionWithTypeParametersScript.kts")
     public void testFunctionWithTypeParametersScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithTypeParametersScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithTypeParametersScript.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass2Script.kts")
     public void testHierarchyWithOverrideAndNestedClass2Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass2Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass2Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass3Script.kts")
     public void testHierarchyWithOverrideAndNestedClass3Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass3Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass3Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClassScript.kts")
     public void testHierarchyWithOverrideAndNestedClassScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClassScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClassScript.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideScript.kts")
     public void testHierarchyWithOverrideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideScript.kts");
     }
 
     @Test
     @TestMetadata("simpleLoopInOverride2Script.kts")
     public void testSimpleLoopInOverride2Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride2Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride2Script.kts");
     }
 
     @Test
     @TestMetadata("simpleLoopInOverrideScript.kts")
     public void testSimpleLoopInOverrideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverrideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverrideScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNameClashImplicitConstructorScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashImplicitConstructorScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashImplicitConstructorScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNameClashScript.kts")
     public void testSuperTypeCallNameClashScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNestedNameClashImplicitConstructorScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructorScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructorScript.kts");
     }
 
     @Test
     @TestMetadata("superTypeCallNestedNameClashScript.kts")
     public void testSuperTypeCallNestedNameClashScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashScript.kts");
     }
   }
 
@@ -962,97 +962,97 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @Test
     @TestMetadata("getterWithDelegationScript.kts")
     public void testGetterWithDelegationScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/getterWithDelegationScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/getterWithDelegationScript.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass2Script.kts")
     public void testHierarchyWithOverrideAndNestedClass2Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass2Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass2Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass3Script.kts")
     public void testHierarchyWithOverrideAndNestedClass3Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass3Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass3Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClass4Script.kts")
     public void testHierarchyWithOverrideAndNestedClass4Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass4Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass4Script.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideAndNestedClassScript.kts")
     public void testHierarchyWithOverrideAndNestedClassScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClassScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClassScript.kts");
     }
 
     @Test
     @TestMetadata("hierarchyWithOverrideScript.kts")
     public void testHierarchyWithOverrideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideScript.kts");
     }
 
     @Test
     @TestMetadata("propertyGetterWithExplicitTypeAndBodyScript.kts")
     public void testPropertyGetterWithExplicitTypeAndBodyScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeAndBodyScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeAndBodyScript.kts");
     }
 
     @Test
     @TestMetadata("propertyGetterWithExplicitTypeScript.kts")
     public void testPropertyGetterWithExplicitTypeScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeScript.kts");
     }
 
     @Test
     @TestMetadata("propertyGetterWithImplicitTypeScript.kts")
     public void testPropertyGetterWithImplicitTypeScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithImplicitTypeScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithImplicitTypeScript.kts");
     }
 
     @Test
     @TestMetadata("propertySetterScript.kts")
     public void testPropertySetterScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertySetterScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/propertySetterScript.kts");
     }
 
     @Test
     @TestMetadata("propertyWithTypeParametersScript.kts")
     public void testPropertyWithTypeParametersScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyWithTypeParametersScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/propertyWithTypeParametersScript.kts");
     }
 
     @Test
     @TestMetadata("resultWithPropagatedType.kts")
     public void testResultWithPropagatedType() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/resultWithPropagatedType.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/resultWithPropagatedType.kts");
     }
 
     @Test
     @TestMetadata("scriptWithResultWithPropagatedType.kts")
     public void testScriptWithResultWithPropagatedType() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithResultWithPropagatedType.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithResultWithPropagatedType.kts");
     }
 
     @Test
     @TestMetadata("scriptWithTypeAnnotationsOnDeclaration.kts")
     public void testScriptWithTypeAnnotationsOnDeclaration() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithTypeAnnotationsOnDeclaration.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithTypeAnnotationsOnDeclaration.kts");
     }
 
     @Test
     @TestMetadata("simpleLoopInOverride2Script.kts")
     public void testSimpleLoopInOverride2Script() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2Script.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2Script.kts");
     }
 
     @Test
     @TestMetadata("simpleLoopInOverrideScript.kts")
     public void testSimpleLoopInOverrideScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverrideScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverrideScript.kts");
     }
   }
 
@@ -1078,7 +1078,7 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @Test
     @TestMetadata("typeAliasWithTypeParametersScript.kts")
     public void testTypeAliasWithTypeParametersScript() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithTypeParametersScript.kts");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithTypeParametersScript.kts");
     }
   }
 

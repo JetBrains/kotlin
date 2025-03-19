@@ -26,66 +26,66 @@ public class SourceClassIdConsistencyTestGenerated extends AbstractSourceClassId
   @Test
   @TestMetadata("classWithMembers.kt")
   public void testClassWithMembers() {
-    runTest("analysis/low-level-api-fir/testData/classId/classWithMembers.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/classWithMembers.kt");
   }
 
   @Test
   @TestMetadata("enum.kt")
   public void testEnum() {
-    runTest("analysis/low-level-api-fir/testData/classId/enum.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/enum.kt");
   }
 
   @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
-    runTest("analysis/low-level-api-fir/testData/classId/enumEntry.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/enumEntry.kt");
   }
 
   @Test
   @TestMetadata("invalidForJvmClassName.kt")
   public void testInvalidForJvmClassName() {
-    runTest("analysis/low-level-api-fir/testData/classId/invalidForJvmClassName.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/invalidForJvmClassName.kt");
   }
 
   @Test
   @TestMetadata("localClassInsideAnnotationArgument.kt")
   public void testLocalClassInsideAnnotationArgument() {
-    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideAnnotationArgument.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/localClassInsideAnnotationArgument.kt");
   }
 
   @Test
   @TestMetadata("localClassInsideFunctionLiteral.kt")
   public void testLocalClassInsideFunctionLiteral() {
-    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
   }
 
   @Test
   @TestMetadata("localClassInsideLambdaCallInsideStringTemplate.kt")
   public void testLocalClassInsideLambdaCallInsideStringTemplate() {
-    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideLambdaCallInsideStringTemplate.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/localClassInsideLambdaCallInsideStringTemplate.kt");
   }
 
   @Test
   @TestMetadata("localClassInsideSuperEntryCall.kt")
   public void testLocalClassInsideSuperEntryCall() {
-    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
   }
 
   @Test
   @TestMetadata("localClassInsideUnclosedAnnotation.kt")
   public void testLocalClassInsideUnclosedAnnotation() {
-    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideUnclosedAnnotation.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/localClassInsideUnclosedAnnotation.kt");
   }
 
   @Test
   @TestMetadata("namelessClasses.kt")
   public void testNamelessClasses() {
-    runTest("analysis/low-level-api-fir/testData/classId/namelessClasses.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/namelessClasses.kt");
   }
 
   @Test
   @TestMetadata("namelessInsideNamelessClasses.kt")
   public void testNamelessInsideNamelessClasses() {
-    runTest("analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kt");
   }
 }

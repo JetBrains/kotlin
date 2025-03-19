@@ -29,139 +29,139 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
     @Test
     @TestMetadata("androidRecently.kt")
     public void testAndroidRecently() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidRecently.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidRecently.kt");
     }
 
     @Test
     @TestMetadata("androidSdk.kt")
     public void testAndroidSdk() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidSdk.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidSdk.kt");
     }
 
     @Test
     @TestMetadata("android_support.kt")
     public void testAndroid_support() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/android_support.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/android_support.kt");
     }
 
     @Test
     @TestMetadata("androidx.kt")
     public void testAndroidx() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidx.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidx.kt");
     }
 
     @Test
     @TestMetadata("annotatedConflictsWithPurelyImplemented.kt")
     public void testAnnotatedConflictsWithPurelyImplemented() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/annotatedConflictsWithPurelyImplemented.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/annotatedConflictsWithPurelyImplemented.kt");
     }
 
     @Test
     @TestMetadata("aosp.kt")
     public void testAosp() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/aosp.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/aosp.kt");
     }
 
     @Test
     @TestMetadata("checkerFramework.kt")
     public void testCheckerFramework() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/checkerFramework.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/checkerFramework.kt");
     }
 
     @Test
     @TestMetadata("eclipse.kt")
     public void testEclipse() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/eclipse.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/eclipse.kt");
     }
 
     @Test
     @TestMetadata("errorArgumentOfWarningAfter.kt")
     public void testErrorArgumentOfWarningAfter() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningAfter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningAfter.kt");
     }
 
     @Test
     @TestMetadata("errorArgumentOfWarningBefore.kt")
     public void testErrorArgumentOfWarningBefore() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningBefore.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningBefore.kt");
     }
 
     @Test
     @TestMetadata("findBugsSimple.kt")
     public void testFindBugsSimple() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/findBugsSimple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/findBugsSimple.kt");
     }
 
     @Test
     @TestMetadata("irrelevantQualifierNicknames.kt")
     public void testIrrelevantQualifierNicknames() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/irrelevantQualifierNicknames.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/irrelevantQualifierNicknames.kt");
     }
 
     @Test
     @TestMetadata("kt47833.kt")
     public void testKt47833() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47833.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47833.kt");
     }
 
     @Test
     @TestMetadata("kt47920.kt")
     public void testKt47920() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
     }
 
     @Test
     @TestMetadata("kt48316_multiModuleAnnotationDefault.kt")
     public void testKt48316_multiModuleAnnotationDefault() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt48316_multiModuleAnnotationDefault.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt48316_multiModuleAnnotationDefault.kt");
     }
 
     @Test
     @TestMetadata("kt50734.kt")
     public void testKt50734() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt50734.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt50734.kt");
     }
 
     @Test
     @TestMetadata("lombokSimple.kt")
     public void testLombokSimple() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/lombokSimple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/lombokSimple.kt");
     }
 
     @Test
     @TestMetadata("multiple.kt")
     public void testMultiple() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/multiple.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/multiple.kt");
     }
 
     @Test
     @TestMetadata("rxjava.kt")
     public void testRxjava() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava.kt");
     }
 
     @Test
     @TestMetadata("rxjava3Default.kt")
     public void testRxjava3Default() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Default.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Default.kt");
     }
 
     @Test
     @TestMetadata("rxjava3Errors.kt")
     public void testRxjava3Errors() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Errors.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Errors.kt");
     }
 
     @Test
     @TestMetadata("rxjava3Ignore.kt")
     public void testRxjava3Ignore() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Ignore.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Ignore.kt");
     }
 
     @Test
     @TestMetadata("rxjava3Warnings.kt")
     public void testRxjava3Warnings() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Warnings.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Warnings.kt");
     }
 
     @Nested
@@ -176,31 +176,31 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @Test
       @TestMetadata("dontIgnoreAnnotationsWithoutTarget.kt")
       public void testDontIgnoreAnnotationsWithoutTarget() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/dontIgnoreAnnotationsWithoutTarget.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/dontIgnoreAnnotationsWithoutTarget.kt");
       }
 
       @Test
       @TestMetadata("nonNullNever.kt")
       public void testNonNullNever() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nonNullNever.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nonNullNever.kt");
       }
 
       @Test
       @TestMetadata("nullabilityNicknames.kt")
       public void testNullabilityNicknames() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityNicknames.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityNicknames.kt");
       }
 
       @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/simple.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/simple.kt");
       }
 
       @Test
       @TestMetadata("strange.kt")
       public void testStrange() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/strange.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/strange.kt");
       }
 
       @Nested
@@ -215,7 +215,7 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("parametersAreNonnullByDefault.kt")
         public void testParametersAreNonnullByDefault() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore/parametersAreNonnullByDefault.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore/parametersAreNonnullByDefault.kt");
         }
       }
 
@@ -231,61 +231,61 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("elvis.kt")
         public void testElvis() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/elvis.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/elvis.kt");
         }
 
         @Test
         @TestMetadata("expressionBodiedFunction.kt")
         public void testExpressionBodiedFunction() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/expressionBodiedFunction.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/expressionBodiedFunction.kt");
         }
 
         @Test
         @TestMetadata("kt65193.kt")
         public void testKt65193() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt");
         }
 
         @Test
         @TestMetadata("localInference.kt")
         public void testLocalInference() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/localInference.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/localInference.kt");
         }
 
         @Test
         @TestMetadata("nullabilityGenerics.kt")
         public void testNullabilityGenerics() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/nullabilityGenerics.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/nullabilityGenerics.kt");
         }
 
         @Test
         @TestMetadata("nullabilityNicknames.kt")
         public void testNullabilityNicknames() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/nullabilityNicknames.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/nullabilityNicknames.kt");
         }
 
         @Test
         @TestMetadata("override.kt")
         public void testOverride() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/override.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/override.kt");
         }
 
         @Test
         @TestMetadata("safeCalls.kt")
         public void testSafeCalls() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/safeCalls.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/safeCalls.kt");
         }
 
         @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/simple.kt");
         }
 
         @Test
         @TestMetadata("strange.kt")
         public void testStrange() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/strange.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/strange.kt");
         }
 
         @Nested
@@ -300,121 +300,121 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
           @Test
           @TestMetadata("arithmetic.kt")
           public void testArithmetic() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/arithmetic.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/arithmetic.kt");
           }
 
           @Test
           @TestMetadata("array.kt")
           public void testArray() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/array.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/array.kt");
           }
 
           @Test
           @TestMetadata("assignToVar.kt")
           public void testAssignToVar() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/assignToVar.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/assignToVar.kt");
           }
 
           @Test
           @TestMetadata("conditions.kt")
           public void testConditions() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/conditions.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/conditions.kt");
           }
 
           @Test
           @TestMetadata("dataFlowInfo.kt")
           public void testDataFlowInfo() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/dataFlowInfo.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/dataFlowInfo.kt");
           }
 
           @Test
           @TestMetadata("defaultParameters.kt")
           public void testDefaultParameters() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/defaultParameters.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/defaultParameters.kt");
           }
 
           @Test
           @TestMetadata("delegatedProperties.kt")
           public void testDelegatedProperties() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegatedProperties.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegatedProperties.kt");
           }
 
           @Test
           @TestMetadata("delegation.kt")
           public void testDelegation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegation.kt");
           }
 
           @Test
           @TestMetadata("derefenceExtension.kt")
           public void testDerefenceExtension() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceExtension.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceExtension.kt");
           }
 
           @Test
           @TestMetadata("derefenceMember.kt")
           public void testDerefenceMember() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceMember.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceMember.kt");
           }
 
           @Test
           @TestMetadata("expectedType.kt")
           public void testExpectedType() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/expectedType.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/expectedType.kt");
           }
 
           @Test
           @TestMetadata("for.kt")
           public void testFor() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/for.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/for.kt");
           }
 
           @Test
           @TestMetadata("functionArguments.kt")
           public void testFunctionArguments() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/functionArguments.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/functionArguments.kt");
           }
 
           @Test
           @TestMetadata("invoke.kt")
           public void testInvoke() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/invoke.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/invoke.kt");
           }
 
           @Test
           @TestMetadata("kt6829.kt")
           public void testKt6829() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/kt6829.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/kt6829.kt");
           }
 
           @Test
           @TestMetadata("multiDeclaration.kt")
           public void testMultiDeclaration() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/multiDeclaration.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/multiDeclaration.kt");
           }
 
           @Test
           @TestMetadata("passToJava.kt")
           public void testPassToJava() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/passToJava.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/passToJava.kt");
           }
 
           @Test
           @TestMetadata("primitiveArray.kt")
           public void testPrimitiveArray() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/primitiveArray.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/primitiveArray.kt");
           }
 
           @Test
           @TestMetadata("throw.kt")
           public void testThrow() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/throw.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/throw.kt");
           }
 
           @Test
           @TestMetadata("uselessElvisRightIsNull.kt")
           public void testUselessElvisRightIsNull() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/uselessElvisRightIsNull.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/uselessElvisRightIsNull.kt");
           }
         }
 
@@ -430,49 +430,49 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
           @Test
           @TestMetadata("equalsOnNonNull.kt")
           public void testEqualsOnNonNull() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/equalsOnNonNull.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/equalsOnNonNull.kt");
           }
 
           @Test
           @TestMetadata("fieldsAreNullable.kt")
           public void testFieldsAreNullable() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/fieldsAreNullable.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/fieldsAreNullable.kt");
           }
 
           @Test
           @TestMetadata("nullabilityFromOverridden.kt")
           public void testNullabilityFromOverridden() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/nullabilityFromOverridden.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/nullabilityFromOverridden.kt");
           }
 
           @Test
           @TestMetadata("overridingDefaultQualifier.kt")
           public void testOverridingDefaultQualifier() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/overridingDefaultQualifier.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/overridingDefaultQualifier.kt");
           }
 
           @Test
           @TestMetadata("parametersAreNonnullByDefault.kt")
           public void testParametersAreNonnullByDefault() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefault.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefault.kt");
           }
 
           @Test
           @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
           public void testParametersAreNonnullByDefaultPackage() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
           }
 
           @Test
           @TestMetadata("springNullable.kt")
           public void testSpringNullable() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullable.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullable.kt");
           }
 
           @Test
           @TestMetadata("springNullablePackage.kt")
           public void testSpringNullablePackage() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullablePackage.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullablePackage.kt");
           }
         }
       }
@@ -489,55 +489,55 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("fieldsAreNullable.kt")
         public void testFieldsAreNullable() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/fieldsAreNullable.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/fieldsAreNullable.kt");
         }
 
         @Test
         @TestMetadata("forceFlexibility.kt")
         public void testForceFlexibility() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/forceFlexibility.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/forceFlexibility.kt");
         }
 
         @Test
         @TestMetadata("forceFlexibleOverOverrides.kt")
         public void testForceFlexibleOverOverrides() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/forceFlexibleOverOverrides.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/forceFlexibleOverOverrides.kt");
         }
 
         @Test
         @TestMetadata("nullabilityFromOverridden.kt")
         public void testNullabilityFromOverridden() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/nullabilityFromOverridden.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/nullabilityFromOverridden.kt");
         }
 
         @Test
         @TestMetadata("overridingDefaultQualifier.kt")
         public void testOverridingDefaultQualifier() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/overridingDefaultQualifier.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/overridingDefaultQualifier.kt");
         }
 
         @Test
         @TestMetadata("parametersAreNonnullByDefault.kt")
         public void testParametersAreNonnullByDefault() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefault.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefault.kt");
         }
 
         @Test
         @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
         public void testParametersAreNonnullByDefaultPackage() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
         }
 
         @Test
         @TestMetadata("springNullable.kt")
         public void testSpringNullable() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/springNullable.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/springNullable.kt");
         }
 
         @Test
         @TestMetadata("springNullablePackage.kt")
         public void testSpringNullablePackage() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/springNullablePackage.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/springNullablePackage.kt");
         }
       }
     }
@@ -563,55 +563,55 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("customMigration.kt")
         public void testCustomMigration() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/customMigration.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/customMigration.kt");
         }
 
         @Test
         @TestMetadata("globalIgnore.kt")
         public void testGlobalIgnore() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/globalIgnore.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/globalIgnore.kt");
         }
 
         @Test
         @TestMetadata("globalWarningMigrationIgnore.kt")
         public void testGlobalWarningMigrationIgnore() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/globalWarningMigrationIgnore.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/globalWarningMigrationIgnore.kt");
         }
 
         @Test
         @TestMetadata("migrationError.kt")
         public void testMigrationError() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationError.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationError.kt");
         }
 
         @Test
         @TestMetadata("migrationIgnore.kt")
         public void testMigrationIgnore() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationIgnore.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationIgnore.kt");
         }
 
         @Test
         @TestMetadata("migrationWarning.kt")
         public void testMigrationWarning() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationWarning.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationWarning.kt");
         }
 
         @Test
         @TestMetadata("overrideConflicts.kt")
         public void testOverrideConflicts() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/overrideConflicts.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/overrideConflicts.kt");
         }
 
         @Test
         @TestMetadata("specialCollision.kt")
         public void testSpecialCollision() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/specialCollision.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/specialCollision.kt");
         }
 
         @Test
         @TestMetadata("stateRefinement.kt")
         public void testStateRefinement() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/stateRefinement.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/stateRefinement.kt");
         }
       }
     }
@@ -628,7 +628,7 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @Test
       @TestMetadata("defaultAndNicknameMigrationPolicy.kt")
       public void testDefaultAndNicknameMigrationPolicy() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault/defaultAndNicknameMigrationPolicy.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault/defaultAndNicknameMigrationPolicy.kt");
       }
     }
   }
@@ -645,31 +645,31 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
     @Test
     @TestMetadata("checkerFramework.kt")
     public void testCheckerFramework() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/checkerFramework.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/checkerFramework.kt");
     }
 
     @Test
     @TestMetadata("eclipse.kt")
     public void testEclipse() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/eclipse.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/eclipse.kt");
     }
 
     @Test
     @TestMetadata("overrideOfMethodWithParametricNullness.kt")
     public void testOverrideOfMethodWithParametricNullness() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/overrideOfMethodWithParametricNullness.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/overrideOfMethodWithParametricNullness.kt");
     }
 
     @Test
     @TestMetadata("typeUseOnObject.kt")
     public void testTypeUseOnObject() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeUseOnObject.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeUseOnObject.kt");
     }
 
     @Test
     @TestMetadata("warningModeForHeadType.kt")
     public void testWarningModeForHeadType() {
-      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/warningModeForHeadType.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/warningModeForHeadType.kt");
     }
 
     @Nested
@@ -684,19 +684,19 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @Test
       @TestMetadata("default.kt")
       public void testDefault() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/default.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/default.kt");
       }
 
       @Test
       @TestMetadata("WhenStrict.kt")
       public void testWhenStrict() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/WhenStrict.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/WhenStrict.kt");
       }
 
       @Test
       @TestMetadata("WhenWarn.kt")
       public void testWhenWarn() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/WhenWarn.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/WhenWarn.kt");
       }
 
       @Nested
@@ -711,259 +711,259 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedBoundsOfWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedBoundsOfWildcard.kt");
         }
 
         @Test
         @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
         public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
         }
 
         @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
         }
 
         @Test
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.kt");
         }
 
         @Test
         @TestMetadata("DerivedAsNullableOrNotNull.kt")
         public void testDerivedAsNullableOrNotNull() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/DerivedAsNullableOrNotNull.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/DerivedAsNullableOrNotNull.kt");
         }
 
         @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
         }
 
         @Test
         @TestMetadata("interconnectedGenerics.kt")
         public void testInterconnectedGenerics() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/interconnectedGenerics.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/interconnectedGenerics.kt");
         }
 
         @Test
         @TestMetadata("kt47396.kt")
         public void testKt47396() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47396.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47396.kt");
         }
 
         @Test
         @TestMetadata("kt47422.kt")
         public void testKt47422() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47422.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47422.kt");
         }
 
         @Test
         @TestMetadata("kt47437.kt")
         public void testKt47437() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47437.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47437.kt");
         }
 
         @Test
         @TestMetadata("kt48261.kt")
         public void testKt48261() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt48261.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt48261.kt");
         }
 
         @Test
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("notNullTypeAgainstNullableWildcard.kt")
         public void testNotNullTypeAgainstNullableWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/notNullTypeAgainstNullableWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/notNullTypeAgainstNullableWildcard.kt");
         }
 
         @Test
         @TestMetadata("NullMarkedVsPackageNullUnmarked.kt")
         public void testNullMarkedVsPackageNullUnmarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsPackageNullUnmarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsPackageNullUnmarked.kt");
         }
 
         @Test
         @TestMetadata("NullMarkedVsTypeNullUnmarked.kt")
         public void testNullMarkedVsTypeNullUnmarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsTypeNullUnmarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsTypeNullUnmarked.kt");
         }
 
         @Test
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedWithStarType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedWithStarType.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarked.kt")
         public void testNullUnmarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarked.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
         public void testNullUnmarkedAndNullMarkedConflictA() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedAndNullMarkedConflictA.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedAndNullMarkedConflictA.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
         public void testNullUnmarkedAndNullMarkedConflictB() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedAndNullMarkedConflictB.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedAndNullMarkedConflictB.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaRawTypeInNonNullContext.kt")
         public void testNullUnmarkedJavaRawTypeInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaRawTypeInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaRawTypeInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaRawTypeInNullableContext.kt")
         public void testNullUnmarkedJavaRawTypeInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaRawTypeInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaRawTypeInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaWildcardsInNonNullContext.kt")
         public void testNullUnmarkedJavaWildcardsInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaWildcardsInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaWildcardsInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaWildcardsInNullableContext.kt")
         public void testNullUnmarkedJavaWildcardsInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaWildcardsInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaWildcardsInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeArgumentInNonNullContext.kt")
         public void testNullUnmarkedTypeArgumentInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeArgumentInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeArgumentInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeArgumentInNullableContext.kt")
         public void testNullUnmarkedTypeArgumentInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeArgumentInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeArgumentInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeParameterInNonNullContext.kt")
         public void testNullUnmarkedTypeParameterInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeParameterInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeParameterInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeParameterInNullableContext.kt")
         public void testNullUnmarkedTypeParameterInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeParameterInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeParameterInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeVariableInNonNullContext.kt")
         public void testNullUnmarkedTypeVariableInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeVariableInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeVariableInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeVariableInNullableContext.kt")
         public void testNullUnmarkedTypeVariableInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeVariableInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeVariableInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
         public void testNullUnmarkedVsPackageNullMarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsPackageNullMarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsPackageNullMarked.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedVsParametricNullness.kt")
         public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsParametricNullness.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsParametricNullness.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
         public void testNullUnmarkedVsTypeNullMarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsTypeNullMarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsTypeNullMarked.kt");
         }
 
         @Test
         @TestMetadata("nullableArray.kt")
         public void testNullableArray() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/nullableArray.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/nullableArray.kt");
         }
 
         @Test
         @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
         public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
         }
 
         @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/SelfType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/SelfType.kt");
         }
 
         @Test
         @TestMetadata("Simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.kt");
         }
 
         @Test
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeArgumentsFromParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeArgumentsFromParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcard.kt");
         }
 
         @Test
         @TestMetadata("WildcardWithNullableUpperBoundInOutPosition.kt")
         public void testWildcardWithNullableUpperBoundInOutPosition() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardWithNullableUpperBoundInOutPosition.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardWithNullableUpperBoundInOutPosition.kt");
         }
 
         @Test
         @TestMetadata("WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt")
         public void testWildcardWithSameTypeButDifferentNullabilitiesAsBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt");
         }
 
         @Test
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
         }
       }
 
@@ -979,277 +979,277 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.kt");
         }
 
         @Test
         @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
         public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
         }
 
         @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");
         }
 
         @Test
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.kt");
         }
 
         @Test
         @TestMetadata("DerivedAsNullableOrNotNull.kt")
         public void testDerivedAsNullableOrNotNull() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/DerivedAsNullableOrNotNull.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/DerivedAsNullableOrNotNull.kt");
         }
 
         @Test
         @TestMetadata("forkPointCausedByWarnAnnotation.kt")
         public void testForkPointCausedByWarnAnnotation() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotation.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotation.kt");
         }
 
         @Test
         @TestMetadata("forkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions.kt")
         public void testForkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotationDisableConsiderForkPointsWhenCheckingContradictions.kt");
         }
 
         @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
         }
 
         @Test
         @TestMetadata("kt47899.kt")
         public void testKt47899() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt47899.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt47899.kt");
         }
 
         @Test
         @TestMetadata("kt65318.kt")
         public void testKt65318() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt65318.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt65318.kt");
         }
 
         @Test
         @TestMetadata("kt68110.kt")
         public void testKt68110() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt68110.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt68110.kt");
         }
 
         @Test
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("notNullTypeAgainstNullableWildcard.kt")
         public void testNotNullTypeAgainstNullableWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/notNullTypeAgainstNullableWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/notNullTypeAgainstNullableWildcard.kt");
         }
 
         @Test
         @TestMetadata("NullMarkedVsPackageNullUnmarked.kt")
         public void testNullMarkedVsPackageNullUnmarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedVsPackageNullUnmarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedVsPackageNullUnmarked.kt");
         }
 
         @Test
         @TestMetadata("NullMarkedVsTypeNullUnmarked.kt")
         public void testNullMarkedVsTypeNullUnmarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedVsTypeNullUnmarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedVsTypeNullUnmarked.kt");
         }
 
         @Test
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedWithStarType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedWithStarType.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarked.kt")
         public void testNullUnmarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarked.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
         public void testNullUnmarkedAndNullMarkedConflictA() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedAndNullMarkedConflictA.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedAndNullMarkedConflictA.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
         public void testNullUnmarkedAndNullMarkedConflictB() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedAndNullMarkedConflictB.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedAndNullMarkedConflictB.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaRawTypeInNonNullContext.kt")
         public void testNullUnmarkedJavaRawTypeInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaRawTypeInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaRawTypeInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaRawTypeInNullableContext.kt")
         public void testNullUnmarkedJavaRawTypeInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaRawTypeInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaRawTypeInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaWildcardsInNonNullContext.kt")
         public void testNullUnmarkedJavaWildcardsInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaWildcardsInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaWildcardsInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedJavaWildcardsInNullableContext.kt")
         public void testNullUnmarkedJavaWildcardsInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaWildcardsInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaWildcardsInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeArgumentInNonNullContext.kt")
         public void testNullUnmarkedTypeArgumentInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeArgumentInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeArgumentInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeArgumentInNullableContext.kt")
         public void testNullUnmarkedTypeArgumentInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeArgumentInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeArgumentInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeParameterInNonNullContext.kt")
         public void testNullUnmarkedTypeParameterInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeParameterInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeParameterInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeParameterInNullableContext.kt")
         public void testNullUnmarkedTypeParameterInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeParameterInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeParameterInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeVariableInNonNullContext.kt")
         public void testNullUnmarkedTypeVariableInNonNullContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeVariableInNonNullContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeVariableInNonNullContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedTypeVariableInNullableContext.kt")
         public void testNullUnmarkedTypeVariableInNullableContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeVariableInNullableContext.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeVariableInNullableContext.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
         public void testNullUnmarkedVsPackageNullMarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsPackageNullMarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsPackageNullMarked.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedVsParametricNullness.kt")
         public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsParametricNullness.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsParametricNullness.kt");
         }
 
         @Test
         @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
         public void testNullUnmarkedVsTypeNullMarked() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsTypeNullMarked.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsTypeNullMarked.kt");
         }
 
         @Test
         @TestMetadata("nullableArray.kt")
         public void testNullableArray() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/nullableArray.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/nullableArray.kt");
         }
 
         @Test
         @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
         public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
         }
 
         @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("OverrideOfAnnotated.kt")
         public void testOverrideOfAnnotated() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/OverrideOfAnnotated.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/OverrideOfAnnotated.kt");
         }
 
         @Test
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.kt");
         }
 
         @Test
         @TestMetadata("Simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.kt");
         }
 
         @Test
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeArgumentsFromParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeArgumentsFromParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/UnannotatedWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/UnannotatedWildcard.kt");
         }
 
         @Test
         @TestMetadata("WildcardWithNullableUpperBoundInOutPosition.kt")
         public void testWildcardWithNullableUpperBoundInOutPosition() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithNullableUpperBoundInOutPosition.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithNullableUpperBoundInOutPosition.kt");
         }
 
         @Test
         @TestMetadata("WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt")
         public void testWildcardWithSameTypeButDifferentNullabilitiesAsBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt");
         }
 
         @Test
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
         }
 
         @Test
         @TestMetadata("wrongNullabilityForOverridesCommon.kt")
         public void testWrongNullabilityForOverridesCommon() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesCommon.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesCommon.kt");
         }
 
         @Test
         @TestMetadata("wrongNullabilityForOverridesPlatform.kt")
         public void testWrongNullabilityForOverridesPlatform() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesPlatform.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesPlatform.kt");
         }
       }
     }
@@ -1266,7 +1266,7 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @Test
       @TestMetadata("default.kt")
       public void testDefault() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/default.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/default.kt");
       }
 
       @Nested
@@ -1281,97 +1281,97 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/AnnotatedBoundsOfWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/AnnotatedBoundsOfWildcard.kt");
         }
 
         @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Captured.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Captured.kt");
         }
 
         @Test
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Defaults.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Defaults.kt");
         }
 
         @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/IgnoreAnnotations.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/IgnoreAnnotations.kt");
         }
 
         @Test
         @TestMetadata("kt47396.kt")
         public void testKt47396() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47396.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47396.kt");
         }
 
         @Test
         @TestMetadata("kt47422.kt")
         public void testKt47422() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47422.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47422.kt");
         }
 
         @Test
         @TestMetadata("kt47437.kt")
         public void testKt47437() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47437.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47437.kt");
         }
 
         @Test
         @TestMetadata("kt48261.kt")
         public void testKt48261() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt48261.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt48261.kt");
         }
 
         @Test
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/NonPlatformTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/NonPlatformTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/NullnessUnspecifiedTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/SelfType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/SelfType.kt");
         }
 
         @Test
         @TestMetadata("Simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Simple.kt");
         }
 
         @Test
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/TypeArgumentsFromParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/TypeArgumentsFromParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/TypeParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/TypeParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/UnannotatedWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/UnannotatedWildcard.kt");
         }
 
         @Test
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/WildcardsWithDefault.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/WildcardsWithDefault.kt");
         }
       }
 
@@ -1387,85 +1387,85 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @Test
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/AnnotatedBoundsOfWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/AnnotatedBoundsOfWildcard.kt");
         }
 
         @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Captured.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Captured.kt");
         }
 
         @Test
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Defaults.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Defaults.kt");
         }
 
         @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/IgnoreAnnotations.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/IgnoreAnnotations.kt");
         }
 
         @Test
         @TestMetadata("kt47899.kt")
         public void testKt47899() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/kt47899.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/kt47899.kt");
         }
 
         @Test
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/NonPlatformTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/NonPlatformTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/NullnessUnspecifiedTypeParameter.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
         @Test
         @TestMetadata("OverrideOfAnnotated.kt")
         public void testOverrideOfAnnotated() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/OverrideOfAnnotated.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/OverrideOfAnnotated.kt");
         }
 
         @Test
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/SelfType.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/SelfType.kt");
         }
 
         @Test
         @TestMetadata("Simple.kt")
         public void testSimple() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Simple.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Simple.kt");
         }
 
         @Test
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/TypeArgumentsFromParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/TypeArgumentsFromParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/TypeParameterBounds.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/TypeParameterBounds.kt");
         }
 
         @Test
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/UnannotatedWildcard.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/UnannotatedWildcard.kt");
         }
 
         @Test
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/WildcardsWithDefault.kt");
+          runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/WildcardsWithDefault.kt");
         }
       }
     }
@@ -1482,43 +1482,43 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @Test
       @TestMetadata("defaultAnnotationAppliedToType.kt")
       public void testDefaultAnnotationAppliedToType() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/defaultAnnotationAppliedToType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/defaultAnnotationAppliedToType.kt");
       }
 
       @Test
       @TestMetadata("defaultAnnotationAppliedToTypeForCompiledJava.kt")
       public void testDefaultAnnotationAppliedToTypeForCompiledJava() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/defaultAnnotationAppliedToTypeForCompiledJava.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/defaultAnnotationAppliedToTypeForCompiledJava.kt");
       }
 
       @Test
       @TestMetadata("overrideWithTypeUseInClasspath.kt")
       public void testOverrideWithTypeUseInClasspath() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspath.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspath.kt");
       }
 
       @Test
       @TestMetadata("overrideWithTypeUseInClasspathWithArray.kt")
       public void testOverrideWithTypeUseInClasspathWithArray() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspathWithArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspathWithArray.kt");
       }
 
       @Test
       @TestMetadata("springNullableWithTypeUse.kt")
       public void testSpringNullableWithTypeUse() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNullableWithTypeUse.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNullableWithTypeUse.kt");
       }
 
       @Test
       @TestMetadata("typeArguments.kt")
       public void testTypeArguments() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/typeArguments.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/typeArguments.kt");
       }
 
       @Test
       @TestMetadata("typeUseVsMethodConflict.kt")
       public void testTypeUseVsMethodConflict() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/typeUseVsMethodConflict.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/typeUseVsMethodConflict.kt");
       }
     }
 
@@ -1534,109 +1534,109 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @Test
       @TestMetadata("annotatedPrimitiveArray.kt")
       public void testAnnotatedPrimitiveArray() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray.kt");
       }
 
       @Test
       @TestMetadata("annotatedPrimitiveArray_before.kt")
       public void testAnnotatedPrimitiveArray_before() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray_before.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray_before.kt");
       }
 
       @Test
       @TestMetadata("annotatedTypeArguments.kt")
       public void testAnnotatedTypeArguments() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.kt");
       }
 
       @Test
       @TestMetadata("classTypeParameterBound.kt")
       public void testClassTypeParameterBound() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBound.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBound.kt");
       }
 
       @Test
       @TestMetadata("classTypeParameterBoundWithWarnings.kt")
       public void testClassTypeParameterBoundWithWarnings() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBoundWithWarnings.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBoundWithWarnings.kt");
       }
 
       @Test
       @TestMetadata("enhancedRecursiveStarProjection.kt")
       public void testEnhancedRecursiveStarProjection() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
       }
 
       @Test
       @TestMetadata("errorsBasedOnEnhancedBasedType.kt")
       public void testErrorsBasedOnEnhancedBasedType() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/errorsBasedOnEnhancedBasedType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/errorsBasedOnEnhancedBasedType.kt");
       }
 
       @Test
       @TestMetadata("kt48261.kt")
       public void testKt48261() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/kt48261.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/kt48261.kt");
       }
 
       @Test
       @TestMetadata("methodWithTypeParameter.kt")
       public void testMethodWithTypeParameter() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.kt");
       }
 
       @Test
       @TestMetadata("mutabilityAndNullabilityForWarning.kt")
       public void testMutabilityAndNullabilityForWarning() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/mutabilityAndNullabilityForWarning.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/mutabilityAndNullabilityForWarning.kt");
       }
 
       @Test
       @TestMetadata("notNullVarargsOverrides.kt")
       public void testNotNullVarargsOverrides() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.kt");
       }
 
       @Test
       @TestMetadata("nullableVarargsOverrides.kt")
       public void testNullableVarargsOverrides() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.kt");
       }
 
       @Test
       @TestMetadata("returnType.kt")
       public void testReturnType() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnType.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnType.kt");
       }
 
       @Test
       @TestMetadata("returnTypeDifferentConstructor.kt")
       public void testReturnTypeDifferentConstructor() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeDifferentConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeDifferentConstructor.kt");
       }
 
       @Test
       @TestMetadata("returnTypeOverrideInKotlin.kt")
       public void testReturnTypeOverrideInKotlin() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.kt");
       }
 
       @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
       }
 
       @Test
       @TestMetadata("useTypeParameterAnnotationToEnhanceItsUsages.kt")
       public void testUseTypeParameterAnnotationToEnhanceItsUsages() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/useTypeParameterAnnotationToEnhanceItsUsages.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/useTypeParameterAnnotationToEnhanceItsUsages.kt");
       }
 
       @Test
       @TestMetadata("valueParameter.kt")
       public void testValueParameter() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
       }
     }
   }
@@ -1680,85 +1680,85 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
           @Test
           @TestMetadata("basic.kt")
           public void testBasic() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/basic.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/basic.kt");
           }
 
           @Test
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dependentModulesNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dependentModulesNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
           @Test
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dotNamedModule.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dotNamedModule.kt");
           }
 
           @Test
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/inheritanceAcrossModules.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/inheritanceAcrossModules.kt");
           }
 
           @Test
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/nestedClasses.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/nestedClasses.kt");
           }
 
           @Test
           @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
           public void testNullUnmarkedAndNullMarkedConflictA() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedAndNullMarkedConflictA.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedAndNullMarkedConflictA.kt");
           }
 
           @Test
           @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
           public void testNullUnmarkedAndNullMarkedConflictB() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedAndNullMarkedConflictB.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedAndNullMarkedConflictB.kt");
           }
 
           @Test
           @TestMetadata("NullUnmarkedVsModuleNullMarked.kt")
           public void testNullUnmarkedVsModuleNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedVsModuleNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedVsModuleNullMarked.kt");
           }
 
           @Test
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
           }
 
           @Test
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
           }
         }
 
@@ -1774,85 +1774,85 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
           @Test
           @TestMetadata("basic.kt")
           public void testBasic() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/basic.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/basic.kt");
           }
 
           @Test
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dependentModulesNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dependentModulesNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
           @Test
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dotNamedModule.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dotNamedModule.kt");
           }
 
           @Test
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/inheritanceAcrossModules.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/inheritanceAcrossModules.kt");
           }
 
           @Test
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/nestedClasses.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/nestedClasses.kt");
           }
 
           @Test
           @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
           public void testNullUnmarkedAndNullMarkedConflictA() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedAndNullMarkedConflictA.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedAndNullMarkedConflictA.kt");
           }
 
           @Test
           @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
           public void testNullUnmarkedAndNullMarkedConflictB() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedAndNullMarkedConflictB.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedAndNullMarkedConflictB.kt");
           }
 
           @Test
           @TestMetadata("NullUnmarkedVsModuleNullMarked.kt")
           public void testNullUnmarkedVsModuleNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedVsModuleNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedVsModuleNullMarked.kt");
           }
 
           @Test
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
           }
 
           @Test
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/severalModulesDifferentPackages.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/severalModulesDifferentPackages.kt");
           }
         }
       }
@@ -1888,67 +1888,67 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
           @Test
           @TestMetadata("basic.kt")
           public void testBasic() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/basic.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/basic.kt");
           }
 
           @Test
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dependentModulesNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dependentModulesNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
           @Test
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dotNamedModule.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dotNamedModule.kt");
           }
 
           @Test
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/inheritanceAcrossModules.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/inheritanceAcrossModules.kt");
           }
 
           @Test
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/nestedClasses.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/nestedClasses.kt");
           }
 
           @Test
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
           }
 
           @Test
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
           }
         }
 
@@ -1964,67 +1964,67 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
           @Test
           @TestMetadata("basic.kt")
           public void testBasic() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/basic.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/basic.kt");
           }
 
           @Test
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dependentModulesNullMarked.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dependentModulesNullMarked.kt");
           }
 
           @Test
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
           @Test
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dotNamedModule.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dotNamedModule.kt");
           }
 
           @Test
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/inheritanceAcrossModules.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/inheritanceAcrossModules.kt");
           }
 
           @Test
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/nestedClasses.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/nestedClasses.kt");
           }
 
           @Test
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
           }
 
           @Test
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/severalModulesDifferentPackages.kt");
+            runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/severalModulesDifferentPackages.kt");
           }
         }
       }

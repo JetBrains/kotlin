@@ -27,319 +27,319 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextParameters.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextParameters.kt");
   }
 
   @Test
   @TestMetadata("contextReceivers.kt")
   public void testContextReceivers() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextReceivers.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextReceivers.kt");
   }
 
   @Test
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/dataClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/dataClass.kt");
   }
 
   @Test
   @TestMetadata("delegate.kt")
   public void testDelegate() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/delegate.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/delegate.kt");
   }
 
   @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/enumEntry.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/enumEntry.kt");
   }
 
   @Test
   @TestMetadata("functionWithDefinitelyNotNullParameter.kt")
   public void testFunctionWithDefinitelyNotNullParameter() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/functionWithDefinitelyNotNullParameter.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/functionWithDefinitelyNotNullParameter.kt");
   }
 
   @Test
   @TestMetadata("genericsOnNestedClasses.kt")
   public void testGenericsOnNestedClasses() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/genericsOnNestedClasses.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/genericsOnNestedClasses.kt");
   }
 
   @Test
   @TestMetadata("multiFieldValueClass.kt")
   public void testMultiFieldValueClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multiFieldValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multiFieldValueClass.kt");
   }
 
   @Test
   @TestMetadata("multiFieldValueClassWithTypeAlias.kt")
   public void testMultiFieldValueClassWithTypeAlias() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multiFieldValueClassWithTypeAlias.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multiFieldValueClassWithTypeAlias.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeFunction.kt")
   public void testMultifileFacadeFunction() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunction.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunction.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeFunctionInherit.kt")
   public void testMultifileFacadeFunctionInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeFunctionPart.kt")
   public void testMultifileFacadeFunctionPart() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionPart.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionPart.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeFunctionPartInherit.kt")
   public void testMultifileFacadeFunctionPartInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionPartInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionPartInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalFunction.kt")
   public void testMultifileFacadeInternalFunction() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunction.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunction.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalFunctionInherit.kt")
   public void testMultifileFacadeInternalFunctionInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalFunctionPart.kt")
   public void testMultifileFacadeInternalFunctionPart() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionPart.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionPart.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalFunctionPartInherit.kt")
   public void testMultifileFacadeInternalFunctionPartInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionPartInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionPartInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalVariable.kt")
   public void testMultifileFacadeInternalVariable() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariable.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalVariableInherit.kt")
   public void testMultifileFacadeInternalVariableInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariableInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariableInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalVariablePart.kt")
   public void testMultifileFacadeInternalVariablePart() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariablePart.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariablePart.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeInternalVariablePartInherit.kt")
   public void testMultifileFacadeInternalVariablePartInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariablePartInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariablePartInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateFunction.kt")
   public void testMultifileFacadePrivateFunction() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunction.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunction.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateFunctionInherit.kt")
   public void testMultifileFacadePrivateFunctionInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateFunctionPart.kt")
   public void testMultifileFacadePrivateFunctionPart() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionPart.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionPart.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateFunctionPartInherit.kt")
   public void testMultifileFacadePrivateFunctionPartInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionPartInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionPartInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateVariable.kt")
   public void testMultifileFacadePrivateVariable() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariable.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateVariableInherit.kt")
   public void testMultifileFacadePrivateVariableInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariableInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariableInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateVariablePart.kt")
   public void testMultifileFacadePrivateVariablePart() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariablePart.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariablePart.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadePrivateVariablePartInherit.kt")
   public void testMultifileFacadePrivateVariablePartInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariablePartInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariablePartInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeVariable.kt")
   public void testMultifileFacadeVariable() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariable.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariable.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeVariableInherit.kt")
   public void testMultifileFacadeVariableInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariableInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariableInherit.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeVariablePart.kt")
   public void testMultifileFacadeVariablePart() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariablePart.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariablePart.kt");
   }
 
   @Test
   @TestMetadata("multifileFacadeVariablePartInherit.kt")
   public void testMultifileFacadeVariablePartInherit() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariablePartInherit.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariablePartInherit.kt");
   }
 
   @Test
   @TestMetadata("nestedValueClass.kt")
   public void testNestedValueClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/nestedValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/nestedValueClass.kt");
   }
 
   @Test
   @TestMetadata("parameter.kt")
   public void testParameter() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameter.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameter.kt");
   }
 
   @Test
   @TestMetadata("parameterNullableSuspendLambda.kt")
   public void testParameterNullableSuspendLambda() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterNullableSuspendLambda.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterNullableSuspendLambda.kt");
   }
 
   @Test
   @TestMetadata("parameterSuspendLambda.kt")
   public void testParameterSuspendLambda() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterSuspendLambda.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterSuspendLambda.kt");
   }
 
   @Test
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/secondaryConstructor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/secondaryConstructor.kt");
   }
 
   @Test
   @TestMetadata("simpleClass.kt")
   public void testSimpleClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleClass.kt");
   }
 
   @Test
   @TestMetadata("simpleConstructor.kt")
   public void testSimpleConstructor() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleConstructor.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleConstructor.kt");
   }
 
   @Test
   @TestMetadata("simpleFunction.kt")
   public void testSimpleFunction() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleFunction.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleFunction.kt");
   }
 
   @Test
   @TestMetadata("simpleProperty.kt")
   public void testSimpleProperty() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleProperty.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleProperty.kt");
   }
 
   @Test
   @TestMetadata("topLevelFunction.kt")
   public void testTopLevelFunction() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/topLevelFunction.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/topLevelFunction.kt");
   }
 
   @Test
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typeParameter.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/typeParameter.kt");
   }
 
   @Test
   @TestMetadata("typealiasUnsignedConst.kt")
   public void testTypealiasUnsignedConst() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typealiasUnsignedConst.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/typealiasUnsignedConst.kt");
   }
 
   @Test
   @TestMetadata("unsignedConst.kt")
   public void testUnsignedConst() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/unsignedConst.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/unsignedConst.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithAnotherValueClass.kt")
   public void testValueClassWithAnotherValueClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithAnotherValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithAnotherValueClass.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithMultiFieldValueClass.kt")
   public void testValueClassWithMultiFieldValueClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithMultiFieldValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithMultiFieldValueClass.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithNestedClass.kt")
   public void testValueClassWithNestedClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithNestedClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithNestedClass.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithNullableMultiFieldValueClass.kt")
   public void testValueClassWithNullableMultiFieldValueClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithNullableMultiFieldValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithNullableMultiFieldValueClass.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithParameterizedAlias.kt")
   public void testValueClassWithParameterizedAlias() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithParameterizedAlias.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithParameterizedAlias.kt");
   }
 
   @Test
   @TestMetadata("valueClassWithTypeAliasOnAnotherValueClass.kt")
   public void testValueClassWithTypeAliasOnAnotherValueClass() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithTypeAliasOnAnotherValueClass.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/valueClassWithTypeAliasOnAnotherValueClass.kt");
   }
 
   @Test
   @TestMetadata("varargAndFunctionalType.kt")
   public void testVarargAndFunctionalType() {
-    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/varargAndFunctionalType.kt");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/varargAndFunctionalType.kt");
   }
 
   @Nested
@@ -363,37 +363,37 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
       @Test
       @TestMetadata("memberFunction.kt")
       public void testMemberFunction() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/memberFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/memberFunction.kt");
       }
 
       @Test
       @TestMetadata("memberProperty.kt")
       public void testMemberProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/memberProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/memberProperty.kt");
       }
 
       @Test
       @TestMetadata("primaryConstructor.kt")
       public void testPrimaryConstructor() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/primaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/primaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("secondaryConstructor.kt")
       public void testSecondaryConstructor() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/secondaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/secondaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/topLevelFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/topLevelFunction.kt");
       }
 
       @Test
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/topLevelProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/topLevelProperty.kt");
       }
     }
 
@@ -409,49 +409,49 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
       @Test
       @TestMetadata("memberFunction.kt")
       public void testMemberFunction() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/memberFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/memberFunction.kt");
       }
 
       @Test
       @TestMetadata("memberProperty.kt")
       public void testMemberProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/memberProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/memberProperty.kt");
       }
 
       @Test
       @TestMetadata("primaryConstructor.kt")
       public void testPrimaryConstructor() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/primaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/primaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("secondaryConstructor.kt")
       public void testSecondaryConstructor() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/secondaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/secondaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelFunction.kt");
       }
 
       @Test
       @TestMetadata("topLevelFunctionWithJvmName.kt")
       public void testTopLevelFunctionWithJvmName() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelFunctionWithJvmName.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelFunctionWithJvmName.kt");
       }
 
       @Test
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelProperty.kt");
       }
 
       @Test
       @TestMetadata("topLevelPropertyWithJvmName.kt")
       public void testTopLevelPropertyWithJvmName() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelPropertyWithJvmName.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelPropertyWithJvmName.kt");
       }
     }
 
@@ -467,37 +467,37 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
       @Test
       @TestMetadata("memberFunction.kt")
       public void testMemberFunction() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/memberFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/memberFunction.kt");
       }
 
       @Test
       @TestMetadata("memberProperty.kt")
       public void testMemberProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/memberProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/memberProperty.kt");
       }
 
       @Test
       @TestMetadata("primaryConstructor.kt")
       public void testPrimaryConstructor() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/primaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/primaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("secondaryConstructor.kt")
       public void testSecondaryConstructor() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/secondaryConstructor.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/secondaryConstructor.kt");
       }
 
       @Test
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/topLevelFunction.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/topLevelFunction.kt");
       }
 
       @Test
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
-        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/topLevelProperty.kt");
+        runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/topLevelProperty.kt");
       }
     }
   }
@@ -514,67 +514,67 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     @Test
     @TestMetadata("classAnnotation.kt")
     public void testClassAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/classAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/classAnnotation.kt");
     }
 
     @Test
     @TestMetadata("constructorAnnotation.kt")
     public void testConstructorAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/constructorAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/constructorAnnotation.kt");
     }
 
     @Test
     @TestMetadata("dynamic.kt")
     public void testDynamic() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/dynamic.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/dynamic.kt");
     }
 
     @Test
     @TestMetadata("enumAnnotation.kt")
     public void testEnumAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/enumAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/enumAnnotation.kt");
     }
 
     @Test
     @TestMetadata("fileJsModule.kt")
     public void testFileJsModule() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/fileJsModule.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/fileJsModule.kt");
     }
 
     @Test
     @TestMetadata("functionAnnotation.kt")
     public void testFunctionAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/functionAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/functionAnnotation.kt");
     }
 
     @Test
     @TestMetadata("jQueryExample.kt")
     public void testJQueryExample() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/jQueryExample.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/jQueryExample.kt");
     }
 
     @Test
     @TestMetadata("parameterAnnotation.kt")
     public void testParameterAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/parameterAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/parameterAnnotation.kt");
     }
 
     @Test
     @TestMetadata("propertyAnnotation.kt")
     public void testPropertyAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/propertyAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/propertyAnnotation.kt");
     }
 
     @Test
     @TestMetadata("typeAnnotation.kt")
     public void testTypeAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/typeAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/typeAnnotation.kt");
     }
 
     @Test
     @TestMetadata("typeParameterAnnotation.kt")
     public void testTypeParameterAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/typeParameterAnnotation.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/typeParameterAnnotation.kt");
     }
   }
 
@@ -590,43 +590,43 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     @Test
     @TestMetadata("publishedApiClass.kt")
     public void testPublishedApiClass() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiClass.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiClass.kt");
     }
 
     @Test
     @TestMetadata("publishedApiConstructor.kt")
     public void testPublishedApiConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiConstructor.kt");
     }
 
     @Test
     @TestMetadata("publishedApiFunction.kt")
     public void testPublishedApiFunction() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiFunction.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiFunction.kt");
     }
 
     @Test
     @TestMetadata("publishedApiPrimaryConstructor.kt")
     public void testPublishedApiPrimaryConstructor() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPrimaryConstructor.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPrimaryConstructor.kt");
     }
 
     @Test
     @TestMetadata("publishedApiProperty.kt")
     public void testPublishedApiProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiProperty.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiProperty.kt");
     }
 
     @Test
     @TestMetadata("publishedApiPropertyGetter.kt")
     public void testPublishedApiPropertyGetter() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPropertyGetter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPropertyGetter.kt");
     }
 
     @Test
     @TestMetadata("publishedApiPropertySetter.kt")
     public void testPublishedApiPropertySetter() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPropertySetter.kt");
+      runTest("/Users/ilya.goncharov/repos/kotlin-amper/analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPropertySetter.kt");
     }
   }
 }

@@ -111,17 +111,17 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.1.kt");
                 }
 
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.2.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.1.kt");
                 }
 
                 public void testAllFilesPresentInNeg() {
@@ -139,37 +139,37 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.2.kt");
                 }
 
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.3.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.1.kt");
                 }
 
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.2.kt");
                 }
 
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.3.kt");
                 }
 
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.4.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -213,7 +213,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/1.1.kt");
                 }
 
                 public void testAllFilesPresentInNeg() {
@@ -231,22 +231,22 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.1.kt");
                 }
 
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.2.kt");
                 }
 
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.3.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -316,17 +316,17 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt");
                 }
 
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.2.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt");
                 }
 
                 public void testAllFilesPresentInNeg() {
@@ -344,32 +344,32 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.1.kt");
                 }
 
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.2.kt");
                 }
 
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.1.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.1.kt");
                 }
 
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.2.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.2.kt");
                 }
 
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.3.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.3.kt");
                 }
 
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.4.kt");
+                  runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.4.kt");
                 }
 
                 public void testAllFilesPresentInPos() {
@@ -414,47 +414,47 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.3.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.3.kt");
               }
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.1.kt");
               }
 
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.2.kt");
               }
 
               @TestMetadata("3.3.kt")
               public void test3_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.3.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -472,22 +472,22 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/1.2.kt");
               }
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
               }
 
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/3.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/3.2.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -518,22 +518,22 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -551,32 +551,32 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.5.kt");
               }
 
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.6.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -607,37 +607,37 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.5.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/2.1.kt");
               }
 
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/3.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/3.1.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -655,52 +655,52 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.5.kt");
               }
 
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.6.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
               }
 
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.4.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -731,22 +731,22 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.4.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -764,52 +764,52 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
               }
 
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.6.kt");
               }
 
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.7.kt");
               }
 
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.1.kt");
               }
 
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.2.kt");
               }
 
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.3.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -840,7 +840,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg/1.1.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -884,22 +884,22 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.4.kt");
               }
 
               public void testAllFilesPresentInNeg() {
@@ -917,52 +917,52 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt");
               }
 
               @TestMetadata("1.10.kt")
               public void test1_10() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.10.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.10.kt");
               }
 
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt");
               }
 
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt");
               }
 
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.4.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.4.kt");
               }
 
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.5.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.5.kt");
               }
 
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.6.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.6.kt");
               }
 
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.7.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.7.kt");
               }
 
               @TestMetadata("1.8.kt")
               public void test1_8() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.8.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.8.kt");
               }
 
               @TestMetadata("1.9.kt")
               public void test1_9() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.9.kt");
+                runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.9.kt");
               }
 
               public void testAllFilesPresentInPos() {
@@ -1007,12 +1007,12 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.1.kt");
             }
 
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.2.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -1030,12 +1030,12 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.1.kt");
             }
 
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.2.kt");
             }
 
             public void testAllFilesPresentInPos() {
@@ -1066,22 +1066,22 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.1.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.2.kt");
             }
 
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.1.kt");
             }
 
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.2.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -1112,17 +1112,17 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.1.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.2.kt");
             }
 
             @TestMetadata("1.3.kt")
             public void test1_3() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.3.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.3.kt");
             }
 
             public void testAllFilesPresentInNeg() {
@@ -1153,27 +1153,27 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
 
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.1.kt");
             }
 
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.2.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.2.kt");
             }
 
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/3.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/3.1.kt");
             }
 
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/5.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/5.1.kt");
             }
 
             @TestMetadata("7.1.kt")
             public void test7_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/7.1.kt");
+              runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/7.1.kt");
             }
 
             public void testAllFilesPresentInNeg() {

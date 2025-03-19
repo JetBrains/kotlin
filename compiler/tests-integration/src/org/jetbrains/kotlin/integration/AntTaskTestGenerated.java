@@ -27,7 +27,7 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
 
   @TestMetadata("additionalArguments")
   public void testAdditionalArguments() {
-    runTest("compiler/testData/integration/ant/jvm/additionalArguments/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/additionalArguments/");
   }
 
   public void testAllFilesPresentInJvm() {
@@ -36,136 +36,136 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
 
   @TestMetadata("doNotFailOnError")
   public void testDoNotFailOnError() {
-    runTest("compiler/testData/integration/ant/jvm/doNotFailOnError/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/doNotFailOnError/");
   }
 
   @TestMetadata("doNotIncludeRuntimeByDefault")
   public void testDoNotIncludeRuntimeByDefault() {
-    runTest("compiler/testData/integration/ant/jvm/doNotIncludeRuntimeByDefault/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/doNotIncludeRuntimeByDefault/");
   }
 
   @TestMetadata("failOnErrorByDefault")
   public void testFailOnErrorByDefault() {
-    runTest("compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
   }
 
   @TestMetadata("fork")
   public void testFork() {
-    runTest("compiler/testData/integration/ant/jvm/fork/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/fork/");
   }
 
   @TestMetadata("forkOnError")
   public void testForkOnError() {
-    runTest("compiler/testData/integration/ant/jvm/forkOnError/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/forkOnError/");
   }
 
   @TestMetadata("helloWorld")
   public void testHelloWorld() {
-    runTest("compiler/testData/integration/ant/jvm/helloWorld/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/helloWorld/");
   }
 
   @TestMetadata("internalMembers")
   public void testInternalMembers() {
-    runTest("compiler/testData/integration/ant/jvm/internalMembers/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/internalMembers/");
   }
 
   @TestMetadata("jvmClasspath")
   public void testJvmClasspath() {
-    runTest("compiler/testData/integration/ant/jvm/jvmClasspath/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/jvmClasspath/");
   }
 
   @TestMetadata("kt11995")
   public void testKt11995() {
-    runTest("compiler/testData/integration/ant/jvm/kt11995/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/kt11995/");
   }
 
   @TestMetadata("languageVersion")
   public void testLanguageVersion() {
-    runTest("compiler/testData/integration/ant/jvm/languageVersion/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/languageVersion/");
   }
 
   @TestMetadata("mainInFiles")
   public void testMainInFiles() {
-    runTest("compiler/testData/integration/ant/jvm/mainInFiles/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/mainInFiles/");
   }
 
   @TestMetadata("manySourceRoots")
   public void testManySourceRoots() {
-    runTest("compiler/testData/integration/ant/jvm/manySourceRoots/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/manySourceRoots/");
   }
 
   @TestMetadata("moduleName")
   public void testModuleName() {
-    runTest("compiler/testData/integration/ant/jvm/moduleName/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/moduleName/");
   }
 
   @TestMetadata("moduleNameDefault")
   public void testModuleNameDefault() {
-    runTest("compiler/testData/integration/ant/jvm/moduleNameDefault/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/moduleNameDefault/");
   }
 
   @TestMetadata("moduleNameWithKotlin")
   public void testModuleNameWithKotlin() {
-    runTest("compiler/testData/integration/ant/jvm/moduleNameWithKotlin/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/moduleNameWithKotlin/");
   }
 
   @TestMetadata("noReflectForJavac")
   public void testNoReflectForJavac() {
-    runTest("compiler/testData/integration/ant/jvm/noReflectForJavac/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/noReflectForJavac/");
   }
 
   @TestMetadata("noStdlibForJavac")
   public void testNoStdlibForJavac() {
-    runTest("compiler/testData/integration/ant/jvm/noStdlibForJavac/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/noStdlibForJavac/");
   }
 
   @TestMetadata("overloadResolutionOnCollectionLiteral")
   public void testOverloadResolutionOnCollectionLiteral() {
-    runTest("compiler/testData/integration/ant/jvm/overloadResolutionOnCollectionLiteral/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/overloadResolutionOnCollectionLiteral/");
   }
 
   @TestMetadata("stdlibForJavacWithNoKotlin")
   public void testStdlibForJavacWithNoKotlin() {
-    runTest("compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
   }
 
   @TestMetadata("suppressWarnings")
   public void testSuppressWarnings() {
-    runTest("compiler/testData/integration/ant/jvm/suppressWarnings/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/suppressWarnings/");
   }
 
   @TestMetadata("twoStdlibForCollectionLiterals")
   public void testTwoStdlibForCollectionLiterals() {
-    runTest("compiler/testData/integration/ant/jvm/twoStdlibForCollectionLiterals/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/twoStdlibForCollectionLiterals/");
   }
 
   @TestMetadata("valWithInvoke")
   public void testValWithInvoke() {
-    runTest("compiler/testData/integration/ant/jvm/valWithInvoke/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/valWithInvoke/");
   }
 
   @TestMetadata("verbose")
   public void testVerbose() {
-    runTest("compiler/testData/integration/ant/jvm/verbose/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/verbose/");
   }
 
   @TestMetadata("version")
   public void testVersion() {
-    runTest("compiler/testData/integration/ant/jvm/version/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/version/");
   }
 
   @TestMetadata("withKotlinFork")
   public void testWithKotlinFork() {
-    runTest("compiler/testData/integration/ant/jvm/withKotlinFork/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/withKotlinFork/");
   }
 
   @TestMetadata("withKotlinNoJavaSources")
   public void testWithKotlinNoJavaSources() {
-    runTest("compiler/testData/integration/ant/jvm/withKotlinNoJavaSources/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/withKotlinNoJavaSources/");
   }
 
   @TestMetadata("wrongCallForCollectionLiteral")
   public void testWrongCallForCollectionLiteral() {
-    runTest("compiler/testData/integration/ant/jvm/wrongCallForCollectionLiteral/");
+    runTest("/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/integration/ant/jvm/wrongCallForCollectionLiteral/");
   }
 }
