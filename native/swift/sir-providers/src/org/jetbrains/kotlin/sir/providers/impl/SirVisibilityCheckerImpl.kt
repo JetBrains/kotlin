@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -55,6 +57,9 @@ public class SirVisibilityCheckerImpl(
         }
         // Context parameters are not supported yet in Swift export, so just skip such declarations.
         if (ktSymbol is KaCallableSymbol && ktSymbol.contextParameters.isNotEmpty()) {
+            return SirVisibility.PRIVATE
+        }
+        if (containsHidesFromObjCAnnotation(ktSymbol)) {
             return SirVisibility.PRIVATE
         }
         val isExported = when (ktSymbol) {
@@ -167,5 +172,14 @@ public class SirVisibilityCheckerImpl(
         }
     }
 }
+
+private fun KaSession.containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
+    return symbol.annotations.any { annotation ->
+        val annotationClassId = annotation.classId ?: return@any false
+        val annotationClassSymbol = findClass(annotationClassId) ?: return@any false
+        ClassId.topLevel(FqName("kotlin.native.HidesFromObjC")) in annotationClassSymbol.annotations
+    }
+}
+
 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
