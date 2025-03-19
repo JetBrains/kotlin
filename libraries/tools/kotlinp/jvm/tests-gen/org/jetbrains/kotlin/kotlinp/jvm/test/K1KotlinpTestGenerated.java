@@ -25,6 +25,12 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   }
 
   @Test
+  @TestMetadata("AnnotationParameterDefaultValues.kt")
+  public void testAnnotationParameterDefaultValues() {
+    runTest("libraries/tools/kotlinp/jvm/testData/AnnotationParameterDefaultValues.kt");
+  }
+
+  @Test
   @TestMetadata("AnnotationTargets.kt")
   public void testAnnotationTargets() {
     runTest("libraries/tools/kotlinp/jvm/testData/AnnotationTargets.kt");

@@ -31942,6 +31942,19 @@ public final class DebugProtoBuf {
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
         int index);
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    boolean hasAnnotationParameterDefaultValue();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder getAnnotationParameterDefaultValueOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.ValueParameter}
@@ -32048,6 +32061,19 @@ public final class DebugProtoBuf {
                 mutable_bitField0_ |= 0x00000040;
               }
               annotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.PARSER, extensionRegistry));
+              break;
+            }
+            case 66: {
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
+                subBuilder = annotationParameterDefaultValue_.toBuilder();
+              }
+              annotationParameterDefaultValue_ = input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(annotationParameterDefaultValue_);
+                annotationParameterDefaultValue_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000040;
               break;
             }
           }
@@ -32244,6 +32270,27 @@ public final class DebugProtoBuf {
       return annotation_.get(index);
     }
 
+    public static final int ANNOTATION_PARAMETER_DEFAULT_VALUE_FIELD_NUMBER = 8;
+    private org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value annotationParameterDefaultValue_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    public boolean hasAnnotationParameterDefaultValue() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue() {
+      return annotationParameterDefaultValue_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder getAnnotationParameterDefaultValueOrBuilder() {
+      return annotationParameterDefaultValue_;
+    }
+
     private void initFields() {
       flags_ = 0;
       name_ = 0;
@@ -32252,6 +32299,7 @@ public final class DebugProtoBuf {
       varargElementType_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.getDefaultInstance();
       varargElementTypeId_ = 0;
       annotation_ = java.util.Collections.emptyList();
+      annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -32277,6 +32325,12 @@ public final class DebugProtoBuf {
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasAnnotationParameterDefaultValue()) {
+        if (!getAnnotationParameterDefaultValue().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -32316,6 +32370,9 @@ public final class DebugProtoBuf {
       for (int i = 0; i < annotation_.size(); i++) {
         output.writeMessage(7, annotation_.get(i));
       }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeMessage(8, annotationParameterDefaultValue_);
+      }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
     }
@@ -32353,6 +32410,10 @@ public final class DebugProtoBuf {
       for (int i = 0; i < annotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(7, annotation_.get(i));
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(8, annotationParameterDefaultValue_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -32468,6 +32529,7 @@ public final class DebugProtoBuf {
           getTypeFieldBuilder();
           getVarargElementTypeFieldBuilder();
           getAnnotationFieldBuilder();
+          getAnnotationParameterDefaultValueFieldBuilder();
         }
       }
       private static Builder create() {
@@ -32502,6 +32564,12 @@ public final class DebugProtoBuf {
         } else {
           annotationBuilder_.clear();
         }
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+        } else {
+          annotationParameterDefaultValueBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -32571,6 +32639,14 @@ public final class DebugProtoBuf {
         } else {
           result.annotation_ = annotationBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          result.annotationParameterDefaultValue_ = annotationParameterDefaultValue_;
+        } else {
+          result.annotationParameterDefaultValue_ = annotationParameterDefaultValueBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -32631,6 +32707,9 @@ public final class DebugProtoBuf {
             }
           }
         }
+        if (other.hasAnnotationParameterDefaultValue()) {
+          mergeAnnotationParameterDefaultValue(other.getAnnotationParameterDefaultValue());
+        }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -32655,6 +32734,12 @@ public final class DebugProtoBuf {
         }
         for (int i = 0; i < getAnnotationCount(); i++) {
           if (!getAnnotation(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasAnnotationParameterDefaultValue()) {
+          if (!getAnnotationParameterDefaultValue().isInitialized()) {
             
             return false;
           }
@@ -33311,6 +33396,122 @@ public final class DebugProtoBuf {
           annotation_ = null;
         }
         return annotationBuilder_;
+      }
+
+      private org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder> annotationParameterDefaultValueBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public boolean hasAnnotationParameterDefaultValue() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue() {
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          return annotationParameterDefaultValue_;
+        } else {
+          return annotationParameterDefaultValueBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder setAnnotationParameterDefaultValue(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value value) {
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          annotationParameterDefaultValue_ = value;
+          onChanged();
+        } else {
+          annotationParameterDefaultValueBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000080;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder setAnnotationParameterDefaultValue(
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Builder builderForValue) {
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          annotationParameterDefaultValue_ = builderForValue.build();
+          onChanged();
+        } else {
+          annotationParameterDefaultValueBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000080;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder mergeAnnotationParameterDefaultValue(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value value) {
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          if (((bitField0_ & 0x00000080) == 0x00000080) &&
+              annotationParameterDefaultValue_ != org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance()) {
+            annotationParameterDefaultValue_ =
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.newBuilder(annotationParameterDefaultValue_).mergeFrom(value).buildPartial();
+          } else {
+            annotationParameterDefaultValue_ = value;
+          }
+          onChanged();
+        } else {
+          annotationParameterDefaultValueBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000080;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder clearAnnotationParameterDefaultValue() {
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+          onChanged();
+        } else {
+          annotationParameterDefaultValueBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000080);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Builder getAnnotationParameterDefaultValueBuilder() {
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return getAnnotationParameterDefaultValueFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder getAnnotationParameterDefaultValueOrBuilder() {
+        if (annotationParameterDefaultValueBuilder_ != null) {
+          return annotationParameterDefaultValueBuilder_.getMessageOrBuilder();
+        } else {
+          return annotationParameterDefaultValue_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder> 
+          getAnnotationParameterDefaultValueFieldBuilder() {
+        if (annotationParameterDefaultValueBuilder_ == null) {
+          annotationParameterDefaultValueBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder>(
+                  getAnnotationParameterDefaultValue(),
+                  getParentForChildren(),
+                  isClean());
+          annotationParameterDefaultValue_ = null;
+        }
+        return annotationParameterDefaultValueBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.ValueParameter)
@@ -44747,80 +44948,83 @@ public final class DebugProtoBuf {
       "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
       "tation\022L\n\031delegate_field_annotation\030# \003(" +
       "\0132).org.jetbrains.kotlin.metadata.Annota",
-      "tion*\006\010d\020\270\224\001\"\256\002\n\016ValueParameter\022\020\n\005flags" +
+      "tion*\006\010d\020\270\224\001\"\224\003\n\016ValueParameter\022\020\n\005flags" +
       "\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0221\n\004type\030\003 " +
       "\001(\0132#.org.jetbrains.kotlin.metadata.Type" +
       "\022\025\n\007type_id\030\005 \001(\005B\004\240\265\030\001\022@\n\023vararg_elemen" +
       "t_type\030\004 \001(\0132#.org.jetbrains.kotlin.meta" +
       "data.Type\022$\n\026vararg_element_type_id\030\006 \001(" +
       "\005B\004\240\265\030\001\022=\n\nannotation\030\007 \003(\0132).org.jetbra" +
-      "ins.kotlin.metadata.Annotation*\005\010d\020\310\001\"\347\003" +
-      "\n\tTypeAlias\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 " +
-      "\002(\005B\004\210\265\030\001\022D\n\016type_parameter\030\003 \003(\0132,.org.",
-      "jetbrains.kotlin.metadata.TypeParameter\022" +
-      "<\n\017underlying_type\030\004 \001(\0132#.org.jetbrains" +
-      ".kotlin.metadata.Type\022 \n\022underlying_type" +
-      "_id\030\005 \001(\005B\004\240\265\030\001\022:\n\rexpanded_type\030\006 \001(\0132#" +
-      ".org.jetbrains.kotlin.metadata.Type\022\036\n\020e" +
-      "xpanded_type_id\030\007 \001(\005B\004\240\265\030\001\022=\n\nannotatio" +
-      "n\030\010 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Annotation\022\033\n\023version_requirement\030\037 \003(\005\022" +
-      "O\n\024compiler_plugin_data\030  \003(\01321.org.jetb" +
-      "rains.kotlin.metadata.CompilerPluginData",
-      "*\005\010d\020\310\001\"e\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001" +
-      "\022=\n\nannotation\030\002 \003(\0132).org.jetbrains.kot" +
-      "lin.metadata.Annotation*\005\010d\020\310\001\"\225\003\n\022Versi" +
-      "onRequirement\022\017\n\007version\030\001 \001(\005\022\024\n\014versio" +
-      "n_full\030\002 \001(\005\022M\n\005level\030\003 \001(\01627.org.jetbra" +
-      "ins.kotlin.metadata.VersionRequirement.L" +
-      "evel:\005ERROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n\007messa" +
-      "ge\030\005 \001(\005B\004\230\265\030\001\022e\n\014version_kind\030\006 \001(\0162=.o" +
-      "rg.jetbrains.kotlin.metadata.VersionRequ" +
-      "irement.VersionKind:\020LANGUAGE_VERSION\"+\n",
-      "\005Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN" +
-      "\020\002\"J\n\013VersionKind\022\024\n\020LANGUAGE_VERSION\020\000\022" +
-      "\024\n\020COMPILER_VERSION\020\001\022\017\n\013API_VERSION\020\002\"a" +
-      "\n\027VersionRequirementTable\022F\n\013requirement" +
-      "\030\001 \003(\01321.org.jetbrains.kotlin.metadata.V" +
-      "ersionRequirement\"\217\002\n\017PackageFragment\022;\n" +
-      "\007strings\030\001 \001(\0132*.org.jetbrains.kotlin.me" +
-      "tadata.StringTable\022J\n\017qualified_names\030\002 " +
-      "\001(\01321.org.jetbrains.kotlin.metadata.Qual" +
-      "ifiedNameTable\0227\n\007package\030\003 \001(\0132&.org.je",
-      "tbrains.kotlin.metadata.Package\0223\n\005class" +
-      "\030\004 \003(\0132$.org.jetbrains.kotlin.metadata.C" +
-      "lass*\005\010d\020\310\001\"A\n\010Contract\0225\n\006effect\030\001 \003(\0132" +
-      "%.org.jetbrains.kotlin.metadata.Effect\"\306" +
-      "\003\n\006Effect\022E\n\013effect_type\030\001 \001(\01620.org.jet" +
-      "brains.kotlin.metadata.Effect.EffectType" +
-      "\022N\n\033effect_constructor_argument\030\002 \003(\0132)." +
-      "org.jetbrains.kotlin.metadata.Expression" +
-      "\022S\n conclusion_of_conditional_effect\030\003 \001" +
-      "(\0132).org.jetbrains.kotlin.metadata.Expre",
-      "ssion\022B\n\004kind\030\004 \001(\01624.org.jetbrains.kotl" +
-      "in.metadata.Effect.InvocationKind\"C\n\nEff" +
-      "ectType\022\024\n\020RETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001" +
-      "\022\024\n\020RETURNS_NOT_NULL\020\002\"G\n\016InvocationKind" +
-      "\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\r" +
-      "AT_LEAST_ONCE\020\002\"\245\003\n\nExpression\022\020\n\005flags\030" +
-      "\001 \001(\005:\0010\022!\n\031value_parameter_reference\030\002 " +
-      "\001(\005\022O\n\016constant_value\030\003 \001(\01627.org.jetbra" +
-      "ins.kotlin.metadata.Expression.ConstantV" +
-      "alue\022=\n\020is_instance_type\030\004 \001(\0132#.org.jet",
-      "brains.kotlin.metadata.Type\022!\n\023is_instan" +
-      "ce_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014and_argument\030\006" +
-      " \003(\0132).org.jetbrains.kotlin.metadata.Exp" +
-      "ression\022>\n\013or_argument\030\007 \003(\0132).org.jetbr" +
-      "ains.kotlin.metadata.Expression\".\n\rConst" +
-      "antValue\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\"" +
-      ";\n\022CompilerPluginData\022\027\n\tplugin_id\030\001 \002(\005" +
-      "B\004\230\265\030\001\022\014\n\004data\030\002 \002(\014*9\n\010Modality\022\t\n\005FINA" +
-      "L\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*" +
-      "b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001",
-      "\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_T" +
-      "O_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DEC" +
-      "LARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGAT" +
-      "ION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBuf"
+      "ins.kotlin.metadata.Annotation\022d\n\"annota" +
+      "tion_parameter_default_value\030\010 \001(\01328.org" +
+      ".jetbrains.kotlin.metadata.Annotation.Ar",
+      "gument.Value*\005\010d\020\310\001\"\347\003\n\tTypeAlias\022\020\n\005fla" +
+      "gs\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022D\n\016type_" +
+      "parameter\030\003 \003(\0132,.org.jetbrains.kotlin.m" +
+      "etadata.TypeParameter\022<\n\017underlying_type" +
+      "\030\004 \001(\0132#.org.jetbrains.kotlin.metadata.T" +
+      "ype\022 \n\022underlying_type_id\030\005 \001(\005B\004\240\265\030\001\022:\n" +
+      "\rexpanded_type\030\006 \001(\0132#.org.jetbrains.kot" +
+      "lin.metadata.Type\022\036\n\020expanded_type_id\030\007 " +
+      "\001(\005B\004\240\265\030\001\022=\n\nannotation\030\010 \003(\0132).org.jetb" +
+      "rains.kotlin.metadata.Annotation\022\033\n\023vers",
+      "ion_requirement\030\037 \003(\005\022O\n\024compiler_plugin" +
+      "_data\030  \003(\01321.org.jetbrains.kotlin.metad" +
+      "ata.CompilerPluginData*\005\010d\020\310\001\"e\n\tEnumEnt" +
+      "ry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001\022=\n\nannotation\030\002 \003" +
+      "(\0132).org.jetbrains.kotlin.metadata.Annot" +
+      "ation*\005\010d\020\310\001\"\225\003\n\022VersionRequirement\022\017\n\007v" +
+      "ersion\030\001 \001(\005\022\024\n\014version_full\030\002 \001(\005\022M\n\005le" +
+      "vel\030\003 \001(\01627.org.jetbrains.kotlin.metadat" +
+      "a.VersionRequirement.Level:\005ERROR\022\022\n\nerr" +
+      "or_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005B\004\230\265\030\001\022e\n\014",
+      "version_kind\030\006 \001(\0162=.org.jetbrains.kotli" +
+      "n.metadata.VersionRequirement.VersionKin" +
+      "d:\020LANGUAGE_VERSION\"+\n\005Level\022\013\n\007WARNING\020" +
+      "\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n\013VersionKind\022" +
+      "\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020COMPILER_VERSIO" +
+      "N\020\001\022\017\n\013API_VERSION\020\002\"a\n\027VersionRequireme" +
+      "ntTable\022F\n\013requirement\030\001 \003(\01321.org.jetbr" +
+      "ains.kotlin.metadata.VersionRequirement\"" +
+      "\217\002\n\017PackageFragment\022;\n\007strings\030\001 \001(\0132*.o" +
+      "rg.jetbrains.kotlin.metadata.StringTable",
+      "\022J\n\017qualified_names\030\002 \001(\01321.org.jetbrain" +
+      "s.kotlin.metadata.QualifiedNameTable\0227\n\007" +
+      "package\030\003 \001(\0132&.org.jetbrains.kotlin.met" +
+      "adata.Package\0223\n\005class\030\004 \003(\0132$.org.jetbr" +
+      "ains.kotlin.metadata.Class*\005\010d\020\310\001\"A\n\010Con" +
+      "tract\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.ko" +
+      "tlin.metadata.Effect\"\306\003\n\006Effect\022E\n\013effec" +
+      "t_type\030\001 \001(\01620.org.jetbrains.kotlin.meta" +
+      "data.Effect.EffectType\022N\n\033effect_constru" +
+      "ctor_argument\030\002 \003(\0132).org.jetbrains.kotl",
+      "in.metadata.Expression\022S\n conclusion_of_" +
+      "conditional_effect\030\003 \001(\0132).org.jetbrains" +
+      ".kotlin.metadata.Expression\022B\n\004kind\030\004 \001(" +
+      "\01624.org.jetbrains.kotlin.metadata.Effect" +
+      ".InvocationKind\"C\n\nEffectType\022\024\n\020RETURNS" +
+      "_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NU" +
+      "LL\020\002\"G\n\016InvocationKind\022\020\n\014AT_MOST_ONCE\020\000" +
+      "\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"\245\003" +
+      "\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_" +
+      "parameter_reference\030\002 \001(\005\022O\n\016constant_va",
+      "lue\030\003 \001(\01627.org.jetbrains.kotlin.metadat" +
+      "a.Expression.ConstantValue\022=\n\020is_instanc" +
+      "e_type\030\004 \001(\0132#.org.jetbrains.kotlin.meta" +
+      "data.Type\022!\n\023is_instance_type_id\030\005 \001(\005B\004" +
+      "\240\265\030\001\022?\n\014and_argument\030\006 \003(\0132).org.jetbrai" +
+      "ns.kotlin.metadata.Expression\022>\n\013or_argu" +
+      "ment\030\007 \003(\0132).org.jetbrains.kotlin.metada" +
+      "ta.Expression\".\n\rConstantValue\022\010\n\004TRUE\020\000" +
+      "\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPluginD" +
+      "ata\022\027\n\tplugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 \002",
+      "(\014*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010A" +
+      "BSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010I" +
+      "NTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n" +
+      "\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020" +
+      "\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE" +
+      "_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZ" +
+      "ED\020\003B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -44930,7 +45134,7 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_metadata_ValueParameter_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_ValueParameter_descriptor,
-        new java.lang.String[] { "Flags", "Name", "Type", "TypeId", "VarargElementType", "VarargElementTypeId", "Annotation", });
+        new java.lang.String[] { "Flags", "Name", "Type", "TypeId", "VarargElementType", "VarargElementTypeId", "Annotation", "AnnotationParameterDefaultValue", });
     internal_static_org_jetbrains_kotlin_metadata_TypeAlias_descriptor =
       getDescriptor().getMessageTypes().get(12);
     internal_static_org_jetbrains_kotlin_metadata_TypeAlias_fieldAccessorTable = new

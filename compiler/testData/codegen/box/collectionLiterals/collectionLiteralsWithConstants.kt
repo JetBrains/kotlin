@@ -1,6 +1,7 @@
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
-// TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
 
 import java.util.Arrays
 import kotlin.reflect.KFunction0

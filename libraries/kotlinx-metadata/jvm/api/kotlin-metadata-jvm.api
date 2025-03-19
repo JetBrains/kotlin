@@ -641,10 +641,12 @@ public final class kotlin/metadata/KmTypeProjection$Companion {
 public final class kotlin/metadata/KmValueParameter {
 	public field type Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
+	public final fun getAnnotationParameterDefaultValue ()Lkotlin/metadata/KmAnnotationArgument;
 	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getType ()Lkotlin/metadata/KmType;
 	public final fun getVarargElementType ()Lkotlin/metadata/KmType;
+	public final fun setAnnotationParameterDefaultValue (Lkotlin/metadata/KmAnnotationArgument;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setType (Lkotlin/metadata/KmType;)V
 	public final fun setVarargElementType (Lkotlin/metadata/KmType;)V

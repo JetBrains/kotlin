@@ -190,6 +190,9 @@ private fun WriteContext.writeValueParameter(
     val t = ProtoBuf.ValueParameter.newBuilder()
     t.type = writeType(kmValueParameter.type).build()
     kmValueParameter.varargElementType?.let { t.varargElementType = writeType(it).build() }
+    kmValueParameter.annotationParameterDefaultValue?.let {
+        t.annotationParameterDefaultValue = it.writeAnnotationArgument(strings).build()
+    }
     extensions.forEach { it.writeValueParameterExtensions(kmValueParameter, t, this) }
     val flags = kmValueParameter.flags or
             Flags.HAS_ANNOTATIONS.toFlags(kmValueParameter.annotations.isNotEmpty())

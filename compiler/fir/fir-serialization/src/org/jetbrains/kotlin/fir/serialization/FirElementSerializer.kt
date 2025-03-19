@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.constant.AnnotationValue
+import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.EnumValue
 import org.jetbrains.kotlin.constant.IntValue
 import org.jetbrains.kotlin.descriptors.*
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
@@ -978,10 +980,21 @@ class FirElementSerializer private constructor(
             }
         }
 
+        if (shouldWriteAnnotationParameterDefaultValues(extension.metadataVersion) &&
+            parameter.containingDeclarationSymbol.isAnnotationConstructor(session)
+        ) {
+            parameter.defaultValue?.toConstantValue<ConstantValue<*>>(session, scopeSession, extension.constValueProvider)?.let { value ->
+                builder.setAnnotationParameterDefaultValue(extension.annotationSerializer.valueProto(value))
+            }
+        }
+
         extension.serializeValueParameter(parameter, builder)
 
         return builder
     }
+
+    private fun shouldWriteAnnotationParameterDefaultValues(version: BinaryVersion): Boolean =
+        version.major > 2 || (version.major == 2 && version.minor >= 2)
 
     private fun typeParameterProto(typeParameter: FirTypeParameter): ProtoBuf.TypeParameter.Builder =
         whileAnalysing(session, typeParameter) {

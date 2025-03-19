@@ -20,7 +20,7 @@ public abstract @interface Anno1 {
  * public final annotation class Anno2 : kotlin/Annotation {
  *
  *   // signature: <init>(ILjava/lang/String;[ILkotlin/Array;LAnno1;LColors;Lkotlin/Array;Lkotlin/reflect/KClass;Lkotlin/Array;)V
- *   public constructor(i: kotlin/Int (* = ... *), s: kotlin/String (* = ... *), ii: kotlin/IntArray (* = ... *), ss: kotlin/Array<kotlin/String> (* = ... *), a: Anno1, color: Colors (* = ... *), colors: kotlin/Array<Colors> (* = ... *), clazz: kotlin/reflect/KClass<*>, classes: kotlin/Array<kotlin/reflect/KClass<*>>)
+ *   public constructor(i: kotlin/Int = 5, s: kotlin/String = "ABC", ii: kotlin/IntArray = [1, 2, 3], ss: kotlin/Array<kotlin/String> = ["A", "B"], a: Anno1, color: Colors = Colors.BLACK, colors: kotlin/Array<Colors> = [Colors.BLACK, Colors.WHITE], clazz: kotlin/reflect/KClass<*>, classes: kotlin/Array<kotlin/reflect/KClass<*>>)
  *
  *   // getter: a()LAnno1;
  *   public final val a: Anno1

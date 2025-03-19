@@ -465,7 +465,11 @@ abstract class Kotlinp(protected val settings: Settings) {
         } else {
             append(valueParameter.name, ": ").appendType(valueParameter.type)
         }
-        if (valueParameter.declaresDefaultValue) {
+        val annotationParameterDefaultValue = valueParameter.annotationParameterDefaultValue
+        if (annotationParameterDefaultValue != null) {
+            append(" = ")
+            renderAnnotationArgument(annotationParameterDefaultValue, printer)
+        } else if (valueParameter.declaresDefaultValue) {
             append(" /* = ... */")
         }
     }

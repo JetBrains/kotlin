@@ -23641,6 +23641,15 @@ public final class ProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 7;</code>
      */
     int getAnnotationCount();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    boolean hasAnnotationParameterDefaultValue();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.ValueParameter}
@@ -23745,6 +23754,19 @@ public final class ProtoBuf {
                 mutable_bitField0_ |= 0x00000040;
               }
               annotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.PARSER, extensionRegistry));
+              break;
+            }
+            case 66: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
+                subBuilder = annotationParameterDefaultValue_.toBuilder();
+              }
+              annotationParameterDefaultValue_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(annotationParameterDefaultValue_);
+                annotationParameterDefaultValue_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000040;
               break;
             }
           }
@@ -23923,6 +23945,21 @@ public final class ProtoBuf {
       return annotation_.get(index);
     }
 
+    public static final int ANNOTATION_PARAMETER_DEFAULT_VALUE_FIELD_NUMBER = 8;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value annotationParameterDefaultValue_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    public boolean hasAnnotationParameterDefaultValue() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue() {
+      return annotationParameterDefaultValue_;
+    }
+
     private void initFields() {
       flags_ = 0;
       name_ = 0;
@@ -23931,6 +23968,7 @@ public final class ProtoBuf {
       varargElementType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
       varargElementTypeId_ = 0;
       annotation_ = java.util.Collections.emptyList();
+      annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -23956,6 +23994,12 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasAnnotationParameterDefaultValue()) {
+        if (!getAnnotationParameterDefaultValue().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -23995,6 +24039,9 @@ public final class ProtoBuf {
       for (int i = 0; i < annotation_.size(); i++) {
         output.writeMessage(7, annotation_.get(i));
       }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeMessage(8, annotationParameterDefaultValue_);
+      }
       extensionWriter.writeUntil(200, output);
       output.writeRawBytes(unknownFields);
     }
@@ -24032,6 +24079,10 @@ public final class ProtoBuf {
       for (int i = 0; i < annotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(7, annotation_.get(i));
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(8, annotationParameterDefaultValue_);
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -24141,6 +24192,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000020);
         annotation_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000040);
+        annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -24193,6 +24246,10 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.annotation_ = annotation_;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.annotationParameterDefaultValue_ = annotationParameterDefaultValue_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -24227,6 +24284,9 @@ public final class ProtoBuf {
           }
           
         }
+        if (other.hasAnnotationParameterDefaultValue()) {
+          mergeAnnotationParameterDefaultValue(other.getAnnotationParameterDefaultValue());
+        }
         this.mergeExtensionFields(other);
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -24252,6 +24312,12 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getAnnotationCount(); i++) {
           if (!getAnnotation(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasAnnotationParameterDefaultValue()) {
+          if (!getAnnotationParameterDefaultValue().isInitialized()) {
             
             return false;
           }
@@ -24680,6 +24746,66 @@ public final class ProtoBuf {
         ensureAnnotationIsMutable();
         annotation_.remove(index);
 
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public boolean hasAnnotationParameterDefaultValue() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue() {
+        return annotationParameterDefaultValue_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder setAnnotationParameterDefaultValue(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        annotationParameterDefaultValue_ = value;
+
+        bitField0_ |= 0x00000080;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder setAnnotationParameterDefaultValue(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Builder builderForValue) {
+        annotationParameterDefaultValue_ = builderForValue.build();
+
+        bitField0_ |= 0x00000080;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder mergeAnnotationParameterDefaultValue(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value value) {
+        if (((bitField0_ & 0x00000080) == 0x00000080) &&
+            annotationParameterDefaultValue_ != org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance()) {
+          annotationParameterDefaultValue_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.newBuilder(annotationParameterDefaultValue_).mergeFrom(value).buildPartial();
+        } else {
+          annotationParameterDefaultValue_ = value;
+        }
+
+        bitField0_ |= 0x00000080;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
+       */
+      public Builder clearAnnotationParameterDefaultValue() {
+        annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 

@@ -1143,6 +1143,11 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsValueParameterAnnotation(old, new)) return false
 
+        if (old.hasAnnotationParameterDefaultValue() != new.hasAnnotationParameterDefaultValue()) return false
+        if (old.hasAnnotationParameterDefaultValue()) {
+            if (!checkEquals(old.annotationParameterDefaultValue, new.annotationParameterDefaultValue)) return false
+        }
+
         if (old.getExtensionCount(JsProtoBuf.parameterAnnotation) != new.getExtensionCount(JsProtoBuf.parameterAnnotation)) {
             return false
         }
@@ -2826,6 +2831,10 @@ fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes:
 
     for(i in 0..annotationCount - 1) {
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasAnnotationParameterDefaultValue()) {
+        hashCode = 31 * hashCode + annotationParameterDefaultValue.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..getExtensionCount(JsProtoBuf.parameterAnnotation) - 1) {

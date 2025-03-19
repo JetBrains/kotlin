@@ -439,6 +439,8 @@ message ValueParameter {
 
   repeated Annotation annotation = 7;
 
+  optional Annotation.Argument.Value annotation_parameter_default_value = 8;
+
   extensions 100 to 199;
 }
 

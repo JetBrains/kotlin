@@ -345,6 +345,11 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
+    @TestMetadata("annotationParameterDefaultValueChanged")
+    public void testAnnotationParameterDefaultValueChanged() {
+      runTest("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/annotationParameterDefaultValueChanged/");
+    }
+
     @TestMetadata("classWithCompanionObjectChanged")
     public void testClassWithCompanionObjectChanged() {
       runTest("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged/");
@@ -393,6 +398,19 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     @TestMetadata("sealedClassImplAdded")
     public void testSealedClassImplAdded() {
       runTest("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded/");
+    }
+
+    @TestMetadata("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/annotationParameterDefaultValueChanged")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AnnotationParameterDefaultValueChanged extends AbstractJvmProtoComparisonTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInAnnotationParameterDefaultValueChanged() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/annotationParameterDefaultValueChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      }
     }
 
     @TestMetadata("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged")

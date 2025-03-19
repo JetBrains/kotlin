@@ -249,6 +249,10 @@ private fun ProtoBuf.ValueParameter.toKmValueParameter(c: ReadContext): KmValueP
 
     v.varargElementType = varargElementType(c.types)?.toKmType(c)
 
+    if (hasAnnotationParameterDefaultValue()) {
+        v.annotationParameterDefaultValue = annotationParameterDefaultValue.readAnnotationArgument(c.strings)
+    }
+
     c.extensions.forEach { it.readValueParameterExtensions(v, this, c) }
 
     return v
