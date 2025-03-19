@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
@@ -1218,7 +1219,17 @@ open class Kapt3IT : Kapt3BaseIT() {
     @GradleTest
     @OsCondition(supportedOn = [OS.WINDOWS], enabledOnCI = [OS.WINDOWS])
     fun testDifferentDisksSetupDoesNotFailConfiguration(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
+        project(
+            "simple".withPrefix,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                /*
+                 * We need to set the warning mode to none because the test fails when emitting the problems report
+                 * https://github.com/gradle/gradle/issues/32778
+                 */
+                warningMode = WarningMode.None,
+            )
+        ) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }
 
             //language=Gradle
