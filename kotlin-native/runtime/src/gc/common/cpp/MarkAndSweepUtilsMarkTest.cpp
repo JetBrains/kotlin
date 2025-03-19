@@ -75,6 +75,8 @@ class ScopedMarkTraits : private Pinned {
 public:
     using MarkQueue = std::vector<ObjHeader*>;
 
+    static constexpr auto kAllowHeapToStackRefs = true;
+
     ScopedMarkTraits() {
         RuntimeAssert(instance_ == nullptr, "Only one ScopedMarkTraits is allowed");
         instance_ = this;

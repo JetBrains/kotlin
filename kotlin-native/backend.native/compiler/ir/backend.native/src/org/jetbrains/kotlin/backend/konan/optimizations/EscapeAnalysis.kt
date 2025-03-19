@@ -1671,7 +1671,8 @@ internal object EscapeAnalysis {
                                     stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arrayLength!!, arraySizeInBytes.toInt())
                                 } else {
                                     // Can be placed into the local arena.
-                                    lifetime = Lifetime.LOCAL
+                                    // TODO. Support Lifetime.LOCAL
+                                    lifetime = Lifetime.GLOBAL
                                 }
                             }
                         }
@@ -1703,7 +1704,7 @@ internal object EscapeAnalysis {
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
                         } else {
-                            ptgNode.forcedLifetime = Lifetime.LOCAL
+                            ptgNode.forcedLifetime = Lifetime.GLOBAL // TODO: Change to LOCAL when supported.
                         }
                     }
                 }
@@ -1794,7 +1795,13 @@ internal object EscapeAnalysis {
         assert(lifetimes.isEmpty())
 
         try {
-            InterproceduralAnalysis(context, generationState, callGraph, moduleDFG, lifetimes, propagateExiledToHeapObjects = false).analyze()
+            InterproceduralAnalysis(context, generationState, callGraph,
+                    moduleDFG, lifetimes,
+                    // The GC must be careful not to scan exiled objects, that have already became dead,
+                    // as they may reference other already destroyed stack-allocated objects.
+                    // TODO somehow tag these object, so that GC could handle them properly.
+                    propagateExiledToHeapObjects = context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
+            ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
                     """
