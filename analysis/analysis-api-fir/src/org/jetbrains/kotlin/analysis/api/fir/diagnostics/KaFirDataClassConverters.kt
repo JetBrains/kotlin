@@ -1391,6 +1391,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NON_SOURCE_ANNOTATION_ON_FILE) { firDiagnostic ->
+        NonSourceAnnotationOnFileImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION) { firDiagnostic ->
         PotentiallyNonReportedAnnotationImpl(
             firDiagnostic as KtPsiDiagnostic,

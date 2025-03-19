@@ -1198,6 +1198,11 @@ internal class NonSourceAnnotationOnInlinedLambdaExpressionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.NonSourceAnnotationOnInlinedLambdaExpression
 
+internal class NonSourceAnnotationOnFileImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.NonSourceAnnotationOnFile
+
 internal class PotentiallyNonReportedAnnotationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

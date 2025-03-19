@@ -173,6 +173,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirUnresolvedInMiddleOfImportChecker,
             FirTopLevelPropertiesChecker,
             FirPackageConflictsWithClassifierChecker,
+            FirNonSourceFileAnnotationChecker,
         )
 
     override val scriptCheckers: Set<FirScriptChecker>

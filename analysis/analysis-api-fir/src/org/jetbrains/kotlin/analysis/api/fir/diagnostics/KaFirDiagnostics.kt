@@ -999,6 +999,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonSourceAnnotationOnInlinedLambdaExpression::class
     }
 
+    interface NonSourceAnnotationOnFile : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = NonSourceAnnotationOnFile::class
+    }
+
     interface PotentiallyNonReportedAnnotation : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = PotentiallyNonReportedAnnotation::class
     }
