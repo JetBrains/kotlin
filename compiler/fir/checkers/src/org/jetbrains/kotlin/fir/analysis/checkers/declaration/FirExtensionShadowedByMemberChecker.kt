@@ -147,8 +147,8 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
     private fun FirFunctionSymbol<*>.shadows(extension: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
         if (isExtension) return false
 
-        if (valueParameterSymbols.size != extension.valueParameterSymbols.size) return false
-        if (varargParameterPosition != extension.varargParameterPosition) return false
+        if (extension.valueParameterSymbols.size != valueParameterSymbols.size) return false
+        if (extension.varargParameterPosition != varargParameterPosition) return false
         if (extension.isOperator && !isOperator) return false
         if (extension.isInfix && !isInfix) return false
         if (extension.typeParameterSymbols.size != typeParameterSymbols.size) return false
