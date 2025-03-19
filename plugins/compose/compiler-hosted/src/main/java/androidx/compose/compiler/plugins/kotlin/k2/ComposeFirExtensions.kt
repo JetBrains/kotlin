@@ -71,11 +71,11 @@ object ComposableFunction : FunctionTypeKind(
     isReflectType = false,
     isInlineable = true,
 ) {
-    override val prefixForTypeRender: String
-        get() = "@Composable"
+    override val prefixForTypeRender: String = "@Composable"
 
-    override val serializeAsFunctionWithAnnotationUntil: String
-        get() = useLegacyCustomFunctionTypeSerializationUntil
+    override val serializeAsFunctionWithAnnotationUntil: String = useLegacyCustomFunctionTypeSerializationUntil
+
+    override val supportsConversionFromSimpleFunctionType: Boolean = false
 
     override fun reflectKind(): FunctionTypeKind = KComposableFunction
 }
@@ -87,8 +87,11 @@ object KComposableFunction : FunctionTypeKind(
     isReflectType = true,
     isInlineable = false,
 ) {
-    override val serializeAsFunctionWithAnnotationUntil: String
-        get() = useLegacyCustomFunctionTypeSerializationUntil
+    override val prefixForTypeRender: String = "@Composable"
+
+    override val serializeAsFunctionWithAnnotationUntil: String = useLegacyCustomFunctionTypeSerializationUntil
+
+    override val supportsConversionFromSimpleFunctionType: Boolean = false
 
     override fun nonReflectKind(): FunctionTypeKind = ComposableFunction
 }
