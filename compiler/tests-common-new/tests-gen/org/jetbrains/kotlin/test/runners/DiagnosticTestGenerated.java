@@ -21615,18 +21615,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
           public void testKt74819f() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt74819f.kt");
           }
-
-          @Test
-          @TestMetadata("kt74819g.kt")
-          public void testKt74819g() {
-            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt74819g.kt");
-          }
-
-          @Test
-          @TestMetadata("kt74819h.kt")
-          public void testKt74819h() {
-            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt74819h.kt");
-          }
         }
 
         @Nested
