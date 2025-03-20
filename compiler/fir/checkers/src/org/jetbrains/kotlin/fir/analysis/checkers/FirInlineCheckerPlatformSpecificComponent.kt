@@ -34,4 +34,4 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirSessionComponent {
     }
 }
 
-val FirSession.inlineCheckerExtension by FirSession.nullableSessionComponentAccessor<FirInlineCheckerPlatformSpecificComponent>()
+val FirSession.inlineCheckerExtension: FirInlineCheckerPlatformSpecificComponent? by FirSession.nullableSessionComponentAccessor<FirInlineCheckerPlatformSpecificComponent>()

@@ -18,4 +18,4 @@ abstract class FirPrimaryConstructorSuperTypeCheckerPlatformComponent : FirSessi
     }
 }
 
-val FirSession.primaryConstructorSuperTypePlatformSupport by FirSession.sessionComponentAccessor<FirPrimaryConstructorSuperTypeCheckerPlatformComponent>()
+val FirSession.primaryConstructorSuperTypePlatformSupport: FirPrimaryConstructorSuperTypeCheckerPlatformComponent by FirSession.sessionComponentAccessor<FirPrimaryConstructorSuperTypeCheckerPlatformComponent>()

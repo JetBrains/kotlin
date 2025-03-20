@@ -66,13 +66,13 @@ abstract class AbstractLightTreeRawFirBuilder(
         return null
     }
 
-    override fun LighterASTNode.getExpressionInParentheses() = getFirstChildExpression()
+    override fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? = getFirstChildExpression()
 
-    override fun LighterASTNode.getAnnotatedExpression() = getFirstChildExpression()
+    override fun LighterASTNode.getAnnotatedExpression(): LighterASTNode? = getFirstChildExpression()
 
-    override fun LighterASTNode.getLabeledExpression() = getLastChildExpression()
+    override fun LighterASTNode.getLabeledExpression(): LighterASTNode? = getLastChildExpression()
 
-    fun LighterASTNode.getChildExpression() = getFirstChildExpression()
+    fun LighterASTNode.getChildExpression(): LighterASTNode? = getFirstChildExpression()
 
     private fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
         forEachChildren {

@@ -1629,7 +1629,7 @@ class ControlFlowGraphBuilder {
     )
 }
 
-fun FirDeclaration?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
+fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
 
 private val FirControlFlowGraphOwner.memberShouldHaveGraph: Boolean
     get() = when (this) {

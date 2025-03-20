@@ -12,4 +12,4 @@ import org.jetbrains.kotlin.resolve.DefaultImportProvider
 class FirDefaultImportProviderHolder(val provider: DefaultImportProvider) : FirSessionComponent
 
 private val FirSession.defaultImportProviderHolder: FirDefaultImportProviderHolder by FirSession.sessionComponentAccessor()
-val FirSession.defaultImportProvider get() = defaultImportProviderHolder.provider
+val FirSession.defaultImportProvider: DefaultImportProvider get() = defaultImportProviderHolder.provider

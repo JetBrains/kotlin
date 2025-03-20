@@ -202,4 +202,4 @@ val Collection<ResolutionDiagnostic>.allSuccessful: Boolean get() = all { it.app
 val Collection<ResolutionDiagnostic>.anyUnsuccessful: Boolean get() = !allSuccessful
 
 @OptIn(ApplicabilityDetail::class)
-val ResolutionDiagnostic.isSuccess get() = applicability.isSuccess
+val ResolutionDiagnostic.isSuccess: Boolean get() = applicability.isSuccess

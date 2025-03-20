@@ -668,7 +668,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     }
 
     /**
-     * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
+     * See [UNWRAPPABLE_TOKEN_TYPES][psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
      */
     private fun T?.unwrap(): T? {
         // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
@@ -1367,12 +1367,12 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
  * primary constructor value parameters annotations should go to the
  * [FirValueParameter] first.
  */
-fun List<FirAnnotationCall>.filterConstructorPropertyRelevantAnnotations(isVar: Boolean) = filter {
+fun List<FirAnnotationCall>.filterConstructorPropertyRelevantAnnotations(isVar: Boolean): List<FirAnnotationCall> = filter {
     it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY || it.useSiteTarget == AnnotationUseSiteTarget.ALL
             || !isVar && (it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER)
 }
 
-fun List<FirAnnotationCall>.filterStandalonePropertyRelevantAnnotations(isVar: Boolean) = filter {
+fun List<FirAnnotationCall>.filterStandalonePropertyRelevantAnnotations(isVar: Boolean): List<FirAnnotationCall> = filter {
     it.useSiteTarget != AnnotationUseSiteTarget.FIELD && it.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD && it.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_GETTER &&
             (!isVar || it.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER && it.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER)
 }
