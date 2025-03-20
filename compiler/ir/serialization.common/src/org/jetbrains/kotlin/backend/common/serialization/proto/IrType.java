@@ -145,7 +145,6 @@ public final class IrType extends
       implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
     LEGACYSIMPLE(1),
     DYNAMIC(2),
-    ERROR(3),
     DNN(4),
     SIMPLE(5),
     KIND_NOT_SET(0);
@@ -157,7 +156,6 @@ public final class IrType extends
       switch (value) {
         case 1: return LEGACYSIMPLE;
         case 2: return DYNAMIC;
-        case 3: return ERROR;
         case 4: return DNN;
         case 5: return SIMPLE;
         case 0: return KIND_NOT_SET;
@@ -437,9 +435,6 @@ public final class IrType extends
         result.kind_ = kind_;
       }
       if (kindCase_ == 2) {
-        result.kind_ = kind_;
-      }
-      if (kindCase_ == 3) {
         result.kind_ = kind_;
       }
       if (kindCase_ == 4) {
