@@ -178,7 +178,10 @@ public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: M
 internal expect inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E>
 
 
-/** Returns this Set if it's not `null` and the empty set otherwise. */
+/**
+ * Returns this Set if it's not `null` and the empty set otherwise.
+ * @sample samples.collections.Collections.Sets.setOrEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
