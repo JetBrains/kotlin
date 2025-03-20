@@ -20,41 +20,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.setSize
 
-internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper {
-    override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
-
-    override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) = symbol
-
-    override fun getDeclaredScript(symbol: IrScriptSymbol) = symbol
-
-    override fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol = symbol
-
-    override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol) = symbol
-
-    override fun getDeclaredProperty(symbol: IrPropertySymbol) = symbol
-
-    override fun getDeclaredField(symbol: IrFieldSymbol) = symbol
-
-    override fun getDeclaredFile(symbol: IrFileSymbol) = symbol
-
-    override fun getDeclaredConstructor(symbol: IrConstructorSymbol) = symbol
-
-    override fun getDeclaredEnumEntry(symbol: IrEnumEntrySymbol) = symbol
-
-    override fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol) = symbol
-
-    override fun getDeclaredVariable(symbol: IrVariableSymbol) = symbol
-
-    override fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol) = symbol
-
-    override fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol) = symbol
-
-    override fun getDeclaredValueParameter(symbol: IrValueParameterSymbol) = symbol
-
-    override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol) = symbol
-
-    override fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
-
+internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper.Empty() {
     override fun getReferencedClass(symbol: IrClassSymbol) = symbol.actualizeSymbol()
 
     override fun getReferencedScript(symbol: IrScriptSymbol) = symbol.actualizeSymbol()
