@@ -423,20 +423,10 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
     fun testSimpleWithIC(gradleVersion: GradleVersion) {
-        doTestSimpleWithIC(gradleVersion)
-    }
-
-    @DisplayName("Kapt is working with incremental compilation, when kotlin.incremental.useClasspathSnapshot=true")
-    @GradleTest
-    fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {
-        doTestSimpleWithIC(gradleVersion, useClasspathSnapshot = true)
-    }
-
-    private fun doTestSimpleWithIC(gradleVersion: GradleVersion, useClasspathSnapshot: Boolean? = null) {
         project(
             "simple".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(incremental = true, useGradleClasspathSnapshot = useClasspathSnapshot)
+            buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             build("clean", "build") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")

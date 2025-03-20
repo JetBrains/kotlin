@@ -675,7 +675,6 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     fun testAbiChangeInLib_addNewMethod_withAbiSnapshot(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
         ) {
             build("assemble")
 
@@ -686,7 +685,6 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
                     libSources = listOf("bar/A.kt", "bar/B.kt"),
-                    // TODO(valtman): for abi-snapshot "BB.kt" should not be recompiled
                     appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt")
                 )
 
@@ -719,7 +717,6 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     fun testChangeIsolatedClassInLib_withAbiSnapshot(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
         ) {
             build("assemble")
 

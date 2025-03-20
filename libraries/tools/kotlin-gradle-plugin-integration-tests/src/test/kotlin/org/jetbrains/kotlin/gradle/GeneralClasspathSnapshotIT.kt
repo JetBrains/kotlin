@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName
 @JvmGradlePluginTests
 @DisplayName("Classpath Snapshots transformation tests") // related mostly to the Gradle part
 class GeneralClasspathSnapshotIT : KGPBaseTest() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = true) // ensure classpath snapshotting is enabled
 
     @DisplayName("Non-existent dependency files do not fail the build")
     @GradleTest

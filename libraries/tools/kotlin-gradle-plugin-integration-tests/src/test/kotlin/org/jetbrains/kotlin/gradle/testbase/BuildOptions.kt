@@ -36,7 +36,6 @@ data class BuildOptions(
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
-    val useGradleClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
     /**
      * Enable File System Watching
@@ -218,8 +217,6 @@ data class BuildOptions(
         if (incremental != null) {
             arguments.add("-Pkotlin.incremental=$incremental")
         }
-
-        useGradleClasspathSnapshot?.let { arguments.add("-Pkotlin.incremental.useClasspathSnapshot=$it") }
 
         if (fileSystemWatchEnabled) {
             arguments.add("--watch-fs")
