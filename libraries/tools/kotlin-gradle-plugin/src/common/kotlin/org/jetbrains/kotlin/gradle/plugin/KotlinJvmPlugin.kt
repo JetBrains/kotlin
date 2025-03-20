@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.*
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.*
 
@@ -55,12 +54,5 @@ internal open class KotlinJvmPlugin(
             kotlinExtension.compilerOptions,
             target.compilerOptions
         )
-    }
-
-    override fun configureClassInspectionForIC(project: Project) {
-        // For new IC this task is not needed
-        if (!project.kotlinPropertiesProvider.useClasspathSnapshot.get()) {
-            super.configureClassInspectionForIC(project)
-        }
     }
 }

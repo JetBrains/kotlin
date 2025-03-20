@@ -315,8 +315,6 @@ internal open class GradleCompilerRunner(
                             jarToModule[it] = module
                         }
                     }
-                } else if (task is InspectClassesForMultiModuleIC) {
-                    jarToClassListFile[File(task.archivePath.get())] = task.classesListFile.get().asFile
                 }
             }
 
