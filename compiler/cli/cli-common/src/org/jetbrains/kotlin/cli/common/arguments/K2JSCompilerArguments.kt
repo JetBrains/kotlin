@@ -19,20 +19,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         @JvmStatic private val serialVersionUID = 0L
     }
 
-    // TODO: KT-70222 Remove this option in 2.2
-    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(
-        value = "-output",
-        valueDescription = "<filepath>",
-        description = """This option does nothing and is left for compatibility with the legacy backend.
-It is deprecated and will be removed in Kotlin 2.2."""
-    )
-    var outputFile: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(value = "-ir-output-dir", valueDescription = "<directory>", description = "Destination for generated files.")
     var outputDir: String? = null
         set(value) {
@@ -50,28 +36,6 @@ It is deprecated and will be removed in Kotlin 2.2."""
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
-    @GradleDeprecatedOption(
-        message = "Only for legacy backend.",
-        level = DeprecationLevel.ERROR, // TODO: KT-70222 Remove completely in 2.2
-        removeAfter = LanguageVersion.KOTLIN_2_2,
-    )
-    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(
-        value = "-no-stdlib",
-        description = """This option does nothing and is left for compatibility with the legacy backend.
-It is deprecated and will be removed in Kotlin 2.2."""
-    )
-    var noStdlib = false
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @Argument(
@@ -155,28 +119,6 @@ It is deprecated and will be removed in Kotlin 2.2."""
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
-    @GradleDeprecatedOption(
-        message = "Only for legacy backend.",
-        level = DeprecationLevel.ERROR, // TODO: KT-70222 Remove completely in 2.2
-        removeAfter = LanguageVersion.KOTLIN_2_2,
-    )
-    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(
-        value = "-meta-info",
-        description = """This option does nothing and is left for compatibility with the legacy backend.
-It is deprecated and will be removed in Kotlin 2.2."""
-    )
-    var metaInfo = false
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @GradleOption(
@@ -481,7 +423,7 @@ It is deprecated and will be removed in Kotlin 2.2."""
     )
     @GradleDeprecatedOption(
         message = "Only for legacy backend.",
-        level = DeprecationLevel.WARNING, // TODO: KT-70222 Replace with ERROR in 2.2, remove completely in 2.3
+        level = DeprecationLevel.ERROR, // TODO: KT-70222 Remove thi option in 2.3
         removeAfter = LanguageVersion.KOTLIN_2_2,
     )
     @Argument(

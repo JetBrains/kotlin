@@ -15,19 +15,11 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     override val main: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode::class.java).convention(org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode.CALL)
 
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    override val metaInfo: org.gradle.api.provider.Property<kotlin.Boolean> =
-        objectFactory.property(kotlin.Boolean::class.java).convention(false)
-
     override val moduleKind: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsModuleKind> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsModuleKind::class.java)
 
     override val moduleName: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java)
-
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    override val noStdlib: org.gradle.api.provider.Property<kotlin.Boolean> =
-        objectFactory.property(kotlin.Boolean::class.java).convention(false)
 
     override val sourceMap: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
@@ -44,7 +36,7 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     override val target: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java).convention("es5")
 
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
     override val typedArrays: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
 

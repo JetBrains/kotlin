@@ -41,17 +41,6 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         get() = options.main.get().mainKotlinOption
         set(value) = options.main.set(value.mainCompilerOption)
 
-    /**
-     * This option does nothing and is left for compatibility with the legacy backend.
-     * It is deprecated and will be removed in Kotlin 2.2.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    var metaInfo: kotlin.Boolean
-        get() = options.metaInfo.get()
-        set(value) = options.metaInfo.set(value)
-
     private val kotlin.String?.moduleKindCompilerOption get() = this?.let { org.jetbrains.kotlin.gradle.dsl.JsModuleKind.fromKind(it) }
 
     private val org.jetbrains.kotlin.gradle.dsl.JsModuleKind?.moduleKindKotlinOption get() = this?.kind
@@ -75,17 +64,6 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
     var moduleName: kotlin.String?
         get() = options.moduleName.orNull
         set(value) = options.moduleName.set(value)
-
-    /**
-     * This option does nothing and is left for compatibility with the legacy backend.
-     * It is deprecated and will be removed in Kotlin 2.2.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    var noStdlib: kotlin.Boolean
-        get() = options.noStdlib.get()
-        set(value) = options.noStdlib.set(value)
 
     /**
      * Generate a source map.
@@ -152,7 +130,7 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
      *
      * Default value: false
      */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
     var typedArrays: kotlin.Boolean
         get() = options.typedArrays.get()
         set(value) = options.typedArrays.set(value)

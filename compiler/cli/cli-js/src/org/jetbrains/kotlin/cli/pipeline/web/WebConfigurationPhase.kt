@@ -119,22 +119,10 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
     ) {
         val messageCollector = configuration.messageCollector
         @Suppress("DEPRECATION")
-        if (arguments.outputFile != null) {
-            messageCollector.report(WARNING, "The '-output' command line option does nothing and will be removed in a future release")
-        }
-        @Suppress("DEPRECATION")
-        if (arguments.noStdlib) {
-            messageCollector.report(WARNING, "The '-no-stdlib' command line option does nothing and will be removed in a future release")
-        }
-        @Suppress("DEPRECATION")
-        if (arguments.metaInfo) {
-            messageCollector.report(WARNING, "The '-meta-info' command line option does nothing and will be removed in a future release")
-        }
-        @Suppress("DEPRECATION")
         if (arguments.typedArrays) {
             messageCollector.report(
                 WARNING,
-                "The '-Xtyped-arrays' command line option does nothing and will be removed in a future release"
+                "The '-Xtyped-arrays' command line option does nothing and will be removed in Kotlin 2.3"
             )
         }
 

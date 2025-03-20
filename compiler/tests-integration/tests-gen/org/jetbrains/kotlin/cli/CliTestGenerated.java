@@ -2011,11 +2011,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/noModuleName.args");
     }
 
-    @TestMetadata("noStdlib.args")
-    public void testNoStdlib() {
-      runTest("compiler/testData/cli/js/noStdlib.args");
-    }
-
     @TestMetadata("nonExistingKotlinHome.args")
     public void testNonExistingKotlinHome() {
       runTest("compiler/testData/cli/js/nonExistingKotlinHome.args");

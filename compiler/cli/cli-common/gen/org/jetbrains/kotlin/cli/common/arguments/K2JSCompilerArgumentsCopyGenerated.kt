@@ -37,16 +37,10 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irSafeExternalBooleanDiagnostic = from.irSafeExternalBooleanDiagnostic
     to.libraries = from.libraries
     to.main = from.main
-    @Suppress("DEPRECATION")
-    to.metaInfo = from.metaInfo
     to.moduleKind = from.moduleKind
     to.moduleName = from.moduleName
-    @Suppress("DEPRECATION")
-    to.noStdlib = from.noStdlib
     to.optimizeGeneratedJs = from.optimizeGeneratedJs
     to.outputDir = from.outputDir
-    @Suppress("DEPRECATION")
-    to.outputFile = from.outputFile
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs

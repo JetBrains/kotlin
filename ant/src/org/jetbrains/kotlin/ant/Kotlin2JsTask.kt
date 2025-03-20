@@ -26,7 +26,6 @@ class Kotlin2JsTask : KotlinCompilerBaseTask() {
     var outputPrefix: File? = null
     var outputPostfix: File? = null
     var sourceMap: Boolean = false
-    var metaInfo: Boolean = false
     var moduleKind: String = "plain"
 
     /**
@@ -41,9 +40,6 @@ class Kotlin2JsTask : KotlinCompilerBaseTask() {
     }
 
     override fun fillSpecificArguments() {
-        args.add("-output")
-        args.add(output!!.canonicalPath)
-
         // TODO: write test
         libraries?.let {
             args.add("-libraries")
@@ -65,9 +61,7 @@ class Kotlin2JsTask : KotlinCompilerBaseTask() {
             args.add(it)
         }
 
-        if (noStdlib) args.add("-no-stdlib")
         if (sourceMap) args.add("-source-map")
-        if (metaInfo) args.add("-meta-info")
 
         args += listOf("-module-kind", moduleKind)
     }
