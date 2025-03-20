@@ -17,7 +17,7 @@ fun <T> Ref(content: @Composable () -> T) {
 @Composable
 fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)<::Fn>,<::Fn>,<Ref<T>...>,<::IntF...>,<::IntF...>,<Ref(::...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)<::Fn>,<Ref<T>...>,<::IntF...>,<Ref(::...>:Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -26,8 +26,12 @@ fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         @Composable
-        fun Fn(%composer: Composer?, %changed: Int): T {
-          Fn(null, %composer, 0, 0b0001)
+        fun <T> Fn(%composer: Composer?, %changed: Int): T {
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C(Fn):Test.kt")
+          val tmp0 = Fn(null, %composer, 0, 0b0001)
+          %composer.endReplaceGroup()
+          return tmp0
         }
         ::Fn
       }
@@ -39,7 +43,11 @@ fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed
       val tmp1_group = %composer.cache(false) {
         @Composable
         fun IntFn(%composer: Composer?, %changed: Int): Int {
-          IntFn(0, %composer, 0, 0b0001)
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C(IntFn):Test.kt")
+          val tmp0 = IntFn(0, %composer, 0, 0b0001)
+          %composer.endReplaceGroup()
+          return tmp0
         }
         ::IntFn
       }

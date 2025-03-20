@@ -713,4 +713,47 @@ class FunctionReferenceTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """,
     )
+
+    @Test
+    fun referenceIfElse() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Fn(int: Int): Int = 0
+            @Composable
+            fun Fn2(int: Int): Int = 0
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Ref(flag: Boolean, content: @Composable (Int) -> Int) {
+                Ref(flag, if (flag) ::Fn else ::Fn2)
+            }
+        """,
+    )
+
+    @Test
+    fun inline() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            inline fun Fn(int: Int): Int = 0
+            @Composable
+            inline fun Fn2(int: Int): Int = 0
+            @Composable
+            inline fun Content(content: @Composable (Int) -> Int) { content(0) }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Ref(flag: Boolean) {
+                Content(::Fn)
+                Content(if (flag) ::Fn else ::Fn2)
+            }
+        """,
+    )
 }

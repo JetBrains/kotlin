@@ -15,7 +15,15 @@ fun Ref(content: @Composable (Int) -> Int) {
 // Transformed IR
 // ------------------------------------------
 
-val property: Function3<Int, Composer, Int, Int> = ::Fn
+val property: Function3<Int, Composer, Int, Int> = @Composable
+fun Fn(int: Int, %composer: Composer?, %changed: Int): Int {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Fn):Test.kt")
+  val tmp0 = Fn(int, %composer, 0b1110 and %changed)
+  %composer.endReplaceGroup()
+  return tmp0
+}
+::Fn
 @Composable
 fun Ref(content: Function3<Int, Composer, Int, Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
