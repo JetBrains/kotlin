@@ -34,6 +34,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
+        DeprecatedProperty(
+            propertyName = "kotlin.incremental.useClasspathSnapshot",
+            details = "History based incremental compilation approach for JVM platform is removed." +
+                    " Kotlin Gradle plugin is now using a more efficient approach based on ABI snapshots."
+        ),
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(

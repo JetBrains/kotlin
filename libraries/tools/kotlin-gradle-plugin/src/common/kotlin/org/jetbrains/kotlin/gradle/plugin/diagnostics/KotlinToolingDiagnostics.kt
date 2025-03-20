@@ -1344,19 +1344,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
-        operator fun invoke(): ToolingDiagnostic = build {
-            title("History-Based Incremental Compilation Deprecated for JVM Platform")
-                .description {
-                    "History based incremental compilation approach for JVM platform is deprecated and will be removed" +
-                            " soon in favor of approach based on ABI snapshots."
-                }
-                .solution {
-                    "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT}=false' from 'gradle.properties' file."
-                }
-        }
-    }
-
     object KMPJavaPluginsIncompatibilityDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
 
         operator fun invoke(
