@@ -55,7 +55,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.jvmTargetValidationMode.convention(propertiesProvider.jvmTargetValidationMode).finalizeValueOnRead()
 
                 task.incrementalModuleInfoProvider.disallowChanges()
-                task.classpathSnapshotProperties.useClasspathSnapshot.value(true).disallowChanges()
                 val classpathEntrySnapshotFiles = classpathConfiguration.incoming.artifactView {
                     it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                 }.files

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
@@ -115,7 +114,11 @@ abstract class KotlinCompile @Inject constructor(
 
     /** Properties related to the `kotlin.incremental.useClasspathSnapshot` feature. */
     abstract class ClasspathSnapshotProperties {
-        @get:Input
+        @get:Internal
+        @Deprecated(
+            message = "This input property is not supported - classpath snapshots based incremental compilation is the only used approach.",
+            level = DeprecationLevel.ERROR
+        )
         abstract val useClasspathSnapshot: Property<Boolean>
 
         @get:Internal
@@ -503,31 +506,29 @@ abstract class KotlinCompile @Inject constructor(
         )
     }
 
-    private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges = when {
-        !classpathSnapshotProperties.useClasspathSnapshot.get() -> ClasspathSnapshotDisabled
-        else -> {
-            val classpathSnapshotFiles = ClasspathSnapshotFiles(
-                classpathSnapshotProperties.classpathSnapshot.files.toList(),
-                classpathSnapshotProperties.classpathSnapshotDir.get().asFile
-            )
-            when {
-                !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
-                // When `inputChanges.isIncremental == true`, we want to compile incrementally. However, if the incremental state (e.g.
-                // lookup caches or previous classpath snapshot) is missing, we need to compile non-incrementally. There are a few cases:
-                //   1. Previous compilation happened using Kotlin daemon and with IC enabled (the usual case) => Incremental state
-                //      including classpath snapshot must have been produced (we have that guarantee in `IncrementalCompilerRunner`).
-                //   2. Previous compilation happened using Kotlin daemon but with IC disabled (e.g., by setting `kotlin.incremental=false`)
-                //      => This run will have `inputChanges.isIncremental = false` as `isIncrementalCompilationEnabled` is a task input.
-                //   3. Previous compilation happened without using Kotlin daemon (set by the user or caused by a fallback).
-                //   4. Previous compilation was skipped because there were no sources to compile (see `AbstractKotlinCompile.executeImpl`).
-                // In case 3 and 4, it is possible that `inputChanges.isIncremental == true` in this run and incremental state is missing.
-                !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
-                    NotAvailableDueToMissingClasspathSnapshot(classpathSnapshotFiles)
-                }
+    private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
 
-                inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> NoChanges(classpathSnapshotFiles)
-                else -> ToBeComputedByIncrementalCompiler(classpathSnapshotFiles)
+        val classpathSnapshotFiles = ClasspathSnapshotFiles(
+            classpathSnapshotProperties.classpathSnapshot.files.toList(),
+            classpathSnapshotProperties.classpathSnapshotDir.get().asFile
+        )
+        return when {
+            !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
+            // When `inputChanges.isIncremental == true`, we want to compile incrementally. However, if the incremental state (e.g.
+            // lookup caches or previous classpath snapshot) is missing, we need to compile non-incrementally. There are a few cases:
+            //   1. Previous compilation happened using Kotlin daemon and with IC enabled (the usual case) => Incremental state
+            //      including classpath snapshot must have been produced (we have that guarantee in `IncrementalCompilerRunner`).
+            //   2. Previous compilation happened using Kotlin daemon but with IC disabled (e.g., by setting `kotlin.incremental=false`)
+            //      => This run will have `inputChanges.isIncremental = false` as `isIncrementalCompilationEnabled` is a task input.
+            //   3. Previous compilation happened without using Kotlin daemon (set by the user or caused by a fallback).
+            //   4. Previous compilation was skipped because there were no sources to compile (see `AbstractKotlinCompile.executeImpl`).
+            // In case 3 and 4, it is possible that `inputChanges.isIncremental == true` in this run and incremental state is missing.
+            !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
+                NotAvailableDueToMissingClasspathSnapshot(classpathSnapshotFiles)
             }
+
+            inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> NoChanges(classpathSnapshotFiles)
+            else -> ToBeComputedByIncrementalCompiler(classpathSnapshotFiles)
         }
     }
 }
