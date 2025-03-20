@@ -47,7 +47,9 @@ message AccessorIdSignature {
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
-  optional int32 debug_info = 3;
+
+  // WARNING: Don't occupy index 3 which was previously used for storing local signature description.
+  //optional int32 debug_info = 3;
 }
 
 message CompositeSignature {
@@ -58,7 +60,9 @@ message CompositeSignature {
 message LocalSignature {
   repeated int32 local_fq_name = 1 [packed=true];
   optional int64 local_hash = 2;
-  optional int32 debug_info = 3;
+
+  // WARNING: Don't occupy index 3 which was previously used for storing local signature description.
+  //optional int32 debug_info = 3;
 }
 
 message FileSignature {}
