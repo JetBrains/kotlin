@@ -25,11 +25,9 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -639,7 +637,7 @@ class ComposableFunctionBodyTransformer(
             return visitComposableReferenceAdapter(declaration, scope)
         }
 
-        val restartable = declaration.shouldBeRestartable()
+        val restartable = declaration.shouldBeRestartable() && !inlineLambdaInfo.isInlineLambda(declaration)
         val isLambda = declaration.isLambda()
 
         val isTracked = declaration.returnType.isUnit()
@@ -705,68 +703,6 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    // Currently, we make all composable functions restartable by default, unless:
-    // 1. They are inline
-    // 2. They have a return value (may get relaxed in the future)
-    // 3. They are a lambda (we use ComposableLambda<...> class for this instead)
-    // 4. They are annotated as @NonRestartableComposable
-    private fun IrFunction.shouldBeRestartable(): Boolean {
-        // Only insert observe scopes in non-empty composable function
-        if (body == null || this !is IrSimpleFunction)
-            return false
-
-        if (isLocal && parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
-            return false
-        }
-
-        // Do not insert observe scope in an inline function
-        if (isInline)
-            return false
-
-        if (hasNonRestartableAnnotation)
-            return false
-
-        if (hasExplicitGroups)
-            return false
-
-        // Do not insert an observe scope in an inline composable lambda
-        if (inlineLambdaInfo.isInlineLambda(this)) return false
-
-        // Do not insert an observe scope if the function has a return result
-        if (!returnType.isUnit())
-            return false
-
-        if (isComposableDelegatedAccessor())
-            return false
-
-        // Do not insert an observe scope if the function hasn't been transformed by the
-        // ComposerParamTransformer and has a synthetic "composer param" as its last parameter
-        if (composerParam() == null) return false
-
-        // Virtual functions with default params are called through wrapper generated in
-        // ComposableDefaultParamLowering. The restartable group is moved to the wrapper, while
-        // the function itself is no longer restartable.
-        if (isVirtualFunctionWithDefaultParam()) {
-            return false
-        }
-
-        // Open functions cannot be restartable since restart logic makes a virtual call (todo: b/329477544)
-        if (modality == Modality.OPEN && parentClassOrNull?.isFinalClass != true) {
-            return false
-        }
-
-        // Check if the descriptor has restart scope calls resolved
-        // Lambdas should be ignored. All composable lambdas are wrapped by a restartable
-        // function wrapper by ComposerLambdaMemoization which supplies the startRestartGroup/
-        // endRestartGroup pair on behalf of the lambda.
-        return origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-    }
-
-    private fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
-        this is IrSimpleFunction &&
-                (isVirtualFunctionWithDefaultParam != null ||
-                        overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
-
     // At a high level, without useNonSkippingGroupOptimization, a non-restartable composable
     // function
     // 1. gets a replace group placed around the body
@@ -797,7 +733,8 @@ class ComposableFunctionBodyTransformer(
         var outerGroupRequired =
             (!isReadOnly && !hasExplicitGroups && !useNonSkippingGroupOptimization) ||
                     declaration.isLambda() ||
-                    declaration.isOverridableOrOverrides
+                    declaration.isOverridableOrOverrides ||
+                    declaration.isComposableReferenceAdapter
 
         val skipPreamble = mutableStatementContainer()
         val bodyPreamble = mutableStatementContainer()
@@ -809,7 +746,9 @@ class ComposableFunctionBodyTransformer(
 
         var (transformed, returnVar) = body.asBodyAndResultVar()
 
-        val emitTraceMarkers = traceEventMarkersEnabled && !scope.function.isInline
+        val emitTraceMarkers = traceEventMarkersEnabled &&
+                !scope.function.isInline &&
+                !declaration.isComposableReferenceAdapter
 
         transformed = transformed.apply {
             transformChildrenVoid()
