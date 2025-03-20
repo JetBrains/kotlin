@@ -408,7 +408,10 @@ abstract class AbstractAtomicfuTransformer(
                 else (propertyGetterCall as? IrCall)?.dispatchReceiver
             val atomicHandler = getAtomicHandler(propertyGetterCall, data)
             val atomicHandlerExtraArg = atomicHandler.getAtomicHandlerExtraArg(dispatchReceiver, propertyGetterCall, data)
-            val builder = atomicfuSymbols.createBuilder(expression.symbol)
+            val builder = atomicfuSymbols.createBuilder(expression.symbol).also {
+                it.startOffset = propertyGetterCall.startOffset
+                it.endOffset = propertyGetterCall.endOffset
+            }
             if (expression.symbol.owner.isFromKotlinxAtomicfuPackage()) {
                 val functionName = expression.symbol.owner.name.asString()
                 if (functionName in ATOMICFU_LOOP_FUNCTIONS) {
