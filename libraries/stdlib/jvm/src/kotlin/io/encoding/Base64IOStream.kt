@@ -12,7 +12,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.io.encoding.Base64.Default.bytesPerGroup
-import kotlin.io.encoding.Base64.Default.mimeLineLength
 import kotlin.io.encoding.Base64.Default.mimeLineSeparatorSymbols
 import kotlin.io.encoding.Base64.Default.padSymbol
 import kotlin.io.encoding.Base64.Default.symbolsPerGroup
@@ -245,7 +244,7 @@ private class EncodeOutputStream(
 ) : OutputStream() {
     private var isClosed = false
 
-    private var lineLength = if (base64.isMimeScheme) mimeLineLength else -1
+    private var lineLength = if (base64.isMimeScheme) base64.mimeLineLength else -1
 
     private val symbolBuffer = ByteArray(1024)
 
@@ -339,8 +338,8 @@ private class EncodeOutputStream(
         )
         if (lineLength == 0) {
             output.write(mimeLineSeparatorSymbols)
-            lineLength = mimeLineLength
-            check(symbolsEncoded <= mimeLineLength)
+            lineLength = base64.mimeLineLength
+            check(symbolsEncoded <= base64.mimeLineLength)
         }
         output.write(symbolBuffer, 0, symbolsEncoded)
         lineLength -= symbolsEncoded

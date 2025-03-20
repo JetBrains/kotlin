@@ -3356,7 +3356,7 @@ public final class kotlin/io/TextStreamsKt {
 
 public class kotlin/io/encoding/Base64 {
 	public static final field Default Lkotlin/io/encoding/Base64$Default;
-	public synthetic fun <init> (ZZLkotlin/io/encoding/Base64$PaddingOption;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ZZILkotlin/io/encoding/Base64$PaddingOption;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun decode (Ljava/lang/CharSequence;II)[B
 	public final fun decode ([BII)[B
 	public static synthetic fun decode$default (Lkotlin/io/encoding/Base64;Ljava/lang/CharSequence;IIILjava/lang/Object;)[B
