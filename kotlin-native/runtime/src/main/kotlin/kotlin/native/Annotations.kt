@@ -51,7 +51,7 @@ internal annotation class RetainForTarget(val target: String)
 
 
 /** @suppress */
-@Deprecated("Use common kotlin.Throws annotation instead.", ReplaceWith("kotlin.Throws"), DeprecationLevel.WARNING)
+@Deprecated("Use common kotlin.Throws annotation instead.", ReplaceWith("kotlin.Throws"), DeprecationLevel.ERROR)
 public typealias Throws = kotlin.Throws
 
 /** @suppress */
