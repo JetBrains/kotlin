@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -240,11 +242,18 @@ class SerializedIrDumpHandler(
             referenceRenderingStrategy = ReferenceRenderingStrategy.Custom { symbol ->
                 val declaration = runIf(symbol.isBound) { symbol.owner as? IrDeclaration }
 
-                if (declaration != null && signatureComputer.mangler.run { !declaration.isExported(compatibleMode = false) })
-                    return@Custom null
+                if (declaration != null) {
+                    if (signatureComputer.mangler.run { !declaration.isExported(compatibleMode = false) })
+                        return@Custom null
 
-                if (declaration is IrDeclarationWithVisibility && declaration.isEffectivelyPrivate())
-                    return@Custom null
+                    // An enum entry is an instance of `IrDeclaration` but not an instance of `IrDeclarationWithVisibility`.
+                    // So, to make a proper check here, it's necessary to take the first outer `IrDeclarationWithVisibility`.
+                    val firstDeclarationWithVisibility = (declaration as? IrDeclarationWithVisibility)
+                        ?: declaration.parents.firstIsInstanceOrNull<IrDeclarationWithVisibility>()
+
+                    if (firstDeclarationWithVisibility?.isEffectivelyPrivate() != false)
+                        return@Custom null
+                }
 
                 val signature = symbol.signature ?: declaration?.let(signatureComputer::computeSignature)
                 if (signature == null || signature.isLocal)
@@ -258,9 +267,7 @@ class SerializedIrDumpHandler(
 
         val irFiles = info.irModuleFragment.files.sortedBy { it.fileEntry.name }
         for (irFile in irFiles) {
-            val actualDump = signatureComputer.inFile(irFile.symbol) {
-                irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
-            }
+            val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
             builder.append(actualDump)
         }
     }
