@@ -4,7 +4,7 @@ import KotlinRuntime
 import stdlib
 @_implementationOnly import KotlinBridges_KotlinSerialization
 
-public typealias `internal` = ExportedKotlinPackages.kotlinx.serialization.internal
+public typealias `internal` = ExportedKotlinPackages.kotlinx.serialization.`internal`
 public typealias modules = ExportedKotlinPackages.kotlinx.serialization.modules
 public typealias descriptors = ExportedKotlinPackages.kotlinx.serialization.descriptors
 public typealias builtins = ExportedKotlinPackages.kotlinx.serialization.builtins
@@ -287,7 +287,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         fatalError()
     }
 }
-public extension ExportedKotlinPackages.kotlinx.serialization.internal {
+public extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     public final class ElementMarker: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public func mark(
             index: Swift.Int32

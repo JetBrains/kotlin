@@ -1,9 +1,9 @@
 // simple0
 public typealias simple0 = Test.simple0
 //
-public typealias _ = Test.
+public typealias _ = Test._
 // _
-public typealias `_` = Test._
+public typealias `_` = Test.`_`
 // a
 public typealias a = Test.a
 // 0
@@ -25,7 +25,7 @@ public typealias u2829202d3e20_Function = Test.u2829202d3e20_Function
 // +
 public typealias u2b = Test.u2b
 // class
-public typealias `class` = Test.class
+public typealias `class` = Test.`class`
 // Class
 public typealias Class = Test.Class
 // with	extensive
@@ -79,13 +79,13 @@ public var simple0: Test.simple0 {
     }
 }
 //
-public var _: Test. {
+public var _: Test._ {
     get {
         stub()
     }
 }
 // _
-public var `_`: Test._ {
+public var `_`: Test.`_` {
     get {
         stub()
     }
@@ -151,7 +151,7 @@ public var u2b: Test.u2b {
     }
 }
 // class
-public var `class`: Test.class {
+public var `class`: Test.`class` {
     get {
         stub()
     }
@@ -187,11 +187,11 @@ public func simple0() -> Test.simple0 {
     stub()
 }
 //
-public func _() -> Test. {
+public func _() -> Test._ {
     stub()
 }
 // _
-public func `_`() -> Test._ {
+public func `_`() -> Test.`_` {
     stub()
 }
 // a
@@ -235,7 +235,7 @@ public func u2b() -> Test.u2b {
     stub()
 }
 // class
-public func `class`() -> Test.class {
+public func `class`() -> Test.`class` {
     stub()
 }
 // Class
