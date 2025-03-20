@@ -141,6 +141,30 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
+    public final annotation class InAnn14 : kotlin.Annotation {
+        public constructor InAnn14(/*0*/ vararg value: [Error type: Missed a type for a value parameter value] /*kotlin.Array<out [Error type: Missed a type for a value parameter value]>*/ = ...)
+        public final val value: kotlin.Array<out [Error type: No type specified for vararg val value = [1.0, 2.2]]>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class InAnn15 : kotlin.Annotation {
+        public constructor InAnn15(/*0*/ vararg value: [Error type: Missed a type for a value parameter value] /*kotlin.Array<out [Error type: Missed a type for a value parameter value]>*/ = ...)
+        public final val value: kotlin.Array<out [Error type: No type specified for vararg val value = [1, 2]]>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class InAnn16 : kotlin.Annotation {
+        public constructor InAnn16(/*0*/ vararg value: [Error type: Missed a type for a value parameter value] /*kotlin.Array<out [Error type: Missed a type for a value parameter value]>*/ = ...)
+        public final val value: kotlin.Array<out [Error type: No type specified for vararg val value = ["alpha", "beta"]]>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     public final annotation class InAnn4 : kotlin.Annotation {
         public constructor InAnn4(/*0*/ p1: kotlin.Array<kotlin.Int>, /*1*/ p2: kotlin.Array<kotlin.Int>?)
         public final val p1: kotlin.Array<kotlin.Int>

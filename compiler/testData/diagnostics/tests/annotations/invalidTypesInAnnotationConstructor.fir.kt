@@ -70,6 +70,10 @@ annotation class InAnn13(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p1: String,
                         <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p4: Ann1,
                         <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p5: Int)
 
+annotation class InAnn14(<!INVALID_TYPE_OF_ANNOTATION_MEMBER, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>vararg val value<!SYNTAX!><!> = [1.0, 2.2]<!>)
+annotation class InAnn15(<!INVALID_TYPE_OF_ANNOTATION_MEMBER, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>vararg val value<!SYNTAX!><!> = [1, 2]<!>)
+annotation class InAnn16(<!INVALID_TYPE_OF_ANNOTATION_MEMBER, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>vararg val value<!SYNTAX!><!> = ["alpha", "beta"]<!>)
+
 enum class MyEnum {
     A
 }
