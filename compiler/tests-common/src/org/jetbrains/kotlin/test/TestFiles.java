@@ -46,7 +46,7 @@ public class TestFiles {
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     // Must be same as in AdditionalDiagnosticsSourceFilesProvider.directiveToFileMap
-    private static final String checkTypeWithExact = "compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt";
+    private static final String checkTypeWithExact = "/Users/ilya.goncharov/repos/kotlin-amper/compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt";
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {

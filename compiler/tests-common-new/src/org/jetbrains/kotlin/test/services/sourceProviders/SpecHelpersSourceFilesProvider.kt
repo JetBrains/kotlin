@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 class SpecHelpersSourceFilesProvider(testServices: TestServices, testType: String, baseDir: String) : AdditionalSourceProvider(testServices) {
-    private val helpersDirPath = "$baseDir/compiler/tests-spec/testData/$testType/helpers"
+    private val baseDir2 = "/Users/ilya.goncharov/repos/kotlin-amper"
+    private val helpersDirPath = "$baseDir2/compiler/tests-spec/testData/$testType/helpers"
 
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)

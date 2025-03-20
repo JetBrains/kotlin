@@ -83,9 +83,9 @@ class AdditionalSourceFilesProvider(testServices: TestServices) : AdditionalSour
 
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         return buildList {
-            add(File("plugins/power-assert/testData/helpers/InfixDispatch.kt").toTestFile())
-            add(File("plugins/power-assert/testData/helpers/InfixExtension.kt").toTestFile())
-            add(File("plugins/power-assert/testData/helpers/utils.kt").toTestFile())
+            add(File("/Users/ilya.goncharov/repos/kotlin-amper/plugins/power-assert/testData/helpers/InfixDispatch.kt").toTestFile())
+            add(File("/Users/ilya.goncharov/repos/kotlin-amper/plugins/power-assert/testData/helpers/InfixExtension.kt").toTestFile())
+            add(File("/Users/ilya.goncharov/repos/kotlin-amper/plugins/power-assert/testData/helpers/utils.kt").toTestFile())
         }
     }
 }

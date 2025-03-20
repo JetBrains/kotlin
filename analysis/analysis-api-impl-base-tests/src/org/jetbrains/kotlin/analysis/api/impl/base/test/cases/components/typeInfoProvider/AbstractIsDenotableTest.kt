@@ -91,7 +91,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
 
     private class TestHelperProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
         override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
-            return listOf(File("analysis/analysis-api/testData/helpers/isDenotable/helpers.kt").toTestFile())
+            return listOf(File("/Users/ilya.goncharov/repos/kotlin-amper/analysis/analysis-api/testData/helpers/isDenotable/helpers.kt").toTestFile())
         }
     }
 }
