@@ -82,7 +82,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     }
 
     fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature =
-        table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature("RB") }
+        table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature() }
 }
 
 // This is what we pre-populate tables with

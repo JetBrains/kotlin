@@ -215,9 +215,9 @@ class FileLocalIdSignatureComputer(
     }
 
     fun computeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
-        is IrValueDeclaration -> generateScopeLocalSignature(declaration.name.asString())
-        is IrAnonymousInitializer -> generateScopeLocalSignature("ANON INIT")
-        is IrLocalDelegatedProperty -> generateScopeLocalSignature(declaration.name.asString())
+        is IrValueDeclaration -> generateScopeLocalSignature()
+        is IrAnonymousInitializer -> generateScopeLocalSignature()
+        is IrLocalDelegatedProperty -> generateScopeLocalSignature()
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
@@ -225,8 +225,7 @@ class FileLocalIdSignatureComputer(
                 declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
                 ++localIndex
-            },
-            description = declaration.render()
+            }
         )
 
         is IrProperty -> IdSignature.FileLocalSignature(
@@ -235,19 +234,17 @@ class FileLocalIdSignatureComputer(
                 declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
                 ++localIndex
-            },
-            description = declaration.render()
+            }
         )
 
         else -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
-            id = ++localIndex,
-            description = declaration.render()
+            id = ++localIndex
         )
     }
 
-    fun generateScopeLocalSignature(description: String): IdSignature =
-        IdSignature.ScopeLocalDeclaration(scopeIndex++, description)
+    fun generateScopeLocalSignature(): IdSignature =
+        IdSignature.ScopeLocalDeclaration(scopeIndex++)
 
     /**
      * We shall have stable indices for local fake override functions/properties.

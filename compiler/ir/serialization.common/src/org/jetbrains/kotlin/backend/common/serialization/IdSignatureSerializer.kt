@@ -59,7 +59,6 @@ class IdSignatureSerializer(
 
         proto.container = protoIdSignature(signature.container)
         proto.localId = signature.id
-        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }
@@ -83,7 +82,6 @@ class IdSignatureSerializer(
 
         proto.addAllLocalFqName(serializeFqName(signature.localFqn))
         signature.hashSig?.let { proto.localHash = it }
-        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }

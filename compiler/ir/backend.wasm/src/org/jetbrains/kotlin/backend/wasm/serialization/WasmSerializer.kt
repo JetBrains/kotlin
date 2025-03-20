@@ -467,20 +467,18 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeFileLocalSignature(fileLocal: IdSignature.FileLocalSignature) {
         with(fileLocal) {
-            withFlags(description == null) {
+            withFlags {
                 serializeIdSignature(container)
                 b.writeUInt64(id.toULong())
-                description?.let { serializeString(it) }
             }
         }
     }
 
     private fun serializeLocalSignature(local: IdSignature.LocalSignature) {
         with(local) {
-            withFlags(hashSig == null, description == null) {
+            withFlags(hashSig == null) {
                 serializeString(localFqn)
                 hashSig?.let { b.writeUInt64(it.toULong()) }
-                description?.let { serializeString(it) }
             }
         }
     }
@@ -495,9 +493,8 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeScopeLocalDeclaration(scopeLocal: IdSignature.ScopeLocalDeclaration) {
         with(scopeLocal) {
-            withFlags(description == null) {
+            withFlags {
                 b.writeUInt32(id.toUInt())
-                description?.let { serializeString(it) }
             }
         }
     }

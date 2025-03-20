@@ -43,7 +43,7 @@ private fun IdSignature.CompositeSignature.rebuildSignature(moduleName: String):
     IdSignature.CompositeSignature(container.rebuildSignature(moduleName), inner.rebuildSignature(moduleName))
 
 private fun IdSignature.FileLocalSignature.rebuildSignature(moduleName: String): IdSignature =
-    IdSignature.FileLocalSignature(container.rebuildSignature(moduleName), id, description)
+    IdSignature.FileLocalSignature(container.rebuildSignature(moduleName), id)
 
 private fun IdSignature.LoweredDeclarationSignature.rebuildSignature(moduleName: String): IdSignature =
     IdSignature.LoweredDeclarationSignature(original.rebuildSignature(moduleName), stage, index)

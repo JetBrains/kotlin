@@ -460,7 +460,7 @@ sealed class IdSignature {
      *
      * This signature is not navigatable through files.
      */
-    class LocalSignature(val localFqn: String, val hashSig: Long?, val description: String?) : IdSignature() {
+    class LocalSignature(val localFqn: String, val hashSig: Long?) : IdSignature() {
         override val isPubliclyVisible: Boolean
             get() = false
 
@@ -559,7 +559,7 @@ sealed class IdSignature {
      *   **Important**: For fake overrides, this is the hash of the mangle name.
      *   TODO: Consider using specialized signatures for local fake overrides, KT-72296
      */
-    class FileLocalSignature(val container: IdSignature, val id: Long, val description: String? = null) : IdSignature() {
+    class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = false
 
         override fun packageFqName(): FqName = container.packageFqName()
@@ -594,7 +594,7 @@ sealed class IdSignature {
      *
      * This signature is not navigatable through files.
      */
-    class ScopeLocalDeclaration(val id: Int, val description: String? = null) : IdSignature() {
+    class ScopeLocalDeclaration(val id: Int) : IdSignature() {
 
         override val isPubliclyVisible: Boolean get() = false
 

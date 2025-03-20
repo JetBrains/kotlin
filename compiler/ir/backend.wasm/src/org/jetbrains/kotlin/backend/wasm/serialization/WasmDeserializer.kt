@@ -452,16 +452,14 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withFlags { flags ->
             val container = deserializeIdSignature()
             val id = b.readUInt64().toLong()
-            val description = if (flags.consume()) null else deserializeString()
-            IdSignature.FileLocalSignature(container, id, description)
+            IdSignature.FileLocalSignature(container, id)
         }
 
     private fun deserializeLocalSignature(): IdSignature.LocalSignature =
         withFlags { flags ->
             val localFqn = deserializeString()
             val hashSig = if (flags.consume()) null else b.readUInt64().toLong()
-            val description = if (flags.consume()) null else deserializeString()
-            IdSignature.LocalSignature(localFqn, hashSig, description)
+            IdSignature.LocalSignature(localFqn, hashSig)
         }
 
     private fun deserializeLoweredDeclarationSignature(): IdSignature.LoweredDeclarationSignature {
@@ -474,8 +472,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeScopeLocalDeclaration(): IdSignature.ScopeLocalDeclaration =
         withFlags { flags ->
             val id = b.readUInt32().toInt()
-            val description = if (flags.consume()) null else deserializeString()
-            IdSignature.ScopeLocalDeclaration(id, description)
+            IdSignature.ScopeLocalDeclaration(id)
         }
 
     private fun deserializeConstantDataElement(): ConstantDataElement =
