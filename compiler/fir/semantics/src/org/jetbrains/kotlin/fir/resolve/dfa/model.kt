@@ -16,20 +16,20 @@ import kotlin.contracts.contract
 // --------------------------------------- Facts ---------------------------------------
 
 data class PersistentTypeStatement(
-    override val variable: RealVariable,
+    override val variable: DataFlowVariable,
     override val upperTypes: PersistentSet<ConeKotlinType>,
     override val lowerTypes: PersistentSet<DfaType>,
 ) : TypeStatement()
 
 class MutableTypeStatement(
-    override val variable: RealVariable,
+    override val variable: DataFlowVariable,
     override val upperTypes: MutableSet<ConeKotlinType> = linkedSetOf(),
     override val lowerTypes: MutableSet<DfaType> = linkedSetOf(),
 ) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------
 
-typealias TypeStatements = Map<RealVariable, TypeStatement>
+typealias TypeStatements = Map<DataFlowVariable, TypeStatement>
 
 // --------------------------------------- DSL ---------------------------------------
 
