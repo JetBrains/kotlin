@@ -594,7 +594,7 @@ sealed class IdSignature {
      *
      * This signature is not navigatable through files.
      */
-    class ScopeLocalDeclaration(val id: Int) : IdSignature() {
+    data class ScopeLocalDeclaration(val id: Int) : IdSignature() {
 
         override val isPubliclyVisible: Boolean get() = false
 
@@ -608,11 +608,6 @@ sealed class IdSignature {
         override fun nearestPublicSig(): IdSignature = error("Is not supported for Local ID")
 
         override fun packageFqName(): FqName = error("Is not supported for Local ID")
-
-        override fun equals(other: Any?): Boolean =
-            other is ScopeLocalDeclaration && id == other.id
-
-        override fun hashCode(): Int = id
     }
 
     /**
