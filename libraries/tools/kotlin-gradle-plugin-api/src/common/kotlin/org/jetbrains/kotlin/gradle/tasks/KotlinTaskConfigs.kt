@@ -138,7 +138,7 @@ interface BaseKotlinCompile : KotlinCompileTool {
 /**
  * Represents a Kotlin task compiling given Kotlin sources into JVM class files.
  */
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION")
 interface KotlinJvmCompile : BaseKotlinCompile,
     KotlinCompileDeprecated<KotlinJvmOptionsDeprecated>,
     KotlinCompilationTask<KotlinJvmCompilerOptions>,

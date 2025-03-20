@@ -60,13 +60,16 @@ abstract class KotlinCompile @Inject constructor(
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") KotlinJvmCompileDsl {
 
     @Suppress("DEPRECATION")
-    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },
         compilerOptions
     )
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR", "DEPRECATION")
     @Deprecated(
         "Configure compilerOptions directly. Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("compilerOptions"),

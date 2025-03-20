@@ -784,8 +784,7 @@ tasks {
             exclude("collections/MapTest.kt")
         }
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            @Suppress("DEPRECATION")
-            kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
+            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
         }
         named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
             enabled = false  // Causes out-of-memory in CI: KTI-2150

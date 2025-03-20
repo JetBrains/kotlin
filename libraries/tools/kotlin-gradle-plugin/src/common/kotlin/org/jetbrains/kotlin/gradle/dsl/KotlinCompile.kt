@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileApi
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR", "DEPRECATION")
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>,
     KotlinCompilationTask<KotlinJsCompilerOptions>
 
@@ -19,11 +19,11 @@ interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>,
 )
 interface KotlinJvmCompile : KotlinJvmCompileApi
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR", "DEPRECATION")
 internal interface KotlinNativeCompileTask : KotlinCompile<KotlinCommonOptions>,
     KotlinCompilationTask<KotlinNativeCompilerOptions>
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR", "DEPRECATION")
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>,
     KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>
 

@@ -17,14 +17,14 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
     @GradleTest
     fun enumEntriesNotAccessible(gradleVersion: GradleVersion) {
         project("enumEntriesNotAccessible", gradleVersion) {
-            buildGradleKts.replaceText("\"<language-version>\"", "\"1.9\" // <language-version>")
+            buildGradleKts.replaceText("<language-version>", "KotlinVersion.KOTLIN_1_9")
 
             buildAndFail(":compileKotlin") {
                 assertOutputContains("Main.kt:13:20 Unresolved reference: entries")
                 assertOutputContains("Main.kt:14:30 Unresolved reference: entries")
             }
 
-            buildGradleKts.replaceText("\"1.9\" // <language-version>", "\"2.0\" // <language-version>")
+            buildGradleKts.replaceText("KotlinVersion.KOTLIN_1_9", "KotlinVersion.KOTLIN_2_0")
 
             buildAndFail(":compileKotlin") {
                 assertOutputContains("Main.kt:13:20 Unresolved reference 'entries'.")
@@ -40,10 +40,10 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
             projectPath.resolve("src/main/kotlin/Main.kt")
                 .replaceText("entries", "values()")
 
-            buildGradleKts.replaceText("\"<language-version>\"", "\"1.9\" // <language-version>")
+            buildGradleKts.replaceText("<language-version>", "KotlinVersion.KOTLIN_1_9")
             build(":compileKotlin")
 
-            buildGradleKts.replaceText("\"1.9\" // <language-version>", "\"2.0\" // <language-version>")
+            buildGradleKts.replaceText("KotlinVersion.KOTLIN_1_9", "KotlinVersion.KOTLIN_2_0")
             build(":compileKotlin")
         }
     }

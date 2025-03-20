@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
  */
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 @Deprecated(
-    message = "Replaced with 'KotlinCompilationTask' that exposes the compiler options DSL. More details are here: https://kotl.in/u1r8ln"
+    message = "Replaced with 'KotlinCompilationTask' that exposes the compiler options DSL. More details are here: https://kotl.in/u1r8ln",
+    level = DeprecationLevel.ERROR,
 )
 @KotlinGradlePluginDsl
 interface KotlinCompile<out T : KotlinCommonOptionsDeprecated> : Task {
@@ -37,7 +38,10 @@ interface KotlinCompile<out T : KotlinCommonOptionsDeprecated> : Task {
      * The [kotlinOptions] configuration is delegated to the related task `compilerOptions` input configuration.
      */
     @OptIn(InternalKotlinGradlePluginApi::class)
-    @Deprecated(message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     @get:Internal
     val kotlinOptions: T
 
@@ -45,9 +49,12 @@ interface KotlinCompile<out T : KotlinCommonOptionsDeprecated> : Task {
      * Configures the [kotlinOptions] with the provided configuration.
      */
     @OptIn(InternalKotlinGradlePluginApi::class)
-    @Deprecated(message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     fun kotlinOptions(fn: T.() -> Unit) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         kotlinOptions.fn()
     }
 
@@ -55,9 +62,12 @@ interface KotlinCompile<out T : KotlinCommonOptionsDeprecated> : Task {
      * Configures the [kotlinOptions] with the provided configuration.
      */
     @OptIn(InternalKotlinGradlePluginApi::class)
-    @Deprecated(message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     fun kotlinOptions(fn: Action<in T>) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         fn.execute(kotlinOptions)
     }
 }

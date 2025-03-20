@@ -131,9 +131,6 @@ fun Project.configureKotlinCompilationOptions() {
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
-        val useJvmFir by extra(project.kotlinBuildProperties.useFir)
-        val useFirLT by extra(project.kotlinBuildProperties.useFirWithLightTree)
-        val useFirIC by extra(project.kotlinBuildProperties.useFirTightIC)
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -166,7 +163,7 @@ fun Project.configureKotlinCompilationOptions() {
             ) {
                 doFirst {
                     if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
-                        @Suppress("DEPRECATION")
+                        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
                         (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
                             "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
                     }

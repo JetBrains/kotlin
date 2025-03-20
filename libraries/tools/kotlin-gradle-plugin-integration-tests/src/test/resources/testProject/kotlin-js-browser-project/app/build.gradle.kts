@@ -77,7 +77,7 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
-    kotlinOptions {
-        moduleKind = "es"
+    compilerOptions {
+        moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
     }
 }

@@ -17,8 +17,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
@@ -209,7 +207,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @Deprecated(
         message = "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("compileTaskProvider"),
@@ -220,6 +218,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    @Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @Deprecated(
         message = "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("compileTaskProvider"),

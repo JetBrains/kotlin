@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     kotlin("multiplatform")
@@ -153,19 +154,22 @@ kotlin {
     }
 }
 
-@Suppress("DEPRECATION")
-tasks.withType<KotlinCompile<*>>().configureEach {
-    kotlinOptions.languageVersion = "2.0"
-    kotlinOptions.apiVersion = "2.0"
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xallow-kotlin-package",
-        "-Xexpect-actual-classes",
-        "-Xstdlib-compilation",
-        "-Xdont-warn-on-error-suppression",
-        "-opt-in=kotlin.ExperimentalMultiplatform",
-        "-opt-in=kotlin.contracts.ExperimentalContracts",
-        "-Xcontext-parameters",
-    )
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        compilerOptions.languageVersion = KotlinVersion.KOTLIN_2_0
+        compilerOptions.apiVersion = KotlinVersion.KOTLIN_2_0
+        compilerOptions.freeCompilerArgs.addAll(
+            listOf(
+                "-Xallow-kotlin-package",
+                "-Xexpect-actual-classes",
+                "-Xstdlib-compilation",
+                "-Xdont-warn-on-error-suppression",
+                "-opt-in=kotlin.ExperimentalMultiplatform",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
+                "-Xcontext-parameters",
+            )
+        )
+    }
 }
 
 tasks {
@@ -173,8 +177,7 @@ tasks {
         enabled = false
     }
 
-    @Suppress("DEPRECATION")
-    named("compileKotlinJs", KotlinCompile::class) {
-        kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+    named<KotlinCompilationTask<*>>("compileKotlinJs") {
+        compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin")
     }
 }

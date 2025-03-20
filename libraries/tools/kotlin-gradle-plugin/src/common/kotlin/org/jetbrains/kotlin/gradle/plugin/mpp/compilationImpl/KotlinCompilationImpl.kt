@@ -12,8 +12,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinCompilationSourceDeprecation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -159,6 +158,7 @@ internal class KotlinCompilationImpl(
     override val compileKotlinTask: KotlinCompile<KotlinCommonOptions>
         get() = compileKotlinTaskProvider.get()
 
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("compileTaskProvider"),
