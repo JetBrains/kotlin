@@ -200,14 +200,17 @@ internal class JvmPropertiesLowering(
             this.returnType = returnType
             this.visibility = visibility
         }.apply {
-            parameters = declaration.getter?.parameters?.mapNotNull {
-                when (it.kind) {
+            if (!isStatic) {
+                dispatchReceiverParameter = declaration.getter?.dispatchReceiverParameter?.let {
                     // Synthetic methods don't get generic type signatures anyway, so not exactly useful to preserve type parameters.
-                    IrParameterKind.DispatchReceiver -> if (!isStatic) it.copyTo(this, type = it.type.eraseTypeParameters()) else null
-                    IrParameterKind.Context, IrParameterKind.ExtensionReceiver, IrParameterKind.Regular ->
-                        it.copyTo(this, type = it.type.eraseTypeParameters(), kind = IrParameterKind.Regular)
+                    it.copyTo(this, type = it.type.eraseTypeParameters())
                 }
-            } ?: emptyList()
+            }
+            valueParameters = listOfNotNull(
+                declaration.getter?.extensionReceiverParameter?.let {
+                    it.copyTo(this, type = it.type.eraseTypeParameters())
+                }
+            )
             parent = declaration.parent
             metadata = declaration.metadata
         }
