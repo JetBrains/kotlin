@@ -24,7 +24,6 @@ internal fun collectGeneralConfigurationTimeMetrics(
     project: Project,
     gradle: Gradle,
     buildReportOutputs: List<BuildReportType>,
-    useClasspathSnapshot: Boolean,
     pluginVersion: String,
     isProjectIsolationEnabled: Boolean,
     isProjectIsolationRequested: Boolean,
@@ -34,7 +33,6 @@ internal fun collectGeneralConfigurationTimeMetrics(
 
     val statisticOverhead = measureTimeMillis {
         configurationTimeMetrics.put(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
-        configurationTimeMetrics.put(StringMetrics.USE_CLASSPATH_SNAPSHOT, useClasspathSnapshot.toString())
         buildReportOutputs.forEach {
             when (it) {
                 BuildReportType.BUILD_SCAN -> configurationTimeMetrics.put(BooleanMetrics.BUILD_SCAN_BUILD_REPORT, true)

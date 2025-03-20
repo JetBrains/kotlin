@@ -127,7 +127,6 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             KotlinBuildStatsBeanService.initStatsService(project)
 
             val buildReportOutputs = reportingSettings(project).buildReportOutputs
-            val useClasspathSnapshot = PropertiesProvider(project).useClasspathSnapshot.get()
             val gradle = project.gradle
             val generalConfigurationMetricsProvider = project.provider {
                 //isProjectIsolationEnabled isConfigurationCacheRequested and isProjectIsolationRequested should be calculated beforehand
@@ -137,7 +136,6 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                     project,
                     gradle,
                     buildReportOutputs,
-                    useClasspathSnapshot,
                     pluginVersion,
                     isProjectIsolationEnabled,
                     isProjectIsolationRequested,

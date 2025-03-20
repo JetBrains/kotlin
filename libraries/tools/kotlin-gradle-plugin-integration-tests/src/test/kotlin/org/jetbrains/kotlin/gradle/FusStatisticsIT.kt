@@ -31,7 +31,6 @@ class FusStatisticsIT : KGPBaseTest() {
         "GRADLE_VERSION",
         "KOTLIN_STDLIB_VERSION",
         "KOTLIN_COMPILER_VERSION",
-        "USE_CLASSPATH_SNAPSHOT=true"
     )
 
     private val GradleProject.fusStatisticsPath: Path
