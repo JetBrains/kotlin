@@ -131,8 +131,8 @@ object FirJvmErrors {
     val JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // JVM Default
-    val JVM_DEFAULT_IN_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("JVM_DEFAULT_IN_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
-    val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
+    val JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
+    val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // External Declaration

@@ -6211,15 +6211,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.JVM_DEFAULT_IN_DECLARATION) { firDiagnostic ->
-        JvmDefaultInDeclarationImpl(
-            firDiagnostic.a,
+    add(FirJvmErrors.JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE) { firDiagnostic ->
+        JvmDefaultWithoutCompatibilityNotInEnableModeImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION) { firDiagnostic ->
-        JvmDefaultWithCompatibilityInDeclarationImpl(
+    add(FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE) { firDiagnostic ->
+        JvmDefaultWithCompatibilityNotInNoCompatibilityModeImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

@@ -5210,16 +5210,15 @@ internal class JavaModuleDoesNotExportPackageImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaModuleDoesNotExportPackage
 
-internal class JvmDefaultInDeclarationImpl(
-    override val annotation: String,
+internal class JvmDefaultWithoutCompatibilityNotInEnableModeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmDefaultInDeclaration
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmDefaultWithoutCompatibilityNotInEnableMode
 
-internal class JvmDefaultWithCompatibilityInDeclarationImpl(
+internal class JvmDefaultWithCompatibilityNotInNoCompatibilityModeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmDefaultWithCompatibilityInDeclaration
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmDefaultWithCompatibilityNotInNoCompatibilityMode
 
 internal class JvmDefaultWithCompatibilityNotOnInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,

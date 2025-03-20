@@ -27,8 +27,8 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         val withoutCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID, session)
         if (withoutCompatibility != null) {
             val source = withoutCompatibility.source
-            if (!jvmDefaultMode.isEnabled) {
-                reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefaultWithoutCompatibility", context)
+            if (jvmDefaultMode != JvmDefaultMode.ENABLE) {
+                reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE, context)
                 return
             }
         }
@@ -37,7 +37,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             val source = withCompatibility.source
             when {
                 jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY -> {
-                    reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, context)
+                    reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE, context)
                     return
                 }
                 declaration !is FirRegularClass || !declaration.isInterface -> {
