@@ -110,7 +110,7 @@ internal fun FirConstructorSymbol.isObjCConstructor(session: FirSession) =
 /**
  * mimics IrClass.isObjCClass()
  */
-fun FirClassSymbol<*>.isObjCClass(session: FirSession) = classId.packageFqName != NativeStandardInteropNames.cInteropPackage &&
+fun FirClassSymbol<*>.isObjCClass(session: FirSession): Boolean = classId.packageFqName != NativeStandardInteropNames.cInteropPackage &&
         selfOrAnySuperClass(session) {
             it.classId == NativeStandardInteropNames.objCObjectClassId
         }

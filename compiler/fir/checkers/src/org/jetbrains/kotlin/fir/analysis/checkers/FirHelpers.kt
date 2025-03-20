@@ -130,7 +130,7 @@ fun ConeKotlinType.isSingleFieldValueClass(session: FirSession): Boolean = with(
 private fun ConeKotlinType.isRecursiveSingleFieldValueClassType(session: FirSession) =
     isRecursiveValueClassType(hashSetOf(), session, onlyInline = true)
 
-fun ConeKotlinType.isRecursiveValueClassType(session: FirSession) =
+fun ConeKotlinType.isRecursiveValueClassType(session: FirSession): Boolean =
     isRecursiveValueClassType(hashSetOf(), session, onlyInline = false)
 
 private fun ConeKotlinType.isRecursiveValueClassType(visited: HashSet<ConeKotlinType>, session: FirSession, onlyInline: Boolean): Boolean {
@@ -186,7 +186,7 @@ fun FirCallableSymbol<*>.getContainingSymbol(session: FirSession): FirBasedSymbo
 /**
  * The containing symbol is resolved using the declaration-site session.
  */
-fun FirDeclaration.getContainingClassSymbol() = symbol.getContainingClassSymbol()
+fun FirDeclaration.getContainingClassSymbol(): FirClassLikeSymbol<*>? = symbol.getContainingClassSymbol()
 
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
@@ -898,12 +898,12 @@ private fun FirCallableSymbol<*>.containingClassUnsubstitutedScope(context: Chec
     return containingClass.unsubstitutedScope(context)
 }
 
-val CheckerContext.closestNonLocal get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()
+val CheckerContext.closestNonLocal: FirDeclaration? get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()
 
-fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration) =
+fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration): FirDeclaration? =
     (containingDeclarations + declaration).takeWhile { it.isNonLocal }.lastOrNull()
 
-val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull().let { it is FirFile || it is FirScript }
+val CheckerContext.isTopLevel: Boolean get() = containingDeclarations.lastOrNull().let { it is FirFile || it is FirScript }
 
 /**
  * The containing symbol is resolved using the declaration-site session.
@@ -914,7 +914,7 @@ fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, sess
     return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
 }
 
-fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession) =
+fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean =
     symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)
 
 fun FirBasedSymbol<*>.getAnnotationFirstArgument(classId: ClassId, session: FirSession): FirExpression? {
@@ -1031,7 +1031,9 @@ fun FirElement.requireFeatureSupport(
     context: CheckerContext,
     reporter: DiagnosticReporter,
     positioningStrategy: SourceElementPositioningStrategy? = null,
-) = source.requireFeatureSupport(feature, context, reporter, positioningStrategy)
+) {
+    source.requireFeatureSupport(feature, context, reporter, positioningStrategy)
+}
 
 fun reportAtomicToPrimitiveProblematicAccess(
     type: ConeKotlinType,

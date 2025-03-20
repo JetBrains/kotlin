@@ -39,7 +39,10 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if ((source.kind !is KtRealSourceElementKind && source.kind != KtFakeSourceElementKind.PropertyFromParameter) ||
+        val sourceKindIsReal = source.kind is KtRealSourceElementKind
+        if (!sourceKindIsReal &&
+            source.kind != KtFakeSourceElementKind.PropertyFromParameter || // Fake properties from parameter should be checked for visibility
+            element.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty ||
             element !is FirMemberDeclaration
         ) {
             return
@@ -64,7 +67,10 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
             checkVisibilityModifier(explicitApiState, element, source, context, reporter)
         }
 
-        checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source, context, reporter)
+        if (sourceKindIsReal) {
+            // Don't check fake property from parameter because they always have an explicit type (otherwise it's a compiler error)
+            checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source, context, reporter)
+        }
     }
 
     private fun checkVisibilityModifier(
@@ -109,9 +115,6 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                     if (containingClass != null && (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
                         return true
                     }
-                    if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                        return true
-                    }
                 }
 
                 // 3, 8
@@ -129,7 +132,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         reporter: DiagnosticReporter
     ) {
         if (declaration !is FirCallableDeclaration) return
-        if (!declaration.returnTypeCheckIsApplicable(source, context)) return
+        if (!declaration.returnTypeCheckIsApplicable(context)) return
 
         val shouldReport = returnTypeRequired(declaration, context)
         if (shouldReport) {
@@ -142,12 +145,13 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         }
     }
 
-    private fun FirCallableDeclaration.returnTypeCheckIsApplicable(source: KtSourceElement, context: CheckerContext): Boolean {
-        // Note that by default getChild uses `depth = -1`, which would find all descendents.
-        if (source.getChild(KtNodeTypes.TYPE_REFERENCE, depth = 1) != null) return false
+    private fun FirCallableDeclaration.returnTypeCheckIsApplicable(context: CheckerContext): Boolean {
         // Do not check if the containing file is not a physical file.
         val containingFile = context.containingDeclarations.first()
         if (containingFile.source?.elementType in codeFragmentTypes) return false
+
+        // It's an explicit type, the check always should be skipped
+        if (returnTypeRef.source?.kind == KtRealSourceElementKind) return false
 
         return this is FirProperty ||
                 this is FirFunction &&

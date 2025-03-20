@@ -51,7 +51,7 @@ inline val FirDeclaration.isSynthetic: Boolean
 
 // NB: This function checks transitive localness. That is,
 // if a declaration `isNonLocal`, then its parent also `isNonLocal`.
-val FirDeclaration.isNonLocal
+val FirDeclaration.isNonLocal: Boolean
     get() = when (this) {
         is FirFile -> true
         is FirCallableDeclaration -> !symbol.callableId.isLocal
@@ -59,7 +59,7 @@ val FirDeclaration.isNonLocal
         else -> false
     }
 
-val FirCallableDeclaration.isExtension get() = receiverParameter != null
+val FirCallableDeclaration.isExtension: Boolean get() = receiverParameter != null
 
 val FirBasedSymbol<*>.isMemberDeclaration: Boolean
     // Accessing `fir` is ok, because we don't really use it
@@ -91,9 +91,9 @@ val FirNamedFunctionSymbol.isMethodOfAny: Boolean
         }
     }
 
-val FirConstructorSymbol.isErrorPrimaryConstructor get() = fir is FirErrorPrimaryConstructor
+val FirConstructorSymbol.isErrorPrimaryConstructor: Boolean get() = fir is FirErrorPrimaryConstructor
 
-fun FirStatement.isDestructuredParameter() = this is FirVariable && getDestructuredParameter() != null
+fun FirStatement.isDestructuredParameter(): Boolean = this is FirVariable && getDestructuredParameter() != null
 
 fun FirVariable.getDestructuredParameter(): FirValueParameterSymbol? {
     val initializer = initializer

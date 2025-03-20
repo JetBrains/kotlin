@@ -153,7 +153,9 @@ fun FirClassSymbol<*>.processAllDeclarations(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
     processor: (FirBasedSymbol<*>) -> Unit
-) = fir.processAllDeclarations(session, memberRequiredPhase, processor)
+) {
+    fir.processAllDeclarations(session, memberRequiredPhase, processor)
+}
 
 /**
  * Returns the primary constructor of a given class, if any. Resolve phase is not guaranteed.

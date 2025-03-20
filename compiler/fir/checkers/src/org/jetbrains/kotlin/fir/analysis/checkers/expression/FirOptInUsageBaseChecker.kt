@@ -115,7 +115,7 @@ object FirOptInUsageBaseChecker {
             )
             if (fromSupertype) {
                 if (annotationType.lookupTag.classId == OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID) {
-                    val annotationClass = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
+                    val annotationClass = annotation.findArgumentByName(OPT_IN_ANNOTATION_CLASS) ?: continue
                     val classes = annotationClass.extractClassesFromArgument(session)
                     classes.forEach { klass ->
                         result.addIfNotNull(
@@ -158,7 +158,7 @@ object FirOptInUsageBaseChecker {
         fromSetter = false, dispatchReceiverType = null, fromSupertype = true
     )
 
-    fun FirClassLikeSymbol<*>.isExperimentalMarker(session: FirSession) =
+    fun FirClassLikeSymbol<*>.isExperimentalMarker(session: FirSession): Boolean =
         this is FirRegularClassSymbol && getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) != null
 
     @OptIn(SymbolInternals::class)
@@ -427,7 +427,7 @@ object FirOptInUsageBaseChecker {
             if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {
                 continue
             }
-            val annotationClasses = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
+            val annotationClasses = annotation.findArgumentByName(OPT_IN_ANNOTATION_CLASS) ?: continue
             if (annotationClasses.extractClassesFromArgument(session).any { it.classId == annotationClassId }) {
                 return true
             }
@@ -444,7 +444,7 @@ object FirOptInUsageBaseChecker {
             if (coneType?.lookupTag?.classId != OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID) {
                 continue
             }
-            val annotationClass = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
+            val annotationClass = annotation.findArgumentByName(OPT_IN_ANNOTATION_CLASS) ?: continue
             if (annotationClass.extractClassesFromArgument(session).any { it.classId == annotationClassId }) {
                 return true
             }

@@ -89,7 +89,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionCompon
     }
 }
 
-val FirSession.annotationPlatformSupport by FirSession.sessionComponentAccessor<FirAnnotationsPlatformSpecificSupportComponent>()
+val FirSession.annotationPlatformSupport: FirAnnotationsPlatformSpecificSupportComponent by FirSession.sessionComponentAccessor<FirAnnotationsPlatformSpecificSupportComponent>()
 
 class AnnotationsPosition(
     val backingFieldAnnotations: List<FirAnnotation>,

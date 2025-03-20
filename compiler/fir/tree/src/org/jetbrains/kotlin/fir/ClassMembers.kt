@@ -66,7 +66,7 @@ private object HasNoEnumEntriesKey : FirDeclarationDataKey()
 var FirClass.hasNoEnumEntriesAttr: Boolean? by FirDeclarationDataRegistry.data(HasNoEnumEntriesKey)
 
 // Must be true iff the class metadata contains the hasEnumEntries flag
-val FirClass.hasEnumEntries get() = hasNoEnumEntriesAttr != true
+val FirClass.hasEnumEntries: Boolean get() = hasNoEnumEntriesAttr != true
 
 private object IsNewPlaceForBodyGeneration : FirDeclarationDataKey()
 var FirRegularClass.isNewPlaceForBodyGeneration: Boolean? by FirDeclarationDataRegistry.data(IsNewPlaceForBodyGeneration)

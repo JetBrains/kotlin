@@ -648,7 +648,7 @@ fun FirStatement.isChildInParentheses(): Boolean {
     return sourceElement.isChildInParentheses()
 }
 
-fun KtSourceElement.isChildInParentheses() =
+fun KtSourceElement.isChildInParentheses(): Boolean =
     treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
 
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
@@ -744,7 +744,7 @@ fun FirExpression.guardedBy(
     )
 }
 
-fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter() = this == null ||
+fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter(): Boolean = this == null ||
         this == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER ||
         this == AnnotationUseSiteTarget.RECEIVER ||
         this == AnnotationUseSiteTarget.FILE ||

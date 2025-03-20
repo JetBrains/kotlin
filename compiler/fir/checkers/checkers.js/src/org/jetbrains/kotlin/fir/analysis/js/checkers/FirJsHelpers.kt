@@ -34,7 +34,7 @@ fun FirBasedSymbol<*>.isEffectivelyExternalMember(session: FirSession): Boolean 
     return fir is FirMemberDeclaration && isEffectivelyExternal(session)
 }
 
-fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
+fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext): Boolean = isEffectivelyExternal(context.session)
 
 fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
     if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
@@ -80,7 +80,7 @@ fun FirBasedSymbol<*>.isLibraryObject(session: FirSession): Boolean {
     return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsLibrary, session)
 }
 
-fun FirBasedSymbol<*>.isPresentInGeneratedCode(session: FirSession) = !isNativeObject(session) && !isLibraryObject(session)
+fun FirBasedSymbol<*>.isPresentInGeneratedCode(session: FirSession): Boolean = !isNativeObject(session) && !isLibraryObject(session)
 
 internal val FirBasedSymbol<*>.isExpect
     get() = when (this) {
@@ -134,15 +134,15 @@ internal fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
     }
 }
 
-fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext) = isNativeObject(context.session)
+fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext): Boolean = isNativeObject(context.session)
 
-fun FirBasedSymbol<*>.isNativeInterface(context: CheckerContext) = isNativeInterface(context.session)
+fun FirBasedSymbol<*>.isNativeInterface(context: CheckerContext): Boolean = isNativeInterface(context.session)
 
-fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)
+fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext): Boolean = isPredefinedObject(context.session)
 
-fun FirBasedSymbol<*>.isExportedObject(context: CheckerContext) = isExportedObject(context.session)
+fun FirBasedSymbol<*>.isExportedObject(context: CheckerContext): Boolean = isExportedObject(context.session)
 
-fun FirBasedSymbol<*>.isLibraryObject(context: CheckerContext) = isLibraryObject(context.session)
+fun FirBasedSymbol<*>.isLibraryObject(context: CheckerContext): Boolean = isLibraryObject(context.session)
 
 internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
     .filterNot { it.isAny || it.isNullableAny }
