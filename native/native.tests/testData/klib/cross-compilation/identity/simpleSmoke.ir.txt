@@ -14,7 +14,7 @@ MODULE_FRAGMENT name:<simpleSmoke>
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:simple/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
         PROPERTY name:companionObjectVal signature:simple/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
-          FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ simple/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ simple/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
             EXPRESSION_BODY
               CONST String type=<unbound IrClassSymbolImpl> value="foo"
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVal> signature:simple/I.Companion.companionObjectVal.<get-companionObjectVal>|<get-companionObjectVal>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
@@ -22,10 +22,10 @@ MODULE_FRAGMENT name:<simpleSmoke>
             correspondingProperty: PROPERTY name:companionObjectVal signature:simple/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
             BLOCK_BODY
               RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-companionObjectVal> (): <unbound IrClassSymbolImpl> declared in simple.I.Companion'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ simple/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ simple/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
                   receiver: GET_VAR '<this>: simple.I.Companion declared in simple.I.Companion.<get-companionObjectVal>' type=simple.I.Companion origin=null
     FUN name:take signature:simple/take|take(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
-      TYPE_PARAMETER name:T index:0 variance: signature:[ simple/take|take(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T index:0 variance: signature:[ simple/take|take(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
       VALUE_PARAMETER kind:Regular name:x index:0 type:T of simple.take
       BLOCK_BODY
     FUN name:getBoolean signature:simple/getBoolean|getBoolean(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>

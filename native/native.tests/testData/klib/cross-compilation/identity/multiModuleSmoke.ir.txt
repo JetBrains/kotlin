@@ -15,7 +15,7 @@ MODULE_FRAGMENT name:<lib1>
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
         PROPERTY name:companionObjectVal signature:lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
-          FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
+          FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
             EXPRESSION_BODY
               CONST String type=<unbound IrClassSymbolImpl> value="foo"
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVal> signature:lib1/I.Companion.companionObjectVal.<get-companionObjectVal>|<get-companionObjectVal>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
@@ -23,10 +23,10 @@ MODULE_FRAGMENT name:<lib1>
             correspondingProperty: PROPERTY name:companionObjectVal signature:lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
             BLOCK_BODY
               RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-companionObjectVal> (): <unbound IrClassSymbolImpl> declared in lib1.I.Companion'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
                   receiver: GET_VAR '<this>: lib1.I.Companion declared in lib1.I.Companion.<get-companionObjectVal>' type=lib1.I.Companion origin=null
     FUN name:take signature:lib1/take|take(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
-      TYPE_PARAMETER name:T index:0 variance: signature:[ lib1/take|take(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
+      TYPE_PARAMETER name:T index:0 variance: signature:[ lib1/take|take(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
       VALUE_PARAMETER kind:Regular name:x index:0 type:T of lib1.take
       BLOCK_BODY
     FUN name:getBoolean signature:lib1/getBoolean|getBoolean(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
@@ -120,7 +120,7 @@ MODULE_FRAGMENT name:<lib2>
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/SealedInterface.Object|null[0] modality:FINAL visibility:public [data] superTypes:[lib2.SealedInterface]' type=<unbound IrClassSymbolImpl>
         PROPERTY name:v signature:lib2/SealedInterface.Object.v|{}v[0] visibility:public modality:OPEN [delegated,val]
-          FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:v$delegate type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final]
+          FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final]
             EXPRESSION_BODY
               CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=null
                 TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
@@ -138,7 +138,7 @@ MODULE_FRAGMENT name:<lib2>
               RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface.Object'
                 CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
                   TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
-                  ARG 1: GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:v$delegate type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=null
+                  ARG 1: GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=null
                     receiver: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=IMPLICIT_ARGUMENT
                   ARG 2: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=null
                   ARG 3: PROPERTY_REFERENCE 'public open v: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [delegated,val] declared in lib2.SealedInterface.Object' field=null getter='public open fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface.Object' setter=null type=<unbound IrClassSymbolImpl><lib2.SealedInterface.Object, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -185,23 +185,23 @@ MODULE_FRAGMENT name:<lib2>
 MODULE_FRAGMENT name:<lib3>
   FILE fqName:lib3 fileName:/lib3.kt
     PROPERTY name:FOO signature:lib3/FOO|{}FOO[0] visibility:public modality:FINAL [const,val]
-      FIELD PROPERTY_BACKING_FIELD name:FOO signature:[ lib3/FOO|{}FOO[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+      FIELD PROPERTY_BACKING_FIELD name:FOO signature:[ lib3/FOO|{}FOO[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
         EXPRESSION_BODY
           CONST String type=<unbound IrClassSymbolImpl> value="BAR"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-FOO> signature:lib3/FOO.<get-FOO>|<get-FOO>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
         correspondingProperty: PROPERTY name:FOO signature:lib3/FOO|{}FOO[0] visibility:public modality:FINAL [const,val]
         BLOCK_BODY
           RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-FOO> (): <unbound IrClassSymbolImpl> declared in lib3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:FOO signature:[ lib3/FOO|{}FOO[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:FOO signature:[ lib3/FOO|{}FOO[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
     PROPERTY name:BAR signature:lib3/BAR|{}BAR[0] visibility:public modality:FINAL [const,val]
-      FIELD PROPERTY_BACKING_FIELD name:BAR signature:[ lib3/BAR|{}BAR[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
+      FIELD PROPERTY_BACKING_FIELD name:BAR signature:[ lib3/BAR|{}BAR[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
         EXPRESSION_BODY
           CONST Int type=<unbound IrClassSymbolImpl> value=3
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BAR> signature:lib3/BAR.<get-BAR>|<get-BAR>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
         correspondingProperty: PROPERTY name:BAR signature:lib3/BAR|{}BAR[0] visibility:public modality:FINAL [const,val]
         BLOCK_BODY
           RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-BAR> (): <unbound IrClassSymbolImpl> declared in lib3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BAR signature:[ lib3/BAR|{}BAR[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BAR signature:[ lib3/BAR|{}BAR[0] <- Local[<BF>] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
     CLASS CLASS name:IImpl signature:lib3/IImpl|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib3.IImpl
       CONSTRUCTOR signature:lib3/IImpl.<init>|<init>(){}[0] visibility:public returnType:lib3.IImpl [primary]
