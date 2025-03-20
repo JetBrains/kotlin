@@ -57,11 +57,15 @@ package kotlin.io.encoding
 public open class Base64 private constructor(
     internal val isUrlSafe: Boolean,
     internal val isMimeScheme: Boolean,
+    internal val mimeLineLength: Int,
     internal val paddingOption: PaddingOption
 ) {
     init {
         require(!isUrlSafe || !isMimeScheme)
     }
+
+    private val mimeGroupsPerLine: Int = mimeLineLength / symbolsPerGroup
+
 
     /**
      * An enumeration of the possible padding options for Base64 encoding and decoding.
@@ -145,7 +149,7 @@ public open class Base64 private constructor(
     @SinceKotlin("2.0")
     public fun withPadding(option: PaddingOption): Base64 {
         return if (paddingOption == option) this
-        else Base64(isUrlSafe, isMimeScheme, option)
+        else Base64(isUrlSafe, isMimeScheme, mimeLineLength, option)
     }
 
     /**
@@ -696,7 +700,7 @@ public open class Base64 private constructor(
      *
      * @sample samples.io.encoding.Base64Samples.defaultEncodingSample
      */
-    public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false, PaddingOption.PRESENT) {
+    public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false, mimeLineLength = -1, paddingOption = PaddingOption.PRESENT) {
 
         private const val bitsPerByte: Int = 8
         private const val bitsPerSymbol: Int = 6
@@ -706,8 +710,7 @@ public open class Base64 private constructor(
 
         internal const val padSymbol: Byte = 61 // '='
 
-        internal const val mimeLineLength: Int = 76
-        private const val mimeGroupsPerLine: Int = mimeLineLength / symbolsPerGroup
+        private const val lineLengthMime: Int = 76
         internal val mimeLineSeparatorSymbols: ByteArray = byteArrayOf('\r'.code.toByte(), '\n'.code.toByte())
 
         /**
@@ -725,7 +728,7 @@ public open class Base64 private constructor(
          *
          * @sample samples.io.encoding.Base64Samples.urlSafeEncodingSample
          */
-        public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false, PaddingOption.PRESENT)
+        public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false, mimeLineLength = -1, paddingOption = PaddingOption.PRESENT)
 
         /**
          * The encoding specified by [`RFC 2045 section 6.8`](https://www.rfc-editor.org/rfc/rfc2045#section-6.8),
@@ -742,7 +745,7 @@ public open class Base64 private constructor(
          *
          * @sample samples.io.encoding.Base64Samples.mimeEncodingSample
          */
-        public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, PaddingOption.PRESENT)
+        public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, mimeLineLength = lineLengthMime, paddingOption = PaddingOption.PRESENT)
     }
 }
 
