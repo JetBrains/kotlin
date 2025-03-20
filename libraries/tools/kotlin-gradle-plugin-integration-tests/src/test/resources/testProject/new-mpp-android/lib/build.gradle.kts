@@ -44,23 +44,6 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
 }
 
-kotlin.targets.all {
-    compilations.all {
-        // KT-29964: check that Android compilations can be configured with an `all { ... }` handler:
-        kotlinOptions { 
-            verbose = true
-        }
-        compileTaskProvider.configure {
-            doFirst {
-                if (!compilerOptions.verbose.get()) {
-                    throw AssertionError("compilerOptions were not configured properly")
-                }
-                println("KT-29964 OK")
-            }
-        }
-    }
-}
-
 kotlin {
     androidTarget("androidLib") {
         attributes {

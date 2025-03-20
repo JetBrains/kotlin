@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -228,26 +230,26 @@ kotlin {
                 }
             }
         }
+
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                listOf(
+                    "-Xallow-kotlin-package",
+                    "-Xexpect-actual-classes",
+                )
+            )
+        }
+
         compilations {
-            all {
-                @Suppress("DEPRECATION")
-                kotlinOptions {
-                    freeCompilerArgs += listOf(
-                        "-Xallow-kotlin-package",
-                        "-Xexpect-actual-classes",
-                    )
-                }
-            }
             val main by getting {
-                @Suppress("DEPRECATION")
-                kotlinOptions {
-                    freeCompilerArgs += listOfNotNull(
-                        "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
-                        diagnosticNamesArg,
-                    )
-                }
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
+                    compilerOptions.freeCompilerArgs.addAll(
+                        listOfNotNull(
+                            "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
+                            diagnosticNamesArg,
+                        )
+                    )
                 }
             }
         }
@@ -255,20 +257,20 @@ kotlin {
 
     fun KotlinWasmTargetDsl.commonWasmTargetConfiguration() {
         (this as KotlinTargetWithNodeJsDsl).nodejs()
-        compilations {
-            all {
-                @Suppress("DEPRECATION")
-                kotlinOptions.freeCompilerArgs += listOfNotNull(
+        (this as KotlinJsTargetDsl).compilerOptions {
+            freeCompilerArgs.addAll(
+                listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
                     diagnosticNamesArg
                 )
-            }
-            @Suppress("DEPRECATION")
+            )
+        }
+        compilations {
             val main by getting {
-                kotlinOptions.freeCompilerArgs += "-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME"
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
+                    compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME")
                 }
             }
         }
@@ -315,17 +317,14 @@ kotlin {
             isMingwX64 -> mingwX64("native")
             else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
         }
-        nativeTarget.apply {
-            compilations.all {
-                @Suppress("DEPRECATION")
-                kotlinOptions {
-                    freeCompilerArgs += listOf(
-                        "-Xallow-kotlin-package",
-                        "-Xexpect-actual-classes",
-                        "-nostdlib",
-                    )
-                }
-            }
+        nativeTarget.compilerOptions {
+            freeCompilerArgs.addAll(
+                listOf(
+                    "-Xallow-kotlin-package",
+                    "-Xexpect-actual-classes",
+                    "-nostdlib",
+                )
+            )
         }
     }
 

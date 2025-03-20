@@ -232,7 +232,8 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
      */
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
     )
     val kotlinOptions: KotlinCommonOptionsDeprecated
 
@@ -241,10 +242,11 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
      */
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
     )
     fun kotlinOptions(configure: KotlinCommonOptionsDeprecated.() -> Unit) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         configure(kotlinOptions)
     }
 
@@ -253,10 +255,11 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
      */
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
     )
     fun kotlinOptions(configure: Action<KotlinCommonOptionsDeprecated>) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         configure.execute(kotlinOptions)
     }
 

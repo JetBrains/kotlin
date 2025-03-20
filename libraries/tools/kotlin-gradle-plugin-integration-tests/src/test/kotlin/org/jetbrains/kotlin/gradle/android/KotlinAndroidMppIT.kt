@@ -586,8 +586,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 // KT-30784
                 assertOutputDoesNotContain("API 'variant.getPackageLibrary()' is obsolete and has been replaced")
 
-                assertOutputContains("KT-29964 OK") // Output from lib/build.gradle
-
                 assertTasksExecuted(
                     ":lib:compileDebugKotlinAndroidLib",
                     ":lib:compileReleaseKotlinAndroidLib",
