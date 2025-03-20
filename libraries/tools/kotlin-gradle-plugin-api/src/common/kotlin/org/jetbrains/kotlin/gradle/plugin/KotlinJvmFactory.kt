@@ -75,7 +75,8 @@ interface KotlinJvmFactory {
      */
     @Deprecated(
         message = "Replaced by compilerJvmOptions",
-        replaceWith = ReplaceWith("createCompilerJvmOptions()")
+        replaceWith = ReplaceWith("createCompilerJvmOptions()"),
+        level = DeprecationLevel.ERROR,
     )
     fun createKotlinJvmOptions(): KotlinJvmOptionsDeprecated
 
