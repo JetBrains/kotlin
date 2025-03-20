@@ -18,7 +18,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
-import org.gradle.internal.configuration.problems.taskPathFrom
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import javax.inject.Inject
 
 @CacheableTask
@@ -120,15 +118,17 @@ abstract class KotlinCompile @Inject constructor(
         @get:Input
         abstract val useClasspathSnapshot: Property<Boolean>
 
+        @get:Internal
+        @Deprecated(
+            message = "This input property is not supported - classpath snapshots based incremental compilation is the only used approach.",
+            level = DeprecationLevel.ERROR
+        )
+        abstract val classpath: ConfigurableFileCollection
+
         @get:Classpath
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection
-
-        @get:Classpath
-        @get:Incremental
-        @get:Optional // Set if useClasspathSnapshot == false (to restore the existing classpath annotations when the feature is disabled)
-        abstract val classpath: ConfigurableFileCollection
 
         @get:OutputDirectory
         @get:Optional // Set if useClasspathSnapshot == true
@@ -142,7 +142,6 @@ abstract class KotlinCompile @Inject constructor(
             scriptSources,
             androidLayoutResources,
             commonSourceSet,
-            classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
         )
 

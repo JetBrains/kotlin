@@ -12,9 +12,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -40,28 +38,15 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
     init {
         configureTaskProvider { taskProvider ->
-            val useClasspathSnapshot = propertiesProvider.useClasspathSnapshot.get()
 
-            val classpathConfiguration = if (useClasspathSnapshot) {
-                val jvmToolchain = taskProvider.flatMap { it.defaultKotlinJavaToolchain }
-                val runKotlinCompilerViaBuildToolsApi = propertiesProvider.runKotlinCompilerViaBuildToolsApi
-                registerTransformsOnce(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
-                // Note: Creating configurations should be done during build configuration, not task configuration, to avoid issues with
-                // composite builds (e.g., https://issuetracker.google.com/183952598).
-                project.configurations.detachedResolvable(
-                    project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
-                )
-            } else null
-
-            if (useClasspathSnapshot) {
-                taskProvider.configure { it.incrementalModuleInfoProvider.disallowChanges() }
-            } else {
-                val incrementalModuleInfoProvider = IncrementalModuleInfoBuildService.registerIfAbsent(
-                    project,
-                    objectFactory.providerWithLazyConvention { GradleCompilerRunner.buildModulesInfo(project.gradle) },
-                )
-                taskProvider.configure { it.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges() }
-            }
+            val jvmToolchain = taskProvider.flatMap { it.defaultKotlinJavaToolchain }
+            val runKotlinCompilerViaBuildToolsApi = propertiesProvider.runKotlinCompilerViaBuildToolsApi
+            registerTransformsOnce(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
+            // Note: Creating configurations should be done during build configuration, not task configuration, to avoid issues with
+            // composite builds (e.g., https://issuetracker.google.com/183952598).
+            val classpathConfiguration = project.configurations.detachedResolvable(
+                project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
+            )
 
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
@@ -69,16 +54,13 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
                 task.jvmTargetValidationMode.convention(propertiesProvider.jvmTargetValidationMode).finalizeValueOnRead()
 
-                task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
-                if (useClasspathSnapshot) {
-                    val classpathEntrySnapshotFiles = classpathConfiguration!!.incoming.artifactView {
-                        it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-                    }.files
-                    task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
-                    task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
-                } else {
-                    task.classpathSnapshotProperties.classpath.from(task.project.provider { task.libraries }).disallowChanges()
-                }
+                task.incrementalModuleInfoProvider.disallowChanges()
+                task.classpathSnapshotProperties.useClasspathSnapshot.value(true).disallowChanges()
+                val classpathEntrySnapshotFiles = classpathConfiguration.incoming.artifactView {
+                    it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                }.files
+                task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
+                task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
                 task.taskOutputsBackupExcludes.addAll(
                     task.classpathSnapshotProperties.classpathSnapshotDir.asFile.flatMap {
                         // it looks weird, but it's required to work around this issue: https://github.com/gradle/gradle/issues/17704

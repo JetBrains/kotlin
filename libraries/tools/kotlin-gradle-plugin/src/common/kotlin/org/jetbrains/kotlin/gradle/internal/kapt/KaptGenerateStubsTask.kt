@@ -110,7 +110,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             sources,
             javaSources,
             commonSourceSet,
-            classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
         )
 
