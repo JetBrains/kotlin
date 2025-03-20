@@ -850,8 +850,8 @@ private class BooleanValuePassing(override val cType: CType, private val irBuilt
             expression: IrExpression,
             symbols: KonanSymbols
     ): IrExpression = irNot(irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!.owner).apply {
-        putValueArgument(0, expression)
-        putValueArgument(1, IrConstImpl.byte(startOffset, endOffset, irBuiltIns.byteType, 0))
+        arguments[0] = expression
+        arguments[1] = IrConstImpl.byte(startOffset, endOffset, irBuiltIns.byteType, 0)
     })
 
     override fun bridgedToC(expression: String): String = cType.cast(expression)
@@ -1137,7 +1137,7 @@ private class ObjCBlockPointerValuePassing(
     private fun IrBuilderWithScope.createKotlinFunctionObject(blockPointer: IrExpression): IrExpression {
         val constructor = generateKotlinFunctionClass()
         return irCall(constructor).apply {
-            putValueArgument(0, blockPointer)
+            arguments[0] = blockPointer
         }
     }
 

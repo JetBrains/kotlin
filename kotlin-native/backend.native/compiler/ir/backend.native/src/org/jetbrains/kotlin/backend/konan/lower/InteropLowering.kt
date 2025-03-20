@@ -223,7 +223,7 @@ private class InteropTransformerPart1(
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
             irCall(symbols.interopAllocObjCObject).apply {
-                putValueArgument(0, classPtr)
+                arguments[0] = classPtr
             }
 
     private val outerClasses = mutableListOf<IrClass>()

@@ -61,7 +61,7 @@ private fun InteropCallContext.findMemoryAccessFunction(isRead: Boolean, valueTy
         if (isRead) {
             it.returnType.classOrNull == valueType.classOrNull
         } else {
-            it.valueParameters.last().type.classOrNull == valueType.classOrNull
+            it.parameters.last().type.classOrNull == valueType.classOrNull
         }
     } ?: error("No memory access function for ${valueType.classOrNull?.owner?.name}")
 }
@@ -73,8 +73,8 @@ private fun InteropCallContext.readValueFromMemory(
     val memoryValueType = determineInMemoryType(returnType)
     val memReadFn = findMemoryAccessFunction(isRead = true, valueType = memoryValueType)
     val memRead = builder.irCall(memReadFn).also { memRead ->
-        memRead.dispatchReceiver = builder.irGetObject(symbols.nativeMemUtils)
-        memRead.putValueArgument(0, readPointed(nativePtr, symbols.nativePointed.defaultType))
+        memRead.arguments[0] = builder.irGetObject(symbols.nativeMemUtils)
+        memRead.arguments[1] = readPointed(nativePtr, symbols.nativePointed.defaultType)
     }
     return castPrimitiveIfNeeded(memRead, memoryValueType, returnType)
 }
@@ -89,9 +89,9 @@ private fun InteropCallContext.writeValueToMemory(
     val valueToWrite = castPrimitiveIfNeeded(value, targetType, memoryValueType)
     return with(builder) {
         irCall(memWriteFn).also { memWrite ->
-            memWrite.dispatchReceiver = irGetObject(symbols.nativeMemUtils)
-            memWrite.putValueArgument(0, readPointed(nativePtr, symbols.nativePointed.defaultType))
-            memWrite.putValueArgument(1, valueToWrite)
+            memWrite.arguments[0] = irGetObject(symbols.nativeMemUtils)
+            memWrite.arguments[1] = readPointed(nativePtr, symbols.nativePointed.defaultType)
+            memWrite.arguments[2] = valueToWrite
         }
     }
 }
@@ -123,11 +123,7 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
                 val conversion = symbols.integerConversions[sourceClass to targetClass]
                         ?: error("There is no conversion from ${sourceClass.owner.name} to ${targetClass.owner.name}")
                 builder.irCall(conversion.owner).apply {
-                    if (conversion.owner.dispatchReceiverParameter != null) {
-                        dispatchReceiver = value
-                    } else {
-                        extensionReceiver = value
-                    }
+                    arguments[0] = value
                 }
             }
         }
@@ -149,11 +145,11 @@ private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: 
     }
     val areEqualByValuesBytes = symbols.areEqualByValue.getValue(primitiveBinaryType)
     val compareToZero = builder.irCall(areEqualByValuesBytes).apply {
-        putValueArgument(0, value)
-        putValueArgument(1, immZero)
+        arguments[0] = value
+        arguments[1] = immZero
     }
     return builder.irCall(irBuiltIns.booleanNotSymbol).apply {
-        dispatchReceiver = compareToZero
+        arguments[0] = compareToZero
     }
 }
 
@@ -187,10 +183,10 @@ private fun InteropCallContext.convertIntegralToEnum(
     val enumClass = enumType.getClass()!!
     val companionClass = enumClass.companionObject()!!
     val byValue = companionClass.simpleFunctions().single { it.name.asString() == "byValue" }
-    val byValueArg = castPrimitiveIfNeeded(value, intergralType, byValue.valueParameters.first().type)
+    val byValueArg = castPrimitiveIfNeeded(value, intergralType, byValue.parameters[1].type)
     return builder.irCall(byValue).apply {
-        dispatchReceiver = builder.irGetObject(companionClass.symbol)
-        putValueArgument(0, byValueArg)
+        arguments[0] = builder.irGetObject(companionClass.symbol)
+        arguments[1] = byValueArg
     }
 }
 
@@ -218,7 +214,7 @@ private fun InteropCallContext.writeEnumValueToMemory(
 
 private fun InteropCallContext.convertCPointerToNativePtr(cPointer: IrExpression): IrExpression {
     return builder.irCall(symbols.interopCPointerGetRawValue).also {
-        it.extensionReceiver = cPointer
+        it.arguments[0] = cPointer
     }
 }
 
@@ -240,7 +236,7 @@ private fun InteropCallContext.writeObjCReferenceToMemory(
         value: IrExpression
 ): IrExpression {
     val valueToWrite = builder.irCall(symbols.interopObjCObjectRawValueGetter).also {
-        it.extensionReceiver = value
+        it.arguments[0] = value
     }
     return writeValueToMemory(nativePtr, valueToWrite, valueToWrite.type)
 }
@@ -253,8 +249,8 @@ private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, off
             .functions.single { it.name.identifier == "plus" }
     return with (builder) {
         irCall(nativePtrPlusLong).also {
-            it.dispatchReceiver = base
-            it.putValueArgument(0, irLong(offset))
+            it.arguments[0] = base
+            it.arguments[1] = irLong(offset)
         }
     }
 }
@@ -263,12 +259,12 @@ private fun InteropCallContext.interpretCPointer(nativePtr: IrExpression, type: 
     require(type.isCPointer()) { "A CPointer expected but was: ${type.render()}" }
     return builder.irCallWithSubstitutedType(
             symbols.interopInterpretCPointer, listOf((type as IrSimpleType).arguments[0].typeOrFail)
-    ).also { it.putValueArgument(0, nativePtr) }
+    ).also { it.arguments[0] = nativePtr }
 }
 
 private fun InteropCallContext.readPointed(nativePtr: IrExpression, type: IrType) =
         builder.irCallWithSubstitutedType(symbols.interopInterpretNullablePointed, listOf(type)).also {
-            it.putValueArgument(0, nativePtr)
+            it.arguments[0] = nativePtr
         }
 
 private fun InteropCallContext.readObjectiveCReferenceFromMemory(
@@ -277,7 +273,7 @@ private fun InteropCallContext.readObjectiveCReferenceFromMemory(
 ): IrExpression {
     val readMemory = readValueFromMemory(nativePtr, symbols.nativePtrType)
     return builder.irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
-        putValueArgument(0, readMemory)
+        arguments[0] = readMemory
     }
 }
 
@@ -306,13 +302,13 @@ internal fun tryGenerateInteropMemberAccess(
 private fun InteropCallContext.generateEnumVarValueAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val nativePtr = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
-        it.dispatchReceiver = callSite.dispatchReceiver!!
+        it.arguments[0] = callSite.arguments[0]!!
     }
     return when {
         accessor.isGetter -> readEnumValueFromMemory(nativePtr, accessor.returnType)
         accessor.isSetter -> {
-            val type = accessor.valueParameters[0].type
-            writeEnumValueToMemory(nativePtr, callSite.getValueArgument(0)!!, type)
+            val type = accessor.parameters[1].type
+            writeEnumValueToMemory(nativePtr, callSite.arguments[1]!!, type)
         }
         else -> error("")
     }
@@ -321,8 +317,8 @@ private fun InteropCallContext.generateEnumVarValueAccess(callSite: IrCall): IrE
 private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructMemberAt)!!
-    val offset = (memberAt.getValueArgument(0) as IrConst).value as Long
-    val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
+    val offset = (memberAt.arguments[0] as IrConst).value as Long
+    val fieldPointer = calculateFieldPointer(callSite.arguments[0]!!, offset)
     return when {
         accessor.isGetter -> {
             val type = accessor.returnType
@@ -336,8 +332,8 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             }
         }
         accessor.isSetter -> {
-            val value = callSite.getValueArgument(0)!!
-            val type = accessor.valueParameters[0].type
+            val value = callSite.arguments[1]!!
+            val type = accessor.parameters[1].type
             when {
                 type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value, type)
                 type.isCStructFieldTypeStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value, type)
@@ -353,7 +349,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
 private fun InteropCallContext.generateArrayMemberAtAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructArrayMemberAt)!!
-    val offset = (memberAt.getValueArgument(0) as IrConst).value as Long
+    val offset = (memberAt.arguments[0] as IrConst).value as Long
     val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
     return interpretCPointer(fieldPointer, accessor.returnType)
 }
@@ -369,14 +365,14 @@ private fun InteropCallContext.writeBits(
         type.isCEnumType() -> convertEnumToIntegral(value, type) to type.getCEnumPrimitiveType()
         else -> value to type
     }
-    val targetType = symbols.writeBits.owner.valueParameters.last().type
+    val targetType = symbols.writeBits.owner.parameters.last().type
     val valueToWrite = castPrimitiveIfNeeded(integralValue, fromType, targetType)
     return with(builder) {
         irCall(symbols.writeBits).also {
-            it.putValueArgument(0, base)
-            it.putValueArgument(1, irLong(offset))
-            it.putValueArgument(2, irInt(size))
-            it.putValueArgument(3, valueToWrite)
+            it.arguments[0] = base
+            it.arguments[1] = irLong(offset)
+            it.arguments[2] = irInt(size)
+            it.arguments[3] = valueToWrite
         }
     }
 }
@@ -395,10 +391,10 @@ private fun InteropCallContext.readBits(
     }
     val integralValue = with (builder) {
         irCall(symbols.readBits).also {
-            it.putValueArgument(0, base)
-            it.putValueArgument(1, irLong(offset))
-            it.putValueArgument(2, irInt(size))
-            it.putValueArgument(3, irBoolean(isSigned))
+            it.arguments[0] = base
+            it.arguments[1] = irLong(offset)
+            it.arguments[2] = irInt(size)
+            it.arguments[3] = irBoolean(isSigned)
         }
     }
     return when {
@@ -410,15 +406,15 @@ private fun InteropCallContext.readBits(
 private fun InteropCallContext.generateBitFieldAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val bitField = accessor.getAnnotation(RuntimeNames.cStructBitField)!!
-    val offset = (bitField.getValueArgument(0) as IrConst).value as Long
-    val size = (bitField.getValueArgument(1) as IrConst).value as Int
+    val offset = (bitField.arguments[0] as IrConst).value as Long
+    val size = (bitField.arguments[1] as IrConst).value as Int
     val base = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
         it.dispatchReceiver = callSite.dispatchReceiver!!
     }
     return when {
         accessor.isSetter -> {
-            val argument = callSite.getValueArgument(0)!!
-            val type = accessor.valueParameters[0].type
+            val argument = callSite.arguments[1]!!
+            val type = accessor.parameters[1].type
             writeBits(base, offset, size, argument, type)
         }
         accessor.isGetter -> {
