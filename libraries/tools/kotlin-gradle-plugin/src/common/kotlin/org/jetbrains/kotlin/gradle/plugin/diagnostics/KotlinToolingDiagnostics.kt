@@ -1574,25 +1574,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IcFirMisconfigurationRequireClasspathSnapshots : ToolingDiagnosticFactory(
-        predefinedSeverity = FATAL,
-        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
-    ) {
-        operator fun invoke(
-            taskPath: String
-        ) = build {
-            title("FIR based incremental compilation mode compatibility")
-                .description {
-                    "FIR based incremental compilation is only working in the classpath snapshots based mode while task '$taskPath' " +
-                            "has it disabled."
-                }
-                .solution {
-                    "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT}' from your " +
-                            "Gradle properties."
-                }
-        }
-    }
-
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
         operator fun invoke(targetName: String): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")
