@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
@@ -120,23 +119,31 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
 }
 
 /**
- * A root function for running Swift Export from build tool
+ * Translates a collection of fully exported Kotlin modules to their Swift equivalent,
+ * handles dependencies among modules, writes Swift output files, and generates additional
+ * runtime support modules for Swift integration.
+ *
+ * @param fullyExportedModules The set of modules that are fully defined for export to Swift.
+ * @param transitivelyExportedModules The set of modules that are indirectly required for the translation process.
+ * @param config The configuration object specifying the behavior, paths, and options for Swift export.
+ * @return A [Result] containing a set of translated Swift export modules upon success, or an exception in case of a failure.
  */
 public fun runSwiftExport(
-    input: Set<InputModule>,
+    fullyExportedModules: Set<InputModule>,
+    transitivelyExportedModules: Set<InputModule>,
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
-    logConfigIssues(input, config.logger)
+    logConfigIssues(fullyExportedModules, config.logger)
     val stdlibInputModule = config.stdlibInputModule
     val platformLibsInputModule = config.platformLibsInputModule
-    val translationResults = input.map { rootModule ->
+    val translationResults = fullyExportedModules.map { rootModule ->
         /**
          * This value represents dependencies of current module.
          * The actual dependency graph is unknown at this point - there is only an array of modules to translate. This particular value
          * will be used to initialize Analysis API session. It is an error to pass module as a dependency to itself - therefor there is
          * a need to remove the current translation module from the list of dependencies.
          */
-        val dependencies = input - rootModule
+        val dependencies = fullyExportedModules - rootModule
         translateModulePublicApi(
             rootModule,
             SwiftExportDependencies(

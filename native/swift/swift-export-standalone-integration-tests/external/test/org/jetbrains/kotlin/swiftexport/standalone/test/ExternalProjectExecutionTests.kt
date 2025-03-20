@@ -67,7 +67,7 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
             konanTarget = targets.testTarget
         )
 
-        val swiftExportResult = runSwiftExport(inputModules, swiftConfig).getOrThrow()
+        val swiftExportResult = runSwiftExport(inputModules, emptySet(), swiftConfig).getOrThrow()
         val kotlinBridgeFiles =
             swiftExportResult.filterIsInstance<SwiftExportModule.BridgesToKotlin>().map { it.files.kotlinBridges.toFile() }
         val testCase = generateSwiftExportTestCase(

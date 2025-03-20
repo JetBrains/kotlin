@@ -47,7 +47,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         }.get()
 
         val modules = GradleSwiftExportModules(
-            runSwiftExport(exportModules, createSwiftExportConfig()).getOrThrow().toPlainList(),
+            runSwiftExport(exportModules, emptySet(), createSwiftExportConfig()).getOrThrow().toPlainList(),
             Instant.now().toEpochMilli()
         )
 

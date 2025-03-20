@@ -89,7 +89,7 @@ abstract class AbstractSwiftExportTest {
         }
 
         // run swift export
-        val swiftExportOutputs: Set<SwiftExportModule> = runSwiftExport(input, config).getOrThrow()
+        val swiftExportOutputs: Set<SwiftExportModule> = runSwiftExport(input, emptySet(), config).getOrThrow()
 
         // compile kotlin into binary
         val additionalKtFiles: Set<Path> = mutableSetOf<Path>()
