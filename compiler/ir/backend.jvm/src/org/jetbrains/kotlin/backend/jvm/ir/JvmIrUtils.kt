@@ -371,26 +371,26 @@ fun findSuperDeclaration(function: IrSimpleFunction): IrSimpleFunction {
     return current
 }
 
-fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = arguments[i]?.let {
+fun IrFunctionAccessExpression.getIntConstArgumentOrNull(i: Int) = nonDispatchArguments.getOrNull(i)?.let {
     if (it is IrConst && it.kind == IrConstKind.Int)
         it.value as Int
     else
         null
 }
 
-fun IrMemberAccessExpression<*>.getIntConstArgument(i: Int): Int =
+fun IrFunctionAccessExpression.getIntConstArgument(i: Int): Int =
     getIntConstArgumentOrNull(i) ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
 
-fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
-    arguments[i]?.let {
+fun IrFunctionAccessExpression.getStringConstArgument(i: Int): String =
+    nonDispatchArguments.getOrNull(i)?.let {
         if (it is IrConst && it.kind == IrConstKind.String)
             it.value as String
         else
             null
     } ?: throw AssertionError("Value argument #$i should be a String const: ${dump()}")
 
-fun IrMemberAccessExpression<*>.getBooleanConstArgument(i: Int): Boolean =
-    arguments[i]?.let {
+fun IrFunctionAccessExpression.getBooleanConstArgument(i: Int): Boolean =
+    nonDispatchArguments.getOrNull(i)?.let {
         if (it is IrConst && it.kind == IrConstKind.Boolean)
             it.value as Boolean
         else
