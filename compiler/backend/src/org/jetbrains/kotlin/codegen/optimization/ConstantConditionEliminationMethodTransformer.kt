@@ -62,7 +62,7 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             arrayListOf<() -> Unit>().also { actions ->
                 val deadCode = ArrayList<AbstractInsnNode>()
 
-                val frames = analyze(internalClassName, methodNode, ConstantPropagationInterpreter())
+                val frames: Array<out Frame<BasicValue>?> = analyze(internalClassName, methodNode, ConstantPropagationInterpreter())
                 val insns = methodNode.instructions.toArray()
 
                 for (i in frames.indices) {
