@@ -421,7 +421,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 IdSignatureTags.LOCAL -> deserializeLocalSignature()
                 IdSignatureTags.LOWERED_DECLARATION -> deserializeLoweredDeclarationSignature()
                 IdSignatureTags.SCOPE_LOCAL_DECLARATION -> deserializeScopeLocalDeclaration()
-                IdSignatureTags.SPECIAL_FAKE_OVERRIDE -> deserializeSpecialFakeOverrideSignature()
                 IdSignatureTags.FILE -> deserializeString().let { IdSignature.FileSignature(it, FqName.ROOT, it) }
                 else -> tagError(tag)
             }
@@ -478,12 +477,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val description = if (flags.consume()) null else deserializeString()
             IdSignature.ScopeLocalDeclaration(id, description)
         }
-
-    private fun deserializeSpecialFakeOverrideSignature(): IdSignature.SpecialFakeOverrideSignature {
-        val memberSignature = deserializeIdSignature()
-        val overriddenSignatures = deserializeList(::deserializeIdSignature)
-        return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
-    }
 
     private fun deserializeConstantDataElement(): ConstantDataElement =
         withTag { tag ->

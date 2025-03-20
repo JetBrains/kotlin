@@ -435,7 +435,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is IdSignature.LocalSignature -> withTag(IdSignatureTags.LOCAL) { serializeLocalSignature(idSignature) }
             is IdSignature.LoweredDeclarationSignature -> withTag(IdSignatureTags.LOWERED_DECLARATION) { serializeLoweredDeclarationSignature(idSignature) }
             is IdSignature.ScopeLocalDeclaration -> withTag(IdSignatureTags.SCOPE_LOCAL_DECLARATION) { serializeScopeLocalDeclaration(idSignature) }
-            is IdSignature.SpecialFakeOverrideSignature -> withTag(IdSignatureTags.SPECIAL_FAKE_OVERRIDE) { serializeSpecialFakeOverrideSignature(idSignature) }
+            is IdSignature.SpecialFakeOverrideSignature -> error("SpecialFakeOverrideSignature is not supposed to be serialized")
             is IdSignature.FileSignature -> withTag(IdSignatureTags.FILE) { serializeString(idSignature.fileName) }
         }
 
@@ -499,13 +499,6 @@ class WasmSerializer(outputStream: OutputStream) {
                 b.writeUInt32(id.toUInt())
                 description?.let { serializeString(it) }
             }
-        }
-    }
-
-    private fun serializeSpecialFakeOverrideSignature(specialFakeOverride: IdSignature.SpecialFakeOverrideSignature) {
-        with(specialFakeOverride) {
-            serializeIdSignature(memberSignature)
-            serializeList(overriddenSignatures, ::serializeIdSignature)
         }
     }
 
