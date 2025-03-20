@@ -64,7 +64,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
             checkVisibilityModifier(explicitApiState, element, source, context, reporter)
         }
 
-        if (sourceKindIsReal) {
+        if (sourceKindIsReal && element is FirCallableDeclaration) {
             // Don't check fake property from parameter because they always have an explicit type (otherwise it's a compiler error)
             checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source, context, reporter)
         }
@@ -123,23 +123,19 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
 
     private fun checkExplicitReturnType(
         state: ExplicitApiMode,
-        declaration: FirMemberDeclaration,
+        declaration: FirCallableDeclaration,
         source: KtSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (declaration !is FirCallableDeclaration) return
         if (!declaration.returnTypeCheckIsApplicable()) return
 
-        val shouldReport = returnTypeRequired(declaration, context)
-        if (shouldReport) {
-            val factory =
-                if (state == ExplicitApiMode.STRICT)
-                    FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE
-                else
-                    FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING
-            reporter.reportOn(source, factory, context)
-        }
+        val factory =
+            if (state == ExplicitApiMode.STRICT)
+                FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE
+            else
+                FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING
+        reporter.reportOn(source, factory, context)
     }
 
     private fun FirCallableDeclaration.returnTypeCheckIsApplicable(): Boolean {
@@ -153,10 +149,5 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                 this !is FirPropertyAccessor &&
                 // Implicit return type can exist only for single-expression functions, unspecified type for regular functions is incorrect.
                 body is FirSingleExpressionBlock
-    }
-
-    private fun returnTypeRequired(declaration: FirCallableDeclaration, context: CheckerContext): Boolean {
-        // If current declaration is local or it's a member in a local declaration (local class, etc), then we do not require return type.
-        return !declaration.isLocalMember && context.containingDeclarations.lastOrNull()?.isLocalMember != true
     }
 }
