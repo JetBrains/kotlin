@@ -161,25 +161,21 @@ class Fir2IrDeclarationStorage(
     @Suppress("unused")
     @DelicateDeclarationStorageApi
     fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
-        functionCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
+        functionCache.values.forEachSkipFakeOverrides(block)
         constructorCache.values.forEach(block)
-        propertyCache.normal.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapPropertySymbol, block)
-        propertyCache.synthetic.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapPropertySymbol, block)
-        getterForPropertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
-        setterForPropertyCache.values.forEachWithRemapping(symbolsMappingForLazyClasses::remapFunctionSymbol, block)
+        propertyCache.normal.values.forEachSkipFakeOverrides(block)
+        propertyCache.synthetic.values.forEachSkipFakeOverrides(block)
+        getterForPropertyCache.values.forEachSkipFakeOverrides(block)
+        setterForPropertyCache.values.forEachSkipFakeOverrides(block)
         backingFieldForPropertyCache.values.forEach(block)
         propertyForBackingFieldCache.values.forEach(block)
         delegateVariableForPropertyCache.values.forEach(block)
     }
 
-    private inline fun <S : IrSymbol> Collection<S>.forEachWithRemapping(remapper: (S) -> S, block: (S) -> Unit) {
+    private inline fun <S : IrSymbol> Collection<S>.forEachSkipFakeOverrides(block: (S) -> Unit) {
         for (symbol in this) {
-            val updatedSymbol = if (symbol is IrFakeOverrideSymbolBase<*, *, *>) {
-                remapper(symbol)
-            } else {
-                symbol
-            }
-            block(updatedSymbol)
+            if (symbol is IrFakeOverrideSymbolBase<*, *, *>) continue
+            block(symbol)
         }
     }
 
