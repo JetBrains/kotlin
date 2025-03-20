@@ -141,6 +141,12 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
     }
 
     @Test
+    @TestMetadata("inliningAndSMAP.kt")
+    public void testInliningAndSMAP() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/inliningAndSMAP.kt");
+    }
+
+    @Test
     @TestMetadata("LateinitPropertiesTest.kt")
     public void testLateinitPropertiesTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LateinitPropertiesTest.kt");
