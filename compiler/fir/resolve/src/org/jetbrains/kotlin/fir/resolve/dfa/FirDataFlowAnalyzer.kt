@@ -168,7 +168,8 @@ abstract class FirDataFlowAnalyzer(
 
                 @OptIn(ImplicitValue.ImplicitValueInternals::class)
                 override fun implicitUpdated(info: TypeStatement) {
-                    receiverStack.replaceImplicitValueType(info.variable.symbol, info.smartCastedType(typeContext))
+                    val dataFlowVariable = info.variable as? RealVariable ?: error("Not a real variable: ${info.variable}")
+                    receiverStack.replaceImplicitValueType(dataFlowVariable.symbol, info.smartCastedType(typeContext))
                 }
 
                 override val logicSystem: LogicSystem =
@@ -240,12 +241,14 @@ abstract class FirDataFlowAnalyzer(
         context.variableAssignmentAnalyzer.isUnstableInCurrentScope(symbol.fir, types, components.session) ||
                 dispatchReceiver?.isUnstableLocalVar(types = null) == true
 
-    private fun RealVariable.getStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability =
-        getStability(flow, components.session).let {
-            if (it == SmartcastStability.CAPTURED_VARIABLE && !isUnstableLocalVar(targetTypes))
-                SmartcastStability.STABLE_VALUE
-            else it
-        }
+    private fun DataFlowVariable.getStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability =
+        if (this is RealVariable) {
+            getStability(flow, components.session).let {
+                if (it == SmartcastStability.CAPTURED_VARIABLE && !isUnstableLocalVar(targetTypes))
+                    SmartcastStability.STABLE_VALUE
+                else it
+            }
+        } else SmartcastStability.STABLE_VALUE
 
     /**
      * Retrieve smartcast type information [FirDataFlowAnalyzer] may have for the specified variable access expression. Type information
@@ -256,7 +259,7 @@ abstract class FirDataFlowAnalyzer(
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartCastStatement? {
         val flow = currentSmartCastPosition ?: return null
         // Can have an unstable alias to a stable variable, so don't resolve aliases here.
-        val variable = flow.getRealVariableWithoutUnwrappingAlias(expression) ?: return null
+        val variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
         val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty }
         val upperTypes = typeStatement?.upperTypes
         val upperTypesStability = when {
@@ -1661,7 +1664,8 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        if (newStatement.variable.isImplicit && this === currentSmartCastPosition) {
+        val dataFlowVariable = newStatement.variable
+        if (dataFlowVariable is RealVariable && dataFlowVariable.isImplicit && this === currentSmartCastPosition) {
             implicitUpdated(newStatement)
         }
     }

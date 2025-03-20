@@ -266,7 +266,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         approvedStatement: OperationStatement,
         removeApprovedOrImpossible: Boolean
     ): TypeStatements {
-        val result = mutableMapOf<RealVariable, MutableTypeStatement>()
+        val result = mutableMapOf<DataFlowVariable, MutableTypeStatement>()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
         val approved = mutableSetOf<OperationStatement>()
         while (queue.isNotEmpty()) {
@@ -411,7 +411,7 @@ private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
 }
 
 @JvmName("replaceVariableInStatements")
-private fun MutableMap<RealVariable, PersistentTypeStatement>.replaceVariable(from: RealVariable, to: RealVariable?) {
+private fun MutableMap<DataFlowVariable, PersistentTypeStatement>.replaceVariable(from: DataFlowVariable, to: DataFlowVariable?) {
     val existing = remove(from) ?: return
     if (to != null) {
         put(to, existing.copy(variable = to))
