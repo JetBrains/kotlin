@@ -25,10 +25,12 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromO
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -1661,6 +1663,56 @@ abstract class AbstractComposeLowering(
         copy.body = null
         return copy
     }
+
+    protected fun IrFunction.shouldBeRestartable(): Boolean {
+        // Only insert observe scopes in non-empty composable function
+        if (body == null || this !is IrSimpleFunction)
+            return false
+
+        if (isLocal && parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+            return false
+        }
+
+        // Do not insert observe scope in an inline function
+        if (isInline)
+            return false
+
+        if (hasNonRestartableAnnotation)
+            return false
+
+        if (hasExplicitGroups)
+            return false
+
+        // Do not insert an observe scope if the function has a return result
+        if (!returnType.isUnit())
+            return false
+
+        if (isComposableDelegatedAccessor())
+            return false
+
+        // Virtual functions with default params are called through wrapper generated in
+        // ComposableDefaultParamLowering. The restartable group is moved to the wrapper, while
+        // the function itself is no longer restartable.
+        if (isVirtualFunctionWithDefaultParam()) {
+            return false
+        }
+
+        // Open functions cannot be restartable since restart logic makes a virtual call (todo: b/329477544)
+        if (modality == Modality.OPEN && parentClassOrNull?.isFinalClass != true) {
+            return false
+        }
+
+        // Check if the descriptor has restart scope calls resolved
+        // Lambdas should be ignored. All composable lambdas are wrapped by a restartable
+        // function wrapper by ComposerLambdaMemoization which supplies the startRestartGroup/
+        // endRestartGroup pair on behalf of the lambda.
+        return origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    }
+
+    private fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
+        this is IrSimpleFunction &&
+                (isVirtualFunctionWithDefaultParam != null ||
+                        overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()

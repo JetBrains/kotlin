@@ -24,6 +24,14 @@ fun Ref(content: Function3<String, Composer, Int, Int>, %composer: Composer?, %c
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
+        @Composable
+        fun Fn(str: String?, %composer: Composer?, %changed: Int): Int {
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C(Fn):Test.kt")
+          val tmp0 = Fn(str, %composer, 0b1110 and %changed)
+          %composer.endReplaceGroup()
+          return tmp0
+        }
         ::Fn
       }
       sourceInformationMarkerEnd(%composer)

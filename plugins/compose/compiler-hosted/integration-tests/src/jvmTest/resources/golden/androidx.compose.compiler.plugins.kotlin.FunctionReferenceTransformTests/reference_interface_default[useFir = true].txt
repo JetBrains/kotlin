@@ -34,6 +34,14 @@ fun Ref(intf: Intf, content: Function3<Int, Composer, Int, Unit>, %composer: Com
       val tmp0 = intf
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(tmp0)) {
+        @Composable
+        @ComposableInferredTarget(scheme = "[0[0]]")
+        fun Intf.Fn(int: Int, %composer: Composer?, %changed: Int) {
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C(Fn):Test.kt")
+          receiver.Fn(int, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shl 0b0011)
+          %composer.endReplaceGroup()
+        }
         tmp0::Fn
       }
       sourceInformationMarkerEnd(%composer)

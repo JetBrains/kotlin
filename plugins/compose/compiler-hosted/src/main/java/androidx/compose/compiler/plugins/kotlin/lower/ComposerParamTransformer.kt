@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
@@ -115,6 +113,32 @@ class ComposerParamTransformer(
         return super.visitPropertyReference(expression)
     }
 
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        if (expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+            if (inlineLambdaInfo.isInlineFunctionExpression(expression)) {
+                return super.visitBlock(expression)
+            }
+
+            val functionRef = expression.statements.lastOrNull() as? IrFunctionReference
+                ?: error("Expected function reference in ${expression.dump()}")
+            if (!functionRef.type.isKComposableFunction() && !functionRef.type.isSyntheticComposableFunction()) {
+                return super.visitBlock(expression)
+            }
+
+            val fn = functionRef.symbol.owner as? IrSimpleFunction ?: return super.visitBlock(expression)
+
+            // Adapter functions are never restartable, but the original function might be.
+            val adapterCall = fn.findCallInBody() ?: error("Expected a call in ${fn.dump()}")
+            val originalFn = adapterCall.symbol.owner
+            return if (originalFn.shouldBeRestartable()) {
+                super.visitBlock(expression)
+            } else {
+                adaptComposableReference(functionRef, originalFn, useAdaptedOrigin = false)
+            }
+        }
+        return super.visitBlock(expression)
+    }
+
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         if (!expression.type.isKComposableFunction() && !expression.type.isSyntheticComposableFunction()) {
             return super.visitFunctionReference(expression)
@@ -122,17 +146,46 @@ class ComposerParamTransformer(
 
         val fn = expression.symbol.owner as? IrSimpleFunction ?: return super.visitFunctionReference(expression)
 
-        if (fn.requiresDefaultParameter() && expression.origin != IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+        if (!fn.isComposableReferenceAdapter &&
+            fn.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE &&
+            !inlineLambdaInfo.isInlineFunctionExpression(expression) &&
+            !fn.shouldBeRestartable()
+        ) {
+            // Non-restartable functions may not contain a group and should be wrapped with a separate
+            // adapter. This is different from Kotlin's adapted function reference since it is treated
+            // as a regular local function and is not inlined into AdaptedFunctionReference.
+            // This might mess with the reflection that tries to find a containing class, but the name
+            // will be preserved. This is fine, since AdaptedFunctionReference does not support reflection
+            // either.
+            return adaptComposableReference(expression, fn, useAdaptedOrigin = false)
+        } else if (!fn.isComposableReferenceAdapter && fn.requiresDefaultParameter()) {
             // Composable functions with default parameters add a $default mask parameter that is not expected
             // by the lambda side.
             // We need to create an adapter function that will call the original function with correct parameters.
-            return visitComposableReferenceWithDefault(expression, fn)
+            return adaptComposableReference(expression, fn, useAdaptedOrigin = true)
         } else {
-            return visitComposableFunctionReference(expression, fn)
+            return transformComposableFunctionReference(expression, fn)
         }
     }
 
-    private fun visitComposableFunctionReference(
+    private fun IrFunction.findCallInBody(): IrCall? {
+        var call: IrCall? = null
+        body?.acceptChildrenVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                if (call == null) {
+                    call = expression
+                }
+                return
+            }
+        })
+        return call
+    }
+
+    private fun transformComposableFunctionReference(
         expression: IrFunctionReference,
         fn: IrSimpleFunction
     ): IrExpression {
@@ -186,93 +239,100 @@ class ComposerParamTransformer(
         }
     }
 
-    private fun visitComposableReferenceWithDefault(
+    private fun adaptComposableReference(
         expression: IrFunctionReference,
         fn: IrSimpleFunction,
+        useAdaptedOrigin: Boolean
     ): IrExpression {
-        val adapter = irBlock(type = expression.type, origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE, statements = buildList {
-            val localParent = currentParent ?: error("No parent found for ${expression.dump()}")
-            val adapterFn = context.irFactory.buildFun {
-                origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
-                name = fn.name
-                visibility = DescriptorVisibilities.LOCAL
-                modality = Modality.FINAL
-                returnType = fn.returnType
-            }
-            adapterFn.copyAnnotationsFrom(fn)
-            adapterFn.copyParametersFrom(fn, copyDefaultValues = false)
-            require(
-                adapterFn.parameters.count {
-                    it.kind == IrParameterKind.ExtensionReceiver ||
-                            it.kind == IrParameterKind.DispatchReceiver
-                } <= 1
-            ) {
-                "Function references are not allowed to have multiple receivers: ${expression.dump()}"
-            }
-            adapterFn.parameters = buildList {
-                val receiver = adapterFn.parameters.find {
-                    it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver
+        val adapter = irBlock(
+            type = expression.type,
+            origin = if (useAdaptedOrigin) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null,
+            statements = buildList {
+                val localParent = currentParent ?: error("No parent found for ${expression.dump()}")
+                val adapterFn = context.irFactory.buildFun {
+                    origin = if (useAdaptedOrigin) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
+                    name = fn.name
+                    visibility = DescriptorVisibilities.LOCAL
+                    modality = Modality.FINAL
+                    returnType = fn.returnType
                 }
-                if (receiver != null) {
-                    // Match IR generated by the FIR2IR adapter codegen.
-                    receiver.kind = IrParameterKind.ExtensionReceiver
-                    receiver.name = Name.identifier("receiver")
-                    add(receiver)
+                adapterFn.copyAnnotationsFrom(fn)
+                adapterFn.copyParametersFrom(fn, copyDefaultValues = false)
+                require(
+                    adapterFn.parameters.count {
+                        it.kind == IrParameterKind.ExtensionReceiver ||
+                                it.kind == IrParameterKind.DispatchReceiver
+                    } <= 1
+                ) {
+                    "Function references are not allowed to have multiple receivers: ${expression.dump()}"
                 }
+                adapterFn.parameters = buildList {
+                    val receiver = adapterFn.parameters.find {
+                        it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver
+                    }
+                    if (receiver != null) {
+                        // Match IR generated by the FIR2IR adapter codegen.
+                        receiver.kind = IrParameterKind.ExtensionReceiver
+                        receiver.name = Name.identifier("receiver")
+                        add(receiver)
+                    }
 
-                // The adapter function should have the same parameters as the KComposableFunction type.
-                // Receivers are processed separately and are not included in the parameter count.
-                val type = expression.type as IrSimpleType
-                var n = type.arguments.size - /* return type */ 1
-                adapterFn.parameters.fastForEach {
-                    if (it.kind == IrParameterKind.Regular && n-- > 0) {
-                        add(it)
+                    // The adapter function should have the same parameters as the KComposableFunction type.
+                    // Receivers are processed separately and are not included in the parameter count.
+                    val type = expression.type as IrSimpleType
+                    var n = type.arguments.size - /* return type */ 1
+                    adapterFn.parameters.fastForEach {
+                        if (it.kind == IrParameterKind.Regular && n-- > 0) {
+                            add(it)
+                        }
                     }
                 }
-            }
+                adapterFn.isComposableReferenceAdapter = true
 
-            adapterFn.body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
-                statements.add(
-                    irReturn(
-                        adapterFn.symbol,
-                        irCall(fn.symbol).also { call ->
-                            fn.parameters.fastForEach {
-                                call.arguments[it.indexInParameters] = when (it.kind) {
-                                    IrParameterKind.Context -> {
-                                        // Should be unreachable (see CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION)
-                                        error("Context parameters are not supported in function references")
-                                    }
-                                    IrParameterKind.DispatchReceiver,
-                                    IrParameterKind.ExtensionReceiver -> {
-                                        adapterFn.parameters.first { it.kind == IrParameterKind.ExtensionReceiver }
-                                    }
-                                    IrParameterKind.Regular -> {
-                                        adapterFn.parameters.getOrNull(it.indexInParameters)
-                                    }
-                                }?.let(::irGet)
+                adapterFn.body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
+                    statements.add(
+                        irReturn(
+                            adapterFn.symbol,
+                            irCall(fn.symbol).also { call ->
+                                fn.parameters.fastForEach {
+                                    call.arguments[it.indexInParameters] = when (it.kind) {
+                                        IrParameterKind.Context -> {
+                                            // Should be unreachable (see CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION)
+                                            error("Context parameters are not supported in function references")
+                                        }
+                                        IrParameterKind.DispatchReceiver,
+                                        IrParameterKind.ExtensionReceiver
+                                            -> {
+                                            adapterFn.parameters.first { it.kind == IrParameterKind.ExtensionReceiver }
+                                        }
+                                        IrParameterKind.Regular -> {
+                                            adapterFn.parameters.getOrNull(it.indexInParameters)
+                                        }
+                                    }?.let(::irGet)
+                                }
                             }
-                        }
+                        )
                     )
+                }
+                adapterFn.parent = localParent
+                add(adapterFn)
+
+                add(
+                    IrFunctionReferenceImpl(
+                        startOffset = expression.startOffset,
+                        endOffset = expression.endOffset,
+                        type = expression.type,
+                        symbol = adapterFn.symbol,
+                        typeArgumentsCount = expression.typeArguments.size,
+                        reflectionTarget = fn.symbol,
+                        origin = if (useAdaptedOrigin) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null
+                    ).apply {
+                        typeArguments.assignFrom(expression.typeArguments)
+                        arguments.assignFrom(expression.arguments)
+                    }
                 )
             }
-            adapterFn.parent = localParent
-            add(adapterFn)
-
-            add(
-                IrFunctionReferenceImpl(
-                    startOffset = expression.startOffset,
-                    endOffset = expression.endOffset,
-                    type = expression.type,
-                    symbol = adapterFn.symbol,
-                    typeArgumentsCount = expression.typeArguments.size,
-                    reflectionTarget = fn.symbol,
-                    origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
-                ).apply {
-                    typeArguments.assignFrom(expression.typeArguments)
-                    arguments.assignFrom(expression.arguments)
-                }
-            )
-        })
+        )
 
         // Pass the adapted function reference to the transformer to handle the adapted function the same way as regular composables.
         return visitBlock(adapter)

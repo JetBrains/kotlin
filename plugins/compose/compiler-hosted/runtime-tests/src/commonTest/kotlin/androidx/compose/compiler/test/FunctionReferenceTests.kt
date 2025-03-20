@@ -6,11 +6,8 @@
 
 package androidx.compose.compiler.test
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.mock.*
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import kotlin.test.Test
 
 // This class is on top of the file to avoid handling order when loading generated classes
@@ -265,10 +262,14 @@ private fun TextVararg(vararg int: Int = intArrayOf(0)) {
 }
 
 @Composable
-private fun Number(int: Int) = int
+private fun Number(int: Int): Int {
+    remember { "" } // this is to ensure remember collides without a group
+    return int
+}
 
 @Composable
-private fun OtherNumber(int: Int, def: Int = 1) = int + def
+private fun OtherNumber(int: Int, def: Int = 1) =
+    remember { int + def }
 
 @Composable
 private fun Text(n: Int, number: @Composable (Int) -> Int) {
