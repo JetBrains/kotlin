@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -286,7 +287,7 @@ class JvmCachedDeclarations(
                 val klass = newFunction.parentAsClass
                 when (context.config.jvmDefaultMode) {
                     JvmDefaultMode.NO_COMPATIBILITY -> return null
-                    JvmDefaultMode.ENABLE if klass.hasJvmDefaultNoCompatibilityAnnotation() -> return null
+                    JvmDefaultMode.ENABLE if klass.hasAnnotation(JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME) -> return null
                     else -> superFunction
                 }
             } else {

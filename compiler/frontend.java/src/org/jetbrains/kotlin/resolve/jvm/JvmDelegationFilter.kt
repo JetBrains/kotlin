@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasObsoleteJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 
 object JvmDelegationFilter : DelegationFilter {
@@ -35,7 +35,7 @@ object JvmDelegationFilter : DelegationFilter {
         //We always have only one implementation otherwise it's an error in kotlin and java
         val realMember = DescriptorUtils.unwrapFakeOverride(interfaceMember)
         return !isJavaDefaultMethod(realMember) &&
-                !realMember.hasJvmDefaultAnnotation() &&
+                !realMember.hasObsoleteJvmDefaultAnnotation() &&
                 !isBuiltInMemberMappedToJavaDefault(realMember)
     }
 

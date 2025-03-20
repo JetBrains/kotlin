@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
-val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
-val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
-val JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithCompatibility")
 val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
 
 @JvmField
@@ -70,14 +68,8 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
 }
 
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
+fun CallableMemberDescriptor.hasObsoleteJvmDefaultAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
-
-fun DeclarationDescriptor.hasJvmDefaultNoCompatibilityAnnotation(): Boolean =
-    this.annotations.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
-
-fun DeclarationDescriptor.hasJvmDefaultWithCompatibilityAnnotation(): Boolean =
-    this.annotations.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)
 
 private fun Annotated.findJvmSyntheticAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)

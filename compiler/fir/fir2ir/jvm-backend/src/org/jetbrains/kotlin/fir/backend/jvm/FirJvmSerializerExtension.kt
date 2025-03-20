@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
@@ -126,26 +128,21 @@ open class FirJvmSerializerExtension(
         writeVersionRequirementForJvmDefaultIfNeeded(klass, proto, versionRequirementTable)
 
         if (jvmDefaultMode.isEnabled && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
-            proto.setExtension(
-                JvmProtoBuf.jvmClassFlags,
-                JvmFlags.getClassFlags(
-                    true,
-                    (JvmDefaultMode.ENABLE == jvmDefaultMode &&
-                            !klass.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)) ||
-                            (JvmDefaultMode.NO_COMPATIBILITY == jvmDefaultMode &&
-                                    klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session))
-                )
-            )
+            proto.setExtension(JvmProtoBuf.jvmClassFlags, JvmFlags.getClassFlags(true, isInCompatibilityMode(klass)))
         }
 
         serializeAnnotations(klass, proto::addAnnotation)
     }
 
+    private fun isInCompatibilityMode(klass: FirRegularClass): Boolean =
+        (jvmDefaultMode == JvmDefaultMode.ENABLE && !klass.hasAnnotation(JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID, session)) ||
+                (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY && klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session))
+
     override fun serializeScript(
         script: FirScript,
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
-        childSerializer: FirElementSerializer
+        childSerializer: FirElementSerializer,
     ) {
         processScriptOrSnippet(proto, childSerializer)
     }
@@ -409,10 +406,6 @@ open class FirJvmSerializerExtension(
             JvmSerializationBindings.SerializationMappingSlice.create()
         val DELEGATE_METHOD_FOR_FIR_VARIABLE: JvmSerializationBindings.SerializationMappingSlice<FirVariable, Method> =
             JvmSerializationBindings.SerializationMappingSlice.create()
-        private val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
-        private val JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithCompatibility")
-        private val JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID: ClassId = ClassId.topLevel(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
-        private val JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID: ClassId = ClassId.topLevel(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)
     }
 }
 

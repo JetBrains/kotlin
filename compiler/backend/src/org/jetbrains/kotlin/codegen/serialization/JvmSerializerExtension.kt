@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultNoCompatibilityAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultWithCompatibilityAnnotation
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -80,15 +80,14 @@ class JvmSerializerExtension(
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
         if (jvmDefaultMode.isEnabled && isInterface(descriptor)) {
-            proto.setExtension(
-                JvmProtoBuf.jvmClassFlags,
-                JvmFlags.getClassFlags(
-                    true,
-                    (JvmDefaultMode.ENABLE == jvmDefaultMode && !descriptor.hasJvmDefaultNoCompatibilityAnnotation()) ||
-                            (JvmDefaultMode.NO_COMPATIBILITY == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
-                )
-            )
+            proto.setExtension(JvmProtoBuf.jvmClassFlags, JvmFlags.getClassFlags(true, isInCompatibilityMode(descriptor)))
         }
+    }
+
+    private fun isInCompatibilityMode(descriptor: ClassDescriptor): Boolean {
+        val annotations = descriptor.annotations
+        return (jvmDefaultMode == JvmDefaultMode.ENABLE && !annotations.hasAnnotation(JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME)) ||
+                (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY && annotations.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME))
     }
 
     // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
