@@ -45,7 +45,7 @@ public object KotlinRuntimeModule : SirModule() {
                 parameters.add(
                     SirParameter(
                         argumentName = "__externalRCRef",
-                        type = SirNominalType(SirSwiftModule.uint)
+                        type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
                     )
                 )
             }

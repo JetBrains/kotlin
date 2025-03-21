@@ -27,7 +27,7 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }

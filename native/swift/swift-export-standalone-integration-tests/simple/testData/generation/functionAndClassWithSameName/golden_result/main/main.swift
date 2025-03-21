@@ -14,7 +14,7 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, 
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -23,7 +23,7 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, 
     ) {
         let __kt = __root___ClassWithFactoryWithoutParameters_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
+        __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
     }
 }
 public final class EnumWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
@@ -38,7 +38,7 @@ public final class EnumWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSuppo
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -58,7 +58,7 @@ public final class ObjectWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSup
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -67,10 +67,10 @@ public final class UtcOffset: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Ko
     public override init() {
         let __kt = __root___UtcOffset_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -116,10 +116,10 @@ public extension ExportedKotlinPackages.test.factory {
         public override init() {
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
             super.init(__externalRCRef: __kt)
-            test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -129,10 +129,10 @@ public extension ExportedKotlinPackages.test.factory {
             public override init() {
                 let __kt = test_factory_Outer_Nested_init_allocate()
                 super.init(__externalRCRef: __kt)
-                test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+                test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -140,10 +140,10 @@ public extension ExportedKotlinPackages.test.factory {
         public override init() {
             let __kt = test_factory_Outer_init_allocate()
             super.init(__externalRCRef: __kt)
-            test_factory_Outer_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

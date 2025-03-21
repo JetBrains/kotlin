@@ -14,10 +14,10 @@ public extension ExportedKotlinPackages.org.jetbrains.a {
         public override init() {
             let __kt = org_jetbrains_a_MyLibraryA_init_allocate()
             super.init(__externalRCRef: __kt)
-            org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

@@ -31,8 +31,8 @@ public fun __root___deprecatedChildT_init_allocate(): kotlin.native.internal.Nat
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, deprecatedChildT())
 }
@@ -53,8 +53,8 @@ public fun __root___deprecatedT_init_allocate(): kotlin.native.internal.NativePt
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___deprecatedT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, deprecatedT())
 }
@@ -93,8 +93,8 @@ public fun __root___normalChildT_init_allocate(): kotlin.native.internal.NativeP
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___normalChildT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun __root___normalChildT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___normalChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___normalChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, normalChildT())
 }
@@ -105,8 +105,8 @@ public fun __root___normalT_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___normalT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun __root___normalT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, normalT())
 }
@@ -156,8 +156,8 @@ public fun __root___renamedT_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___renamedT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun __root___renamedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, renamedT())
 }
@@ -229,8 +229,8 @@ public fun deprecatedT_deprecationInheritedT_init_allocate(): kotlin.native.inte
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, deprecatedT.deprecationInheritedT())
 }
@@ -265,8 +265,8 @@ public fun deprecatedT_deprecationRestatedT_init_allocate(): kotlin.native.inter
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, deprecatedT.deprecationRestatedT())
 }
@@ -457,8 +457,8 @@ public fun normalT_deprecatedT_init_allocate(): kotlin.native.internal.NativePtr
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
-public fun normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, deprecated: Int): Unit {
+@ExportedBridge("normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, deprecated: Int): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __deprecated = deprecated
     kotlin.native.internal.initInstance(____kt, normalT.deprecatedT(__deprecated))
@@ -496,8 +496,8 @@ public fun normalT_normalT_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("normalT_normalT_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun normalT_normalT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("normalT_normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun normalT_normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, normalT.normalT())
 }
@@ -585,4 +585,3 @@ public fun normalT_removedInFutureV_get(self: kotlin.native.internal.NativePtr):
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
     __self.removedInFutureV
 }
-

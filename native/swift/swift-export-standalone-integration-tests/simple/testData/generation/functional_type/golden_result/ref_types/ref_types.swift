@@ -8,7 +8,7 @@ public func consume_block_with_opt_reftype(
 ) -> Swift.Void {
     return __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_KotlinRuntime_KotlinBase__U29202D_U20Swift_Optional_data_Foo___({
         let originalBlock = block
-        return { arg0, arg1, arg2, arg3 in return originalBlock(arg0.map { it in it.int32Value }, { switch arg1 { case 0: .none; case let res: data.Bar(__externalRCRef: res); } }(), arg2, arg3.map { it in it as! Swift.Set<KotlinRuntime.KotlinBase> }).map { it in it.__externalRCRef() } ?? 0 }
+        return { arg0, arg1, arg2, arg3 in return originalBlock(arg0.map { it in it.int32Value }, { switch arg1 { case nil: .none; case let res: data.Bar(__externalRCRef: res); } }(), arg2, arg3.map { it in it as! Swift.Set<KotlinRuntime.KotlinBase> }).map { it in it.__externalRCRef() } ?? nil }
     }())
 }
 public func consume_block_with_reftype_consumer(

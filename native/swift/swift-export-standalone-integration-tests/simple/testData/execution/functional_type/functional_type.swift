@@ -57,15 +57,17 @@ func testFunctionalTypeTypealias() throws {
 
 @Test
 func testBlockWithRefType() throws {
-    var lastB: Bar? = nil
-    var receivedB: Bar? = nil
-    saveRefBlock { b in
-        lastB = b
-        return Bar(i: b.i+1)
+    for _ in 0...1_000_000 {
+        var lastB: Bar? = nil
+        var receivedB: Bar? = nil
+        saveRefBlock { b in
+            lastB = b
+            return Bar(i: b.i+1)
+        }
+        receivedB = callRefBlock(with: Bar(i: 0))
+        try #require(receivedB!.i == 1)
+        try #require(lastB!.i == 0)
     }
-    receivedB = callRefBlock(with: Bar(i: 0))
-    try #require(receivedB!.i == 1)
-    try #require(lastB!.i == 0)
 }
 
 @Test

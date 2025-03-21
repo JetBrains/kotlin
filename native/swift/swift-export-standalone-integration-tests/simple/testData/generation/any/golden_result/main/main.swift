@@ -12,7 +12,7 @@ public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }

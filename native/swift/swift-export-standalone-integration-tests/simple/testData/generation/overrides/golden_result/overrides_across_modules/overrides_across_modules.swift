@@ -10,7 +10,7 @@ open class Cousin: overrides.Parent {
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -19,7 +19,7 @@ open class Cousin: overrides.Parent {
     ) {
         let __kt = __root___Cousin_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Cousin_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__(__kt, value)
+        __root___Cousin_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Cousin_finalOverrideFunc(self.__externalRCRef())
@@ -34,10 +34,10 @@ public final class FinalDerived3: overrides.AbstractDerived2 {
     public override init() {
         let __kt = __root___FinalDerived3_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -46,7 +46,7 @@ public final class FinalDerived3: overrides.AbstractDerived2 {
     ) {
         let __kt = __root___FinalDerived3_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, x)
+        __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x)
     }
     public override func abstractFun1() -> Swift.Void {
         return FinalDerived3_abstractFun1(self.__externalRCRef())

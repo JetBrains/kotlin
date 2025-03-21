@@ -12,8 +12,8 @@ public fun __root___Context_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___Context_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun __root___Context_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___Context_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___Context_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Context())
 }

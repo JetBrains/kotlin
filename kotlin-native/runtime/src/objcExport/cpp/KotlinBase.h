@@ -22,9 +22,9 @@ struct ObjHeader;
 // The code panics if the determined best-fitting class is not a subclass of `self`'s type.
 // This situation happens if there's some unexported Swift class inheriting from an exported
 // open class: this is not currently supported.
-- (instancetype)initWithExternalRCRef:(uintptr_t)ref NS_REFINED_FOR_SWIFT;
+- (instancetype)initWithExternalRCRef:(void *)ref NS_REFINED_FOR_SWIFT;
 
 // Return kotlin.native.internal.ref.ExternalRCRef stored in this class
-- (uintptr_t)externalRCRef NS_REFINED_FOR_SWIFT;
+- (void *)externalRCRef NS_REFINED_FOR_SWIFT NS_RETURNS_INNER_POINTER;
 
 @end

@@ -25,8 +25,8 @@ public fun weird_A_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("weird_A_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun weird_A_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Unit {
+@ExportedBridge("weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val ____error = __error
     try {
@@ -70,8 +70,8 @@ public fun weird_B_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("weird_B_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun weird_B_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, weird.B())
 }
@@ -81,4 +81,3 @@ public fun weird_B_throws(self: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.B
     __self.throws()
 }
-

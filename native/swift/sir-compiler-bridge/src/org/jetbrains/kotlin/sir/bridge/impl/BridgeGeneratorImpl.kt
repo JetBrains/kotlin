@@ -136,10 +136,10 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 val errorParameter = descriptor.errorParameter
 
                 if (errorParameter != null) {
-                    add("var ${errorParameter.name}: UInt = 0")
+                    add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
                     add("let _result = ${descriptor.swiftInvoke(typeNamer)}")
                     val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
-                    add("guard ${errorParameter.name} == 0 else { throw KotlinError(wrapped: $error) }")
+                    add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
                     add("return ${descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result")}")
                 } else {
                     add("return ${descriptor.swiftCall(typeNamer)}")
@@ -153,10 +153,10 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add("super.init(__externalRCRef: ${obj.name})")
 
                 if (errorParameter != null) {
-                    add("var ${errorParameter.name}: UInt = 0")
+                    add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
                     add(initDescriptor.swiftCall(typeNamer))
                     val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
-                    add("guard ${errorParameter.name} == 0 else { throw KotlinError(wrapped: $error) }")
+                    add("guard ${errorParameter.name} == .none else { throw KotlinError(wrapped: $error) }")
                 } else {
                     add(initDescriptor.swiftCall(typeNamer))
                 }
@@ -245,7 +245,7 @@ private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFun
     )
 }
 
-private val obj = BridgeParameter("__kt", bridgeType(SirNominalType(SirSwiftModule.uint)))
+private val obj = BridgeParameter("__kt", bridgeType(SirNominalType(SirSwiftModule.unsafeMutableRawPointer)))
 
 private fun FunctionBridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
     require(callable is SirInit) { "Use descriptor instead" }
@@ -421,8 +421,8 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
         SirSwiftModule.double -> Bridge.AsIs(type, KotlinType.Double, CType.Double)
         SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
-        SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
-        SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
+        SirSwiftModule.unsafeMutableRawPointer -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
+        SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
 
         SirSwiftModule.string -> Bridge.AsObjCBridged(type, CType.NSString)
 
@@ -515,8 +515,8 @@ private sealed class CType {
     data object UInt64 : Predefined("uint64_t")
     data object Float : Predefined("float")
     data object Double : Predefined("double")
-    data object Object : Predefined("uintptr_t")
-    data object OutObject : Predefined("uintptr_t *")
+    data object Object : Predefined("void *")
+    data object OutObject : Predefined("void **")
     data object id : Predefined("id")
     data object NSString : Predefined("NSString *")
     data object NSNumber : Predefined("NSNumber *")
@@ -626,7 +626,7 @@ private sealed class Bridge(
         }
 
         override val inSwiftSources = object : InSwiftSourcesConversion {
-            override fun renderNil(): String = "0"
+            override fun renderNil(): String = "nil"
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
@@ -645,7 +645,7 @@ private sealed class Bridge(
         }
 
         override val inSwiftSources = object : InSwiftSourcesConversion {
-            override fun renderNil(): String = "0"
+            override fun renderNil(): String = "nil"
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
@@ -665,7 +665,7 @@ private sealed class Bridge(
         }
 
         override val inSwiftSources = object : NilableIdentityValueConversion {
-            override fun renderNil(): String = TODO("Not yet implemented")
+            override fun renderNil(): String = "nil"
         }
     }
 
@@ -964,7 +964,7 @@ private sealed class Bridge(
                 }
 
                 override fun renderNil(): String {
-                    return "0"
+                    return "nil"
                 }
             }
     }

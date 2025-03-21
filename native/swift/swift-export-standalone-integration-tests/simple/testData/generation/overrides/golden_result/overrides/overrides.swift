@@ -12,7 +12,7 @@ open class AbstractBase: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -33,7 +33,7 @@ open class AbstractDerived2: overrides.OpenDerived1 {
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -49,7 +49,7 @@ open class AbstractDerived2: overrides.OpenDerived1 {
 open class Child: overrides.Parent {
     open override var objectOptionalVar: overrides.Parent? {
         get {
-            return { switch Child_objectOptionalVar_get(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
+            return { switch Child_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
         }
     }
     open override var objectVar: overrides.Parent {
@@ -78,7 +78,7 @@ open class Child: overrides.Parent {
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -87,14 +87,14 @@ open class Child: overrides.Parent {
     ) {
         let __kt = __root___Child_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
+        __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
     }
     public override init(
         value: Swift.String
     ) {
         let __kt = __root___Child_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__(__kt, value)
+        __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
     }
     public init(
         nullable: Swift.Int32,
@@ -103,14 +103,14 @@ open class Child: overrides.Parent {
     ) {
         let __kt = __root___Child_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
+        __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
     }
     open override func actuallyOverride(
         nullable: Swift.Int32?,
         poly: overrides.Parent,
         nullablePoly: overrides.Parent?
     ) -> Swift.Void {
-        return Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? 0)
+        return Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Child_finalOverrideFunc(self.__externalRCRef())
@@ -129,7 +129,7 @@ open class Child: overrides.Parent {
     open override func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
-        return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
+        return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
     }
     open override func overrideChainFunc() -> Swift.Void {
         return Child_overrideChainFunc(self.__externalRCRef())
@@ -153,7 +153,7 @@ open class Child: overrides.Parent {
 }
 public final class GrandChild: overrides.Child {
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -162,7 +162,7 @@ public final class GrandChild: overrides.Child {
     ) {
         let __kt = __root___GrandChild_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___GrandChild_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
+        __root___GrandChild_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
     }
     public override func finalOverrideHopFunc() -> Swift.Void {
         return GrandChild_finalOverrideHopFunc(self.__externalRCRef())
@@ -183,10 +183,10 @@ open class OpenDerived1: overrides.AbstractBase {
     public override init() {
         let __kt = __root___OpenDerived1_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -195,7 +195,7 @@ open class OpenDerived1: overrides.AbstractBase {
     ) {
         let __kt = __root___OpenDerived1_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, x)
+        __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x)
     }
     open override func abstractFun1() -> Swift.Void {
         return OpenDerived1_abstractFun1(self.__externalRCRef())
@@ -207,7 +207,7 @@ open class OpenDerived1: overrides.AbstractBase {
 open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     open var objectOptionalVar: overrides.Parent? {
         get {
-            return { switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
+            return { switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
         }
     }
     open var objectVar: overrides.Parent {
@@ -227,7 +227,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     }
     open var subtypeOptionalObjectVar: overrides.Parent? {
         get {
-            return { switch Parent_subtypeOptionalObjectVar_get(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
+            return { switch Parent_subtypeOptionalObjectVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
         }
     }
     open var subtypeOptionalPrimitiveVar: Swift.Int32? {
@@ -241,7 +241,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -250,7 +250,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     ) {
         let __kt = __root___Parent_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Parent_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__(__kt, value)
+        __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
     }
     open func actuallyOverride(
         nullable: Swift.Int32,
@@ -282,7 +282,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     open func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
-        return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
+        return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
     }
     open func overrideChainFunc() -> Swift.Void {
         return Parent_overrideChainFunc(self.__externalRCRef())
@@ -298,7 +298,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         return overrides.Parent(__externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
     }
     open func subtypeOptionalObjectFunc() -> overrides.Parent? {
-        return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
+        return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent(__externalRCRef: res); } }()
     }
     open func subtypeOptionalPrimitiveFunc() -> Swift.Int32? {
         return Parent_subtypeOptionalPrimitiveFunc(self.__externalRCRef()).map { it in it.int32Value }

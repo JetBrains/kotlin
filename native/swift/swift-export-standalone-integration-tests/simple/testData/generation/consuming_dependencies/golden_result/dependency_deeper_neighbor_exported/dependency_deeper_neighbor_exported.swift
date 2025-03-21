@@ -8,10 +8,10 @@ public extension ExportedKotlinPackages.dependency.four {
         public override init() {
             let __kt = dependency_four_AnotherBar_init_allocate()
             super.init(__externalRCRef: __kt)
-            dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

@@ -176,7 +176,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
   return [self retain];
 }
 
-- (instancetype)initWithExternalRCRef:(uintptr_t)ref {
+- (instancetype)initWithExternalRCRef:(void *)ref {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
@@ -245,7 +245,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     return self;
 }
 
-- (uintptr_t)externalRCRef {
+- (void *)externalRCRef {
     auto ref = std::visit([](auto&& arg) noexcept -> kotlin::mm::RawExternalRCRef* {
         using T = std::decay_t<decltype(arg)>;
         if constexpr (std::is_same_v<T, PermanentRef>) {
@@ -254,7 +254,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
             return arg.get()->toRaw();
         }
     }, refHolder);
-    return reinterpret_cast<uintptr_t>(ref);
+    return reinterpret_cast<void*>(ref);
 }
 
 - (NSString *)description {

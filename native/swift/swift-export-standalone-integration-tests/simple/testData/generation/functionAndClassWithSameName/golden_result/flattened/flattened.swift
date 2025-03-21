@@ -14,10 +14,10 @@ public extension ExportedKotlinPackages.flattenedPackage {
         public override init() {
             let __kt = flattenedPackage_FlattenedPackageClass_init_allocate()
             super.init(__externalRCRef: __kt)
-            flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

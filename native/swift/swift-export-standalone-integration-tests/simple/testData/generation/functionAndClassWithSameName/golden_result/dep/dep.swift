@@ -8,10 +8,10 @@ public extension ExportedKotlinPackages.test.factory.modules {
         public override init() {
             let __kt = test_factory_modules_ClassFromDependency_init_allocate()
             super.init(__externalRCRef: __kt)
-            test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

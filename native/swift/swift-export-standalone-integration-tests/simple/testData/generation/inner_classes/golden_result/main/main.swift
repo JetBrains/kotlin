@@ -6,7 +6,7 @@ public final class Outer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotlin
     public final class Inner: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class InnerInner: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -15,11 +15,11 @@ public final class Outer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotlin
             ) {
                 let __kt = Outer_Inner_InnerInner_init_allocate()
                 super.init(__externalRCRef: __kt)
-                Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(__kt, outer__.__externalRCRef())
+                Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Outer_Inner__(__kt, outer__.__externalRCRef())
             }
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -28,7 +28,7 @@ public final class Outer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotlin
         ) {
             let __kt = Outer_Inner_init_allocate()
             super.init(__externalRCRef: __kt)
-            Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer__(__kt, outer__.__externalRCRef())
+            Outer_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Outer__(__kt, outer__.__externalRCRef())
         }
         public func foo() -> Swift.Int32 {
             return Outer_Inner_foo(self.__externalRCRef())
@@ -37,10 +37,10 @@ public final class Outer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotlin
     public override init() {
         let __kt = __root___Outer_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Outer_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }

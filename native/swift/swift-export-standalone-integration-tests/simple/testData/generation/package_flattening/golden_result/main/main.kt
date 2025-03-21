@@ -13,8 +13,8 @@ public fun org_kotlin_foo_Clazz_init_allocate(): kotlin.native.internal.NativePt
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UInt__")
-public fun org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, org.kotlin.foo.Clazz())
 }
@@ -57,4 +57,3 @@ public fun org_kotlin_foo_y__TypesOfArguments__Swift_String__(`receiver`: kotlin
     val _result = __receiver.org_kotlin_foo_y()
     return _result
 }
-

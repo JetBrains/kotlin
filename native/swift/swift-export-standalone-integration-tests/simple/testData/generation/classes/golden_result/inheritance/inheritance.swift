@@ -12,7 +12,7 @@ public final class INHERITANCE_SINGLE_CLASS: inheritance.OPEN_CLASS {
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -21,7 +21,7 @@ public final class INHERITANCE_SINGLE_CLASS: inheritance.OPEN_CLASS {
     ) {
         let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
+        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
     }
 }
 public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
@@ -34,7 +34,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -43,10 +43,10 @@ open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBri
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }

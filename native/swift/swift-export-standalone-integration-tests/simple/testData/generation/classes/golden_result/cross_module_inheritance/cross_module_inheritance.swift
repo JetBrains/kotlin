@@ -13,7 +13,7 @@ public final class CLASS_ACROSS_MODULES: inheritance.OPEN_CLASS {
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -22,6 +22,6 @@ public final class CLASS_ACROSS_MODULES: inheritance.OPEN_CLASS {
     ) {
         let __kt = __root___CLASS_ACROSS_MODULES_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___CLASS_ACROSS_MODULES_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
+        __root___CLASS_ACROSS_MODULES_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
     }
 }

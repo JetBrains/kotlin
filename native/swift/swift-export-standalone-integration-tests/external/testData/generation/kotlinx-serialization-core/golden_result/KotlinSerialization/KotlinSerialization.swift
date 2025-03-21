@@ -31,7 +31,7 @@ public final class _ExportedKotlinPackages_kotlinx_serialization_encoding_Compos
         }
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -152,7 +152,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Array_Swift_String__Swift_String__(__kt, missingFields, serialName)
+            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String__Swift_String__(__kt, missingFields, serialName)
         }
         public init(
             missingField: Swift.String,
@@ -160,7 +160,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UInt_Swift_String_Swift_String__(__kt, missingField, serialName)
+            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String_Swift_String__(__kt, missingField, serialName)
         }
         public init(
             missingFields: [Swift.String],
@@ -169,10 +169,10 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Array_Swift_String__Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, missingFields, message ?? nil, cause.map { it in it.__externalRCRef() } ?? 0)
+            kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String__Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, missingFields, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -181,14 +181,14 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         public override init() {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         public override init(
             message: Swift.String?
         ) {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
         }
         public override init(
             message: Swift.String?,
@@ -196,17 +196,17 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         ) {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? 0)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UInt_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? 0)
+            kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -303,13 +303,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         ) {
             let __kt = kotlinx_serialization_internal_ElementMarker_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UInt_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(__kt, descriptor.__externalRCRef(), {
+            kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(__kt, descriptor.__externalRCRef(), {
                 let originalBlock = readIfAbsent
                 return { arg0, arg1 in return originalBlock(KotlinRuntime.KotlinBase(__externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, arg1) }
             }())
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -397,7 +397,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -440,7 +440,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -535,7 +535,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             return kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_element__TypesOfArguments__Swift_String_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Array_anyU20ExportedKotlinPackages_kotlin_Annotation__Swift_Bool__(self.__externalRCRef(), elementName, descriptor.__externalRCRef(), annotations, isOptional)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -548,7 +548,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -563,7 +563,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -575,7 +575,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -588,7 +588,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -603,7 +603,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -618,7 +618,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -633,7 +633,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -648,7 +648,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -663,7 +663,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -678,7 +678,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -693,7 +693,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -708,7 +708,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -720,7 +720,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -733,7 +733,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -748,7 +748,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -766,7 +766,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -779,7 +779,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -794,7 +794,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -809,7 +809,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -824,7 +824,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
                 }
             }
             package override init(
-                __externalRCRef: Swift.UInt
+                __externalRCRef: Swift.UnsafeMutableRawPointer?
             ) {
                 super.init(__externalRCRef: __externalRCRef)
             }
@@ -836,7 +836,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -919,7 +919,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     ) -> (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)? {
-        return { switch kotlinx_serialization_descriptors_getContextualDescriptor__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef(), descriptor.__externalRCRef()) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor; } }()
+        return { switch kotlinx_serialization_descriptors_getContextualDescriptor__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef(), descriptor.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor; } }()
     }
     public static func getPolymorphicDescriptors(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
@@ -1467,7 +1467,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -1642,7 +1642,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

@@ -14,12 +14,12 @@ public extension ExportedKotlinPackages.weird {
         public init() throws {
             let __kt = weird_A_init_allocate()
             super.init(__externalRCRef: __kt)
-            var __error: UInt = 0
-            weird_A_init_initialize__TypesOfArguments__Swift_UInt__(__kt, &__error)
-            guard __error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: __error)) }
+            var __error: UnsafeMutableRawPointer? = nil
+            weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt, &__error)
+            guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: __error)) }
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -28,9 +28,9 @@ public extension ExportedKotlinPackages.weird {
             return weird_A_foo(self.__externalRCRef())
         }
         open func `throws`() throws -> Swift.Void {
-            var _out_error: UInt = 0
+            var _out_error: UnsafeMutableRawPointer? = nil
             let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
-            guard _out_error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: _out_error)) }
+            guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: _out_error)) }
             return _result
         }
     }
@@ -45,10 +45,10 @@ public extension ExportedKotlinPackages.weird {
         public init() {
             let __kt = weird_B_init_allocate()
             super.init(__externalRCRef: __kt)
-            weird_B_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

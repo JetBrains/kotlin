@@ -29,10 +29,10 @@ public final class deprecatedChildT: main.deprecatedT {
     public override init() {
         let __kt = __root___deprecatedChildT_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -52,10 +52,10 @@ open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         public override init() {
             let __kt = deprecatedT_deprecationInheritedT_init_allocate()
             super.init(__externalRCRef: __kt)
-            deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -65,10 +65,10 @@ open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         public override init() {
             let __kt = deprecatedT_deprecationRestatedT_init_allocate()
             super.init(__externalRCRef: __kt)
-            deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -94,10 +94,10 @@ open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
     public override init() {
         let __kt = __root___deprecatedT_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -191,10 +191,10 @@ public final class normalChildT: main.normalT {
     public override init() {
         let __kt = __root___normalChildT_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___normalChildT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___normalChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -223,7 +223,7 @@ open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridge
     @available(*, deprecated, message: "Deprecated")
     open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -233,17 +233,17 @@ open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridge
         ) {
             let __kt = normalT_deprecatedT_init_allocate()
             super.init(__externalRCRef: __kt)
-            normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, deprecated)
+            normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, deprecated)
         }
     }
     open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = normalT_normalT_init_allocate()
             super.init(__externalRCRef: __kt)
-            normalT_normalT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            normalT_normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -335,10 +335,10 @@ open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridge
     public override init() {
         let __kt = __root___normalT_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___normalT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -368,10 +368,10 @@ public final class renamedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
     public override init() {
         let __kt = __root___renamedT_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___renamedT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }

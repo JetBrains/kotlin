@@ -11,7 +11,7 @@ public extension ExportedKotlinPackages.kotlin {
             }
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }

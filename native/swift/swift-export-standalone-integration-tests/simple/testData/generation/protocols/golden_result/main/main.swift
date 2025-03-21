@@ -43,10 +43,10 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.Foeble, mai
     public override init() {
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Bar_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -65,10 +65,10 @@ public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, KotlinRuntimeSupp
     public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -88,7 +88,7 @@ public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -97,10 +97,10 @@ open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRunti
     public override init() {
         let __kt = ContainerProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
-        ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -109,10 +109,10 @@ open class _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_Nested
     public override init() {
         let __kt = packagewithprotocols_ContainerProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
-        packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -122,10 +122,10 @@ public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_
         public override init() {
             let __kt = packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_allocate()
             super.init(__externalRCRef: __kt)
-            packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -133,10 +133,10 @@ public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_
     public override init() {
         let __kt = packagewithprotocols_SiblingProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
-        packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -146,10 +146,10 @@ public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, Kotli
         public override init() {
             let __kt = SiblingProtocol_NestedClass_NestedClass_init_allocate()
             super.init(__externalRCRef: __kt)
-            SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -157,10 +157,10 @@ public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, Kotli
     public override init() {
         let __kt = SiblingProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
-        SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -169,10 +169,10 @@ open class __ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinB
     public override init() {
         let __kt = ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
-        ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -181,10 +181,10 @@ open class __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_Neste
     public override init() {
         let __kt = packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
-        packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UInt
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
@@ -207,10 +207,10 @@ public var normal: any main.Foeble {
 }
 public var nullable: (any main.Foeble)? {
     get {
-        return { switch __root___nullable_get() { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any main.Foeble; } }()
+        return { switch __root___nullable_get() { case nil: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any main.Foeble; } }()
     }
     set {
-        return __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(newValue.map { it in it.__externalRCRef() } ?? 0)
+        return __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(newValue.map { it in it.__externalRCRef() } ?? nil)
     }
 }
 public func foo(
@@ -246,7 +246,7 @@ public func normal(
 public func nullable(
     value: (any main.Foeble)?
 ) -> (any main.Foeble)? {
-    return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? 0) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any main.Foeble; } }()
+    return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any main.Foeble; } }()
 }
 public extension main.Barable where Self : KotlinRuntimeSupport._KotlinBridged {
     public var baz: any main.Foeble {
@@ -305,7 +305,7 @@ public extension ExportedKotlinPackages.packagewithprotocols {
             }
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -319,10 +319,10 @@ public extension ExportedKotlinPackages.packagewithprotocols {
         public override init() {
             let __kt = packagewithprotocols_INHERITANCE_COUPLE_init_allocate()
             super.init(__externalRCRef: __kt)
-            packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -331,10 +331,10 @@ public extension ExportedKotlinPackages.packagewithprotocols {
         public override init() {
             let __kt = packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_allocate()
             super.init(__externalRCRef: __kt)
-            packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -349,7 +349,7 @@ public extension ExportedKotlinPackages.packagewithprotocols {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -384,10 +384,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Child1_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Child1_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Child1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -396,10 +396,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Child2_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Child2_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Child2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -408,10 +408,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Child3_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Child3_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Child3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -420,10 +420,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Child4_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Child4_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Child4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -432,10 +432,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Child5_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Child5_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Child5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -444,10 +444,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_GrandChild1_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_GrandChild1_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_GrandChild1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -456,10 +456,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_GrandChild2_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_GrandChild2_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_GrandChild2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -468,10 +468,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_GrandChild3_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_GrandChild3_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_GrandChild3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -480,10 +480,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_GrandChild4_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_GrandChild4_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_GrandChild4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -492,10 +492,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_GrandChild5_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_GrandChild5_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_GrandChild5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -504,10 +504,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Parent1_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Parent1_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Parent1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -516,10 +516,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Parent2_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Parent2_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Parent2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -528,10 +528,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Parent3_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Parent3_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Parent3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -540,10 +540,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Parent4_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Parent4_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Parent4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
@@ -552,10 +552,10 @@ public extension ExportedKotlinPackages.repeating_conformances {
         public override init() {
             let __kt = repeating_conformances_Parent5_init_allocate()
             super.init(__externalRCRef: __kt)
-            repeating_conformances_Parent5_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+            repeating_conformances_Parent5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UInt
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
