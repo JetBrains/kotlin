@@ -49,7 +49,7 @@ fun TypeSystemInferenceExtensionContext.hasRecursiveTypeParametersWithGivenSelfT
     if (selfTypeConstructor.getParameters().any { it.hasRecursiveBounds(selfTypeConstructor) }) return true
     if (!isK2) return false
 
-    if (selfTypeConstructor is CapturedTypeConstructorMarker) {
+    if (selfTypeConstructor is CapturedTypeConstructorMarker || selfTypeConstructor.isIntersection()) {
         return selfTypeConstructor.supertypes().any {
             hasRecursiveTypeParametersWithGivenSelfType(it.typeConstructor())
         }

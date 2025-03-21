@@ -15,5 +15,5 @@ FILE: inferredToNothingDueToBoundsWithSelect.kt
         ^select R|<local>/x|
     }
     public final fun foo(path: R|Path|, e: R|Entity<*>|): R|kotlin/String| {
-        ^foo R|/select|<R|Path|>(R|<local>/e|.R|SubstitutionOverride</Entity.isEqualTo: R|T|>|<R|kotlin/Nothing|>(), R|<local>/path|).R|/Traversable.foo|()
+        ^foo R|/select|<R|Path|>(R|<local>/e|.R|SubstitutionOverride</Entity.isEqualTo: R|T|>|<R|it(CapturedType(*) & Path)|>(), R|<local>/path|).R|/Traversable.foo|()
     }
