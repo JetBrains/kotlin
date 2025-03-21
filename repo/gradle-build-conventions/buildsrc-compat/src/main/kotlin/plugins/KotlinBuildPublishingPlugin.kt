@@ -6,8 +6,10 @@
 package plugins
 
 import capitalize
+import gradle.kotlin.dsl.accessors._1efd8fbcd0db49a81470bda782f0062d.kotlin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
@@ -18,6 +20,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import java.util.*
 import javax.inject.Inject
 
@@ -196,10 +199,147 @@ fun Project.configureDefaultPublishing(
         configureSigning()
     }
 
+    // whitelist of source sets checked for transitive dependencies to be published
+    val allowedSourceSetNames = listOf(
+        "common",
+        "commonMain",
+        "jsMain",
+        "jvmMain",
+        "main",
+        "gradle80",
+        "gradle81",
+        "gradle811",
+        "gradle82",
+        "gradle85",
+        "gradle86",
+        "gradle88",
+        "jvmJava9",
+        "jvmMainJdk7",
+        "jvmMainJdk8",
+        "nativeWasmMain",
+        "wasmCommonMain",
+        "wasmJsMain",
+        "wasmWasiMain",
+        "java9",
+        "annotationsCommonMain",
+        "assertionsCommonMain",
+        "jvmJUnit",
+        "jvmJUnit5",
+        "jvmTestNG",
+    )
+    val excludedSourceSetNames = listOf( // checks compilation name not source set name
+        KotlinCompilation.TEST_COMPILATION_NAME,
+        org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME,
+        "functionalTest",
+        "moduleTest",
+        "compileOnlyDeclarations", // jvm prefix
+        "longRunningTest", // jvm prefix
+        "JUnit5Test",
+        "TestNGTest",
+        "JUnitTest",
+    )
 
     tasks.register("install") {
         group = "publishing"
-        dependsOn(tasks.named("publishToMavenLocal"))
+        description = "Installs the artifacts and itto the local Maven repository."
+        dependsOn(tasks.named("publishToMavenLocal")) // depend on publishing this module
+
+        val installTask = this
+        pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+            val kotlinExtension = project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
+            kotlinExtension.sourceSets.configureEach sourceSet@{
+                kotlinExtension.targets.configureEach target@{
+                    val kotlinCompilations = compilations.filter { it.allKotlinSourceSets.contains(this@sourceSet) }
+                    // use an heuristic that if there's any non-test compilation having this source set, its dependencies should be published
+                    val filtered = kotlinCompilations.filter { !excludedSourceSetNames.contains(it.name) }
+                    val isMainSourceSet = kotlinCompilations.any { !excludedSourceSetNames.contains(it.name) }
+                    if (!isMainSourceSet) return@target
+                    require(allowedSourceSetNames.contains(this@sourceSet.name)) {
+                        "Source set ${this@sourceSet.name} isn't added to allowed ones. Please add it either to excluded or allowed source set names. ${filtered}"
+                    }
+                    println("KOTLIN_MPP Processing source set ${this@sourceSet.name} in project ${project.name}...")
+                    val configurationsAddingRuntimeDeps =
+                        listOf(implementationConfigurationName, apiConfigurationName, runtimeOnlyConfigurationName)
+                    configurationsAddingRuntimeDeps.forEach { configurationName ->
+                        println("KOTLIN_MPP Processing configuration $configurationName in project ${project.name}...")
+                        configurations.named(configurationName) {
+                            require(isCanBeDeclared) {
+                                "Configuration ${this@sourceSet.name} is expected to be declarable."
+                            }
+                            dependencies.withType<ProjectDependency> {
+                                println("KOTLIN_MPP Adding dependency on ${path} to install task from ${installTask.path} (${this@sourceSet.name})")
+                                installTask.dependsOn("${path}:install")
+                                @Suppress("DEPRECATION")
+                                dependencyProject.tasks.findByName("install")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+            val kotlinExtension = kotlin
+            kotlin.sourceSets.configureEach sourceSets@{
+                val kotlinCompilations = kotlinExtension.target.compilations.filter { it.allKotlinSourceSets.contains(this) }
+                // use an heuristic that if there's any non-test compilation having this source set, its dependencies should be published
+                val isMainSourceSet = kotlinCompilations.any { !excludedSourceSetNames.contains(it.name) }
+                if (!isMainSourceSet) return@sourceSets
+                require(allowedSourceSetNames.contains(name)) {
+                    "Source set $name isn't added to allowed ones. Please add it either to excluded or allowed source set names."
+                }
+                println("KOTLIN Processing source set $name in project ${project.name}...")
+                val configurationsAddingRuntimeDeps =
+                    listOf(implementationConfigurationName, apiConfigurationName, runtimeOnlyConfigurationName)
+                configurationsAddingRuntimeDeps.forEach { configurationName ->
+                    println("KOTLIN Processing configuration $configurationName in project ${project.name}...")
+                    configurations.named(configurationName) {
+                        require(isCanBeDeclared) {
+                            "Configuration $configurationName is expected to be declarable."
+                        }
+                        dependencies.withType<ProjectDependency> {
+                            println("KOTLIN Adding dependency on ${path} to install task from ${installTask.path} (${this@sourceSets.name})")
+                            installTask.dependsOn("${path}:install")
+                            @Suppress("DEPRECATION")
+                            dependencyProject.tasks.findByName("install")
+                        }
+                    }
+                }
+            }
+        }
+        pluginManager.withPlugin("java") {
+            val configurationsAddingRuntimeDeps = listOf("implementation", "runtimeOnly")
+            configurationsAddingRuntimeDeps.forEach { configurationName ->
+                println("JAVA Processing configuration $configurationName in project ${project.name}...")
+                configurations.named(configurationName) {
+                    require(isCanBeDeclared) {
+                        "Configuration $name is expected to be declarable."
+                    }
+                    dependencies.withType<ProjectDependency> {
+                        println("JAVA Adding dependency on ${path} to install task from ${installTask.path}")
+                        installTask.dependsOn("${path}:install")
+                        @Suppress("DEPRECATION")
+                        dependencyProject.tasks.findByName("install")
+                    }
+                }
+            }
+        }
+        pluginManager.withPlugin("java-library") {
+            val configurationsAddingRuntimeDeps = listOf("implementation", "api", "runtimeOnly")
+            configurationsAddingRuntimeDeps.forEach { configurationName ->
+                println("JAVA_LIBRARY Processing configuration $configurationName in project ${project.name}...")
+                configurations.named(configurationName) {
+                    require(isCanBeDeclared) {
+                        "Configuration $name is expected to be declarable."
+                    }
+                    dependencies.withType<ProjectDependency> {
+                        println("JAVA_LIBRARY Adding dependency on ${path} to install task from ${installTask.path}")
+                        installTask.dependsOn("${path}:install")
+                        @Suppress("DEPRECATION")
+                        dependencyProject.tasks.findByName("install")
+                    }
+                }
+            }
+        }
     }.also {
         rootProject.tasks.named("mvnInstall").configure {
             dependsOn(it)

@@ -1,0 +1,17 @@
+:compiler:build-tools:kotlin-build-statistics
+:compiler:tests-mutes:mutes-junit4
+:kotlin-build-common
+:kotlin-compiler-runner
+:kotlin-gradle-plugin
+:kotlin-gradle-plugin-api
+:kotlin-gradle-plugin-idea
+:kotlin-gradle-plugin-idea-proto
+:kotlin-gradle-plugin-model
+:kotlin-gradle-plugins-bom
+:kotlin-gradle-statistics
+:kotlin-test
+:kotlin-tooling-metadata
+:kotlin-util-klib-metadata
+:libraries:tools:abi-validation:abi-tools-api
+:libraries:tools:gradle:fus-statistics-gradle-plugin
+:native:kotlin-klib-commonizer-api

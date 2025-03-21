@@ -35,18 +35,27 @@ import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
 
-val kotlinGradlePluginAndItsRequired = arrayOf(
-    ":kotlin-assignment",
+val compilerPlugins = arrayOf(
     ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
-    ":kotlin-noarg",
-    ":kotlin-power-assert",
-    ":kotlin-sam-with-receiver",
-    ":kotlin-lombok",
-    ":kotlin-serialization",
+    ":kotlin-allopen-compiler-plugin.embeddable",
     ":kotlin-android-extensions",
     ":kotlin-android-extensions-runtime",
+    ":kotlin-assignment",
+    ":kotlin-assignment-compiler-plugin.embeddable",
+    ":kotlin-lombok",
+    ":kotlin-lombok-compiler-plugin.embeddable",
+    ":kotlin-noarg",
+    ":kotlin-noarg-compiler-plugin.embeddable",
     ":kotlin-parcelize-compiler",
+    ":kotlin-power-assert",
+    ":kotlin-power-assert-compiler-plugin.embeddable",
+    ":kotlin-sam-with-receiver",
+    ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
+    // scripting is enabled by default compiler plugin
+)
+
+val kotlinGradlePluginAndItsRequired = compilerPlugins + arrayOf(
     ":kotlin-compiler-embeddable",
     ":native:kotlin-native-utils",
     ":kotlin-util-klib",
@@ -72,15 +81,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-stdlib-jdk8",
     ":kotlin-dom-api-compat",
     ":examples:annotation-processor-example",
-    ":kotlin-assignment-compiler-plugin.embeddable",
-    ":kotlin-allopen-compiler-plugin.embeddable",
-    ":kotlin-noarg-compiler-plugin.embeddable",
-    ":kotlin-power-assert-compiler-plugin.embeddable",
-    ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
-    ":kotlin-lombok-compiler-plugin.embeddable",
-    ":kotlinx-serialization-compiler-plugin.embeddable",
     ":kotlin-annotation-processing-embeddable",
-    ":plugins:compose-compiler-plugin:compiler",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",

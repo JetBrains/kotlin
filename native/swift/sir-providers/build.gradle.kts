@@ -13,9 +13,9 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     implementation(project(":native:swift:sir"))
-    implementation(project(":analysis:analysis-api"))
-    implementation(project(":compiler:psi"))
-    implementation(project(":native:analysis-api-based-export-common"))
+    compileOnly(project(":analysis:analysis-api"))
+    compileOnly(project(":compiler:psi"))
+    compileOnly(project(":native:analysis-api-based-export-common"))
 }
 
 sourceSets {

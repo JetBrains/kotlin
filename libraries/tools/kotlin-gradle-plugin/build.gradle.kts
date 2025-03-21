@@ -625,3 +625,20 @@ fun avoidPublishingTestFixtures() {
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }
 avoidPublishingTestFixtures()
+
+tasks.named("install") {
+    // implicit dependencies added at runtime
+    val implicitDependencies = buildList {
+        //region stdlib, check the "kotlin.stdlib.default.dependency" Gradle property related code
+        add(":kotlin-stdlib")
+        add(":kotlin-stdlib-common")
+        add(":kotlin-stdlib-jdk7")
+        add(":kotlin-stdlib-jdk8")
+        //endregion
+        add(":libraries:tools:abi-validation:abi-tools")
+        add(":compiler:build-tools:kotlin-build-tools-impl")
+    }
+    for (dependencyProject in implicitDependencies) {
+        dependsOn("$dependencyProject:install")
+    }
+}
