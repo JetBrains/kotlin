@@ -171,10 +171,6 @@ constructor(
         targets.all { it.withSourcesJar(publish) }
     }
 
-    private fun warnAboutTargetFromPresetDeprecation() {
-        project.reportDiagnostic(KotlinToolingDiagnostics.TargetFromPreset())
-    }
-
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
         KotlinSoftwareComponentWithCoordinatesAndPublication(
             project,
