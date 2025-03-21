@@ -42,7 +42,7 @@ class NativeInliningFacade(
             PhaserState(),
             NativePreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration, diagnosticReporter)
         ).runPreSerializationLoweringPhases(
-            nativeLoweringsOfTheFirstPhase,
+            nativeLoweringsOfTheFirstPhase(module.languageVersionSettings),
             inputArtifact.irModuleFragment,
         )
 

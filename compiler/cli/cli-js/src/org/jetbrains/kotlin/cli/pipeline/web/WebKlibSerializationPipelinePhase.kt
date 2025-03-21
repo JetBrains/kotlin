@@ -41,7 +41,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
                 configuration.phaseConfig!!,
                 PhaserState(),
                 JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
-            ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase)
+            ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         }
 
         val outputKlibPath = configuration.computeOutputKlibPath()

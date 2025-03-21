@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -21,7 +19,6 @@ fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLowe
         runPhase(
             lowering,
             module,
-            disable = !this.context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
         )
     }
 }

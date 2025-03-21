@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningOnlyPrivateFunctionsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -105,19 +107,21 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
-@Suppress("UNUSED_PARAMETER")
 fun loweringsOfTheFirstPhase(
-    irMangler: IrMangler,
-): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
-    lateinitPhase,
-    sharedVariablesLoweringPhase,
-    localClassesInInlineLambdasPhase,
-    arrayConstructorPhase,
-    inlineOnlyPrivateFunctionsPhase,
-    checkInlineDeclarationsAfterInliningOnlyPrivateFunctions,
-    outerThisSpecialAccessorInInlineFunctionsPhase,
-    syntheticAccessorGenerationPhase,
-    validateIrAfterInliningOnlyPrivateFunctions,
-//    inlineAllFunctionsPhase(irMangler),
-//        validateIrAfterInliningAllFunctions
-)
+    @Suppress("UNUSED_PARAMETER") irMangler: IrMangler,
+    languageVersionSettings: LanguageVersionSettings
+): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+        this += lateinitPhase
+        this += sharedVariablesLoweringPhase
+        this += localClassesInInlineLambdasPhase
+        this += arrayConstructorPhase
+        this += inlineOnlyPrivateFunctionsPhase
+        this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions
+        this += outerThisSpecialAccessorInInlineFunctionsPhase
+        this += syntheticAccessorGenerationPhase
+        this += validateIrAfterInliningOnlyPrivateFunctions
+        //this += inlineAllFunctionsPhase(irMangler)
+        //this += validateIrAfterInliningAllFunctions
+    }
+}

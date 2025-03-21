@@ -68,7 +68,7 @@ class JsIrInliningFacade(
                 diagnosticReporter,
             ),
         ).runPreSerializationLoweringPhases(
-            jsLoweringsOfTheFirstPhase,
+            jsLoweringsOfTheFirstPhase(module.languageVersionSettings),
             inputArtifact.irModuleFragment,
         )
 

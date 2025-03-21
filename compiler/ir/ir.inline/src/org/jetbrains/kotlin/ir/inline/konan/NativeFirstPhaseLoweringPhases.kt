@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
@@ -24,5 +26,12 @@ private val assertionWrapperPhase = makeIrModulePhase(
     name = "AssertionWrapperLowering",
 )
 
-val nativeLoweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> =
-    listOf(upgradeCallableReferencesPhase, assertionWrapperPhase) + loweringsOfTheFirstPhase(KonanManglerIr)
+fun nativeLoweringsOfTheFirstPhase(
+    languageVersionSettings: LanguageVersionSettings,
+): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+        this += upgradeCallableReferencesPhase // TODO: create a separate language feature to upgrade callable references
+        this += assertionWrapperPhase
+    }
+    this += loweringsOfTheFirstPhase(KonanManglerIr, languageVersionSettings)
+}
