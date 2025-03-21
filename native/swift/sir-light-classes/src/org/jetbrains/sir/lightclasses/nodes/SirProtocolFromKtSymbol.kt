@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -29,9 +28,8 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
-internal class SirProtocolFromKtSymbol(
+internal open class SirProtocolFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol> {
     override val origin: SirOrigin = KotlinSource(ktSymbol)
@@ -100,11 +98,10 @@ internal class SirProtocolFromKtSymbol(
  */
 internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
     val targetProtocol: SirProtocol,
 ) : SirExtension(), SirFromKtSymbol<KaNamedClassSymbol> {
-    constructor(protocol: SirProtocolFromKtSymbol) : this(protocol.ktSymbol, protocol.ktModule, protocol.sirSession, protocol)
+    constructor(protocol: SirProtocolFromKtSymbol) : this(protocol.ktSymbol, protocol.sirSession, protocol)
 
     override val origin: SirOrigin = KotlinSource(ktSymbol)
 
@@ -196,4 +193,14 @@ private class SirRelocatedVariable(
     override val attributes: List<SirAttribute> get() = source.attributes
     override val getter: SirGetter get() = source.getter
     override val setter: SirSetter? get() = source.setter
+}
+
+internal class SirStubProtocol(
+    ktSymbol: KaNamedClassSymbol,
+    sirSession: SirSession
+) : SirProtocolFromKtSymbol(
+    ktSymbol,
+    sirSession
+) {
+    override val declarations: MutableList<SirDeclaration> = mutableListOf()
 }

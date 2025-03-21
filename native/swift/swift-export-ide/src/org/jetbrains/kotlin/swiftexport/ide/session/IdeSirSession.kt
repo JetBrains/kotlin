@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
+import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
 
 public class IdeSirSession(
     kaModule: KaModule,
@@ -21,14 +22,20 @@ public class IdeSirSession(
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
     targetPackageFqName: FqName?,
 ) : SirSession {
+    override val useSiteModule: KaModule = kaModule
+
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
     override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(
         platformLibs = platformLibs,
     )
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
-        declarationsProvider = SirDeclarationFromKtSymbolProvider(
+        declarationsProvider = StubbingSirDeclarationProvider(
             ktModule = kaModule,
             sirSession = sirSession,
+            declarationsProvider = SirDeclarationFromKtSymbolProvider(
+                ktModule = kaModule,
+                sirSession = sirSession,
+            )
         )
     )
     override val enumGenerator: SirEnumGenerator = SirEnumGeneratorImpl(moduleForPackageEnums)

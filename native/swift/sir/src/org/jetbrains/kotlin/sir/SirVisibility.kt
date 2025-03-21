@@ -9,6 +9,6 @@ enum class SirVisibility {
     PRIVATE,
     FILEPRIVATE,
     INTERNAL,
-    PUBLIC,
     PACKAGE,
+    PUBLIC,
 }

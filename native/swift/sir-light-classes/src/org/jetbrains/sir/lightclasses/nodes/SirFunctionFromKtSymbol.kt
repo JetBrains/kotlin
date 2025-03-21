@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -17,14 +16,11 @@ import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
-import org.jetbrains.sir.lightclasses.utils.isSubtypeOf
-import org.jetbrains.sir.lightclasses.utils.overridableCandidates
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
 internal class SirFunctionFromKtSymbol(
     override val ktSymbol: KaNamedFunctionSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirFunction(), SirFromKtSymbol<KaNamedFunctionSymbol> {
 

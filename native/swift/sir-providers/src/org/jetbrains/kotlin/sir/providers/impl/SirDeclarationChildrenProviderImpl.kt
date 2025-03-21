@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.sir.SirAvailability
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
@@ -20,8 +21,12 @@ public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSessi
     }
 
     private fun SirSession.isAccessible(symbol: KaDeclarationSymbol, kaSession: KaSession): Boolean =
-        when (symbol.sirVisibility(kaSession)) {
-            null, SirVisibility.PRIVATE, SirVisibility.FILEPRIVATE, SirVisibility.INTERNAL -> false
-            SirVisibility.PUBLIC, SirVisibility.PACKAGE -> true
+        when (val availability = symbol.sirAvailability(kaSession)) {
+            is SirAvailability.Available -> when (availability.visibility) {
+                SirVisibility.PUBLIC, SirVisibility.PACKAGE -> true
+                SirVisibility.PRIVATE, SirVisibility.FILEPRIVATE, SirVisibility.INTERNAL -> false
+            }
+            is SirAvailability.Unavailable -> false
+            is SirAvailability.Hidden -> true // these will need to be stubbed at some later stage
         }
 }

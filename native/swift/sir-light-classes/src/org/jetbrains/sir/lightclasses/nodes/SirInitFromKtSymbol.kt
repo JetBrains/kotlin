@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -26,12 +25,11 @@ import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal class SirInitFromKtSymbol(
     override val ktSymbol: KaConstructorSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirInit(), SirFromKtSymbol<KaConstructorSymbol> {
 
     override val visibility: SirVisibility by lazyWithSessions {
-        ktSymbol.sirVisibility(this) ?: error("$ktSymbol shouldn't be exposed to SIR")
+        ktSymbol.sirAvailability(this).visibility ?: error("$ktSymbol shouldn't be exposed to SIR")
     }
 
     override val isFailable: Boolean = false

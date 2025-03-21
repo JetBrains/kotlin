@@ -28,13 +28,16 @@ class TestSirSession(
     kaModule: KaModule,
     referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
+    override val useSiteModule: KaModule = kaModule
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
     override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(emptyList())
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
-        declarationsProvider = SirDeclarationFromKtSymbolProvider(
-            ktModule = kaModule,
-            sirSession = sirSession,
-            kaClassReferenceHandler = referencedTypeHandler,
+        declarationsProvider = ObservingSirDeclarationProvider(
+            declarationsProvider = SirDeclarationFromKtSymbolProvider(
+                ktModule = kaModule,
+                sirSession = sirSession,
+            ),
+            kaClassReferenceHandler = referencedTypeHandler
         )
     )
     override val enumGenerator: SirEnumGenerator = SirEnumGeneratorImpl(buildModule { name = "Packages" })

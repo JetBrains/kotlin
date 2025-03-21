@@ -1,6 +1,4 @@
 public enum kotlin {
-    public enum time {
-    }
 }
 public enum kotlinx {
     public enum serialization {

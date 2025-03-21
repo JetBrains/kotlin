@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
+import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
@@ -105,7 +107,7 @@ private fun KaSession.createTranslationResult(
     sirModule.updateImport(SirImport(config.runtimeSupportModuleName))
     sirModule.updateImport(SirImport(config.runtimeModuleName))
     val bridgesName = "${moduleConfig.bridgeModuleName}_${sirModule.name}"
-    val bridges = generateModuleBridges(sirModule, bridgesName)
+    val bridges = sirSession.withSessions { generateModuleBridges(sirModule, bridgesName) }
     // Serialize SirModule to sources to avoid leakage of SirSession (and KaSession, likely) outside the analyze call.
     val swiftSourceCode = SirAsSwiftSourcesPrinter.print(
         sirModule,
@@ -131,7 +133,7 @@ private fun KaSession.createTranslationResult(
 /**
  * Generates method bodies for functions in [sirModule], as well as Kotlin and C [BridgeSources].
  */
-private fun KaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleName: String): BridgeSources {
+private fun SirAndKaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleName: String): BridgeSources {
     val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
 
     // KT-68253: bridge generation could be better

@@ -265,7 +265,7 @@ open class hiddenT() {
     open val deprecationRestatedV: Unit get() = Unit
 }
 
-open class hiddenСhildT : hiddenT() {
+open class hiddenChildT : hiddenT() {
     override fun deprecationFurtherRelaxedF() = Unit
     override val deprecationFurtherRelaxedV: Unit get() = Unit
     override fun deprecationRelaxedF() = Unit

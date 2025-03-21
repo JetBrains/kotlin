@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
+import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
 
 internal class StandaloneSirSession(
-    internal val useSiteModule: KaModule,
+    override val useSiteModule: KaModule,
     moduleToTranslate: KaModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
@@ -31,10 +32,16 @@ internal class StandaloneSirSession(
     override val declarationNamer = SirDeclarationNamerImpl()
 
     override val declarationProvider = CachingSirDeclarationProvider(
-        declarationsProvider = SirDeclarationFromKtSymbolProvider(
-            ktModule = useSiteModule,
-            sirSession = sirSession,
-            kaClassReferenceHandler = referencedTypeHandler,
+        declarationsProvider = ObservingSirDeclarationProvider(
+            declarationsProvider = StubbingSirDeclarationProvider(
+                ktModule = useSiteModule,
+                sirSession = sirSession,
+                declarationsProvider = SirDeclarationFromKtSymbolProvider(
+                    ktModule = useSiteModule,
+                    sirSession = sirSession,
+                )
+            ),
+            kaClassReferenceHandler = referencedTypeHandler
         )
     )
 

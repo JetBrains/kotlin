@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.sir.providers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -34,6 +36,8 @@ public interface SirSession :
 {
     public val sirSession: SirSession
         get() = this
+
+    public val useSiteModule: KaModule
 
     public val enumGenerator: SirEnumGenerator
 
@@ -82,8 +86,13 @@ public interface SirSession :
             )
         }
 
+    @Deprecated("Use this.sirAvailability instead", ReplaceWith("this.sirAvailability(ktAnalysisSession)"))
+    @Suppress("DEPRECATION")
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
+
+    override fun KaDeclarationSymbol.sirAvailability(ktAnalysisSession: KaSession): SirAvailability =
+        with(visibilityChecker) { this@sirAvailability.sirAvailability(ktAnalysisSession) }
 
     override fun Sequence<KaDeclarationSymbol>.extractDeclarations(kaSession: KaSession): Sequence<SirDeclaration> =
         with(childrenProvider) { this@extractDeclarations.extractDeclarations(kaSession) }
@@ -153,6 +162,20 @@ public sealed interface SirTranslationResult {
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
         override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration, bridgedImplementation)
+    }
+
+    public data class StubClass(
+        public val declaration: SirClass,
+    ) : SirTranslationResult {
+        override val primaryDeclaration: SirDeclaration get() = declaration
+        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration)
+    }
+
+    public data class StubInterface(
+        public val declaration: SirProtocol,
+    ) : SirTranslationResult {
+        override val primaryDeclaration: SirDeclaration get() = declaration
+        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration)
     }
 }
 
@@ -242,10 +265,33 @@ public interface SirTypeProvider {
     ): SirType
 }
 
+
+
 public interface SirVisibilityChecker {
     /**
      * Determines visibility of the given [KaDeclarationSymbol].
      * @return null if symbol should not be exposed to SIR completely.
      */
-    public fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility?
+    @Deprecated(
+        "Use sirAvailability instead",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith("this.sirAvailability(ktAnalysisSession)")
+    )
+    public fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
+        this.sirAvailability(ktAnalysisSession).visibility
+
+    /**
+     * Determines availability of the given [KaDeclarationSymbol].
+     */
+    public fun KaDeclarationSymbol.sirAvailability(ktAnalysisSession: KaSession): SirAvailability
+}
+
+public interface SirAndKaSession : KaSession, SirSession
+
+public inline fun <T> SirSession.withSessions(crossinline block: SirAndKaSession.() -> T): T {
+    return analyze(this.useSiteModule) {
+        object : SirSession by this@withSessions, KaSession by this@analyze, SirAndKaSession {
+            override val useSiteModule: KaModule get() = this@analyze.useSiteModule
+        }.block()
+    }
 }

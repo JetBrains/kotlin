@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
@@ -42,7 +41,6 @@ import kotlin.getValue
 internal class SirFunctionFromKtPropertySymbol(
     val ktPropertySymbol: KaPropertySymbol,
     override val ktSymbol: KaPropertyAccessorSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirFunction(), SirFromKtSymbol<KaPropertyAccessorSymbol> {
 

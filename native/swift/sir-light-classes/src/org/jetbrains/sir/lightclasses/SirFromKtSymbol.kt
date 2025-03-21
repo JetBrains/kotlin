@@ -11,6 +11,5 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 
 internal interface SirFromKtSymbol<S : KaDeclarationSymbol> {
     val ktSymbol: S
-    val ktModule: KaModule
     val sirSession: SirSession
 }

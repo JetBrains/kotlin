@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirTypealias
+import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.SirAndKaSession
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 @OptIn(KaExperimentalApi::class)

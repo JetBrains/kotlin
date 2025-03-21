@@ -198,4 +198,3 @@ public fun typealiases_TypealiasWithFactoryWithoutParameters(): kotlin.native.in
     val _result = typealiases.TypealiasWithFactoryWithoutParameters()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
-

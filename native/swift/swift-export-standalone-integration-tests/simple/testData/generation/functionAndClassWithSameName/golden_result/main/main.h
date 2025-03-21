@@ -58,4 +58,3 @@ uintptr_t test_factory_modules_ClassFromDependency__TypesOfArguments__KotlinRunt
 uintptr_t test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t arg);
 
 uintptr_t typealiases_TypealiasWithFactoryWithoutParameters();
-

@@ -9,33 +9,34 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.BridgeGenerator
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
+import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 
-internal fun KaSession.buildBridgeRequests(generator: BridgeGenerator, container: SirDeclarationContainer): List<BridgeRequest> = buildList {
-    addAll(
-        container
-            .allCallables()
-            .filterIsInstance<SirInit>()
-            .flatMap { constructFunctionBridgeRequests(it, generator) }
-    )
-    addAll(
-        container
-            .allCallables()
-            .filterIsInstance<SirFunction>()
-            .flatMap { it.constructFunctionBridgeRequests(generator) + it.constructPropertyAccessorsBridgeRequests(generator) }
-    )
-    addAll(
-        container
-            .allVariables()
-            .flatMap { it.constructFunctionBridgeRequests(generator) }
-    )
-    addAll(
-        container
-            .allClasses()
-            .flatMap { it.constructTypeBindingBridgeRequests() }
-    )
-    addAll(
-        container
-            .allContainers()
-            .flatMap { buildBridgeRequests(generator, it) }
-    )
-}
+internal fun SirAndKaSession.buildBridgeRequests(generator: BridgeGenerator, container: SirDeclarationContainer): List<BridgeRequest> = buildList {
+        addAll(
+            container
+                .allCallables()
+                .filterIsInstance<SirInit>()
+                .flatMap { constructFunctionBridgeRequests(it, generator) }
+        )
+        addAll(
+            container
+                .allCallables()
+                .filterIsInstance<SirFunction>()
+                .flatMap { constructFunctionBridgeRequests(it, generator) + constructPropertyAccessorsBridgeRequests(it, generator) }
+        )
+        addAll(
+            container
+                .allVariables()
+                .flatMap { constructFunctionBridgeRequests(it, generator) }
+        )
+        addAll(
+            container
+                .allClasses()
+                .flatMap { it.constructTypeBindingBridgeRequests() }
+        )
+        addAll(
+            container
+                .allContainers()
+                .flatMap { buildBridgeRequests(generator, it) }
+        )
+    }

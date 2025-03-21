@@ -200,4 +200,3 @@ void namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfAr
 uintptr_t namespace_deeper_Object_with_package_INNER_OBJECT_get();
 
 uintptr_t namespace_deeper_Object_with_package_get();
-

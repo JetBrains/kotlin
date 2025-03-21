@@ -6,7 +6,6 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
@@ -28,7 +27,6 @@ import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal abstract class SirAbstractVariableFromKtSymbol(
     override val ktSymbol: KaVariableSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirVariable(), SirFromKtSymbol<KaVariableSymbol> {
 
@@ -46,7 +44,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
     override val getter: SirGetter by lazy {
         ((ktSymbol as? KaPropertySymbol)?.let {
             it.getter?.let {
-                SirGetterFromKtSymbol(it, ktModule, sirSession)
+                SirGetterFromKtSymbol(it, sirSession)
             }
         } ?: buildGetter()).also {
             it.parent = this@SirAbstractVariableFromKtSymbol
@@ -55,7 +53,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
     override val setter: SirSetter? by lazy {
         ((ktSymbol as? KaPropertySymbol)?.let {
             it.setter?.let {
-                SirSetterFromKtSymbol(it, ktModule, sirSession)
+                SirSetterFromKtSymbol(it, sirSession)
             }
         } ?: ktSymbol.isVal.ifFalse { buildSetter() })?.also {
             it.parent = this@SirAbstractVariableFromKtSymbol
@@ -86,9 +84,8 @@ internal abstract class SirAbstractVariableFromKtSymbol(
 
 internal class SirVariableFromKtSymbol(
     ktSymbol: KaVariableSymbol,
-    ktModule: KaModule,
     sirSession: SirSession,
-) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
     override val isInstance: Boolean
         get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
 }
@@ -96,9 +93,8 @@ internal class SirVariableFromKtSymbol(
 @OptIn(KaExperimentalApi::class)
 internal class SirEnumEntriesStaticPropertyFromKtSymbol(
     ktSymbol: KaPropertySymbol,
-    ktModule: KaModule,
     sirSession: SirSession,
-) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
     override val isInstance: Boolean
         get() = false
 
@@ -121,15 +117,13 @@ internal class SirEnumEntriesStaticPropertyFromKtSymbol(
 
 internal class SirEnumCaseFromKtSymbol(
     ktSymbol: KaEnumEntrySymbol,
-    ktModule: KaModule,
     sirSession: SirSession,
-) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
     override val isInstance: Boolean = false
 }
 
 internal class SirGetterFromKtSymbol(
     override val ktSymbol: KaPropertyGetterSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirGetter(), SirFromKtSymbol<KaPropertyGetterSymbol> {
     override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
@@ -143,7 +137,6 @@ internal class SirGetterFromKtSymbol(
 
 internal class SirSetterFromKtSymbol(
     override val ktSymbol: KaPropertySetterSymbol,
-    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirSetter(), SirFromKtSymbol<KaPropertySetterSymbol> {
     override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }

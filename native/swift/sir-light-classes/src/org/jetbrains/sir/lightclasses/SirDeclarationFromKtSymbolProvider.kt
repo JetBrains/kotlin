@@ -12,23 +12,19 @@ import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
-import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.sir.lightclasses.nodes.*
 
 public class SirDeclarationFromKtSymbolProvider(
     private val ktModule: KaModule,
     private val sirSession: SirSession,
-    private val kaClassReferenceHandler: SirKaClassReferenceHandler? = null,
 ) : SirDeclarationProvider {
     public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
         when (val ktSymbol = this@toSir) {
             is KaNamedClassSymbol -> {
-                kaClassReferenceHandler?.onClassReference(ktSymbol)
                 if (ktSymbol.classKind == KaClassKind.INTERFACE) {
                     val protocol = SirProtocolFromKtSymbol(
                         ktSymbol = ktSymbol,
-                        ktModule = ktModule,
                         sirSession = sirSession,
                     )
                     SirTranslationResult.RegularInterface(
@@ -40,7 +36,6 @@ public class SirDeclarationFromKtSymbolProvider(
                 } else {
                     createSirClassFromKtSymbol(
                         ktSymbol = ktSymbol,
-                        ktModule = ktModule,
                         sirSession = sirSession,
                     ).let(SirTranslationResult::RegularClass)
                 }
@@ -48,14 +43,12 @@ public class SirDeclarationFromKtSymbolProvider(
             is KaConstructorSymbol -> {
                 SirInitFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    ktModule = ktModule,
                     sirSession = sirSession,
                 ).let(SirTranslationResult::Constructor)
             }
             is KaNamedFunctionSymbol -> {
                 SirFunctionFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    ktModule = ktModule,
                     sirSession = sirSession,
                 ).let(SirTranslationResult::RegularFunction)
             }
@@ -71,7 +64,6 @@ public class SirDeclarationFromKtSymbolProvider(
             is KaTypeAliasSymbol -> {
                 SirTypealiasFromKtSymbol(
                     ktSymbol = ktSymbol,
-                    ktModule = ktModule,
                     sirSession = sirSession,
                 ).let(SirTranslationResult::TypeAlias)
             }
@@ -80,14 +72,12 @@ public class SirDeclarationFromKtSymbolProvider(
     private fun KaPropertyAccessorSymbol.toSirFunction(ktPropertySymbol: KaPropertySymbol): SirFunction = SirFunctionFromKtPropertySymbol(
         ktPropertySymbol = ktPropertySymbol,
         ktSymbol = this,
-        ktModule = ktModule,
         sirSession = sirSession,
     )
 
     private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol = when (this) {
         is KaEnumEntrySymbol -> SirEnumCaseFromKtSymbol(
             ktSymbol = this,
-            ktModule = ktModule,
             sirSession = sirSession,
         )
         else ->
@@ -95,11 +85,10 @@ public class SirDeclarationFromKtSymbolProvider(
                 && isStatic
                 && name == StandardNames.ENUM_ENTRIES
             ) {
-                SirEnumEntriesStaticPropertyFromKtSymbol(this, ktModule, sirSession)
+                SirEnumEntriesStaticPropertyFromKtSymbol(this, sirSession)
             } else {
                 SirVariableFromKtSymbol(
                     ktSymbol = this@toSirVariable,
-                    ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }

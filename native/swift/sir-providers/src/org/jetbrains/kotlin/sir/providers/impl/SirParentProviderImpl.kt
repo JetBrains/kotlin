@@ -76,8 +76,9 @@ public class SirParentProviderImpl(
                     }
                 } else {
                     parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
+                        ?: error("parent declaration does not produce suitable SIR")
                 }
-            } ?: error("parent declaration does not produce suitable SIR")
+            }
         }
     }
 }

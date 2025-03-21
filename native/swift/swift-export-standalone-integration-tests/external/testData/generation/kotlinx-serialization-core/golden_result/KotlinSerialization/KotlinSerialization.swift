@@ -1015,67 +1015,67 @@ public extension ExportedKotlinPackages.kotlinx.serialization.builtins {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Boolean.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Byte.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Char.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Double.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Float.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Int.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Long.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.Short.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.String.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.UByte.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.UInt.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.ULong.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.UShort.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }
@@ -1085,7 +1085,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.builtins {
         fatalError()
     }
     public static func serializer(
-        _ receiver: ExportedKotlinPackages.kotlin.time.Duration.Companion
+        _ receiver: Swift.Never
     ) -> Swift.Never {
         fatalError()
     }

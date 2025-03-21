@@ -110,14 +110,14 @@ public class SirTypeProviderImpl(
 
                         else -> {
                             val classSymbol = kaType.symbol
-                            if (classSymbol.sirVisibility(ctx.ktAnalysisSession) == SirVisibility.PUBLIC) {
-                                if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
-                                    SirExistentialType(classSymbol.toSir().allDeclarations.firstIsInstance<SirProtocol>())
-                                } else {
-                                    ctx.nominalTypeFromClassSymbol(classSymbol)
-                                }
-                            } else {
-                                null
+                            when (classSymbol.sirAvailability(ctx.ktAnalysisSession)) {
+                                is SirAvailability.Available, is SirAvailability.Hidden ->
+                                    if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
+                                        SirExistentialType(classSymbol.toSir().allDeclarations.firstIsInstance<SirProtocol>())
+                                    } else {
+                                        ctx.nominalTypeFromClassSymbol(classSymbol)
+                                    }
+                                is SirAvailability.Unavailable -> null
                             }
                         }
                     }
