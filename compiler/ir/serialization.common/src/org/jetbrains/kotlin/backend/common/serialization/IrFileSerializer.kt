@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
@@ -542,10 +543,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
-        val proto = ProtoMemberAccessCommon.newBuilder()
-
-        requireAbiAtLeast(ABI_LEVEL_2_2, { "Single-list argument" }) { call }
-        for (arg in call.arguments) {
+        fun buildProtoNullableIrExpression(arg: IrExpression?): ProtoNullableIrExpression.Builder {
             val argOrNullProto = ProtoNullableIrExpression.newBuilder()
             if (arg == null) {
                 // Am I observing an IR generation regression?
@@ -557,7 +555,27 @@ open class IrFileSerializer(
             } else {
                 argOrNullProto.expression = serializeExpression(arg)
             }
-            proto.addArgument(argOrNullProto)
+            return argOrNullProto
+        }
+
+        val proto = ProtoMemberAccessCommon.newBuilder()
+
+        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
+            for (arg in call.arguments) {
+                proto.addArgument(buildProtoNullableIrExpression(arg))
+            }
+        } else { // KLIB ABI 2.1:
+            val callableSymbol = call.symbol
+            require(callableSymbol.isBound) { callableSymbol }
+
+            for ((parameter, arg) in call.getAllArgumentsWithIr()) {
+                when (parameter.kind) {
+                    IrParameterKind.DispatchReceiver -> if (arg != null) proto.dispatchReceiver = serializeExpression(arg)
+                    IrParameterKind.ExtensionReceiver -> if (arg != null) proto.extensionReceiver = serializeExpression(arg)
+                    IrParameterKind.Context -> serializationNotSupportedAtCurrentAbiLevel({ "Context parameter" }) { callableSymbol.owner }
+                    IrParameterKind.Regular -> proto.addRegularArgument(buildProtoNullableIrExpression(arg))
+                }
+            }
         }
 
         for (typeArg in call.typeArguments) {
@@ -1561,10 +1579,16 @@ open class IrFileSerializer(
         prefix: (T) -> String = { it::class.simpleName ?: "IrElement" },
         irNode: () -> T,
     ) {
-        require(settings.abiCompatibilityLevel.isAtLeast(abiCompatibilityLevel)) {
-            val irNode = irNode()
-            "${prefix(irNode)} serialization is not supported at ABI compatibility level ${settings.abiCompatibilityLevel}: ${irNode.render()}"
-        }
+        if (!settings.abiCompatibilityLevel.isAtLeast(abiCompatibilityLevel))
+            serializationNotSupportedAtCurrentAbiLevel(prefix, irNode)
+    }
+
+    private inline fun <T : IrElement> serializationNotSupportedAtCurrentAbiLevel(
+        prefix: (T) -> String = { it::class.simpleName ?: "IrElement" },
+        irNode: () -> T,
+    ): Nothing {
+        val irNode = irNode()
+        error("${prefix(irNode)} serialization is not supported at ABI compatibility level ${settings.abiCompatibilityLevel}: ${irNode.render()}")
     }
 }
 
