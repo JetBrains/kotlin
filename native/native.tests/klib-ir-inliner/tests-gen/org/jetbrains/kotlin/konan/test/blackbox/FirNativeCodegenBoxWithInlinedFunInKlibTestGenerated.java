@@ -27234,7 +27234,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
         @TestDataPath("$PROJECT_ROOT")
-        @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
         public class Directive {
@@ -27276,18 +27275,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Test
             public void testAllFilesPresentInChild() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/parent")
-          @TestDataPath("$PROJECT_ROOT")
-          @Tag("klibIrInliner")
-          @UseExtTestCaseGroupProvider()
-          public class Parent {
-            @Test
-            public void testAllFilesPresentInParent() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/parent"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
         }

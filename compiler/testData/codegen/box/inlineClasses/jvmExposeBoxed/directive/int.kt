@@ -1,25 +1,24 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
+// CHECK_BYTECODE_LISTING
 // LANGUAGE: +ImplicitJvmExposeBoxed
 
 // FILE: Test.kt
-class TopLevelClass {
-    fun UInt.foo(i: Int): UInt = this + i.toUInt()
-}
-
 @OptIn(ExperimentalStdlibApi::class)
 @JvmExposeBoxed("create")
 fun createUInt(): UInt = 1u
 
+fun foo(u: UInt): Int = u.toInt()
+
 // FILE: Main.java
 public class Main {
-    public kotlin.UInt test() {
-        return new TopLevelClass().foo(TestKt.create(), 2);
+    public int test() {
+        return TestKt.foo(TestKt.create());
     }
 }
 
 // FILE: Box.kt
 fun box(): String {
-    if (Main().test() == 3u) return "OK"
+    if (Main().test() == 1) return "OK"
     return "FAIL"
 }

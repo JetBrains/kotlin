@@ -141,15 +141,6 @@ fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructo
     }
 
 fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrConstructorCall> {
-    // @JvmExposeBoxed contradicts @JvmSynthetic, so keep it on mangled declaration only
-    fun List<IrConstructorCall>.withoutJvmSyntheticAnnotation(): List<IrConstructorCall> {
-        return this.toMutableList().apply {
-            removeAll {
-                it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true
-            }
-        }
-    }
-
     if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
         val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
         // If name is not provided, copy the name from @JvmName annotation, if the latter is present
@@ -159,12 +150,12 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
                 jvmExposeBoxedAnnotation?.arguments[0] = jvmName
             }
         }
-        return withoutJvmSyntheticAnnotation()
+        return this
     }
     // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
     // or -Xjvm-expose-boxed is specified. Add the annotation.
     val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
-    return this.withoutJvmSyntheticAnnotation() + IrConstructorCallImpl.fromSymbolOwner(
+    return this + IrConstructorCallImpl.fromSymbolOwner(
         constructor.owner.returnType,
         constructor
     ).apply {

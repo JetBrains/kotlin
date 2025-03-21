@@ -1,8 +1,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
 // TARGET_BACKEND: JVM_IR
-//todo: check with lightweightlambdas and without it
-// JVM_EXPOSE_BOXED
+// LANGUAGE: +ImplicitJvmExposeBoxed
 
 // FILE: IC.kt
 @JvmInline

@@ -27277,18 +27277,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/parent")
-          @TestDataPath("$PROJECT_ROOT")
-          @ClassicPipeline()
-          @UseExtTestCaseGroupProvider()
-          public class Parent {
-            @Test
-            public void testAllFilesPresentInParent() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/parent"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-          }
         }
       }
 

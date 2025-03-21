@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// JVM_EXPOSE_BOXED
+// LANGUAGE: +ImplicitJvmExposeBoxed
 
 // FILE: Test.kt
 class TopLevelClass {

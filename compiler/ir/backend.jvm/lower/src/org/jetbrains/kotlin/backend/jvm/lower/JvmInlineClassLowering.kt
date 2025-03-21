@@ -126,7 +126,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             handleSpecificNewClass(declaration)
         }
 
-        // Per KEEP, @JvmBoxedAnnotation is generated only on callables.
+        // Per KEEP, @JvmExposeBoxed annotation is generated only on callables.
         //   As a result, both annotation processors and runtime reflection do not see @JvmExposeBoxed on the containers (file, class)
         //   but rather on each individual operation.
         // So, drop the annotation from classes and files.
@@ -521,7 +521,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                 +irSetField(
                     irGet(valueClass.thisReceiver!!),
                     getInlineClassBackingField(valueClass),
-                    irGet(this@apply.valueParameters[0])
+                    irGet(this@apply.parameters[0])
                 )
             }
         }
@@ -535,7 +535,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
         function.parameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
-            val argument = function.valueParameters[0]
+            val argument = function.parameters[0]
             val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
             valueMap[valueClass.thisReceiver!!.symbol] = thisValue
             for (initBlock in initBlocks) {
@@ -549,50 +549,63 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         valueClass.declarations.removeAll(initBlocks)
         valueClass.declarations += function
 
-        // Add constructor, which is exposed to Java
         if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
-            val exposedConstructor = valueClass.addConstructor {
+            valueClass.addExposedConstructor(irConstructor, primaryConstructor, function)
+        }
+    }
+
+    // Add constructor, which is exposed to Java
+    private fun IrClass.addExposedConstructor(
+        irConstructor: IrConstructor,
+        primaryConstructor: IrConstructor,
+        function: IrSimpleFunction,
+    ) {
+        addConstructor {
+            updateFrom(irConstructor)
+            isPrimary = false
+            origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
+            returnType = irConstructor.returnType
+        }.apply {
+            // Don't create a default argument stub for the exposed constructor
+            copyValueAndTypeParametersFrom(irConstructor)
+            parameters.forEach { it.defaultValue = null }
+            annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, this@JvmInlineClassLowering.context)
+            body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
+                // Call private constructor
+                +irDelegatingConstructorCall(primaryConstructor).apply {
+                    passTypeArgumentsFrom(primaryConstructor)
+                    arguments[0] = irGet(parameters[0])
+                    arguments[1] = irNull()
+                }
+                // Call constructor-impl to run init blocks
+                +irCall(function).apply {
+                    arguments[0] = irGet(parameters[0])
+                    passTypeArgumentsFrom(primaryConstructor)
+                }
+            }
+        }
+
+        // Add no-arg constructor for usage by something like Hibernate
+        val defaultValue = irConstructor.parameters.singleOrNull()?.defaultValue
+        if (defaultValue != null) {
+            addConstructor {
                 updateFrom(irConstructor)
                 isPrimary = false
                 origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
                 returnType = irConstructor.returnType
             }.apply {
-                // Don't create a default argument stub for the exposed constructor
-                copyValueAndTypeParametersFrom(irConstructor)
-                valueParameters.forEach { it.defaultValue = null }
-                annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, context)
-                body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                    // Call private constructor
+                copyTypeParametersFrom(irConstructor)
+                annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, this@JvmInlineClassLowering.context)
+                body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
+                    // Delegate to exposed constructor-impl$default
+                    val tmp = irTemporary(irCall(function).apply {
+                        arguments[0] = null
+                        passTypeArgumentsFrom(primaryConstructor)
+                    })
                     +irDelegatingConstructorCall(primaryConstructor).apply {
                         passTypeArgumentsFrom(primaryConstructor)
-                        putValueArgument(0, irGet(valueParameters[0]))
-                        putValueArgument(1, irNull())
-                    }
-                    // Call constructor-impl to run init blocks
-                    +irCall(function).apply {
-                        passTypeArgumentsFrom(primaryConstructor)
-                        putValueArgument(0, irGet(valueParameters[0]))
-                    }
-                }
-            }
-
-            // Add no-arg constructor for usage by something like Hibernate
-            val defaultValue = irConstructor.parameters.singleOrNull()?.defaultValue
-            if (defaultValue != null) {
-                valueClass.addConstructor {
-                    updateFrom(irConstructor)
-                    isPrimary = false
-                    origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
-                    returnType = irConstructor.returnType
-                }.apply {
-                    copyTypeParametersFrom(irConstructor)
-                    annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, context)
-                    body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                        // Delegate to exposed constructor
-                        +irDelegatingConstructorCall(exposedConstructor).apply {
-                            passTypeArgumentsFrom(primaryConstructor)
-                            putValueArgument(0, defaultValue.deepCopyWithSymbols(irConstructor).expression)
-                        }
+                        arguments[0] = irGet(tmp).coerceToUnboxed()
+                        arguments[1] = irNull()
                     }
                 }
             }

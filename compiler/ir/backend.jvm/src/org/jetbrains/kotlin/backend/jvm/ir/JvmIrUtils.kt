@@ -246,13 +246,15 @@ val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
             || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
 
 fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: LanguageVersionSettings): Boolean {
-    if (!isFunctionWithInlineClassesInSignature()) return false
+    if (!isFunctionWhichCanBeExposed()) return false
 
-    return findJvmExposeBoxedAnnotation() != null || languageVersionSettings.getFlag(JvmAnalysisFlags.jvmExposeBoxed)
+    return getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
+            parentClassOrNull?.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
+            languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
 }
 
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
-fun IrDeclaration.isFunctionWithInlineClassesInSignature(): Boolean {
+fun IrDeclaration.isFunctionWhichCanBeExposed(): Boolean {
     if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
     if (isSuspend) return false
     if (parameters.any { it.type.isInlineClassType() }) return true
@@ -260,15 +262,6 @@ fun IrDeclaration.isFunctionWithInlineClassesInSignature(): Boolean {
     // It is not explicitly annotated, global and returns inline class, do not expose it, since otherwise
     // it would lead to ambiguous call on Java side
     return !parentAsClass.isFileClass || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
-}
-
-fun IrDeclaration.findJvmExposeBoxedAnnotation(): IrConstructorCall? {
-    var cursor: IrMutableAnnotationContainer? = this
-    while (cursor != null) {
-        cursor.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.let { return it }
-        cursor = (cursor as? IrDeclaration)?.parent as? IrMutableAnnotationContainer
-    }
-    return null
 }
 
 val IrDeclaration.isStaticValueClassReplacement: Boolean
