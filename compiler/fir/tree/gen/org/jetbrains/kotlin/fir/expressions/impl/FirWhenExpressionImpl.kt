@@ -31,7 +31,7 @@ internal class FirWhenExpressionImpl(
     override var subjectVariable: FirVariable?,
     override val branches: MutableList<FirWhenBranch>,
     override var exhaustivenessStatus: ExhaustivenessStatus?,
-    override val usedAsExpression: Boolean,
+    override var usedAsExpression: Boolean,
 ) : FirWhenExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -88,5 +88,9 @@ internal class FirWhenExpressionImpl(
 
     override fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?) {
         exhaustivenessStatus = newExhaustivenessStatus
+    }
+
+    override fun replaceUsedAsExpression(newUsedAsExpression: Boolean) {
+        usedAsExpression = newUsedAsExpression
     }
 }

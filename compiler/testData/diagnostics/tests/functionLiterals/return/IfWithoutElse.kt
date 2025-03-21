@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 val flag = true
 
 // type of a was checked by txt

@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     run {
         if (true) {

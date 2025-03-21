@@ -20,7 +20,7 @@ fun noCoercionBlockHasExplicitReturn() {
     val c = l@{
         if (true) return@l 42
 
-        if (true) 239
+        <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 239
     }
 }
 

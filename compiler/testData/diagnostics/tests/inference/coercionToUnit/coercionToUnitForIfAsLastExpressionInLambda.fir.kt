@@ -26,7 +26,7 @@ fun foo(): String? {
         if (true)
             42
         else
-            if (true) 42
+            <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
     }
 
     run {

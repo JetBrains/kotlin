@@ -1236,7 +1236,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("subjectVariable", variable, nullable = true, withTransform = true)
         +listField("branches", whenBranch, withTransform = true)
         +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
-        +field("usedAsExpression", boolean)
+        +field("usedAsExpression", boolean, withReplace = true)
     }
 
     val typeProjection: Element by sealedElement(TypeRefElement)

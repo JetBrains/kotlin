@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -182,6 +183,9 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
         source = (lastStatement.source ?: body.source ?: this@addReturnToLastStatementIfNeeded.source)
             ?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
 
+        if (lastStatement is FirWhenExpression) {
+            lastStatement.accept(UsedAsExpressionSetter)
+        }
         result = lastStatement
         target = returnTarget
     }
@@ -192,6 +196,26 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
                 if (element == lastStatement) returnExpression as E else element
         }, null
     )
+}
+
+private object UsedAsExpressionSetter : FirVisitorVoid() {
+    override fun visitElement(element: FirElement) {
+        element.acceptChildren(this)
+    }
+
+    override fun visitWhenExpression(whenExpression: FirWhenExpression) {
+        whenExpression.replaceUsedAsExpression(true)
+        whenExpression.acceptChildren(this)
+    }
+
+    override fun visitBlock(block: FirBlock) {
+        block.statements.lastOrNull()?.accept(this)
+    }
+
+    // We shouldn't traverse through calls / local variables / etc., only blocks and whens are allowed
+    override fun visitStatement(statement: FirStatement) {}
+
+    override fun visitDeclaration(declaration: FirDeclaration) {}
 }
 
 /**

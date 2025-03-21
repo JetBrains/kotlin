@@ -45,6 +45,8 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     abstract fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?)
 
+    abstract fun replaceUsedAsExpression(newUsedAsExpression: Boolean)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression

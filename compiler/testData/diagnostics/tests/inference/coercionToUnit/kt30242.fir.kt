@@ -26,7 +26,7 @@ fun test2(b: Boolean) {
 
 fun test3(b: Boolean) {
     foo {
-        if (b) {
+        <!INVALID_IF_AS_EXPRESSION!>if<!> (b) {
             return@foo A()
         }
     }
