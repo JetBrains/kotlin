@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
-import org.jetbrains.kotlin.swiftexport.standalone.builders.SwiftExportDependencies
+import org.jetbrains.kotlin.swiftexport.standalone.builders.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
+import kotlin.collections.plus
 import kotlin.io.path.div
 
 public enum class UnsupportedDeclarationReporterKind {
@@ -129,35 +130,12 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  * @return A [Result] containing a set of translated Swift export modules upon success, or an exception in case of a failure.
  */
 public fun runSwiftExport(
-    fullyExportedModules: Set<InputModule>,
+    explicitlyExportedModules: Set<InputModule>,
     transitivelyExportedModules: Set<InputModule>,
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
-    logConfigIssues(fullyExportedModules, config.logger)
-    val stdlibInputModule = config.stdlibInputModule
-    val platformLibsInputModule = config.platformLibsInputModule
-    val translationResults = fullyExportedModules.map { rootModule ->
-        /**
-         * This value represents dependencies of current module.
-         * The actual dependency graph is unknown at this point - there is only an array of modules to translate. This particular value
-         * will be used to initialize Analysis API session. It is an error to pass module as a dependency to itself - therefor there is
-         * a need to remove the current translation module from the list of dependencies.
-         */
-        val dependencies = fullyExportedModules - rootModule
-        translateModulePublicApi(
-            rootModule,
-            SwiftExportDependencies(
-                user = dependencies,
-                stdlib = stdlibInputModule,
-                platform = platformLibsInputModule
-            ),
-            config
-        )
-    }
-    val stdlibTranslationResult = translationResults.flatMap { it.referencedStdlibTypes }.ifNotEmpty {
-        translateModuleTransitiveClosure(stdlibInputModule, config, toSet())
-    }
-    val allModules = translationResults + listOfNotNull(stdlibTranslationResult)
+    logConfigIssues(explicitlyExportedModules, config.logger)
+    val allModules = translateModules(explicitlyExportedModules, transitivelyExportedModules, config)
     val packagesModule = writeKotlinPackagesModule(
         sirModule = allModules.createModuleForPackages(config),
         outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"
@@ -167,6 +145,21 @@ public fun runSwiftExport(
         outputPath = config.outputPath.parent / config.runtimeSupportModuleName / "${config.runtimeSupportModuleName}.swift",
     )
     return@runCatching setOf(packagesModule, runtimeSupportModule) + allModules.map { it.writeModule(config) }
+}
+
+private fun translateModules(
+    explicitlyExportedModules: Set<InputModule>,
+    transitivelyExportedModules: Set<InputModule>,
+    config: SwiftExportConfig,
+): List<TranslationResult> {
+    val stdlibInputModule = config.stdlibInputModule
+    val inputModules = explicitlyExportedModules + transitivelyExportedModules + stdlibInputModule
+    val kaModules = createKaModulesForStandaloneAnalysis(inputModules, config.targetPlatform, config.platformLibsInputModule)
+    val explicitModulesTranslationResults = explicitlyExportedModules.map { translateModulePublicApi(it, kaModules, config) }
+    val stdlibTranslationResult = explicitModulesTranslationResults.flatMap { it.referencedStdlibTypes }.ifNotEmpty {
+        translateModuleTransitiveClosure(stdlibInputModule, kaModules, config, toSet())
+    }
+    return explicitModulesTranslationResults + listOfNotNull(stdlibTranslationResult)
 }
 
 private fun Collection<TranslationResult>.createModuleForPackages(config: SwiftExportConfig): SirModule = buildModule {
