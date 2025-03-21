@@ -17,14 +17,6 @@ import kotlin.test.*
 class TargetPresetDeprecationTest {
 
     @Test
-    fun `targetFromPreset usage - emits TargetFromPreset diagnostic`() = checkDiagnostics(
-        "PresetDeprecation-targetFromPreset"
-    ) {
-        @Suppress("DEPRECATION_ERROR")
-        targetFromPreset(presets.getByName("jvm"))
-    }
-
-    @Test
     fun `targets fromPreset usage - emits FromPreset diagnostic`() = checkDiagnostics(
         "PresetDeprecation-fromPreset"
     ) {

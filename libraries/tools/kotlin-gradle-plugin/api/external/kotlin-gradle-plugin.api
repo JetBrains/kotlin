@@ -184,12 +184,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun mingwX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public fun publishing (Lkotlin/jvm/functions/Function1;)V
 	public fun publishing (Lorg/gradle/api/Action;)V
-	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public static synthetic fun targetFromPreset$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public final fun targets (Lkotlin/jvm/functions/Function1;)V
 	public final fun targets (Lorg/gradle/api/Action;)V
 	public fun tvosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
