@@ -156,9 +156,9 @@ private fun translateModules(
     val inputModules = explicitlyExportedModules + transitivelyExportedModules + stdlibInputModule
     val kaModules = createKaModulesForStandaloneAnalysis(inputModules, config.targetPlatform, config.platformLibsInputModule)
     val explicitModulesTranslationResults = explicitlyExportedModules.map { translateModulePublicApi(it, kaModules, config) }
-    val stdlibTranslationResult = explicitModulesTranslationResults.flatMap { it.referencedStdlibTypes }.ifNotEmpty {
-        translateModuleTransitiveClosure(stdlibInputModule, kaModules, config, toSet())
-    }
+    val stdlibTranslationResult = explicitModulesTranslationResults
+        .flatMap { it.externalTypeDeclarationReferences["stdlib"] ?: emptyList() }
+        .ifNotEmpty { translateModuleTransitiveClosure(stdlibInputModule, kaModules, config, toSet()) }
     return explicitModulesTranslationResults + listOfNotNull(stdlibTranslationResult)
 }
 

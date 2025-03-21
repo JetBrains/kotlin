@@ -45,17 +45,19 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(kaModules.useSiteModule) {
-        val referencedStdlibTypes = mutableSetOf<FqName>()
-        val stdlibReferenceHandler = SirKaClassReferenceHandler { symbol ->
+        val externalTypeDeclarationReferences = mutableMapOf<String, MutableList<FqName>>()
+        val externalTypeReferenceHandler = SirKaClassReferenceHandler { symbol ->
             val symbolContainingModule = symbol.containingModule as? KaLibraryModule
-            if (symbolContainingModule?.libraryName == "stdlib") {
-                referencedStdlibTypes.addIfNotNull(symbol.classId?.outermostClassId?.asSingleFqName())
+            symbolContainingModule?.libraryName?.let { libraryName ->
+                externalTypeDeclarationReferences
+                    .getOrPut(libraryName) { mutableListOf() }
+                    .addIfNotNull(symbol.classId?.asSingleFqName())
             }
         }
-        val sirSession = buildSirSession(module.name, kaModules, config, module.config, stdlibReferenceHandler)
+        val sirSession = buildSirSession(module.name, kaModules, config, module.config, externalTypeReferenceHandler)
         val sirModule = translateModule(sirSession, kaModules.mainModules.single { it.libraryName == module.name })
         val bridgeRequests = buildBridgeRequests(bridgeGenerator, sirModule)
-        createTranslationResult(sirSession, sirModule, config, module.config, referencedStdlibTypes, bridgeRequests)
+        createTranslationResult(sirSession, sirModule, config, module.config, externalTypeDeclarationReferences, bridgeRequests)
     }
 }
 
@@ -89,7 +91,7 @@ internal fun translateModuleTransitiveClosure(module: InputModule, kaModules: Ka
             bridgeRequests += buildBridgeRequests(bridgeGenerator, sirModule)
             newlyReferencedTypes.clear()
         } while (inputQueue.isNotEmpty())
-        createTranslationResult(sirSession, sirModule, config, module.config, emptySet(), bridgeRequests.toList())
+        createTranslationResult(sirSession, sirModule, config, module.config, emptyMap(), bridgeRequests.toList())
     }
 }
 
@@ -98,7 +100,7 @@ private fun KaSession.createTranslationResult(
     sirModule: SirModule,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
-    referencedStdlibTypes: Set<FqName>,
+    externalTypeDeclarationReferences: Map<String, List<FqName>>,
     bridgeRequests: List<BridgeRequest>,
 ): TranslationResult {
     // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
@@ -125,7 +127,7 @@ private fun KaSession.createTranslationResult(
         bridgeSources = bridges,
         moduleConfig = moduleConfig,
         bridgesModuleName = bridgesName,
-        referencedStdlibTypes = referencedStdlibTypes,
+        externalTypeDeclarationReferences = externalTypeDeclarationReferences,
     )
 }
 
@@ -152,5 +154,5 @@ internal class TranslationResult(
     val bridgeSources: BridgeSources,
     val moduleConfig: SwiftModuleConfig,
     val bridgesModuleName: String,
-    val referencedStdlibTypes: Set<FqName>,
+    val externalTypeDeclarationReferences: Map<String, List<FqName>>,
 )
