@@ -904,19 +904,19 @@ private sealed class Bridge(
                         ?.let { " ${it.joinToString { "${it.first}: ${typeNamer.kotlinFqName(it.second.swiftType)}" }} ->" }
                     val callArgs = argsInClosure
                         ?.let { it.joinToString { it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first) } } ?: ""
-                    return """{    
+                    return """run {    
                     |    val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
                     |    {${defineArgs ?: ""}
                     |        ${returnType.inKotlinSources.swiftToKotlin(typeNamer, "kotlinFun(${callArgs})")} 
                     |    }
-                    |}()""".replaceIndentByMargin("    ")
+                    |}""".replaceIndentByMargin("    ")
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return """{
+                    return """run {
                     |    val newClosure = { kotlin.native.internal.ref.createRetainedExternalRCRef(_result()).toLong() }
                     |    newClosure.objcPtr()
-                    |}()""".replaceIndentByMargin("    ")
+                    |}""".replaceIndentByMargin("    ")
                 }
             }
 
