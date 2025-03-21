@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.sir.tree.generator.printer
 
 import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
 import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.StandardTypes
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
+import org.jetbrains.kotlin.generators.tree.typeKind
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
 
@@ -18,6 +23,17 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
     }
 
     override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
-        // do nothing
+        if (element.typeKind != TypeKind.Interface) {
+            addStarImport("org.jetbrains.kotlin.sir.util")
+
+            printFunctionWithBlockBody(
+                name = "toString",
+                parameters = emptyList(),
+                returnType = StandardTypes.string,
+                override = true
+            ) {
+                println("return this.debugString")
+            }
+        }
     }
 }

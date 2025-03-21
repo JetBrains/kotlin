@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.variable]
  */
@@ -24,4 +26,7 @@ abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationPar
     abstract val type: SirType
     abstract val getter: SirGetter
     abstract val setter: SirSetter?
+    override fun toString(): String {
+        return this.debugString
+    }
 }

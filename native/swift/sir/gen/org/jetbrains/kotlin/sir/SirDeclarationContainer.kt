@@ -8,9 +8,14 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declarationContainer]
  */
 sealed class SirDeclarationContainer : SirElementBase(), SirDeclarationParent {
     abstract val declarations: List<SirDeclaration>
+    override fun toString(): String {
+        return this.debugString
+    }
 }

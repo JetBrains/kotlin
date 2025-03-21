@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.init]
  */
@@ -24,4 +26,7 @@ abstract class SirInit : SirElementBase(), SirCallable {
     abstract val isConvenience: Boolean
     abstract val isRequired: Boolean
     abstract val isOverride: Boolean
+    override fun toString(): String {
+        return this.debugString
+    }
 }

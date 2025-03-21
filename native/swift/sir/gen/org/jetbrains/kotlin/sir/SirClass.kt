@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.class]
  */
@@ -22,4 +24,7 @@ abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration, SirCla
     abstract override val superClass: SirType?
     abstract override val protocols: List<SirProtocol>
     abstract val modality: SirModality
+    override fun toString(): String {
+        return this.debugString
+    }
 }

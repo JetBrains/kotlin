@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.function]
  */
@@ -26,4 +28,7 @@ abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclar
     abstract val extensionReceiverParameter: SirParameter?
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
+    override fun toString(): String {
+        return this.debugString
+    }
 }

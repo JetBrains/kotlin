@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.struct]
  */
@@ -19,4 +21,7 @@ abstract class SirStruct : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override val attributes: List<SirAttribute>
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
+    override fun toString(): String {
+        return this.debugString
+    }
 }

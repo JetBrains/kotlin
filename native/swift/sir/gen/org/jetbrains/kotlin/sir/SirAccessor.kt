@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.accessor]
  */
@@ -19,4 +21,7 @@ sealed class SirAccessor : SirElementBase(), SirCallable {
     abstract override val attributes: List<SirAttribute>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
+    override fun toString(): String {
+        return this.debugString
+    }
 }

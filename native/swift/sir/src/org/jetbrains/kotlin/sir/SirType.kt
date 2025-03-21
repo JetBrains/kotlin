@@ -84,7 +84,7 @@ class SirExistentialType(
     protocols: List<SirProtocol>,
 ) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
-    
+
     val protocols: List<SirProtocol> = protocols.sortedBy { it.swiftFqName }
 
     constructor(vararg protocols: SirProtocol) : this(protocols.toList())
