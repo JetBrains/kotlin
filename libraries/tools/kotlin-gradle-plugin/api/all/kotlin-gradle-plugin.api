@@ -1027,8 +1027,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinNativ
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinNativeTargetPreset : org/jetbrains/kotlin/gradle/targets/android/internal/InternalKotlinTargetPreset {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinNativeTargetPreset$Companion;
 	public fun <init> (Ljava/lang/String;Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
-	public synthetic fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	protected abstract fun createTargetConfigurator ()Lorg/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator;
 	public synthetic fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -1244,8 +1242,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTargetPreset$Companion;
 	public static final field PRESET_NAME Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
-	public synthetic fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public synthetic fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun getName ()Ljava/lang/String;
@@ -1378,8 +1374,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJvmWithJavaTarge
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinJvmWithJavaTargetPreset$Companion;
 	public static final field PRESET_NAME Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
-	public synthetic fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinWithJavaTarget;
 	public synthetic fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinWithJavaTarget;
 	public fun getName ()Ljava/lang/String;
@@ -1538,8 +1532,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTargetPre
 	public fun <init> (Lorg/gradle/api/Project;)V
 	protected abstract fun createCompilationFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinCompilationFactory;
 	protected abstract fun createKotlinTargetConfigurator ()Lorg/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator;
-	public synthetic fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
 	public synthetic fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun createTargetInternal (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
 	protected abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;

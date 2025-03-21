@@ -1394,7 +1394,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$Sour
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset : org/gradle/api/Named {
-	public abstract fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinTargetExecution, org/jetbrains/kotlin/gradle/plugin/KotlinTestRun {

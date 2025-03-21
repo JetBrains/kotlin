@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.internal
@@ -16,17 +15,8 @@ internal fun <T : KotlinTarget> KotlinMultiplatformExtension.targetFromPresetInt
     configure: T.() -> Unit = { },
 ): T = configureOrCreate(name, preset.internal, configure)
 
-internal fun <T : KotlinTarget> KotlinMultiplatformExtension.targetFromPresetInternal(
-    preset: KotlinTargetPreset<T>,
-    name: String,
-    configure: Action<T>,
-) = targetFromPresetInternal(preset, name) { configure.execute(this) }
-
 internal fun <T : KotlinTarget> KotlinMultiplatformExtension.targetFromPresetInternal(preset: KotlinTargetPreset<T>) =
     targetFromPresetInternal(preset, preset.name) { }
 
 internal fun <T : KotlinTarget> KotlinMultiplatformExtension.targetFromPresetInternal(preset: KotlinTargetPreset<T>, name: String) =
     targetFromPresetInternal(preset, name) { }
-
-internal fun <T : KotlinTarget> KotlinMultiplatformExtension.targetFromPresetInternal(preset: KotlinTargetPreset<T>, configure: Action<T>) =
-    targetFromPresetInternal(preset, preset.name, configure)
