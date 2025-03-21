@@ -133,7 +133,6 @@ object FirJvmErrors {
     // JVM Default
     val JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
     val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
-    val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // External Declaration
     val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT", ERROR, SourceElementPositioningStrategies.ABSTRACT_MODIFIER, KtDeclaration::class)

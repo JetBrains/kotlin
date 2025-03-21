@@ -6,5 +6,5 @@ interface A<T> {
     fun test(p: T) {}
 }
 
-<!JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE!>@JvmDefaultWithCompatibility<!>
+@JvmDefaultWithCompatibility
 class B : A<String> {}

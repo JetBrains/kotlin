@@ -5220,11 +5220,6 @@ internal class JvmDefaultWithCompatibilityNotInNoCompatibilityModeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmDefaultWithCompatibilityNotInNoCompatibilityMode
 
-internal class JvmDefaultWithCompatibilityNotOnInterfaceImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmDefaultWithCompatibilityNotOnInterface
-
 internal class ExternalDeclarationCannotBeAbstractImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

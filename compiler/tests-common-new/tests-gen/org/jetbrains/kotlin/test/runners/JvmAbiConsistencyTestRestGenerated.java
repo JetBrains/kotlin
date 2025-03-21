@@ -15264,6 +15264,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
           }
 
           @Test
+          @TestMetadata("bridgeInInterfaceWithCompatibility.kt")
+          public void testBridgeInInterfaceWithCompatibility() {
+            runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noCompatibility/bridgeInInterfaceWithCompatibility.kt");
+          }
+
+          @Test
           @TestMetadata("bridgeInInterfaceWithProperties.kt")
           public void testBridgeInInterfaceWithProperties() {
             runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noCompatibility/bridgeInInterfaceWithProperties.kt");

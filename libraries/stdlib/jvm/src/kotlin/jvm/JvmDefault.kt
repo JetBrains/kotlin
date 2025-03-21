@@ -18,12 +18,13 @@ import kotlin.internal.RequireKotlinVersionKind
 public annotation class JvmDefault
 
 /**
- * Prevents the compiler from generating compatibility accessors for the annotated class or interface, and suppresses
- * any related compatibility warnings. In other words, this annotation makes the compiler generate the annotated class
- * or interface in the `-jvm-default=no-compatibility` mode, where only JVM default methods are generated, without `DefaultImpls`.
+ * Prevents the compiler from generating compatibility accessors for the annotated class or interface.
  *
- * Annotating an existing class with this annotation is a binary incompatible change. Therefore this annotation makes
- * the most sense for _new_ classes in libraries which opted into the compatibility mode.
+ * In other words, this annotation makes the compiler generate the annotated class or interface in the `-jvm-default=no-compatibility` mode.
+ * For an interface, only JVM default methods are generated, without `DefaultImpls`. For a class, no implementations that call super methods
+ * or `DefaultImpls` accessors are generated.
+ *
+ * Annotating an existing class with this annotation is a binary incompatible change.
  *
  * Used only with `-jvm-default=enable`.
  */
@@ -33,10 +34,12 @@ public annotation class JvmDefault
 public annotation class JvmDefaultWithoutCompatibility
 
 /**
- * Forces the compiler to generate compatibility accessors for the annotated interface in the `DefaultImpls` class.
- * Please note that if an interface is annotated with this annotation for binary compatibility, public derived Kotlin interfaces should also be annotated with it,
- * because their `DefaultImpls` methods will be used to access implementations from the `DefaultImpls` class of the original interface.
+ * Forces the compiler to generate compatibility accessors for the annotated class or interface.
  *
+ * In other words, this annotation makes the compiler generate the annotated class or interface in the `-jvm-default=enable` mode.
+ * For an interface, `DefaultImpls` accessors are generated in addition to the JVM default methods. For a class, implementations that call
+ * super methods are generated.
+
  * Used only with `-jvm-default=no-compatibility`.
  */
 @SinceKotlin("1.6")

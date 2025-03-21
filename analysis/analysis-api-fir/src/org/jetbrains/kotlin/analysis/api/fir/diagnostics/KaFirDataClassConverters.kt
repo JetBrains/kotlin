@@ -6223,12 +6223,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE) { firDiagnostic ->
-        JvmDefaultWithCompatibilityNotOnInterfaceImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT) { firDiagnostic ->
         ExternalDeclarationCannotBeAbstractImpl(
             firDiagnostic as KtPsiDiagnostic,

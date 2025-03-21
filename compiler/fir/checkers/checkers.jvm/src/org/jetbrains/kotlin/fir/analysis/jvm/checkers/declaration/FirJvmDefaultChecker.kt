@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID
@@ -25,26 +23,12 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         val jvmDefaultMode = context.session.jvmDefaultModeState
         val session = context.session
         val withoutCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID, session)
-        if (withoutCompatibility != null) {
-            val source = withoutCompatibility.source
-            if (jvmDefaultMode != JvmDefaultMode.ENABLE) {
-                reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE, context)
-                return
-            }
+        if (withoutCompatibility != null && jvmDefaultMode != JvmDefaultMode.ENABLE) {
+            reporter.reportOn(withoutCompatibility.source, FirJvmErrors.JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE, context)
         }
         val withCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session)
-        if (withCompatibility != null) {
-            val source = withCompatibility.source
-            when {
-                jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY -> {
-                    reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE, context)
-                    return
-                }
-                declaration !is FirRegularClass || !declaration.isInterface -> {
-                    reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE, context)
-                    return
-                }
-            }
+        if (withCompatibility != null && jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY) {
+            reporter.reportOn(withCompatibility.source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE, context)
         }
     }
 }
