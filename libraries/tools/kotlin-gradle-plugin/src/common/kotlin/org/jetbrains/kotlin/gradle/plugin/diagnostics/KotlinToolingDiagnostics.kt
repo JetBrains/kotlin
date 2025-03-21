@@ -845,20 +845,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    private val presetsDeprecationSeverity = ERROR
-
-    object CreateTarget : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroup.Kgp.Deprecation) {
-        private const val DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
-        operator fun invoke() = build {
-            title("KotlinTargetPreset.createTarget() Method Deprecated")
-                .description(DEPRECATION_MESSAGE)
-                .solution(PRESETS_DEPRECATION_SOLUTION)
-                .documentationLink(URI(PRESETS_DEPRECATION_URL)) { url ->
-                    "$PRESETS_DEPRECATION_URL_PREFIX $url"
-                }
-        }
-    }
-
     object JvmWithJavaIsIncompatibleWithAndroid : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(androidPluginId: String, trace: Throwable?) = build(throwable = trace) {
             title("`withJava()` in JVM Target Incompatible with Android Plugins")
