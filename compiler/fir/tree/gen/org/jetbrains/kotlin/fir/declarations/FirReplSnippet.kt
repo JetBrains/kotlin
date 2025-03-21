@@ -35,6 +35,7 @@ abstract class FirReplSnippet : FirDeclaration(), FirControlFlowGraphOwner {
     abstract val receivers: List<FirScriptReceiverParameter>
     abstract val body: FirBlock
     abstract val resultTypeRef: FirTypeRef
+    abstract val resultFieldName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitReplSnippet(this, data)

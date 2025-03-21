@@ -37,6 +37,7 @@ class FirReplSnippetBuilder : FirAnnotationContainerBuilder {
     val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
     lateinit var body: FirBlock
     lateinit var resultTypeRef: FirTypeRef
+    var resultFieldName: Name? = null
 
     override fun build(): FirReplSnippet {
         return FirReplSnippetImpl(
@@ -51,8 +52,10 @@ class FirReplSnippetBuilder : FirAnnotationContainerBuilder {
             receivers.toMutableOrEmpty(),
             body,
             resultTypeRef,
+            resultFieldName,
         )
     }
+
 }
 
 @OptIn(ExperimentalContracts::class)

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 import org.jetbrains.kotlin.fir.tree.generator.model.fieldSet
 import org.jetbrains.kotlin.fir.tree.generator.util.type
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
 
@@ -747,7 +748,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +declaredSymbol(scriptSymbolType)
         +listField("parameters", property, withTransform = true)
         +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
-        +field("resultPropertyName", nameType, nullable = true)
+        +field("resultFieldName", nameType, nullable = true)
     }
 
     val codeFragment: Element by element(Declaration) {
@@ -768,6 +769,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
         +field("body", block, nullable = false, withTransform = true, withReplace = true)
         +field("resultTypeRef", typeRef, withReplace = true, withTransform = true)
+        +field("resultFieldName", org.jetbrains.kotlin.generators.tree.type<Name>(), nullable = true)
     }
 
     val packageDirective: Element by element(Other) {

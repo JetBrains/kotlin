@@ -279,6 +279,7 @@ open class DeepCopyIrTreeWithSymbols(
             factory = declaration.factory,
             name = declaration.name,
             symbol = symbolRemapper.getDeclaredReplSnippet(declaration.symbol),
+            resultFieldName = declaration.resultFieldName,
         ).apply {
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }

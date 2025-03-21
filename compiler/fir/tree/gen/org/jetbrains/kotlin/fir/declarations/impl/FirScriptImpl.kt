@@ -37,7 +37,7 @@ internal class FirScriptImpl(
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirProperty>,
     override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,
-    override val resultPropertyName: Name?,
+    override val resultFieldName: Name?,
 ) : FirScript() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 

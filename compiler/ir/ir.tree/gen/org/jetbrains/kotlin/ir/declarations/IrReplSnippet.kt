@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Represents a REPL snippet entity that corresponds to the analogous FIR entity.
@@ -42,6 +43,8 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
     abstract var body: IrBody
 
     abstract var returnType: IrType?
+
+    abstract var resultFieldName: Name?
 
     /**
      * Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.

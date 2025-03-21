@@ -554,6 +554,7 @@ object IrTree : AbstractTreeBuilder() {
         }
         +field("body", body)
         +field("returnType", irTypeType, nullable = true)
+        +field("resultFieldName", type<Name>(), nullable = true)
         +referencedSymbol("targetClass", classSymbol, nullable = true){
             kDoc = """
                 Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.

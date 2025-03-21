@@ -35,7 +35,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     lateinit var symbol: FirScriptSymbol
     val parameters: MutableList<FirProperty> = mutableListOf()
     val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
-    var resultPropertyName: Name? = null
+    var resultFieldName: Name? = null
 
     override fun build(): FirScript {
         return FirScriptImpl(
@@ -50,7 +50,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             symbol,
             parameters,
             receivers.toMutableOrEmpty(),
-            resultPropertyName,
+            resultFieldName,
         )
     }
 
@@ -80,6 +80,6 @@ inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Uni
     copyBuilder.source = original.source
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.receivers.addAll(original.receivers)
-    copyBuilder.resultPropertyName = original.resultPropertyName
+    copyBuilder.resultFieldName = original.resultFieldName
     return copyBuilder.apply(init).build()
 }

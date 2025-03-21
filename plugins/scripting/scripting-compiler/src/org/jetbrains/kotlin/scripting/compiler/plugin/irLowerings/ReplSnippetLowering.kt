@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
 
@@ -228,6 +230,19 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         // TODO: find out what problems could arise from copying annotations applicable to file only (KT-74176)
         irSnippetClass.annotations += (irSnippetClass.parent as IrFile).annotations
+
+        irSnippetClass.declarations
+            .filterIsInstance<IrProperty>()
+            .firstOrNull { it.name.identifier == irSnippet.resultFieldName?.identifier }
+            ?.let { resultProperty ->
+                val fieldType = resultProperty.backingField?.type?.toIrBasedKotlinType() ?: return@let
+                irSnippetClass.scriptResultFieldDataAttr =
+                    ScriptResultFieldData(
+                        scriptClassName = irSnippetClass.kotlinFqName,
+                        fieldName = resultProperty.name,
+                        fieldTypeName = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(fieldType)
+                    )
+            }
     }
 
     private fun createConstructor(irSnippetClass: IrClass): IrConstructor =

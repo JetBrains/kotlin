@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.Console
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.baseClassLoader
@@ -61,6 +62,22 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
             updateClasspath(
                 listOf(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
             )
+        }
+        repl {
+            resultFieldPrefix($$"$res")
+        }
+
+        refineConfiguration {
+            beforeCompiling {
+                it.compilationConfiguration.with {
+                    repl {
+                        // Unclear why this is called twice, but account for the fact
+                        // that only every second call is a "visible" line.
+                        val line = LineId(lineCounter / 2, 0, 0)
+                        currentLineId(line)
+                    }
+                }.asSuccess()
+            }
         }
     }
 
@@ -159,16 +176,15 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
         }
 
     private suspend fun compile(line: String, lineNo: Int): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
-        val lineId = LineId(lineNo, 0, line.hashCode())
         val snippet = line.toScriptSource("snippet_$lineNo.repl.kts")
 
         return replCompiler.compile(
             snippet,
-            scriptCompilationConfiguration.with {
-                repl {
-                    currentLineId(lineId)
-                }
-            }
+            // TODO Updating the scriptCompilationConfiguration after the CompilerState is created doesn't have an affect.
+            //  It is put into the cache the first time, but for FirScriptConfigurationExtension
+            //  the cache is empty. Session problem? For now we try to work around it by putting update logic in the
+            //  initialScriptCompilationConfiguration
+            scriptCompilationConfiguration
         ).also {
             if (it is ResultWithDiagnostics.Success) {
                 scriptCompilationConfiguration = it.value.get().compilationConfiguration

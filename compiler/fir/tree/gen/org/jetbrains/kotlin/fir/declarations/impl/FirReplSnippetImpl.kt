@@ -39,6 +39,7 @@ internal class FirReplSnippetImpl(
     override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,
     override var body: FirBlock,
     override var resultTypeRef: FirTypeRef,
+    override val resultFieldName: Name?,
 ) : FirReplSnippet() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 

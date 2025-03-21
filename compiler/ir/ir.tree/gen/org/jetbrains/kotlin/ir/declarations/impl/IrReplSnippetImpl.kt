@@ -27,6 +27,7 @@ class IrReplSnippetImpl(
     override val factory: IrFactory,
     override var name: Name,
     override val symbol: IrReplSnippetSymbol,
+    override var resultFieldName: Name?,
 ) : IrReplSnippet() {
     override var attributeOwnerId: IrElement = this
 

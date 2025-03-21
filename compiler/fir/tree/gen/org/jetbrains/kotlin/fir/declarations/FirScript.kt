@@ -33,7 +33,7 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val symbol: FirScriptSymbol
     abstract val parameters: List<FirProperty>
     abstract val receivers: List<FirScriptReceiverParameter>
-    abstract val resultPropertyName: Name?
+    abstract val resultFieldName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitScript(this, data)

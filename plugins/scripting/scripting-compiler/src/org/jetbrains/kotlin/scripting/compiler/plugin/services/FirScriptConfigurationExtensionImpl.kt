@@ -197,7 +197,7 @@ class FirScriptConfiguratorExtensionImpl(
                         isLocal = false
                         isVar = false
                     }.also {
-                        resultPropertyName = it.name
+                        this.resultFieldName = it.name
                     }
                 )
             }

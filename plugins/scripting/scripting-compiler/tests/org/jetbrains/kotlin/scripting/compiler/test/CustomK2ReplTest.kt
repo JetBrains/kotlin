@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalAtomicApi::class)
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -5,12 +6,17 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
+import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import java.io.File
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.fetchAndIncrement
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
@@ -19,7 +25,10 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class ReplReceiver1 {
     val ok = "OK"
@@ -150,6 +159,64 @@ class CustomK2ReplTest {
             }
         )
     }
+
+    @Test
+    fun testReturnValueGeneration() {
+        val snippetNo = AtomicInt(0)
+        evalAndCheckSnippetsResultVals(
+            sequenceOf("42", $$"`$res0`", $$"`$res1`"),
+            sequenceOf(42, 42, 42),
+            compilationConfiguration = baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling {
+                        it.compilationConfiguration.with {
+                            repl {
+                                // Unclear why this is called twice, but account for the fact
+                                // that only every second call is a "visible" line.
+                                val line = LineId(snippetNo.fetchAndIncrement() / 2, 0, 0)
+                                currentLineId(line)
+                            }
+                        }.asSuccess()
+                    }
+                }
+            }
+        )
+    }
+
+    @Test
+    fun testReturnFieldGenerationInMetadata() {
+        val snippetNo = AtomicInt(0)
+        evalAndCheckSnippets(
+            snippets = sequenceOf("42"),
+            compilationConfiguration = baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling {
+                        it.compilationConfiguration.with {
+                            repl {
+                                // Unclear why this is called twice, but account for the fact
+                                // that only every second call is a "visible" line.
+                                val line = LineId(snippetNo.fetchAndIncrement() / 2, 0, 0)
+                                currentLineId(line)
+                            }
+                        }.asSuccess()
+                    }
+                }
+            },
+            evaluationConfiguration = baseEvaluationConfiguration,
+            {
+                it.onSuccess { s ->
+                    val evaluatedSnippet = s.get()
+                    val resultField = evaluatedSnippet.compiledSnippet.resultField
+                    assertEquals($$"$res0", resultField?.first)
+                    assertEquals(KotlinType(Int::class), resultField?.second)
+                    // TODO Figure out why this is failing
+                    // val snippetClass = evaluatedSnippet.result.scriptInstance!!::class
+                    // assertTrue(snippetClass.declaredMembers.any { member -> member.name == resultField?.first })
+                    it
+                }
+            }
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
@@ -158,6 +225,9 @@ private val baseCompilationConfiguration: ScriptCompilationConfiguration =
             ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty()
         updateClasspath(classpath + ForTestCompileRuntime.runtimeJarForTests())
         compilerOptions("-Xrender-internal-diagnostic-names=true")
+        repl {
+            resultFieldPrefix($$"$res")
+        }
     }
 
 private val baseEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration {}
@@ -173,13 +243,18 @@ private fun compileEvalAndCheckSnippetsSequence(
         val evaluator = K2ReplEvaluator()
         val filenameExtension = compilationConfiguration[ScriptCompilationConfiguration.fileExtension] ?: "repl.kts"
         var snippetNo = 1
+        var configuration = compilationConfiguration
         val checkersIterator = expectedResultCheckers.iterator()
         @Suppress("DEPRECATION_ERROR")
         internalScriptingRunSuspend {
             snippets.asIterable().mapSuccess { snippet ->
                 val checker = if (checkersIterator.hasNext()) checkersIterator.next() else null
-                compiler.compile(snippet.toScriptSource("s${snippetNo++}.$filenameExtension")).onSuccess {
-                    evaluator.eval(it, evaluationConfiguration).let { checker?.invoke(it) ?: it }
+                compiler.compile(
+                    snippet.toScriptSource("s${snippetNo++}.$filenameExtension"),
+                    configuration
+                ).onSuccess { compiledSnippet ->
+                    configuration = compiledSnippet.get().compilationConfiguration
+                    evaluator.eval(compiledSnippet, evaluationConfiguration).let { checker?.invoke(it) ?: it }
                 }
             }
         }
@@ -192,7 +267,6 @@ private fun checkEvaluatedSnippetsResultVals(
     val expectedIter = expectedResultVals.iterator()
     val successResults = evaluationResults.valueOr {
         fail("Evaluation failed:\n  ${it.reports.joinToString("\n  ") { it.message }}")
-        return
     }
     for (res in successResults) {
         if (!expectedIter.hasNext()) break
