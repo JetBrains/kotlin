@@ -486,6 +486,7 @@ enum class LanguageFeature(
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, kind = OTHER), // KT-70722
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, kind = OTHER), // KT-70722
     IrRichCallableReferencesInKlibs(sinceVersion = null, kind = OTHER), // KT-72734, KT-74384, KT-74392
+    ExportKlibToOlderAbiVersion(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-76131
     ;
 
     init {
