@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCustomKotlinAbiVersion
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -98,28 +96,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 
-        arguments.relativePathBases?.let {
-            configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
-        }
-
         // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
-        configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
-        configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-        configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
-
+        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true)
         arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
-        configuration.put(
-            KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
-            DuplicatedUniqueNameStrategy.parseOrDefault(
-                arguments.duplicatedUniqueNameStrategy,
-                default = if (arguments.metadataKlib) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
-            )
-        )
-
-        configuration.putIfNotNull(
-            KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION,
-            parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, configuration.messageCollector)
-        )
 
         return environment
     }
