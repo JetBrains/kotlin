@@ -60,7 +60,9 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
                     if (it.kind == IrParameterKind.DispatchReceiver) {
                         parameters += createExtensionReceiver(it.type)
                     } else {
-                        parameters += it.copyTo(function, type = it.type)
+                        // Erase the default value as it might be unlowered because of cross-file calls.
+                        // Leaving it as is might lead to problems like KT-74739.
+                        parameters += it.copyTo(function, type = it.type, defaultValue = null)
                     }
                 }
 
