@@ -31,7 +31,10 @@ object KlibConfigurationKeys {
     val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
 
     @JvmField
-    val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("Custom klib abi version")
+    val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("Custom KLIB ABI version")
+
+    @JvmField
+    val KLIB_ABI_COMPATIBILITY_LEVEL = CompilerConfigurationKey.create<KlibAbiCompatibilityLevel>("KLIB ABI compatibility level")
 
 }
 
@@ -58,4 +61,8 @@ var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStra
 var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
     get() = get(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION)
     set(value) { putIfNotNull(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION, value) }
+
+var CompilerConfiguration.klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel
+    get() = get(KlibConfigurationKeys.KLIB_ABI_COMPATIBILITY_LEVEL, KlibAbiCompatibilityLevel.LATEST_STABLE)
+    set(value) { put(KlibConfigurationKeys.KLIB_ABI_COMPATIBILITY_LEVEL, value) }
 

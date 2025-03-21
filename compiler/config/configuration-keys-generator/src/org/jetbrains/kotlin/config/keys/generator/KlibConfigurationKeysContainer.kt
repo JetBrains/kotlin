@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
@@ -21,5 +22,10 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
 
     val DUPLICATED_UNIQUE_NAME_STRATEGY by key<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
 
-    val CUSTOM_KLIB_ABI_VERSION by key<KotlinAbiVersion>("Custom klib abi version", throwOnNull = false)
+    val CUSTOM_KLIB_ABI_VERSION by key<KotlinAbiVersion>("Custom KLIB ABI version", throwOnNull = false)
+
+    val KLIB_ABI_COMPATIBILITY_LEVEL by key<KlibAbiCompatibilityLevel>(
+        "KLIB ABI compatibility level",
+        defaultValue = "KlibAbiCompatibilityLevel.LATEST_STABLE"
+    )
 }

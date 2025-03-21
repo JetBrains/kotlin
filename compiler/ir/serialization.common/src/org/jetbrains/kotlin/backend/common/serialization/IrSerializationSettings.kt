@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.klibNormalizeAbsolutePath
 import org.jetbrains.kotlin.config.klibRelativePathBases
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -42,16 +44,5 @@ class IrSerializationSettings(
     val normalizeAbsolutePaths: Boolean = configuration.klibNormalizeAbsolutePath,
     val shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
     val reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
-    val abiCompatibilityLevel: KlibAbiCompatibilityLevel = KlibAbiCompatibilityLevel.ABI_LEVEL_2_2,
+    val abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
 )
-
-enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
-    ABI_LEVEL_2_1(2, 1),
-    ABI_LEVEL_2_2(2, 2),
-    ;
-
-    override fun toString() = "$major.$minor"
-
-    fun isAtLeast(other: KlibAbiCompatibilityLevel): Boolean =
-        major > other.major || major == other.major && minor >= other.minor
-}
