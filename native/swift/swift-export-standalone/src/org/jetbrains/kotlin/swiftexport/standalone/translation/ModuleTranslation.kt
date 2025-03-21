@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.translation
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -40,25 +38,27 @@ import kotlin.collections.plusAssign
 /**
  * Translates the whole public API surface of the given [module] to [SirModule] and generates compiler bridges between them.
  */
-@OptIn(KaExperimentalApi::class)
 internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules, config: SwiftExportConfig): TranslationResult {
     val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(kaModules.useSiteModule) {
-        val externalTypeDeclarationReferences = mutableMapOf<String, MutableList<FqName>>()
+        val externalTypeDeclarationReferences = mutableMapOf<KaLibraryModule, MutableList<FqName>>()
         val externalTypeReferenceHandler = SirKaClassReferenceHandler { symbol ->
             val symbolContainingModule = symbol.containingModule as? KaLibraryModule
-            symbolContainingModule?.libraryName?.let { libraryName ->
+            symbolContainingModule?.let { libraryName ->
                 externalTypeDeclarationReferences
                     .getOrPut(libraryName) { mutableListOf() }
                     .addIfNotNull(symbol.classId?.asSingleFqName())
             }
         }
-        val sirSession = buildSirSession(module.name, kaModules, config, module.config, externalTypeReferenceHandler)
-        val sirModule = translateModule(sirSession, kaModules.mainModules.single { it.libraryName == module.name })
-        val bridgeRequests = buildBridgeRequests(bridgeGenerator, sirModule)
-        createTranslationResult(sirSession, sirModule, config, module.config, externalTypeDeclarationReferences, bridgeRequests)
+        buildSirSession(module.name, kaModules, config, module.config, externalTypeReferenceHandler).withSessions {
+            val sirModule = translateModule(
+                module = kaModules.mainModules.single { it.libraryName == module.name }
+            )
+            val bridgeRequests = sirSession.withSessions { buildBridgeRequests(bridgeGenerator, sirModule) }
+            sirSession.createTranslationResult(sirModule, config, module.config, externalTypeDeclarationReferences, bridgeRequests)
+        }
     }
 }
 
@@ -84,26 +84,29 @@ private class ModuleTransitiveTranslationState(
  * @return a list of non-empty [TranslationResult].
  */
 internal fun translateCrossReferencingModulesTransitively(
-    typeDeclarationReferences: Map<InputModule, List<FqName>>,
+    typeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
     kaModules: KaModules,
     config: SwiftExportConfig,
-): List<TranslationResult> = analyze(kaModules.useSiteModule) {
+): List<TranslationResult> {
     val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
-    val translationStates = typeDeclarationReferences.map { (module, references) ->
-        ModuleTransitiveTranslationState(
-            kaModule = kaModules.mainModules.single { it.libraryName == module.name },
-            moduleConfig = module.config,
-            unprocessedReferences = references.toMutableSet(),
-            processedReferences = mutableSetOf(),
-        )
-    }
+    val translationStates = typeDeclarationReferences
+        .map { (module, references) ->
+            ModuleTransitiveTranslationState(
+                kaModule = module,
+                moduleConfig = kaModules.configFor(module),
+                unprocessedReferences = references.toMutableSet(),
+                processedReferences = mutableSetOf(),
+            )
+        }
     val typeReferenceHandler = SirKaClassReferenceHandler { symbol ->
-        val libraryName = (symbol.containingModule as? KaLibraryModule)?.libraryName
-        translationStates.find { it.kaModule.libraryName == libraryName }?.let {
-            val fqName = symbol.classId?.asSingleFqName()
-                ?: return@SirKaClassReferenceHandler
-            if (fqName !in it.processedReferences) {
-                it.unprocessedReferences += fqName
+        analyze(kaModules.useSiteModule) {
+            val libraryName = (symbol.containingModule as? KaLibraryModule)?.libraryName
+            translationStates.find { it.kaModule.libraryName == libraryName }?.let {
+                val fqName = symbol.classId?.asSingleFqName()
+                    ?: return@analyze
+                if (fqName !in it.processedReferences) {
+                    it.unprocessedReferences += fqName
+                }
             }
         }
     }
@@ -112,34 +115,43 @@ internal fun translateCrossReferencingModulesTransitively(
     }
     // Translate modules until the process converges.
     while (translationStates.any { it.unprocessedReferences.isNotEmpty() }) {
-        translationStates.filter { it.unprocessedReferences.isNotEmpty() }.map {
-            // Copy new references to avoid concurrent modification exception.
-            val inputQueue = it.unprocessedReferences.toList()
-            it.unprocessedReferences.clear()
-            val sirModule = translateModule(it.sirSession, it.kaModule) { scope ->
-                scope.classifiers
-                    .filterIsInstance<KaClassLikeSymbol>()
-                    .filter { it.classId?.asSingleFqName() in inputQueue }
+        translationStates
+            .filter { it.unprocessedReferences.isNotEmpty() }
+            .map {
+                // Copy new references to avoid concurrent modification exception.
+                val inputQueue = it.unprocessedReferences.toList()
+                it.unprocessedReferences.clear()
+                val sirModule = it.sirSession.withSessions {
+                    translateModule(module = it.kaModule) { scope ->
+                        scope.classifiers
+                            .filterIsInstance<KaClassLikeSymbol>()
+                            .filter { it.classId?.asSingleFqName() in inputQueue }
+                    }
+                }
+                it.processedReferences += inputQueue
+                // We build bridges at every iteration as new references might appear.
+                it.bridgeRequests += it.sirSession.withSessions { buildBridgeRequests(bridgeGenerator, sirModule) }
             }
-            it.processedReferences += inputQueue
-            // We build bridges at every iteration as new references might appear.
-            it.bridgeRequests += buildBridgeRequests(bridgeGenerator, sirModule)
-        }
     }
-    translationStates.mapNotNull {
+    return translationStates.mapNotNull {
         val sirModule = with(it.sirSession) { it.kaModule.sirModule() }
         // Avoid generation of empty modules.
         if (sirModule.declarations.isEmpty()) return@mapNotNull null
-        createTranslationResult(it.sirSession, sirModule, config, it.moduleConfig, emptyMap(), it.bridgeRequests)
+        it.sirSession.createTranslationResult(
+            sirModule,
+            config,
+            it.moduleConfig,
+            emptyMap(),
+            it.bridgeRequests
+        )
     }
 }
 
-private fun KaSession.createTranslationResult(
-    sirSession: SirSession,
+private fun SirSession.createTranslationResult(
     sirModule: SirModule,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
-    externalTypeDeclarationReferences: Map<String, List<FqName>>,
+    externalTypeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
     bridgeRequests: List<BridgeRequest>,
 ): TranslationResult {
     // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
@@ -193,5 +205,5 @@ internal class TranslationResult(
     val bridgeSources: BridgeSources,
     val moduleConfig: SwiftModuleConfig,
     val bridgesModuleName: String,
-    val externalTypeDeclarationReferences: Map<String, List<FqName>>,
+    val externalTypeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
 )

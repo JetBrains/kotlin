@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModu
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
@@ -49,16 +49,15 @@ internal fun buildSirSession(
 
 /**
  * Translates the given [module] to a [SirModule].
- * The result is stored as a side effect in [sirSession]'s [org.jetbrains.kotlin.sir.providers.SirModuleProvider].
+ * The result is stored as a side effect in [this.sirSession]'s [org.jetbrains.kotlin.sir.providers.SirModuleProvider].
  * [scopeToDeclarations] allows filtering declarations during translation.
  */
-internal fun KaSession.translateModule(
-    sirSession: SirSession,
+internal fun SirAndKaSession.translateModule(
     module: KaLibraryModule,
     scopeToDeclarations: (KaScope) -> Sequence<KaDeclarationSymbol> = { it.declarations },
 ): SirModule {
     val scope = KlibScope(module, useSiteSession)
-    extractAllTransitively(scopeToDeclarations(scope), sirSession, useSiteSession)
+    extractAllTransitively(scopeToDeclarations(scope))
         .toList()
         .forEach { (oldParent, children) ->
             children
@@ -68,21 +67,21 @@ internal fun KaSession.translateModule(
                     newParent.addChild { declaration }
                 }
         }
-    return with(sirSession) { module.sirModule() }
+    return module.sirModule()
 }
 
-private fun extractAllTransitively(
+private fun SirAndKaSession.extractAllTransitively(
     declarations: Sequence<KaDeclarationSymbol>,
-    sirSession: SirSession,
-    kaSession: KaSession,
-): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> = with(sirSession) {
-    generateSequence<List<Pair<SirDeclarationParent, List<SirDeclaration>>>>(declarations.extractDeclarations(kaSession).groupBy { it.parent }.toList()) {
-        it.flatMap { (_, children) ->
-            children.filterIsInstance<SirDeclarationContainer>()
-                .map { it to it.declarations }
-        }.takeIf { it.isNotEmpty() }
-    }.flatten()
-}
+): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> = generateSequence(
+    declarations.extractDeclarations(useSiteSession).groupBy { it.parent }.toList()
+) {
+    it.flatMap { (_, children) ->
+        children
+            .filterIsInstance<SirDeclarationContainer>()
+            .map { it to it.declarations }
+    }.takeIf { it.isNotEmpty() }
+}.flatten()
+
 
 /**
  * [useSiteModule] a target for creating Analysis API session via [analyze].
@@ -91,29 +90,34 @@ private fun extractAllTransitively(
  */
 internal class KaModules(
     val useSiteModule: KaModule,
-    val mainModules: List<KaLibraryModule>,
+    private val modulesToInputs: Map<KaLibraryModule, InputModule>,
     val platformLibraries: List<KaLibraryModule>,
-)
+) {
+    val inputsToModules: Map<InputModule, KaLibraryModule> = modulesToInputs.map { it.value to it.key }.toMap()
+    val mainModules: List<KaLibraryModule> = modulesToInputs.keys.toList()
+    fun configFor(module: KaLibraryModule): SwiftModuleConfig =
+        modulesToInputs[module]?.config ?: error("No config for module ${module.libraryName}")
+}
 
 internal fun createKaModulesForStandaloneAnalysis(
     inputs: Set<InputModule>,
     targetPlatform: TargetPlatform,
     platformLibraries: Set<InputModule>,
 ): KaModules {
-    lateinit var binaryModules: List<KaLibraryModule>
+    lateinit var binaryModules: Map<KaLibraryModule, InputModule>
     lateinit var fakeSourceModule: KaSourceModule
     var platformLibraryModules: List<KaLibraryModule> = emptyList()
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = targetPlatform
-            binaryModules = inputs.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
+            binaryModules = inputs.associate { inputModuleIntoKaLibraryModule(it, targetPlatform) to it }
             platformLibraryModules = platformLibraries.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
                     platform = targetPlatform
                     moduleName = "fakeSourceModule"
-                    binaryModules.forEach(::addRegularDependency)
+                    binaryModules.forEachKey(::addRegularDependency)
                     platformLibraryModules.forEach(::addRegularDependency)
                 }
             )
@@ -132,3 +136,5 @@ private fun KtModuleProviderBuilder.inputModuleIntoKaLibraryModule(
         libraryName = input.name
     }
 )
+
+private inline fun <K> Map<out K, *>.forEachKey(action: (K) -> Unit) = keys.forEach(action)

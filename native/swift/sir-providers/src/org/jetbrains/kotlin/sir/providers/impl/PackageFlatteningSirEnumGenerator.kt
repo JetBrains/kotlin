@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirEnum
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.util.addChild
-import org.jetbrains.kotlin.sir.util.name
 
 public class PackageFlatteningSirEnumGenerator(
     private val sirSession: SirSession,

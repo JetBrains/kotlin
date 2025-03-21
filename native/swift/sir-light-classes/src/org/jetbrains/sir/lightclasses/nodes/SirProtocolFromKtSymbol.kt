@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
-import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation

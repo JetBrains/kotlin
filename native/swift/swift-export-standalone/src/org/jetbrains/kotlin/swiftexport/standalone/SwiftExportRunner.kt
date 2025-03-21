@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
+import kotlin.collections.filter
 import kotlin.collections.plus
 import kotlin.io.path.div
 
@@ -129,12 +132,11 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  * @return A [Result] containing a set of translated Swift export modules upon success, or an exception in case of a failure.
  */
 public fun runSwiftExport(
-    explicitlyExportedModules: Set<InputModule>,
-    transitivelyExportedModules: Set<InputModule>,
+    modules: Set<InputModule>,
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
-    logConfigIssues(explicitlyExportedModules, config.logger)
-    val allModules = translateModules(explicitlyExportedModules, transitivelyExportedModules, config)
+    logConfigIssues(modules, config.logger)
+    val allModules = translateModules(modules, config)
     val packagesModule = writeKotlinPackagesModule(
         sirModule = allModules.createModuleForPackages(config),
         outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"
@@ -147,16 +149,21 @@ public fun runSwiftExport(
 }
 
 private fun translateModules(
-    explicitlyExportedModules: Set<InputModule>,
-    transitivelyExportedModules: Set<InputModule>,
+    inputModules: Set<InputModule>,
     config: SwiftExportConfig,
 ): List<TranslationResult> {
-    val stdlibInputModule = config.stdlibInputModule
-    val inputModules = explicitlyExportedModules + transitivelyExportedModules + stdlibInputModule
-    val kaModules = createKaModulesForStandaloneAnalysis(inputModules, config.targetPlatform, config.platformLibsInputModule)
-    val explicitModulesTranslationResults = explicitlyExportedModules.map { translateModulePublicApi(it, kaModules, config) }
-    val accumulatedReferences = explicitModulesTranslationResults.map { it.externalTypeDeclarationReferences }.reduce { acc, map -> acc + map }
-    val transitiveExportRoots = (transitivelyExportedModules + stdlibInputModule).associateWith { accumulatedReferences[it.name] ?: emptyList() }
+    val allModules = inputModules + config.stdlibInputModule
+    val kaModules = createKaModulesForStandaloneAnalysis(allModules, config.targetPlatform, config.platformLibsInputModule)
+    val explicitModulesTranslationResults = allModules
+        .filter { it.config.shouldBeFullyExported }
+        .map { translateModulePublicApi(it, kaModules, config) }
+    val transitiveExportRoots = allModules
+        .filterNot { it.config.shouldBeFullyExported }
+        .mapNotNull { kaModules.inputsToModules[it] }
+        .associateWith { inputModule ->
+            explicitModulesTranslationResults
+                .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: emptyList() }
+        }
     val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
     return explicitModulesTranslationResults + transitiveModulesTranslationResults
 }

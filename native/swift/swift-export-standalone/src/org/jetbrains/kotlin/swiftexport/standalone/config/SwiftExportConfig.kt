@@ -38,14 +38,18 @@ public data class SwiftExportConfig(
     val targetPlatform: TargetPlatform by lazy { NativePlatforms.nativePlatformBySingleTarget(konanTarget) }
 
     private fun createInputModuleForStdlib(distribution: Distribution) =
-        InputModule("stdlib", Path(distribution.stdlib), SwiftModuleConfig())
+        InputModule(
+            "stdlib",
+            Path(distribution.stdlib),
+            SwiftModuleConfig(shouldBeFullyExported = false)
+        )
 
     private fun createInputModuleForPlatformLibs(platformLibsRootFile: File) = platformLibsRootFile.list()!!
         .map {
             InputModule(
                 name = it.split(".").last(),
                 platformLibsRootFile.resolve(it).toPath(),
-                SwiftModuleConfig()
+                SwiftModuleConfig(shouldBeFullyExported = false)
             )
         }.toSet()
 }

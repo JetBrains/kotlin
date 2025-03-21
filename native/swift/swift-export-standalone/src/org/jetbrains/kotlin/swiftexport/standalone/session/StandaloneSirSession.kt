@@ -34,7 +34,6 @@ internal class StandaloneSirSession(
     override val declarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = ObservingSirDeclarationProvider(
             declarationsProvider = StubbingSirDeclarationProvider(
-                ktModule = useSiteModule,
                 sirSession = sirSession,
                 declarationsProvider = SirDeclarationFromKtSymbolProvider(
                     ktModule = useSiteModule,

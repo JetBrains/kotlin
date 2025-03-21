@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.sir.util.addChild
 
@@ -24,10 +25,9 @@ public class SirParentProviderImpl(
 
     private val createdExtensionsForModule: MutableMap<SirModule, MutableMap<SirEnum, SirExtension>> = mutableMapOf()
 
-    override fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement = with(sirSession) {
-        with(ktAnalysisSession) {
-            this@getOriginalSirParent.containingDeclaration?.toSir()?.primaryDeclaration ?: this@getOriginalSirParent.containingModule.sirModule()
-        }
+    override fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement = sirSession.withSessions {
+        this@getOriginalSirParent.containingDeclaration?.toSir()?.primaryDeclaration
+            ?: this@getOriginalSirParent.containingModule.sirModule()
     }
 
     override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationContainer {

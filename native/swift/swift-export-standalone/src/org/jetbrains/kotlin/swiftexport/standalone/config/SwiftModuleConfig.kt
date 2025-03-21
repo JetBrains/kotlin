@@ -19,6 +19,7 @@ public data class SwiftModuleConfig(
     val rootPackage: String? = null,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val experimentalFeatures: Map<String, String> = emptyMap(),
+    val shouldBeFullyExported: Boolean,
 ) {
 
     val targetPackageFqName: FqName? = rootPackage?.rootPackageToFqn()

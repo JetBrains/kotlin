@@ -30,7 +30,6 @@ public class IdeSirSession(
     )
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = StubbingSirDeclarationProvider(
-            ktModule = kaModule,
             sirSession = sirSession,
             declarationsProvider = SirDeclarationFromKtSymbolProvider(
                 ktModule = kaModule,

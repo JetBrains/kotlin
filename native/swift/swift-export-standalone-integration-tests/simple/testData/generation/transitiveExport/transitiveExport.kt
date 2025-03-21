@@ -23,6 +23,7 @@ class FeatureC() {
 }
 
 // MODULE: main(feature,anotherFeature)
+// EXPORT_TO_SWIFT
 // FILE: main.kt
 import oh.my.kotlin.FeatureA
 
@@ -32,4 +33,15 @@ fun foo(): FeatureA {
 
 fun bar(): FeatureC {
     return FeatureC()
+}
+
+// MODULE: main_2(feature)
+// EXPORT_TO_SWIFT
+// FILE: main_2.kt
+package foo
+
+import oh.my.kotlin.FeatureB
+
+fun foo(): FeatureB {
+    return FeatureB()
 }

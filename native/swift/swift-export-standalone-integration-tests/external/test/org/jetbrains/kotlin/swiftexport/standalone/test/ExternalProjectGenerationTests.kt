@@ -47,8 +47,10 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
         validateKotlinBridge: Boolean = false,
     ) {
         val config = klib.createConfig(outputPath = tmpdir.toPath().resolve(klib.swiftModuleName))
-        val inputModule = klib.createInputModule(SwiftModuleConfig(rootPackage = klib.rootPackage))
-        val result = runSwiftExport(setOf(inputModule), emptySet(), config).getOrThrow()
+        val inputModule = klib.createInputModule(
+            SwiftModuleConfig(rootPackage = klib.rootPackage, shouldBeFullyExported = true)
+        )
+        val result = runSwiftExport(setOf(inputModule), config).getOrThrow()
         validateSwiftExportOutput(testDataDir.resolve(goldenData), result, validateKotlinBridge)
     }
 

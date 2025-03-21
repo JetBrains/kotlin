@@ -59,7 +59,7 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
     private fun runTestsAgainstKlib(klibSettings: Set<KlibExportSettings>, testPath: File) {
         val testModules = klibSettings.map { TestModule.Given(it.path.toFile()) }.toSet()
         val inputModules = klibSettings.map {
-            it.createInputModule(SwiftModuleConfig(rootPackage = it.rootPackage))
+            it.createInputModule(SwiftModuleConfig(rootPackage = it.rootPackage, shouldBeFullyExported = true))
         }.toSet()
 
         val swiftConfig = SwiftExportConfig(
@@ -67,7 +67,7 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
             konanTarget = targets.testTarget
         )
 
-        val swiftExportResult = runSwiftExport(inputModules, emptySet(), swiftConfig).getOrThrow()
+        val swiftExportResult = runSwiftExport(inputModules, swiftConfig).getOrThrow()
         val kotlinBridgeFiles =
             swiftExportResult.filterIsInstance<SwiftExportModule.BridgesToKotlin>().map { it.files.kotlinBridges.toFile() }
         val testCase = generateSwiftExportTestCase(

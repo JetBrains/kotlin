@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
@@ -114,12 +113,12 @@ private fun SirAndKaSession.isSupported(type: SirType): Boolean = when (type) {
     is SirNominalType -> {
         val declarationSupported = when (val declaration = type.typeDeclaration) {
             is SirTypealias -> isSupported(declaration.type)
-            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability(this)?.let { it is SirAvailability.Available } != false
+            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability(useSiteSession)?.let { it is SirAvailability.Available } != false
         }
         declarationSupported && type.typeArguments.all(::isSupported)
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all(::isSupported)
-    is SirExistentialType -> type.protocols.all { it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability(this) is SirAvailability.Available != false }
+    is SirExistentialType -> type.protocols.all { it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability(useSiteSession) is SirAvailability.Available != false }
     else -> false
 }
 
