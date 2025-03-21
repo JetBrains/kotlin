@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.analysis.api.export.utilities.*
 
 public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
@@ -146,6 +147,11 @@ public class SirVisibilityCheckerImpl(
 
     @OptIn(KaExperimentalApi::class)
     private fun KaNamedClassSymbol.isExported(ktAnalysisSession: KaSession): Boolean = with(ktAnalysisSession) {
+
+        if (!isAllContainingSymbolsExported(ktAnalysisSession)) {
+            return false
+        }
+
         // Any is exported as a KotlinBase class.
         if (classId == DefaultTypeClassIds.ANY) {
             return false
@@ -199,6 +205,11 @@ public class SirVisibilityCheckerImpl(
             val parent = containingSymbol as? KaClassSymbol ?: return false
             return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
         }
+    }
+
+    private fun KaNamedClassSymbol.isAllContainingSymbolsExported(ktAnalysisSession: KaSession): Boolean = with(ktAnalysisSession) {
+        if (containingSymbol !is KaNamedClassSymbol) return true
+        return (containingSymbol as? KaNamedClassSymbol)?.isExported(ktAnalysisSession) == true
     }
 }
 
