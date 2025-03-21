@@ -116,3 +116,27 @@ class WithIC {
         get() = TODO()
         set(value) {}
 }
+
+abstract class Abstract {
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
+    open fun openIC(ic: IC) {}
+
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
+    abstract fun abstractIC(ic: IC)
+}
+
+interface Interface {
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
+    fun foo(ic: IC) {}
+
+    fun bar(ic: IC)
+}
+
+class Class: Interface {
+    @JvmExposeBoxed
+    override fun bar(ic: IC) {}
+}
+
+@JvmSynthetic
+<!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC!>@JvmExposeBoxed<!>
+fun syntheticFun(ic: IC) {}

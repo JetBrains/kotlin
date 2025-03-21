@@ -4076,6 +4076,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmExposeBoxedCannotBeTheSameAsJvmName::class
     }
 
+    interface JvmExposeBoxedCannotExposeOpenAbstract : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotExposeOpenAbstract::class
+    }
+
+    interface JvmExposeBoxedCannotExposeSynthetic : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotExposeSynthetic::class
+    }
+
     interface WrongNullabilityForJavaOverride : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WrongNullabilityForJavaOverride::class
         val override: KaCallableSymbol
