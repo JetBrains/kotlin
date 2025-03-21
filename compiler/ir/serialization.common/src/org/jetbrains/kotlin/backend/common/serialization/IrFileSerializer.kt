@@ -173,6 +173,7 @@ open class IrFileSerializer(
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
+    protected val protoDebugInfoMap = hashMapOf<String, Int>()
     protected val protoDebugInfoArray = arrayListOf<String>()
 
     private var isInsideInline: Boolean = false
@@ -230,9 +231,9 @@ open class IrFileSerializer(
         protoStringArray.size - 1
     }
 
-    private fun serializeDebugInfo(value: String): Int {
+    private fun serializeDebugInfo(value: String): Int = protoDebugInfoMap.getOrPut(value) {
         protoDebugInfoArray.add(value)
-        return protoDebugInfoArray.size - 1
+        protoDebugInfoArray.size - 1
     }
 
     private fun serializeName(name: Name): Int = serializeString(name.toString())
