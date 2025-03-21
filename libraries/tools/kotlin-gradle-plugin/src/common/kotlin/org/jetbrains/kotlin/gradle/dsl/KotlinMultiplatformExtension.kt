@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
@@ -59,16 +60,25 @@ constructor(
         return targets
     }
 
-    private val presetExtension = project.objects.newInstance(
-        DefaultTargetsFromPresetExtension::class.java,
+    private val presetExtension = project.objects.DefaultTargetsFromPresetExtension(
         targets,
         project,
     )
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = targetsExtensionDeprecationMessage,
+        level = DeprecationLevel.WARNING,
+    )
     fun targets(configure: Action<TargetsFromPresetExtension>) {
         configure.execute(presetExtension)
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = targetsExtensionDeprecationMessage,
+        level = DeprecationLevel.WARNING,
+    )
     fun targets(configure: TargetsFromPresetExtension.() -> Unit) {
         configure(presetExtension)
     }
@@ -184,10 +194,26 @@ constructor(
             }
 }
 
+private const val targetsExtensionDeprecationMessage =
+    "Usages of this DSL are deprecated, please migrate to top-level 'kotlin {}' extension."
+
+@Deprecated(
+    message = targetsExtensionDeprecationMessage,
+    level = DeprecationLevel.WARNING,
+)
 @KotlinGradlePluginPublicDsl
 interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
 
-@Suppress("OVERRIDE_DEPRECATION")
+
+internal fun ObjectFactory.DefaultTargetsFromPresetExtension(
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project,
+): DefaultTargetsFromPresetExtension = newInstance(
+    targets,
+    project,
+)
+
+@Suppress("DEPRECATION")
 internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
     val targets: NamedDomainObjectCollection<KotlinTarget>,
     val project: Project,
