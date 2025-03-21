@@ -60,7 +60,11 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
                     parameters += createExtensionReceiver(outerReceiverParameter.type)
                 }
 
-                valueParameters = irConstructor.valueParameters.map { it.copyTo(function, type = it.type) }
+                valueParameters = irConstructor.valueParameters.map {
+                    // Erase the default value as it might be unlowered because of cross-file calls.
+                    // Leaving it as is might lead to problems like KT-74739.
+                    it.copyTo(function, type = it.type, defaultValue = null)
+                }
 
                 annotations = irConstructor.annotations
             }
