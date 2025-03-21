@@ -82,7 +82,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
             .filterIsInstanceAnd<IrSimpleFunction> {
                 it.correspondingPropertySymbol != null && !it.isFakeOverride
             }
-            .flatMapTo(hashSetOf()) { overriddenAccessor ->
+            .flatMapTo(linkedSetOf()) { overriddenAccessor ->
                 overriddenAccessor.overriddenSymbols.filter {
                     it.owner.realOverrideTarget.isEffectivelyExternal()
                 }
