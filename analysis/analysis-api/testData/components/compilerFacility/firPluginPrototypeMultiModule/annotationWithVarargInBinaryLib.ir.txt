@@ -1,0 +1,35 @@
+MODULE_FRAGMENT
+  FILE fqName:home fileName:main.kt
+    CLASS CLASS name:Child modality:FINAL visibility:public superTypes:[p2.Base]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:home.Child
+      CONSTRUCTOR visibility:public returnType:home.Child [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in p2.Base'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Child modality:FINAL visibility:public superTypes:[p2.Base]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in p2.Base
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int [fake_override] declared in p2.Base
+      FUN FAKE_OVERRIDE name:setContentView visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:p2.Base
+        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+          annotations:
+            SuppressLint(value = ["UnknownNullness", "MissingNullability"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+        overridden:
+          public open fun setContentView (p0: kotlin.Int): kotlin.Unit declared in p2.Base
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String [fake_override] declared in p2.Base
+      FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:home.Child
+        BLOCK_BODY
+          VAR name:x type:kotlin.Int [val]
+            CALL 'public final fun foo (<this>: p2.Base, b: kotlin.Int): kotlin.Int declared in p3' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR '<this>: home.Child declared in home.Child.test' type=home.Child origin=IMPLICIT_ARGUMENT
+              ARG b: CONST Int type=kotlin.Int value=7

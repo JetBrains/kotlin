@@ -1,0 +1,5 @@
+public final class home/Child {
+    // source: 'main.kt'
+    public method <init>(): void
+    public final method test(): void
+}

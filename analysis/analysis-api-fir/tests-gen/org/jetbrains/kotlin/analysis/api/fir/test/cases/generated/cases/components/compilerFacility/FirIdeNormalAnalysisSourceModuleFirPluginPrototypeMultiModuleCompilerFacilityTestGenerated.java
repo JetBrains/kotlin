@@ -58,6 +58,12 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   }
 
   @Test
+  @TestMetadata("annotationWithVarargInBinaryLib.kt")
+  public void testAnnotationWithVarargInBinaryLib() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/annotationWithVarargInBinaryLib.kt");
+  }
+
+  @Test
   @TestMetadata("compilerPluginUsage.kt")
   public void testCompilerPluginUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/compilerPluginUsage.kt");
