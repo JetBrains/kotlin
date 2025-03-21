@@ -1,7 +1,7 @@
 @_exported import ExportedKotlinPackages
-import KotlinRuntimeSupport
-import KotlinRuntime
 import stdlib
+import KotlinRuntime
+import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinSerialization
 
 public typealias `internal` = ExportedKotlinPackages.kotlinx.serialization.`internal`

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.writer
 
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportFiles
+import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import java.io.File
 
 internal fun dumpTextAtPath(
@@ -20,13 +21,12 @@ internal fun dumpTextAtPath(
 }
 
 internal fun generateBridgeSources(
-    bridgeGenerator: BridgeGenerator,
     requests: List<BridgeRequest>,
     stableDeclarationsOrder: Boolean,
 ): BridgeSources {
     val kotlinBridgePrinter = createKotlinBridgePrinter()
     val cBridgePrinter = createCBridgePrinter()
-
+    val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
     requests
         .let { if (stableDeclarationsOrder) it.sortedWith(StableBridgeRequestComparator) else it }
         .flatMap(bridgeGenerator::generateBridges)
