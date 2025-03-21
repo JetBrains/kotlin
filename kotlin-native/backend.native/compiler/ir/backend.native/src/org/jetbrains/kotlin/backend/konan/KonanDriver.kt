@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.copyCommonKlibArgumentsFrom
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -214,11 +215,7 @@ class KonanDriver(
 
             // KT-71976: Restore keys, which are reset within `compilationSpawner.spawn(emptyList())`,
             // during invocation of `prepareEnvironment()` with empty arguments.
-            copy(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
-            copy(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES)
-            copy(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH)
-            copy(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-            copy(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
+            copyCommonKlibArgumentsFrom(configuration)
         }
 
         // For the second stage, remove already compiled source files from the configuration.

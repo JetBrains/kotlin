@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.arguments.parseCustomKotlinAbiVersion
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
 import org.jetbrains.kotlin.cli.js.*
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
@@ -235,6 +234,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
     }
 
     internal fun initializeCommonConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
+        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = false)
+
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
         configuration.libraries += libraries
@@ -246,18 +247,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         for (arg in arguments.freeArgs) {
             configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(arg))
         }
-
-        arguments.relativePathBases?.let {
-            configuration.klibRelativePathBases += it
-        }
-        configuration.klibNormalizeAbsolutePath = arguments.normalizeAbsolutePath
-        configuration.produceKlibSignaturesClashChecks = arguments.enableSignatureClashChecks
-
-        configuration.duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.parseOrDefault(
-            arguments.duplicatedUniqueNameStrategy,
-            default = DuplicatedUniqueNameStrategy.DENY
-        )
-        configuration.customKlibAbiVersion = parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, configuration.messageCollector)
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
             configuration.messageCollector.report(ERROR, message, location = null)
@@ -265,6 +254,5 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         }
         configuration.moduleName = moduleName
         configuration.allowKotlinPackage = arguments.allowKotlinPackage
-        configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
     }
 }
