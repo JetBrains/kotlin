@@ -9,7 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
@@ -17,13 +16,10 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.syncCommonMultiplatformOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
-import org.jetbrains.kotlin.gradle.targets.android.internal.internal
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -196,12 +192,7 @@ internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
     val targets: NamedDomainObjectCollection<KotlinTarget>,
     val project: Project,
 ) : TargetsFromPresetExtension,
-    NamedDomainObjectCollection<KotlinTarget> by targets {
-
-    private fun warnAboutFromPresetDeprecation() {
-        project.reportDiagnostic(KotlinToolingDiagnostics.FromPreset())
-    }
-}
+    NamedDomainObjectCollection<KotlinTarget> by targets
 
 private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
     internal._preset == kotlinTargetPreset

@@ -847,18 +847,6 @@ internal object KotlinToolingDiagnostics {
 
     private val presetsDeprecationSeverity = ERROR
 
-    object FromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroup.Kgp.Deprecation) {
-        const val DEPRECATION_MESSAGE = "The fromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
-        operator fun invoke() = build {
-            title("fromPreset() Function Deprecated")
-                .description(DEPRECATION_MESSAGE)
-                .solution(PRESETS_DEPRECATION_SOLUTION)
-                .documentationLink(URI(PRESETS_DEPRECATION_URL)) { url ->
-                    "$PRESETS_DEPRECATION_URL_PREFIX $url"
-                }
-        }
-    }
-
     object CreateTarget : ToolingDiagnosticFactory(presetsDeprecationSeverity, DiagnosticGroup.Kgp.Deprecation) {
         private const val DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
         operator fun invoke() = build {
