@@ -16,10 +16,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.Cleanabl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.session.registerModuleData
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.WasmPlatform
@@ -65,7 +68,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
 
         if (module is KaLibraryModule && (preferBinary || module.isSdk)) {
             return getCachedSession(module, binaryCache) {
-                createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
+                createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module, ::findBinarySymbol)
             }
         }
 
@@ -217,6 +220,13 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     private val KaModule.supportsIsolatedSessionCreation: Boolean
         get() = this !is KaDanglingFileModule
 
+    private fun findBinarySymbol(classId: ClassId): FirClassLikeSymbol<*>? {
+        for (module in binaryCache.keys) {
+            binaryCache[module]?.symbolProvider?.getClassLikeSymbolByClassId(classId)?.let { return it }
+        }
+        return null
+    }
+
     private fun createSession(module: KaModule): LLFirSession {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
@@ -224,7 +234,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             is KaBuiltinsModule -> sessionFactory.createLibrarySession(module)
             is KaLibraryModule -> {
                 if (module.isSdk) {
-                    sessionFactory.createBinaryLibrarySession(module)
+                    sessionFactory.createBinaryLibrarySession(module, ::findBinarySymbol)
                 } else {
                     sessionFactory.createLibrarySession(module)
                 }

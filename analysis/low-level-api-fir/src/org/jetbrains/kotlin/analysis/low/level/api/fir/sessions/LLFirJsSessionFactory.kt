@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory.registerJsComponents
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.name.ClassId
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
@@ -56,7 +58,10 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(
+        module: KaLibraryModule,
+        findBinarySymbol: (ClassId) -> FirClassLikeSymbol<*>?,
+    ): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerJsComponents(moduleKind = null)
         }

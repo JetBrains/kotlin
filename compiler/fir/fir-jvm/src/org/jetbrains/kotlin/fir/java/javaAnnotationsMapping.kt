@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMappi
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
+import org.jetbrains.kotlin.fir.resolve.binaryLibrarySymbolProvider
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -283,7 +284,8 @@ private fun fillAnnotationArgumentMapping(
 ) {
     if (annotationArguments.isEmpty()) return
 
-    val annotationClassSymbol = lookupTag.toSymbol(session)
+    val annotationClassSymbol =
+        lookupTag.toSymbol(session) ?: session.binaryLibrarySymbolProvider?.getClassLikeSymbolByClassId(lookupTag.classId)
     val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)
         ?.declarations
         ?.firstIsInstanceOrNull<FirConstructor>()
