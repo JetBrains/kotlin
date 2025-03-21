@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.createKaModulesForSt
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
+import org.jetbrains.kotlin.swiftexport.standalone.translation.translateCrossReferencingModulesTransitively
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModulePublicApi
-import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModuleTransitiveClosure
 import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
@@ -156,10 +155,10 @@ private fun translateModules(
     val inputModules = explicitlyExportedModules + transitivelyExportedModules + stdlibInputModule
     val kaModules = createKaModulesForStandaloneAnalysis(inputModules, config.targetPlatform, config.platformLibsInputModule)
     val explicitModulesTranslationResults = explicitlyExportedModules.map { translateModulePublicApi(it, kaModules, config) }
-    val stdlibTranslationResult = explicitModulesTranslationResults
-        .flatMap { it.externalTypeDeclarationReferences["stdlib"] ?: emptyList() }
-        .ifNotEmpty { translateModuleTransitiveClosure(stdlibInputModule, kaModules, config, toSet()) }
-    return explicitModulesTranslationResults + listOfNotNull(stdlibTranslationResult)
+    val accumulatedReferences = explicitModulesTranslationResults.map { it.externalTypeDeclarationReferences }.reduce { acc, map -> acc + map }
+    val transitiveExportRoots = (transitivelyExportedModules + stdlibInputModule).associateWith { accumulatedReferences[it.name] ?: emptyList() }
+    val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
+    return explicitModulesTranslationResults + transitiveModulesTranslationResults
 }
 
 private fun Collection<TranslationResult>.createModuleForPackages(config: SwiftExportConfig): SirModule = buildModule {
