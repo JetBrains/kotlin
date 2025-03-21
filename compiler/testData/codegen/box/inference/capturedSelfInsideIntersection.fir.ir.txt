@@ -160,8 +160,8 @@ FILE fqName:<root> fileName:/capturedSelfInsideIntersection.kt
               ARG <this>: GET_VAR '<this>: <root>.GraphQlTester.Path declared in <root>.isEqualTo' type=<root>.GraphQlTester.Path origin=IMPLICIT_ARGUMENT
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public abstract fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.GraphQlTester.Entity.isEqualTo declared in <root>.GraphQlTester.Entity' type=kotlin.Nothing origin=null
-              TYPE_ARG T: kotlin.Nothing
+            then: CALL 'public abstract fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.GraphQlTester.Entity.isEqualTo declared in <root>.GraphQlTester.Entity' type=<root>.GraphQlTester.Traversable origin=null
+              TYPE_ARG T: <root>.GraphQlTester.Traversable
               ARG <this>: CALL 'public abstract fun entity <E> (entityType: kotlin.reflect.KClass<E of <root>.GraphQlTester.Path.entity>): <root>.GraphQlTester.Entity<E of <root>.GraphQlTester.Path.entity, *> declared in <root>.GraphQlTester.Path' type=<root>.GraphQlTester.Entity<U of <root>.isEqualTo, *> origin=null
                 TYPE_ARG E: U of <root>.isEqualTo
                 ARG <this>: GET_VAR '<this>: <root>.GraphQlTester.Path declared in <root>.isEqualTo' type=<root>.GraphQlTester.Path origin=IMPLICIT_ARGUMENT
