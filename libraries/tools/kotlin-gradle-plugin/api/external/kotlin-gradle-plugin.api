@@ -831,14 +831,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/TargetsFromPresetExtension : org/gradle/api/NamedDomainObjectCollection {
-	public abstract fun fromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public abstract fun fromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public abstract fun fromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/TargetsFromPresetExtension$DefaultImpls {
-	public static fun fromPreset (Lorg/jetbrains/kotlin/gradle/dsl/TargetsFromPresetExtension;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public static synthetic fun fromPreset$default (Lorg/jetbrains/kotlin/gradle/dsl/TargetsFromPresetExtension;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
