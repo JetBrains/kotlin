@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 sealed class Statement {
@@ -17,6 +19,7 @@ sealed class Statement {
  * d != Null
  * d == True
  * d == False
+ * d != <symbol>
  */
 data class OperationStatement(override val variable: DataFlowVariable, val operation: Operation) : Statement() {
     override fun toString(): String {
@@ -57,13 +60,32 @@ class Implication(
     }
 }
 
-enum class Operation {
-    EqTrue, EqFalse, EqNull, NotEqNull;
+sealed class Operation {
+    data object EqTrue : Operation()
+    data object EqFalse : Operation()
+    data object EqNull : Operation()
+    data object NotEqNull : Operation()
+
+    /**
+     * Exists separately from [NotEqNull] because the latter is used in contract
+     * descriptions, where everything is resolved to the point that we keep no [FirExpression]s.
+     * You could say that [NotEqNull] and [NotEqSymbol] are optimized corner cases
+     * of some more general `NotEq`, which we don't need to support yet.
+     *
+     * Additionally, only [NotEqNull] is considered for smart-casting; inequality to
+     * other values is only used when verifying `when` exhaustiveness.
+     *
+     * [symbol] should point to a singleton with adequate equality.
+     * That is, to a construction unique up to `equals()` (like enum entries).
+     * A counter-example: you can have multiple non-equal deserialized instances of `object O`.
+     */
+    data class NotEqSymbol(val symbol: FirBasedSymbol<*>) : Operation()
 
     fun valueIfKnown(given: Operation): Boolean? = when (this) {
         EqTrue, EqFalse -> if (given == NotEqNull) null else given == this
         EqNull -> given == EqNull
         NotEqNull -> given != EqNull
+        is NotEqSymbol -> given is NotEqSymbol && given.symbol == symbol
     }
 
     override fun toString(): String = when (this) {
@@ -71,5 +93,6 @@ enum class Operation {
         EqFalse -> "== False"
         EqNull -> "== Null"
         NotEqNull -> "!= Null"
+        is NotEqSymbol -> "!= $symbol"
     }
 }

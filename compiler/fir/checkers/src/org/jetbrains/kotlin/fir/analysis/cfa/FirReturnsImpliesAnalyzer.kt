@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -137,6 +138,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.coneType, type)
         Operation.EqNull -> type.canBeNull(session)
         Operation.NotEqNull -> !type.isNullableNothing
+        is Operation.NotEqSymbol -> type.toSymbol(session) != symbol
     }
 
     private fun Operation.isTrueFor(value: Any?) = when (this) {
@@ -144,6 +146,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         Operation.EqFalse -> value == false
         Operation.EqNull -> value == null
         Operation.NotEqNull -> value != null
+        is Operation.NotEqSymbol -> error("`value` only comes from `FirLiteralExpression`s, there's no `ConstantValueKind` for singleton symbols")
     }
 
     private fun CFGNode<*>.collectBranchExits(nodes: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
