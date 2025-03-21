@@ -3378,6 +3378,7 @@ public class kotlin/io/encoding/Base64 {
 
 public final class kotlin/io/encoding/Base64$Default : kotlin/io/encoding/Base64 {
 	public final fun getMime ()Lkotlin/io/encoding/Base64;
+	public final fun getPem ()Lkotlin/io/encoding/Base64;
 	public final fun getUrlSafe ()Lkotlin/io/encoding/Base64;
 }
 
