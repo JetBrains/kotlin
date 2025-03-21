@@ -37,7 +37,7 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
         get() = buildFile == null &&
                 !version &&
                 !allowNoSourceFiles &&
-                (script || expression != null || freeArgs.isEmpty())
+                (script || expression != null || repl || freeArgs.isEmpty())
 
     override fun isKaptMode(arguments: K2JVMCompilerArguments): Boolean {
         return K2JVMCompiler.kaptIsEnabled(arguments)

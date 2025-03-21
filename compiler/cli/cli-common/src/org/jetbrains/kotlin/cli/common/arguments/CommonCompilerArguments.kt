@@ -96,6 +96,13 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
+    @Argument(value = "-Xrepl", description = "Run Kotlin REPL (deprecated)")
+    var repl = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @GradleOption(
         value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT

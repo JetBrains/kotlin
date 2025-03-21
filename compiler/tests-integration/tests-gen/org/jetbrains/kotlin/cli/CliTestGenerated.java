@@ -1723,6 +1723,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
     }
 
+    @TestMetadata("replLaunchError.args")
+    public void testReplLaunchError() {
+      runTest("compiler/testData/cli/jvm/replLaunchError.args");
+    }
+
     @TestMetadata("reportAllWarnings.args")
     public void testReportAllWarnings() {
       runTest("compiler/testData/cli/jvm/reportAllWarnings.args");

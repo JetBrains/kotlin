@@ -49,7 +49,8 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("jar of Kotlin compiler in Kotlin plugin", comment = "used in FIR IDE uast tests")
 
     val PRINT_VERSION by key<Boolean>("Print compiler version")
-    val SCRIPT_MODE by key<Boolean>("Compile and evaluate kotlin script")
+    val SCRIPT_MODE by key<Boolean>("Compile and evaluate Kotlin script")
+    val REPL_MODE by key<Boolean>("Run Kotlin REPL (deprecated)")
     val KOTLIN_PATHS by key<KotlinPaths>("Kotlin paths")
 
     val ALLOW_NO_SOURCE_FILES by key<Boolean>("allow no source files compilation")

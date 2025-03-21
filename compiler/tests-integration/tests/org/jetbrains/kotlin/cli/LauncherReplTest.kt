@@ -40,6 +40,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
                 add(compilationClasspath.joinToString(File.pathSeparator) { it.absolutePath })
             }
         }
+        processBuilder.command().add("-Xrepl")
         val process = processBuilder.start()
 
         data class ExceptionContainer(var value: Throwable? = null)

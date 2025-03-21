@@ -65,7 +65,10 @@ object CLIConfigurationKeys {
     val PRINT_VERSION = CompilerConfigurationKey.create<Boolean>("Print compiler version")
 
     @JvmField
-    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile and evaluate kotlin script")
+    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile and evaluate Kotlin script")
+
+    @JvmField
+    val REPL_MODE = CompilerConfigurationKey.create<Boolean>("Run Kotlin REPL (deprecated)")
 
     @JvmField
     val KOTLIN_PATHS = CompilerConfigurationKey.create<KotlinPaths>("Kotlin paths")
@@ -126,6 +129,10 @@ var CompilerConfiguration.printVersion: Boolean
 var CompilerConfiguration.scriptMode: Boolean
     get() = getBoolean(CLIConfigurationKeys.SCRIPT_MODE)
     set(value) { put(CLIConfigurationKeys.SCRIPT_MODE, value) }
+
+var CompilerConfiguration.replMode: Boolean
+    get() = getBoolean(CLIConfigurationKeys.REPL_MODE)
+    set(value) { put(CLIConfigurationKeys.REPL_MODE, value) }
 
 var CompilerConfiguration.kotlinPaths: KotlinPaths?
     get() = get(CLIConfigurationKeys.KOTLIN_PATHS)
