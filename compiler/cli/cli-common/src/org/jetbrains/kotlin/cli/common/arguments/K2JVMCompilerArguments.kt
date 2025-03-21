@@ -840,7 +840,6 @@ If API Level >= 2.2 -- no-op."""
         description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), " +
                 "and read annotations from the metadata if they are present."
     )
-    @Enables(LanguageFeature.AnnotationsInMetadata)
     var annotationsInMetadata = false
         set(value) {
             checkFrozen()
@@ -904,6 +903,9 @@ If API Level >= 2.2 -- no-op."""
         }
         if (valueClasses) {
             result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
+        }
+        if (annotationsInMetadata) {
+            result[LanguageFeature.AnnotationsInMetadata] = LanguageFeature.State.ENABLED
         }
 
         // If a JVM default mode is enabled via `-jvm-default` or `-Xjvm-default`, also forcibly enable a few flags that fix incomplete
