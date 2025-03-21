@@ -14,13 +14,14 @@ dependencies {
 
     api(project(":native:swift:sir"))
     api(project(":native:swift:sir-providers"))
-    implementation(project(":native:analysis-api-based-export-common"))
+    compileOnly(project(":native:analysis-api-based-export-common"))
 
-    api(project(":compiler:psi"))
-    api(project(":analysis:analysis-api"))
+    compileOnly(project(":compiler:psi"))
+    compileOnly(project(":analysis:analysis-api"))
 
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(project(":native:analysis-api-based-export-common"))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(project(":native:analysis-api-based-test-utils"))
     testImplementation(project(":compiler:tests-common", "tests-jar"))

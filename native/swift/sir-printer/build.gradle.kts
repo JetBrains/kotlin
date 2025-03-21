@@ -14,7 +14,7 @@ dependencies {
 
     api(project(":native:swift:sir"))
 
-    implementation(project(":core:util.runtime"))
+    compileOnly(project(":core:util.runtime"))
 
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)

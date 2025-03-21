@@ -198,10 +198,12 @@ fun Project.configureDefaultPublishing(
         configureSigning()
     }
 
-
     tasks.register("install") {
         group = "publishing"
-        dependsOn(tasks.named("publishToMavenLocal"))
+        description = "Installs the artifacts of this project and its runtime dependencies to the local Maven repository."
+        dependsOn(tasks.named("publishToMavenLocal")) // depend on publishing this module
+
+        configureInstallTaskToBeTransitive() // depend on runtime dependencies publishing transitively
     }.also {
         rootProject.tasks.named("mvnInstall").configure {
             dependsOn(it)

@@ -12,6 +12,9 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
+    testRuntimeOnly(project(":analysis:analysis-api-standalone"))
+    testRuntimeOnly(project(":native:analysis-api-klib-reader"))
+    testRuntimeOnly(project(":native:analysis-api-based-export-common"))
     testImplementation(project(":native:swift:swift-export-standalone-integration-tests"))
     testImplementation(project(":native:external-projects-test-utils"))
     testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))

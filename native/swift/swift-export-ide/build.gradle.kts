@@ -16,7 +16,10 @@ dependencies {
     implementation(project(":native:swift:sir-light-classes"))
     implementation(project(":native:swift:sir-printer"))
 
-    implementation(project(":analysis:analysis-api"))
+    compileOnly(project(":analysis:analysis-api"))
+    compileOnly(project(":core:compiler.common"))
+
+    testRuntimeOnly(project(":native:analysis-api-based-export-common"))
 
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
