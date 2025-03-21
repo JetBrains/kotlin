@@ -205,6 +205,8 @@ public actual annotation class JvmRecord
  * - Constructor available from Java is added.
  *
  * These additions preserve backwards compatibility (both binary and source), so existing inline classes can be marked safely.
+ *
+ * @property jvmName - optional wrapper name. Only applicable to functions, getters and setters.
  */
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented

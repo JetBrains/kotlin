@@ -5,6 +5,5 @@
 
 package kotlin.jvm.internal
 
-// Used by constructor, complementary to ones, exposed by @JvmExposeBoxed
-@PublishedApi
-internal class BoxingConstructorMarker private constructor()
+// Used by constructors complementary to the ones exposed by @JvmExposeBoxed.
+public class BoxingConstructorMarker private constructor()
