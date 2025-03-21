@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated class files.")
@@ -540,6 +541,7 @@ problems with parentheses in identifiers on certain platforms."""
         value = "-Xjvm-expose-boxed",
         description = "Expose inline classes and functions, accepting and returning them, to Java."
     )
+    @Enables(LanguageFeature.ImplicitJvmExposeBoxed)
     var jvmExposeBoxed = false
         set(value) {
             checkFrozen()

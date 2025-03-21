@@ -23,7 +23,6 @@ const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
 const val INHERIT_MULTIFILE_PARTS = "INHERIT_MULTIFILE_PARTS"
 const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 const val ENABLE_JVM_PREVIEW = "ENABLE_JVM_PREVIEW"
-const val JVM_EXPOSE_BOXED = "JVM_EXPOSE_BOXED"
 
 data class CompilerTestLanguageVersionSettings(
     private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -75,7 +74,6 @@ fun parseLanguageVersionSettings(
         analysisFlag(JvmAnalysisFlags.inheritMultifileParts, if (INHERIT_MULTIFILE_PARTS in directives) true else null),
         analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null),
         analysisFlag(JvmAnalysisFlags.enableJvmPreview, if (ENABLE_JVM_PREVIEW in directives) true else null),
-        analysisFlag(JvmAnalysisFlags.jvmExposeBoxed, if (JVM_EXPOSE_BOXED in directives) true else null),
         analysisFlag(AnalysisFlags.explicitApiVersion, if (apiVersionString != null) true else null)
     )
 
