@@ -45,9 +45,18 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
     )
 }
 
-fun TypeSystemInferenceExtensionContext.hasRecursiveTypeParametersWithGivenSelfType(selfTypeConstructor: TypeConstructorMarker): Boolean =
-    selfTypeConstructor.getParameters().any { it.hasRecursiveBounds(selfTypeConstructor) } ||
-            isK2 && selfTypeConstructor is CapturedTypeConstructorMarker && selfTypeConstructor.supertypes().any { hasRecursiveTypeParametersWithGivenSelfType(it.typeConstructor()) }
+fun TypeSystemInferenceExtensionContext.hasRecursiveTypeParametersWithGivenSelfType(selfTypeConstructor: TypeConstructorMarker): Boolean {
+    if (selfTypeConstructor.getParameters().any { it.hasRecursiveBounds(selfTypeConstructor) }) return true
+    if (!isK2) return false
+
+    if (selfTypeConstructor is CapturedTypeConstructorMarker) {
+        return selfTypeConstructor.supertypes().any {
+            hasRecursiveTypeParametersWithGivenSelfType(it.typeConstructor())
+        }
+    }
+
+    return false
+}
 
 fun TypeSystemInferenceExtensionContext.isRecursiveTypeParameter(typeConstructor: TypeConstructorMarker) =
     typeConstructor.getTypeParameterClassifier()?.hasRecursiveBounds() == true
