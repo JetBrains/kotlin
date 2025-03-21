@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithInlineSnapshotting
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 

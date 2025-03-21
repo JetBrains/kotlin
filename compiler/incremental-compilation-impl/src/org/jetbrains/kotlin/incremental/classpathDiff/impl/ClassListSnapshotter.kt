@@ -144,14 +144,24 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
      */
 
     override fun snapshot(): List<ClassSnapshot> {
-        // expected order:
-        // InlinedLocalClassKt$calculate$foo$1, InlinedLocalClassKt$calculate$bar$1, InlinedLocalClassKt
-        // this allows us to visit inner classes before the outer class
-        val sortedClasses = classes.sortedByDescending { it.classFile.getClassName().internalName }
-        println(sortedClasses.map {it.classFile.getClassName().internalName}.joinToString(", "))
+        // Very fair assumption: it's not possible to define a top-level class inside an inline function
+        // Fair assumption #2: class names can be obfuscated,
 
-        val (inner, outer) = classes.partition { it.classFile.getClassName().internalName.contains("$") }
-        val innerSorted = inner.sortedBy { it.classFile.getClassName().internalName }
+        //TODO - critical - look at r8ed classfiles
+
+        val nonTopLevelClasses = classes.filter { it.classFile.getClassName().internalName.contains("$") }
+        //val innerSorted = inner.sortedBy { it.classFile.getClassName().internalName }
+
+        /**
+         * We assume that inner classes are relatively light-weight, so it is not a problem to load them twice.
+         * A possible optimization is adding a cache with soft references so we'd utilize the available RAM efficiently?
+         */
+
+        for (innerClass in inner) {
+            //TODO add test case - inline fun in a local class
+            //disgusting
+            makeOrReuseClassSnapshot(innerClass)
+        }
 
         for (outerClass in outer) {
             // outer class snapshotting might find accessible inline functons ->

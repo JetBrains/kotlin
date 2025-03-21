@@ -24,7 +24,9 @@ class BasicClassInfoTest {
     @Test
     fun `compute BasicClassInfo`() {
         val compiledClasses = compileJava(className, sourceCode)
-        val classIds = compiledClasses.map { BasicClassInfo.compute(it).classId }
+        val basicInfos = compiledClasses.map { BasicClassInfo.compute(it) }
+        val classIds = basicInfos.map { it.classId }
+        val containingMethods = basicInfos.map { it.outerClassWithMethodName }
 
         assertEquals(
             listOf(
@@ -42,6 +44,21 @@ class BasicClassInfoTest {
                 classId("com.example", "TopLevelClass.StaticNestedClass", local = false)
             ),
             classIds
+        )
+
+        // [classId]'s definition of "local" is wider than JVM definition of local, so we don't visitOuterClass for every class
+        // with expected "local = true" state from above
+        assertEquals(
+            listOf(
+                null,
+                "com/example/TopLevelClass\$methodWithinTopLevelClass",
+                "com/example/TopLevelClass\$methodWithinTopLevelClass",
+                "com/example/TopLevelClass\$1LocalClass\$methodWithinLocalClass",
+                null, null, null,
+                "com/example/TopLevelClass\$InnerClass\$someMethod",
+                null, null, null, null,
+            ),
+            containingMethods
         )
     }
 

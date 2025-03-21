@@ -24,7 +24,8 @@ internal class BasicClassInfo(
     val supertypes: List<JvmClassName>,
 
     private val accessFlags: Int,
-    val isAnonymous: Boolean
+    val isAnonymous: Boolean,
+    val outerClassWithMethodName: String?, // per ASM documentation, null if this is not a proper local or anonymous class
 ) {
     val isKotlinClass = kotlinClassHeader != null
     val isPrivate = flagEnabled(accessFlags, Opcodes.ACC_PRIVATE)
@@ -60,12 +61,14 @@ internal class BasicClassInfo(
                 kotlinClassHeader = kotlinClassHeaderClassVisitor.getKotlinClassHeader(),
                 supertypes = basicClassInfoVisitor.getSupertypes(),
                 accessFlags = basicClassInfoVisitor.getAccessFlags(),
-                isAnonymous = innerClassesInfo[className]?.let { it.innerSimpleName == null } ?: false
+                isAnonymous = innerClassesInfo[className]?.let { it.innerSimpleName == null } == true,
+                outerClassWithMethodName = outerClassClassVisitor.getOuterClassWithMethod(),
             )
         }
     }
 }
 
+//TODO: I don't like how it looks, why not merge all classvisitors into a single one? thoughts?
 private class BasicClassInfoClassVisitor(cv: ClassVisitor) : ClassVisitor(Opcodes.API_VERSION, cv) {
     private var className: String? = null
     private var classAccess: Int? = null
@@ -96,12 +99,26 @@ private class InnerClassesClassVisitor(cv: ClassVisitor) : ClassVisitor(Opcodes.
     fun getInnerClassesInfo(): InnerClassesInfo = innerClassesInfo
 }
 
+/**
+ * Example inputs with just two layers of local classes:
+ *
+ * com/example/ictest/InlinedLocalClassKt calculate ()I
+ * com/example/ictest/InlinedLocalClassKt$calculate$outer$1 invoke ()Ljava/lang/Integer;
+ *
+ * If the [calc] at the end of OneClass$InnerClass$AnotherInnerClass$calc is actually an inline fun,
+ * we'd want to include into its abi snapshot every local class whose "outer class with method"
+ * has a prefix of "com/example/ictest/OneClass$InnerClass$AnotherInnerClass$calc"
+ */
 private class OuterClassClassVisitor(cv: ClassVisitor) : ClassVisitor(Opcodes.API_VERSION, cv) {
+    private var outerClassWithMethod: String? = null
 
     override fun visitOuterClass(owner: String?, name: String?, descriptor: String?) {
-        println("yo $owner $name $descriptor")
+        println("yo $owner $name")
+        outerClassWithMethod = owner?.let { owner -> name?.let { name -> "$owner\$$name" }}
         super.visitOuterClass(owner, name, descriptor)
     }
+
+    fun getOuterClassWithMethod(): String? = outerClassWithMethod
 }
 
 private class KotlinClassHeaderClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
