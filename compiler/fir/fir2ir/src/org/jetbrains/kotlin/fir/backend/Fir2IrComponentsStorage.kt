@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrComponentsStorage(
@@ -30,6 +31,7 @@ class Fir2IrComponentsStorage(
     override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     override val firProvider: FirProviderWithGeneratedFiles,
     syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
+    fakeOverrideResolver: SymbolRemapper,
 ) : Fir2IrComponents {
     override val lock: IrLock = commonMemberStorage.lock
 
@@ -62,7 +64,8 @@ class Fir2IrComponentsStorage(
     override val callGenerator: CallAndReferenceGenerator = CallAndReferenceGenerator(this, fir2IrVisitor, conversionScope)
 
     override val lazyFakeOverrideGenerator: Fir2IrLazyFakeOverrideGenerator = Fir2IrLazyFakeOverrideGenerator(this)
-    override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
+    override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses =
+        Fir2IrSymbolsMappingForLazyClasses(fakeOverrideResolver)
 
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
 

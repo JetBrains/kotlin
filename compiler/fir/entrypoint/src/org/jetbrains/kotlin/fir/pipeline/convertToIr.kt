@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -119,7 +118,8 @@ private class Fir2IrPipeline(
         val commonMemberStorage: Fir2IrCommonMemberStorage,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
-        val irTypeSystemContext: IrTypeSystemContext
+        val irTypeSystemContext: IrTypeSystemContext,
+        val fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
     )
 
     fun convertToIrAndActualize(): Fir2IrActualizedResult {
@@ -140,6 +140,8 @@ private class Fir2IrPipeline(
 
         val syntheticIrBuiltinsSymbolsContainer = Fir2IrSyntheticIrBuiltinsSymbolsContainer()
 
+        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
+
         lateinit var componentsStorage: Fir2IrComponentsStorage
 
         val fragments = outputs.map {
@@ -156,6 +158,7 @@ private class Fir2IrPipeline(
                 specialAnnotationsProvider,
                 firProvidersWithGeneratedFiles.getValue(it.session.moduleData),
                 syntheticIrBuiltinsSymbolsContainer,
+                fakeOverrideResolver,
             )
 
             Fir2IrConverter.generateIrModuleFragment(componentsStorage, it.fir).also { moduleFragment ->
@@ -176,7 +179,8 @@ private class Fir2IrPipeline(
             commonMemberStorage,
             irBuiltIns,
             symbolTable,
-            irTypeSystemContext
+            irTypeSystemContext,
+            fakeOverrideResolver,
         )
     }
 
@@ -203,9 +207,8 @@ private class Fir2IrPipeline(
 
         generateSyntheticBodiesOfDataValueMembers()
 
-        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
         val (fakeOverrideStrategy, delegatedMembersGenerationStrategy) =
-            buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer, fakeOverrideResolver)
+            buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer)
 
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
@@ -220,7 +223,7 @@ private class Fir2IrPipeline(
             )
         }
 
-        resolveFakeOverrideSymbols(fakeOverrideResolver)
+        resolveFakeOverrideSymbols()
         delegatedMembersGenerationStrategy.updateMetadataSources(
             commonMemberStorage.firClassesWithInheritanceByDelegation,
             outputs.last().session,
@@ -294,10 +297,9 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.buildFakeOverridesAndPlatformSpecificDeclarations(
         irActualizer: IrActualizer?,
-        fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
     ): Pair<Fir2IrFakeOverrideStrategy, Fir2IrDelegatedMembersGenerationStrategy> {
         val (fakeOverrideBuilder, delegatedMembersGenerationStrategy) = createFakeOverrideBuilder(irActualizer)
-        buildFakeOverrides(fakeOverrideBuilder, fakeOverrideResolver)
+        buildFakeOverrides(fakeOverrideBuilder)
         if (!componentsStorage.configuration.skipBodies) {
             delegatedMembersGenerationStrategy.generateDelegatedBodies()
         }
@@ -308,14 +310,12 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.buildFakeOverrides(
         fakeOverrideBuilder: IrFakeOverrideBuilder,
-        fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
     ) {
         fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, fakeOverrideResolver)
-        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(fakeOverrideResolver)
+        componentsStorage.symbolsMappingForLazyClasses.enableRemapper()
     }
 
-    private fun Fir2IrConversionResult.resolveFakeOverrideSymbols(fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver) {
+    private fun Fir2IrConversionResult.resolveFakeOverrideSymbols() {
         mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
     }
 
