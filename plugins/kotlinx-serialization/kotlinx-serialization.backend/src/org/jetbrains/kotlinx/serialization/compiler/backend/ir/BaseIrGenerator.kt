@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irGetObject
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -297,11 +297,11 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         } ?: return null
 
         // workaround for sealed and abstract classes - the `Companion.serializer()` function expects non-null serializers, but does not use them, so serializers of any type can be passed
-        val replaceArgsWithUnitSerializer = expectedSerializer == polymorphicSerializerId || expectedSerializer == sealedSerializerId
+        val replaceArgsWithUnitSerializer = expectedSerializer == polymorphicSerializerId
 
         val adjustedArgs: List<IrExpression> =
             if (replaceArgsWithUnitSerializer) {
-                val serializer = findStandardKotlinTypeSerializer(compilerContext, context.irBuiltIns.unitType)!!
+                val serializer = compilerContext.unitSerializerClass!!
                 List(baseClass.typeParameters.size) { irGetObject(serializer) }
             } else {
                 args
@@ -479,13 +479,19 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         val kSerializerType = kSerializerType(property.type)
 
+        // if in type arguments there are type parameters - we can't cache it in companion's property because she should use actual serializer
+        val serializers = createSerializerOnlyForClasses(property.type, serializableClass) ?: return null
+        val genericGetter: (Int, IrType) -> IrExpression = { index, _ ->
+            serializers[index]
+        }
+
         val expr = serializerInstance(
             serializer,
             compilerContext,
             property.type,
             null,
             serializableClass,
-            null
+            genericGetter
         )
 
         return if (expr != null) {
@@ -494,6 +500,27 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             }
         } else {
             null
+        }
+    }
+
+    // create serializers for type arguments if all arguments are classes, `null` otherwise
+    private fun IrBuilderWithScope.createSerializerOnlyForClasses(type: IrSimpleType, serializableClass: IrClass): List<IrExpression>? {
+        // arguments contain star projections or type parameter
+        if (!type.arguments.all { it is IrSimpleType && it.typeOrNull?.isTypeParameter() != true }) {
+            return null
+        }
+
+        return type.arguments.map { argumentType ->
+            argumentType as? IrSimpleType ?: return null
+            val serializer = findTypeSerializerOrContext(compilerContext, argumentType)
+            serializerInstance(
+                serializer,
+                compilerContext,
+                argumentType,
+                null,
+                serializableClass,
+                null
+            ) ?: return null // we can't create serializer
         }
     }
 
@@ -618,7 +645,44 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 // instantiate serializer only inside sealed class/interface Companion
                 if (serializerClassOriginal == kType.classOrUpperBound()?.owner.classSerializer(pluginContext) && this@BaseIrGenerator !is SerializableCompanionIrGenerator) {
                     // otherwise call Companion.serializer()
-                    callSerializerFromCompanion(kType, typeArgs, emptyList(), sealedSerializerId)?.let { return it }
+
+                    val args = kType.arguments.map { typeArg ->
+                        val type = typeArg.typeOrNull
+                        when {
+                            type?.isTypeParameter() == true && rootSerializableClass != null -> {
+                                // try to use type argument from root serializable class
+                                val indexInRootClass = typeArg.indexInClass(rootSerializableClass)
+                                serializerInstance(
+                                    null,
+                                    pluginContext,
+                                    type,
+                                    indexInRootClass,
+                                    rootSerializableClass,
+                                    genericGetter
+                                ) ?: irGetObject(compilerContext.unitSerializerClass!!)
+                            }
+
+                            type != null && !type.isTypeParameter() -> {
+                                // create serializer for class type argument
+                                val serializer = findTypeSerializerOrContext(compilerContext, type)
+                                serializerInstance(
+                                    serializer,
+                                    pluginContext,
+                                    type,
+                                    null,
+                                    rootSerializableClass,
+                                    genericGetter
+                                ) ?: irGetObject(compilerContext.unitSerializerClass!!)
+                            }
+
+                            else -> {
+                                // for star projection we can't pick serializer so use Unit serializer
+                                // do the same in other unknown cases
+                                irGetObject(compilerContext.unitSerializerClass!!)
+                            }
+                        }
+                    }
+                    callSerializerFromCompanion(kType, typeArgs, args, sealedSerializerId)?.let { return it }
                 }
 
                 args = mutableListOf<IrExpression>().apply {
@@ -651,18 +715,32 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                                     pluginContext,
                                     type,
                                     type.genericIndex,
-                                    rootSerializableClass
+                                    rootSerializableClass,
                                 ) { index, genericType ->
                                     val indexInParent = path?.let { mapTypeParameterIndex(index, it) }
 
-                                    if (genericGetter != null && indexInParent != null) {
-                                        genericGetter.invoke(indexInParent, genericType)
-                                    } else {
-                                        serializerInstance(
-                                            pluginContext.referenceClass(polymorphicSerializerId),
-                                            pluginContext,
-                                            (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
-                                        )!!
+                                    when {
+                                        genericGetter != null && indexInParent != null -> {
+                                            genericGetter.invoke(indexInParent, genericType)
+                                        }
+                                        !genericType.isTypeParameter() -> {
+                                            val serializer = findTypeSerializerOrContext(compilerContext, type)
+                                            serializerInstance(
+                                                serializer,
+                                                pluginContext,
+                                                type,
+                                                null,
+                                                rootSerializableClass,
+                                                genericGetter
+                                            )!!
+                                        }
+                                        else -> {
+                                            serializerInstance(
+                                                pluginContext.referenceClass(polymorphicSerializerId),
+                                                pluginContext,
+                                                (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
+                                            )!!
+                                        }
                                     }
                                 }!!
                                 wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)

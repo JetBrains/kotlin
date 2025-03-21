@@ -108,6 +108,9 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
      */
     internal val kSerializerClass = referenceClass(SerialEntityNames.KSERIALIZER_CLASS_ID)?.owner
 
+    internal val unitSerializerClass =
+        getClassFromRuntimeOrNull("UnitSerializer", SerializationPackages.internalPackageFqName, SerializationPackages.packageFqName)
+
     // evaluated properties
     override val runtimeHasEnumSerializerFactoryFunctions = enumSerializerFactoryFunc != null && annotatedEnumSerializerFactoryFunc != null
 

@@ -27,6 +27,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.builtins.serializer
 
 // == value class
 @Serializable(with = ValueSerializer::class)
@@ -214,6 +215,20 @@ public data class Container(
     internal object CustomSerializer : KSerializer<Container> by generatedSerializer()
 }
 
+@Serializable
+public sealed interface ParametrizedSchema<T> {
+    val x: T
+}
+
+@KeepGeneratedSerializer
+@Serializable(with = ParametrizedContainer.CustomSerializer::class)
+public data class ParametrizedContainer<T>(
+    val properties: List<ParametrizedSchema<T>>,
+    override val x: T
+) : ParametrizedSchema<T> {
+    internal object CustomSerializer : KSerializer<ParametrizedContainer<Int>> by Companion.generatedSerializer(Int.serializer())
+}
+
 fun box(): String = boxWrapper {
     val value = Value(42)
     val data = Data(42)
@@ -243,6 +258,10 @@ fun box(): String = boxWrapper {
     assertEquals("Container", Container.serializer().descriptor.serialName, "Container.serializer() illegal")
     assertEquals("""{"properties":[{"type":"Container","properties":[]}]}""", Json.encodeToString(Container.serializer(), Container(listOf(Container(emptyList())))))
     assertEquals("""{"properties":[{"type":"Container","properties":[]}]}""", Json.encodeToString(Container.CustomSerializer, Container(listOf(Container(emptyList())))))
+
+    assertEquals("ParametrizedContainer", ParametrizedContainer.serializer(Int.serializer()).descriptor.serialName, "Container.serializer() illegal")
+    assertEquals("""{"properties":[{"type":"ParametrizedContainer","properties":[],"x":1}],"x":2}""", Json.encodeToString(ParametrizedContainer.serializer(Int.serializer()), ParametrizedContainer(listOf(ParametrizedContainer(emptyList(), 1)), 2)))
+    assertEquals("""{"properties":[{"type":"ParametrizedContainer","properties":[],"x":1}],"x":2}""", Json.encodeToString(ParametrizedContainer.CustomSerializer, ParametrizedContainer(listOf(ParametrizedContainer(emptyList(), 1)), 2)))
 
     assertFailsWith<MissingFieldException> {
         // test for fix of https://github.com/Kotlin/kotlinx.serialization/issues/2974

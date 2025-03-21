@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -121,5 +122,17 @@ private fun IrTypeParameter.belongsClass(typeOfClass: IrSimpleType): Boolean {
 
     val classId = classOfType.classId
     return classId != null && classId == classInParameter.classId
+}
+
+/**
+ * Returns index in [serializableClass] of type parameters used as type argument in [this].
+ */
+internal fun IrTypeArgument.indexInClass(serializableClass: IrClass): Int? {
+    val rootTypeParameter = serializableClass.typeParameters.firstOrNull { param ->
+        // TODO is it ok?
+        param.symbol == (this as? IrSimpleType)?.classifier
+    }
+
+    return rootTypeParameter?.index
 }
 
