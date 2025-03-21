@@ -472,6 +472,9 @@ public open class Base64 private constructor(
         if (trailingBytes != 0) { // trailing symbols
             size += if (shouldPadOnEncode()) symbolsPerGroup else trailingBytes + 1
         }
+        if (size < 0) { // Int overflow
+            throw IllegalArgumentException("Input is too big")
+        }
         if (isMimeScheme) { // line separators
             size += ((size - 1) / mimeLineLength) * 2
         }
@@ -711,6 +714,7 @@ public open class Base64 private constructor(
         internal const val padSymbol: Byte = 61 // '='
 
         private const val lineLengthMime: Int = 76
+        private const val lineLengthPem: Int = 64
         internal val mimeLineSeparatorSymbols: ByteArray = byteArrayOf('\r'.code.toByte(), '\n'.code.toByte())
 
         /**
@@ -746,6 +750,23 @@ public open class Base64 private constructor(
          * @sample samples.io.encoding.Base64Samples.mimeEncodingSample
          */
         public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, mimeLineLength = lineLengthMime, paddingOption = PaddingOption.PRESENT)
+
+        /**
+         * The encoding specified by [`RFC 1421 section 4.3.2.4`](https://www.rfc-editor.org/rfc/rfc1421#section-4.3.2.4),
+         * Base64 Content-Transfer-Encoding.
+         *
+         * Uses the encoding alphabet as specified in Table 1 of RFC 1421 for encoding and decoding,
+         * consisting of `'A'..'Z'`, `'a'..'z'`, `'+'` and `'/'` characters.
+         *
+         * This instance is configured with the padding option set to [PaddingOption.PRESENT].
+         * Use the [withPadding] function to create a new instance with a different padding option if necessary.
+         *
+         * Encode operation adds CRLF every 64 symbols. No line separator is added to the end of the encoded output.
+         * Decode operation ignores all line separators and other characters outside the base64 alphabet.
+         *
+         * @sample samples.io.encoding.Base64Samples.pemEncodingSample
+         */
+        public val Pem: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, mimeLineLength = lineLengthPem, paddingOption = PaddingOption.PRESENT)
     }
 }
 

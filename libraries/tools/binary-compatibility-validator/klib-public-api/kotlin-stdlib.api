@@ -4440,6 +4440,8 @@ open class kotlin.io.encoding/Base64 { // kotlin.io.encoding/Base64|null[0]
     final object Default : kotlin.io.encoding/Base64 { // kotlin.io.encoding/Base64.Default|null[0]
         final val Mime // kotlin.io.encoding/Base64.Default.Mime|{}Mime[0]
             final fun <get-Mime>(): kotlin.io.encoding/Base64 // kotlin.io.encoding/Base64.Default.Mime.<get-Mime>|<get-Mime>(){}[0]
+        final val Pem // kotlin.io.encoding/Base64.Default.Pem|{}Pem[0]
+            final fun <get-Pem>(): kotlin.io.encoding/Base64 // kotlin.io.encoding/Base64.Default.Pem.<get-Pem>|<get-Pem>(){}[0]
         final val UrlSafe // kotlin.io.encoding/Base64.Default.UrlSafe|{}UrlSafe[0]
             final fun <get-UrlSafe>(): kotlin.io.encoding/Base64 // kotlin.io.encoding/Base64.Default.UrlSafe.<get-UrlSafe>|<get-UrlSafe>(){}[0]
     }
