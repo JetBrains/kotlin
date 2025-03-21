@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -106,27 +107,34 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     // ==================================================================================
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: IrElement): IrElement {
-        if (data is IrBlock) {
-            return data.insertImplicitCasts()
-        }
-        val irWhen = data as IrWhen
+        val irWhen = if (data is IrBlock) {
+            if (data.statements.isEmpty()) return data
+            data.insertImplicitCasts()
+            data.statements.last() as IrWhen
+        } else data as IrWhen
         if (irWhen.branches.size != whenExpression.branches.size) {
             return data
         }
-        val firBranchMap = irWhen.branches.zip(whenExpression.branches).toMap()
-        irWhen.branches.replaceAll {
-            visitWhenBranch(firBranchMap.getValue(it), it)
+        irWhen.branches.forEach {
+            val result = it.result
+            when (result) {
+                is IrContainerExpression -> {
+                    result.insertImplicitCasts(coerceLastExpressionToUnit = irWhen.type.isUnit())
+                    if (irWhen.type.isUnit() && !result.type.isNothing()) {
+                        result.type = builtins.unitType
+                    }
+                }
+                else -> if (irWhen.type.isUnit()) {
+                    it.result = coerceToUnitIfNeeded(result, builtins)
+                }
+            }
         }
         return data
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: IrElement): IrElement = data
 
-    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: IrElement): IrBranch {
-        val irBranch = data as IrBranch
-        (irBranch.result as? IrContainerExpression)?.insertImplicitCasts()
-        return data
-    }
+    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: IrElement): IrElement = data
 
     override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: IrElement): IrElement = data
 

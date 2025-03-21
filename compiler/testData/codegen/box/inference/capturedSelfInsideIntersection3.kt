@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 // ISSUE: KT-74999
 
 interface Traversable {

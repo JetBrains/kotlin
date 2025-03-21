@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/implicitCastOnAssignment.kt
     BLOCK_BODY
       VAR name:b type:<root>.B? [var]
         CONST Null type=kotlin.Nothing? value=null
-      WHEN type=kotlin.Nothing origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
             GET_VAR 'a: <root>.A declared in <root>.process' type=<root>.A origin=null

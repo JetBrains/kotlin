@@ -13,10 +13,10 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
             return sb.append(p0 = it)
           }
 )
-        }
+        } /*~> Unit */
       }
-      else -> sb.append(p0 = ch)
-    } /*~> Unit */
+      else -> sb.append(p0 = ch) /*~> Unit */
+    }
     ch = nextChar(/* <this> = <this> */)
   }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun toString(grade: String): String {
     when (grade) {
         "A" -> return "Excellent"

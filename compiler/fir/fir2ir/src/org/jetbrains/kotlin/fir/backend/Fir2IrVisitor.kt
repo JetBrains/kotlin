@@ -1370,7 +1370,10 @@ class Fir2IrVisitor(
                         IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true), irResult
                     )
                 }
-                generateWhen(startOffset, endOffset, origin, subjectVariable, irBranches, whenExpressionType.toIrType(c))
+                generateWhen(
+                    startOffset, endOffset, origin, subjectVariable, irBranches,
+                    resultType = if (whenExpression.usedAsExpression) whenExpressionType.toIrType(c) else builtins.unitType
+                )
             }
         }.also {
             whenExpression.accept(implicitCastInserter, it)

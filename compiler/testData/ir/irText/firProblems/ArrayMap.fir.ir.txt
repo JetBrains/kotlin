@@ -700,7 +700,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 overridden:
                   public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
                 BLOCK_BODY
-                  WHEN type=kotlin.Nothing origin=IF
+                  WHEN type=kotlin.Unit origin=IF
                     BRANCH
                       if: CALL 'private final fun <get-notVisited> (): kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Boolean origin=GET_PROPERTY
                         ARG <this>: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.next' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=IMPLICIT_ARGUMENT
