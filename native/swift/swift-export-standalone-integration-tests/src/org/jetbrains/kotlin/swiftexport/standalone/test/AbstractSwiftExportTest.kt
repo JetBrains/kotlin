@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -67,6 +66,7 @@ abstract class AbstractSwiftExportTest {
 
         val rootModules = originalTestCase.rootModules
         val modulesMarkedForExport = originalTestCase.modules.filterToSetOrEmpty { it.shouldBeExportedToSwift() }
+        val transitivelyExportedModules = originalTestCase.modules.filterToSetOrEmpty { !it.shouldBeExportedToSwift() } - rootModules
         val modulesToExport = rootModules + modulesMarkedForExport
 
         val config = SwiftExportConfig(
@@ -78,18 +78,10 @@ abstract class AbstractSwiftExportTest {
             unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType
         )
 
-        val input = modulesToExport.mapToSet { testModule ->
-            testModule.constructSwiftInput(
-                originalTestCase.freeCompilerArgs,
-                SwiftModuleConfig(
-                    rootPackage = testModule.swiftExportConfigMap()?.get(SwiftModuleConfig.ROOT_PACKAGE),
-                    unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(testModule.swiftExportConfigMap())
-                )
-            )
-        }
-
+        val explicitlyExportedInputs = modulesToExport.mapToSet { createInputModule(it, originalTestCase) }
+        val transitivelyExportedInputs = transitivelyExportedModules.mapToSet { createInputModule(it, originalTestCase) }
         // run swift export
-        val swiftExportOutputs: Set<SwiftExportModule> = runSwiftExport(input, emptySet(), config).getOrThrow()
+        val swiftExportOutputs = runSwiftExport(explicitlyExportedInputs, transitivelyExportedInputs, config).getOrThrow()
 
         // compile kotlin into binary
         val additionalKtFiles: Set<Path> = mutableSetOf<Path>()
@@ -132,6 +124,15 @@ abstract class AbstractSwiftExportTest {
             kotlinBinaryLibrary
         )
     }
+
+    private fun createInputModule(testModule: TestModule.Exclusive, originalTestCase: TestCase): InputModule =
+        testModule.constructSwiftInput(
+            originalTestCase.freeCompilerArgs,
+            SwiftModuleConfig(
+                rootPackage = testModule.swiftExportConfigMap()?.get(SwiftModuleConfig.ROOT_PACKAGE),
+                unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(testModule.swiftExportConfigMap())
+            )
+        )
 
     private fun TestModule.Exclusive.constructSwiftInput(
         freeCompilerArgs: TestCompilerArgs,

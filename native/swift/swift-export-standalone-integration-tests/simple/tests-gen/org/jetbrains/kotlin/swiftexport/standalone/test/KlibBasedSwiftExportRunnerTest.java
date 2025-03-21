@@ -206,6 +206,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("transitiveExport")
+  public void testTransitiveExport() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/transitiveExport/");
+  }
+
+  @Test
   @TestMetadata("type_reference")
   public void testType_reference() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/type_reference/");
