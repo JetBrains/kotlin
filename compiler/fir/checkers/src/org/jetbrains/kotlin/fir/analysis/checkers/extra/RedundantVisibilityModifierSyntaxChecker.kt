@@ -15,20 +15,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
-import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.resolvedStatus
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.toVisibilityOrNull
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.processOverriddenProperties
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -249,53 +243,23 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     }
 
     private fun findPropertyAccessorVisibility(accessor: FirPropertyAccessor, context: CheckerContext): Visibility {
-        val containingClass = context.findClosestClassOrObject()?.symbol ?: return Visibilities.Public
         val propertySymbol = accessor.propertySymbol
-
-        val scope = containingClass.unsubstitutedScope(
-            context.sessionHolder.session,
-            context.sessionHolder.scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = FirResolvePhase.STATUS,
-        )
-
         return findBiggestVisibility { checkVisibility ->
-            scope.processPropertiesByName(propertySymbol.name) {}
-            scope.processOverriddenProperties(propertySymbol) { property ->
+            propertySymbol.processOverriddenPropertiesWithActionSafe(context) { property ->
                 checkVisibility(property.setterSymbol ?: property)
             }
         }
     }
 
     private fun findPropertyVisibility(property: FirProperty, context: CheckerContext): Visibility {
-        val containingClass = context.findClosestClassOrObject()?.symbol ?: return Visibilities.Public
-
-        val scope = containingClass.unsubstitutedScope(
-            context.sessionHolder.session,
-            context.sessionHolder.scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = FirResolvePhase.STATUS,
-        )
-
         return findBiggestVisibility {
-            scope.processPropertiesByName(property.symbol.name) {}
-            scope.processOverriddenProperties(property.symbol, it)
+            property.symbol.processOverriddenPropertiesWithActionSafe(context, it)
         }
     }
 
     private fun findFunctionVisibility(function: FirSimpleFunction, context: CheckerContext): Visibility {
-        val currentClassSymbol = context.findClosestClassOrObject()?.symbol ?: return Visibilities.Unknown
-
-        val scope = currentClassSymbol.unsubstitutedScope(
-            context.sessionHolder.session,
-            context.sessionHolder.scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = FirResolvePhase.STATUS,
-        )
-
         return findBiggestVisibility {
-            scope.processFunctionsByName(function.symbol.name) {}
-            scope.processOverriddenFunctions(function.symbol, it)
+            function.symbol.processOverriddenFunctionsWithActionSafe(context, it)
         }
     }
 }

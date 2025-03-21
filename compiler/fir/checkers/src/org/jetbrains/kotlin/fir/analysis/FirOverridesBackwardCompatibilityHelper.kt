@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.ClassId
 
@@ -67,13 +63,7 @@ abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
             }
         }
 
-        val scope =
-            symbol.dispatchReceiverClassTypeOrNull()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return false
-        val overriddenSymbols = when (originalMemberSymbol) {
-            is FirNamedFunctionSymbol -> scope.getDirectOverriddenFunctions(originalMemberSymbol)
-            is FirPropertySymbol -> scope.getDirectOverriddenProperties(originalMemberSymbol)
-            else -> return false
-        }
+        val overriddenSymbols = originalMemberSymbol.directOverriddenSymbolsSafe(context)
         if (overriddenSymbols.isEmpty()) return false
         return overriddenSymbols.all { isPlatformSpecificSymbolThatCanBeImplicitlyOverridden(it, visitedSymbols, context) }
     }

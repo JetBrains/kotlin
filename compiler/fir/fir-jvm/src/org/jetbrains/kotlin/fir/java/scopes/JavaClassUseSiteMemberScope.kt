@@ -307,6 +307,7 @@ class JavaClassUseSiteMemberScope(
         return isJavaOrEnhancement || typeParameters.isEmpty()
     }
 
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     private fun FirPropertySymbol.getBuiltinSpecialPropertyGetterName(): Name? {
         var result: Name? = null
         superTypeScopes.processOverriddenPropertiesAndSelf(this) { overridden ->

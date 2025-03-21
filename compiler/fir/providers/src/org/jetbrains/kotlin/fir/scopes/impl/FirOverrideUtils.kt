@@ -18,14 +18,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 
+@ScopeFunctionRequiresPrewarm
 fun filterOutOverriddenFunctions(extractedOverridden: Collection<MemberWithBaseScope<FirNamedFunctionSymbol>>): Collection<MemberWithBaseScope<FirNamedFunctionSymbol>> {
     return filterOutOverridden(extractedOverridden, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope)
 }
 
+@ScopeFunctionRequiresPrewarm
 fun filterOutOverriddenProperties(extractedOverridden: Collection<MemberWithBaseScope<FirPropertySymbol>>): Collection<MemberWithBaseScope<FirPropertySymbol>> {
     return filterOutOverridden(extractedOverridden, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope)
 }
 
+@ScopeFunctionRequiresPrewarm
 fun <D : FirCallableSymbol<*>> filterOutOverridden(
     extractedOverridden: Collection<MemberWithBaseScope<D>>,
     processAllOverridden: ProcessOverriddenWithBaseScope<D>,

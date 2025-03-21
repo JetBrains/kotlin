@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.chooseIntersectionVisibilityOrNull
 import org.jetbrains.kotlin.fir.scopes.impl.isAbstractAccordingToRawStatus
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
     private val javaClassForTypeParameterStack: FirJavaClass?,

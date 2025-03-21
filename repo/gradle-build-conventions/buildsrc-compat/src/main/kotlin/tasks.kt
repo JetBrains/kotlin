@@ -392,7 +392,7 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     }
 }
 
-private fun Project.optInTo(annotationFqName: String) {
+fun Project.optInTo(annotationFqName: String) {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions.optIn.add(annotationFqName)
     }

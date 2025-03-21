@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctionsSafe
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.getObjCInitMethod
 import org.jetbrains.kotlin.fir.backend.native.interop.isKotlinObjCClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -73,7 +74,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
             // Remove fake overrides of this init method, also check for explicit overriding:
             firClass.symbol.processAllDeclaredCallables(context.session) {
                 if (it is FirNamedFunctionSymbol &&
-                    initMethod in it.directOverriddenFunctions(context) &&
+                    initMethod in it.directOverriddenFunctionsSafe(context) &&
                     !it.isSubstitutionOrIntersectionOverride
                 ) {
                     reporter.reportOn(

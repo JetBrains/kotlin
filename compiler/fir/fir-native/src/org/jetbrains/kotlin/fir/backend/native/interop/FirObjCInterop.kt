@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenSafe
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
@@ -33,9 +33,8 @@ fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
             val firClassSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>?
             firClassSymbol?.let {
                 val unsubstitutedScope = it.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-                // call of `processFunctionsByName()` is needed only for necessary side-effect before `getDirectOverriddenFunctions` call
-                unsubstitutedScope.processFunctionsByName(symbol.name) {}
-                unsubstitutedScope.getDirectOverriddenFunctions(symbol).firstNotNullOfOrNull {
+
+                unsubstitutedScope.getDirectOverriddenSafe(symbol).firstNotNullOfOrNull {
                     require(it != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
                     it.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
                 }

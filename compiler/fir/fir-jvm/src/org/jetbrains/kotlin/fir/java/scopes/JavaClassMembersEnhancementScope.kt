@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.syntheticNamesProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -51,6 +49,7 @@ class JavaClassMembersEnhancementScope(
         }
     }
 
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     private fun FirCallableDeclaration.overriddenMembers(): List<FirCallableDeclaration> {
         return useSiteMemberScope.getDirectOverriddenMembers(symbol).map { it.fir }
     }

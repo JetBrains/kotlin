@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 /**
  * This class should be used ONLY for generation of fake-overrides for Fir2IrLazy... declarations
  */
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     /**
      * For given [originalFunction] calculates original symbols for supertypes of given [klass], which contain this function

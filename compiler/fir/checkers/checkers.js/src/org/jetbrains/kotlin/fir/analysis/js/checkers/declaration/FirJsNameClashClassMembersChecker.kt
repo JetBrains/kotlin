@@ -26,11 +26,7 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
@@ -63,7 +59,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             val leaves = mutableSetOf<FirCallableSymbol<*>>()
             while (symbolsToProcess.isNotEmpty()) {
                 val (processingSymbol, scope) = symbolsToProcess.popLast()
-                val overriddenMembers = scope.getDirectOverriddenMembersWithBaseScope(processingSymbol)
+                val overriddenMembers = scope.getDirectOverriddenMembersWithBaseScopeSafe(processingSymbol)
                 for (overriddenMemberWithScope in overriddenMembers) {
                     if (visitedSymbols.add(overriddenMemberWithScope)) {
                         symbolsToProcess.add(overriddenMemberWithScope)
@@ -120,6 +116,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             for (symbol in symbols) {
                 when (symbol) {
                     is FirIntersectionCallableSymbol -> {
+                        @OptIn(ScopeFunctionRequiresPrewarm::class) // the symbols come from calling process*ByName
                         val nonSubsumedOverriddenSymbols = symbol.getNonSubsumedOverriddenSymbols(
                             sessionHolder.session,
                             sessionHolder.scopeSession

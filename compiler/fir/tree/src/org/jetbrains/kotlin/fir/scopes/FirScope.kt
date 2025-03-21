@@ -75,6 +75,7 @@ fun FirScope.getDeclaredConstructors(): List<FirConstructorSymbol> = mutableList
     processDeclaredConstructors(this::add)
 }
 
+@ScopeFunctionRequiresPrewarm
 fun FirTypeScope.processOverriddenFunctionsAndSelf(
     functionSymbol: FirNamedFunctionSymbol,
     processor: (FirNamedFunctionSymbol) -> ProcessorAction
@@ -84,6 +85,7 @@ fun FirTypeScope.processOverriddenFunctionsAndSelf(
     return processOverriddenFunctions(functionSymbol, processor = processor)
 }
 
+@ScopeFunctionRequiresPrewarm
 fun List<FirTypeScope>.processOverriddenPropertiesAndSelf(
     propertySymbol: FirPropertySymbol,
     processor: (FirPropertySymbol) -> ProcessorAction

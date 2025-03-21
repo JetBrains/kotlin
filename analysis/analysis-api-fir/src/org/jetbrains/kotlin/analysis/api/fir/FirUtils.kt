@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenSafe
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -163,6 +163,6 @@ internal fun FirPropertyAccessorSymbol.isSetterOverride(analysisSession: KaFirSe
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return false
 
-    val overriddenProperties = containingClassScope.getDirectOverriddenProperties(propertySymbol)
+    val overriddenProperties = containingClassScope.getDirectOverriddenSafe(propertySymbol)
     return overriddenProperties.any { it.isVar }
 }

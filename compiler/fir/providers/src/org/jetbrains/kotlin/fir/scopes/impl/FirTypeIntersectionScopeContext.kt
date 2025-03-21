@@ -29,6 +29,7 @@ import kotlin.contracts.contract
 
 typealias MembersByScope<D> = List<Pair<FirTypeScope, List<D>>>
 
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 class FirTypeIntersectionScopeContext(
     val session: FirSession,
     private val overrideChecker: FirOverrideChecker,
@@ -296,6 +297,7 @@ class FirTypeIntersectionScopeContext(
         }
 
         val realOverridden = extractedOverridden.flatMap { realOverridden(it.member, it.baseScope, processDirectOverridden) }
+
         val filteredOverridden = filterOutOverridden(realOverridden, processDirectOverridden)
 
         return filteredOverridden.minOf { (it.member.fir as FirMemberDeclaration).modality ?: Modality.ABSTRACT }

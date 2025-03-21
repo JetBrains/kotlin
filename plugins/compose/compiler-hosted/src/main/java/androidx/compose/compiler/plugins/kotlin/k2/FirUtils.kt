@@ -22,18 +22,14 @@ import androidx.compose.compiler.plugins.kotlin.ComposeMetadata
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctionsSafe
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenPropertiesSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationStringParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -100,25 +96,12 @@ private fun FirPropertyAccessorSymbol.isComposableDelegate(session: FirSession):
 fun FirFunction.getDirectOverriddenFunctions(
     context: CheckerContext,
 ): List<FirFunctionSymbol<*>> {
-    if (!isOverride && (this as? FirPropertyAccessor)?.propertySymbol?.isOverride != true)
-        return listOf()
-
-    val scope = (containingClassLookupTag()
-        ?.toSymbol(context.session) as? FirClassSymbol<*>)
-        ?.unsubstitutedScope(context)
-        ?: return listOf()
-
     return when (val symbol = symbol) {
         is FirNamedFunctionSymbol -> {
-            scope.processFunctionsByName(symbol.name) {}
-            scope.getDirectOverriddenFunctions(symbol, true)
+            symbol.directOverriddenFunctionsSafe(context)
         }
         is FirPropertyAccessorSymbol -> {
-            // On IDE, for some FIR session on some threads like background threads for highlight feature, it randomly skips
-            // processing properties, which results in false negative missing direct overridden properties. To avoid the bug,
-            // we explicitly run `processPropertiesByName` here.
-            scope.processPropertiesByName(symbol.propertySymbol.name) {}
-            scope.getDirectOverriddenProperties(symbol.propertySymbol, true).mapNotNull {
+            symbol.propertySymbol.directOverriddenPropertiesSafe(context).mapNotNull {
                 if (symbol.isGetter) it.getterSymbol else it.setterSymbol
             }
         }

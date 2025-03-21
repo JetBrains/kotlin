@@ -39,7 +39,7 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffecti
 fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
     if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
 
-    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctions(context) ?: return false
+    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctionsSafe(context) ?: return false
 
     for (overriddenFunction in overridden.filter { it.isEffectivelyExternal(context) }) {
         if (overriddenFunction.valueParameterSymbols.any { it.hasDefaultValue }) return true

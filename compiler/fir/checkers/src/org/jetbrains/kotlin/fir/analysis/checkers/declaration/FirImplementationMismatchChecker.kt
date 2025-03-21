@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
+@OptIn(ScopeFunctionRequiresPrewarm::class) // we call the process functions in check
 sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirImplementationMismatchChecker(MppCheckerKind.Platform) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.processAllCallables
 import org.jetbrains.kotlin.fir.scopes.processAllOverriddenCallables
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -62,6 +63,7 @@ private fun collectAllCallableDeclarations(classSymbol: FirClassSymbol<*>, sessi
     return buildSet {
         baseScope.processAllCallables { callable ->
             add(callable)
+            @OptIn(ScopeFunctionRequiresPrewarm::class)
             baseScope.processAllOverriddenCallables(
                 callable,
                 processor = {

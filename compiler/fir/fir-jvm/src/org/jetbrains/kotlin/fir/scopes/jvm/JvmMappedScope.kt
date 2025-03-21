@@ -208,9 +208,11 @@ class JvmMappedScope(
         }.symbol
     }
 
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     private fun isOverrideOfKotlinDeclaredFunction(symbol: FirNamedFunctionSymbol) =
         javaMappedClassUseSiteScope.anyOverriddenOf(symbol, ::isDeclaredInBuiltinClass)
 
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     private fun isMutabilityViolation(symbol: FirNamedFunctionSymbol, jvmDescriptor: String): Boolean {
         val signature = SignatureBuildingComponents.signature(firJavaClass.classId, jvmDescriptor)
         val isAmongMutableSignatures = signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES

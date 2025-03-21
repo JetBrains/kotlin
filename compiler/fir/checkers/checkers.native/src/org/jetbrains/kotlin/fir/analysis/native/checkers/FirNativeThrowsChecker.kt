@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctionsWithBaseScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -136,6 +136,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             if (!visited.add(localFunctionSymbol)) return
 
             val directOverriddenFunctionsWithScopes =
+                @OptIn(ScopeFunctionRequiresPrewarm::class)
                 functionWithScope.baseScope.getDirectOverriddenFunctionsWithBaseScope(localFunctionSymbol)
 
             if (localFunctionSymbol == function.symbol || localThrowsAnnotation == null && directOverriddenFunctionsWithScopes.isNotEmpty()) {
@@ -153,6 +154,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
 
         val currentScope = function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context)
         if (currentScope != null) {
+            currentScope.processFunctionsByName(function.name) {}
             getInheritedThrows(throwsAnnotation, MemberWithBaseScope(function.symbol, currentScope))
         }
 

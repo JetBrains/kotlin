@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScopeSafe
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -68,7 +68,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             objCAnnotations: List<FirAnnotation>,
             swiftAnnotations: List<FirAnnotation>
         ) {
-            val overriddenMemberSymbols = baseScope.getDirectOverriddenMembersWithBaseScope(memberSymbol)
+            val overriddenMemberSymbols = baseScope.getDirectOverriddenMembersWithBaseScopeSafe(memberSymbol)
             if (overriddenMemberSymbols.isEmpty()) return
             var isHiddenFromObjC = objCAnnotations.isNotEmpty()
             var isRefinedInSwift = swiftAnnotations.isNotEmpty()
@@ -91,7 +91,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             val (hasObjC, hasSwift) = hasRefinedAnnotations(session)
             if (hasObjC && hasSwift) return true to true
             // Note: `checkMember` requires all overridden symbols to be either refined or not refined.
-            val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScope(this).firstOrNull()
+            val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScopeSafe(this).firstOrNull()
                 ?: return hasObjC to hasSwift
             val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, scope)
             return (hasObjC || inheritsObjC) to (hasSwift || inheritsSwift)

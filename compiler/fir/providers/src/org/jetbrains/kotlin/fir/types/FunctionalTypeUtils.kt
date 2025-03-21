@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -252,6 +253,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     var overriddenInvoke: FirFunctionSymbol<*>? = null
     if (declaredInvoke != null) {
         // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
+        @OptIn(ScopeFunctionRequiresPrewarm::class) // processFunctionsByName is called above
         scope.processOverriddenFunctions(declaredInvoke) { functionSymbol ->
             if (functionSymbol == baseInvokeSymbol || functionSymbol.originalForSubstitutionOverride == baseInvokeSymbol) {
                 overriddenInvoke = functionSymbol

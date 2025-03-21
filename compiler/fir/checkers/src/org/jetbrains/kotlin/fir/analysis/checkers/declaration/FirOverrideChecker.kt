@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctionsWithActionSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
@@ -283,7 +284,6 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext,
-        firTypeScope: FirTypeScope,
     ) {
         val ownDeprecation = this.getDeprecation(context.languageVersionSettings)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
@@ -308,7 +308,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             val callableName = this.name.asString()
 
             if (callableName in FirDeprecationChecker.DeprecatedOverrideOfHiddenReplacements) {
-                firTypeScope.processOverriddenFunctions(this) {
+                this.processOverriddenFunctionsWithActionSafe(context) {
                     if (it.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = true) == VisibleWithDeprecation) {
                         val message = FirDeprecationChecker.getDeprecatedOverrideOfHiddenMessage(callableName)
                         val deprecationInfo = object : FirDeprecationInfo() {
@@ -317,7 +317,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                             override fun getMessage(session: FirSession): String = message
                         }
                         reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, it, deprecationInfo, context)
-                        return@processOverriddenFunctions ProcessorAction.STOP
+                        return@processOverriddenFunctionsWithActionSafe ProcessorAction.STOP
                     }
 
                     ProcessorAction.NEXT
@@ -356,7 +356,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         firTypeScope: FirTypeScope,
         context: CheckerContext
     ) {
-        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
+        val overriddenMemberSymbols = firTypeScope.getDirectOverriddenSafe(member)
         val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
         val isOverride = member.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
 
@@ -440,7 +440,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
         if (member.origin == FirDeclarationOrigin.Source) {
-            member.checkDeprecation(reporter, overriddenMemberSymbols, context, firTypeScope)
+            member.checkDeprecation(reporter, overriddenMemberSymbols, context)
         }
 
         // Data class members are already checked by `DATA_CLASS_OVERRIDE_DEFAULT_VALUES`

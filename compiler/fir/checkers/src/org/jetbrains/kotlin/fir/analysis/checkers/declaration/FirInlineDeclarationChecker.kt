@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.isDataClassCopy
-import org.jetbrains.kotlin.fir.analysis.checkers.getDirectOverriddenSymbols
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.inlineCheckerExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -524,7 +524,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     fun checkCallableDeclaration(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) return
-        val directOverriddenSymbols = declaration.getDirectOverriddenSymbols(context)
+        val directOverriddenSymbols = declaration.symbol.directOverriddenSymbolsSafe(context)
         if (declaration is FirSimpleFunction) {
             checkParameters(declaration, directOverriddenSymbols, context, reporter)
             checkNothingToInline(declaration, context, reporter)

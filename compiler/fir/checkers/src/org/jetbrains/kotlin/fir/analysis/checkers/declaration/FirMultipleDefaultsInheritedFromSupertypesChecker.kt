@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctionsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -62,7 +62,7 @@ sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheck
         reporter: DiagnosticReporter,
     ) {
         val overriddenFunctions = mutableSetOf<FirNamedFunctionSymbol>()
-        function.processOverriddenFunctions(context) { overridden ->
+        function.processOverriddenFunctionsSafe(context) { overridden ->
             // default values of actual functions are located in corresponding expect functions
             val overriddenWithDefaults = overridden.getSingleMatchedExpectForActualOrNull() as? FirNamedFunctionSymbol ?: overridden
             if (overriddenWithDefaults.valueParameterSymbols.any { it.hasDefaultValue }) {

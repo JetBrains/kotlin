@@ -345,6 +345,7 @@ fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: F
  *
  * @param parentClassSymbol the contextual class for this query.
  */
+@OptIn(ScopeFunctionRequiresPrewarm::class)
 fun FirCallableSymbol<*>.getImplementationStatus(
     sessionHolder: SessionHolder,
     parentClassSymbol: FirClassSymbol<*>
@@ -835,45 +836,58 @@ private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement
     )
 }
 
-fun FirCallableDeclaration.getDirectOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<FirCallableDeclaration>> {
+@OptIn(ScopeFunctionRequiresPrewarm::class)
+fun FirCallableSymbol<*>.directOverriddenSymbolsSafe(context: CheckerContext): List<FirCallableSymbol<*>> {
     if (!this.isOverride) return emptyList()
-    val classSymbol = this.containingClassLookupTag()?.toClassSymbol(context.session) ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(context)
-    //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
-    //and not in processDirectOverriddenFunctionsWithBaseScope
-    scope.processFunctionsByName(this.symbol.name) { }
-    return scope.getDirectOverriddenMembers(this.symbol, true)
+    val scope = containingClassUnsubstitutedScope(context) ?: return emptyList()
+    scope.processFunctionsByName(this.name) { }
+    return scope.getDirectOverriddenMembers(this, true)
 }
 
-fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
-    val classSymbol = getContainingClassSymbol() as? FirClassSymbol ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(
-        session,
-        scopeSession,
-        withForcedTypeCalculator = false,
-        memberRequiredPhase = FirResolvePhase.STATUS,
-    )
-
-    scope.processFunctionsByName(name) { }
-    return scope.getDirectOverriddenFunctions(this, true)
+fun FirNamedFunctionSymbol.directOverriddenFunctionsSafe(context: CheckerContext): List<FirNamedFunctionSymbol> {
+    @Suppress("UNCHECKED_CAST")
+    return directOverriddenSymbolsSafe(context) as List<FirNamedFunctionSymbol>
 }
 
-fun FirNamedFunctionSymbol.directOverriddenFunctions(context: CheckerContext) =
-    directOverriddenFunctions(context.session, context.sessionHolder.scopeSession)
+fun FirPropertySymbol.directOverriddenPropertiesSafe(context: CheckerContext): List<FirPropertySymbol> {
+    @Suppress("UNCHECKED_CAST")
+    return directOverriddenSymbolsSafe(context) as List<FirPropertySymbol>
+}
 
-inline fun FirNamedFunctionSymbol.processOverriddenFunctions(
+@OptIn(ScopeFunctionRequiresPrewarm::class)
+inline fun FirNamedFunctionSymbol.processOverriddenFunctionsSafe(
     context: CheckerContext,
     crossinline action: (FirNamedFunctionSymbol) -> Unit,
 ) {
-    val containingClass = getContainingClassSymbol() as? FirClassSymbol ?: return
-    val firTypeScope = containingClass.unsubstitutedScope(context)
-
-    firTypeScope.processFunctionsByName(callableId.callableName) { }
-
-    firTypeScope.processOverriddenFunctions(this) {
+    processOverriddenFunctionsWithActionSafe(context) {
         action(it)
         ProcessorAction.NEXT
     }
+}
+
+@OptIn(ScopeFunctionRequiresPrewarm::class)
+fun FirNamedFunctionSymbol.processOverriddenFunctionsWithActionSafe(
+    context: CheckerContext,
+    action: (FirNamedFunctionSymbol) -> ProcessorAction,
+) {
+    val firTypeScope = containingClassUnsubstitutedScope(context) ?: return
+    firTypeScope.processFunctionsByName(callableId.callableName) { }
+    firTypeScope.processOverriddenFunctions(this, action)
+}
+
+@OptIn(ScopeFunctionRequiresPrewarm::class)
+fun FirPropertySymbol.processOverriddenPropertiesWithActionSafe(
+    context: CheckerContext,
+    action: (FirPropertySymbol) -> ProcessorAction,
+) {
+    val firTypeScope = containingClassUnsubstitutedScope(context) ?: return
+    firTypeScope.processPropertiesByName(callableId.callableName) { }
+    firTypeScope.processOverriddenProperties(this, action)
+}
+
+private fun FirCallableSymbol<*>.containingClassUnsubstitutedScope(context: CheckerContext): FirTypeScope? {
+    val containingClass = getContainingClassSymbol() as? FirClassSymbol ?: return null
+    return containingClass.unsubstitutedScope(context)
 }
 
 val CheckerContext.closestNonLocal get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()

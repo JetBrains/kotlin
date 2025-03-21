@@ -40,6 +40,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
         }
     }
 
+    @OptIn(ScopeFunctionRequiresPrewarm::class)
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val substitutor = EnhancedForWarningConeSubstitutor(context.session.typeContext)
         val scope = declaration.unsubstitutedScope(context)

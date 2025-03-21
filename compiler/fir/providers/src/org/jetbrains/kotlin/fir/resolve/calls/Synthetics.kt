@@ -290,6 +290,7 @@ class FirSyntheticPropertiesScope private constructor(
                 CallToPotentiallyHiddenSymbolResult.Visible -> {}
             }
 
+            @OptIn(ScopeFunctionRequiresPrewarm::class)
             val overriddenWithScope = scope.getDirectOverriddenFunctionsWithBaseScope(symbol)
 
             if (symbol.origin == FirDeclarationOrigin.Enhancement) {

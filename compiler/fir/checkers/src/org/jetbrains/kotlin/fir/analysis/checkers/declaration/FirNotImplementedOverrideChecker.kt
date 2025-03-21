@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.impl.filterOutOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.filterOutOverriddenProperties
@@ -64,6 +65,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
         val varsImplementedByInheritedVal = mutableListOf<FirIntersectionCallableSymbol>()
 
+        @OptIn(ScopeFunctionRequiresPrewarm::class) // The symbol is coming from a call to process*ByName
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val delegatedWrapperData = symbol.delegatedWrapperData
             if (delegatedWrapperData != null && symbol !is FirIntersectionCallableSymbol) {

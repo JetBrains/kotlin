@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.anyOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -61,6 +62,7 @@ object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker(MppCheckerKind.C
         // Without it, `LLReversedDiagnosticsFe10TestGenerated.testSuperCallsWithDefaultArguments` fails
         // because the maps in the scope are empty.
         containingScope.processFunctionsByName(functionSymbol.name) { }
+        @OptIn(ScopeFunctionRequiresPrewarm::class)
         return containingScope.anyOverriddenOf(functionSymbol, predicate)
     }
 }

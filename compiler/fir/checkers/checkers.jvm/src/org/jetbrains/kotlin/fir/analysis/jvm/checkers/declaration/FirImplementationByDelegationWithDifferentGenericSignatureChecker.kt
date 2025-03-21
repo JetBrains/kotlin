@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -36,6 +37,7 @@ object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirCl
             val genericSymbolToCompare = wrappedGenericFunction.symbol.unwrapFakeOverrides()
             fieldScope.processFunctionsByName(symbol.name) { clashedSymbol ->
                 if (reported || clashedSymbol.typeParameterSymbols.isNotEmpty()) return@processFunctionsByName
+                @OptIn(ScopeFunctionRequiresPrewarm::class)
                 fieldScope.processOverriddenFunctions(clashedSymbol) { overriddenSymbol ->
                     if (overriddenSymbol.unwrapFakeOverrides() === genericSymbolToCompare) {
                         reporter.reportOn(
