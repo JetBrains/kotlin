@@ -116,6 +116,8 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().warn("Executing scripts in maven build files is deprecated and will be removed in further release.");
+
         if (scriptFile != null && script == null) {
             executeScriptFile(scriptFile);
         } else if (scriptFile == null && script != null) {
