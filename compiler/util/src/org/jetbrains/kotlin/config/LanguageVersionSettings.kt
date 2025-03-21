@@ -486,6 +486,7 @@ enum class LanguageFeature(
     AnnotationsInMetadata(sinceVersion = null, kind = OTHER), // KT-57919
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, kind = OTHER), // KT-70722
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, kind = OTHER), // KT-70722
+    IrRichCallableReferencesInKlibs(sinceVersion = null, kind = OTHER), // KT-72734, KT-74384, KT-74392
     ;
 
     init {

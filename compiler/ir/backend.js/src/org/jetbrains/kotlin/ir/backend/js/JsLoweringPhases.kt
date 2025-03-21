@@ -731,8 +731,14 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 fun jsLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
+    // TODO: after the fix of KT-76260 this condition should be simplified to just the check of `IrRichCallableReferencesInKlibs` feature
+    val enableRichReferences = languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs) ||
+            languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
+
+    if (enableRichReferences) {
+        this += upgradeCallableReferences
+    }
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
-        this += upgradeCallableReferences // TODO: create a separate language feature to upgrade callable references
         this += jsCodeOutliningPhaseOnFirstStage
     }
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
