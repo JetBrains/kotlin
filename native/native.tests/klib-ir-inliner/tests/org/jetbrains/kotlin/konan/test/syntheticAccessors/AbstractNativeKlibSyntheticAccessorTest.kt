@@ -105,4 +105,3 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
 }
 
 open class AbstractNativeKlibSyntheticAccessorInPhase1Test : AbstractNativeKlibSyntheticAccessorTest(narrowedAccessorVisibility = true)
-open class AbstractNativeKlibSyntheticAccessorInPhase2Test : AbstractNativeKlibSyntheticAccessorTest(narrowedAccessorVisibility = false)

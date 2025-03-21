@@ -285,13 +285,6 @@ fun main() {
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
-            testClass<AbstractNativeKlibSyntheticAccessorInPhase2Test>(
-                annotations = listOf(
-                    *klibSyntheticAccessors(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
         }
     }
 

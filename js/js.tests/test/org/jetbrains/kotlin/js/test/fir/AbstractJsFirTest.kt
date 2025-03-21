@@ -256,8 +256,3 @@ open class AbstractFirJsKlibSyntheticAccessorInPhase1Test : AbstractFirJsKlibSyn
     narrowedAccessorVisibility = true,
     testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/phase1",
 )
-
-open class AbstractFirJsKlibSyntheticAccessorInPhase2Test : AbstractFirJsKlibSyntheticAccessorTest(
-    narrowedAccessorVisibility = false,
-    testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/phase2",
-)
