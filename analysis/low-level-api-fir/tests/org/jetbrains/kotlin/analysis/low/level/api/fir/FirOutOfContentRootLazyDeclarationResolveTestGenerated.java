@@ -1254,6 +1254,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("constructorDuplicatedContextParameter.kt")
+    public void testConstructorDuplicatedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/constructorDuplicatedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorDuplicatedContextParameter2.kt")
+    public void testConstructorDuplicatedContextParameter2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/constructorDuplicatedContextParameter2.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationWithNestedDeclarations.kt")
     public void testDanglingAnnotationWithNestedDeclarations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationWithNestedDeclarations.kt");
@@ -1266,9 +1278,33 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("functionDuplicatedContextParameter.kt")
+    public void testFunctionDuplicatedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/functionDuplicatedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionDuplicatedContextParameter2.kt")
+    public void testFunctionDuplicatedContextParameter2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/functionDuplicatedContextParameter2.kt");
+    }
+
+    @Test
     @TestMetadata("parameterNoType.kt")
     public void testParameterNoType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/parameterNoType.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyDuplicatedContextParameter.kt")
+    public void testPropertyDuplicatedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/propertyDuplicatedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyDuplicatedContextParameter2.kt")
+    public void testPropertyDuplicatedContextParameter2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/propertyDuplicatedContextParameter2.kt");
     }
   }
 

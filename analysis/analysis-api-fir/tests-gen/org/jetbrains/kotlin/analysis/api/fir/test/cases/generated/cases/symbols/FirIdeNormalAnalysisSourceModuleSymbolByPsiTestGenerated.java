@@ -410,6 +410,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("duplicatedContextParameter.kt")
+    public void testDuplicatedContextParameter() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/duplicatedContextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("similarSignatures.kt")
     public void testSimilarSignatures() {
       runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/similarSignatures.kt");
