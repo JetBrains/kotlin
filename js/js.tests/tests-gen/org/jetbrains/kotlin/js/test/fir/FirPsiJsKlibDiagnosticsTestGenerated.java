@@ -208,6 +208,18 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
       public void testLeakingPrivateClassThroughtTypecheckWarning() {
         runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtTypecheckWarning.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateClassThroughGenericType.kt")
+      public void testUsePrivateClassThroughGenericType() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/usePrivateClassThroughGenericType.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateClassThroughtPrivateTopLevelFun.kt")
+      public void testUsePrivateClassThroughtPrivateTopLevelFun() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/usePrivateClassThroughtPrivateTopLevelFun.kt");
+      }
     }
   }
 }

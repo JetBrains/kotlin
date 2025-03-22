@@ -7520,18 +7520,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         }
 
         @Test
-        @TestMetadata("usePrivateClassThroughGenericType.kt")
-        public void testUsePrivateClassThroughGenericType() {
-          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateClassThroughGenericType.kt");
-        }
-
-        @Test
-        @TestMetadata("usePrivateClassThroughtPrivateTopLevelFun.kt")
-        public void testUsePrivateClassThroughtPrivateTopLevelFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateClassThroughtPrivateTopLevelFun.kt");
-        }
-
-        @Test
         @TestMetadata("usePrivateTopLevelExtensionFunFromInternalInline.kt")
         public void testUsePrivateTopLevelExtensionFunFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelExtensionFunFromInternalInline.kt");
