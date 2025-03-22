@@ -128,7 +128,13 @@ private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 
 fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    annotationClass.hasEqualFqName(fqName)
+    if (symbol.isBound)
+        annotationClass.hasEqualFqName(fqName)
+    else {
+        val signatureParts = symbol.signature.toString().split("|")
+        val fqNameInit = fqName.child(Name.special("<init>"))
+        signatureParts.first().replace("/", ".") == fqNameInit.asString()
+    }
 
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
@@ -167,10 +173,10 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
 fun List<IrConstructorCall>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.hasEqualFqName(fqName) }
+    any { it.isAnnotationWithEqualFqName(fqName) }
 
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
+    firstOrNull { it.isAnnotationWithEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
@@ -304,7 +310,7 @@ fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = own
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
 fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
-    return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
+    return annotations.filterNot { it.isAnnotationWithEqualFqName(fqName) }
 }
 
 fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
