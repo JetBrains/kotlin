@@ -1,8 +1,8 @@
 FILE: multipleContextParameterLists.kt
-    context(s: R|kotlin/String|)
+    context(s: R|kotlin/String|, i: R|kotlin/Int|)
     public final fun foo(): R|kotlin/Unit| {
     }
-    context(s: R|kotlin/String|)
+    context(s: R|kotlin/String|, i: R|kotlin/Int|)
     public final val bar: R|kotlin/String|
         public get(): R|kotlin/String| {
             ^ String()
