@@ -1,0 +1,6 @@
+context(c@kotlin.Int)
+fun bar()
+
+context(c@kotlin.Int)
+val foo: kotlin.Int
+  get()
