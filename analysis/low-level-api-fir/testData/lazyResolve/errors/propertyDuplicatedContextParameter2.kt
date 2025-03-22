@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_FIR
 
 context(c: Int)
 context(c<caret>: String)
