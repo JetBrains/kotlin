@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
@@ -167,7 +166,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 (firDeclaration as? FirFunction)?.valueParameters
             }
 
-            parameters?.get(parameterIndex())
+            parameters?.firstOrNull { it.psi == this }
         }
 
         is KtTypeParameter -> {
