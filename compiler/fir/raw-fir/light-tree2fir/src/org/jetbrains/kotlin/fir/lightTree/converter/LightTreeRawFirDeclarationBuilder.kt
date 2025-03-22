@@ -315,8 +315,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 ANNOTATION -> annotations += it
                 ANNOTATION_ENTRY -> annotations += it
-                // We only collect the first context receiver list. A checker reports an error if there is more than one.
-                CONTEXT_RECEIVER_LIST if (contextList == null) -> contextList = it
+                CONTEXT_RECEIVER_LIST -> contextLists += it
                 is KtModifierKeywordToken -> addModifier(it, isInClass)
             }
         }
@@ -592,7 +591,7 @@ class LightTreeRawFirDeclarationBuilder(
                         //parse primary constructor
                         val primaryConstructorWrapper = convertPrimaryConstructor(
                             primaryConstructor,
-                            modifiers?.contextList,
+                            modifiers?.contextLists,
                             selfType.source,
                             classWrapper,
                             delegatedConstructorSource,
@@ -675,7 +674,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         initCompanionObjectSymbolAttr()
 
-                        contextParameters.addContextParameters(modifiers?.contextList, classSymbol)
+                        contextParameters.addContextParameters(modifiers?.contextLists, classSymbol)
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
                     }
@@ -762,7 +761,7 @@ class LightTreeRawFirDeclarationBuilder(
                     //parse primary constructor
                     convertPrimaryConstructor(
                         primaryConstructor,
-                        modifiers?.contextList,
+                        modifiers?.contextLists,
                         delegatedSelfType.source,
                         classWrapper,
                         delegatedConstructorSource,
@@ -866,7 +865,7 @@ class LightTreeRawFirDeclarationBuilder(
                             superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
                             convertPrimaryConstructor(
                                 null,
-                                modifiers?.contextList,
+                                modifiers?.contextLists,
                                 enumEntry.toFirSourceElement(),
                                 enumClassWrapper,
                                 superTypeCallEntry?.toFirSourceElement(),
@@ -958,7 +957,7 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertPrimaryConstructor(
         primaryConstructor: LighterASTNode?,
-        classContextReceiverList: LighterASTNode?,
+        classContextReceiverLists: List<LighterASTNode>?,
         selfTypeSource: KtSourceElement?,
         classWrapper: ClassWrapper,
         delegatedConstructorSource: KtLightSourceElement?,
@@ -1078,7 +1077,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
-                this.contextParameters.addContextParameters(classContextReceiverList, constructorSymbol)
+                this.contextParameters.addContextParameters(classContextReceiverLists, constructorSymbol)
             }
 
             return PrimaryConstructor(
@@ -1186,8 +1185,8 @@ class LightTreeRawFirDeclarationBuilder(
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
-                this.contextParameters.addContextParameters(classWrapper.modifiers.contextList, constructorSymbol)
-                this.contextParameters.addContextParameters(modifiers?.contextList, constructorSymbol)
+                this.contextParameters.addContextParameters(classWrapper.modifiers.contextLists, constructorSymbol)
+                this.contextParameters.addContextParameters(modifiers?.contextLists, constructorSymbol)
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
                 target.bind(it)
@@ -1499,7 +1498,7 @@ class LightTreeRawFirDeclarationBuilder(
                     else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                 }
 
-                contextParameters.addContextParameters(modifiers?.contextList, propertySymbol)
+                contextParameters.addContextParameters(modifiers?.contextLists, propertySymbol)
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -1967,7 +1966,7 @@ class LightTreeRawFirDeclarationBuilder(
                 typeParameters += firTypeParameters
 
                 withCapturedTypeParameters(true, functionSource, typeParameters) {
-                    contextParameters.addContextParameters(modifiers?.contextList, functionSymbol)
+                    contextParameters.addContextParameters(modifiers?.contextLists, functionSymbol)
 
                     valueParametersList?.let { list ->
                         valueParameters += convertValueParameters(
@@ -2662,48 +2661,51 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     private fun MutableList<FirValueParameter>.addContextParameters(
-        contextList: LighterASTNode?,
+        contextLists: List<LighterASTNode>?,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ) {
-        contextList?.getChildNodesByType(VALUE_PARAMETER)?.mapTo(this) { contextParameterElement ->
-            convertValueParameter(
-                valueParameter = contextParameterElement,
-                containingDeclarationSymbol = containingDeclarationSymbol,
-                valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
-            ).firValueParameter
-        }
+        if (contextLists == null) return
+        for (contextList in contextLists) {
+            contextList.getChildNodesByType(VALUE_PARAMETER).mapTo(this) { contextParameterElement ->
+                convertValueParameter(
+                    valueParameter = contextParameterElement,
+                    containingDeclarationSymbol = containingDeclarationSymbol,
+                    valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
+                ).firValueParameter
+            }
 
-        // Legacy context receivers
-        contextList?.getChildNodesByType(CONTEXT_RECEIVER)?.mapTo(this) { contextReceiverElement ->
-            buildValueParameter {
-                this.source = contextReceiverElement.toFirSourceElement()
-                this.moduleData = baseModuleData
-                this.origin = FirDeclarationOrigin.Source
+            // Legacy context receivers
+            contextList.getChildNodesByType(CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
+                buildValueParameter {
+                    this.source = contextReceiverElement.toFirSourceElement()
+                    this.moduleData = baseModuleData
+                    this.origin = FirDeclarationOrigin.Source
 
-                val customLabelName =
-                    contextReceiverElement
-                        .getChildNodeByType(LABEL_QUALIFIER)
-                        ?.getChildNodeByType(LABEL)
-                        ?.getChildNodeByType(IDENTIFIER)
+                    val customLabelName =
+                        contextReceiverElement
+                            .getChildNodeByType(LABEL_QUALIFIER)
+                            ?.getChildNodeByType(LABEL)
+                            ?.getChildNodeByType(IDENTIFIER)
+                            ?.getReferencedNameAsName()
+
+                    val typeReference = contextReceiverElement.getChildNodeByType(TYPE_REFERENCE)
+
+                    val labelNameFromTypeRef = typeReference?.getChildNodeByType(USER_TYPE)
+                        ?.getChildNodeByType(REFERENCE_EXPRESSION)
                         ?.getReferencedNameAsName()
 
-                val typeReference = contextReceiverElement.getChildNodeByType(TYPE_REFERENCE)
+                    // We're abusing the value parameter name for the label/type name of legacy context receivers.
+                    // Luckily, legacy context receivers are getting removed soon.
+                    this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
-                val labelNameFromTypeRef = typeReference?.getChildNodeByType(USER_TYPE)
-                    ?.getChildNodeByType(REFERENCE_EXPRESSION)
-                    ?.getReferencedNameAsName()
-
-                // We're abusing the value parameter name for the label/type name of legacy context receivers.
-                // Luckily, legacy context receivers are getting removed soon.
-                this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-
-                this.symbol = FirValueParameterSymbol(name)
-                withContainerSymbol(this.symbol) {
-                    this.returnTypeRef = typeReference?.let { convertType(it) }
-                        ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
+                    this.symbol = FirValueParameterSymbol(name)
+                    withContainerSymbol(this.symbol) {
+                        this.returnTypeRef = typeReference?.let { convertType(it) }
+                            ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
+                    }
+                    this.containingDeclarationSymbol = containingDeclarationSymbol
+                    this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
                 }
-                this.containingDeclarationSymbol = containingDeclarationSymbol
-                this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
             }
         }
     }
