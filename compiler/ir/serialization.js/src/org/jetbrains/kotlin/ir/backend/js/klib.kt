@@ -590,12 +590,11 @@ fun serializeModuleIntoKlib(
                 compatibilityMode,
                 normalizeAbsolutePaths,
                 sourceBaseDirs,
-                languageVersionSettings,
                 shouldCheckSignaturesOnUniqueness,
             ->
             JsIrModuleSerializer(
                 settings = IrSerializationSettings(
-                    languageVersionSettings = languageVersionSettings,
+                    configuration = configuration,
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,

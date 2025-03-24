@@ -491,7 +491,7 @@ class GenerateIrRuntime {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         return JsIrModuleSerializer(
-            settings = IrSerializationSettings(languageVersionSettings = configuration.languageVersionSettings),
+            settings = IrSerializationSettings(configuration),
             KtDiagnosticReporterWithImplicitIrBasedContext(
                 DiagnosticReporterFactory.createPendingReporter(messageCollector),
                 configuration.languageVersionSettings,

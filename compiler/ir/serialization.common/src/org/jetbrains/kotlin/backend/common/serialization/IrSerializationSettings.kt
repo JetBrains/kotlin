@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrFileEntry
 
 /**
@@ -27,7 +29,8 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  *   is already known.
  */
 class IrSerializationSettings(
-    val languageVersionSettings: LanguageVersionSettings,
+    configuration: CompilerConfiguration,
+    val languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings,
     val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
     val publicAbiOnly: Boolean = false,
     val sourceBaseDirs: Collection<String> = emptyList(),

@@ -40,10 +40,10 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         val ir = it.irModule
         KonanIrModuleSerializer(
             settings = IrSerializationSettings(
+                configuration = config.configuration,
                 compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = config.configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
                 sourceBaseDirs = config.configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
-                languageVersionSettings = config.languageVersionSettings,
                 bodiesOnlyForInlines = input.produceHeaderKlib,
                 publicAbiOnly = input.produceHeaderKlib,
             ),

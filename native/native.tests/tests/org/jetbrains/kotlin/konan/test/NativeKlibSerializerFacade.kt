@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
-import org.jetbrains.kotlin.util.toKlibMetadataVersion
 
 abstract class AbstractNativeKlibSerializerFacade(
     testServices: TestServices
@@ -150,7 +148,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
 
         val serializerIr = KonanIrModuleSerializer(
             settings = IrSerializationSettings(
-                languageVersionSettings = configuration.languageVersionSettings,
+                configuration = configuration,
                 normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
                 sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
                 shouldCheckSignaturesOnUniqueness = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true)
@@ -192,15 +190,14 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
                 compatibilityMode,
                 normalizeAbsolutePaths,
                 sourceBaseDirs,
-                languageVersionSettings,
                 shouldCheckSignaturesOnUniqueness,
             ->
             KonanIrModuleSerializer(
                 settings = IrSerializationSettings(
+                    configuration = configuration,
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
-                    languageVersionSettings = languageVersionSettings,
                     shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                     reuseExistingSignaturesForSymbols = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
                 ),

@@ -119,7 +119,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         compatibilityMode: CompatibilityMode,
         normalizeAbsolutePaths: Boolean,
         sourceBaseDirs: Collection<String>,
-        languageVersionSettings: LanguageVersionSettings,
         shouldCheckSignaturesOnUniqueness: Boolean,
     ) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
@@ -157,7 +156,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
             compatibilityMode,
             configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
             configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
-            configuration.languageVersionSettings,
             configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
         ).serializedIrModule(it)
     }
