@@ -388,7 +388,7 @@ public class KtPsiUtil {
         IElementType operation = getOperation(expression);
         for (KotlinExpressionParsing.Precedence precedence : KotlinExpressionParsing.Precedence.values()) {
             if (precedence != KotlinExpressionParsing.Precedence.PREFIX && precedence != KotlinExpressionParsing.Precedence.POSTFIX &&
-                precedence.getOperations().contains(operation)) {
+                precedence.operations.contains(operation)) {
                 return maxPriority - precedence.ordinal() - 1;
             }
         }

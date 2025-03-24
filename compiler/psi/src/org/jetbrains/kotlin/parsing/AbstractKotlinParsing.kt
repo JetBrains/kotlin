@@ -13,417 +13,371 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.lang.PsiBuilder
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
+import com.intellij.util.containers.Stack
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.utils.strings.substringWithContext
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.lexer.KtKeywordToken;
-import org.jetbrains.kotlin.lexer.KtToken;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.utils.strings.StringsKt;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.jetbrains.kotlin.lexer.KtTokens.*;
-
-/*package*/ abstract class AbstractKotlinParsing {
-    private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<>();
-
-    static {
-        for (IElementType type : KtTokens.SOFT_KEYWORDS.getTypes()) {
-            KtKeywordToken keywordToken = (KtKeywordToken) type;
-            assert keywordToken.isSoft();
-            SOFT_KEYWORD_TEXTS.put(keywordToken.getValue(), keywordToken);
+/*package*/
+abstract class AbstractKotlinParsing @JvmOverloads constructor(
+    @JvmField protected val myBuilder: SemanticWhitespaceAwarePsiBuilder,
+    @JvmField protected val isLazy: Boolean = true
+) {
+    protected val lastToken: IElementType?
+        get() {
+            var i = 1
+            val currentOffset = myBuilder.getCurrentOffset()
+            while (i <= currentOffset && KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-i))) {
+                i++
+            }
+            return myBuilder.rawLookup(-i)
         }
+
+    protected fun mark(): PsiBuilder.Marker {
+        return myBuilder.mark()
     }
 
-    static {
-        for (IElementType token : KtTokens.KEYWORDS.getTypes()) {
-            assert token instanceof KtKeywordToken : "Must be KtKeywordToken: " + token;
-            assert !((KtKeywordToken) token).isSoft() : "Must not be soft: " + token;
-        }
+    protected fun error(message: String) {
+        myBuilder.error(message)
     }
 
-    protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
-    protected final boolean isLazy;
-
-    public AbstractKotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
-        this(builder, true);
-    }
-
-    public AbstractKotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isLazy) {
-        this.myBuilder = builder;
-        this.isLazy = isLazy;
-    }
-
-    protected IElementType getLastToken() {
-        int i = 1;
-        int currentOffset = myBuilder.getCurrentOffset();
-        while (i <= currentOffset && WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-i))) {
-            i++;
-        }
-        return myBuilder.rawLookup(-i);
-    }
-
-    protected boolean expect(KtToken expectation, String message) {
-        return expect(expectation, message, null);
-    }
-
-    protected PsiBuilder.Marker mark() {
-        return myBuilder.mark();
-    }
-
-    protected void error(String message) {
-        myBuilder.error(message);
-    }
-
-    protected boolean expect(KtToken expectation, String message, TokenSet recoverySet) {
+    protected fun expect(expectation: KtToken?, message: String, recoverySet: TokenSet? = null): Boolean {
         if (expect(expectation)) {
-            return true;
+            return true
         }
 
-        errorWithRecovery(message, recoverySet);
+        errorWithRecovery(message, recoverySet)
 
-        return false;
+        return false
     }
 
-    protected boolean expect(KtToken expectation) {
+    protected fun expect(expectation: KtToken?): Boolean {
         if (at(expectation)) {
-            advance(); // expectation
-            return true;
+            advance() // expectation
+            return true
         }
 
-        if (expectation == KtTokens.IDENTIFIER && "`".equals(myBuilder.getTokenText())) {
-            advance();
+        if (expectation === KtTokens.IDENTIFIER && "`" == myBuilder.getTokenText()) {
+            advance()
         }
 
-        return false;
+        return false
     }
 
-    protected void expectNoAdvance(KtToken expectation, String message) {
+    protected fun expectNoAdvance(expectation: KtToken?, message: String) {
         if (at(expectation)) {
-            advance(); // expectation
-            return;
+            advance() // expectation
+            return
         }
 
-        error(message);
+        error(message)
     }
 
-    protected void errorWithRecovery(String message, TokenSet recoverySet) {
-        IElementType tt = tt();
+    protected fun errorWithRecovery(message: String, recoverySet: TokenSet?) {
+        val tt = tt()
         if (recoverySet == null ||
-            recoverySet.contains(tt) ||
-            tt == LBRACE || tt == RBRACE ||
-            (recoverySet.contains(EOL_OR_SEMICOLON) && (eof() || tt == SEMICOLON || myBuilder.newlineBeforeCurrentToken()))) {
-            error(message);
+            recoverySet.contains(tt) || tt === KtTokens.LBRACE || tt === KtTokens.RBRACE ||
+            (recoverySet.contains(KtTokens.EOL_OR_SEMICOLON) && (eof() || tt === KtTokens.SEMICOLON || myBuilder.newlineBeforeCurrentToken()))
+        ) {
+            error(message)
+        } else {
+            errorAndAdvance(message)
         }
-        else {
-            errorAndAdvance(message);
-        }
     }
 
-    protected void errorAndAdvance(String message) {
-        errorAndAdvance(message, 1);
+    protected fun errorAndAdvance(message: String, advanceTokenCount: Int = 1) {
+        val err = mark()
+        advance(advanceTokenCount)
+        err.error(message)
     }
 
-    protected void errorAndAdvance(String message, int advanceTokenCount) {
-        PsiBuilder.Marker err = mark();
-        advance(advanceTokenCount);
-        err.error(message);
+    protected fun eof(): Boolean {
+        return myBuilder.eof()
     }
 
-    protected boolean eof() {
-        return myBuilder.eof();
-    }
-
-    protected void advance() {
+    protected fun advance() {
         // TODO: how to report errors on bad characters? (Other than highlighting)
-        myBuilder.advanceLexer();
+        myBuilder.advanceLexer()
     }
 
-    protected void advance(int advanceTokenCount) {
-        for (int i = 0; i < advanceTokenCount; i++) {
-            advance(); // erroneous token
+    protected fun advance(advanceTokenCount: Int) {
+        for (i in 0..<advanceTokenCount) {
+            advance() // erroneous token
         }
     }
 
-    protected void advanceAt(IElementType current) {
-        assert _at(current);
-        myBuilder.advanceLexer();
+    protected fun advanceAt(current: IElementType?) {
+        assert(_at(current))
+        myBuilder.advanceLexer()
     }
 
-    protected int getTokenId() {
-        IElementType elementType = tt();
-        return (elementType instanceof KtToken) ? ((KtToken)elementType).tokenId : INVALID_Id;
-    }
+    protected val tokenId: Int
+        get() {
+            val elementType = tt()
+            return if (elementType is KtToken) elementType.tokenId else KtTokens.INVALID_Id
+        }
 
-    protected IElementType tt() {
-        return myBuilder.getTokenType();
+    protected fun tt(): IElementType? {
+        return myBuilder.tokenType
     }
 
     /**
      * Side-effect-free version of at()
      */
-    protected boolean _at(IElementType expectation) {
-        IElementType token = tt();
-        return tokenMatches(token, expectation);
+    protected fun _at(expectation: IElementType?): Boolean {
+        val token = tt()
+        return tokenMatches(token, expectation)
     }
 
-    private boolean tokenMatches(IElementType token, IElementType expectation) {
-        if (token == expectation) return true;
-        if (expectation == EOL_OR_SEMICOLON) {
-            if (eof()) return true;
-            if (token == SEMICOLON) return true;
-            if (myBuilder.newlineBeforeCurrentToken()) return true;
+    private fun tokenMatches(token: IElementType?, expectation: IElementType?): Boolean {
+        if (token === expectation) return true
+        if (expectation === KtTokens.EOL_OR_SEMICOLON) {
+            if (eof()) return true
+            if (token === KtTokens.SEMICOLON) return true
+            if (myBuilder.newlineBeforeCurrentToken()) return true
         }
-        return false;
+        return false
     }
 
-    protected boolean at(IElementType expectation) {
-        if (_at(expectation)) return true;
-        IElementType token = tt();
-        if (token == IDENTIFIER && expectation instanceof KtKeywordToken) {
-            KtKeywordToken expectedKeyword = (KtKeywordToken) expectation;
-            if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
-                myBuilder.remapCurrentToken(expectation);
-                return true;
+    protected fun at(expectation: IElementType?): Boolean {
+        if (_at(expectation)) return true
+        val token = tt()
+        if (token === KtTokens.IDENTIFIER && expectation is KtKeywordToken) {
+            val expectedKeyword = expectation
+            if (expectedKeyword.isSoft && expectedKeyword.getValue() == myBuilder.getTokenText()) {
+                myBuilder.remapCurrentToken(expectation)
+                return true
             }
         }
-        if (expectation == IDENTIFIER && token instanceof KtKeywordToken) {
-            KtKeywordToken keywordToken = (KtKeywordToken) token;
-            if (keywordToken.isSoft()) {
-                myBuilder.remapCurrentToken(IDENTIFIER);
-                return true;
+        if (expectation === KtTokens.IDENTIFIER && token is KtKeywordToken) {
+            val keywordToken = token
+            if (keywordToken.isSoft) {
+                myBuilder.remapCurrentToken(KtTokens.IDENTIFIER)
+                return true
             }
         }
-        return false;
+        return false
     }
 
     /**
      * Side-effect-free version of atSet()
      */
-    protected boolean _atSet(TokenSet set) {
-        IElementType token = tt();
-        if (set.contains(token)) return true;
-        if (set.contains(EOL_OR_SEMICOLON)) {
-            if (eof()) return true;
-            if (token == SEMICOLON) return true;
-            if (myBuilder.newlineBeforeCurrentToken()) return true;
+    protected fun _atSet(set: TokenSet): Boolean {
+        val token = tt()
+        if (set.contains(token)) return true
+        if (set.contains(KtTokens.EOL_OR_SEMICOLON)) {
+            if (eof()) return true
+            if (token === KtTokens.SEMICOLON) return true
+            if (myBuilder.newlineBeforeCurrentToken()) return true
         }
-        return false;
+        return false
     }
 
-    protected boolean atSet(TokenSet set) {
-        if (_atSet(set)) return true;
-        IElementType token = tt();
-        if (token == IDENTIFIER) {
-            KtKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText());
+    protected fun atSet(set: TokenSet): Boolean {
+        if (_atSet(set)) return true
+        val token = tt()
+        if (token === KtTokens.IDENTIFIER) {
+            val keywordToken: KtKeywordToken? = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText())
             if (keywordToken != null && set.contains(keywordToken)) {
-                myBuilder.remapCurrentToken(keywordToken);
-                return true;
+                myBuilder.remapCurrentToken(keywordToken)
+                return true
             }
-        }
-        else {
+        } else {
             // We know at this point that <code>set</code> does not contain <code>token</code>
-            if (set.contains(IDENTIFIER) && token instanceof KtKeywordToken) {
-                if (((KtKeywordToken) token).isSoft()) {
-                    myBuilder.remapCurrentToken(IDENTIFIER);
-                    return true;
+            if (set.contains(KtTokens.IDENTIFIER) && token is KtKeywordToken) {
+                if (token.isSoft()) {
+                    myBuilder.remapCurrentToken(KtTokens.IDENTIFIER)
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
-    protected IElementType lookahead(int k) {
-        return myBuilder.lookAhead(k);
+    protected fun lookahead(k: Int): IElementType? {
+        return myBuilder.lookAhead(k)
     }
 
-    protected boolean consumeIf(KtToken token) {
+    protected fun consumeIf(token: KtToken?): Boolean {
         if (at(token)) {
-            advance(); // token
-            return true;
+            advance() // token
+            return true
         }
-        return false;
+        return false
     }
 
     // TODO: Migrate to predicates
-    protected void skipUntil(TokenSet tokenSet) {
-        boolean stopAtEolOrSemi = tokenSet.contains(EOL_OR_SEMICOLON);
-        while (!eof() && !tokenSet.contains(tt()) && !(stopAtEolOrSemi && at(EOL_OR_SEMICOLON))) {
-            advance();
+    protected fun skipUntil(tokenSet: TokenSet) {
+        val stopAtEolOrSemi = tokenSet.contains(KtTokens.EOL_OR_SEMICOLON)
+        while (!eof() && !tokenSet.contains(tt()) && !(stopAtEolOrSemi && at(KtTokens.EOL_OR_SEMICOLON))) {
+            advance()
         }
     }
 
-    protected void errorUntil(String message, TokenSet tokenSet) {
-        assert tokenSet.contains(LBRACE) : "Cannot include LBRACE into error element!";
-        assert tokenSet.contains(RBRACE) : "Cannot include RBRACE into error element!";
-        PsiBuilder.Marker error = mark();
-        skipUntil(tokenSet);
-        error.error(message);
+    protected fun errorUntil(message: String, tokenSet: TokenSet) {
+        assert(tokenSet.contains(KtTokens.LBRACE)) { "Cannot include LBRACE into error element!" }
+        assert(tokenSet.contains(KtTokens.RBRACE)) { "Cannot include RBRACE into error element!" }
+        val error = mark()
+        skipUntil(tokenSet)
+        error.error(message)
     }
 
-    protected static void errorIf(PsiBuilder.Marker marker, boolean condition, String message) {
-        if (condition) {
-            marker.error(message);
-        }
-        else {
-            marker.drop();
-        }
-    }
+    protected inner class OptionalMarker(actuallyMark: Boolean) {
+        private val marker: PsiBuilder.Marker?
+        private val offset: Int
 
-    protected class OptionalMarker {
-        private final PsiBuilder.Marker marker;
-        private final int offset;
-
-        public OptionalMarker(boolean actuallyMark) {
-            marker = actuallyMark ? mark() : null;
-            offset = myBuilder.getCurrentOffset();
+        init {
+            marker = if (actuallyMark) mark() else null
+            offset = myBuilder.getCurrentOffset()
         }
 
-        public void done(IElementType elementType) {
-            if (marker == null) return;
-            marker.done(elementType);
+        fun done(elementType: IElementType) {
+            if (marker == null) return
+            marker.done(elementType)
         }
 
-        public void error(String message) {
-            if (marker == null) return;
+        fun error(message: String) {
+            if (marker == null) return
             if (offset == myBuilder.getCurrentOffset()) {
-                marker.drop(); // no empty errors
-            }
-            else {
-                marker.error(message);
+                marker.drop() // no empty errors
+            } else {
+                marker.error(message)
             }
         }
 
-        public void drop() {
-            if (marker == null) return;
-            marker.drop();
+        fun drop() {
+            if (marker == null) return
+            marker.drop()
         }
     }
 
-    protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
-        PsiBuilder.Marker currentPosition = mark();
-        Stack<IElementType> opens = new Stack<>();
-        int openAngleBrackets = 0;
-        int openBraces = 0;
-        int openParentheses = 0;
-        int openBrackets = 0;
+    protected fun matchTokenStreamPredicate(pattern: TokenStreamPattern): Int {
+        val currentPosition = mark()
+        val opens = Stack<IElementType?>()
+        var openAngleBrackets = 0
+        var openBraces = 0
+        var openParentheses = 0
+        var openBrackets = 0
         while (!eof()) {
             if (pattern.processToken(
                     myBuilder.getCurrentOffset(),
-                    pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses))) {
-                break;
+                    pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses)
+                )
+            ) {
+                break
             }
-            switch (getTokenId()) {
-                case LPAR_Id:
-                    openParentheses++;
-                    opens.push(LPAR);
-                    break;
-                case LT_Id:
-                    openAngleBrackets++;
-                    opens.push(LT);
-                    break;
-                case LBRACE_Id:
-                    openBraces++;
-                    opens.push(LBRACE);
-                    break;
-                case LBRACKET_Id:
-                    openBrackets++;
-                    opens.push(LBRACKET);
-                    break;
-                case RPAR_Id:
-                    openParentheses--;
-                    if (opens.isEmpty() || opens.pop() != LPAR) {
-                        if (pattern.handleUnmatchedClosing(RPAR)) {
-                            break;
+            when (this.tokenId) {
+                KtTokens.LPAR_Id -> {
+                    openParentheses++
+                    opens.push(KtTokens.LPAR)
+                }
+                KtTokens.LT_Id -> {
+                    openAngleBrackets++
+                    opens.push(KtTokens.LT)
+                }
+                KtTokens.LBRACE_Id -> {
+                    openBraces++
+                    opens.push(KtTokens.LBRACE)
+                }
+                KtTokens.LBRACKET_Id -> {
+                    openBrackets++
+                    opens.push(KtTokens.LBRACKET)
+                }
+                KtTokens.RPAR_Id -> {
+                    openParentheses--
+                    if (opens.isEmpty() || opens.pop() !== KtTokens.LPAR) {
+                        if (pattern.handleUnmatchedClosing(KtTokens.RPAR)) {
+                            break
                         }
                     }
-                    break;
-                case GT_Id:
-                    openAngleBrackets--;
-                    break;
-                case RBRACE_Id:
-                    openBraces--;
-                    break;
-                case RBRACKET_Id:
-                    openBrackets--;
-                    break;
+                }
+                KtTokens.GT_Id -> openAngleBrackets--
+                KtTokens.RBRACE_Id -> openBraces--
+                KtTokens.RBRACKET_Id -> openBrackets--
             }
 
-            advance(); // skip token
+            advance() // skip token
         }
 
-        currentPosition.rollbackTo();
+        currentPosition.rollbackTo()
 
-        return pattern.result();
+        return pattern.result()
     }
 
-    protected boolean eol() {
-        return myBuilder.newlineBeforeCurrentToken() || eof();
+    protected fun eol(): Boolean {
+        return myBuilder.newlineBeforeCurrentToken() || eof()
     }
 
-    protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType, boolean precedingNonDocComments) {
-        marker.done(elementType);
-        marker.setCustomEdgeTokenBinders(precedingNonDocComments ? PrecedingCommentsBinder.INSTANCE : PrecedingDocCommentsBinder.INSTANCE,
-                                         TrailingCommentsBinder.INSTANCE);
+    abstract fun create(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing
+
+    protected fun createTruncatedBuilder(eofPosition: Int): KotlinParsing? {
+        return create(TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition))
     }
 
-    protected abstract KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder);
-
-    protected KotlinParsing createTruncatedBuilder(int eofPosition) {
-        return create(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
-    }
-
-    protected class At extends AbstractTokenStreamPredicate {
-
-        private final IElementType lookFor;
-        private final boolean topLevelOnly;
-
-        public At(IElementType lookFor, boolean topLevelOnly) {
-            this.lookFor = lookFor;
-            this.topLevelOnly = topLevelOnly;
-        }
-
-        public At(IElementType lookFor) {
-            this(lookFor, true);
-        }
-
-        @Override
-        public boolean matching(boolean topLevel) {
-            return (topLevel || !topLevelOnly) && at(lookFor);
-        }
-
-    }
-
-    protected class AtSet extends AbstractTokenStreamPredicate {
-        private final TokenSet lookFor;
-        private final TokenSet topLevelOnly;
-
-        public AtSet(TokenSet lookFor, TokenSet topLevelOnly) {
-            this.lookFor = lookFor;
-            this.topLevelOnly = topLevelOnly;
-        }
-
-        public AtSet(TokenSet lookFor) {
-            this(lookFor, lookFor);
-        }
-
-        @Override
-        public boolean matching(boolean topLevel) {
-            return (topLevel || !atSet(topLevelOnly)) && atSet(lookFor);
+    protected inner class At @JvmOverloads constructor(private val lookFor: IElementType?, private val topLevelOnly: Boolean = true) :
+        AbstractTokenStreamPredicate() {
+        override fun matching(topLevel: Boolean): Boolean {
+            return (topLevel || !topLevelOnly) && at(lookFor)
         }
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    protected inner class AtSet @JvmOverloads constructor(private val lookFor: TokenSet, private val topLevelOnly: TokenSet = lookFor) :
+        AbstractTokenStreamPredicate() {
+        override fun matching(topLevel: Boolean): Boolean {
+            return (topLevel || !atSet(topLevelOnly)) && atSet(lookFor)
+        }
+    }
+
     @TestOnly
-    public String currentContext() {
-        return StringsKt.substringWithContext(myBuilder.getOriginalText(), myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20);
+    fun currentContext(): String {
+        return myBuilder.originalText.substringWithContext(myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20)
+    }
+
+    companion object {
+        private val SOFT_KEYWORD_TEXTS: MutableMap<String?, KtKeywordToken?> = HashMap<String?, KtKeywordToken?>()
+
+        init {
+            for (type in KtTokens.SOFT_KEYWORDS.getTypes()) {
+                val keywordToken = type as KtKeywordToken
+                assert(keywordToken.isSoft())
+                SOFT_KEYWORD_TEXTS.put(keywordToken.getValue(), keywordToken)
+            }
+        }
+
+        init {
+            for (token in KtTokens.KEYWORDS.getTypes()) {
+                assert(token is KtKeywordToken) { "Must be KtKeywordToken: " + token }
+                assert(!(token as KtKeywordToken).isSoft()) { "Must not be soft: " + token }
+            }
+        }
+
+        @JvmStatic
+        protected fun errorIf(marker: PsiBuilder.Marker, condition: Boolean, message: String) {
+            if (condition) {
+                marker.error(message)
+            } else {
+                marker.drop()
+            }
+        }
+
+        @JvmStatic
+        protected fun closeDeclarationWithCommentBinders(
+            marker: PsiBuilder.Marker,
+            elementType: IElementType,
+            precedingNonDocComments: Boolean
+        ) {
+            marker.done(elementType)
+            marker.setCustomEdgeTokenBinders(
+                if (precedingNonDocComments) PrecedingCommentsBinder else PrecedingDocCommentsBinder,
+                TrailingCommentsBinder
+            )
+        }
     }
 }
