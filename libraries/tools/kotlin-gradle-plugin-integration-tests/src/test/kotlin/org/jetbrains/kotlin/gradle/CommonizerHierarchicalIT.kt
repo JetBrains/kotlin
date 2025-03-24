@@ -85,7 +85,11 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     @GradleTest
     fun testCommonizeHierarchicallyMultiModule(gradleVersion: GradleVersion) {
         nativeProject("commonizeHierarchicallyMultiModule", gradleVersion) {
-            build("assemble") {
+            build(
+                "assemble",
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            ) {
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")
                 assertTasksExecuted(":p3:commonizeCInterop")
