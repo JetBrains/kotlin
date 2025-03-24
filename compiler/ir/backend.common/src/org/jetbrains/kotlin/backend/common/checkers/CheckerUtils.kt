@@ -109,21 +109,21 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
 /**
  * The set of declarations' fully qualified names references to which we don't want to check for visibility violations.
  *
- * FIXME: This is temporary hack until KT-70295 is fixed.
+ * FIXME: We need to get rid of this list of exceptions (KT-70295, KT-69947).
  */
 private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
-    "kotlin.js.sharedBoxCreate",
-    "kotlin.js.sharedBoxWrite",
-    "kotlin.js.sharedBoxRead",
-    "kotlin.wasm.internal.ClosureBoxBoolean",
-    "kotlin.wasm.internal.ClosureBoxByte",
-    "kotlin.wasm.internal.ClosureBoxShort",
-    "kotlin.wasm.internal.ClosureBoxChar",
-    "kotlin.wasm.internal.ClosureBoxInt",
-    "kotlin.wasm.internal.ClosureBoxLong",
-    "kotlin.wasm.internal.ClosureBoxFloat",
-    "kotlin.wasm.internal.ClosureBoxDouble",
-    "kotlin.wasm.internal.ClosureBoxAny",
+    "kotlin.js.sharedBoxCreate",              // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.js.sharedBoxWrite",               // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.js.sharedBoxRead",                // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxBoolean", // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxByte",    // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxShort",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxChar",    // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxInt",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxLong",    // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxFloat",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxDouble",  // TODO: Unify intrinsics for boxing captured variables, KT-70295
+    "kotlin.wasm.internal.ClosureBoxAny",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.wasmTypeId",
     "kotlin.coroutines.CoroutineImpl",
     "kotlin.native.internal.KClassImpl",
