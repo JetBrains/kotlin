@@ -1251,6 +1251,8 @@ class Fir2IrVisitor(
         forceBlockUnitType: Boolean,
         coerceWhenToUnitIfPossible: Boolean,
     ): IrContainerExpression {
+        /** Combination of [forceBlockUnitType] = true and [coerceWhenToUnitIfPossible] = false is not allowed */
+        assert(!forceBlockUnitType || coerceWhenToUnitIfPossible)
         val type = if (forceBlockUnitType)
             builtins.unitType
         else
@@ -1351,6 +1353,10 @@ class Fir2IrVisitor(
                 elvisExpression.resolvedType.toIrType(c)
             )
         }
+    }
+
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
+        return convertToWhenExpression(whenExpression, coerceToUnitIfPossible = false)
     }
 
     private fun convertToWhenExpression(whenExpression: FirWhenExpression, coerceToUnitIfPossible: Boolean): IrExpression {
