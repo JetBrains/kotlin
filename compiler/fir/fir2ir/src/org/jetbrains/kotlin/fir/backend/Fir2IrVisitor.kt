@@ -1251,6 +1251,8 @@ class Fir2IrVisitor(
         forceBlockUnitType: Boolean,
         coerceWhenToUnitIfPossible: Boolean,
     ): IrContainerExpression {
+        /** Combination of [forceBlockUnitType] = true and [coerceWhenToUnitIfPossible] = false is not allowed */
+        assert(!forceBlockUnitType || coerceWhenToUnitIfPossible)
         val type = if (forceBlockUnitType)
             builtins.unitType
         else
