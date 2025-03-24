@@ -146,9 +146,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         ).serializeModule(frontendOutput.analysisResult.moduleDescriptor)
 
         val serializerIr = KonanIrModuleSerializer(
-            settings = IrSerializationSettings(
-                configuration = configuration,
-            ),
+            settings = IrSerializationSettings(configuration),
             KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings),
             inputArtifact.irPluginContext.irBuiltIns,
         ).serializedIrModule(inputArtifact.irModuleFragment)
@@ -178,13 +176,9 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
         diagnosticReporter,
         cleanFiles = emptyList(),
         usedLibrariesForManifest,
-        createModuleSerializer = {
-                irDiagnosticReporter,
-            ->
+        createModuleSerializer = { irDiagnosticReporter ->
             KonanIrModuleSerializer(
-                settings = IrSerializationSettings(
-                    configuration = configuration,
-                ),
+                settings = IrSerializationSettings(configuration),
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
             )

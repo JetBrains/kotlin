@@ -582,9 +582,7 @@ fun serializeModuleIntoKlib(
         diagnosticReporter = diagnosticReporter,
         cleanFiles = cleanFiles,
         dependencies = dependencies,
-        createModuleSerializer = {
-                irDiagnosticReporter
-            ->
+        createModuleSerializer = { irDiagnosticReporter ->
             JsIrModuleSerializer(
                 settings = IrSerializationSettings(
                     configuration = configuration,

@@ -107,9 +107,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     diagnosticReporter: DiagnosticReporter,
     cleanFiles: List<KotlinFileSerializedData>,
     dependencies: List<Dependency>,
-    createModuleSerializer: (
-        irDiagnosticReporter: IrDiagnosticReporter,
-    ) -> IrModuleSerializer<*>,
+    createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
