@@ -174,21 +174,19 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
     ) = serializeModuleIntoKlib(
         moduleName = inputArtifact.irModuleFragment.name.asString(),
         inputArtifact.irModuleFragment,
-        inputArtifact.irPluginContext.irBuiltIns,
         configuration,
         diagnosticReporter,
         cleanFiles = emptyList(),
         usedLibrariesForManifest,
         createModuleSerializer = {
                 irDiagnosticReporter,
-                irBuiltIns,
             ->
             KonanIrModuleSerializer(
                 settings = IrSerializationSettings(
                     configuration = configuration,
                 ),
                 diagnosticReporter = irDiagnosticReporter,
-                irBuiltIns = irBuiltIns,
+                irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
             )
         },
         inputArtifact.metadataSerializer ?: error("expected metadata serializer"),

@@ -45,7 +45,6 @@ internal fun PhaseContext.firSerializerBase(
     val serializerOutput = serializeModuleIntoKlib(
             moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
             irModuleFragment = irModuleFragment,
-            irBuiltins = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns,
             configuration = configuration,
             diagnosticReporter = diagnosticReporter,
             metadataSerializer = Fir2KlibMetadataSerializer(
@@ -57,8 +56,7 @@ internal fun PhaseContext.firSerializerBase(
             ),
             cleanFiles = emptyList(),
             dependencies = usedResolvedLibraries?.map { it.library as KonanLibrary }.orEmpty(),
-            createModuleSerializer = { irDiagnosticReporter,
-                                       irBuiltIns ->
+            createModuleSerializer = { irDiagnosticReporter ->
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(
                         configuration = configuration,
@@ -66,7 +64,7 @@ internal fun PhaseContext.firSerializerBase(
                         publicAbiOnly = produceHeaderKlib,
                     ),
                     diagnosticReporter = irDiagnosticReporter,
-                    irBuiltIns = irBuiltIns,
+                    irBuiltIns = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns!!,
                 )
             },
     )

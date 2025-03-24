@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -90,7 +88,6 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  *
  * @param moduleName The name of the module being serialized to be written into the KLIB header.
  * @param irModuleFragment The IR to be serialized into the KLIB being produced, or `null` if this is going to be a metadata-only KLIB.
- * @param irBuiltins IR builtins for `irModuleFragment`, or `null` if this is going to be a metadata-only KLIB.
  * @param configuration Used to determine certain serialization parameters and enable/disable serialization diagnostics.
  * @param diagnosticReporter Used for reporting serialization-time diagnostics, for example, about clashing IR signatures.
  * @param cleanFiles In the case of incremental compilation, the list of files that were not changed and therefore don't need to be
@@ -106,14 +103,12 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
 fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
-    irBuiltins: IrBuiltIns?,
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
     cleanFiles: List<KotlinFileSerializedData>,
     dependencies: List<Dependency>,
     createModuleSerializer: (
         irDiagnosticReporter: IrDiagnosticReporter,
-        irBuiltins: IrBuiltIns,
     ) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
@@ -146,7 +141,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 
         createModuleSerializer(
             irDiagnosticReporter,
-            irBuiltins!!,
         ).serializedIrModule(it)
     }
 

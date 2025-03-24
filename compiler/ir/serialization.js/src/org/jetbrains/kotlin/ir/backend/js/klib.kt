@@ -578,14 +578,12 @@ fun serializeModuleIntoKlib(
     val serializerOutput = serializeModuleIntoKlib(
         moduleName = moduleFragment.name.asString(),
         irModuleFragment = moduleFragment,
-        irBuiltins = irBuiltIns,
         configuration = configuration,
         diagnosticReporter = diagnosticReporter,
         cleanFiles = cleanFiles,
         dependencies = dependencies,
         createModuleSerializer = {
-                irDiagnosticReporter,
-                irBuiltins,
+                irDiagnosticReporter
             ->
             JsIrModuleSerializer(
                 settings = IrSerializationSettings(
@@ -593,7 +591,7 @@ fun serializeModuleIntoKlib(
                     compatibilityMode = CompatibilityMode(abiVersion),
                 ),
                 irDiagnosticReporter,
-                irBuiltins,
+                irBuiltIns,
             ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
         },
         metadataSerializer = metadataSerializer,
