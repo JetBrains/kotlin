@@ -132,6 +132,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
 
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
+    ":compiler:ir.semantics",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
     ":compiler:ir.serialization.jvm",
@@ -147,6 +148,7 @@ val irCompilerModules = arrayOf(
 
 val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.tree",
+    ":compiler:ir.semantics",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.jvm",
     ":compiler:ir.serialization.js", // used in IJ android plugin in `ComposeIrGenerationExtension`

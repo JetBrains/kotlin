@@ -98,6 +98,7 @@
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
+/compiler/ir/ir.semantics/ "Kotlin Common Backend"
 /compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" Sergej.Jaskiewicz
 /compiler/ir/ir.objcinterop/ "Kotlin Native"
 /compiler/ir/serialization.common/ "Kotlin Common Backend"
