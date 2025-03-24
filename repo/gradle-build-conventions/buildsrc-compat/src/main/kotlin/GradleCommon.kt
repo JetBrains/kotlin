@@ -512,7 +512,13 @@ fun Project.createGradlePluginVariant(
 
     dependencies {
         variantSourceSet.compileOnlyConfigurationName(kotlinStdlib())
-        variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
+        if (variant == GradlePluginVariant.GRADLE_813) {
+            // Workaround until 'dev.gradleplugins:gradle-api:8.13' will be published
+            variantSourceSet.compileOnlyConfigurationName("org.jetbrains.intellij.deps:gradle-api:${variant.gradleApiVersion}")
+            variantSourceSet.compileOnlyConfigurationName("javax.inject:javax.inject:1")
+        } else {
+            variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
+        }
         if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
                 capabilities {

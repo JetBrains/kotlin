@@ -33,7 +33,7 @@ projectTest(parallel = true) {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
 val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 
-task<Exec>("downloadJspecifyTests") {
+tasks.register<Exec>("downloadJspecifyTests") {
     val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
     doFirst {
         executable("git")
@@ -50,7 +50,7 @@ task<Exec>("downloadJspecifyTests") {
 tasks.test {
     exclude("**/*JspecifyAnnotationsTestGenerated*")
 }
-task<Test>("jspecifyTests") {
+tasks.register<Test>("jspecifyTests") {
     workingDir(project.rootDir)
     include("**/*JspecifyAnnotationsTestGenerated*")
 }

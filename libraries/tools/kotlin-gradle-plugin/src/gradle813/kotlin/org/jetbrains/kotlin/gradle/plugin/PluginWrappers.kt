@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG811
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle811"
@@ -64,8 +62,7 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     }
 }
 
+@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[ProblemsReporter.Factory::class] =
-        ProblemsReporterG811.Factory()
+
 }

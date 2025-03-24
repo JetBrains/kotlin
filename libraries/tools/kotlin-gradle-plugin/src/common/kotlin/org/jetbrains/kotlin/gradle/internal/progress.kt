@@ -34,7 +34,7 @@ internal fun <T> ProgressLogger.operation(
     initialStatus: String? = null,
     body: ProgressLogger.() -> T,
 ): T {
-    start(description, initialStatus)
+    start(description, initialStatus ?: "")
     try {
         return body(this)
     } finally {

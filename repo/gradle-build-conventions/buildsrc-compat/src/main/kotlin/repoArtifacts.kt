@@ -34,17 +34,18 @@ import java.io.File
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
 
-fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
+fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testApi"])
 
-    return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
+    return tasks.register<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
             from(testSourceSet.output)
         }
         archiveClassifier.set("tests")
         body()
-        project.addArtifact(testsJarCfg, this, this)
+    }.also {
+        project.addArtifact(testsJarCfg.name, it)
     }
 }
 

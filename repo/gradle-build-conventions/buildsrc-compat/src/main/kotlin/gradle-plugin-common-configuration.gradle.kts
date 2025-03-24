@@ -115,4 +115,11 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         commonSourceSet = commonSourceSet
     )
     publishShadowedJar(gradle811SourceSet, commonSourceSet)
+
+    // Used for Gradle 8.13+ versions
+    val gradle813SourceSet = createGradlePluginVariant(
+        GradlePluginVariant.GRADLE_813,
+        commonSourceSet = commonSourceSet
+    )
+    publishShadowedJar(gradle813SourceSet, commonSourceSet)
 }

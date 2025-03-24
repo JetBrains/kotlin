@@ -474,11 +474,11 @@ gradlePlugin {
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     // Workaround for KT-75550
-    tasks.named("gradle85Jar") {
+    tasks.named("gradle813Jar") {
         enabled = false
     }
 
-    val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_85
+    val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_813
     val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
         compileClasspath += gradlePluginVariantSourceSet.output

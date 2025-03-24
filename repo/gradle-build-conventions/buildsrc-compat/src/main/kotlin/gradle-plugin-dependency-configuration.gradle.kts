@@ -70,6 +70,13 @@ createGradlePluginVariant(
     isGradlePlugin = false
 )
 
+// Used for Gradle 8.13+ versions
+createGradlePluginVariant(
+    GradlePluginVariant.GRADLE_813,
+    commonSourceSet = commonSourceSet,
+    isGradlePlugin = false
+)
+
 publishing {
     publications {
         register<MavenPublication>(DEFAULT_MAIN_PUBLICATION_NAME) {

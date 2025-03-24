@@ -12,15 +12,19 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.problems.Problem
+import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.ProblemSpec
 import org.gradle.api.problems.internal.AdditionalDataBuilderFactory
+import org.gradle.api.problems.internal.InternalProblem
+import org.gradle.api.problems.internal.InternalProblemBuilder
 import org.gradle.api.problems.internal.InternalProblemReporter
 import org.gradle.api.problems.internal.InternalProblemSpec
 import org.gradle.api.problems.internal.InternalProblems
-import org.gradle.api.problems.internal.Problem
 import org.gradle.api.problems.internal.ProblemsProgressEventEmitterHolder
 import org.gradle.internal.operations.OperationIdentifier
+import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -211,17 +215,59 @@ private class InternalProblemsStub : InternalProblems {
     override fun getReporter(): ProblemReporter = TODO()
     override fun getInternalReporter(): InternalProblemReporter = InternalProblemReporterStub()
     override fun getAdditionalDataBuilderFactory(): AdditionalDataBuilderFactory = TODO()
+    override fun getInstantiator(): Instantiator {
+        TODO("Not yet implemented")
+    }
+
+    override fun getProblemBuilder(): InternalProblemBuilder {
+        TODO("Not yet implemented")
+    }
 }
 
 private class InternalProblemReporterStub : InternalProblemReporter {
-    override fun report(problem: Problem, id: OperationIdentifier) {}
-    override fun create(action: Action<InternalProblemSpec?>): Problem = TODO()
-    override fun report(problem: Problem) {}
-    override fun report(problems: MutableCollection<out Problem>) {}
+    override fun report(problem: Problem, id: OperationIdentifier) {
+        TODO("Not yet implemented")
+    }
+
+    override fun internalCreate(action: Action<in InternalProblemSpec>): InternalProblem {
+        TODO("Not yet implemented")
+    }
+
+    override fun create(
+        problemId: ProblemId,
+        action: Action<in ProblemSpec>,
+    ): Problem {
+        TODO("Not yet implemented")
+    }
+
+    override fun report(problemId: ProblemId, spec: Action<in ProblemSpec>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun report(problem: Problem) {
+        TODO("Not yet implemented")
+    }
+
+    override fun report(problems: Collection<Problem?>) {
+        TODO("Not yet implemented")
+    }
+
     override fun throwing(
         exception: Throwable,
-        problems: MutableCollection<out Problem>
-    ): RuntimeException = TODO()
-    override fun reporting(spec: Action<ProblemSpec?>) {}
-    override fun throwing(spec: Action<ProblemSpec?>): java.lang.RuntimeException = TODO()
+        problemId: ProblemId,
+        spec: Action<in ProblemSpec>,
+    ): java.lang.RuntimeException {
+        TODO("Not yet implemented")
+    }
+
+    override fun throwing(exception: Throwable, problem: Problem): java.lang.RuntimeException {
+        TODO("Not yet implemented")
+    }
+
+    override fun throwing(
+        exception: Throwable,
+        problems: Collection<Problem?>,
+    ): java.lang.RuntimeException {
+        TODO("Not yet implemented")
+    }
 }
