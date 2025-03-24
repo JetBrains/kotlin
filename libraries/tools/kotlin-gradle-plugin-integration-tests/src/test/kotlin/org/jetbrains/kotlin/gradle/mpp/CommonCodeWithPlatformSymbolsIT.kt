@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
@@ -19,13 +21,23 @@ import org.junit.jupiter.api.DisplayName
  * [CommonCodeWithPlatformSymbolsIT] should be removed with the IC option when the underlying compiler issue is fixed
  */
 
-abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String, val taskToExecute: String) : KGPBaseTest() {
+abstract class CommonCodeWithPlatformSymbolsITBase(
+    val platformType: KotlinPlatformType,
+    val taskToExecute: String,
+    val setupBuildScript: GradleProjectBuildScriptInjectionContext.() -> Unit,
+) : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,
             languageVersion = "2.0",
-            enableUnsafeIncrementalCompilationForMultiplatform = false
+            enableUnsafeIncrementalCompilationForMultiplatform = false,
+            isolatedProjects = when (platformType) {
+                KotlinPlatformType.js -> BuildOptions.IsolatedProjectsMode.DISABLED
+                else -> super.defaultBuildOptions.isolatedProjects
+            }
         )
+
+    private val platformSourceSet = "${platformType.name}Main"
 
     @GradleTest
     @DisplayName("Baseline - compilation failure without hotfix")
@@ -36,6 +48,8 @@ abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(enableUnsafeIncrementalCompilationForMultiplatform = true)
         ) {
+            buildScriptInjection(setupBuildScript)
+
             // initial build is good
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
@@ -63,6 +77,8 @@ abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String
         project(
             "kt-62686-mpp-source-set-boundary", gradleVersion
         ) {
+            buildScriptInjection(setupBuildScript)
+
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
             }
@@ -83,6 +99,8 @@ abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String
         project(
             "kt-62686-mpp-source-set-boundary", gradleVersion
         ) {
+            buildScriptInjection(setupBuildScript)
+
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
             }
@@ -103,6 +121,8 @@ abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String
         project(
             "kt-62686-mpp-source-set-boundary", gradleVersion
         ) {
+            buildScriptInjection(setupBuildScript)
+
             projectPath.resolve("src/commonMain/kotlin/riskyCode.kt").replaceWithVersion("useMemberFunctionFromExpectClass")
 
             build(taskToExecute) {
@@ -126,6 +146,8 @@ abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String
         project(
             "kt-62686-mpp-source-set-boundary", gradleVersion
         ) {
+            buildScriptInjection(setupBuildScript)
+
             projectPath.resolve("src/commonMain/kotlin/riskyCode.kt").replaceWithVersion("useMemberFunctionFromExpectClass")
 
             build(taskToExecute) {
@@ -146,11 +168,24 @@ abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String
 @MppGradlePluginTests
 @DisplayName("Tests for IC with compatible overloads in common and platform sourceSets - Jvm")
 class CommonCodeWithPlatformSymbolsJvmIT() : CommonCodeWithPlatformSymbolsITBase(
-    platformSourceSet = "jvmMain", taskToExecute = ":compileKotlinJvm"
+    platformType = KotlinPlatformType.jvm,
+    taskToExecute = ":compileKotlinJvm",
+    setupBuildScript = {
+        kotlinMultiplatform.jvm().compilations.all { compilation ->
+            compilation.compileTaskProvider.configure { task ->
+                // log level isn't properly used to set `verbose` in the default configuration, fix is WIP in KT-64698
+                task.compilerOptions.verbose.convention(true)
+            }
+        }
+    }
 )
 
 @MppGradlePluginTests
 @DisplayName("Tests for IC with compatible overloads in common and platform sourceSets - Js")
 class CommonCodeWithPlatformSymbolsJsIT() : CommonCodeWithPlatformSymbolsITBase(
-    platformSourceSet = "jsMain", taskToExecute = ":compileKotlinJs"
+    platformType = KotlinPlatformType.js,
+    taskToExecute = ":compileKotlinJs",
+    setupBuildScript = {
+        kotlinMultiplatform.js(KotlinJsCompilerType.IR)
+    }
 )
