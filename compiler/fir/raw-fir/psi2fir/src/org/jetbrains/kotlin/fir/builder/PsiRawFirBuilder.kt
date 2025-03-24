@@ -575,8 +575,10 @@ open class PsiRawFirBuilder(
                         this@PsiRawFirBuilder.context.firFunctionTargets.removeLast()
                     }
                 }
-                isGetter || property.isVar -> {
-                    // Default getter for val/var properties, and default setter for var properties.
+
+                this != null || isGetter || property.isVar -> {
+                    // Default getter for val/var properties, default setter for var properties,
+                    // and a default setter without body for val properties.
                     val propertySource =
                         this?.toFirSourceElement() ?: property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor)
                     val valueParameter = this?.valueParameters?.firstOrNull()

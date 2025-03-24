@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// COMPARE_WITH_LIGHT_TREE
 var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
    get() : Int = 1
    set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
@@ -15,7 +14,7 @@ var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
     get() = 1
 
 val illegalDefaultSetter = ""
-    <!VAL_WITH_SETTER{LT}!>set<!>
+    <!VAL_WITH_SETTER!>set<!>
 
 class Test() {
     var a : Int = 111
