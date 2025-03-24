@@ -59,13 +59,11 @@ internal fun PhaseContext.firSerializerBase(
             dependencies = usedResolvedLibraries?.map { it.library as KonanLibrary }.orEmpty(),
             createModuleSerializer = { irDiagnosticReporter,
                                        irBuiltIns,
-                                       normalizeAbsolutePaths,
-                                       sourceBaseDirs ->
+                                       normalizeAbsolutePaths ->
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(
                         configuration = configuration,
                         normalizeAbsolutePaths = normalizeAbsolutePaths,
-                        sourceBaseDirs = sourceBaseDirs,
                         bodiesOnlyForInlines = produceHeaderKlib,
                         publicAbiOnly = produceHeaderKlib,
                     ),

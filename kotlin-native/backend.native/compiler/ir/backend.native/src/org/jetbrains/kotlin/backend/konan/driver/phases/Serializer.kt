@@ -41,7 +41,6 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
             settings = IrSerializationSettings(
                 configuration = config.configuration,
                 normalizeAbsolutePaths = config.configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
-                sourceBaseDirs = config.configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
                 bodiesOnlyForInlines = input.produceHeaderKlib,
                 publicAbiOnly = input.produceHeaderKlib,
             ),

@@ -587,14 +587,12 @@ fun serializeModuleIntoKlib(
                 irDiagnosticReporter,
                 irBuiltins,
                 normalizeAbsolutePaths,
-                sourceBaseDirs,
             ->
             JsIrModuleSerializer(
                 settings = IrSerializationSettings(
                     configuration = configuration,
                     compatibilityMode = CompatibilityMode(abiVersion),
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
-                    sourceBaseDirs = sourceBaseDirs,
                 ),
                 irDiagnosticReporter,
                 irBuiltins,
