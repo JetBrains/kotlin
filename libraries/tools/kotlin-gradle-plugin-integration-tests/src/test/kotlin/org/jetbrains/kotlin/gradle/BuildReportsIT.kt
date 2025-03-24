@@ -94,7 +94,13 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testBuildMetricsForMppJs(gradleVersion: GradleVersion) {
-        testBuildReportInFile("kotlin-js-package-module-name", "assemble", gradleVersion)
+        testBuildReportInFile(
+            "kotlin-js-package-module-name",
+            "assemble",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            disableIsolatedProjects = true,
+        )
     }
 
     @DisplayName("Build metrics produces valid report for JS project")
@@ -108,7 +114,9 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.KOTLIN_1_7.version
+            languageVersion = KotlinVersion.KOTLIN_1_7.version,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            disableIsolatedProjects = true,
         )
     }
 
@@ -117,8 +125,13 @@ class BuildReportsIT : KGPBaseTest() {
         task: String,
         gradleVersion: GradleVersion,
         languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
+        disableIsolatedProjects: Boolean = false,
     ) {
-        project(project, gradleVersion) {
+        val buildOptions = if (disableIsolatedProjects) defaultBuildOptions.copy(
+            isolatedProjects = IsolatedProjectsMode.DISABLED
+        ) else defaultBuildOptions
+
+        project(project, gradleVersion, buildOptions = buildOptions) {
             if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             build(task) {
                 assertBuildReportPathIsPrinted()
@@ -127,7 +140,7 @@ class BuildReportsIT : KGPBaseTest() {
             validateBuildReportFile(KotlinVersion.DEFAULT.version)
         }
 
-        project(project, gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = languageVersion)) {
+        project(project, gradleVersion, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
             if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
                 assertBuildReportPathIsPrinted()
@@ -690,7 +703,9 @@ class BuildReportsIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
                 configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
-                buildReport = listOf(BuildReportType.BUILD_SCAN)
+                buildReport = listOf(BuildReportType.BUILD_SCAN),
+                // KT-68847 Support build reports for build scan with project isolation
+                isolatedProjects = IsolatedProjectsMode.DISABLED,
             )
         ) {
             settingsGradle.modify {
