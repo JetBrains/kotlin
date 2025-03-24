@@ -338,7 +338,7 @@ class Fir2IrVisitor(
             irFunction.body = if (configuration.skipBodies) {
                 IrFactoryImpl.createExpressionBody(IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType))
             } else {
-                val irBlock = codeFragment.block.convertToIrBlock(forceBlockUnitType = false)
+                val irBlock = codeFragment.block.convertToIrBlock(forceBlockUnitType = true)
                 IrFactoryImpl.createExpressionBody(irBlock)
             }
         }
