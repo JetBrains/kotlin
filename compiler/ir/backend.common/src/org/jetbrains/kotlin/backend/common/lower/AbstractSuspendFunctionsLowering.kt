@@ -47,7 +47,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
     protected abstract fun nameForCoroutineClass(function: IrFunction): Name
-    protected open fun coroutineClassVisibility(function: IrFunction): DescriptorVisibility = function.visibility
 
     protected abstract fun buildStateMachine(
         stateMachineFunction: IrFunction,
@@ -115,7 +114,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             context.irFactory.buildClass {
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = nameForCoroutineClass(function)
-                visibility = coroutineClassVisibility(function)
+                visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 parent = function.parent
                 createThisReceiverParameter()
