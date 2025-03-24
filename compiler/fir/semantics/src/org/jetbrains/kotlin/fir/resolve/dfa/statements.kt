@@ -27,16 +27,25 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
 sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
+    abstract val exactNonType: Set<ConeKotlinType>
 
     val isEmpty: Boolean
-        get() = exactType.isEmpty()
+        get() = exactType.isEmpty() && exactNonType.isEmpty()
 
     val isNotEmpty: Boolean
         get() = !isEmpty
 
     final override fun toString(): String {
-        return "$variable: ${exactType.joinToString(separator = " & ")}"
+        return "$variable: ${renderType()}"
     }
+
+    fun renderType(): String = listOfNotNull(exactTypeStringOrNull, exactNonTypeStringOrNull).joinToString(" & ")
+
+    val exactTypeOrNull: Set<ConeKotlinType>? get() = exactType.takeIf { it.isNotEmpty() }
+    val exactNonTypeOrNull: Set<ConeKotlinType>? get() = exactNonType.takeIf { it.isNotEmpty() }
+
+    private val exactTypeStringOrNull: String? get() = exactTypeOrNull?.joinToString(separator = " & ")
+    private val exactNonTypeStringOrNull: String? get() = exactNonTypeOrNull?.joinToString(separator = " | ")?.let { "¬($it)" }
 }
 
 class Implication(

@@ -60,12 +60,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     }
 
     fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement? {
-        if (statement.exactType.isEmpty()) return null
+        if (statement.isEmpty) return null
         val variable = statement.variable
-        val oldExactType = flow.approvedTypeStatements[variable]?.exactType
+        val oldStatement = flow.approvedTypeStatements[variable]
+        val oldExactType = oldStatement?.exactType
         val newExactType = oldExactType?.addAll(statement.exactType) ?: statement.exactType.toPersistentSet()
-        if (newExactType === oldExactType) return null
-        return PersistentTypeStatement(variable, newExactType).also { flow.approvedTypeStatements[variable] = it }
+        val oldExactNonType = oldStatement?.exactNonType
+        val newExactNonType = oldExactNonType?.addAll(statement.exactNonType) ?: statement.exactNonType.toPersistentSet()
+        if (newExactType === oldExactType && newExactNonType == oldExactNonType) return null
+        return PersistentTypeStatement(variable, newExactType, newExactNonType).also { flow.approvedTypeStatements[variable] = it }
     }
 
     fun addTypeStatements(flow: MutableFlow, statements: TypeStatements): List<TypeStatement> =
@@ -74,8 +77,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addImplication(flow: MutableFlow, implication: Implication) {
         val effect = implication.effect
         val redundant = effect == implication.condition || when (effect) {
-            is TypeStatement ->
-                effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true
+            is TypeStatement -> effect.isEmpty || flow.containsAlready(effect)
             // Synthetic variables can only be referenced in tree order, so implications with synthetic variables can
             // only look like "if <expression> is A, then <part of that expression> is B". If we don't already have any
             // statements about a part of the expression, then we never will, as we're already exiting the entire expression.
@@ -84,6 +86,11 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         if (redundant) return
         val variable = implication.condition.variable
         flow.implications[variable] = flow.implications[variable]?.add(implication) ?: persistentListOf(implication)
+    }
+
+    private fun MutableFlow.containsAlready(effect: TypeStatement): Boolean {
+        return approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true
+                && approvedTypeStatements[effect.variable]?.exactNonType?.containsAll(effect.exactNonType) == true
     }
 
     fun translateVariableFromConditionInStatements(
@@ -318,6 +325,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     private operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
         exactType += other.exactType
+        exactNonType += other.exactNonType
     }
 
     fun and(a: TypeStatement?, b: TypeStatement): TypeStatement {
@@ -345,22 +353,36 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val variable = statements.first().variable
         assert(statements.all { it.variable == variable }) { "folding statements for different variables" }
         if (statements.any { it.isEmpty }) return null
-        val intersected = statements.map { ConeTypeIntersector.intersectTypes(context, it.exactType.toList()) }
-        val unified = context.commonSuperTypeOrNull(intersected) ?: return null
-        val result = when {
-            unified.isNullableAny -> return null
-            unified.isAcceptableForSmartcast() -> unified
-            unified.canBeNull(context.session) -> return null
-            else -> context.anyType()
+        val intersected = statements.map { statement ->
+            statement.exactTypeOrNull?.toList()?.let { ConeTypeIntersector.intersectTypes(context, it) } ?: context.nullableAnyType()
         }
-        return PersistentTypeStatement(variable, persistentSetOf(result))
+        val unified = context.commonSuperTypeOrNull(intersected)
+        val result = when {
+            unified == null -> persistentSetOf()
+            unified.isNullableAny -> persistentSetOf()
+            unified.isAcceptableForSmartcast() -> persistentSetOf(unified)
+            unified.canBeNull(context.session) -> persistentSetOf()
+            else -> persistentSetOf(context.anyType())
+        }
+        val intersectedNonType = statements
+            .flatMap { statement -> statement.exactNonType.takeIf { it.isNotEmpty() } ?: listOf(context.nothingType()) }
+            .let { ConeTypeIntersector.intersectTypes(context, it) }
+        val resultNonType = when {
+            !intersectedNonType.isNothing -> persistentSetOf(intersectedNonType)
+            else -> persistentSetOf()
+        }
+        return if (result.isNotEmpty() || resultNonType.isNotEmpty()) {
+            PersistentTypeStatement(variable, result, resultNonType)
+        } else {
+            null
+        }
     }
 }
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
     // If this statement was obtained via `toMutable`, `toPersistentSet` will call `build`.
-    else -> PersistentTypeStatement(variable, exactType.toPersistentSet())
+    else -> PersistentTypeStatement(variable, exactType.toPersistentSet(), exactNonType.toPersistentSet())
 }
 
 private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
