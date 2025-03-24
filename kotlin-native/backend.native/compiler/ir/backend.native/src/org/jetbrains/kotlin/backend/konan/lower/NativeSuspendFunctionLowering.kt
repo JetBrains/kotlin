@@ -6,8 +6,6 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -102,8 +100,6 @@ internal class NativeSuspendFunctionsLowering(
 
     override fun nameForCoroutineClass(function: IrFunction) =
             fileLowerState.getCoroutineImplUniqueName(function).synthesizedName
-
-    override fun coroutineClassVisibility(function: IrFunction): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         +irReturn(
