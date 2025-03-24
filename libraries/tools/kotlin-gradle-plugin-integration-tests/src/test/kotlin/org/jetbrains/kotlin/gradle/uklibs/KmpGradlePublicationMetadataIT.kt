@@ -60,12 +60,12 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
             GradleMetadata(
                 variants = invariantSubcomponentKmpVariants + standardKmpPublicationMetadataVariants + jvmSubcomponentVariants,
             ).prettyPrinted,
-            json.decodeFromStream<GradleMetadata>(
-                kmpProducer(
-                    version,
-                    withJvm = true,
-                ).publish().rootComponent.gradleMetadata.inputStream()
-            ).prettyPrinted
+            kmpProducer(
+                version,
+                withJvm = true,
+            ).publish().rootComponent.gradleMetadata.inputStream().use {
+                json.decodeFromStream<GradleMetadata>(it).prettyPrinted
+            }
         )
     }
 
