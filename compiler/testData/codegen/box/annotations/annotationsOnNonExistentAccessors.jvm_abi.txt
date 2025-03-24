@@ -14,27 +14,17 @@ MODULE main
 					K2
 						value: kotlin/String
 			PROPERTY x3
-				Property: class.metadata.property.setterModifiers
-					K1
-						private final /* non-default */
-					K2
-						private final
 				Property: class.metadata.property.setterValueParameter
 					K1
 						<set-?>: kotlin/String
 					K2
-						---
+						value: kotlin/String
 			PROPERTY x4
-				Property: class.metadata.property.setterModifiers
-					K1
-						private final /* non-default */
-					K2
-						private final
 				Property: class.metadata.property.setterValueParameter
 					K1
 						<set-?>: kotlin/String
 					K2
-						---
+						value: kotlin/String
 			PROPERTY y0
 				Property: class.metadata.property.getterModifiers
 					K1

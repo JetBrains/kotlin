@@ -509,6 +509,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestDataPath("$PROJECT_ROOT")
       public class WithUseSiteTarget {
         @Test
+        @TestMetadata("All.kt")
+        public void testAll() {
+          runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/All.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInWithUseSiteTarget() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }

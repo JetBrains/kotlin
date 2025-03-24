@@ -206,6 +206,22 @@ Annotations.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+            MODIFIER_LIST[public final]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                TYPE_REFERENCE
+                  NULLABLE_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=Annotations.deleage, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=deleage]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]

@@ -492,6 +492,11 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
       }
 
+      @TestMetadata("All.kt")
+      public void testAll() {
+        runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/All.kt");
+      }
+
       public void testAllFilesPresentInWithUseSiteTarget() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }

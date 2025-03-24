@@ -1319,24 +1319,31 @@ class FirElementSerializer private constructor(
     }
 
     private fun getAccessorFlags(accessor: FirPropertyAccessor, property: FirProperty): Int {
-        // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
-        // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val hasAnnotations = accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor)
-        val isDefault = (property.isLocalInFunction) ||
-                (accessor is FirDefaultPropertyAccessor &&
-                        !hasAnnotations &&
-                        accessor.visibility == property.visibility &&
-                        !accessor.isExternal &&
-                        !accessor.isInline)
         return Flags.getAccessorFlags(
-            hasAnnotations,
+            accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
             // non-default accessor modality is always final, so we check property.modality instead
             ProtoEnumFlags.modality(property.modality!!),
-            !isDefault,
+            !isDefaultAccessor(accessor, property),
             accessor.isExternal,
-            accessor.isInline
+            accessor.isInline,
         )
+    }
+
+    private fun isDefaultAccessor(accessor: FirPropertyAccessor, property: FirProperty): Boolean {
+        if (property.isLocalInFunction) return true
+
+        // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
+        // user-contributed visibility, and modifiers, such as `external` or `inline`.
+        val hasAnnotations = accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor) ||
+                accessor.valueParameters.any { setterParameter ->
+                    setterParameter.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(setterParameter)
+                }
+        return accessor is FirDefaultPropertyAccessor &&
+                !hasAnnotations &&
+                accessor.visibility == property.visibility &&
+                !accessor.isExternal &&
+                !accessor.isInline
     }
 
     private fun createChildSerializer(declaration: FirDeclaration): FirElementSerializer =
