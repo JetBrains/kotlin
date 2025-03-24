@@ -307,8 +307,8 @@ open class IrFileSerializer(
                     // Compute the signature:
                     when {
                         symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
-                            symbolOwner,
-                            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                            declaration = symbolOwner,
+                            compatibleMode = false,
                             recordInSignatureClashDetector = isDeclared
                         )
 
@@ -1534,7 +1534,7 @@ open class IrFileSerializer(
             preprocessedToOriginalInlineFunctions.map { (preprocessedInlineFunction, originalInlineFunction) ->
                 val originalIdSignature = declarationTable.signatureByDeclaration(
                     originalInlineFunction,
-                    settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                    compatibleMode = false,
                     recordInSignatureClashDetector = false
                 )
                 val originalSigIndex = protoIdSignatureMap[originalIdSignature]
@@ -1593,7 +1593,7 @@ open class IrFileSerializer(
         val byteArray = serializeDeclaration(topLevelDeclaration).toByteArray()
         val idSig = declarationTable.signatureByDeclaration(
             topLevelDeclaration,
-            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+            compatibleMode = false,
             recordInSignatureClashDetector = false
         )
         require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }

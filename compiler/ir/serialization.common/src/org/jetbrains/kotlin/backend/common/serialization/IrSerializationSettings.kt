@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  * Various settings used during serialization of IR modules and IR files.
  *
  * @property languageVersionSettings The language version settings.
- * @property compatibilityMode The compatibility mode for computing signatures. See [CompatibilityMode] for more details.
  * @property publicAbiOnly Whether only the part of IR that comprises public ABI should be serialized.
  *   This setting is used for generating so-called "header KLIBs".
  * @property bodiesOnlyForInlines Whether to serialize bodies of only inline functions. Effectively, this setting is only relevant to Kotlin/JVM.
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 class IrSerializationSettings(
     configuration: CompilerConfiguration,
     val languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings,
-    val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
     val publicAbiOnly: Boolean = false,
     val bodiesOnlyForInlines: Boolean = publicAbiOnly,
     val sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
