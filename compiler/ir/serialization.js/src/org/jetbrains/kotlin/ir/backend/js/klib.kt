@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -99,7 +99,6 @@ fun generateKLib(
     depsDescriptors: ModulesStructure,
     outputKlibPath: String,
     nopack: Boolean,
-    abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
     jsOutputName: String?,
     icData: List<KotlinFileSerializedData>,
     moduleFragment: IrModuleFragment,
@@ -123,7 +122,6 @@ fun generateKLib(
         icData,
         nopack,
         depsDescriptors.jsFrontEndResult.hasErrors,
-        abiVersion,
         jsOutputName,
         builtInsPlatform,
         wasmTarget,
@@ -567,7 +565,6 @@ fun serializeModuleIntoKlib(
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
     containsErrorCode: Boolean = false,
-    abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
@@ -584,10 +581,7 @@ fun serializeModuleIntoKlib(
         dependencies = dependencies,
         createModuleSerializer = { irDiagnosticReporter ->
             JsIrModuleSerializer(
-                settings = IrSerializationSettings(
-                    configuration = configuration,
-                    compatibilityMode = CompatibilityMode(abiVersion),
-                ),
+                settings = IrSerializationSettings(configuration),
                 irDiagnosticReporter,
                 irBuiltIns,
             ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
@@ -636,11 +630,9 @@ fun serializeModuleIntoKlib(
 
     val fullSerializedIr = serializerOutput.serializedIr ?: error("Metadata-only KLIBs are not supported in Kotlin/JS")
 
-    val customAbiVersion: KotlinAbiVersion? = configuration.get(CUSTOM_KLIB_ABI_VERSION)
-
     val versions = KotlinLibraryVersioning(
-        abiVersion = customAbiVersion ?: abiVersion,
         compilerVersion = KotlinCompilerVersion.VERSION,
+        abiVersion = configuration.klibAbiVersionForManifest(),
         metadataVersion = configuration.klibMetadataVersionOrDefault()
     )
 

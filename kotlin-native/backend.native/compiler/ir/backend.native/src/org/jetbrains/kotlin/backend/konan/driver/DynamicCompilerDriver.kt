@@ -107,7 +107,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             serializeKLibK2(engine, config, environment)
         else
             serializeKlibK1(engine, config, environment)
-        serializerOutput?.let { engine.writeKlib(it, customAbiVersion = config.customAbiVersion) }
+        serializerOutput?.let { engine.writeKlib(it) }
     }
 
     private fun serializeKLibK2(
@@ -126,10 +126,9 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
                 val fir2IrOutput = engine.runFir2Ir(frontendOutput)
 
                 val headerKlibPath = config.headerKlibPath
-                val customAbiVersion = config.customAbiVersion
                 if (!headerKlibPath.isNullOrEmpty()) {
                     val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
-                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true, customAbiVersion)
+                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
                     // Don't overwrite the header klib with the full klib and stop compilation here.
                     // By providing the same path for both regular output and header klib we can skip emitting the full klib.
                     if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
@@ -156,10 +155,9 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             }
 
             val headerKlibPath = config.headerKlibPath
-            val customAbiVersion = config.customAbiVersion
             if (!headerKlibPath.isNullOrEmpty()) {
                 val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
-                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true, customAbiVersion)
+                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true,)
                 // Don't overwrite the header klib with the full klib and stop compilation here.
                 // By providing the same path for both regular output and header klib we can skip emitting the full klib.
                 if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null

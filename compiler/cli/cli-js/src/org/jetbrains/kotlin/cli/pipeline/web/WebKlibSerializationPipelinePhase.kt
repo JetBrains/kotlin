@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
@@ -125,7 +124,6 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             cleanFiles = icData ?: emptyList(),
             nopack = nopack,
             containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
-            abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
             jsOutputName = jsOutputName,
             builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
             wasmTarget = wasmTarget,
