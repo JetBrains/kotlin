@@ -29,7 +29,15 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
         testDataDir: Path,
         sourceRoots: List<TestCaseSourceRoot>,
     ) {
-        project("mpp-source-set-hierarchy-analysis", gradleVersion) {
+        val buildOptions = if (cliCompiler.isIsolatedProjectsCompatible) defaultBuildOptions else defaultBuildOptions.copy(
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+        )
+        project(
+            "mpp-source-set-hierarchy-analysis",
+            gradleVersion,
+            buildOptions = buildOptions,
+        ) {
+            buildScriptInjection(cliCompiler.setupBuildScript)
             val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
                 sourceRoot.kotlinSourceSetName to testDataDir.resolve(sourceRoot.directoryName)
                     .walk()
@@ -177,9 +185,29 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
 
     internal enum class CliCompiler(
         val targets: List<String>,
+        val isIsolatedProjectsCompatible: Boolean,
+        val setupBuildScript: GradleProjectBuildScriptInjectionContext.() -> Unit,
     ) {
-        K2METADATA(listOf("jvm", "js")),
-        NATIVE(listOf("linuxX64", "linuxArm64"));
+        K2METADATA(
+            targets = listOf("jvm", "js"),
+            isIsolatedProjectsCompatible = false,
+            setupBuildScript = {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    js { nodejs() }
+                }
+            },
+        ),
+        NATIVE(
+            targets = listOf("linuxX64", "linuxArm64"),
+            isIsolatedProjectsCompatible = true,
+            setupBuildScript = {
+                kotlinMultiplatform.apply {
+                    linuxX64()
+                    linuxArm64()
+                }
+            },
+        );
     }
 
     class GradleAndMppHighlightingProvider : GradleArgumentsProvider() {
