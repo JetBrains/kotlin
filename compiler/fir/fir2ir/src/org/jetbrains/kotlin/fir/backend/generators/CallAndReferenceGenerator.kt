@@ -760,7 +760,6 @@ class CallAndReferenceGenerator(
         val irRhsWithCast =
             wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
                 .prepareExpressionForGivenExpectedType(
-                    this,
                     variableAssignment.rValue,
                     variableAssignment.rValue.resolvedType,
                     variableAssignment.lValue.resolvedType
@@ -1096,7 +1095,7 @@ class CallAndReferenceGenerator(
             // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
             // to properly insert nullability check
             irArgument = irArgument.prepareExpressionForGivenExpectedType(
-                this, argument, argumentType, unsubstitutedParameterType, substitutedParameterType
+                argument, argumentType, unsubstitutedParameterType, substitutedParameterType
             )
         }
 
@@ -1435,7 +1434,6 @@ class CallAndReferenceGenerator(
                                 val extensionReceiver = statement.extensionReceiver!!
                                 val substitutor = statement.buildSubstitutorByCalledCallable(c)
                                 it.prepareExpressionForGivenExpectedType(
-                                    this@CallAndReferenceGenerator,
                                     extensionReceiver,
                                     extensionReceiver.resolvedType,
                                     substitutor.substituteOrSelf(receiverType.coneType),

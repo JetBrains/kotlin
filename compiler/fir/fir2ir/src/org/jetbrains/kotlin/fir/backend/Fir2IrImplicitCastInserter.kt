@@ -154,12 +154,10 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         val irTry = data as IrTry
 
         irTry.tryResult = irTry.tryResult.prepareExpressionForGivenExpectedType(
-            this,
             tryExpression.tryBlock, tryExpression.tryBlock.resolvedType, tryExpression.resolvedType
         )
         for ((irCatch, firCatch) in irTry.catches.zip(tryExpression.catches)) {
             irCatch.result = irCatch.result.prepareExpressionForGivenExpectedType(
-                this,
                 firCatch.block, firCatch.block.resolvedType, tryExpression.resolvedType
             )
         }
@@ -169,7 +167,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
         (data as IrThrow).prepareExpressionForGivenExpectedType(
-            this,
             throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType
         )
 
@@ -180,7 +177,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
         irReturn.value = irReturn.value.prepareExpressionForGivenExpectedType(
-            this,
             returnExpression.result,
             returnExpression.result.resolvedType,
             expectedType.coneType

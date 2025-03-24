@@ -278,7 +278,6 @@ internal class ClassMemberGenerator(
                             val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
                             if (property.delegate == null) {
                                 irExpression.prepareExpressionForGivenExpectedType(
-                                    this@ClassMemberGenerator,
                                     initializerExpression,
                                     initializerExpression.resolvedType,
                                     property.returnTypeRef.coneType
@@ -444,7 +443,6 @@ internal class ClassMemberGenerator(
                 else ->
                     factory.createExpressionBody(
                         visitor.convertToIrExpression(firDefaultValue).prepareExpressionForGivenExpectedType(
-                            this@ClassMemberGenerator,
                             firDefaultValue,
                             firDefaultValue.resolvedType,
                             firValueParameter.returnTypeRef.coneType,

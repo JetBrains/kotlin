@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
+context(c: Fir2IrComponents)
 fun IrExpression.prepareExpressionForGivenExpectedType(
-    // TODO: Convert it to the context parameter at some moment
-    c: Fir2IrComponents,
     expression: FirExpression,
     valueType: ConeKotlinType,
     expectedType: ConeKotlinType,

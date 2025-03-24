@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
@@ -538,14 +537,6 @@ class Fir2IrVisitor(
         annotationGenerator.generate(irVariable, variable)
         return irVariable
     }
-
-    private fun IrExpression.prepareExpressionForGivenExpectedType(
-        baseExpression: FirExpression,
-        valueType: ConeKotlinType,
-        expectedType: ConeKotlinType,
-    ): IrExpression = prepareExpressionForGivenExpectedType(
-        this@Fir2IrVisitor, baseExpression, valueType, expectedType
-    )
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement = whileAnalysing(session, property) {
         if (property.isLocal) return visitLocalVariable(property)
