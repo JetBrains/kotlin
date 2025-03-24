@@ -60,7 +60,6 @@ internal fun PhaseContext.firSerializerBase(
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(
                         configuration = configuration,
-                        bodiesOnlyForInlines = produceHeaderKlib,
                         publicAbiOnly = produceHeaderKlib,
                     ),
                     diagnosticReporter = irDiagnosticReporter,

@@ -39,7 +39,6 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         KonanIrModuleSerializer(
             settings = IrSerializationSettings(
                 configuration = config.configuration,
-                bodiesOnlyForInlines = input.produceHeaderKlib,
                 publicAbiOnly = input.produceHeaderKlib,
             ),
             KtDiagnosticReporterWithImplicitIrBasedContext(
