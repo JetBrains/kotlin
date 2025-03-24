@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -41,7 +40,6 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         KonanIrModuleSerializer(
             settings = IrSerializationSettings(
                 configuration = config.configuration,
-                compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = config.configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
                 sourceBaseDirs = config.configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
                 bodiesOnlyForInlines = input.produceHeaderKlib,

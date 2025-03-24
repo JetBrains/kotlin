@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -180,20 +179,17 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
         inputArtifact.irPluginContext.irBuiltIns,
         configuration,
         diagnosticReporter,
-        CompatibilityMode.CURRENT,
         cleanFiles = emptyList(),
         usedLibrariesForManifest,
         createModuleSerializer = {
                 irDiagnosticReporter,
                 irBuiltIns,
-                compatibilityMode,
                 normalizeAbsolutePaths,
                 sourceBaseDirs,
             ->
             KonanIrModuleSerializer(
                 settings = IrSerializationSettings(
                     configuration = configuration,
-                    compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
                 ),

@@ -581,20 +581,18 @@ fun serializeModuleIntoKlib(
         irBuiltins = irBuiltIns,
         configuration = configuration,
         diagnosticReporter = diagnosticReporter,
-        compatibilityMode = CompatibilityMode(abiVersion),
         cleanFiles = cleanFiles,
         dependencies = dependencies,
         createModuleSerializer = {
                 irDiagnosticReporter,
                 irBuiltins,
-                compatibilityMode,
                 normalizeAbsolutePaths,
                 sourceBaseDirs,
             ->
             JsIrModuleSerializer(
                 settings = IrSerializationSettings(
                     configuration = configuration,
-                    compatibilityMode = compatibilityMode,
+                    compatibilityMode = CompatibilityMode(abiVersion),
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
                 ),
