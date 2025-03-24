@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -45,7 +44,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
     // Change calls to big arity invoke functions to vararg calls.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        if (expression.valueArgumentsCount < BuiltInFunctionArity.BIG_ARITY ||
+        if (expression.nonDispatchArguments.size < BuiltInFunctionArity.BIG_ARITY ||
             !(expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
                     expression.symbol.owner.parentAsClass.defaultType.isSuspendFunctionOrKFunction()) ||
             expression.symbol.owner.name.asString() != "invoke"
@@ -54,15 +53,15 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         return context.createJvmIrBuilder(currentScope!!).run {
             at(expression)
             irCall(functionNInvokeFun).apply {
-                dispatchReceiver = irImplicitCast(
+                arguments[0] = irImplicitCast(
                     expression.dispatchReceiver!!.transformVoid(),
                     this@FunctionNVarargBridgeLowering.context.symbols.functionN.defaultType
                 )
-                putValueArgument(0, irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
-                    (0 until expression.valueArgumentsCount).forEach {
-                        +expression.getValueArgument(it)!!.transformVoid()
+                arguments[1] = irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
+                    for (argument in expression.nonDispatchArguments) {
+                        +argument!!.transformVoid()
                     }
-                })
+                }
             }
         }
     }
@@ -93,7 +92,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                 val overridesInvoke = function.overriddenSymbols.any { symbol ->
                     symbol.owner.name.asString() == "invoke"
                 }
-                overridesInvoke && function.valueParameters.size == superType.arguments.sumOf {
+                overridesInvoke && function.nonDispatchParameters.size == superType.arguments.sumOf {
                     if (it.typeOrNull?.needsMfvcFlattening() != true) 1
                     else context.multiFieldValueClassReplacements.getRootMfvcNode(it.typeOrNull!!.erasedUpperBound).leavesCount
                 } - if (function.isSuspend) 0 else 1
@@ -114,32 +113,30 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             origin = IrDeclarationOrigin.BRIDGE
         }.apply {
             overriddenSymbols += superFunction.symbol
-            dispatchReceiverParameter = thisReceiver!!.copyTo(this)
-            valueParameters += superFunction.valueParameters.single().copyTo(this)
+            parameters = listOf(thisReceiver!!.copyTo(this), superFunction.nonDispatchParameters.single().copyTo(this))
 
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                 // Check the number of arguments
-                val argumentCount = invoke.valueParameters.size
+                val argumentCount = invoke.nonDispatchParameters.size
                 +irIfThen(
                     irNotEquals(
                         irCall(arraySizePropertyGetter).apply {
-                            dispatchReceiver = irGet(valueParameters.single())
+                            dispatchReceiver = irGet(nonDispatchParameters.single())
                         },
                         irInt(argumentCount)
                     ),
                     irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
-                        putValueArgument(0, irString("Expected $argumentCount arguments"))
+                        arguments[0] = irString("Expected $argumentCount arguments")
                     }
                 )
 
                 +irReturn(irCall(invoke).apply {
-                    dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                    dispatchReceiver = irGet(parameters[0])
 
-                    for (parameter in invoke.valueParameters) {
-                        val index = parameter.indexInOldValueParameters
-                        val argArray = irGet(valueParameters.single())
-                        val argument = irCallOp(arrayGetFun, context.irBuiltIns.anyNType, argArray, irInt(index))
-                        putValueArgument(index, irImplicitCast(argument, invoke.valueParameters[index].type))
+                    for (parameter in invoke.nonDispatchParameters) {
+                        val argArray = irGet(nonDispatchParameters.single())
+                        val argument = irCallOp(arrayGetFun, context.irBuiltIns.anyNType, argArray, irInt(parameter.indexInParameters - 1))
+                        arguments[parameter] = irImplicitCast(argument, parameter.type)
                     }
                 })
             }
