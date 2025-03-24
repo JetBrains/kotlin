@@ -55,7 +55,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
                 "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
             )
         )
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 

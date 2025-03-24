@@ -22,7 +22,6 @@ kotlin {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
         optIn.add("kotlin.ExperimentalStdlibApi")
         optIn.add("kotlin.io.path.ExperimentalPathApi")
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 

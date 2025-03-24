@@ -47,7 +47,6 @@ sourceSets {
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
     compilerOptions.optIn.addAll(
         listOf(
             "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",

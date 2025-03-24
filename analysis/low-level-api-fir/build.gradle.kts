@@ -80,8 +80,6 @@ sourceSets {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
-
         optIn.addAll(
             "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
             "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",

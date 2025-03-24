@@ -116,7 +116,3 @@ val generateCode by tasks.registering(NoDebugJavaExec::class) {
 val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateCode)
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
-}

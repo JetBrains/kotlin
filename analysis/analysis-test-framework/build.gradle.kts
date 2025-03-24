@@ -41,8 +41,6 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 testsJar()
 
 tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
-
     compilerOptions.optIn.addAll(
         "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
         "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",

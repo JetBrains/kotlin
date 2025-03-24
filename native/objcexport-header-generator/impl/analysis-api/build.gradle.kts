@@ -4,8 +4,6 @@ plugins {
 
 kotlin {
     compilerOptions {
-        /* Required to use Analysis Api */
-        freeCompilerArgs.add("-Xcontext-parameters")
         optIn.add("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
     }
 }
