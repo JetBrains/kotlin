@@ -1408,6 +1408,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/contextReceiversDeprecated.args");
     }
 
+    @TestMetadata("contextSensitive.args")
+    public void testContextSensitive() {
+      runTest("compiler/testData/cli/jvm/contextSensitive.args");
+    }
+
     @TestMetadata("coroutinesEnable.args")
     public void testCoroutinesEnable() {
       runTest("compiler/testData/cli/jvm/coroutinesEnable.args");

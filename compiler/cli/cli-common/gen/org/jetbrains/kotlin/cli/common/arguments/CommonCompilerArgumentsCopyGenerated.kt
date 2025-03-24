@@ -22,6 +22,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextParameters = from.contextParameters
     to.contextReceivers = from.contextReceivers
+    to.contextSensitiveResolution = from.contextSensitiveResolution
     to.debugLevelCompilerChecks = from.debugLevelCompilerChecks
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin

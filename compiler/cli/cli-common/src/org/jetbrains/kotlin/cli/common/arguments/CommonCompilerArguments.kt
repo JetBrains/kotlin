@@ -698,6 +698,17 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xcontext-sensitive-resolution",
+        description = "Enable experimental context-sensitive resolution."
+    )
+    @Enables(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)
+    var contextSensitiveResolution = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xnon-local-break-continue",
         description = "Enable experimental non-local break and continue."
     )

@@ -203,6 +203,7 @@ where advanced options include:
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
   -Xcontext-receivers        Enable experimental context receivers.
   -Xcontext-parameters       Enable experimental context parameters.
+  -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.

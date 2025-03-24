@@ -54,6 +54,10 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.contextSensitiveResolution) {
+        put(LanguageFeature.ContextSensitiveResolutionUsingExpectedType, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.nonLocalBreakContinue) {
         put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
     }
