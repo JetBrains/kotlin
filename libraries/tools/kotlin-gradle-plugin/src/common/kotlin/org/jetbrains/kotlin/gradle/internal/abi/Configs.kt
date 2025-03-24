@@ -13,6 +13,8 @@ import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec.Companion.MAIN_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths
@@ -32,12 +34,8 @@ internal fun ObjectFactory.AbiValidationKlibKindExtension(): AbiValidationKlibKi
  * Configures the extension for Kotlin/JVM or Kotlin Android Gradle plugins.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationExtension.configure(project: Project) {
+internal fun AbiValidationExtension.configure() {
     this as AbiValidationExtensionImpl
-
-    configureCommon(project.layout)
-    configureLegacyTasks(project.name, project.tasks, project.layout, enabled)
-
     // add main root report variant
     variants.add(this)
 }
@@ -46,13 +44,8 @@ internal fun AbiValidationExtension.configure(project: Project) {
  * Configures the extension for Kotlin Multiplatform Gradle plugins.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationMultiplatformExtension.configure(project: Project) {
+internal fun AbiValidationMultiplatformExtension.configure() {
     this as AbiValidationMultiplatformExtensionImpl
-
-    configureCommon(project.layout)
-    configureMultiplatform()
-    configureLegacyTasks(project.name, project.tasks, project.layout, enabled)
-
     // add main root report variant
     variants.add(this)
 }
@@ -61,7 +54,7 @@ internal fun AbiValidationMultiplatformExtension.configure(project: Project) {
  * Initializes [this] report variant with default values for all Kotlin Gradle plugin types.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationVariantSpecImpl.configureCommon(layout: ProjectLayout) {
+internal fun AbiValidationVariantSpec.configureCommon(layout: ProjectLayout) {
     if (name == MAIN_VARIANT_NAME) {
         // configure main report variant
         legacyDump.referenceDumpDir.convention(layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
@@ -77,7 +70,7 @@ internal fun AbiValidationVariantSpecImpl.configureCommon(layout: ProjectLayout)
  * Initializes report variant with default values for all Kotlin Gradle plugin types.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationMultiplatformVariantSpecImpl.configureMultiplatform() {
+internal fun AbiValidationMultiplatformVariantSpec.configureMultiplatform() {
     klib.enabled.convention(true)
     klib.keepUnsupportedTargets.convention(true)
 }
@@ -86,7 +79,7 @@ internal fun AbiValidationMultiplatformVariantSpecImpl.configureMultiplatform() 
  * Creates and preconfigures legacy tasks for [this] report variant.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
+internal fun AbiValidationVariantSpec.configureLegacyTasks(
     projectName: String,
     tasks: TaskContainer,
     layout: ProjectLayout,

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.internal.abi
 
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ProjectLayout
@@ -32,13 +31,7 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 ) : AbiValidationVariantSpecImpl(AbiValidationVariantSpec.MAIN_VARIANT_NAME, objects, tasks), AbiValidationExtension {
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
-    final override val variants: NamedDomainObjectContainer<AbiValidationVariantSpec> =
-        objects.domainObjectContainer(AbiValidationVariantSpec::class.java) { variantName ->
-            val variant = AbiValidationVariantSpecImpl(variantName, objects, tasks)
-            variant.configureCommon(layout)
-            variant.configureLegacyTasks(projectName, tasks, layout, enabled)
-            variant
-        }
+    final override val variants: VariantConfiguratorImpl = objects.newInstance<VariantConfiguratorImpl>(projectName, layout, objects, tasks)
 }
 
 internal fun ExtensionContainer.createAbiValidationExtension(project: Project): AbiValidationExtension {
@@ -66,7 +59,7 @@ internal open class AbiValidationVariantSpecImpl(private val variantName: String
 @ExperimentalAbiValidation
 internal abstract class AbiValidationLegacyDumpExtensionImpl @Inject constructor(
     private val variantName: String,
-    private val tasks: TaskContainer
+    private val tasks: TaskContainer,
 ) : AbiValidationLegacyDumpExtension {
     override val legacyCheckTaskProvider: TaskProvider<KotlinLegacyAbiCheckTask>
         get() = tasks.named<KotlinLegacyAbiCheckTask>(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName))
@@ -88,20 +81,15 @@ internal abstract class AbiValidationMultiplatformExtensionImpl @Inject construc
     projectName: String,
     layout: ProjectLayout,
     objects: ObjectFactory,
-    tasks: TaskContainer
-) :
-    AbiValidationMultiplatformVariantSpecImpl(AbiValidationVariantSpec.MAIN_VARIANT_NAME, objects, tasks), AbiValidationMultiplatformExtension {
+    tasks: TaskContainer,
+) : AbiValidationMultiplatformVariantSpecImpl(AbiValidationVariantSpec.MAIN_VARIANT_NAME, objects, tasks),
+    AbiValidationMultiplatformExtension {
 
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
-    override val variants: NamedDomainObjectContainer<AbiValidationMultiplatformVariantSpec> =
-        objects.domainObjectContainer(AbiValidationMultiplatformVariantSpec::class.java) { name ->
-            val variant = AbiValidationMultiplatformVariantSpecImpl(name, objects, tasks)
-            variant.configureCommon(layout)
-            variant.configureMultiplatform()
-            variant.configureLegacyTasks(projectName, tasks, layout, enabled)
-            variant
-        }
+    override val variants: MultiplatformVariantConfiguratorImpl =
+        objects.newInstance<MultiplatformVariantConfiguratorImpl>(projectName, layout, objects, tasks)
+
 
     override val klib: AbiValidationKlibKindExtension = objects.AbiValidationKlibKindExtension()
 }
