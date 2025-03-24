@@ -18067,6 +18067,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("typeMismatchOnUninferred.kt")
+      public void testTypeMismatchOnUninferred() {
+        runTest("compiler/testData/diagnostics/tests/inference/typeMismatchOnUninferred.kt");
+      }
+
+      @Test
       @TestMetadata("typeParameterInConstructor.kt")
       public void testTypeParameterInConstructor() {
         runTest("compiler/testData/diagnostics/tests/inference/typeParameterInConstructor.kt");

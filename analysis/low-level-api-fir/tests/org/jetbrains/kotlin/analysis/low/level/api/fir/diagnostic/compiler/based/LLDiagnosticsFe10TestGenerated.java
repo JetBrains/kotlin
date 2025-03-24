@@ -18067,6 +18067,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("typeMismatchOnUninferred.kt")
+      public void testTypeMismatchOnUninferred() {
+        runTest("compiler/testData/diagnostics/tests/inference/typeMismatchOnUninferred.kt");
+      }
+
+      @Test
       @TestMetadata("typeParameterInConstructor.kt")
       public void testTypeParameterInConstructor() {
         runTest("compiler/testData/diagnostics/tests/inference/typeParameterInConstructor.kt");
