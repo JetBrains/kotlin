@@ -20,6 +20,7 @@ package androidx.compose.compiler.test
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mock.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -398,6 +399,31 @@ class CompositionTests {
             Text("before")
         }
     }
+
+    @Test
+    fun conditionalCallInMovableGroup() = compositionTest {
+        var condition by mutableStateOf(false)
+        val states = mutableStateListOf(1)
+        compose {
+            states.forEach { state ->
+                key(state) {
+                    if (condition) {
+                        val lambda: suspend CoroutineScope.() -> Unit = { use(state) }
+                        // This call is load bearing because it doesn't introduce the group
+                        // regardless of OptimizeNonSkippingGroups flag (as opposed to remember)
+                        LaunchedEffect(state, lambda)
+                    }
+                    TwoLambdas(
+                        lambda1 = { use(states); use(state) },
+                        lambda2 = { use(states); use(state) }
+                    )
+                }
+            }
+        }
+
+        condition = true
+        advance()
+    }
 }
 
 @Composable
@@ -449,6 +475,18 @@ fun DefaultValueClass(
 ) {
     println(data)
 }
+
+
+@Composable
+fun TwoLambdas(
+    lambda1: () -> Unit,
+    lambda2: (Int) -> Unit
+) {
+    use(lambda1)
+    use(lambda2)
+}
+
+private fun use(value: Any?) { }
 
 @Composable
 fun OuterComposable(content: @Composable () -> Unit) = content()

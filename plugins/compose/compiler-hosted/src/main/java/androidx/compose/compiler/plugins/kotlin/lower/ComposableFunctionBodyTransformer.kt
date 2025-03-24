@@ -3283,7 +3283,7 @@ class ComposableFunctionBodyTransformer(
                 }
             } else {
                 cacheCall.wrap(
-                    before = inputVals.filterNotNull() + listOf(
+                    before = nonNullInputValues + listOf(
                         irStartReplaceGroup(expression, blockScope, irFunctionSourceKey(expression.symbol.owner))
                     ),
                     after = listOf(irEndReplaceGroup(scope = blockScope))
@@ -3495,6 +3495,13 @@ class ComposableFunctionBodyTransformer(
             }
         })
 
+        // Key should behave the same way as any other inlined lambda, so we need to
+        // realize all inner control flow if composable calls are found inside of it.
+        if (scope.hasComposableCalls) {
+            scope.realizeAllDirectChildren()
+            // Realize groups here since `key` itself is not coalescable.
+            scope.realizeCoalescableGroup()
+        }
         scope.realizeEndCalls {
             irEndMovableGroup(scope)
         }
