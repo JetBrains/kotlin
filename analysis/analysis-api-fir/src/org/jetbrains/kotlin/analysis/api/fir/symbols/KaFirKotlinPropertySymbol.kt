@@ -277,7 +277,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
             when {
                 backingPsi != null -> when {
                     backingPsi.hasRegularSetter -> KaFirPropertySetterSymbol(this)
-                    backingPsi.isVar -> KaFirDefaultPropertySetterSymbol(this)
+                    backingPsi.isVar || backingPsi.setter != null -> KaFirDefaultPropertySetterSymbol(this)
                     else -> null
                 }
 

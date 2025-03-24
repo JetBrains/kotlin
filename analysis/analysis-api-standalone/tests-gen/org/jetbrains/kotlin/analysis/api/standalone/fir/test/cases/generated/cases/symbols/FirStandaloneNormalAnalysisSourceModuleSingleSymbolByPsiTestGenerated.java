@@ -870,5 +870,11 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     public void testValPropertyWithSetter() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/valPropertyWithSetter.kt");
     }
+
+    @Test
+    @TestMetadata("valPropertyWithSetter2.kt")
+    public void testValPropertyWithSetter2() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/valPropertyWithSetter2.kt");
+    }
   }
 }
