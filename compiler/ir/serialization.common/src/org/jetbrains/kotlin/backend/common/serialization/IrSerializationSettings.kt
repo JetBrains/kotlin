@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -37,7 +38,7 @@ class IrSerializationSettings(
     val normalizeAbsolutePaths: Boolean = false,
     val bodiesOnlyForInlines: Boolean = false,
     val shouldCheckSignaturesOnUniqueness: Boolean = true,
-    val reuseExistingSignaturesForSymbols: Boolean = false,
+    val reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
     val abiCompatibilityLevel: KlibAbiCompatibilityLevel = KlibAbiCompatibilityLevel.ABI_LEVEL_2_2,
 )
 
