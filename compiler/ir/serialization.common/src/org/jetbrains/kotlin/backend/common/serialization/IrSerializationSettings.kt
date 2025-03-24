@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.klibNormalizeAbsolutePath
 import org.jetbrains.kotlin.config.klibRelativePathBases
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -37,7 +38,7 @@ class IrSerializationSettings(
     val compatibilityMode: CompatibilityMode = CompatibilityMode.CURRENT,
     val publicAbiOnly: Boolean = false,
     val sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
-    val normalizeAbsolutePaths: Boolean = false,
+    val normalizeAbsolutePaths: Boolean = configuration.klibNormalizeAbsolutePath,
     val bodiesOnlyForInlines: Boolean = false,
     val shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
     val reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),

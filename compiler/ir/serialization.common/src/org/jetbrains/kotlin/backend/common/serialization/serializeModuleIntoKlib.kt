@@ -114,7 +114,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     createModuleSerializer: (
         irDiagnosticReporter: IrDiagnosticReporter,
         irBuiltins: IrBuiltIns,
-        normalizeAbsolutePaths: Boolean,
     ) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
@@ -148,7 +147,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         createModuleSerializer(
             irDiagnosticReporter,
             irBuiltins!!,
-            configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
         ).serializedIrModule(it)
     }
 

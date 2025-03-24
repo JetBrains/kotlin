@@ -148,7 +148,6 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         val serializerIr = KonanIrModuleSerializer(
             settings = IrSerializationSettings(
                 configuration = configuration,
-                normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
             ),
             KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings),
             inputArtifact.irPluginContext.irBuiltIns,
@@ -183,12 +182,10 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
         createModuleSerializer = {
                 irDiagnosticReporter,
                 irBuiltIns,
-                normalizeAbsolutePaths,
             ->
             KonanIrModuleSerializer(
                 settings = IrSerializationSettings(
                     configuration = configuration,
-                    normalizeAbsolutePaths = normalizeAbsolutePaths,
                 ),
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = irBuiltIns,
