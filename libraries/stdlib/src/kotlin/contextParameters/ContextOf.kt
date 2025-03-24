@@ -24,6 +24,7 @@ import kotlin.internal.NoInfer
  * @sample samples.misc.ContextParameters.contextOfWithReceiver
  */
 @InlineOnly
-@SinceKotlin("2.1")
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@SinceKotlin("2.2")
 context(context: A)
 public inline fun <A> contextOf(): @NoInfer A = context
