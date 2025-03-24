@@ -13,260 +13,147 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.WhitespacesBinders
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
+import org.jetbrains.annotations.Contract
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespacesBinders;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.KtKeywordToken;
-import org.jetbrains.kotlin.lexer.KtTokens;
+class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuilder, isTopLevel: Boolean, isLazy: Boolean) :
+    AbstractKotlinParsing(builder, isLazy) {
+    private val myExpressionParsing: KotlinExpressionParsing
 
-import static org.jetbrains.kotlin.KtNodeTypes.*;
-import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
-import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_BINDER;
-import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_BINDER;
-
-public class KotlinParsing extends AbstractKotlinParsing {
-    private static final TokenSet GT_COMMA_COLON_SET = TokenSet.create(GT, COMMA, COLON);
-    private static final Logger LOG = Logger.getInstance(KotlinParsing.class);
-
-    private static final TokenSet TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
-            TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
-            FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, PACKAGE_KEYWORD);
-    private static final TokenSet TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET =
-            TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(SEMICOLON));
-    private static final TokenSet LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET =
-            TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOP_LEVEL_DECLARATION_FIRST);
-    private static final TokenSet DECLARATION_FIRST = TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
-                                                                     TokenSet.create(INIT_KEYWORD, GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD));
-
-    private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE),
-                                                                           TOP_LEVEL_DECLARATION_FIRST);
-    private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
-    public static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR, VAL_KEYWORD, VAR_KEYWORD);
-    private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
-    private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
-    private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
-    private static final TokenSet LBRACE_RBRACE_TYPE_REF_FIRST_SET =
-            TokenSet.orSet(TokenSet.create(LBRACE, RBRACE), TYPE_REF_FIRST);
-    private static final TokenSet COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
-            TokenSet.orSet(TokenSet.create(COLON, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST);
-    private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
-    private static final TokenSet VALUE_PARAMETER_FIRST =
-            TokenSet.orSet(
-                    TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD),
-                    TokenSet.andNot(MODIFIER_KEYWORDS, TokenSet.create(FUN_KEYWORD))
-            );
-    private static final TokenSet LAMBDA_VALUE_PARAMETER_FIRST =
-            TokenSet.orSet(
-                    TokenSet.create(IDENTIFIER, LBRACKET),
-                    TokenSet.andNot(MODIFIER_KEYWORDS, TokenSet.create(FUN_KEYWORD))
-            );
-    private static final TokenSet SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(CONSTRUCTOR_KEYWORD, INIT_KEYWORD);
-    private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
-            ALL_KEYWORD, FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD,
-            RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD, DELEGATE_KEYWORD);
-    private static final TokenSet BLOCK_DOC_COMMENT_SET = TokenSet.create(BLOCK_COMMENT, DOC_COMMENT);
-    private static final TokenSet SEMICOLON_SET = TokenSet.create(SEMICOLON);
-    private static final TokenSet COMMA_COLON_GT_SET = TokenSet.create(COMMA, COLON, GT);
-    private static final TokenSet IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET);
-    private static final TokenSet LBRACE_RBRACE_SET = TokenSet.create(LBRACE, RBRACE);
-    private static final TokenSet COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(COMMA, SEMICOLON, RBRACE);
-    private static final TokenSet VALUE_ARGS_RECOVERY_SET = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
-    private static final TokenSet PROPERTY_NAME_FOLLOW_SET =
-      TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
-    private static final TokenSet PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET);
-    private static final TokenSet PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
-    private static final TokenSet IDENTIFIER_EQ_COLON_SEMICOLON_SET = TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON);
-    private static final TokenSet COMMA_RPAR_COLON_EQ_SET = TokenSet.create(COMMA, RPAR, COLON, EQ);
-    private static final TokenSet ACCESSOR_FIRST_OR_PROPERTY_END =
-            TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, FIELD_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
-    private static final TokenSet RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET = TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ);
-    private static final TokenSet COMMA_COLON_RPAR_SET = TokenSet.create(COMMA, COLON, RPAR);
-    private static final TokenSet RPAR_COLON_LBRACE_EQ_SET = TokenSet.create(RPAR, COLON, LBRACE, EQ);
-    private static final TokenSet LBRACKET_LBRACE_RBRACE_LPAR_SET = TokenSet.create(LBRACKET, LBRACE, RBRACE, LPAR);
-    private static final TokenSet FUNCTION_NAME_FOLLOW_SET = TokenSet.create(LT, LPAR, RPAR, COLON, EQ);
-    private static final TokenSet FUNCTION_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, RPAR, COLON, EQ), LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
-    private static final TokenSet VALUE_PARAMETERS_FOLLOW_SET = TokenSet.create(EQ, LBRACE, RBRACE, SEMICOLON, RPAR);
-    private static final TokenSet CONTEXT_PARAMETERS_FOLLOW_SET = TokenSet.create(CLASS_KEYWORD, OBJECT_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
-    private static final TokenSet LPAR_VALUE_PARAMETERS_FOLLOW_SET = TokenSet.orSet(TokenSet.create(LPAR), VALUE_PARAMETERS_FOLLOW_SET);
-    private static final TokenSet
-            LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET = TokenSet.create(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD);
-    private static final TokenSet definitelyOutOfReceiverSet = TokenSet.orSet(
-            TokenSet.create(EQ, COLON, LBRACE, RBRACE, BY_KEYWORD),
-            TOP_LEVEL_DECLARATION_FIRST
-    );
-    private final static TokenSet EOL_OR_SEMICOLON_RBRACE_SET = TokenSet.create(EOL_OR_SEMICOLON, RBRACE);
-    private final static TokenSet CLASS_INTERFACE_SET = TokenSet.create(CLASS_KEYWORD, INTERFACE_KEYWORD);
-
-    static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        return new KotlinParsing(builder, true, true);
-    }
-
-    static KotlinParsing createForTopLevelNonLazy(SemanticWhitespaceAwarePsiBuilder builder) {
-        return new KotlinParsing(builder, true, false);
-    }
-
-    private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder, boolean isLazy) {
-        return new KotlinParsing(new SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy);
-    }
-
-    private final KotlinExpressionParsing myExpressionParsing;
-
-    private final FirstBefore lastDotAfterReceiverLParPattern = new FirstBefore(
-            new AtSet(RECEIVER_TYPE_TERMINATORS),
-            new AbstractTokenStreamPredicate() {
-                @Override
-                public boolean matching(boolean topLevel) {
-                    if (topLevel && atSet(definitelyOutOfReceiverSet)) {
-                        return true;
-                    }
-                    return topLevel && !at(QUEST) && !at(LPAR) && !at(RPAR);
+    private val lastDotAfterReceiverLParPattern = FirstBefore(
+        AtSet(RECEIVER_TYPE_TERMINATORS),
+        object : AbstractTokenStreamPredicate() {
+            override fun matching(topLevel: Boolean): Boolean {
+                if (topLevel && atSet(definitelyOutOfReceiverSet)) {
+                    return true
                 }
+                return topLevel && !at(KtTokens.QUEST) && !at(KtTokens.LPAR) && !at(KtTokens.RPAR)
             }
-    );
+        }
+    )
 
-    private final LastBefore lastDotAfterReceiverNotLParPattern = new LastBefore(
-            new AtSet(RECEIVER_TYPE_TERMINATORS),
-            new AbstractTokenStreamPredicate() {
-                @Override
-                public boolean matching(boolean topLevel) {
-                    if (topLevel && (atSet(definitelyOutOfReceiverSet) || at(LPAR))) return true;
-                    if (topLevel && at(IDENTIFIER)) {
-                        IElementType lookahead = lookahead(1);
-                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
-                    }
-                    return false;
+    private val lastDotAfterReceiverNotLParPattern = LastBefore(
+        AtSet(RECEIVER_TYPE_TERMINATORS),
+        object : AbstractTokenStreamPredicate() {
+            override fun matching(topLevel: Boolean): Boolean {
+                if (topLevel && (atSet(definitelyOutOfReceiverSet) || at(KtTokens.LPAR))) return true
+                if (topLevel && at(KtTokens.IDENTIFIER)) {
+                    val lookahead = lookahead(1)
+                    return lookahead !== KtTokens.LT && lookahead !== KtTokens.DOT && lookahead !== KtTokens.SAFE_ACCESS && lookahead !== KtTokens.QUEST
                 }
-            });
-
-    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isTopLevel, boolean isLazy) {
-        super(builder, isLazy);
-        myExpressionParsing = isTopLevel
-                              ? new KotlinExpressionParsing(builder, this, isLazy)
-                              : new KotlinExpressionParsing(builder, this, isLazy) {
-                                  @Override
-                                  protected boolean parseCallWithClosure() {
-                                      if (((SemanticWhitespaceAwarePsiBuilderForByClause) builder).getStackSize() > 0) {
-                                          return super.parseCallWithClosure();
-                                      }
-                                      return false;
-                                  }
-
-                                  @Override
-                                  protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
-                                      return createForByClause(builder, isLazy);
-                                  }
-                              };
-    }
+                return false
+            }
+        })
 
     /*
      * [start] kotlinFile
      *   : preamble toplevelObject* [eof]
      *   ;
      */
-    void parseFile() {
-        PsiBuilder.Marker fileMarker = mark();
+    fun parseFile() {
+        val fileMarker = mark()
 
-        parsePreamble();
+        parsePreamble()
 
         while (!eof()) {
-            parseTopLevelDeclaration();
+            parseTopLevelDeclaration()
         }
 
-        checkUnclosedBlockComment();
-        fileMarker.done(KT_FILE);
+        checkUnclosedBlockComment()
+        fileMarker.done(KtNodeTypes.KT_FILE)
     }
 
-    private void checkUnclosedBlockComment() {
+    private fun checkUnclosedBlockComment() {
         if (BLOCK_DOC_COMMENT_SET.contains(myBuilder.rawLookup(-1))) {
-            int startOffset = myBuilder.rawTokenTypeStart(-1);
-            int endOffset = myBuilder.rawTokenTypeStart(0);
-            CharSequence tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset);
-            if (!(tokenChars.length() > 2 && tokenChars.subSequence(tokenChars.length() - 2, tokenChars.length()).toString().equals("*/"))) {
-                PsiBuilder.Marker marker = myBuilder.mark();
-                marker.error("Unclosed comment");
-                marker.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_RIGHT_BINDER, null);
+            val startOffset = myBuilder.rawTokenTypeStart(-1)
+            val endOffset = myBuilder.rawTokenTypeStart(0)
+            val tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset)
+            if (!(tokenChars.length > 2 && tokenChars.subSequence(tokenChars.length - 2, tokenChars.length).toString() == "*/")) {
+                val marker = myBuilder.mark()
+                marker.error("Unclosed comment")
+                marker.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_RIGHT_BINDER, null)
             }
         }
     }
 
-    void parseTypeCodeFragment() {
-        PsiBuilder.Marker marker = mark();
-        parseTypeRef();
+    fun parseTypeCodeFragment() {
+        val marker = mark()
+        parseTypeRef()
 
-        checkForUnexpectedSymbols();
+        checkForUnexpectedSymbols()
 
-        marker.done(TYPE_CODE_FRAGMENT);
+        marker.done(KtNodeTypes.TYPE_CODE_FRAGMENT)
     }
 
-    void parseExpressionCodeFragment() {
-        PsiBuilder.Marker marker = mark();
-        myExpressionParsing.parseExpression();
+    fun parseExpressionCodeFragment() {
+        val marker = mark()
+        myExpressionParsing.parseExpression()
 
-        checkForUnexpectedSymbols();
+        checkForUnexpectedSymbols()
 
-        marker.done(EXPRESSION_CODE_FRAGMENT);
+        marker.done(KtNodeTypes.EXPRESSION_CODE_FRAGMENT)
     }
 
-    void parseBlockCodeFragment() {
-        PsiBuilder.Marker marker = mark();
-        PsiBuilder.Marker blockMarker = mark();
+    fun parseBlockCodeFragment() {
+        val marker = mark()
+        val blockMarker = mark()
 
-        if (at(PACKAGE_KEYWORD) || at(IMPORT_KEYWORD)) {
-            PsiBuilder.Marker err = mark();
-            parsePreamble();
-            err.error("Package directive and imports are forbidden in code fragments");
+        if (at(KtTokens.PACKAGE_KEYWORD) || at(KtTokens.IMPORT_KEYWORD)) {
+            val err = mark()
+            parsePreamble()
+            err.error("Package directive and imports are forbidden in code fragments")
         }
 
-        myExpressionParsing.parseStatements();
+        myExpressionParsing.parseStatements()
 
-        checkForUnexpectedSymbols();
+        checkForUnexpectedSymbols()
 
-        blockMarker.done(BLOCK);
-        marker.done(BLOCK_CODE_FRAGMENT);
+        blockMarker.done(KtNodeTypes.BLOCK)
+        marker.done(KtNodeTypes.BLOCK_CODE_FRAGMENT)
     }
 
-    void parseLambdaExpression() {
-        myExpressionParsing.parseFunctionLiteral(/* preferBlock = */ false, /* collapse = */false);
+    fun parseLambdaExpression() {
+        myExpressionParsing.parseFunctionLiteral( /* preferBlock = */false,  /* collapse = */false)
     }
 
-    void parseBlockExpression() {
-        parseBlock(/* collapse = */ false);
+    fun parseBlockExpression() {
+        parseBlock( /* collapse = */false)
     }
 
-    void parseScript() {
-        PsiBuilder.Marker fileMarker = mark();
+    fun parseScript() {
+        val fileMarker = mark()
 
-        parsePreamble();
+        parsePreamble()
 
-        PsiBuilder.Marker scriptMarker = mark();
+        val scriptMarker = mark()
 
-        PsiBuilder.Marker blockMarker = mark();
+        val blockMarker = mark()
 
-        myExpressionParsing.parseStatements(/*isScriptTopLevel = */true);
+        myExpressionParsing.parseStatements( /*isScriptTopLevel = */true)
 
-        checkForUnexpectedSymbols();
+        checkForUnexpectedSymbols()
 
-        blockMarker.done(BLOCK);
-        blockMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
+        blockMarker.done(KtNodeTypes.BLOCK)
+        blockMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER)
 
-        scriptMarker.done(SCRIPT);
-        scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER);
+        scriptMarker.done(KtNodeTypes.SCRIPT)
+        scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER)
 
-        fileMarker.done(KT_FILE);
+        fileMarker.done(KtNodeTypes.KT_FILE)
     }
 
-    private void checkForUnexpectedSymbols() {
+    private fun checkForUnexpectedSymbols() {
         while (!eof()) {
-            errorAndAdvance("Unexpected symbol");
+            errorAndAdvance("Unexpected symbol")
         }
     }
 
@@ -275,97 +162,94 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *  : fileAnnotationList? packageDirective? import*
      *  ;
      */
-    private void parsePreamble() {
-        PsiBuilder.Marker firstEntry = mark();
+    private fun parsePreamble() {
+        val firstEntry = mark()
 
         /*
          * fileAnnotationList
          *   : fileAnnotations*
          */
-        parseFileAnnotationList(FILE_ANNOTATIONS_BEFORE_PACKAGE);
+        parseFileAnnotationList(AnnotationParsingMode.FILE_ANNOTATIONS_BEFORE_PACKAGE)
 
         /*
          * packageDirective
          *   : modifiers "package" SimpleName{"."} SEMI?
          *   ;
          */
-        PsiBuilder.Marker packageDirective = mark();
-        parseModifierList(TokenSet.EMPTY);
+        var packageDirective = mark()
+        parseModifierList(TokenSet.EMPTY)
 
-        if (at(PACKAGE_KEYWORD)) {
-            advance(); // PACKAGE_KEYWORD
+        if (at(KtTokens.PACKAGE_KEYWORD)) {
+            advance() // PACKAGE_KEYWORD
 
-            parsePackageName();
+            parsePackageName()
 
-            firstEntry.drop();
+            firstEntry.drop()
 
-            consumeIf(SEMICOLON);
+            consumeIf(KtTokens.SEMICOLON)
 
-            packageDirective.done(PACKAGE_DIRECTIVE);
-        }
-        else {
+            packageDirective.done(KtNodeTypes.PACKAGE_DIRECTIVE)
+        } else {
             // When package directive is omitted we should not report error on non-file annotations at the beginning of the file.
             // So, we rollback the parsing position and reparse file annotation list without report error on non-file annotations.
-            firstEntry.rollbackTo();
+            firstEntry.rollbackTo()
 
-            parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
-            packageDirective = mark();
-            packageDirective.done(PACKAGE_DIRECTIVE);
+            parseFileAnnotationList(AnnotationParsingMode.FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED)
+            packageDirective = mark()
+            packageDirective.done(KtNodeTypes.PACKAGE_DIRECTIVE)
             // Need to skip everything but shebang comment to allow comments at the start of the file to be bound to the first declaration.
-            packageDirective.setCustomEdgeTokenBinders(BindFirstShebangWithWhitespaceOnly.INSTANCE, null);
+            packageDirective.setCustomEdgeTokenBinders(BindFirstShebangWithWhitespaceOnly, null)
         }
 
-        parseImportDirectives();
+        parseImportDirectives()
     }
 
     /* SimpleName{"."} */
-    private void parsePackageName() {
-        PsiBuilder.Marker qualifiedExpression = mark();
-        boolean simpleName = true;
+    private fun parsePackageName() {
+        var qualifiedExpression = mark()
+        var simpleName = true
         while (true) {
             if (myBuilder.newlineBeforeCurrentToken()) {
-                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", PACKAGE_NAME_RECOVERY_SET);
-                break;
+                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", PACKAGE_NAME_RECOVERY_SET)
+                break
             }
 
-            if (at(DOT)) {
-                advance(); // DOT
-                qualifiedExpression.error("Package name must be a '.'-separated identifier list");
-                qualifiedExpression = mark();
-                continue;
+            if (at(KtTokens.DOT)) {
+                advance() // DOT
+                qualifiedExpression.error("Package name must be a '.'-separated identifier list")
+                qualifiedExpression = mark()
+                continue
             }
 
-            PsiBuilder.Marker nsName = mark();
-            boolean simpleNameFound = expect(IDENTIFIER, "Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET);
+            val nsName = mark()
+            val simpleNameFound =
+                expect(KtTokens.IDENTIFIER, "Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET)
             if (simpleNameFound) {
-                nsName.done(REFERENCE_EXPRESSION);
-            }
-            else {
-                nsName.drop();
+                nsName.done(KtNodeTypes.REFERENCE_EXPRESSION)
+            } else {
+                nsName.drop()
             }
 
             if (!simpleName) {
-                PsiBuilder.Marker precedingMarker = qualifiedExpression.precede();
-                qualifiedExpression.done(DOT_QUALIFIED_EXPRESSION);
-                qualifiedExpression = precedingMarker;
+                val precedingMarker = qualifiedExpression.precede()
+                qualifiedExpression.done(KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
+                qualifiedExpression = precedingMarker
             }
 
-            if (at(DOT)) {
-                advance(); // DOT
+            if (at(KtTokens.DOT)) {
+                advance() // DOT
 
                 if (simpleName && !simpleNameFound) {
-                    qualifiedExpression.drop();
-                    qualifiedExpression = mark();
+                    qualifiedExpression.drop()
+                    qualifiedExpression = mark()
+                } else {
+                    simpleName = false
                 }
-                else {
-                    simpleName = false;
-                }
-            }
-            else {
-                break;
+            } else {
+                break
             }
         }
-        qualifiedExpression.drop();
+        qualifiedExpression.drop()
     }
 
     /*
@@ -373,106 +257,106 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "import" SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
      *   ;
      */
-    private void parseImportDirective() {
-        assert _at(IMPORT_KEYWORD);
-        PsiBuilder.Marker importDirective = mark();
-        advance(); // IMPORT_KEYWORD
+    private fun parseImportDirective() {
+        assert(_at(KtTokens.IMPORT_KEYWORD))
+        val importDirective = mark()
+        advance() // IMPORT_KEYWORD
 
         if (closeImportWithErrorIfNewline(importDirective, null, "Expecting qualified name")) {
-            return;
+            return
         }
 
-        if (!at(IDENTIFIER)) {
-            PsiBuilder.Marker error = mark();
-            skipUntil(TokenSet.create(EOL_OR_SEMICOLON));
-            error.error("Expecting qualified name");
-            importDirective.done(IMPORT_DIRECTIVE);
-            consumeIf(SEMICOLON);
-            return;
+        if (!at(KtTokens.IDENTIFIER)) {
+            val error = mark()
+            skipUntil(TokenSet.create(KtTokens.EOL_OR_SEMICOLON))
+            error.error("Expecting qualified name")
+            importDirective.done(KtNodeTypes.IMPORT_DIRECTIVE)
+            consumeIf(KtTokens.SEMICOLON)
+            return
         }
 
-        PsiBuilder.Marker qualifiedName = mark();
-        PsiBuilder.Marker reference = mark();
-        advance(); // IDENTIFIER
-        reference.done(REFERENCE_EXPRESSION);
+        var qualifiedName = mark()
+        var reference = mark()
+        advance() // IDENTIFIER
+        reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
 
-        while (at(DOT) && lookahead(1) != MUL) {
-            advance(); // DOT
+        while (at(KtTokens.DOT) && lookahead(1) !== KtTokens.MUL) {
+            advance() // DOT
 
             if (closeImportWithErrorIfNewline(importDirective, null, "Import must be placed on a single line")) {
-                qualifiedName.drop();
-                return;
+                qualifiedName.drop()
+                return
             }
 
-            reference = mark();
-            if (expect(IDENTIFIER, "Qualified name must be a '.'-separated identifier list", IMPORT_RECOVERY_SET)) {
-                reference.done(REFERENCE_EXPRESSION);
-            }
-            else {
-                reference.drop();
+            reference = mark()
+            if (expect(KtTokens.IDENTIFIER, "Qualified name must be a '.'-separated identifier list", IMPORT_RECOVERY_SET)) {
+                reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
+            } else {
+                reference.drop()
             }
 
-            PsiBuilder.Marker precede = qualifiedName.precede();
-            qualifiedName.done(DOT_QUALIFIED_EXPRESSION);
-            qualifiedName = precede;
+            val precede = qualifiedName.precede()
+            qualifiedName.done(KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
+            qualifiedName = precede
         }
-        qualifiedName.drop();
+        qualifiedName.drop()
 
-        if (at(DOT)) {
-            advance(); // DOT
-            assert _at(MUL);
-            advance(); // MUL
-            if (at(AS_KEYWORD)) {
-                PsiBuilder.Marker as = mark();
-                advance(); // AS_KEYWORD
+        if (at(KtTokens.DOT)) {
+            advance() // DOT
+            assert(_at(KtTokens.MUL))
+            advance() // MUL
+            if (at(KtTokens.AS_KEYWORD)) {
+                val `as` = mark()
+                advance() // AS_KEYWORD
                 if (closeImportWithErrorIfNewline(importDirective, null, "Expecting identifier")) {
-                    as.drop();
-                    return;
+                    `as`.drop()
+                    return
                 }
-                consumeIf(IDENTIFIER);
-                as.done(IMPORT_ALIAS);
-                as.precede().error("Cannot rename all imported items to one identifier");
+                consumeIf(KtTokens.IDENTIFIER)
+                `as`.done(KtNodeTypes.IMPORT_ALIAS)
+                `as`.precede().error("Cannot rename all imported items to one identifier")
             }
         }
-        if (at(AS_KEYWORD)) {
-            PsiBuilder.Marker alias = mark();
-            advance(); // AS_KEYWORD
+        if (at(KtTokens.AS_KEYWORD)) {
+            val alias = mark()
+            advance() // AS_KEYWORD
             if (closeImportWithErrorIfNewline(importDirective, alias, "Expecting identifier")) {
-                return;
+                return
             }
-            expect(IDENTIFIER, "Expecting identifier", SEMICOLON_SET);
-            alias.done(IMPORT_ALIAS);
+            expect(KtTokens.IDENTIFIER, "Expecting identifier", SEMICOLON_SET)
+            alias.done(KtNodeTypes.IMPORT_ALIAS)
         }
-        consumeIf(SEMICOLON);
-        importDirective.done(IMPORT_DIRECTIVE);
-        importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder.INSTANCE);
+        consumeIf(KtTokens.SEMICOLON)
+        importDirective.done(KtNodeTypes.IMPORT_DIRECTIVE)
+        importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder)
     }
 
-    private boolean closeImportWithErrorIfNewline(
-            PsiBuilder.Marker importDirective,
-            @Nullable PsiBuilder.Marker importAlias,
-            String errorMessage) {
+    private fun closeImportWithErrorIfNewline(
+        importDirective: PsiBuilder.Marker,
+        importAlias: PsiBuilder.Marker?,
+        errorMessage: String
+    ): Boolean {
         if (myBuilder.newlineBeforeCurrentToken()) {
             if (importAlias != null) {
-                importAlias.done(IMPORT_ALIAS);
+                importAlias.done(KtNodeTypes.IMPORT_ALIAS)
             }
-            error(errorMessage);
-            importDirective.done(IMPORT_DIRECTIVE);
-            return true;
+            error(errorMessage)
+            importDirective.done(KtNodeTypes.IMPORT_DIRECTIVE)
+            return true
         }
-        return false;
+        return false
     }
 
-    private void parseImportDirectives() {
-        PsiBuilder.Marker importList = mark();
-        if (!at(IMPORT_KEYWORD)) {
+    private fun parseImportDirectives() {
+        val importList = mark()
+        if (!at(KtTokens.IMPORT_KEYWORD)) {
             // this is necessary to allow comments at the start of the file to be bound to the first declaration
-            importList.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE, null);
+            importList.setCustomEdgeTokenBinders(DoNotBindAnything, null)
         }
-        while (at(IMPORT_KEYWORD)) {
-            parseImportDirective();
+        while (at(KtTokens.IMPORT_KEYWORD)) {
+            parseImportDirective()
         }
-        importList.done(IMPORT_LIST);
+        importList.done(KtNodeTypes.IMPORT_LIST)
     }
 
     /*
@@ -486,235 +370,234 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : object
      *   ;
      */
-    private void parseTopLevelDeclaration() {
-        if (at(SEMICOLON)) {
-            advance(); // SEMICOLON
-            return;
+    private fun parseTopLevelDeclaration() {
+        if (at(KtTokens.SEMICOLON)) {
+            advance() // SEMICOLON
+            return
         }
-        PsiBuilder.Marker decl = mark();
+        val decl = mark()
 
-        ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, TokenSet.EMPTY);
+        val detector = ModifierDetector()
+        parseModifierList(detector, TokenSet.EMPTY)
 
-        IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
+        var declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL)
 
-        if (declType == null && at(LBRACE)) {
-            error("Expecting a top level declaration");
-            parseBlock();
-            declType = FUN;
+        if (declType == null && at(KtTokens.LBRACE)) {
+            error("Expecting a top level declaration")
+            parseBlock()
+            declType = KtNodeTypes.FUN
         }
 
-        if (declType == null && at(IMPORT_KEYWORD)) {
-            error("imports are only allowed in the beginning of file");
-            parseImportDirectives();
-            decl.drop();
-        }
-        else if (declType == null) {
-            errorAndAdvance("Expecting a top level declaration");
-            decl.drop();
-        }
-        else {
-            closeDeclarationWithCommentBinders(decl, declType, true);
+        if (declType == null && at(KtTokens.IMPORT_KEYWORD)) {
+            error("imports are only allowed in the beginning of file")
+            parseImportDirectives()
+            decl.drop()
+        } else if (declType == null) {
+            errorAndAdvance("Expecting a top level declaration")
+            decl.drop()
+        } else {
+            closeDeclarationWithCommentBinders(decl, declType, true)
         }
     }
 
-    public IElementType parseCommonDeclaration(
-            @NotNull ModifierDetector detector,
-            @NotNull NameParsingMode nameParsingModeForObject,
-            @NotNull DeclarationParsingMode declarationParsingMode
-    ) {
-        switch (getTokenId()) {
-            case CLASS_KEYWORD_Id:
-            case INTERFACE_KEYWORD_Id:
-                return parseClass(detector.isEnumDetected(), true);
-            case FUN_KEYWORD_Id:
-                return parseFunction();
-            case VAL_KEYWORD_Id:
-            case VAR_KEYWORD_Id:
-                return parseProperty(declarationParsingMode);
-            case TYPE_ALIAS_KEYWORD_Id:
-                return parseTypeAlias();
-            case OBJECT_KEYWORD_Id:
-                parseObject(nameParsingModeForObject, true);
-                return OBJECT_DECLARATION;
-            case IDENTIFIER_Id:
-                if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
-                    return parseClass(true, false);
-                }
+    fun parseCommonDeclaration(
+        detector: ModifierDetector,
+        nameParsingModeForObject: NameParsingMode,
+        declarationParsingMode: DeclarationParsingMode
+    ): IElementType? {
+        when (tokenId) {
+            KtTokens.CLASS_KEYWORD_Id, KtTokens.INTERFACE_KEYWORD_Id -> return parseClass(
+                detector.isEnumDetected, true
+            )
+            KtTokens.FUN_KEYWORD_Id -> return parseFunction()
+            KtTokens.VAL_KEYWORD_Id, KtTokens.VAR_KEYWORD_Id -> return parseProperty(declarationParsingMode)
+            KtTokens.TYPE_ALIAS_KEYWORD_Id -> return parseTypeAlias()
+            KtTokens.OBJECT_KEYWORD_Id -> {
+                parseObject(nameParsingModeForObject, true)
+                return KtNodeTypes.OBJECT_DECLARATION
+            }
+            KtTokens.IDENTIFIER_Id -> if (detector.isEnumDetected && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
+                return parseClass(true, false)
+            }
         }
 
-        return null;
+        return null
     }
 
     /*
      * (modifier | annotation)*
      */
-    boolean parseModifierList(@NotNull TokenSet noModifiersBefore) {
-        return parseModifierList(null, noModifiersBefore);
+    fun parseModifierList(noModifiersBefore: TokenSet): Boolean {
+        return parseModifierList(null, noModifiersBefore)
     }
 
-    void parseAnnotationsList(@NotNull TokenSet noModifiersBefore) {
-        doParseModifierList(null, TokenSet.EMPTY, AnnotationParsingMode.DEFAULT, noModifiersBefore);
+    fun parseAnnotationsList(noModifiersBefore: TokenSet) {
+        doParseModifierList(null, TokenSet.EMPTY, AnnotationParsingMode.DEFAULT, noModifiersBefore)
     }
 
     /**
      * (modifier | annotation)*
-     * <p>
+     *
+     *
      * Feeds modifiers (not annotations) into the passed consumer, if it is not null
      *
      * @param noModifiersBefore is a token set with elements indicating when met them
-     *                          that previous token must be parsed as an identifier rather than modifier
+     * that previous token must be parsed as an identifier rather than modifier
      */
-    boolean parseModifierList(@Nullable Consumer<IElementType> tokenConsumer, @NotNull TokenSet noModifiersBefore) {
-        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, AnnotationParsingMode.DEFAULT, noModifiersBefore);
+    fun parseModifierList(tokenConsumer: Consumer<IElementType?>?, noModifiersBefore: TokenSet): Boolean {
+        return doParseModifierList(tokenConsumer, KtTokens.MODIFIER_KEYWORDS, AnnotationParsingMode.DEFAULT, noModifiersBefore)
     }
 
-    private void parseFunctionTypeValueParameterModifierList() {
-        doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS_NO_CONTEXT, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+    private fun parseFunctionTypeValueParameterModifierList() {
+        doParseModifierList(
+            null,
+            KtTokens.RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS,
+            AnnotationParsingMode.NO_ANNOTATIONS_NO_CONTEXT,
+            NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER
+        )
     }
 
-    private void parseTypeModifierList() {
-        doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, TYPE_CONTEXT, TokenSet.EMPTY);
+    private fun parseTypeModifierList() {
+        doParseModifierList(null, KtTokens.TYPE_MODIFIER_KEYWORDS, AnnotationParsingMode.TYPE_CONTEXT, TokenSet.EMPTY)
     }
 
-    private void parseTypeArgumentModifierList() {
-        doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS_NO_CONTEXT, COMMA_COLON_GT_SET);
+    private fun parseTypeArgumentModifierList() {
+        doParseModifierList(
+            null,
+            KtTokens.TYPE_ARGUMENT_MODIFIER_KEYWORDS,
+            AnnotationParsingMode.NO_ANNOTATIONS_NO_CONTEXT,
+            COMMA_COLON_GT_SET
+        )
     }
 
-    private boolean doParseModifierListBody(
-            @Nullable Consumer<IElementType> tokenConsumer,
-            @NotNull TokenSet modifierKeywords,
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        boolean empty = true;
-        PsiBuilder.Marker beforeAnnotationMarker;
+    private fun doParseModifierListBody(
+        tokenConsumer: Consumer<IElementType?>?,
+        modifierKeywords: TokenSet,
+        annotationParsingMode: AnnotationParsingMode,
+        noModifiersBefore: TokenSet
+    ): Boolean {
+        var empty = true
+        var beforeAnnotationMarker: PsiBuilder.Marker?
         while (!eof()) {
-            if (at(AT) && annotationParsingMode.allowAnnotations) {
-                beforeAnnotationMarker = mark();
+            if (at(KtTokens.AT) && annotationParsingMode.allowAnnotations) {
+                beforeAnnotationMarker = mark()
 
-                boolean isAnnotationParsed = parseAnnotationOrList(annotationParsingMode);
+                val isAnnotationParsed = parseAnnotationOrList(annotationParsingMode)
 
                 if (!isAnnotationParsed && !annotationParsingMode.withSignificantWhitespaceBeforeArguments) {
-                    beforeAnnotationMarker.rollbackTo();
+                    beforeAnnotationMarker.rollbackTo()
                     // try parse again, but with significant whitespace
-                    AnnotationParsingMode newMode = annotationParsingMode.allowContextList
-                                                 ? WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS
-                                                 : WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS_NO_CONTEXT;
-                    doParseModifierListBody(tokenConsumer, modifierKeywords, newMode, noModifiersBefore);
-                    empty = false;
-                    break;
+                    val newMode =
+                        if (annotationParsingMode.allowContextList) AnnotationParsingMode.WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS else AnnotationParsingMode.WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS_NO_CONTEXT
+                    doParseModifierListBody(tokenConsumer, modifierKeywords, newMode, noModifiersBefore)
+                    empty = false
+                    break
                 } else {
-                    beforeAnnotationMarker.drop();
+                    beforeAnnotationMarker.drop()
                 }
-            }
-            else if (at(CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) == LPAR) {
-                parseContextReceiverList(false);
-            }
-            else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
+            } else if (at(KtTokens.CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) === KtTokens.LPAR) {
+                parseContextReceiverList(false)
+            } else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
+            } else {
+                break
             }
-            else {
-                break;
-            }
-            empty = false;
+            empty = false
         }
 
-        return empty;
+        return empty
     }
 
-    private boolean doParseModifierList(
-            @Nullable Consumer<IElementType> tokenConsumer,
-            @NotNull TokenSet modifierKeywords,
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        PsiBuilder.Marker list = mark();
+    private fun doParseModifierList(
+        tokenConsumer: Consumer<IElementType?>?,
+        modifierKeywords: TokenSet,
+        annotationParsingMode: AnnotationParsingMode,
+        noModifiersBefore: TokenSet
+    ): Boolean {
+        val list = mark()
 
-        boolean empty = doParseModifierListBody(
-                tokenConsumer,
-                modifierKeywords,
-                annotationParsingMode,
-                noModifiersBefore
-        );
+        val empty = doParseModifierListBody(
+            tokenConsumer,
+            modifierKeywords,
+            annotationParsingMode,
+            noModifiersBefore
+        )
 
         if (empty) {
-            list.drop();
+            list.drop()
+        } else {
+            list.done(KtNodeTypes.MODIFIER_LIST)
         }
-        else {
-            list.done(MODIFIER_LIST);
-        }
-        return !empty;
+        return !empty
     }
 
-    private boolean tryParseModifier(
-            @Nullable Consumer<IElementType> tokenConsumer,
-            @NotNull TokenSet noModifiersBefore,
-            @NotNull TokenSet modifierKeywords
-    ) {
-        PsiBuilder.Marker marker = mark();
+    private fun tryParseModifier(
+        tokenConsumer: Consumer<IElementType?>?,
+        noModifiersBefore: TokenSet,
+        modifierKeywords: TokenSet
+    ): Boolean {
+        val marker = mark()
 
         if (atSet(modifierKeywords)) {
-            IElementType lookahead = lookahead(1);
+            val lookahead = lookahead(1)
 
-            if (at(FUN_KEYWORD) && lookahead != INTERFACE_KEYWORD) {
-                marker.rollbackTo();
-                return false;
+            if (at(KtTokens.FUN_KEYWORD) && lookahead !== KtTokens.INTERFACE_KEYWORD) {
+                marker.rollbackTo()
+                return false
             }
 
             if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
-                IElementType tt = tt();
+                val tt = tt()
                 if (tokenConsumer != null) {
-                    tokenConsumer.consume(tt);
+                    tokenConsumer.consume(tt)
                 }
-                advance(); // MODIFIER
-                marker.collapse(tt);
-                return true;
+                advance() // MODIFIER
+                marker.collapse(tt!!)
+                return true
             }
         }
 
-        marker.rollbackTo();
-        return false;
+        marker.rollbackTo()
+        return false
     }
 
     /*
      * contextReceiverList
      *   : "context" "(" (contextReceiver{","})+ ")"
      */
-    private void parseContextReceiverList(boolean inFunctionType) {
-        assert _at(CONTEXT_KEYWORD);
-        PsiBuilder.Marker contextReceiverList = mark();
-        advance(); // CONTEXT_KEYWORD
+    private fun parseContextReceiverList(inFunctionType: Boolean) {
+        assert(_at(KtTokens.CONTEXT_KEYWORD))
+        val contextReceiverList = mark()
+        advance() // CONTEXT_KEYWORD
 
-        assert _at(LPAR);
+        assert(_at(KtTokens.LPAR))
 
-        if (lookahead(1) == RPAR) {
-            advance(); // LPAR
-            error("Empty context parameter list");
-            advance(); // RPAR
+        if (lookahead(1) === KtTokens.RPAR) {
+            advance() // LPAR
+            error("Empty context parameter list")
+            advance() // RPAR
+        } else {
+            valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, Runnable { parseContextReceiver(inFunctionType) })
         }
-        else {
-            valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseContextReceiver(inFunctionType));
-        }
 
-        contextReceiverList.done(CONTEXT_RECEIVER_LIST);
+        contextReceiverList.done(KtNodeTypes.CONTEXT_RECEIVER_LIST)
     }
 
     /*
      * contextReceiver
      *   : label? typeReference
      */
-    private void parseContextReceiver(boolean inFunctionType) {
+    private fun parseContextReceiver(inFunctionType: Boolean) {
         if (tryParseValueParameter(true)) {
-            return;
+            return
         }
 
-        PsiBuilder.Marker contextReceiver = mark();
-        if (!inFunctionType && myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
-            myExpressionParsing.parseLabelDefinition();
+        val contextReceiver = mark()
+        if (!inFunctionType && myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier) {
+            myExpressionParsing.parseLabelDefinition()
         }
-        parseTypeRef();
-        contextReceiver.done(CONTEXT_RECEIVER);
+        parseTypeRef()
+        contextReceiver.done(KtNodeTypes.CONTEXT_RECEIVER)
     }
 
     /*
@@ -722,18 +605,17 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : ("[" "file:" annotationEntry+ "]")*
      *   ;
      */
-    private void parseFileAnnotationList(AnnotationParsingMode mode) {
+    private fun parseFileAnnotationList(mode: AnnotationParsingMode) {
         if (!mode.isFileAnnotationParsingMode) {
-            LOG.error("expected file annotation parsing mode, but:" + mode);
+            LOG.error("expected file annotation parsing mode, but:" + mode)
         }
 
-        PsiBuilder.Marker fileAnnotationsList = mark();
+        val fileAnnotationsList = mark()
 
         if (parseAnnotations(mode)) {
-            fileAnnotationsList.done(FILE_ANNOTATION_LIST);
-        }
-        else {
-            fileAnnotationsList.drop();
+            fileAnnotationsList.done(KtNodeTypes.FILE_ANNOTATION_LIST)
+        } else {
+            fileAnnotationsList.drop()
         }
     }
 
@@ -742,14 +624,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : (annotation | annotationList)*
      *   ;
      */
-    boolean parseAnnotations(AnnotationParsingMode mode) {
-        if (!parseAnnotationOrList(mode)) return false;
+    fun parseAnnotations(mode: AnnotationParsingMode): Boolean {
+        if (!parseAnnotationOrList(mode)) return false
 
         while (parseAnnotationOrList(mode)) {
             // do nothing
         }
 
-        return true;
+        return true
     }
 
     /*
@@ -771,141 +653,133 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "setparam"
      *   ;
      */
-    private boolean parseAnnotationOrList(AnnotationParsingMode mode) {
-        if (at(AT)) {
-            IElementType nextRawToken = myBuilder.rawLookup(1);
-            IElementType tokenToMatch = nextRawToken;
-            boolean isTargetedAnnotation = false;
+    private fun parseAnnotationOrList(mode: AnnotationParsingMode): Boolean {
+        if (at(KtTokens.AT)) {
+            val nextRawToken = myBuilder.rawLookup(1)
+            var tokenToMatch = nextRawToken
+            var isTargetedAnnotation = false
 
-            if ((nextRawToken == IDENTIFIER || ANNOTATION_TARGETS.contains(nextRawToken)) && lookahead(2) == COLON) {
-                tokenToMatch = lookahead(3);
-                isTargetedAnnotation = true;
-            }
-            else if (lookahead(1) == COLON) {
+            if ((nextRawToken === KtTokens.IDENTIFIER || ANNOTATION_TARGETS.contains(nextRawToken)) && lookahead(2) === KtTokens.COLON) {
+                tokenToMatch = lookahead(3)
+                isTargetedAnnotation = true
+            } else if (lookahead(1) === KtTokens.COLON) {
                 // recovery for "@:ann"
-                isTargetedAnnotation = true;
-                tokenToMatch = lookahead(2);
+                isTargetedAnnotation = true
+                tokenToMatch = lookahead(2)
             }
 
-            if (tokenToMatch == IDENTIFIER) {
-                return parseAnnotation(mode);
-            }
-            else if (tokenToMatch == LBRACKET) {
-                return parseAnnotationList(mode);
-            }
-            else {
+            if (tokenToMatch === KtTokens.IDENTIFIER) {
+                return parseAnnotation(mode)
+            } else if (tokenToMatch === KtTokens.LBRACKET) {
+                return parseAnnotationList(mode)
+            } else {
                 if (isTargetedAnnotation) {
-                    if (lookahead(1) == COLON) {
-                        errorAndAdvance("Expected annotation identifier after ':'", 2); // AT, COLON
+                    if (lookahead(1) === KtTokens.COLON) {
+                        errorAndAdvance("Expected annotation identifier after ':'", 2) // AT, COLON
+                    } else {
+                        errorAndAdvance("Expected annotation identifier after ':'", 3) // AT, (ANNOTATION TARGET KEYWORD), COLON
                     }
-                    else {
-                        errorAndAdvance("Expected annotation identifier after ':'", 3); // AT, (ANNOTATION TARGET KEYWORD), COLON
-                    }
-                }
-                else {
-                    errorAndAdvance("Expected annotation identifier after '@'", 1); // AT
+                } else {
+                    errorAndAdvance("Expected annotation identifier after '@'", 1) // AT
                 }
             }
-            return true;
+            return true
         }
 
-        return false;
+        return false
     }
 
-    private boolean parseAnnotationList(AnnotationParsingMode mode) {
-        assert _at(AT);
-        PsiBuilder.Marker annotation = mark();
+    private fun parseAnnotationList(mode: AnnotationParsingMode): Boolean {
+        assert(_at(KtTokens.AT))
+        val annotation = mark()
 
-        myBuilder.disableNewlines();
+        myBuilder.disableNewlines()
 
-        advance(); // AT
+        advance() // AT
 
         if (!parseAnnotationTargetIfNeeded(mode)) {
-            annotation.rollbackTo();
-            myBuilder.restoreNewlinesState();
-            return false;
+            annotation.rollbackTo()
+            myBuilder.restoreNewlinesState()
+            return false
         }
 
-        assert _at(LBRACKET);
-        advance(); // LBRACKET
+        assert(_at(KtTokens.LBRACKET))
+        advance() // LBRACKET
 
-        if (!at(IDENTIFIER) && !at(AT)) {
-            error("Expecting a list of annotations");
-        }
-        else {
-            while (at(IDENTIFIER) || at(AT)) {
-                if (at(AT)) {
-                    errorAndAdvance("No '@' needed in annotation list"); // AT
-                    continue;
+        if (!at(KtTokens.IDENTIFIER) && !at(KtTokens.AT)) {
+            error("Expecting a list of annotations")
+        } else {
+            while (at(KtTokens.IDENTIFIER) || at(KtTokens.AT)) {
+                if (at(KtTokens.AT)) {
+                    errorAndAdvance("No '@' needed in annotation list") // AT
+                    continue
                 }
 
-                parseAnnotation(DEFAULT);
-                while (at(COMMA)) {
-                    errorAndAdvance("No commas needed to separate annotations");
+                parseAnnotation(AnnotationParsingMode.DEFAULT)
+                while (at(KtTokens.COMMA)) {
+                    errorAndAdvance("No commas needed to separate annotations")
                 }
             }
         }
 
-        expect(RBRACKET, "Expecting ']' to close the annotation list");
-        myBuilder.restoreNewlinesState();
+        expect(KtTokens.RBRACKET, "Expecting ']' to close the annotation list")
+        myBuilder.restoreNewlinesState()
 
-        annotation.done(ANNOTATION);
-        return true;
+        annotation.done(KtNodeTypes.ANNOTATION)
+        return true
     }
 
     // Returns true if we should continue parse annotation
-    private boolean parseAnnotationTargetIfNeeded(AnnotationParsingMode mode) {
-        String expectedAnnotationTargetBeforeColon = "Expected annotation target before ':'";
+    private fun parseAnnotationTargetIfNeeded(mode: AnnotationParsingMode): Boolean {
+        val expectedAnnotationTargetBeforeColon = "Expected annotation target before ':'"
 
-        if (at(COLON)) {
+        if (at(KtTokens.COLON)) {
             // recovery for "@:ann"
-            errorAndAdvance(expectedAnnotationTargetBeforeColon); // COLON
-            return true;
+            errorAndAdvance(expectedAnnotationTargetBeforeColon) // COLON
+            return true
         }
 
-        KtKeywordToken targetKeyword = atTargetKeyword();
-        if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword == FILE_KEYWORD && lookahead(1) == COLON)) {
-            return false;
+        val targetKeyword = atTargetKeyword()
+        if (mode == AnnotationParsingMode.FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword === KtTokens.FILE_KEYWORD && lookahead(1) === KtTokens.COLON)) {
+            return false
         }
 
-        if (lookahead(1) == COLON && targetKeyword == null && at(IDENTIFIER)) {
+        if (lookahead(1) === KtTokens.COLON && targetKeyword == null && at(KtTokens.IDENTIFIER)) {
             // recovery for "@fil:ann"
-            errorAndAdvance(expectedAnnotationTargetBeforeColon); // IDENTIFIER
-            advance(); // COLON
-            return true;
+            errorAndAdvance(expectedAnnotationTargetBeforeColon) // IDENTIFIER
+            advance() // COLON
+            return true
         }
 
         if (targetKeyword == null && mode.isFileAnnotationParsingMode) {
-            parseAnnotationTarget(FILE_KEYWORD);
-        }
-        else if (targetKeyword != null) {
-            parseAnnotationTarget(targetKeyword);
+            parseAnnotationTarget(KtTokens.FILE_KEYWORD)
+        } else if (targetKeyword != null) {
+            parseAnnotationTarget(targetKeyword)
         }
 
-        return true;
+        return true
     }
 
-    private void parseAnnotationTarget(KtKeywordToken keyword) {
-        String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
+    private fun parseAnnotationTarget(keyword: KtKeywordToken) {
+        val message =
+            "Expecting \"" + keyword.getValue() + KtTokens.COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations"
 
-        PsiBuilder.Marker marker = mark();
+        val marker = mark()
 
         if (!expect(keyword, message)) {
-            marker.drop();
-        }
-        else {
-            marker.done(ANNOTATION_TARGET);
+            marker.drop()
+        } else {
+            marker.done(KtNodeTypes.ANNOTATION_TARGET)
         }
 
-        expect(COLON, message, IDENTIFIER_RBRACKET_LBRACKET_SET);
+        expect(KtTokens.COLON, message, IDENTIFIER_RBRACKET_LBRACKET_SET)
     }
 
-    @Nullable
-    private KtKeywordToken atTargetKeyword() {
-        for (IElementType target : ANNOTATION_TARGETS.getTypes()) {
-            if (at(target)) return (KtKeywordToken) target;
+    private fun atTargetKeyword(): KtKeywordToken? {
+        for (target in ANNOTATION_TARGETS.getTypes()) {
+            if (at(target)) return target as KtKeywordToken?
         }
-        return null;
+        return null
     }
 
     /*
@@ -917,38 +791,39 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : SimpleName{"."} typeArguments? valueArguments?
      *   ;
      */
-    private boolean parseAnnotation(AnnotationParsingMode mode) {
-        assert _at(IDENTIFIER) ||
-               // We have "@ann" or "@:ann" or "@ :ann", but not "@ ann"
-               // (it's guaranteed that call sites do not allow the latter case)
-               (_at(AT) && (!isNextRawTokenCommentOrWhitespace() || lookahead(1) == COLON))
-                : "Invalid annotation prefix";
+    private fun parseAnnotation(mode: AnnotationParsingMode): Boolean {
+        assert(
+            _at(KtTokens.IDENTIFIER) ||  // We have "@ann" or "@:ann" or "@ :ann", but not "@ ann"
+                    // (it's guaranteed that call sites do not allow the latter case)
+                    (_at(KtTokens.AT) && (!this.isNextRawTokenCommentOrWhitespace || lookahead(1) === KtTokens.COLON))
+        ) { "Invalid annotation prefix" }
 
-        PsiBuilder.Marker annotation = mark();
+        val annotation = mark()
 
-        boolean atAt = at(AT);
+        val atAt = at(KtTokens.AT)
         if (atAt) {
-            advance(); // AT
+            advance() // AT
         }
 
         if (atAt && !parseAnnotationTargetIfNeeded(mode)) {
-            annotation.rollbackTo();
-            return false;
+            annotation.rollbackTo()
+            return false
         }
 
-        PsiBuilder.Marker reference = mark();
-        PsiBuilder.Marker typeReference = mark();
-        parseUserType();
-        typeReference.done(TYPE_REFERENCE);
-        reference.done(CONSTRUCTOR_CALLEE);
+        val reference = mark()
+        val typeReference = mark()
+        parseUserType()
+        typeReference.done(KtNodeTypes.TYPE_REFERENCE)
+        reference.done(KtNodeTypes.CONSTRUCTOR_CALLEE)
 
-        parseTypeArgumentList();
+        parseTypeArgumentList()
 
-        boolean whitespaceAfterAnnotation = WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1));
-        boolean shouldBeParsedNextAsFunctionalType = at(LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments;
+        val whitespaceAfterAnnotation = KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1))
+        val shouldBeParsedNextAsFunctionalType =
+            at(KtTokens.LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments
 
-        if (at(LPAR) && !shouldBeParsedNextAsFunctionalType) {
-            myExpressionParsing.parseValueArgumentList();
+        if (at(KtTokens.LPAR) && !shouldBeParsedNextAsFunctionalType) {
+            myExpressionParsing.parseValueArgumentList()
 
             /*
              * There are two problem cases relating to parsing of annotations on a functional type:
@@ -961,21 +836,20 @@ public class KotlinParsing extends AbstractKotlinParsing {
              * In both cases, parser should rollback to start parsing of annotation and tries parse it with significant whitespace.
              * A marker is set here which means that we must to rollback.
              */
-            if (mode.typeContext && (getLastToken() != RPAR || at(ARROW))) {
-                annotation.done(ANNOTATION_ENTRY);
-                return false;
+            if (mode.typeContext && (lastToken !== KtTokens.RPAR || at(KtTokens.ARROW))) {
+                annotation.done(KtNodeTypes.ANNOTATION_ENTRY)
+                return false
             }
         }
-        annotation.done(ANNOTATION_ENTRY);
+        annotation.done(KtNodeTypes.ANNOTATION_ENTRY)
 
-        return true;
+        return true
     }
 
-    private boolean isNextRawTokenCommentOrWhitespace() {
-        return WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1));
-    }
+    private val isNextRawTokenCommentOrWhitespace: Boolean
+        get() = KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1))
 
-    public enum NameParsingMode {
+    enum class NameParsingMode {
         REQUIRED,
         ALLOWED,
         PROHIBITED
@@ -999,116 +873,107 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "object" SimpleName? primaryConstructor? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
-    private IElementType parseClassOrObject(
-            boolean object,
-            NameParsingMode nameParsingMode,
-            boolean optionalBody,
-            boolean enumClass,
-            boolean expectKindKeyword
-    ) {
+    private fun parseClassOrObject(
+        `object`: Boolean,
+        nameParsingMode: NameParsingMode?,
+        optionalBody: Boolean,
+        enumClass: Boolean,
+        expectKindKeyword: Boolean
+    ): IElementType? {
         if (expectKindKeyword) {
-            if (object) {
-                assert _at(OBJECT_KEYWORD);
+            if (`object`) {
+                assert(_at(KtTokens.OBJECT_KEYWORD))
+            } else {
+                assert(_atSet(CLASS_INTERFACE_SET))
             }
-            else {
-                assert _atSet(CLASS_INTERFACE_SET);
-            }
-            advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
-        }
-        else {
-            assert enumClass : "Currently classifiers without class/interface/object are only allowed for enums";
-            error("'class' keyword is expected after 'enum'");
+            advance() // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
+        } else {
+            assert(enumClass) { "Currently classifiers without class/interface/object are only allowed for enums" }
+            error("'class' keyword is expected after 'enum'")
         }
 
         if (nameParsingMode == NameParsingMode.REQUIRED) {
-            expect(IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET);
-        }
-        else {
-            assert object : "Must be an object to be nameless";
-            if (at(IDENTIFIER)) {
+            expect(KtTokens.IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET)
+        } else {
+            assert(`object`) { "Must be an object to be nameless" }
+            if (at(KtTokens.IDENTIFIER)) {
                 if (nameParsingMode == NameParsingMode.PROHIBITED) {
-                    errorAndAdvance("An object expression cannot bind a name");
-                }
-                else {
-                    assert nameParsingMode == NameParsingMode.ALLOWED;
-                    advance();
+                    errorAndAdvance("An object expression cannot bind a name")
+                } else {
+                    assert(nameParsingMode == NameParsingMode.ALLOWED)
+                    advance()
                 }
             }
         }
 
-        boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
+        val typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET)
 
-        PsiBuilder.Marker beforeConstructorModifiers = mark();
-        PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(TokenSet.EMPTY);
+        val beforeConstructorModifiers = mark()
+        val primaryConstructorMarker = mark()
+        val hasConstructorModifiers = parseModifierList(TokenSet.EMPTY)
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET)) {
-            beforeConstructorModifiers.rollbackTo();
-            return object ? OBJECT_DECLARATION : CLASS;
+            beforeConstructorModifiers.rollbackTo()
+            return if (`object`) KtNodeTypes.OBJECT_DECLARATION else KtNodeTypes.CLASS
         }
 
         // We are still inside a class declaration
-        beforeConstructorModifiers.drop();
+        beforeConstructorModifiers.drop()
 
-        boolean hasConstructorKeyword = at(CONSTRUCTOR_KEYWORD);
+        val hasConstructorKeyword = at(KtTokens.CONSTRUCTOR_KEYWORD)
         if (hasConstructorKeyword) {
-            advance(); // CONSTRUCTOR_KEYWORD
+            advance() // CONSTRUCTOR_KEYWORD
         }
 
-        if (at(LPAR)) {
-            parseValueParameterList(false, /* typeRequired  = */ true, LBRACE_RBRACE_SET);
-            primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
-        }
-        else if (hasConstructorModifiers || hasConstructorKeyword) {
+        if (at(KtTokens.LPAR)) {
+            parseValueParameterList(false,  /* typeRequired  = */true, LBRACE_RBRACE_SET)
+            primaryConstructorMarker.done(KtNodeTypes.PRIMARY_CONSTRUCTOR)
+        } else if (hasConstructorModifiers || hasConstructorKeyword) {
             // A comprehensive error message for cases like:
             //    class A private : Foo
             // or
             //    class A private {
-            primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
+            primaryConstructorMarker.done(KtNodeTypes.PRIMARY_CONSTRUCTOR)
             if (hasConstructorKeyword) {
-                error("Expecting primary constructor parameter list");
+                error("Expecting primary constructor parameter list")
+            } else {
+                error("Expecting 'constructor' keyword")
             }
-            else {
-                error("Expecting 'constructor' keyword");
-            }
-        }
-        else {
-            primaryConstructorMarker.drop();
+        } else {
+            primaryConstructorMarker.drop()
         }
 
-        if (at(COLON)) {
-            advance(); // COLON
-            parseDelegationSpecifierList();
+        if (at(KtTokens.COLON)) {
+            advance() // COLON
+            parseDelegationSpecifierList()
         }
 
-        OptionalMarker whereMarker = new OptionalMarker(object);
-        parseTypeConstraintsGuarded(typeParametersDeclared);
-        whereMarker.error("Where clause is not allowed for objects");
+        val whereMarker = OptionalMarker(`object`)
+        parseTypeConstraintsGuarded(typeParametersDeclared)
+        whereMarker.error("Where clause is not allowed for objects")
 
-        if (at(LBRACE)) {
+        if (at(KtTokens.LBRACE)) {
             if (enumClass) {
-                parseEnumClassBody();
+                parseEnumClassBody()
+            } else {
+                parseClassBody()
             }
-            else {
-                parseClassBody();
-            }
-        }
-        else if (!optionalBody) {
-            PsiBuilder.Marker fakeBody = mark();
-            error("Expecting a class body");
-            fakeBody.done(CLASS_BODY);
+        } else if (!optionalBody) {
+            val fakeBody = mark()
+            error("Expecting a class body")
+            fakeBody.done(KtNodeTypes.CLASS_BODY)
         }
 
-        return object ? OBJECT_DECLARATION : CLASS;
+        return if (`object`) KtNodeTypes.OBJECT_DECLARATION else KtNodeTypes.CLASS
     }
 
-    private IElementType parseClass(boolean enumClass, boolean expectKindKeyword) {
-        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword);
+    private fun parseClass(enumClass: Boolean, expectKindKeyword: Boolean): IElementType? {
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword)
     }
 
-    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false, true);
+    fun parseObject(nameParsingMode: NameParsingMode?, optionalBody: Boolean) {
+        parseClassOrObject(true, nameParsingMode, optionalBody, false, true)
     }
 
     /*
@@ -1116,55 +981,50 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "{" enumEntries (";" members)? "}"
      *   ;
      */
-    private void parseEnumClassBody() {
-        if (!at(LBRACE)) return;
+    private fun parseEnumClassBody() {
+        if (!at(KtTokens.LBRACE)) return
 
-        PsiBuilder.Marker body = mark();
-        myBuilder.enableNewlines();
+        val body = mark()
+        myBuilder.enableNewlines()
 
-        advance(); // LBRACE
+        advance() // LBRACE
 
-        if (!parseEnumEntries() && !at(RBRACE)) {
-            error("Expecting ';' after the last enum entry or '}' to close enum class body");
+        if (!parseEnumEntries() && !at(KtTokens.RBRACE)) {
+            error("Expecting ';' after the last enum entry or '}' to close enum class body")
         }
-        parseMembers();
-        expect(RBRACE, "Expecting '}' to close enum class body");
+        parseMembers()
+        expect(KtTokens.RBRACE, "Expecting '}' to close enum class body")
 
-        myBuilder.restoreNewlinesState();
-        body.done(CLASS_BODY);
+        myBuilder.restoreNewlinesState()
+        body.done(KtNodeTypes.CLASS_BODY)
     }
 
     /**
      * enumEntries
-     *   : enumEntry{","}?
-     *   ;
+     * : enumEntry{","}?
+     * ;
      *
      * @return true if enum regular members can follow, false otherwise
      */
-    private boolean parseEnumEntries() {
-        while (!eof() && !at(RBRACE)) {
-            switch (parseEnumEntry()) {
-                case FAILED:
-                    // Special case without any enum entries but with possible members after semicolon
-                    if (at(SEMICOLON)) {
-                        advance();
-                        return true;
+    private fun parseEnumEntries(): Boolean {
+        while (!eof() && !at(KtTokens.RBRACE)) {
+            when (parseEnumEntry()) {
+                ParseEnumEntryResult.FAILED ->                     // Special case without any enum entries but with possible members after semicolon
+                    if (at(KtTokens.SEMICOLON)) {
+                        advance()
+                        return true
+                    } else {
+                        return false
                     }
-                    else {
-                        return false;
-                    }
-                case NO_DELIMITER:
-                    return false;
-                case COMMA_DELIMITER:
-                    break;
-                case SEMICOLON_DELIMITER:
-                    return true;
+                ParseEnumEntryResult.NO_DELIMITER -> return false
+                ParseEnumEntryResult.COMMA_DELIMITER -> {}
+                ParseEnumEntryResult.SEMICOLON_DELIMITER -> return true
             }
         }
-        return false;
+        return false
     }
 
-    private enum ParseEnumEntryResult {
+    private enum class ParseEnumEntryResult {
         FAILED,
         NO_DELIMITER,
         COMMA_DELIMITER,
@@ -1176,55 +1036,55 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : modifiers SimpleName ("(" arguments ")")? classBody?
      *   ;
      */
-    private ParseEnumEntryResult parseEnumEntry() {
-        PsiBuilder.Marker entry = mark();
+    private fun parseEnumEntry(): ParseEnumEntryResult {
+        val entry = mark()
 
-        parseModifierList(COMMA_SEMICOLON_RBRACE_SET);
+        parseModifierList(COMMA_SEMICOLON_RBRACE_SET)
 
-        if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
-            advance(); // IDENTIFIER
+        if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(KtTokens.IDENTIFIER)) {
+            advance() // IDENTIFIER
 
-            if (at(LPAR)) {
+            if (at(KtTokens.LPAR)) {
                 // Arguments should be parsed here
                 // Also, "fake" constructor call tree is created,
                 // with empty type name inside
-                PsiBuilder.Marker initializerList = mark();
-                PsiBuilder.Marker delegatorSuperCall = mark();
+                val initializerList = mark()
+                val delegatorSuperCall = mark()
 
-                PsiBuilder.Marker callee = mark();
-                PsiBuilder.Marker typeReference = mark();
-                PsiBuilder.Marker type = mark();
-                PsiBuilder.Marker referenceExpr = mark();
-                referenceExpr.done(ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
-                type.done(USER_TYPE);
-                typeReference.done(TYPE_REFERENCE);
-                callee.done(CONSTRUCTOR_CALLEE);
+                val callee = mark()
+                val typeReference = mark()
+                val type = mark()
+                val referenceExpr = mark()
+                referenceExpr.done(KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
+                type.done(KtNodeTypes.USER_TYPE)
+                typeReference.done(KtNodeTypes.TYPE_REFERENCE)
+                callee.done(KtNodeTypes.CONSTRUCTOR_CALLEE)
 
-                myExpressionParsing.parseValueArgumentList();
-                delegatorSuperCall.done(SUPER_TYPE_CALL_ENTRY);
-                initializerList.done(INITIALIZER_LIST);
+                myExpressionParsing.parseValueArgumentList()
+                delegatorSuperCall.done(KtNodeTypes.SUPER_TYPE_CALL_ENTRY)
+                initializerList.done(KtNodeTypes.INITIALIZER_LIST)
             }
-            if (at(LBRACE)) {
-                parseClassBody();
+            if (at(KtTokens.LBRACE)) {
+                parseClassBody()
             }
-            boolean commaFound = at(COMMA);
+            val commaFound = at(KtTokens.COMMA)
             if (commaFound) {
-                advance();
+                advance()
             }
-            boolean semicolonFound = at(SEMICOLON);
+            val semicolonFound = at(KtTokens.SEMICOLON)
             if (semicolonFound) {
-                advance();
+                advance()
             }
 
             // Probably some helper function
-            closeDeclarationWithCommentBinders(entry, ENUM_ENTRY, true);
-            return semicolonFound
-                   ? ParseEnumEntryResult.SEMICOLON_DELIMITER
-                   : (commaFound ? ParseEnumEntryResult.COMMA_DELIMITER : ParseEnumEntryResult.NO_DELIMITER);
-        }
-        else {
-            entry.rollbackTo();
-            return ParseEnumEntryResult.FAILED;
+            closeDeclarationWithCommentBinders(entry, KtNodeTypes.ENUM_ENTRY, true)
+            return if (semicolonFound)
+                ParseEnumEntryResult.SEMICOLON_DELIMITER
+            else
+                (if (commaFound) ParseEnumEntryResult.COMMA_DELIMITER else ParseEnumEntryResult.NO_DELIMITER)
+        } else {
+            entry.rollbackTo()
+            return ParseEnumEntryResult.FAILED
         }
     }
 
@@ -1233,29 +1093,29 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : ("{" members "}")?
      *   ;
      */
-    private void parseClassBody() {
-        PsiBuilder.Marker body = mark();
+    private fun parseClassBody() {
+        val body = mark()
 
-        myBuilder.enableNewlines();
+        myBuilder.enableNewlines()
 
-        if (expect(LBRACE, "Expecting a class body")) {
-            parseMembers();
-            expect(RBRACE, "Missing '}");
+        if (expect(KtTokens.LBRACE, "Expecting a class body")) {
+            parseMembers()
+            expect(KtTokens.RBRACE, "Missing '}")
         }
 
-        myBuilder.restoreNewlinesState();
+        myBuilder.restoreNewlinesState()
 
-        body.done(CLASS_BODY);
+        body.done(KtNodeTypes.CLASS_BODY)
     }
 
     /**
      * members
-     *   : memberDeclaration*
-     *   ;
+     * : memberDeclaration*
+     * ;
      */
-    private void parseMembers() {
-        while (!eof() && !at(RBRACE)) {
-            parseMemberDeclaration();
+    private fun parseMembers() {
+        while (!eof() && !at(KtTokens.RBRACE)) {
+            parseMemberDeclaration()
         }
     }
 
@@ -1276,56 +1136,52 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : object
      *   ;
      */
-    private void parseMemberDeclaration() {
-        if (at(SEMICOLON)) {
-            advance(); // SEMICOLON
-            return;
+    private fun parseMemberDeclaration() {
+        if (at(KtTokens.SEMICOLON)) {
+            advance() // SEMICOLON
+            return
         }
-        PsiBuilder.Marker decl = mark();
+        val decl = mark()
 
-        ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, TokenSet.EMPTY);
+        val detector = ModifierDetector()
+        parseModifierList(detector, TokenSet.EMPTY)
 
-        IElementType declType = parseMemberDeclarationRest(detector);
+        val declType = parseMemberDeclarationRest(detector)
 
         if (declType == null) {
-            errorWithRecovery("Expecting member declaration", TokenSet.EMPTY);
-            decl.drop();
-        }
-        else {
-            closeDeclarationWithCommentBinders(decl, declType, true);
+            errorWithRecovery("Expecting member declaration", TokenSet.EMPTY)
+            decl.drop()
+        } else {
+            closeDeclarationWithCommentBinders(decl, declType, true)
         }
     }
 
-    private IElementType parseMemberDeclarationRest(@NotNull ModifierDetector modifierDetector) {
-        IElementType declType = parseCommonDeclaration(
-                modifierDetector,
-                modifierDetector.isCompanionDetected() ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED,
-                DeclarationParsingMode.MEMBER_OR_TOPLEVEL
-        );
+    private fun parseMemberDeclarationRest(modifierDetector: ModifierDetector): IElementType? {
+        var declType = parseCommonDeclaration(
+            modifierDetector,
+            if (modifierDetector.isCompanionDetected) NameParsingMode.ALLOWED else NameParsingMode.REQUIRED,
+            DeclarationParsingMode.MEMBER_OR_TOPLEVEL
+        )
 
-        if (declType != null) return declType;
+        if (declType != null) return declType
 
-        if (at(INIT_KEYWORD)) {
-            advance(); // init
-            if (at(LBRACE)) {
-                parseBlock();
+        if (at(KtTokens.INIT_KEYWORD)) {
+            advance() // init
+            if (at(KtTokens.LBRACE)) {
+                parseBlock()
+            } else {
+                mark().error("Expecting '{' after 'init'")
             }
-            else {
-                mark().error("Expecting '{' after 'init'");
-            }
-            declType = CLASS_INITIALIZER;
+            declType = KtNodeTypes.CLASS_INITIALIZER
+        } else if (at(KtTokens.CONSTRUCTOR_KEYWORD)) {
+            parseSecondaryConstructor()
+            declType = KtNodeTypes.SECONDARY_CONSTRUCTOR
+        } else if (at(KtTokens.LBRACE)) {
+            error("Expecting member declaration")
+            parseBlock()
+            declType = KtNodeTypes.FUN
         }
-        else if (at(CONSTRUCTOR_KEYWORD)) {
-            parseSecondaryConstructor();
-            declType = SECONDARY_CONSTRUCTOR;
-        }
-        else if (at(LBRACE)) {
-            error("Expecting member declaration");
-            parseBlock();
-            declType = FUN;
-        }
-        return declType;
+        return declType
     }
 
     /*
@@ -1335,67 +1191,63 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "this" valueArguments
      *   : "super" valueArguments
      */
-    private void parseSecondaryConstructor() {
-        assert _at(CONSTRUCTOR_KEYWORD);
+    private fun parseSecondaryConstructor() {
+        assert(_at(KtTokens.CONSTRUCTOR_KEYWORD))
 
-        advance(); // CONSTRUCTOR_KEYWORD
+        advance() // CONSTRUCTOR_KEYWORD
 
-        if (at(LPAR)) {
-            parseValueParameterList(false, /*typeRequired = */ true, VALUE_ARGS_RECOVERY_SET);
+        if (at(KtTokens.LPAR)) {
+            parseValueParameterList(false,  /*typeRequired = */true, VALUE_ARGS_RECOVERY_SET)
+        } else {
+            errorWithRecovery("Expecting '('", TokenSet.orSet(VALUE_ARGS_RECOVERY_SET, TokenSet.create(KtTokens.COLON)))
         }
-        else {
-            errorWithRecovery("Expecting '('", TokenSet.orSet(VALUE_ARGS_RECOVERY_SET, TokenSet.create(COLON)));
-        }
 
-        if (at(COLON)) {
-            advance(); // COLON
+        if (at(KtTokens.COLON)) {
+            advance() // COLON
 
-            PsiBuilder.Marker delegationCall = mark();
+            val delegationCall = mark()
 
-            if (at(THIS_KEYWORD) || at(SUPER_KEYWORD)) {
-                parseThisOrSuper();
-                myExpressionParsing.parseValueArgumentList();
-            }
-            else {
-                error("Expecting a 'this' or 'super' constructor call");
-                PsiBuilder.Marker beforeWrongDelegationCallee = null;
-                if (!at(LPAR)) {
-                    beforeWrongDelegationCallee = mark();
-                    advance(); // wrong delegation callee
+            if (at(KtTokens.THIS_KEYWORD) || at(KtTokens.SUPER_KEYWORD)) {
+                parseThisOrSuper()
+                myExpressionParsing.parseValueArgumentList()
+            } else {
+                error("Expecting a 'this' or 'super' constructor call")
+                var beforeWrongDelegationCallee: PsiBuilder.Marker? = null
+                if (!at(KtTokens.LPAR)) {
+                    beforeWrongDelegationCallee = mark()
+                    advance() // wrong delegation callee
                 }
-                myExpressionParsing.parseValueArgumentList();
+                myExpressionParsing.parseValueArgumentList()
 
                 if (beforeWrongDelegationCallee != null) {
-                    if (at(LBRACE)) {
-                        beforeWrongDelegationCallee.drop();
-                    }
-                    else {
-                        beforeWrongDelegationCallee.rollbackTo();
+                    if (at(KtTokens.LBRACE)) {
+                        beforeWrongDelegationCallee.drop()
+                    } else {
+                        beforeWrongDelegationCallee.rollbackTo()
                     }
                 }
             }
 
-            delegationCall.done(CONSTRUCTOR_DELEGATION_CALL);
-        }
-        else {
+            delegationCall.done(KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL)
+        } else {
             // empty constructor delegation call
-            PsiBuilder.Marker emptyDelegationCall = mark();
-            mark().done(CONSTRUCTOR_DELEGATION_REFERENCE);
-            emptyDelegationCall.done(CONSTRUCTOR_DELEGATION_CALL);
+            val emptyDelegationCall = mark()
+            mark().done(KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE)
+            emptyDelegationCall.done(KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL)
         }
 
-        if (at(LBRACE)) {
-            parseBlock();
+        if (at(KtTokens.LBRACE)) {
+            parseBlock()
         }
     }
 
-    private void parseThisOrSuper() {
-        assert _at(THIS_KEYWORD) || _at(SUPER_KEYWORD);
-        PsiBuilder.Marker mark = mark();
+    private fun parseThisOrSuper() {
+        assert(_at(KtTokens.THIS_KEYWORD) || _at(KtTokens.SUPER_KEYWORD))
+        val mark = mark()
 
-        advance(); // THIS_KEYWORD | SUPER_KEYWORD
+        advance() // THIS_KEYWORD | SUPER_KEYWORD
 
-        mark.done(CONSTRUCTOR_DELEGATION_REFERENCE);
+        mark.done(KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE)
     }
 
     /*
@@ -1403,44 +1255,38 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : modifiers "typealias" SimpleName typeParameters? "=" type
      *   ;
      */
-    private IElementType parseTypeAlias() {
-        assert _at(TYPE_ALIAS_KEYWORD);
+    private fun parseTypeAlias(): IElementType? {
+        assert(_at(KtTokens.TYPE_ALIAS_KEYWORD))
 
-        advance(); // TYPE_ALIAS_KEYWORD
+        advance() // TYPE_ALIAS_KEYWORD
 
-        expect(IDENTIFIER, "Type name expected", LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET);
+        expect(KtTokens.IDENTIFIER, "Type name expected", LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET)
 
-        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
+        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET)
 
-        if (at(WHERE_KEYWORD)) {
-            PsiBuilder.Marker error = mark();
-            parseTypeConstraints();
-            error.error("Type alias parameters can't have bounds");
+        if (at(KtTokens.WHERE_KEYWORD)) {
+            val error = mark()
+            parseTypeConstraints()
+            error.error("Type alias parameters can't have bounds")
         }
 
-        expect(EQ, "Expecting '='", TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET);
+        expect(KtTokens.EQ, "Expecting '='", TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET)
 
-        parseTypeRef();
+        parseTypeRef()
 
-        consumeIf(SEMICOLON);
+        consumeIf(KtTokens.SEMICOLON)
 
-        return TYPEALIAS;
+        return KtNodeTypes.TYPEALIAS
     }
 
-    enum DeclarationParsingMode {
+    enum class DeclarationParsingMode(
+        val destructuringAllowed: Boolean,
+        val accessorsAllowed: Boolean,
+        val canBeEnumUsedAsSoftKeyword: Boolean
+    ) {
         MEMBER_OR_TOPLEVEL(false, true, true),
         LOCAL(true, false, false),
-        SCRIPT_TOPLEVEL(true, true, false);
-
-        public final boolean destructuringAllowed;
-        public final boolean accessorsAllowed;
-        public final boolean canBeEnumUsedAsSoftKeyword;
-
-        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
-            this.destructuringAllowed = destructuringAllowed;
-            this.accessorsAllowed = accessorsAllowed;
-            this.canBeEnumUsedAsSoftKeyword = canBeEnumUsedAsSoftKeyword;
-        }
+        SCRIPT_TOPLEVEL(true, true, false)
     }
 
     /*
@@ -1458,101 +1304,105 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
-    public IElementType parseProperty(DeclarationParsingMode mode) {
-        assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
-        advance();
+    fun parseProperty(mode: DeclarationParsingMode): IElementType {
+        assert(at(KtTokens.VAL_KEYWORD) || at(KtTokens.VAR_KEYWORD))
+        advance()
 
-        boolean typeParametersDeclared = at(LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET);
+        val typeParametersDeclared = at(KtTokens.LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET)
 
-        myBuilder.disableJoiningComplexTokens();
+        myBuilder.disableJoiningComplexTokens()
 
-        PsiBuilder.Marker receiver = mark();
-        boolean receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET);
+        val receiver = mark()
+        val receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET)
 
-        boolean multiDeclaration = at(LPAR);
+        val multiDeclaration = at(KtTokens.LPAR)
 
-        errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration");
+        errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration")
 
-        boolean isNameOnTheNextLine = eol();
-        PsiBuilder.Marker beforeName = mark();
+        val isNameOnTheNextLine = eol()
+        val beforeName = mark()
 
         if (multiDeclaration) {
-            PsiBuilder.Marker multiDecl = mark();
-            parseMultiDeclarationName(PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET);
-            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
-        }
-        else {
-            parseFunctionOrPropertyName(receiverTypeDeclared, "property", PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET, /*nameRequired = */ true);
-        }
-
-        myBuilder.restoreJoiningComplexTokensState();
-
-        boolean noTypeReference = true;
-        if (at(COLON)) {
-            noTypeReference = false;
-            PsiBuilder.Marker type = mark();
-            advance(); // COLON
-            parseTypeRef();
-            errorIf(type, multiDeclaration, "Type annotations are not allowed on destructuring declarations");
+            val multiDecl = mark()
+            parseMultiDeclarationName(PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET)
+            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values")
+        } else {
+            parseFunctionOrPropertyName(
+                receiverTypeDeclared,
+                "property",
+                PROPERTY_NAME_FOLLOW_SET,
+                PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET,  /*nameRequired = */
+                true
+            )
         }
 
-        parseTypeConstraintsGuarded(typeParametersDeclared);
+        myBuilder.restoreJoiningComplexTokensState()
+
+        var noTypeReference = true
+        if (at(KtTokens.COLON)) {
+            noTypeReference = false
+            val type = mark()
+            advance() // COLON
+            parseTypeRef()
+            errorIf(type, multiDeclaration, "Type annotations are not allowed on destructuring declarations")
+        }
+
+        parseTypeConstraintsGuarded(typeParametersDeclared)
 
         if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
             // Do not parse property identifier on the next line if declaration is invalid
             // In most cases this identifier relates to next statement/declaration
-            beforeName.rollbackTo();
-            error("Expecting property name or receiver type");
-            return PROPERTY;
+            beforeName.rollbackTo()
+            error("Expecting property name or receiver type")
+            return KtNodeTypes.PROPERTY
         }
 
-        beforeName.drop();
+        beforeName.drop()
 
         if (mode.accessorsAllowed) {
             // It's only needed for non-local properties, because in local ones:
             // "val a = 1; b" must not be an infix call of b on "val ...;"
 
-            myBuilder.enableNewlines();
-            boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
-            myBuilder.restoreNewlinesState();
+            myBuilder.enableNewlines()
+            val hasNewLineWithSemicolon = consumeIf(KtTokens.SEMICOLON) && myBuilder.newlineBeforeCurrentToken()
+            myBuilder.restoreNewlinesState()
 
             if (!hasNewLineWithSemicolon) {
-                PropertyComponentKind.Collector alreadyRead = new PropertyComponentKind.Collector();
-                PropertyComponentKind propertyComponentKind = parsePropertyComponent(alreadyRead);
+                val alreadyRead = PropertyComponentKind.Collector()
+                var propertyComponentKind = parsePropertyComponent(alreadyRead)
 
                 while (propertyComponentKind != null) {
-                    alreadyRead.collect(propertyComponentKind);
-                    propertyComponentKind = parsePropertyComponent(alreadyRead);
+                    alreadyRead.collect(propertyComponentKind)
+                    propertyComponentKind = parsePropertyComponent(alreadyRead)
                 }
 
                 if (!atSet(EOL_OR_SEMICOLON_RBRACE_SET)) {
-                    if (getLastToken() != SEMICOLON) {
+                    if (lastToken !== KtTokens.SEMICOLON) {
                         errorUntil(
-                                "Property getter or setter expected",
-                                TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+                            "Property getter or setter expected",
+                            TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(KtTokens.EOL_OR_SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE))
+                        )
                     }
-                }
-                else {
-                    consumeIf(SEMICOLON);
+                } else {
+                    consumeIf(KtTokens.SEMICOLON)
                 }
             }
         }
 
-        return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
+        return if (multiDeclaration) KtNodeTypes.DESTRUCTURING_DECLARATION else KtNodeTypes.PROPERTY
     }
 
-    private boolean parsePropertyDelegateOrAssignment() {
-        if (at(BY_KEYWORD)) {
-            parsePropertyDelegate();
-            return true;
-        }
-        else if (at(EQ)) {
-            advance(); // EQ
-            myExpressionParsing.parseExpression();
-            return true;
+    private fun parsePropertyDelegateOrAssignment(): Boolean {
+        if (at(KtTokens.BY_KEYWORD)) {
+            parsePropertyDelegate()
+            return true
+        } else if (at(KtTokens.EQ)) {
+            advance() // EQ
+            myExpressionParsing.parseExpression()
+            return true
         }
 
-        return false;
+        return false
     }
 
     /*
@@ -1560,68 +1410,67 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "by" expression
      *   ;
      */
-    private void parsePropertyDelegate() {
-        assert _at(BY_KEYWORD);
-        PsiBuilder.Marker delegate = mark();
-        advance(); // BY_KEYWORD
-        myExpressionParsing.parseExpression();
-        delegate.done(PROPERTY_DELEGATE);
+    private fun parsePropertyDelegate() {
+        assert(_at(KtTokens.BY_KEYWORD))
+        val delegate = mark()
+        advance() // BY_KEYWORD
+        myExpressionParsing.parseExpression()
+        delegate.done(KtNodeTypes.PROPERTY_DELEGATE)
     }
 
     /*
      * (SimpleName (":" type){","})
      */
-    public void parseMultiDeclarationName(TokenSet follow, TokenSet recoverySet) {
+    fun parseMultiDeclarationName(follow: TokenSet, recoverySet: TokenSet?) {
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
-        myBuilder.disableNewlines();
-        advance(); // LPAR
+        myBuilder.disableNewlines()
+        advance() // LPAR
 
         if (!atSet(follow)) {
             while (true) {
-                if (at(COMMA)) {
-                    errorAndAdvance("Expecting a name");
+                if (at(KtTokens.COMMA)) {
+                    errorAndAdvance("Expecting a name")
+                } else if (at(KtTokens.RPAR)) { // For declaration similar to `val () = somethingCall()`
+                    error("Expecting a name")
+                    break
                 }
-                else if (at(RPAR)) { // For declaration similar to `val () = somethingCall()`
-                    error("Expecting a name");
-                    break;
+                val property = mark()
+
+                parseModifierList(COMMA_RPAR_COLON_EQ_SET)
+
+                expect(KtTokens.IDENTIFIER, "Expecting a name", recoverySet)
+
+                if (at(KtTokens.COLON)) {
+                    advance() // COLON
+                    parseTypeRef(follow)
                 }
-                PsiBuilder.Marker property = mark();
+                property.done(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY)
 
-                parseModifierList(COMMA_RPAR_COLON_EQ_SET);
-
-                expect(IDENTIFIER, "Expecting a name", recoverySet);
-
-                if (at(COLON)) {
-                    advance(); // COLON
-                    parseTypeRef(follow);
-                }
-                property.done(DESTRUCTURING_DECLARATION_ENTRY);
-
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-                if (at(RPAR)) break;
+                if (!at(KtTokens.COMMA)) break
+                advance() // COMMA
+                if (at(KtTokens.RPAR)) break
             }
         }
 
-        expect(RPAR, "Expecting ')'", follow);
-        myBuilder.restoreNewlinesState();
+        expect(KtTokens.RPAR, "Expecting ')'", follow)
+        myBuilder.restoreNewlinesState()
     }
 
-    private enum PropertyComponentKind {
+    private enum class PropertyComponentKind {
         GET,
         SET,
         FIELD;
 
-        static class Collector {
-            private final boolean[] collected = { false, false, false };
+        internal class Collector {
+            private val collected = booleanArrayOf(false, false, false)
 
-            public void collect(PropertyComponentKind kind) {
-                collected[kind.ordinal()] = true;
+            fun collect(kind: PropertyComponentKind) {
+                collected[kind.ordinal] = true
             }
 
-            public boolean contains(PropertyComponentKind kind) {
-                return collected[kind.ordinal()];
+            fun contains(kind: PropertyComponentKind): Boolean {
+                return collected[kind.ordinal]
             }
         }
     }
@@ -1638,101 +1487,108 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *        ) functionBody
      *   ;
      */
-    @Nullable
-    private PropertyComponentKind parsePropertyComponent(PropertyComponentKind.Collector notAllowedKind) {
-        PsiBuilder.Marker propertyComponent = mark();
+    private fun parsePropertyComponent(notAllowedKind: PropertyComponentKind.Collector): PropertyComponentKind? {
+        val propertyComponent = mark()
 
-        parseModifierList(TokenSet.EMPTY);
+        parseModifierList(TokenSet.EMPTY)
 
-        PropertyComponentKind propertyComponentKind;
-        if (at(GET_KEYWORD)) {
-            propertyComponentKind = PropertyComponentKind.GET;
-        }
-        else if (at(SET_KEYWORD)) {
-            propertyComponentKind = PropertyComponentKind.SET;
-        }
-        else if (at(FIELD_KEYWORD)) {
-            propertyComponentKind = PropertyComponentKind.FIELD;
-        }
-        else {
-            propertyComponent.rollbackTo();
-            return null;
+        val propertyComponentKind: PropertyComponentKind?
+        if (at(KtTokens.GET_KEYWORD)) {
+            propertyComponentKind = PropertyComponentKind.GET
+        } else if (at(KtTokens.SET_KEYWORD)) {
+            propertyComponentKind = PropertyComponentKind.SET
+        } else if (at(KtTokens.FIELD_KEYWORD)) {
+            propertyComponentKind = PropertyComponentKind.FIELD
+        } else {
+            propertyComponent.rollbackTo()
+            return null
         }
 
         if (notAllowedKind.contains(propertyComponentKind)) {
-            propertyComponent.rollbackTo();
-            return null;
+            propertyComponent.rollbackTo()
+            return null
         }
 
-        advance(); // GET_KEYWORD, SET_KEYWORD or FIELD_KEYWORD
+        advance() // GET_KEYWORD, SET_KEYWORD or FIELD_KEYWORD
 
-        if (!at(LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
+        if (!at(KtTokens.LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
             // Account for Jet-114 (val a : int get {...})
             if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
-                errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
-            }
-            else {
-                closeDeclarationWithCommentBinders(propertyComponent, PROPERTY_ACCESSOR, true);
-                return propertyComponentKind;
+                errorUntil(
+                    "Accessor body expected",
+                    TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(KtTokens.LBRACE, KtTokens.LPAR, KtTokens.EQ))
+                )
+            } else {
+                closeDeclarationWithCommentBinders(propertyComponent, KtNodeTypes.PROPERTY_ACCESSOR, true)
+                return propertyComponentKind
             }
         }
 
-        myBuilder.disableNewlines();
+        myBuilder.disableNewlines()
 
         if (propertyComponentKind != PropertyComponentKind.FIELD) {
-            PsiBuilder.Marker parameterList = mark();
-            expect(LPAR, "Expecting '('", RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET);
+            val parameterList = mark()
+            expect(KtTokens.LPAR, "Expecting '('", RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET)
             if (propertyComponentKind == PropertyComponentKind.SET) {
-                PsiBuilder.Marker setterParameter = mark();
-                parseModifierList(COMMA_COLON_RPAR_SET);
-                expect(IDENTIFIER, "Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET);
+                val setterParameter = mark()
+                parseModifierList(COMMA_COLON_RPAR_SET)
+                expect(KtTokens.IDENTIFIER, "Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET)
 
-                if (at(COLON)) {
-                    advance(); // COLON
-                    parseTypeRef();
+                if (at(KtTokens.COLON)) {
+                    advance() // COLON
+                    parseTypeRef()
                 }
-                setterParameter.done(VALUE_PARAMETER);
-                if (at(COMMA)) {
-                    advance(); // COMMA
+                setterParameter.done(KtNodeTypes.VALUE_PARAMETER)
+                if (at(KtTokens.COMMA)) {
+                    advance() // COMMA
                 }
             }
-            if (!at(RPAR)) {
-                errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
+            if (!at(KtTokens.RPAR)) {
+                errorUntil(
+                    "Expecting ')'",
+                    TokenSet.create(
+                        KtTokens.RPAR,
+                        KtTokens.COLON,
+                        KtTokens.LBRACE,
+                        KtTokens.RBRACE,
+                        KtTokens.EQ,
+                        KtTokens.EOL_OR_SEMICOLON
+                    )
+                )
             }
-            if (at(RPAR)) {
-                advance();
+            if (at(KtTokens.RPAR)) {
+                advance()
             }
-            parameterList.done(VALUE_PARAMETER_LIST);
+            parameterList.done(KtNodeTypes.VALUE_PARAMETER_LIST)
         }
-        myBuilder.restoreNewlinesState();
+        myBuilder.restoreNewlinesState()
 
-        if (at(COLON)) {
-            advance();
+        if (at(KtTokens.COLON)) {
+            advance()
 
-            parseTypeRef();
+            parseTypeRef()
         }
 
         if (propertyComponentKind != PropertyComponentKind.FIELD) {
-            parseFunctionContract();
-            parseFunctionBody();
-        } else if (at(EQ)) {
-            advance();
-            myExpressionParsing.parseExpression();
-            consumeIf(SEMICOLON);
+            parseFunctionContract()
+            parseFunctionBody()
+        } else if (at(KtTokens.EQ)) {
+            advance()
+            myExpressionParsing.parseExpression()
+            consumeIf(KtTokens.SEMICOLON)
         }
 
         if (propertyComponentKind == PropertyComponentKind.FIELD) {
-            closeDeclarationWithCommentBinders(propertyComponent, BACKING_FIELD, true);
+            closeDeclarationWithCommentBinders(propertyComponent, KtNodeTypes.BACKING_FIELD, true)
         } else {
-            closeDeclarationWithCommentBinders(propertyComponent, PROPERTY_ACCESSOR, true);
+            closeDeclarationWithCommentBinders(propertyComponent, KtNodeTypes.PROPERTY_ACCESSOR, true)
         }
 
-        return propertyComponentKind;
+        return propertyComponentKind
     }
 
-    @NotNull
-    private IElementType parseFunction() {
-        return parseFunction(false);
+    private fun parseFunction(): IElementType? {
+        return parseFunction(false)
     }
 
     /*
@@ -1746,137 +1602,144 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      */
     @Contract("false -> !null")
-    IElementType parseFunction(boolean failIfIdentifierExists) {
-        assert _at(FUN_KEYWORD);
+    fun parseFunction(failIfIdentifierExists: Boolean): IElementType? {
+        assert(_at(KtTokens.FUN_KEYWORD))
 
-        advance(); // FUN_KEYWORD
+        advance() // FUN_KEYWORD
 
         // Recovery for the case of class A { fun| }
-        if (at(RBRACE)) {
-            error("Function body expected");
-            return FUN;
+        if (at(KtTokens.RBRACE)) {
+            error("Function body expected")
+            return KtNodeTypes.FUN
         }
 
-        boolean typeParameterListOccurred = false;
-        if (at(LT)) {
-            parseTypeParameterList(LBRACKET_LBRACE_RBRACE_LPAR_SET);
-            typeParameterListOccurred = true;
+        var typeParameterListOccurred = false
+        if (at(KtTokens.LT)) {
+            parseTypeParameterList(LBRACKET_LBRACE_RBRACE_LPAR_SET)
+            typeParameterListOccurred = true
         }
 
-        myBuilder.disableJoiningComplexTokens();
+        myBuilder.disableJoiningComplexTokens()
 
-        boolean receiverFound = parseReceiverType("function", FUNCTION_NAME_FOLLOW_SET);
+        val receiverFound = parseReceiverType("function", FUNCTION_NAME_FOLLOW_SET)
 
-        if (at(IDENTIFIER) && failIfIdentifierExists) {
-            myBuilder.restoreJoiningComplexTokensState();
-            return null;
+        if (at(KtTokens.IDENTIFIER) && failIfIdentifierExists) {
+            myBuilder.restoreJoiningComplexTokensState()
+            return null
         }
 
         // function as expression has no name
-        parseFunctionOrPropertyName(receiverFound, "function", FUNCTION_NAME_FOLLOW_SET, FUNCTION_NAME_RECOVERY_SET, /*nameRequired = */ false);
+        parseFunctionOrPropertyName(
+            receiverFound,
+            "function",
+            FUNCTION_NAME_FOLLOW_SET,
+            FUNCTION_NAME_RECOVERY_SET,  /*nameRequired = */
+            false
+        )
 
-        myBuilder.restoreJoiningComplexTokensState();
+        myBuilder.restoreJoiningComplexTokensState()
 
-        if (at(LT)) {
-            PsiBuilder.Marker error = mark();
-            parseTypeParameterList(LPAR_VALUE_PARAMETERS_FOLLOW_SET);
+        if (at(KtTokens.LT)) {
+            var error = mark()
+            parseTypeParameterList(LPAR_VALUE_PARAMETERS_FOLLOW_SET)
             if (typeParameterListOccurred) {
-                int finishIndex = myBuilder.rawTokenIndex();
-                error.rollbackTo();
-                error = mark();
-                advance(finishIndex - myBuilder.rawTokenIndex());
-                error.error("Only one type parameter list is allowed for a function");
+                val finishIndex = myBuilder.rawTokenIndex()
+                error.rollbackTo()
+                error = mark()
+                advance(finishIndex - myBuilder.rawTokenIndex())
+                error.error("Only one type parameter list is allowed for a function")
+            } else {
+                error.drop()
             }
-            else {
-                error.drop();
-            }
-            typeParameterListOccurred = true;
+            typeParameterListOccurred = true
         }
 
-        if (at(LPAR)) {
-            parseValueParameterList(false, /* typeRequired  = */ false, VALUE_PARAMETERS_FOLLOW_SET);
-        }
-        else {
-            error("Expecting '('");
-        }
-
-        if (at(COLON)) {
-            advance(); // COLON
-
-            parseTypeRef();
+        if (at(KtTokens.LPAR)) {
+            parseValueParameterList(false,  /* typeRequired  = */false, VALUE_PARAMETERS_FOLLOW_SET)
+        } else {
+            error("Expecting '('")
         }
 
-        boolean functionContractOccurred = parseFunctionContract();
+        if (at(KtTokens.COLON)) {
+            advance() // COLON
 
-        parseTypeConstraintsGuarded(typeParameterListOccurred);
+            parseTypeRef()
+        }
+
+        val functionContractOccurred = parseFunctionContract()
+
+        parseTypeConstraintsGuarded(typeParameterListOccurred)
 
         if (!functionContractOccurred) {
-            parseFunctionContract();
+            parseFunctionContract()
         }
 
-        if (at(SEMICOLON)) {
-            advance(); // SEMICOLON
-        }
-        else if (at(EQ) || at(LBRACE)) {
-            parseFunctionBody();
+        if (at(KtTokens.SEMICOLON)) {
+            advance() // SEMICOLON
+        } else if (at(KtTokens.EQ) || at(KtTokens.LBRACE)) {
+            parseFunctionBody()
         }
 
-        return FUN;
+        return KtNodeTypes.FUN
     }
 
     /*
      *   (type "." | annotations)?
      */
-    private boolean parseReceiverType(String title, TokenSet nameFollow) {
-        PsiBuilder.Marker annotations = mark();
-        boolean annotationsPresent = parseAnnotations(DEFAULT);
-        int lastDot = lastDotAfterReceiver();
-        boolean receiverPresent = lastDot != -1;
+    private fun parseReceiverType(title: String?, nameFollow: TokenSet?): Boolean {
+        val annotations = mark()
+        val annotationsPresent = parseAnnotations(AnnotationParsingMode.DEFAULT)
+        val lastDot = lastDotAfterReceiver()
+        val receiverPresent = lastDot != -1
         if (annotationsPresent) {
             if (receiverPresent) {
-                annotations.rollbackTo();
+                annotations.rollbackTo()
+            } else {
+                annotations.error("Annotations are not allowed in this position")
             }
-            else {
-                annotations.error("Annotations are not allowed in this position");
-            }
-        }
-        else {
-            annotations.drop();
+        } else {
+            annotations.drop()
         }
 
-        if (!receiverPresent) return false;
+        if (!receiverPresent) return false
 
-        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections();
+        createTruncatedBuilder(lastDot)!!.parseTypeRefWithoutIntersections()
 
         if (atSet(RECEIVER_TYPE_TERMINATORS)) {
-            advance(); // expectation
+            advance() // expectation
+        } else {
+            errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow)
         }
-        else {
-            errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
-        }
-        return true;
+        return true
     }
 
-    private int lastDotAfterReceiver() {
-        AbstractTokenStreamPattern pattern = at(LPAR) ? lastDotAfterReceiverLParPattern : lastDotAfterReceiverNotLParPattern;
-        pattern.reset();
-        return matchTokenStreamPredicate(pattern);
+    private fun lastDotAfterReceiver(): Int {
+        val pattern = if (at(KtTokens.LPAR)) lastDotAfterReceiverLParPattern else lastDotAfterReceiverNotLParPattern
+        pattern.reset()
+        return matchTokenStreamPredicate(pattern)
     }
 
     /*
      * IDENTIFIER
      */
-    private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, TokenSet recoverySet, boolean nameRequired) {
-        if (!nameRequired && atSet(nameFollow)) return; // no name
+    private fun parseFunctionOrPropertyName(
+        receiverFound: Boolean,
+        title: String?,
+        nameFollow: TokenSet,
+        recoverySet: TokenSet?,
+        nameRequired: Boolean
+    ) {
+        if (!nameRequired && atSet(nameFollow)) return  // no name
 
-        if (expect(IDENTIFIER)) {
-            return;
+
+        if (expect(KtTokens.IDENTIFIER)) {
+            return
         }
 
         errorWithRecovery(
-                "Expecting " + title + " name" + (!receiverFound ? " or receiver type" : ""),
-                recoverySet
-        );
+            "Expecting " + title + " name" + (if (!receiverFound) " or receiver type" else ""),
+            recoverySet
+        )
     }
 
     /*
@@ -1885,17 +1748,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "=" element
      *   ;
      */
-    private void parseFunctionBody() {
-        if (at(LBRACE)) {
-            parseBlock();
-        }
-        else if (at(EQ)) {
-            advance(); // EQ
-            myExpressionParsing.parseExpression();
-            consumeIf(SEMICOLON);
-        }
-        else {
-            error("Expecting function body");
+    private fun parseFunctionBody() {
+        if (at(KtTokens.LBRACE)) {
+            parseBlock()
+        } else if (at(KtTokens.EQ)) {
+            advance() // EQ
+            myExpressionParsing.parseExpression()
+            consumeIf(KtTokens.SEMICOLON)
+        } else {
+            error("Expecting function body")
         }
     }
 
@@ -1904,51 +1765,47 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "{" (expressions)* "}"
      *   ;
      */
-    void parseBlock() {
-        parseBlock(/*collapse*/ true);
+    fun parseBlock() {
+        parseBlock( /*collapse*/true)
     }
 
-    private void parseBlock(boolean collapse) {
-        PsiBuilder.Marker lazyBlock = mark();
+    private fun parseBlock(collapse: Boolean) {
+        val lazyBlock = mark()
 
-        myBuilder.enableNewlines();
+        myBuilder.enableNewlines()
 
-        boolean hasOpeningBrace = expect(LBRACE, "Expecting '{' to open a block");
-        boolean canCollapse = collapse && hasOpeningBrace && isLazy;
-
-        if (canCollapse) {
-            advanceBalancedBlock();
-        }
-        else {
-            myExpressionParsing.parseStatements();
-            expect(RBRACE, "Expecting '}'");
-        }
-
-        myBuilder.restoreNewlinesState();
+        val hasOpeningBrace = expect(KtTokens.LBRACE, "Expecting '{' to open a block")
+        val canCollapse = collapse && hasOpeningBrace && isLazy
 
         if (canCollapse) {
-            lazyBlock.collapse(BLOCK);
+            advanceBalancedBlock()
+        } else {
+            myExpressionParsing.parseStatements()
+            expect(KtTokens.RBRACE, "Expecting '}'")
         }
-        else {
-            lazyBlock.done(BLOCK);
+
+        myBuilder.restoreNewlinesState()
+
+        if (canCollapse) {
+            lazyBlock.collapse(KtNodeTypes.BLOCK)
+        } else {
+            lazyBlock.done(KtNodeTypes.BLOCK)
         }
     }
 
-    public void advanceBalancedBlock() {
-
-        int braceCount = 1;
+    fun advanceBalancedBlock() {
+        var braceCount = 1
         while (!eof()) {
-            if (_at(LBRACE)) {
-                braceCount++;
-            }
-            else if (_at(RBRACE)) {
-                braceCount--;
+            if (_at(KtTokens.LBRACE)) {
+                braceCount++
+            } else if (_at(KtTokens.RBRACE)) {
+                braceCount--
             }
 
-            advance();
+            advance()
 
             if (braceCount == 0) {
-                break;
+                break
             }
         }
     }
@@ -1956,20 +1813,20 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * delegationSpecifier{","}
      */
-    private void parseDelegationSpecifierList() {
-        PsiBuilder.Marker list = mark();
+    private fun parseDelegationSpecifierList() {
+        val list = mark()
 
         while (true) {
-            if (at(COMMA)) {
-                errorAndAdvance("Expecting a delegation specifier");
-                continue;
+            if (at(KtTokens.COMMA)) {
+                errorAndAdvance("Expecting a delegation specifier")
+                continue
             }
-            parseDelegationSpecifier();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
+            parseDelegationSpecifier()
+            if (!at(KtTokens.COMMA)) break
+            advance() // COMMA
         }
 
-        list.done(SUPER_TYPE_LIST);
+        list.done(KtNodeTypes.SUPER_TYPE_LIST)
     }
 
     /*
@@ -1983,25 +1840,23 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : userType "by" element
      *   ;
      */
-    private void parseDelegationSpecifier() {
-        PsiBuilder.Marker delegator = mark();
-        PsiBuilder.Marker reference = mark();
-        parseTypeRef();
+    private fun parseDelegationSpecifier() {
+        val delegator = mark()
+        val reference = mark()
+        parseTypeRef()
 
-        if (at(BY_KEYWORD)) {
-            reference.drop();
-            advance(); // BY_KEYWORD
-            createForByClause(myBuilder, isLazy).myExpressionParsing.parseExpression();
-            delegator.done(DELEGATED_SUPER_TYPE_ENTRY);
-        }
-        else if (at(LPAR)) {
-            reference.done(CONSTRUCTOR_CALLEE);
-            myExpressionParsing.parseValueArgumentList();
-            delegator.done(SUPER_TYPE_CALL_ENTRY);
-        }
-        else {
-            reference.drop();
-            delegator.done(SUPER_TYPE_ENTRY);
+        if (at(KtTokens.BY_KEYWORD)) {
+            reference.drop()
+            advance() // BY_KEYWORD
+            createForByClause(myBuilder, isLazy).myExpressionParsing.parseExpression()
+            delegator.done(KtNodeTypes.DELEGATED_SUPER_TYPE_ENTRY)
+        } else if (at(KtTokens.LPAR)) {
+            reference.done(KtNodeTypes.CONSTRUCTOR_CALLEE)
+            myExpressionParsing.parseValueArgumentList()
+            delegator.done(KtNodeTypes.SUPER_TYPE_CALL_ENTRY)
+        } else {
+            reference.drop()
+            delegator.done(KtNodeTypes.SUPER_TYPE_ENTRY)
         }
     }
 
@@ -2010,32 +1865,32 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : ("<" typeParameter{","} ">"
      *   ;
      */
-    private boolean parseTypeParameterList(TokenSet recoverySet) {
-        boolean result = false;
-        if (at(LT)) {
-            PsiBuilder.Marker list = mark();
+    private fun parseTypeParameterList(recoverySet: TokenSet?): Boolean {
+        var result = false
+        if (at(KtTokens.LT)) {
+            val list = mark()
 
-            myBuilder.disableNewlines();
-            advance(); // LT
+            myBuilder.disableNewlines()
+            advance() // LT
 
             while (true) {
-                if (at(COMMA)) errorAndAdvance("Expecting type parameter declaration");
-                parseTypeParameter();
+                if (at(KtTokens.COMMA)) errorAndAdvance("Expecting type parameter declaration")
+                parseTypeParameter()
 
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-                if (at(GT)) {
-                    break;
+                if (!at(KtTokens.COMMA)) break
+                advance() // COMMA
+                if (at(KtTokens.GT)) {
+                    break
                 }
             }
 
-            expect(GT, "Missing '>'", recoverySet);
-            myBuilder.restoreNewlinesState();
-            result = true;
+            expect(KtTokens.GT, "Missing '>'", recoverySet)
+            myBuilder.restoreNewlinesState()
+            result = true
 
-            list.done(TYPE_PARAMETER_LIST);
+            list.done(KtNodeTypes.TYPE_PARAMETER_LIST)
         }
-        return result;
+        return result
     }
 
     /*
@@ -2043,38 +1898,38 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : ("where" typeConstraint{","})?
      *   ;
      */
-    private void parseTypeConstraintsGuarded(boolean typeParameterListOccurred) {
-        PsiBuilder.Marker error = mark();
-        boolean constraints = parseTypeConstraints();
-        errorIf(error, constraints && !typeParameterListOccurred, "Type constraints are not allowed when no type parameters declared");
+    private fun parseTypeConstraintsGuarded(typeParameterListOccurred: Boolean) {
+        val error = mark()
+        val constraints = parseTypeConstraints()
+        errorIf(error, constraints && !typeParameterListOccurred, "Type constraints are not allowed when no type parameters declared")
     }
 
-    private boolean parseTypeConstraints() {
-        if (at(WHERE_KEYWORD)) {
-            parseTypeConstraintList();
-            return true;
+    private fun parseTypeConstraints(): Boolean {
+        if (at(KtTokens.WHERE_KEYWORD)) {
+            parseTypeConstraintList()
+            return true
         }
-        return false;
+        return false
     }
 
     /*
      * typeConstraint{","}
      */
-    private void parseTypeConstraintList() {
-        assert _at(WHERE_KEYWORD);
+    private fun parseTypeConstraintList() {
+        assert(_at(KtTokens.WHERE_KEYWORD))
 
-        advance(); // WHERE_KEYWORD
+        advance() // WHERE_KEYWORD
 
-        PsiBuilder.Marker list = mark();
+        val list = mark()
 
         while (true) {
-            if (at(COMMA)) errorAndAdvance("Type constraint expected");
-            parseTypeConstraint();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
+            if (at(KtTokens.COMMA)) errorAndAdvance("Type constraint expected")
+            parseTypeConstraint()
+            if (!at(KtTokens.COMMA)) break
+            advance() // COMMA
         }
 
-        list.done(TYPE_CONSTRAINT_LIST);
+        list.done(KtNodeTypes.TYPE_CONSTRAINT_LIST)
     }
 
     /*
@@ -2082,32 +1937,31 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : annotations SimpleName ":" type
      *   ;
      */
-    private void parseTypeConstraint() {
-        PsiBuilder.Marker constraint = mark();
+    private fun parseTypeConstraint() {
+        val constraint = mark()
 
-        parseAnnotations(DEFAULT);
+        parseAnnotations(AnnotationParsingMode.DEFAULT)
 
-        PsiBuilder.Marker reference = mark();
-        if (expect(IDENTIFIER, "Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
-            reference.done(REFERENCE_EXPRESSION);
+        val reference = mark()
+        if (expect(KtTokens.IDENTIFIER, "Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
+            reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
+        } else {
+            reference.drop()
         }
-        else {
-            reference.drop();
-        }
 
-        expect(COLON, "Expecting ':' before the upper bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET);
+        expect(KtTokens.COLON, "Expecting ':' before the upper bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET)
 
-        parseTypeRef();
+        parseTypeRef()
 
-        constraint.done(TYPE_CONSTRAINT);
+        constraint.done(KtNodeTypes.TYPE_CONSTRAINT)
     }
 
-    private boolean parseFunctionContract() {
-        if (at(CONTRACT_KEYWORD)) {
-            myExpressionParsing.parseContractDescriptionBlock();
-            return true;
+    private fun parseFunctionContract(): Boolean {
+        if (at(KtTokens.CONTRACT_KEYWORD)) {
+            myExpressionParsing.parseContractDescriptionBlock()
+            return true
         }
-        return false;
+        return false
     }
 
     /*
@@ -2115,25 +1969,28 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : modifiers SimpleName (":" userType)?
      *   ;
      */
-    private void parseTypeParameter() {
+    private fun parseTypeParameter() {
         if (atSet(TYPE_PARAMETER_GT_RECOVERY_SET)) {
-            error("Type parameter declaration expected");
-            return;
+            error("Type parameter declaration expected")
+            return
         }
 
-        PsiBuilder.Marker mark = mark();
+        val mark = mark()
 
-        parseModifierList(GT_COMMA_COLON_SET);
+        parseModifierList(GT_COMMA_COLON_SET)
 
-        expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
+        expect(KtTokens.IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY)
 
-        if (at(COLON)) {
-            advance(); // COLON
-            parseTypeRef();
+        if (at(KtTokens.COLON)) {
+            advance() // COLON
+            parseTypeRef()
         }
 
-        mark.done(TYPE_PARAMETER);
+        mark.done(KtNodeTypes.TYPE_PARAMETER)
+    }
 
+    fun parseTypeRefWithoutIntersections() {
+        parseTypeRef(TokenSet.EMPTY,  /* allowSimpleIntersectionTypes */false)
     }
 
     /*
@@ -2152,152 +2009,174 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : typeReference "?"
      *   ;
      */
-    void parseTypeRef() {
-        parseTypeRef(TokenSet.EMPTY);
+    @JvmOverloads
+    fun parseTypeRef(extraRecoverySet: TokenSet? = TokenSet.EMPTY) {
+        parseTypeRef(extraRecoverySet,  /* allowSimpleIntersectionTypes */true)
     }
 
-    void parseTypeRefWithoutIntersections() {
-        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false);
-    }
-
-    void parseTypeRef(TokenSet extraRecoverySet) {
-        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
-    }
-
-    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes);
-        typeRefMarker.done(TYPE_REFERENCE);
+    private fun parseTypeRef(extraRecoverySet: TokenSet?, allowSimpleIntersectionTypes: Boolean) {
+        val typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes)
+        typeRefMarker.done(KtNodeTypes.TYPE_REFERENCE)
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
-        PsiBuilder.Marker typeRefMarker = mark();
+    private fun parseTypeRefContents(extraRecoverySet: TokenSet?, allowSimpleIntersectionTypes: Boolean): PsiBuilder.Marker {
+        val typeRefMarker = mark()
 
-        parseTypeModifierList();
+        parseTypeModifierList()
 
-        IElementType lookahead = lookahead(1);
-        IElementType lookahead2 = lookahead(2);
-        boolean typeBeforeDot = true;
-        boolean withContextReceiver = at(CONTEXT_KEYWORD) && lookahead == LPAR;
-        boolean wasFunctionTypeParsed = false;
+        val lookahead = lookahead(1)
+        val lookahead2 = lookahead(2)
+        var typeBeforeDot = true
+        val withContextReceiver = at(KtTokens.CONTEXT_KEYWORD) && lookahead === KtTokens.LPAR
+        var wasFunctionTypeParsed = false
 
-        PsiBuilder.Marker contextReceiversStart = mark();
+        val contextReceiversStart = mark()
 
         if (withContextReceiver) {
-            parseContextReceiverList(true);
+            parseContextReceiverList(true)
         }
 
-        PsiBuilder.Marker typeElementMarker = mark();
+        var typeElementMarker = mark()
 
-        if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
-            PsiBuilder.Marker dynamicType = mark();
-            advance(); // DYNAMIC_KEYWORD
-            dynamicType.done(DYNAMIC_TYPE);
-        }
-        else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType();
-        }
-        else if (at(LPAR)) {
-            PsiBuilder.Marker functionOrParenthesizedType = mark();
+        if (at(KtTokens.IDENTIFIER) && !(lookahead === KtTokens.DOT && lookahead2 === KtTokens.IDENTIFIER) && lookahead !== KtTokens.LT && at(
+                KtTokens.DYNAMIC_KEYWORD
+            )
+        ) {
+            val dynamicType = mark()
+            advance() // DYNAMIC_KEYWORD
+            dynamicType.done(KtNodeTypes.DYNAMIC_TYPE)
+        } else if (at(KtTokens.IDENTIFIER) || at(KtTokens.PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
+            parseUserType()
+        } else if (at(KtTokens.LPAR)) {
+            val functionOrParenthesizedType = mark()
 
             // This may be a function parameter list or just a parenthesized type
-            advance(); // LPAR
-            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
+            advance() // LPAR
+            parseTypeRefContents(
+                TokenSet.EMPTY,  /* allowSimpleIntersectionTypes */
+                true
+            ).drop() // parenthesized types, no reference element around it is needed
 
-            if (at(RPAR) && lookahead(1) != ARROW) {
+            if (at(KtTokens.RPAR) && lookahead(1) !== KtTokens.ARROW) {
                 // It's a parenthesized type
                 //    (A)
-                advance();
-                functionOrParenthesizedType.drop();
-            }
-            else {
+                advance()
+                functionOrParenthesizedType.drop()
+            } else {
                 // This must be a function type
                 //   (A, B) -> C
                 // or
                 //   (a : A) -> C
-                functionOrParenthesizedType.rollbackTo();
-                parseFunctionType(contextReceiversStart.precede());
-                wasFunctionTypeParsed = true;
+                functionOrParenthesizedType.rollbackTo()
+                parseFunctionType(contextReceiversStart.precede())
+                wasFunctionTypeParsed = true
             }
-        }
-        else {
-            errorWithRecovery("Type expected",
-                    TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
-                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
-                                   extraRecoverySet));
-            typeBeforeDot = false;
+        } else {
+            errorWithRecovery(
+                "Type expected",
+                TokenSet.orSet(
+                    TOP_LEVEL_DECLARATION_FIRST,
+                    TokenSet.create(
+                        KtTokens.EQ,
+                        KtTokens.COMMA,
+                        KtTokens.GT,
+                        KtTokens.RBRACKET,
+                        KtTokens.DOT,
+                        KtTokens.RPAR,
+                        KtTokens.RBRACE,
+                        KtTokens.LBRACE,
+                        KtTokens.SEMICOLON
+                    ),
+                    extraRecoverySet
+                )
+            )
+            typeBeforeDot = false
         }
 
         // Disabling token merge is required for cases like
         //    Int?.(Foo) -> Bar
-        myBuilder.disableJoiningComplexTokens();
-        typeElementMarker = parseNullableTypeSuffix(typeElementMarker);
-        myBuilder.restoreJoiningComplexTokensState();
+        myBuilder.disableJoiningComplexTokens()
+        typeElementMarker = parseNullableTypeSuffix(typeElementMarker)
+        myBuilder.restoreJoiningComplexTokensState()
 
-        boolean wasIntersection = false;
-        if (allowSimpleIntersectionTypes && at(AND)) {
-            PsiBuilder.Marker leftTypeRef = typeElementMarker;
+        var wasIntersection = false
+        if (allowSimpleIntersectionTypes && at(KtTokens.AND)) {
+            val leftTypeRef = typeElementMarker
 
-            typeElementMarker = typeElementMarker.precede();
-            PsiBuilder.Marker intersectionType = leftTypeRef.precede();
+            typeElementMarker = typeElementMarker.precede()
+            val intersectionType = leftTypeRef.precede()
 
-            leftTypeRef.done(TYPE_REFERENCE);
+            leftTypeRef.done(KtNodeTypes.TYPE_REFERENCE)
 
-            advance(); // &
-            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+            advance() // &
+            parseTypeRef(extraRecoverySet,  /* allowSimpleIntersectionTypes */true)
 
-            intersectionType.done(INTERSECTION_TYPE);
-            wasIntersection = true;
+            intersectionType.done(KtNodeTypes.INTERSECTION_TYPE)
+            wasIntersection = true
         }
 
-        if (typeBeforeDot && at(DOT) && !wasIntersection && !wasFunctionTypeParsed) {
+        if (typeBeforeDot && at(KtTokens.DOT) && !wasIntersection && !wasFunctionTypeParsed) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker functionType = contextReceiversStart.precede();
+            val functionType = contextReceiversStart.precede()
 
-            PsiBuilder.Marker receiverTypeRef = typeElementMarker.precede();
-            PsiBuilder.Marker receiverType = receiverTypeRef.precede();
-            receiverTypeRef.done(TYPE_REFERENCE);
-            receiverType.done(FUNCTION_TYPE_RECEIVER);
+            val receiverTypeRef = typeElementMarker.precede()
+            val receiverType = receiverTypeRef.precede()
+            receiverTypeRef.done(KtNodeTypes.TYPE_REFERENCE)
+            receiverType.done(KtNodeTypes.FUNCTION_TYPE_RECEIVER)
 
-            advance(); // DOT
+            advance() // DOT
 
-            if (at(LPAR)) {
-                parseFunctionType(functionType);
+            if (at(KtTokens.LPAR)) {
+                parseFunctionType(functionType)
+            } else {
+                functionType.drop()
+                error("Expecting function type")
             }
-            else {
-                functionType.drop();
-                error("Expecting function type");
-            }
 
-            wasFunctionTypeParsed = true;
+            wasFunctionTypeParsed = true
         }
 
         if (withContextReceiver && !wasFunctionTypeParsed) {
-            errorWithRecovery("Function type expected expected",
-                              TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
-                                             TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
-                                             extraRecoverySet));
+            errorWithRecovery(
+                "Function type expected expected",
+                TokenSet.orSet(
+                    TOP_LEVEL_DECLARATION_FIRST,
+                    TokenSet.create(
+                        KtTokens.EQ,
+                        KtTokens.COMMA,
+                        KtTokens.GT,
+                        KtTokens.RBRACKET,
+                        KtTokens.DOT,
+                        KtTokens.RPAR,
+                        KtTokens.RBRACE,
+                        KtTokens.LBRACE,
+                        KtTokens.SEMICOLON
+                    ),
+                    extraRecoverySet
+                )
+            )
         }
 
-        typeElementMarker.drop();
-        contextReceiversStart.drop();
-        return typeRefMarker;
+        typeElementMarker.drop()
+        contextReceiversStart.drop()
+        return typeRefMarker
     }
 
-    @NotNull
-    private PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeElementMarker) {
+    private fun parseNullableTypeSuffix(typeElementMarker: PsiBuilder.Marker): PsiBuilder.Marker {
         // ?: is joined regardless of joining state
-        while (at(QUEST) && myBuilder.rawLookup(1) != COLON) {
-            PsiBuilder.Marker precede = typeElementMarker.precede();
-            advance(); // QUEST
-            typeElementMarker.done(NULLABLE_TYPE);
-            typeElementMarker = precede;
+        var typeElementMarker = typeElementMarker
+        while (at(KtTokens.QUEST) && myBuilder.rawLookup(1) !== KtTokens.COLON) {
+            val precede = typeElementMarker.precede()
+            advance() // QUEST
+            typeElementMarker.done(KtNodeTypes.NULLABLE_TYPE)
+            typeElementMarker = precede
         }
-        return typeElementMarker;
+        return typeElementMarker
     }
 
     /*
@@ -2310,145 +2189,146 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType() {
-        PsiBuilder.Marker userType = mark();
+    private fun parseUserType() {
+        var userType = mark()
 
-        if (at(PACKAGE_KEYWORD)) {
-            PsiBuilder.Marker keyword = mark();
-            advance(); // PACKAGE_KEYWORD
-            keyword.error("Expecting an element");
-            expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, LBRACE, RBRACE));
+        if (at(KtTokens.PACKAGE_KEYWORD)) {
+            val keyword = mark()
+            advance() // PACKAGE_KEYWORD
+            keyword.error("Expecting an element")
+            expect(KtTokens.DOT, "Expecting '.'", TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACE, KtTokens.RBRACE))
         }
 
-        PsiBuilder.Marker reference = mark();
+        var reference = mark()
         while (true) {
-            recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true);
+            recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true)
 
-            if (expect(IDENTIFIER, "Expecting type name",
-                       TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
-                reference.done(REFERENCE_EXPRESSION);
+            if (expect(
+                    KtTokens.IDENTIFIER, "Expecting type name",
+                    TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST)
+                )
+            ) {
+                reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
+            } else {
+                reference.drop()
+                break
             }
-            else {
-                reference.drop();
-                break;
+
+            parseTypeArgumentList()
+
+            recoverOnPlatformTypeSuffix()
+
+            if (!at(KtTokens.DOT)) {
+                break
             }
-
-            parseTypeArgumentList();
-
-            recoverOnPlatformTypeSuffix();
-
-            if (!at(DOT)) {
-                break;
-            }
-            if (lookahead(1) == LPAR && !atParenthesizedMutableForPlatformTypes(1)) {
+            if (lookahead(1) === KtTokens.LPAR && !atParenthesizedMutableForPlatformTypes(1)) {
                 // This may be a receiver for a function type
                 //   Int.(Int) -> Int
-                break;
+                break
             }
 
-            PsiBuilder.Marker precede = userType.precede();
-            userType.done(USER_TYPE);
-            userType = precede;
+            val precede = userType.precede()
+            userType.done(KtNodeTypes.USER_TYPE)
+            userType = precede
 
-            advance(); // DOT
-            reference = mark();
+            advance() // DOT
+            reference = mark()
         }
 
-        userType.done(USER_TYPE);
+        userType.done(KtNodeTypes.USER_TYPE)
     }
 
-    private boolean atParenthesizedMutableForPlatformTypes(int offset) {
-        return recoverOnParenthesizedWordForPlatformTypes(offset, "Mutable", false);
+    private fun atParenthesizedMutableForPlatformTypes(offset: Int): Boolean {
+        return recoverOnParenthesizedWordForPlatformTypes(offset, "Mutable", false)
     }
 
-    private boolean recoverOnParenthesizedWordForPlatformTypes(int offset, String word, boolean consume) {
+    private fun recoverOnParenthesizedWordForPlatformTypes(offset: Int, word: String, consume: Boolean): Boolean {
         // Array<(out) Foo>! or (Mutable)List<Bar>!
-        if (lookahead(offset) == LPAR && lookahead(offset + 1) == IDENTIFIER && lookahead(offset + 2) == RPAR && lookahead(offset + 3) == IDENTIFIER) {
-            PsiBuilder.Marker error = mark();
+        if (lookahead(offset) === KtTokens.LPAR && lookahead(offset + 1) === KtTokens.IDENTIFIER && lookahead(offset + 2) === KtTokens.RPAR && lookahead(
+                offset + 3
+            ) === KtTokens.IDENTIFIER
+        ) {
+            val error = mark()
 
-            advance(offset);
+            advance(offset)
 
-            advance(); // LPAR
-            if (!word.equals(myBuilder.getTokenText())) {
+            advance() // LPAR
+            if (word != myBuilder.getTokenText()) {
                 // something other than "out" / "Mutable"
-                error.rollbackTo();
-                return false;
-            }
-            else {
-                advance(); // IDENTIFIER('out')
-                advance(); // RPAR
+                error.rollbackTo()
+                return false
+            } else {
+                advance() // IDENTIFIER('out')
+                advance() // RPAR
 
                 if (consume) {
-                    error.error("Unexpected tokens");
-                }
-                else {
-                    error.rollbackTo();
+                    error.error("Unexpected tokens")
+                } else {
+                    error.rollbackTo()
                 }
 
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    private void recoverOnPlatformTypeSuffix() {
+    private fun recoverOnPlatformTypeSuffix() {
         // Recovery for platform types
-        if (at(EXCL)) {
-            PsiBuilder.Marker error = mark();
-            advance(); // EXCL
-            error.error("Unexpected token");
+        if (at(KtTokens.EXCL)) {
+            val error = mark()
+            advance() // EXCL
+            error.error("Unexpected token")
         }
     }
 
     /*
      *  (optionalProjection type){","}
      */
-    private void parseTypeArgumentList() {
-        if (!at(LT)) return;
+    private fun parseTypeArgumentList() {
+        if (!at(KtTokens.LT)) return
 
-        PsiBuilder.Marker list = mark();
+        val list = mark()
 
-        tryParseTypeArgumentList(TokenSet.EMPTY);
+        tryParseTypeArgumentList(TokenSet.EMPTY)
 
-        list.done(TYPE_ARGUMENT_LIST);
+        list.done(KtNodeTypes.TYPE_ARGUMENT_LIST)
     }
 
-    boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
-        myBuilder.disableNewlines();
-        advance(); // LT
+    fun tryParseTypeArgumentList(extraRecoverySet: TokenSet?): Boolean {
+        myBuilder.disableNewlines()
+        advance() // LT
 
         while (true) {
-            PsiBuilder.Marker projection = mark();
+            val projection = mark()
 
-            recoverOnParenthesizedWordForPlatformTypes(0, "out", true);
+            recoverOnParenthesizedWordForPlatformTypes(0, "out", true)
 
             // Currently we do not allow annotations on star projections and probably we should not
             // Annotations on other kinds of type arguments should be parsed as common type annotations (within parseTypeRef call)
-            parseTypeArgumentModifierList();
+            parseTypeArgumentModifierList()
 
-            if (at(MUL)) {
-                advance(); // MUL
+            if (at(KtTokens.MUL)) {
+                advance() // MUL
+            } else {
+                parseTypeRef(extraRecoverySet)
             }
-            else {
-                parseTypeRef(extraRecoverySet);
-            }
-            projection.done(TYPE_PROJECTION);
-            if (!at(COMMA)) break;
-            advance(); // COMMA
-            if (at(GT)) {
-                break;
+            projection.done(KtNodeTypes.TYPE_PROJECTION)
+            if (!at(KtTokens.COMMA)) break
+            advance() // COMMA
+            if (at(KtTokens.GT)) {
+                break
             }
         }
 
-        boolean atGT = at(GT);
+        val atGT = at(KtTokens.GT)
         if (!atGT) {
-            error("Expecting a '>'");
+            error("Expecting a '>'")
+        } else {
+            advance() // GT
         }
-        else {
-            advance(); // GT
-        }
-        myBuilder.restoreNewlinesState();
-        return atGT;
+        myBuilder.restoreNewlinesState()
+        return atGT
     }
 
     /*
@@ -2456,22 +2336,38 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : (type ".")? "(" parameter{","}? ")" "->" type?
      *   ;
      */
-    private void parseFunctionType(PsiBuilder.Marker functionType) {
-        parseFunctionTypeContents(functionType).done(FUNCTION_TYPE);
+    private fun parseFunctionType(functionType: PsiBuilder.Marker?) {
+        parseFunctionTypeContents(functionType)!!.done(KtNodeTypes.FUNCTION_TYPE)
     }
 
-    private PsiBuilder.Marker parseFunctionTypeContents(PsiBuilder.Marker functionType) {
-        assert _at(LPAR) : tt();
+    private fun parseFunctionTypeContents(functionType: PsiBuilder.Marker?): PsiBuilder.Marker? {
+        assert(_at(KtTokens.LPAR)) { tt()!! }
 
-        parseValueParameterList(true, /* typeRequired  = */ true, TokenSet.EMPTY);
+        parseValueParameterList(true,  /* typeRequired  = */true, TokenSet.EMPTY)
 
-        expect(ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST);
-        parseTypeRef();
+        expect(KtTokens.ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST)
+        parseTypeRef()
 
-        return functionType;
+        return functionType
     }
 
-    private static final TokenSet NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = TokenSet.create(COMMA, COLON, EQ, RPAR);
+    init {
+        myExpressionParsing = if (isTopLevel)
+            KotlinExpressionParsing(builder, this, isLazy)
+        else
+            object : KotlinExpressionParsing(builder, this@KotlinParsing, isLazy) {
+                override fun parseCallWithClosure(): Boolean {
+                    if ((builder as SemanticWhitespaceAwarePsiBuilderForByClause).getStackSize() > 0) {
+                        return super.parseCallWithClosure()
+                    }
+                    return false
+                }
+
+                override fun create(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+                    return createForByClause(builder, isLazy)
+                }
+            }
+    }
 
     /*
      * functionParameters
@@ -2486,65 +2382,60 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : parameter ("=" element)?
      *   ;
      */
-    private void parseValueParameterList(boolean isFunctionTypeContents, boolean typeRequired, TokenSet recoverySet) {
-        assert _at(LPAR);
-        PsiBuilder.Marker parameters = mark();
+    private fun parseValueParameterList(isFunctionTypeContents: Boolean, typeRequired: Boolean, recoverySet: TokenSet) {
+        assert(_at(KtTokens.LPAR))
+        val parameters = mark()
 
-        myBuilder.disableNewlines();
+        myBuilder.disableNewlines()
 
         valueParameterLoop(
-                isFunctionTypeContents,
-                recoverySet,
-                () -> {
-                    if (isFunctionTypeContents) {
-                        if (!tryParseValueParameter(typeRequired)) {
-                            PsiBuilder.Marker valueParameter = mark();
-                            parseFunctionTypeValueParameterModifierList();
-                            parseTypeRef();
-                            closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
-                        }
+            isFunctionTypeContents,
+            recoverySet,
+            Runnable {
+                if (isFunctionTypeContents) {
+                    if (!tryParseValueParameter(typeRequired)) {
+                        val valueParameter = mark()
+                        parseFunctionTypeValueParameterModifierList()
+                        parseTypeRef()
+                        closeDeclarationWithCommentBinders(valueParameter, KtNodeTypes.VALUE_PARAMETER, false)
                     }
-                    else {
-                        parseValueParameter(typeRequired);
-                    }
-                });
+                } else {
+                    parseValueParameter(typeRequired)
+                }
+            })
 
-        myBuilder.restoreNewlinesState();
+        myBuilder.restoreNewlinesState()
 
-        parameters.done(VALUE_PARAMETER_LIST);
+        parameters.done(KtNodeTypes.VALUE_PARAMETER_LIST)
     }
 
-    private void valueParameterLoop(boolean inFunctionTypeContext, TokenSet recoverySet, Runnable parseParameter) {
-        advance(); // LPAR
+    private fun valueParameterLoop(inFunctionTypeContext: Boolean, recoverySet: TokenSet, parseParameter: Runnable) {
+        advance() // LPAR
 
-        if (!at(RPAR) && !atSet(recoverySet)) {
+        if (!at(KtTokens.RPAR) && !atSet(recoverySet)) {
             while (true) {
-                if (at(COMMA)) {
-                    errorAndAdvance("Expecting a parameter declaration");
-                }
-                else if (at(RPAR)) {
-                    break;
+                if (at(KtTokens.COMMA)) {
+                    errorAndAdvance("Expecting a parameter declaration")
+                } else if (at(KtTokens.RPAR)) {
+                    break
                 }
 
-                parseParameter.run();
+                parseParameter.run()
 
-                if (at(COMMA)) {
-                    advance(); // COMMA
-                }
-                else if (at(COLON)) {
+                if (at(KtTokens.COMMA)) {
+                    advance() // COMMA
+                } else if (at(KtTokens.COLON)) {
                     // recovery for the case "fun bar(x: Array<Int> : Int)" when we've just parsed "x: Array<Int>"
                     // error should be reported in the `parseValueParameter` call
-                    //noinspection UnnecessaryContinue
-                    continue;
-                }
-                else {
-                    if (!at(RPAR)) error("Expecting comma or ')'");
-                    if (!atSet(inFunctionTypeContext ? LAMBDA_VALUE_PARAMETER_FIRST : VALUE_PARAMETER_FIRST)) break;
+                    continue
+                } else {
+                    if (!at(KtTokens.RPAR)) error("Expecting comma or ')'")
+                    if (!atSet(if (inFunctionTypeContext) LAMBDA_VALUE_PARAMETER_FIRST else VALUE_PARAMETER_FIRST)) break
                 }
             }
         }
 
-        expect(RPAR, "Expecting ')'", recoverySet);
+        expect(KtTokens.RPAR, "Expecting ')'", recoverySet)
     }
 
     /*
@@ -2552,30 +2443,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : modifiers ("val" | "var")? parameter ("=" element)?
      *   ;
      */
-    private boolean tryParseValueParameter(boolean typeRequired) {
-        return parseValueParameter(true, typeRequired);
+    private fun tryParseValueParameter(typeRequired: Boolean): Boolean {
+        return parseValueParameter(true, typeRequired)
     }
 
-    public void parseValueParameter(boolean typeRequired) {
-        parseValueParameter(false, typeRequired);
+    fun parseValueParameter(typeRequired: Boolean) {
+        parseValueParameter(false, typeRequired)
     }
 
-    private boolean parseValueParameter(boolean rollbackOnFailure, boolean typeRequired) {
-        PsiBuilder.Marker parameter = mark();
+    private fun parseValueParameter(rollbackOnFailure: Boolean, typeRequired: Boolean): Boolean {
+        val parameter = mark()
 
-        parseModifierList(NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+        parseModifierList(NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER)
 
-        if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
-            advance(); // VAR_KEYWORD | VAL_KEYWORD
+        if (at(KtTokens.VAR_KEYWORD) || at(KtTokens.VAL_KEYWORD)) {
+            advance() // VAR_KEYWORD | VAL_KEYWORD
         }
 
         if (!parseFunctionParameterRest(typeRequired) && rollbackOnFailure) {
-            parameter.rollbackTo();
-            return false;
+            parameter.rollbackTo()
+            return false
         }
 
-        closeDeclarationWithCommentBinders(parameter, VALUE_PARAMETER, false);
-        return true;
+        closeDeclarationWithCommentBinders(parameter, KtNodeTypes.VALUE_PARAMETER, false)
+        return true
     }
 
     /*
@@ -2583,106 +2474,219 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : parameter ("=" element)?
      *   ;
      */
-    private boolean parseFunctionParameterRest(boolean typeRequired) {
-        boolean noErrors = true;
+    private fun parseFunctionParameterRest(typeRequired: Boolean): Boolean {
+        var noErrors = true
 
         // Recovery for the case 'fun foo(Array<String>) {}'
         // Recovery for the case 'fun foo(: Int) {}'
-        if ((at(IDENTIFIER) && lookahead(1) == LT) || at(COLON)) {
-            error("Parameter name expected");
-            if (at(COLON)) {
+        if ((at(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.LT) || at(KtTokens.COLON)) {
+            error("Parameter name expected")
+            if (at(KtTokens.COLON)) {
                 // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
-                advance(); // COLON
+                advance() // COLON
+            } else {
+                noErrors = false
             }
-            else {
-                noErrors = false;
-            }
-            parseTypeRef();
-        }
-        else {
-            expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
+            parseTypeRef()
+        } else {
+            expect(KtTokens.IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET)
 
-            if (at(COLON)) {
-                advance(); // COLON
+            if (at(KtTokens.COLON)) {
+                advance() // COLON
 
-                if (at(IDENTIFIER) && lookahead(1) == COLON) {
+                if (at(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.COLON) {
                     // recovery for the case "fun foo(x: y: Int)" when we're at "y: " it's likely that this is a name of the next parameter,
                     // not a type reference of the current one
-                    error("Type reference expected");
-                    return false;
+                    error("Type reference expected")
+                    return false
                 }
 
-                parseTypeRef();
-            }
-            else if (typeRequired) {
-                errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET);
-                noErrors = false;
+                parseTypeRef()
+            } else if (typeRequired) {
+                errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET)
+                noErrors = false
             }
         }
 
-        if (at(EQ)) {
-            advance(); // EQ
-            myExpressionParsing.parseExpression();
+        if (at(KtTokens.EQ)) {
+            advance() // EQ
+            myExpressionParsing.parseExpression()
         }
 
-        return noErrors;
+        return noErrors
     }
 
-    @Override
-    protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
-        return createForTopLevel(builder);
+    override fun create(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+        return createForTopLevel(builder)
     }
 
-    /*package*/ static class ModifierDetector implements Consumer<IElementType> {
-        private boolean enumDetected = false;
-        private boolean companionDetected = false;
+    /*package*/
+    class ModifierDetector : Consumer<IElementType?> {
+        var isEnumDetected: Boolean = false
+            private set
+        var isCompanionDetected: Boolean = false
+            private set
 
-        @Override
-        public void consume(IElementType item) {
-            if (item == KtTokens.ENUM_KEYWORD) {
-                enumDetected = true;
+        override fun consume(item: IElementType?) {
+            if (item === KtTokens.ENUM_KEYWORD) {
+                this.isEnumDetected = true
+            } else if (item === KtTokens.COMPANION_KEYWORD) {
+                this.isCompanionDetected = true
             }
-            else if (item == KtTokens.COMPANION_KEYWORD) {
-                companionDetected = true;
-            }
-        }
-
-        public boolean isEnumDetected() {
-            return enumDetected;
-        }
-
-        public boolean isCompanionDetected() {
-            return companionDetected;
         }
     }
 
-    enum AnnotationParsingMode {
+    enum class AnnotationParsingMode(
+        val isFileAnnotationParsingMode: Boolean,
+        val allowAnnotations: Boolean,
+        val allowContextList: Boolean,
+        val typeContext: Boolean,
+        val withSignificantWhitespaceBeforeArguments: Boolean
+    ) {
         DEFAULT(false, true, true, false, false),
         FILE_ANNOTATIONS_BEFORE_PACKAGE(true, true, false, false, false),
         FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(true, true, false, false, false),
         TYPE_CONTEXT(false, true, false, true, false),
         WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS(false, true, true, true, true),
         WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS_NO_CONTEXT(false, true, false, true, true),
-        NO_ANNOTATIONS_NO_CONTEXT(false, false, false, false, false);
+        NO_ANNOTATIONS_NO_CONTEXT(false, false, false, false, false)
+    }
 
-        final boolean isFileAnnotationParsingMode;
-        final boolean allowAnnotations;
-        final boolean allowContextList;
-        final boolean withSignificantWhitespaceBeforeArguments;
-        final boolean typeContext;
+    companion object {
+        private val GT_COMMA_COLON_SET = TokenSet.create(KtTokens.GT, KtTokens.COMMA, KtTokens.COLON)
+        private val LOG = Logger.getInstance(KotlinParsing::class.java)
 
-        AnnotationParsingMode(
-                boolean isFileAnnotationParsingMode,
-                boolean allowAnnotations,
-                boolean allowContextList,
-                boolean typeContext,
-                boolean withSignificantWhitespaceBeforeArguments
-        ) {
-            this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
-            this.allowAnnotations = allowAnnotations;
-            this.allowContextList = allowContextList;
-            this.typeContext = typeContext;
-            this.withSignificantWhitespaceBeforeArguments = withSignificantWhitespaceBeforeArguments;
+        private val TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
+            KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD,
+            KtTokens.FUN_KEYWORD, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD, KtTokens.PACKAGE_KEYWORD
+        )
+        private val TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET =
+            TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(KtTokens.SEMICOLON))
+        private val LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(KtTokens.LT, KtTokens.EQ, KtTokens.SEMICOLON), TOP_LEVEL_DECLARATION_FIRST)
+        private val DECLARATION_FIRST = TokenSet.orSet(
+            TOP_LEVEL_DECLARATION_FIRST,
+            TokenSet.create(KtTokens.INIT_KEYWORD, KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD, KtTokens.CONSTRUCTOR_KEYWORD)
+        )
+
+        private val CLASS_NAME_RECOVERY_SET = TokenSet.orSet(
+            TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.COLON, KtTokens.LBRACE),
+            TOP_LEVEL_DECLARATION_FIRST
+        )
+        private val TYPE_PARAMETER_GT_RECOVERY_SET =
+            TokenSet.create(KtTokens.WHERE_KEYWORD, KtTokens.LPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.GT)
+        val PARAMETER_NAME_RECOVERY_SET: TokenSet =
+            TokenSet.create(KtTokens.COLON, KtTokens.EQ, KtTokens.COMMA, KtTokens.RPAR, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
+        private val PACKAGE_NAME_RECOVERY_SET = TokenSet.create(KtTokens.DOT, KtTokens.EOL_OR_SEMICOLON)
+        private val IMPORT_RECOVERY_SET = TokenSet.create(KtTokens.AS_KEYWORD, KtTokens.DOT, KtTokens.EOL_OR_SEMICOLON)
+        private val TYPE_REF_FIRST =
+            TokenSet.create(KtTokens.LBRACKET, KtTokens.IDENTIFIER, KtTokens.LPAR, KtTokens.HASH, KtTokens.DYNAMIC_KEYWORD)
+        private val LBRACE_RBRACE_TYPE_REF_FIRST_SET = TokenSet.orSet(TokenSet.create(KtTokens.LBRACE, KtTokens.RBRACE), TYPE_REF_FIRST)
+        private val COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(KtTokens.COLON, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE), TYPE_REF_FIRST)
+        private val RECEIVER_TYPE_TERMINATORS = TokenSet.create(KtTokens.DOT, KtTokens.SAFE_ACCESS)
+        private val VALUE_PARAMETER_FIRST = TokenSet.orSet(
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACKET, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD),
+            TokenSet.andNot(KtTokens.MODIFIER_KEYWORDS, TokenSet.create(KtTokens.FUN_KEYWORD))
+        )
+        private val LAMBDA_VALUE_PARAMETER_FIRST = TokenSet.orSet(
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACKET),
+            TokenSet.andNot(KtTokens.MODIFIER_KEYWORDS, TokenSet.create(KtTokens.FUN_KEYWORD))
+        )
+        private val SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.INIT_KEYWORD)
+        private val ANNOTATION_TARGETS = TokenSet.create(
+            KtTokens.ALL_KEYWORD,
+            KtTokens.FILE_KEYWORD,
+            KtTokens.FIELD_KEYWORD,
+            KtTokens.GET_KEYWORD,
+            KtTokens.SET_KEYWORD,
+            KtTokens.PROPERTY_KEYWORD,
+            KtTokens.RECEIVER_KEYWORD,
+            KtTokens.PARAM_KEYWORD,
+            KtTokens.SETPARAM_KEYWORD,
+            KtTokens.DELEGATE_KEYWORD
+        )
+        private val BLOCK_DOC_COMMENT_SET = TokenSet.create(KtTokens.BLOCK_COMMENT, KtTokens.DOC_COMMENT)
+        private val SEMICOLON_SET = TokenSet.create(KtTokens.SEMICOLON)
+        private val COMMA_COLON_GT_SET = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.GT)
+        private val IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(KtTokens.IDENTIFIER, KtTokens.RBRACKET, KtTokens.LBRACKET)
+        private val LBRACE_RBRACE_SET = TokenSet.create(KtTokens.LBRACE, KtTokens.RBRACE)
+        private val COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(KtTokens.COMMA, KtTokens.SEMICOLON, KtTokens.RBRACE)
+        private val VALUE_ARGS_RECOVERY_SET =
+            TokenSet.create(KtTokens.LBRACE, KtTokens.SEMICOLON, KtTokens.RPAR, KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
+        private val PROPERTY_NAME_FOLLOW_SET = TokenSet.create(
+            KtTokens.COLON,
+            KtTokens.EQ,
+            KtTokens.LBRACE,
+            KtTokens.RBRACE,
+            KtTokens.SEMICOLON,
+            KtTokens.VAL_KEYWORD,
+            KtTokens.VAR_KEYWORD,
+            KtTokens.FUN_KEYWORD,
+            KtTokens.CLASS_KEYWORD
+        )
+        private val PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET =
+            TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET)
+        private val PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET =
+            TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST)
+        private val IDENTIFIER_EQ_COLON_SEMICOLON_SET =
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.EQ, KtTokens.COLON, KtTokens.SEMICOLON)
+        private val COMMA_RPAR_COLON_EQ_SET = TokenSet.create(KtTokens.COMMA, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
+        private val ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(
+            KtTokens.MODIFIER_KEYWORDS,
+            TokenSet.create(
+                KtTokens.AT,
+                KtTokens.GET_KEYWORD,
+                KtTokens.SET_KEYWORD,
+                KtTokens.FIELD_KEYWORD,
+                KtTokens.EOL_OR_SEMICOLON,
+                KtTokens.RBRACE
+            )
+        )
+        private val RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET =
+            TokenSet.create(KtTokens.RPAR, KtTokens.IDENTIFIER, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
+        private val COMMA_COLON_RPAR_SET = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.RPAR)
+        private val RPAR_COLON_LBRACE_EQ_SET = TokenSet.create(KtTokens.RPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
+        private val LBRACKET_LBRACE_RBRACE_LPAR_SET = TokenSet.create(KtTokens.LBRACKET, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.LPAR)
+        private val FUNCTION_NAME_FOLLOW_SET = TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
+        private val FUNCTION_NAME_RECOVERY_SET = TokenSet.orSet(
+            TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ),
+            LBRACE_RBRACE_SET,
+            TOP_LEVEL_DECLARATION_FIRST
+        )
+        private val VALUE_PARAMETERS_FOLLOW_SET =
+            TokenSet.create(KtTokens.EQ, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.SEMICOLON, KtTokens.RPAR)
+        private val CONTEXT_PARAMETERS_FOLLOW_SET = TokenSet.create(
+            KtTokens.CLASS_KEYWORD,
+            KtTokens.OBJECT_KEYWORD,
+            KtTokens.FUN_KEYWORD,
+            KtTokens.VAL_KEYWORD,
+            KtTokens.VAR_KEYWORD
+        )
+        private val LPAR_VALUE_PARAMETERS_FOLLOW_SET = TokenSet.orSet(TokenSet.create(KtTokens.LPAR), VALUE_PARAMETERS_FOLLOW_SET)
+        private val LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET =
+            TokenSet.create(KtTokens.LPAR, KtTokens.LBRACE, KtTokens.COLON, KtTokens.CONSTRUCTOR_KEYWORD)
+        private val definitelyOutOfReceiverSet = TokenSet.orSet(
+            TokenSet.create(KtTokens.EQ, KtTokens.COLON, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.BY_KEYWORD),
+            TOP_LEVEL_DECLARATION_FIRST
+        )
+        private val EOL_OR_SEMICOLON_RBRACE_SET = TokenSet.create(KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
+        private val CLASS_INTERFACE_SET = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
+
+        @JvmStatic
+        fun createForTopLevel(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+            return KotlinParsing(builder, true, true)
         }
+
+        @JvmStatic
+        fun createForTopLevelNonLazy(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+            return KotlinParsing(builder, true, false)
+        }
+
+        private fun createForByClause(builder: SemanticWhitespaceAwarePsiBuilder?, isLazy: Boolean): KotlinParsing {
+            return KotlinParsing(SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy)
+        }
+
+        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
     }
 }
