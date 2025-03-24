@@ -151,7 +151,6 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
                 configuration = configuration,
                 normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
                 sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
-                shouldCheckSignaturesOnUniqueness = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true)
             ),
             KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings),
             inputArtifact.irPluginContext.irBuiltIns,
@@ -190,7 +189,6 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
                 compatibilityMode,
                 normalizeAbsolutePaths,
                 sourceBaseDirs,
-                shouldCheckSignaturesOnUniqueness,
             ->
             KonanIrModuleSerializer(
                 settings = IrSerializationSettings(
@@ -198,7 +196,6 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
-                    shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                 ),
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = irBuiltIns,

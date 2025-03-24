@@ -63,8 +63,7 @@ internal fun PhaseContext.firSerializerBase(
                                        irBuiltIns,
                                        compatibilityMode,
                                        normalizeAbsolutePaths,
-                                       sourceBaseDirs,
-                                       shouldCheckSignaturesOnUniqueness ->
+                                       sourceBaseDirs ->
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(
                         configuration = configuration,
@@ -73,7 +72,6 @@ internal fun PhaseContext.firSerializerBase(
                         sourceBaseDirs = sourceBaseDirs,
                         bodiesOnlyForInlines = produceHeaderKlib,
                         publicAbiOnly = produceHeaderKlib,
-                        shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                     ),
                     diagnosticReporter = irDiagnosticReporter,
                     irBuiltIns = irBuiltIns,
