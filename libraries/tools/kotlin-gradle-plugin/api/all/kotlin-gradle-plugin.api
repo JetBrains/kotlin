@@ -1777,6 +1777,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/TransformedMetadataLib
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+	public final fun addTargetResources (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 	public final fun assemble ()V
 	public final fun from ([Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;)V
 	public final fun fromFrameworkDescriptors (Ljava/lang/Iterable;)V

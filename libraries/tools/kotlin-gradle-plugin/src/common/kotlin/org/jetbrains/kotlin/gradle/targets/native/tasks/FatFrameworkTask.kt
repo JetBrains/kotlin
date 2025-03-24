@@ -9,9 +9,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -214,6 +210,7 @@ internal constructor(
         X64("__x86_64__"),
         X86("__i386__"),
         ARM32("__arm__"),
+
         // We need to distinguish between variants of aarch64, because there are two WatchOS ARM64 targets that we support
         // watchOsArm64 that compiles to arm64_32 architecture
         // watchOsDeviceArm64 that compiles to arm64 architecture
@@ -222,13 +219,14 @@ internal constructor(
         ARM64("__ARM64_ARCH_8__"),
     }
 
-    private val KonanTarget.appleArchitecture: AppleArchitecture get() =
-        when (architecture) {
-            Architecture.X64 -> AppleArchitecture.X64
-            Architecture.X86 -> AppleArchitecture.X86
-            Architecture.ARM64 -> if (this == WATCHOS_ARM64) AppleArchitecture.ARM64_32 else AppleArchitecture.ARM64
-            Architecture.ARM32 -> AppleArchitecture.ARM32
-        }
+    private val KonanTarget.appleArchitecture: AppleArchitecture
+        get() =
+            when (architecture) {
+                Architecture.X64 -> AppleArchitecture.X64
+                Architecture.X86 -> AppleArchitecture.X86
+                Architecture.ARM64 -> if (this == WATCHOS_ARM64) AppleArchitecture.ARM64_32 else AppleArchitecture.ARM64
+                Architecture.ARM32 -> AppleArchitecture.ARM32
+            }
 
     // region DSL methods.
     /**
