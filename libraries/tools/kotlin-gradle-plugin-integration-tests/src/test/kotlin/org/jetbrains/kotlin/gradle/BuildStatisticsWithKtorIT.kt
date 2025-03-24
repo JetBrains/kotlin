@@ -312,7 +312,6 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 gradleVersion,
                 buildOptions = defaultBuildOptions.copy(
                     isolatedProjects = IsolatedProjectsMode.ENABLED,
-                    configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 )
             ) {
                 setProjectForTest(port)
