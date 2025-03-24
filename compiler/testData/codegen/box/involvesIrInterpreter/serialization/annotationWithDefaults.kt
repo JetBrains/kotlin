@@ -12,8 +12,8 @@ annotation class IntegerNumberValid(
     val minimum: Long = Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>,
     val maximum: Long = Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>,
 
-    val minMaxArray: LongArray = longArrayOf(Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>, Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>),
-    val minMaxArrayCollection: LongArray = [Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>, Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>],
+    val minMaxArray: LongArray = <!EVALUATED{IR}("[-9223372036854775808.toLong(), 9223372036854775807.toLong()]")!>longArrayOf(Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>, Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>)<!>,
+    val minMaxArrayCollection: LongArray = <!EVALUATED{IR}("[-9223372036854775808.toLong(), 9223372036854775807.toLong()]")!>[Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>, Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>]<!>,
 )
 
 @Target(AnnotationTarget.CLASS)

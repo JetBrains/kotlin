@@ -24,7 +24,9 @@ import kotlin.math.min
 internal abstract class IrConstExpressionTransformer(
     private val context: IrConstEvaluationContext,
 ) : IrTransformer<IrConstExpressionTransformer.Data>() {
-    internal data class Data(val inConstantExpression: Boolean = false)
+    internal data class Data(val inConstantExpression: Boolean = false, val inAnnotationConstructor: Boolean = false) {
+        fun mustEvaluate(): Boolean = inConstantExpression || inAnnotationConstructor
+    }
 
     override fun visitFunction(declaration: IrFunction, data: Data): IrStatement {
         // It is useless to visit default accessor, and if we do that, we could render excess information for `IrGetField`
@@ -32,12 +34,12 @@ internal abstract class IrConstExpressionTransformer(
 
         // We want to be able to evaluate default arguments of annotation's constructor
         val isAnnotationConstructor = declaration is IrConstructor && declaration.parentClassOrNull?.kind == ClassKind.ANNOTATION_CLASS
-        return super.visitFunction(declaration, data.copy(inConstantExpression = isAnnotationConstructor))
+        return super.visitFunction(declaration, data.copy(inAnnotationConstructor = isAnnotationConstructor))
     }
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
         if (context.canBeInterpreted(expression)) {
-            return context.interpret(expression, failAsError = data.inConstantExpression)
+            return context.interpret(expression, failAsError = data.mustEvaluate())
         }
         return super.visitCall(expression, data)
     }
@@ -56,7 +58,7 @@ internal abstract class IrConstExpressionTransformer(
 
     override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
         if (context.canBeInterpreted(expression)) {
-            return context.interpret(expression, failAsError = data.inConstantExpression)
+            return context.interpret(expression, failAsError = data.mustEvaluate())
         }
         return super.visitGetField(expression, data)
     }
@@ -67,7 +69,7 @@ internal abstract class IrConstExpressionTransformer(
         )
 
         fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression =
-            context.interpret(wrapInStringConcat(), failAsError = data.inConstantExpression)
+            context.interpret(wrapInStringConcat(), failAsError = data.mustEvaluate())
 
         fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst) value.toString() else ""
 
@@ -112,5 +114,13 @@ internal abstract class IrConstExpressionTransformer(
         }
 
         return IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type, folded)
+    }
+
+    override fun visitVararg(expression: IrVararg, data: Data): IrExpression {
+        return super.visitVararg(expression, data).also {
+            if (data.inAnnotationConstructor && context.canBeInterpreted(expression)) {
+                context.saveInConstTracker(expression)
+            }
+        }
     }
 }

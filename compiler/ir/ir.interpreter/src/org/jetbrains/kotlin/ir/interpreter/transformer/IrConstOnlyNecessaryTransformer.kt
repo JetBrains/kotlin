@@ -5,17 +5,10 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.isConst
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -37,7 +30,7 @@ internal class IrConstOnlyNecessaryTransformer(context: IrConstEvaluationContext
         }
 
         val isConstGetter = expression.symbol.owner.property.isConst
-        if (data.inConstantExpression || isConstGetter) {
+        if (data.mustEvaluate() || isConstGetter) {
             return super.visitCall(expression, data.copy(inConstantExpression = true))
         }
         expression.transformChildren(this, data)
@@ -46,7 +39,7 @@ internal class IrConstOnlyNecessaryTransformer(context: IrConstEvaluationContext
 
     override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
         val isConst = expression.symbol.owner.property.isConst
-        if (data.inConstantExpression || isConst) {
+        if (data.mustEvaluate() || isConst) {
             return super.visitGetField(expression, data.copy(inConstantExpression = true))
         }
         expression.transformChildren(this, data)
@@ -54,7 +47,7 @@ internal class IrConstOnlyNecessaryTransformer(context: IrConstEvaluationContext
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Data): IrExpression {
-        if (data.inConstantExpression) {
+        if (data.mustEvaluate()) {
             return super.visitStringConcatenation(expression, data.copy(inConstantExpression = true))
         }
         expression.transformChildren(this, data)
