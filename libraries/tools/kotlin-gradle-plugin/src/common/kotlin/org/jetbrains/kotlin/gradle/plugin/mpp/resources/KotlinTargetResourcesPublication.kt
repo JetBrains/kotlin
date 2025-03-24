@@ -34,7 +34,7 @@ interface KotlinTargetResourcesPublication {
         resourcePathForSourceSet: (KotlinSourceSet) -> (ResourceRoot),
         relativeResourcePlacement: Provider<File>,
     )
-    
+
     fun canResolveResources(target: KotlinTarget): Boolean
 
     fun resolveResources(target: KotlinTarget): Provider<File>

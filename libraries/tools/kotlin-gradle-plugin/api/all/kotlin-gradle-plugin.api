@@ -1778,7 +1778,9 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/TransformedMetadataLib
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	public final fun assemble ()V
+	public final fun from (Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;Lorg/gradle/api/provider/Provider;)V
 	public final fun from ([Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;)V
+	public static synthetic fun from$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTask;Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;Lorg/gradle/api/provider/Provider;ILjava/lang/Object;)V
 	public final fun fromFrameworkDescriptors (Ljava/lang/Iterable;)V
 	public final fun fromFrameworkDescriptors ([Lorg/jetbrains/kotlin/gradle/tasks/FrameworkDescriptor;)V
 	public final fun getBaseName ()Lorg/gradle/api/provider/Provider;
@@ -6261,11 +6263,14 @@ public final class org/jetbrains/kotlin/gradle/tasks/FatFrameworkTask$Companion 
 }
 
 public final class org/jetbrains/kotlin/gradle/tasks/FrameworkDescriptor : java/io/Serializable {
+	public fun <init> (Ljava/io/File;Ljava/io/File;ZLorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 	public fun <init> (Ljava/io/File;ZLorg/jetbrains/kotlin/konan/target/KonanTarget;)V
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;)V
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;Ljava/io/File;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;Ljava/io/File;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFile ()Ljava/io/File;
 	public final fun getFiles ()Lorg/jetbrains/kotlin/gradle/tasks/FrameworkLayout;
 	public final fun getName ()Ljava/lang/String;
+	public final fun getResources ()Ljava/io/File;
 	public final fun getTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
 	public final fun isStatic ()Z
 }
