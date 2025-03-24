@@ -3,7 +3,7 @@
 val flag = true
 
 val a: () -> Int = l@ {
-    <!RETURN_TYPE_MISMATCH!>if (flag) return@l 4<!>
+    <!RETURN_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (flag) return@l 4<!>
 }
 
 val b: () -> Unit = l@ {
@@ -11,7 +11,7 @@ val b: () -> Unit = l@ {
 }
 
 val c: () -> Any = l@ {
-    if (flag) return@l 4
+    <!INVALID_IF_AS_EXPRESSION!>if<!> (flag) return@l 4
 }
 
 val d: () -> Int = l@ {

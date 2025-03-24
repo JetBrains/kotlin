@@ -19988,6 +19988,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("buildWithIfAndCoercion.kt")
+        public void testBuildWithIfAndCoercion() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/buildWithIfAndCoercion.kt");
+        }
+
+        @Test
         @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
         public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");

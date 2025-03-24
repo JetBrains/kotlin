@@ -199,8 +199,11 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
 }
 
 private object UsedAsExpressionSetter : FirVisitorVoid() {
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
+    // We shouldn't traverse through calls / local variables / etc., only blocks and whens are allowed
+    override fun visitElement(element: FirElement) {}
+
+    override fun visitWhenBranch(whenBranch: FirWhenBranch) {
+        whenBranch.acceptChildren(this)
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression) {
@@ -211,11 +214,6 @@ private object UsedAsExpressionSetter : FirVisitorVoid() {
     override fun visitBlock(block: FirBlock) {
         block.statements.lastOrNull()?.accept(this)
     }
-
-    // We shouldn't traverse through calls / local variables / etc., only blocks and whens are allowed
-    override fun visitStatement(statement: FirStatement) {}
-
-    override fun visitDeclaration(declaration: FirDeclaration) {}
 }
 
 /**
