@@ -115,3 +115,17 @@ open class GrandChild4: Child4(), Barable
 open class Parent5
 open class Child5: Parent5()
 open class GrandChild5: Child5(), Barable, Foeble
+
+// FILE: sealed_interface.kt
+
+sealed interface SealedFoeble {
+    sealed interface SealedBarable: SealedFoeble
+
+    object SomeFoeble: SealedFoeble
+
+    object SomeBarable: SealedBarable
+}
+
+sealed interface SealedBazzable: SealedFoeble
+
+object SomeBazzable: SealedBazzable

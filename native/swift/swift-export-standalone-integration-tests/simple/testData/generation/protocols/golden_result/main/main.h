@@ -25,6 +25,10 @@ void * Foo_bar__TypesOfArguments__anyU20main_Foeble__(void * self, void * arg);
 
 void * Foo_baz_get(void * self);
 
+void * SealedFoeble_SomeBarable_get();
+
+void * SealedFoeble_SomeFoeble_get();
+
 void * SiblingProtocol_NestedClass_NestedClass_init_allocate();
 
 void SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -42,6 +46,8 @@ void * __root___Foo_init_allocate();
 void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___MyObject_get();
+
+void * __root___SomeBazzable_get();
 
 void __root___foo__TypesOfArguments__anyU20main_ContainerProtocol__(void * receiver);
 

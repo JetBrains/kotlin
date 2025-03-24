@@ -21,10 +21,13 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyObject::class, "4main8MyObjectC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SomeBazzable::class, "4main12SomeBazzableC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ContainerProtocol.NestedClass::class, "4main30_ContainerProtocol_NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.ContainerProtocol.NestedClass::class, "4main74_ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.SiblingProtocol.NestedClass::class, "4main72_ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.SiblingProtocol.NestedClass.NestedClass::class, "4main72_ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClassC11NestedClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SealedFoeble.SomeBarable::class, "4main25_SealedFoeble_SomeBarableC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SealedFoeble.SomeFoeble::class, "4main24_SealedFoeble_SomeFoebleC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SiblingProtocol.NestedClass::class, "4main28_SiblingProtocol_NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SiblingProtocol.NestedClass.NestedClass::class, "4main28_SiblingProtocol_NestedClassC11NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ContainerProtocol.NestedProtocol.NestedClass::class, "4main46__ContainerProtocol_NestedProtocol_NestedClassC")
@@ -119,6 +122,18 @@ public fun Foo_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native.in
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("SealedFoeble_SomeBarable_get")
+public fun SealedFoeble_SomeBarable_get(): kotlin.native.internal.NativePtr {
+    val _result = SealedFoeble.SomeBarable
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("SealedFoeble_SomeFoeble_get")
+public fun SealedFoeble_SomeFoeble_get(): kotlin.native.internal.NativePtr {
+    val _result = SealedFoeble.SomeFoeble
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("SiblingProtocol_NestedClass_NestedClass_init_allocate")
 public fun SiblingProtocol_NestedClass_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<SiblingProtocol.NestedClass.NestedClass>()
@@ -170,6 +185,12 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
 @ExportedBridge("__root___MyObject_get")
 public fun __root___MyObject_get(): kotlin.native.internal.NativePtr {
     val _result = MyObject
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___SomeBazzable_get")
+public fun __root___SomeBazzable_get(): kotlin.native.internal.NativePtr {
+    val _result = SomeBazzable
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

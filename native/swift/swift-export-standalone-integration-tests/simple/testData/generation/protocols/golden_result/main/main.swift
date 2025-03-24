@@ -25,6 +25,13 @@ public protocol Foeble: KotlinRuntime.KotlinBase {
         arg: any main.Foeble
     ) -> any main.Foeble
 }
+public protocol SealedBazzable: KotlinRuntime.KotlinBase, main.SealedFoeble {
+}
+public protocol SealedFoeble: KotlinRuntime.KotlinBase {
+    typealias SealedBarable = main._SealedFoeble_SealedBarable
+    typealias SomeBarable = main._SealedFoeble_SomeBarable
+    typealias SomeFoeble = main._SealedFoeble_SomeFoeble
+}
 public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main._SiblingProtocol_NestedClass
 }
@@ -33,6 +40,8 @@ public protocol _ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
 }
 public protocol _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
+}
+public protocol _SealedFoeble_SealedBarable: KotlinRuntime.KotlinBase, main.SealedFoeble {
 }
 public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.Foeble, main.Bazzable, KotlinRuntimeSupport._KotlinBridged {
     public var baz: main.Bar {
@@ -93,6 +102,21 @@ public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, KotlinRuntimeSupport._KotlinBridged {
+    public static var shared: main.SomeBazzable {
+        get {
+            return main.SomeBazzable(__externalRCRef: __root___SomeBazzable_get())
+        }
+    }
+    private override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = ContainerProtocol_NestedClass_init_allocate()
@@ -134,6 +158,36 @@ public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_
         let __kt = packagewithprotocols_SiblingProtocol_NestedClass_init_allocate()
         super.init(__externalRCRef: __kt)
         packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._SealedFoeble_SealedBarable, KotlinRuntimeSupport._KotlinBridged {
+    public static var shared: main._SealedFoeble_SomeBarable {
+        get {
+            return main._SealedFoeble_SomeBarable(__externalRCRef: SealedFoeble_SomeBarable_get())
+        }
+    }
+    private override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UnsafeMutableRawPointer?
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.SealedFoeble, KotlinRuntimeSupport._KotlinBridged {
+    public static var shared: main._SealedFoeble_SomeFoeble {
+        get {
+            return main._SealedFoeble_SomeFoeble(__externalRCRef: SealedFoeble_SomeFoeble_get())
+        }
+    }
+    private override init() {
+        fatalError()
     }
     package override init(
         __externalRCRef: Swift.UnsafeMutableRawPointer?
@@ -282,6 +336,10 @@ public extension main.Foeble where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension ExportedKotlinPackages.repeating_conformances.Foeble where Self : KotlinRuntimeSupport._KotlinBridged {
 }
+public extension main.SealedBazzable where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension main.SealedFoeble where Self : KotlinRuntimeSupport._KotlinBridged {
+}
 public extension main.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
@@ -289,6 +347,8 @@ public extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol whe
 public extension main._ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension ExportedKotlinPackages.packagewithprotocols {
     public protocol ContainerProtocol: KotlinRuntime.KotlinBase {

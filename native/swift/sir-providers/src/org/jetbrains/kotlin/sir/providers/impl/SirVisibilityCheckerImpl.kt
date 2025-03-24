@@ -159,9 +159,6 @@ public class SirVisibilityCheckerImpl(
         if (classKind == KaClassKind.ANNOTATION_CLASS || classKind == KaClassKind.ANONYMOUS_OBJECT) {
             return@with false
         }
-        if (classKind == KaClassKind.INTERFACE && modality == KaSymbolModality.SEALED) {
-            return false
-        }
         if (classKind == KaClassKind.ENUM_CLASS) {
             if (superTypes.any { it.symbol?.classId?.asSingleFqName() == FqName("kotlinx.cinterop.CEnum") }) {
                 unsupportedDeclarationReporter.report(this@isExported, "C enums are not supported yet.")
