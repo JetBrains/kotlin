@@ -316,9 +316,10 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     modality = Modality.FINAL
                 }.apply {
                     correspondingPropertySymbol = prop.symbol
-                    dispatchReceiverParameter = implClass.thisReceiver!!.copyTo(this)
+                    val dispatchReceiverParameter = implClass.thisReceiver!!.copyTo(this, kind = IrParameterKind.DispatchReceiver)
+                    parameters = listOf(dispatchReceiverParameter)
                     body = irBuiltIns.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                        +irReturn(irGetField(irGet(dispatchReceiverParameter!!), field))
+                        +irReturn(irGetField(irGet(dispatchReceiverParameter), field))
                     }
                     overriddenSymbols = listOf(property.getter!!.symbol)
                 }
