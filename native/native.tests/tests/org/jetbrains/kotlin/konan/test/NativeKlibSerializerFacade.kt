@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test
 
+import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -65,8 +66,8 @@ abstract class AbstractNativeKlibSerializerFacade(
             serializerOutput.serializedMetadata ?: testServices.assertions.fail { "expected serialized metadata" },
             serializerOutput.serializedIr,
             versions = KotlinLibraryVersioning(
-                abiVersion = KotlinAbiVersion.CURRENT,
                 compilerVersion = KotlinCompilerVersion.getVersion(),
+                abiVersion = configuration.klibAbiVersionForManifest(),
                 metadataVersion = configuration.klibMetadataVersionOrDefault(),
             ),
             target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
