@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
@@ -23,7 +24,6 @@ internal data class KlibWriterInput(
         val serializerOutput: SerializerOutput,
         val customOutputPath: String?,
         val produceHeaderKlib: Boolean,
-        val customAbiVersion: KotlinAbiVersion?,
 )
 
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
@@ -37,13 +37,10 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val output = outputFiles.klibOutputFileName(!nopack)
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
-    val abiVersion = input.customAbiVersion ?: KotlinAbiVersion.CURRENT
-    val compilerVersion = KotlinCompilerVersion.getVersion().toString()
-    val metadataVersion = configuration.klibMetadataVersionOrDefault()
     val versions = KotlinLibraryVersioning(
-            abiVersion = abiVersion,
-            compilerVersion = compilerVersion,
-            metadataVersion = metadataVersion,
+        compilerVersion = KotlinCompilerVersion.getVersion().toString(),
+        abiVersion = configuration.klibAbiVersionForManifest(),
+        metadataVersion = configuration.klibMetadataVersionOrDefault(),
     )
     val target = config.target
     val manifestProperties = config.manifestProperties ?: Properties()
@@ -97,7 +94,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.writeKlib(
         serializationOutput: SerializerOutput,
         customOutputPath: String? = null,
         produceHeaderKlib: Boolean = false,
-        customAbiVersion: KotlinAbiVersion?,
 ) {
-    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath, produceHeaderKlib, customAbiVersion))
+    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath, produceHeaderKlib))
 }

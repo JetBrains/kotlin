@@ -31,6 +31,7 @@ fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     }
 }
 
+// TODO: drop CompatibilityMode, KT-72100
 class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
 
     init {
