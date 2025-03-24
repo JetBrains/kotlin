@@ -9,6 +9,7 @@ dependencies {
 
     implementation(project(":core:compiler.common.js"))
     implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":compiler:ir.semantics"))
 
     compileOnly(intellijCore())
 }

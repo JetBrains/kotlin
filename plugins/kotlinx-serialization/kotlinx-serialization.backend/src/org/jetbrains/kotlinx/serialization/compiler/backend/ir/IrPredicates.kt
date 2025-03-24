@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.getAnnotation
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
@@ -29,7 +32,9 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 
 internal fun IrType.isKSerializer(): Boolean {
     val simpleType = this as? IrSimpleType ?: return false

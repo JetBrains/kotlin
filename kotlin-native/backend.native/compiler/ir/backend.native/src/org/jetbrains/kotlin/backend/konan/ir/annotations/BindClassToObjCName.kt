@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.semantics.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.semantics.isAnnotation
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.util.getValueArgument
-import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 

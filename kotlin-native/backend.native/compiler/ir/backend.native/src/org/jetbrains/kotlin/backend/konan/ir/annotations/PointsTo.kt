@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.util.allParameters
-import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 /**

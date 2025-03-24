@@ -442,7 +442,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean =
-        (this as IrAnnotationContainer).hasAnnotation(fqName)
+        (this as IrAnnotationContainer).annotations.any {
+            it.symbol.owner.parentAsClass.hasEqualFqName(fqName)
+        }
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
+import org.jetbrains.kotlin.backend.konan.isInlinedNative
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -17,13 +19,17 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstantValue
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)

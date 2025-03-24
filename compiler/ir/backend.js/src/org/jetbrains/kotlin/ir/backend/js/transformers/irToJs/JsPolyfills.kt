@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.semantics.getAnnotation
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class JsPolyfills {

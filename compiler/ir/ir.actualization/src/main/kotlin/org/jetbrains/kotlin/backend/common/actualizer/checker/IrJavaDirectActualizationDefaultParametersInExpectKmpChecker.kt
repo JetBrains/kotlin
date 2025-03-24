@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
 import org.jetbrains.kotlin.backend.common.actualizer.reportJavaDirectActualizationDefaultParametersInExpectFunction
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.name.StandardClassIds
 

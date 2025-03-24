@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -113,7 +114,9 @@ abstract class FakeOverrideBuilderStrategy(
                     thisModule == memberModule -> true
                     isInFriendModules(thisModule, memberModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
-                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                            original.annotations.any {
+                                it.symbol.owner.parentAsClass.classId == StandardClassIds.Annotations.PublishedApi
+                            } -> true
                     else -> false
                 }
             }

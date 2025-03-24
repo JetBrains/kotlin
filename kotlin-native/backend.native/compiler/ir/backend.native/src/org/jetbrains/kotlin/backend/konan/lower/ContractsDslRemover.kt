@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.util.transformFlat
 
 internal class ContractsDslRemover(val context: Context) : DeclarationContainerLoweringPass {

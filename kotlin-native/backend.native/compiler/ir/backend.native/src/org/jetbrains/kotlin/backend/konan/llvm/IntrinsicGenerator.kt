@@ -1,10 +1,11 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.ir.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -14,9 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCClassBinaryName
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.isInterface
 
 internal enum class IntrinsicType {

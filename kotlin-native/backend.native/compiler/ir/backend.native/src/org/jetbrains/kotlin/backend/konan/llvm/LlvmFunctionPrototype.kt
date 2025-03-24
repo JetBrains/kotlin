@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.ir.util.render
 
 /**
  * Add attributes to LLVM function declaration and its invocation.

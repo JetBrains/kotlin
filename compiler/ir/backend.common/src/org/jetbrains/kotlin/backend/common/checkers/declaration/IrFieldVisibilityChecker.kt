@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.checkers.declaration
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.name.ClassId
 
 /**

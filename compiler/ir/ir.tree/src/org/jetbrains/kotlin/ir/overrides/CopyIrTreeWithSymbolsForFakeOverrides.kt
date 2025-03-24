@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.copyAnnotations
-import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -68,7 +69,7 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
             // copied all type annotations.
             return addAnnotations(buildList {
                 for (fqName in TYPE_ANNOTATIONS_TO_MERGE) {
-                    addIfNotNull(other.annotations.findAnnotation(fqName))
+                    addIfNotNull(other.annotations.firstOrNull { it.symbol.owner.constructedClass.hasEqualFqName(fqName) })
                 }
             })
         }

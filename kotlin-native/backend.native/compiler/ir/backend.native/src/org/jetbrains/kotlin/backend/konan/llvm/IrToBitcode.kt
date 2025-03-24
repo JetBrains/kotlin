@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
@@ -23,6 +24,10 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.semantics.getAnnotationValueOrNull
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*

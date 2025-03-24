@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter.Companion.PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -32,13 +33,12 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 class JvmFir2IrExtensions(
     configuration: CompilerConfiguration,

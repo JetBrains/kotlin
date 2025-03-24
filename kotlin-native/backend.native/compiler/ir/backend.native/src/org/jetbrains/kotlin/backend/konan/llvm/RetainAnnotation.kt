@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.semantics.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 

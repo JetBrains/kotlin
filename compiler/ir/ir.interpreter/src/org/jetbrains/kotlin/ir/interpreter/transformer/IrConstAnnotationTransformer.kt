@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isAnnotation
-import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.ir.util.toIrConst
 
 internal abstract class IrConstAnnotationTransformer(private val context: IrConstEvaluationContext) {

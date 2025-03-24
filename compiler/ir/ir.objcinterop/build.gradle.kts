@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":core:compiler.common"))
     api(project(":compiler:ir.tree"))
+    implementation(project(":compiler:ir.semantics"))
 
     implementation(project(":core:compiler.common.native"))
 

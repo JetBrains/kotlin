@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.objcinterop.canObjCClassMethodBeCalledVirtually
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClassMethod
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*

@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStra
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isObjCBridgeBased
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.filterOutAnnotations
+import org.jetbrains.kotlin.ir.semantics.filterOutAnnotations
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 

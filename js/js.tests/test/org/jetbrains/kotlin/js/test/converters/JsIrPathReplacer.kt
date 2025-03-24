@@ -12,14 +12,15 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.js.test.utils.*
+import org.jetbrains.kotlin.ir.semantics.getAnnotation
+import org.jetbrains.kotlin.js.test.utils.getAdditionalFiles
+import org.jetbrains.kotlin.js.test.utils.getAdditionalMainFiles
+import org.jetbrains.kotlin.js.test.utils.getNameFor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isJsFile
 import org.jetbrains.kotlin.test.services.isMjsFile
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
-import kotlin.io.invariantSeparatorsPath
 
 private const val PATH_TO_ROOT_TOKEN = "@PATH_TO_ROOT"
 

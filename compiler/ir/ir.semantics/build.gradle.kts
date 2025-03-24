@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-
+    api(project(":compiler:ir.tree"))
 }
 
 sourceSets {

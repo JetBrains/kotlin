@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.semantics.filterOutAnnotations
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
+import org.jetbrains.kotlin.ir.semantics.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities

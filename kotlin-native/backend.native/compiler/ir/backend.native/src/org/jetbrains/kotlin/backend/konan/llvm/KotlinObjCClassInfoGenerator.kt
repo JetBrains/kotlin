@@ -7,13 +7,21 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMLinkage
 import llvm.LLVMValueRef
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.InteropFqNames
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.semantics.findAnnotation
+import org.jetbrains.kotlin.ir.semantics.getAnnotationArgumentValue
+import org.jetbrains.kotlin.ir.semantics.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
+import org.jetbrains.kotlin.ir.util.companionObject
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.isFinalClass
 
 internal class KotlinObjCClassInfoGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun generate(irClass: IrClass) {

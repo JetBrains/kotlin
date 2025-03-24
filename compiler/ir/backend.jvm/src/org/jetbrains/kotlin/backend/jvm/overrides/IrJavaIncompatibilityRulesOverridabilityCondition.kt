@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.overrides
 
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Contract
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
+import org.jetbrains.kotlin.ir.semantics.hasAnnotation
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render

@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.interpreter"))
     api(project(":compiler:ir.serialization.common"))
+    api(project(":compiler:ir.semantics"))
     implementation(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
 

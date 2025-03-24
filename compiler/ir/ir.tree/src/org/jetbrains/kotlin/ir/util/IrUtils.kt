@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,10 +31,15 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.StringWriter
 
 /**
@@ -319,64 +325,6 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
     val parent = this.parent
     return parent as? IrPackageFragment
         ?: (parent as IrDeclaration).getPackageFragment()
-}
-
-fun IrConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
-
-fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
-    annotations.find { it.isAnnotation(name) }
-
-fun IrAnnotationContainer.hasAnnotation(name: FqName) =
-    annotations.any {
-        it.symbol.owner.parentAsClass.hasEqualFqName(name)
-    }
-
-fun IrAnnotationContainer.hasAnnotation(classId: ClassId) =
-    annotations.any { it.symbol.owner.parentAsClass.classId == classId }
-
-fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
-    annotations.any {
-        it.symbol.owner.parentAsClass.symbol == symbol
-    }
-
-fun IrConstructorCall.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
-
-fun IrConstructorCall.getAnnotationStringValue(name: String): String {
-    val parameter = symbol.owner.parameters.single { it.name.asString() == name }
-    return (arguments[parameter.indexInParameters] as IrConst).value as String
-}
-
-inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
-    getAnnotationValueOrNullImpl(name) as T?
-
-@PublishedApi
-internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
-    val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
-    val argument = parameter?.let { arguments[it.indexInParameters] }
-    return (argument as IrConst?)?.value
-}
-
-inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
-    getAnnotationArgumentValueImpl(fqName, argumentName) as T?
-
-@PublishedApi
-internal fun IrDeclaration.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
-    val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (parameter in annotation.symbol.owner.parameters) {
-        if (parameter.name.asString() == argumentName) {
-            val actual = annotation.arguments[parameter.indexInParameters] as? IrConst
-            return actual?.value
-        }
-    }
-    return null
-}
-
-fun IrClass.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(StandardClassIds.Annotations.ParameterNames.retentionValue)
-                as? IrGetEnumValue ?: return null
-    val retentionArgumentValue = retentionArgument.symbol.owner
-    return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
@@ -1515,16 +1463,6 @@ fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
 
 val IrFunction.propertyIfAccessor: IrDeclaration
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
-
-/**
- * Whether this declaration (or its corresponding property if it's a property accessor) has the [PublishedApi] annotation.
- */
-fun IrDeclaration.isPublishedApi(): Boolean =
-    hasAnnotation(StandardClassIds.Annotations.PublishedApi) ||
-            (this as? IrSimpleFunction)
-                ?.correspondingPropertySymbol
-                ?.owner
-                ?.hasAnnotation(StandardClassIds.Annotations.PublishedApi) ?: false
 
 const val SKIP_BODIES_ERROR_DESCRIPTION = "skipBodies"
 

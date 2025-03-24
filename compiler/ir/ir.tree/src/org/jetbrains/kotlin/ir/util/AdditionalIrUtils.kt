@@ -7,12 +7,8 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.name.*
@@ -124,12 +120,6 @@ fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDec
     return false
 }
 
-private val IrConstructorCall.annotationClass
-    get() = this.symbol.owner.constructedClass
-
-fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    annotationClass.hasEqualFqName(fqName)
-
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
@@ -163,14 +153,6 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
         packageFqName == packageName && declarationFqName == declarationName
     }
 }
-
-fun List<IrConstructorCall>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
-
-fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.hasEqualFqName(fqName) }
-
-fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
@@ -303,10 +285,6 @@ fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = own
 @UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
-fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
-    return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
-}
-
 fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
     isTopLevelInPackage("suspendCoroutine", StandardNames.COROUTINES_PACKAGE_FQ_NAME)
 
@@ -316,23 +294,3 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
 
-/**
- * @return null - if [this] class is not an annotation class ([isAnnotationClass])
- * set of [KotlinTarget] representing the annotation targets of the annotation
- * ```
- * @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
- * annotation class Foo
- * ```
- *
- * shall return Class, Function, Property & Constructor
- */
-fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
-    if (!this.isAnnotationClass) return null
-
-    val valueArgument = getAnnotation(StandardNames.FqNames.target)
-        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
-        ?: return KotlinTarget.DEFAULT_TARGET_SET
-    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
-        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
-    }.toSet()
-}

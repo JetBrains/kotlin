@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.objcinterop.getObjCMethodInfo
 import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
+import org.jetbrains.kotlin.ir.semantics.getAnnotationArgumentValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
