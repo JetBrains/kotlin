@@ -44,9 +44,9 @@ public class MessageUtil {
     ) {
         VirtualFile virtualFile = file.getVirtualFile();
         String path = virtualFile != null ? virtualFileToPath(virtualFile) : defaultValue;
-        PsiDiagnosticUtils.LineAndColumn start = range.getStart();
-        PsiDiagnosticUtils.LineAndColumn end = range.getEnd();
-        return createMessageLocation(path, start.getLineContent(), start.getLine(), start.getColumn(), end.getLine(), end.getColumn());
+        PsiDiagnosticUtils.LineAndColumn start = range.start;
+        PsiDiagnosticUtils.LineAndColumn end = range.end;
+        return createMessageLocation(path, start.lineContent, start.line, start.column, end.line, end.column);
     }
 
     @Nullable
