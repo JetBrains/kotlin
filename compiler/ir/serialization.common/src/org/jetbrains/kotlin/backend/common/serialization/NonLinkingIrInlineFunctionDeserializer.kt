@@ -139,7 +139,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                 val deserializedFile = deserializedFunction.file
                 it.parent = IrFileImpl(
                     fileEntry = deserializedFile.fileEntry,
-                    symbol = IrFileSymbolImpl(),
+                    symbol = IrFileSymbolImpl(function.getPackageFragment().symbol.descriptor),
                     packageFqName = deserializedFile.packageFqName
                 )
             }
