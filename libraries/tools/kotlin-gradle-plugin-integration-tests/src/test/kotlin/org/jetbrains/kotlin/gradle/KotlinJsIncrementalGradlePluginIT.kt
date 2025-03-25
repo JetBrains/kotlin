@@ -27,12 +27,13 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     protected val irBackend: Boolean
 ) : KGPBaseTest() {
     @Suppress("DEPRECATION")
-    private val defaultJsOptions = BuildOptions.JsOptions(
-    )
+    private val defaultJsOptions = BuildOptions.JsOptions()
 
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
         )
 
     @DisplayName("incremental compilation for js works")
