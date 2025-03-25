@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.kdoc.parser
 
-package org.jetbrains.kotlin.kdoc.parser;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
-
-public class KDocElementTypes {
-    public static final KDocElementType KDOC_SECTION = new KDocElementType("KDOC_SECTION", KDocSection.class);
-    public static final KDocElementType KDOC_TAG = new KDocElementType("KDOC_TAG", KDocTag.class);
-    public static final KDocElementType KDOC_NAME = new KDocElementType("KDOC_NAME", KDocName.class);
+object KDocElementTypes {
+    val KDOC_SECTION: KDocElementType = KDocElementType("KDOC_SECTION", KDocSection::class.java)
+    val KDOC_TAG: KDocElementType = KDocElementType("KDOC_TAG", KDocTag::class.java)
+    val KDOC_NAME: KDocElementType = KDocElementType("KDOC_NAME", KDocName::class.java)
 }

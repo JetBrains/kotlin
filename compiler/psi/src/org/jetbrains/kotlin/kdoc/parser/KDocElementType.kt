@@ -13,36 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.kdoc.parser
 
-package org.jetbrains.kotlin.kdoc.parser;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import java.lang.reflect.Constructor
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
+class KDocElementType(debugName: String, psiClass: Class<out PsiElement>) : IElementType(debugName, KotlinLanguage.INSTANCE) {
+    private val psiFactory: Constructor<out PsiElement>
 
-import java.lang.reflect.Constructor;
-
-public class KDocElementType extends IElementType {
-    private final Constructor<? extends PsiElement> psiFactory;
-
-    public KDocElementType(String debugName, @NotNull Class<? extends PsiElement> psiClass) {
-        super(debugName, KotlinLanguage.INSTANCE);
+    init {
         try {
-            psiFactory = psiClass.getConstructor(ASTNode.class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Must have a constructor with ASTNode");
+            psiFactory = psiClass.getConstructor(ASTNode::class.java)
+        } catch (e: NoSuchMethodException) {
+            throw RuntimeException("Must have a constructor with ASTNode")
         }
     }
 
-    public PsiElement createPsi(ASTNode node) {
-        assert node.getElementType() == this;
+    fun createPsi(node: ASTNode): PsiElement {
+        assert(node.getElementType() === this)
 
         try {
-            return psiFactory.newInstance(node);
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating psi element for node", e);
+            return psiFactory.newInstance(node)
+        } catch (e: Exception) {
+            throw RuntimeException("Error creating psi element for node", e)
         }
     }
 }
