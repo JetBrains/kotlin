@@ -91,7 +91,7 @@ class SingletonObjectJvmStaticTransformer(
         if (function.isJvmStaticInObject()) {
             // dispatch receiver parameter is already null for synthetic property annotation methods
             function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
-                function.dispatchReceiverParameter = null
+                function.parameters -= oldDispatchReceiverParameter
 
                 if (function !is IrLazyFunctionBase) {
                     function.replaceThisByStaticReference(cachedFields, function.parentAsClass, oldDispatchReceiverParameter)
