@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -32,19 +31,9 @@ sourceSets {
 
 testsJar()
 
-compilerTests {
-    testData("testData")
-    withScriptRuntime()
-    withTestJar()
-}
-
 projectTest(parallel = true) {
     workingDir = rootDir
     useJUnitPlatform()
-    inputs.file(File(rootDir, "tests/mute-common.csv")).withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml"))
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar")).withNormalizer(ClasspathNormalizer::class)
 }
 
 val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
