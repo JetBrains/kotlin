@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.abi.tools.v2.ToolsV2
 import org.junit.*
 import org.junit.rules.TestName
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.walk
+import kotlin.io.walk
 import kotlin.test.fail
 
 class CasesPublicAPITest {
@@ -19,7 +18,7 @@ class CasesPublicAPITest {
     companion object {
         val baseClassPaths: List<File> =
             System.getProperty("testCasesClassesDirs")
-                .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property"} }
+                .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property" } }
                 .split(File.pathSeparator)
                 .map { File(it, "cases").canonicalFile }
         val baseOutputPath = File("src/test/kotlin/cases")
@@ -29,50 +28,151 @@ class CasesPublicAPITest {
     @JvmField
     val testName = TestName()
 
-    @Test fun annotations() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun annotations() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun companions() { snapshotAPIAndCompare(testName.methodName, "cases.companions.PrivateApi") }
+    @Test
+    fun companions() {
+        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
+    }
 
-    @Test fun default() { snapshotAPIAndCompare(testName.methodName, "cases.default.PrivateApi") }
+    @Test
+    fun default() {
+        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.default.PrivateApi"))
+    }
 
-    @Test fun inline() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun inline() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun interfaces() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun interfaces() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun internal() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun internal() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun java() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun java() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun localClasses() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun localClasses() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun marker() { snapshotAPIAndCompare(testName.methodName, "cases.marker.HiddenField", "cases.marker.HiddenProperty", "cases.marker.HiddenMethod") }
+    @Test
+    fun marker() {
+        snapshotAPIAndCompare(
+            testName.methodName,
+            excludedAnnotatedWith = setOf(
+                "cases.marker.HiddenField",
+                "cases.marker.HiddenProperty",
+                "cases.marker.HiddenMethod"
+            )
+        )
+    }
 
-    @Test fun nestedClasses() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun nestedClasses() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun packageAnnotations() { snapshotAPIAndCompare(testName.methodName, "cases.packageAnnotations.PrivateApi") }
+    @Test
+    fun packageAnnotations() {
+        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.packageAnnotations.PrivateApi"))
+    }
 
-    @Test fun private() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun private() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun protected() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun protected() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun public() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun public() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun special() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun special() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun suspend() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun suspend() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun whenMappings() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun whenMappings() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    @Test fun enums() { snapshotAPIAndCompare(testName.methodName) }
+    @Test
+    fun enums() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
 
-    private fun snapshotAPIAndCompare(testClassRelativePath: String, vararg excludeAnnotatedWith: String) {
-        val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
-        val testClasses = testClassPaths.flatMap { it.walk() }.filter { it.name.endsWith(".class") }
-        check(testClasses.isNotEmpty()) { "No class files are found in paths: $testClassPaths" }
+    @Test
+    fun included() {
+        snapshotAPIAndCompare(testName.methodName, includedClasses = setOf("cases.included.subpackage.*"))
+    }
 
+    @Test
+    fun root() {
+        snapshotAPIAndCompareRoot(testName.methodName, excludedClasses = setOf("RootClass1", "*Tests"), includedClasses = setOf("*"))
+    }
+
+    @Test
+    fun file() {
+        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.file.FileFacade1Kt"))
+    }
+
+    private fun snapshotAPIAndCompareRoot(
+        testClassRelativePath: String,
+        includedClasses: Set<String> = emptySet(),
+        excludedClasses: Set<String> = emptySet(),
+        includedAnnotatedWith: Set<String> = emptySet(),
+        excludedAnnotatedWith: Set<String> = emptySet(),
+    ) {
+        val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
+
+        val testClassPaths = baseClassPaths.map { it.resolve("..") }
         val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
 
-        val filters = AbiFilters(emptySet(), emptySet(), emptySet(), excludeAnnotatedWith.toSet())
+        doCheck(testClassPaths, target, filters)
+    }
+
+    private fun snapshotAPIAndCompare(
+        testClassRelativePath: String,
+        includedClasses: Set<String> = emptySet(),
+        excludedClasses: Set<String> = emptySet(),
+        includedAnnotatedWith: Set<String> = emptySet(),
+        excludedAnnotatedWith: Set<String> = emptySet(),
+    ) {
+        val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
+
+        val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
+        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
+
+        doCheck(testClassPaths, target, filters)
+    }
+
+    private fun doCheck(testClassPaths: List<File>, target: File, filters: AbiFilters) {
+        val testClasses = testClassPaths.flatMap { it.walk() }.filter { it.name.endsWith(".class") }
+        check(testClasses.isNotEmpty()) { "No class files are found in paths: $testClassPaths" }
 
         if (!target.exists()) {
             target.bufferedWriter().use { writer ->

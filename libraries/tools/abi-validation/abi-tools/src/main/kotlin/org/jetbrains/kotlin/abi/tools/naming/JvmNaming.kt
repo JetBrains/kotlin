@@ -24,19 +24,41 @@ internal fun String.jvmInternalToCanonical(): Pair<String, String> {
     }
 
     val className = substring(lastDelimiter + 1)
+    return Pair(packageName, className.replaceDollars())
+}
 
-    if (!className.contains('$')) return Pair(packageName, className)
+/**
+ * Convert JVM descriptor of object type of parameter or annotation to Java canonical name.
+ * Examples:
+ *  - `Lfoo/bar/Biz$Gz;` -> `foo.bar.Biz.Gz`
+ *  - `Lfoo/bar/Biz$$$Gz$$X;` -> `foo.bar.Biz.$$Gz.$X`
+ *  - `LBar;` -> `Bar`
+ */
+internal fun String.jvmTypeDescToCanonical(): Pair<String, String> {
+    return substring(1, length - 1).jvmInternalToCanonical()
+}
+
+/**
+ * Replaces `$` separator characters in the string with a dot-separated format.
+ * If the `$` character is repeated in a row, then only the first one is replaced with dot.
+ *
+ * Examples:
+ *  - `Biz$Gz` -> `Biz.Gz`
+ *  - `Biz$$$Gz$$X` -> `Biz.$$Gz.$X`
+ *  - `Bar` -> `Bar`
+ */
+private fun String.replaceDollars(): String {
+    if (!contains('$')) return this
 
     val segments = mutableListOf<String>()
     val builder = StringBuilder()
-
-    for (idx in className.indices) {
-        val c = className[idx]
+    for (idx in indices) {
+        val c = this[idx]
         // Don't treat a character as a separator if:
         // - it's not a '$'
         // - it's at the beginning of the segment
         // - it's the last character of the string
-        if (c != '$' || builder.isEmpty() || idx == className.length - 1) {
+        if (c != '$' || builder.isEmpty() || idx == length - 1) {
             builder.append(c)
             continue
         }
@@ -54,17 +76,5 @@ internal fun String.jvmInternalToCanonical(): Pair<String, String> {
         segments.add(builder.toString())
     }
 
-    val correctedClassName = segments.joinToString(separator = ".")
-    return Pair(packageName, correctedClassName)
-}
-
-/**
- * Convert JVM descriptor of object type of parameter or annotation to Java canonical name.
- * Examples:
- *  - `Lfoo/bar/Biz$Gz;` -> `foo.bar.Biz.Gz`
- *  - `Lfoo/bar/Biz$$$Gz$$X;` -> `foo.bar.Biz.$$Gz.$X`
- *  - `LBar;` -> `Bar`
- */
-internal fun String.jvmTypeDescToCanonical(): Pair<String, String> {
-    return substring(1, length - 1).jvmInternalToCanonical()
+    return segments.joinToString(separator = ".")
 }

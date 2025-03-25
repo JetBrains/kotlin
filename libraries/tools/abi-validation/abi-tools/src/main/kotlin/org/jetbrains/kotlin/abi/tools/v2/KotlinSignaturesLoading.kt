@@ -175,6 +175,7 @@ private fun List<AnnotationNode>.extractAnnotationQualifiedNames(): List<String>
 private fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?): Pair<String, String> {
     return when {
         metadata is KotlinClassMetadata.Class -> metadata.kmClass.name.metadataNameToQualified()
+        metadata is KotlinClassMetadata.FileFacade -> name.jvmInternalToCanonical()
         isDefaultImpls(metadata) && outerClassName != null -> outerClassName!!.metadataNameToQualified()
         // if metadata is not null - it's Kotlin symbol without qualified name, like File facade etc, so we clear class name
         metadata != null -> name.jvmInternalToCanonical().first to ""
@@ -295,7 +296,8 @@ internal fun List<ClassBinarySignature>.filterByMatcher(matcher: FiltersMatcher)
         .mapNotNull { classDeclaration ->
             if (matcher.isEmpty) return@mapNotNull FilteredDeclaration(classDeclaration, FilterResult.PASSED)
 
-            val qualifiedName = classDeclaration.packageName + '.' + classDeclaration.qualifiedName
+            val qualifiedName =
+                if (classDeclaration.packageName.isNotEmpty()) classDeclaration.packageName + '.' + classDeclaration.qualifiedName else classDeclaration.qualifiedName
 
             val annotations = if (packageAnnotations != null) {
                 (classDeclaration.annotations.extractAnnotationQualifiedNames() + packageAnnotations[classDeclaration.packageName])
@@ -311,7 +313,13 @@ internal fun List<ClassBinarySignature>.filterByMatcher(matcher: FiltersMatcher)
         }
         // filter members and all non-included empty classes
         .mapNotNull { filtering ->
-            if (!matcher.hasAnnotationFilters) return@mapNotNull filtering.classDeclaration
+            if (!matcher.hasAnnotationFilters) {
+                return@mapNotNull if (filtering.result == FilterResult.NOT_IN_INCLUDE) {
+                    null
+                } else {
+                    filtering.classDeclaration
+                }
+            }
 
             val classDeclaration = filtering.classDeclaration
             val testClass = filtering.result
