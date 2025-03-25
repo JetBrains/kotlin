@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.kdoc.psi.api
 
-package org.jetbrains.kotlin.kdoc.psi.api;
+import com.intellij.psi.PsiElement
 
-import com.intellij.psi.PsiElement;
-
-public interface KDocElement extends PsiElement {
-}
+interface KDocElement : PsiElement
