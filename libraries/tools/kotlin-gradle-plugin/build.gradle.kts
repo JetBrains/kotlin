@@ -496,29 +496,19 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     sourceSets.getByName("testFixtures") {
-        // test source set has a task dependency on testFixture which produces cyclic dependency when trying to inherit dependencies from test; just exclude self dependency as a workaround
-        fun Configuration.dependenciesWithoutSelf() = dependencies.filterNot {
-            it is ProjectDependency && it.path == project.path
-        }
-
-        // Share dependencies with functionalTest
-        configurations.getByName(implementationConfigurationName) {
-            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.implementationConfigurationName))
-            dependencies.addAllLater(
-                provider {
-                    configurations.getByName(testSourceSet.implementationConfigurationName).dependenciesWithoutSelf()
-                }
-            )
-        }
-
-        // Also share runtime dependencies, but we don't actually resolve testFixturesRuntimeClasspath anywhere
-        configurations.getByName(runtimeOnlyConfigurationName) {
-            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.runtimeOnlyConfigurationName))
-            dependencies.addAllLater(
-                provider {
-                    configurations.getByName(testSourceSet.runtimeOnlyConfigurationName).dependenciesWithoutSelf()
-                }
-            )
+        /*
+         * testFixtures source set is closer to regular dependencies,
+         * so that it already has access to main and its transitive API dependencies.
+         * Thus, there's no need to copy the main dependencies.
+         *
+         * Instead of copying dependencies from testSourceSet, define granular dependencies here,
+         * as textFixtures are shared with integration test projects,
+         * and it's preferable to have granular control over them.
+         * Also, it prevents compilation problems due to dependencies from the test source set of too high LV (like compiler modules).
+         */
+        dependencies {
+            add(implementationConfigurationName, commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+            add(implementationConfigurationName, gradleApi())
         }
     }
 
@@ -527,6 +517,11 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     testFixturesCompilation.compileJavaTaskProvider.configure {
         sourceCompatibility = JavaLanguageVersion.of(8).toString()
         targetCompatibility = JavaLanguageVersion.of(8).toString()
+    }
+    testFixturesCompilation.compileTaskProvider.configure {
+        with(this as KotlinCompile) {
+            configureGradleCompatibility()
+        }
     }
 
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
