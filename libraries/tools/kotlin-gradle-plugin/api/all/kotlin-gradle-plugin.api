@@ -3894,7 +3894,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrOutputGra
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSingleTargetPreset : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTargetPreset {
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public synthetic fun createKotlinTargetConfigurator ()Lorg/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator;
-	public fun isMpp ()Z
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl, org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTargetWithBinary {
@@ -3924,6 +3923,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/Kotlin
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;)V
+	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;Z)V
 	public fun applyBinaryen ()V
 	public fun applyBinaryen (Lkotlin/jvm/functions/Function1;)V
 	public fun applyBinaryen (Lorg/gradle/api/Action;)V
@@ -3951,7 +3951,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget
 	public fun getWasmTargetType ()Lorg/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetType;
 	public fun isBrowserConfigured ()Z
 	public fun isD8Configured ()Z
-	public fun isMpp ()Ljava/lang/Boolean;
 	public fun isNodejsConfigured ()Z
 	public fun nodejs ()V
 	public fun nodejs (Lkotlin/jvm/functions/Function1;)V
@@ -3986,7 +3985,7 @@ public class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTargetPreset : 
 	protected fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public synthetic fun instantiateTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
 	protected fun instantiateTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;
-	public fun isMpp ()Z
+	protected fun isMpp ()Z
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTargetPreset$Companion {

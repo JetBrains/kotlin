@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -33,11 +33,18 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
 
+internal fun ObjectFactory.KotlinJsIrTarget(
+    project: Project,
+    platformType: KotlinPlatformType,
+    isMpp: Boolean,
+): KotlinJsIrTarget = newInstance(project, platformType, isMpp)
+
 abstract class KotlinJsIrTarget
 @Inject
 constructor(
     project: Project,
     platformType: KotlinPlatformType,
+    internal val isMpp: Boolean
 ) :
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -46,6 +53,14 @@ constructor(
     KotlinWasmWasiTargetDsl,
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
+
+    @Deprecated(
+        message = "Internal Kotlin Gradle Plugin API. Scheduled for removal in Kotlin 2.4."
+    )
+    constructor(
+        project: Project,
+        platformType: KotlinPlatformType,
+    ) : this(project, platformType, true)
 
     private val propertiesProvider = PropertiesProvider(project)
 
@@ -56,9 +71,6 @@ constructor(
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
         project.container(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
     }
-
-    open var isMpp: Boolean? = null
-        internal set
 
     override var wasmTargetType: KotlinWasmTargetType? = null
         internal set
@@ -111,7 +123,7 @@ constructor(
     override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
         val usageContexts = super.createUsageContexts(producingCompilation)
 
-        if (isMpp!!) return usageContexts
+        if (isMpp) return usageContexts
 
         return usageContexts +
                 DefaultKotlinUsageContext(

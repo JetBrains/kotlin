@@ -22,14 +22,13 @@ open class KotlinJsIrTargetPreset(
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project
 ) {
-    open val isMpp: Boolean
+    protected open val isMpp: Boolean
         get() = true
 
     override val platformType: KotlinPlatformType = KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType).apply {
-            this.isMpp = this@KotlinJsIrTargetPreset.isMpp
+        return project.objects.KotlinJsIrTarget(project, platformType, isMpp).apply {
             this.outputModuleName.convention(buildNpmProjectName(project, name))
             KotlinJsIrTargetMetrics.collectMetrics(
                 isBrowserConfigured = isBrowserConfigured,

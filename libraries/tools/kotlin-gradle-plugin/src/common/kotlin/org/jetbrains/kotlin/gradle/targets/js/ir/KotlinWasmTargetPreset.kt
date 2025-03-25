@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -25,8 +23,7 @@ class KotlinWasmTargetPreset(
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm)
-        irTarget.isMpp = true
+        val irTarget = project.objects.KotlinJsIrTarget(project, KotlinPlatformType.wasm, true)
         irTarget.outputModuleName.convention(buildNpmProjectName(project, name))
         irTarget.wasmTargetType = targetType
 
