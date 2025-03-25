@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -70,7 +71,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         val isCompatibilityMode =
             (jvmDefaultMode == JvmDefaultMode.ENABLE && !irClass.hasJvmDefaultNoCompatibilityAnnotation()) ||
                     (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY && irClass.hasJvmDefaultWithCompatibilityAnnotation())
-        // There are 6 cases for functions on interfaces:
+        // There are 5 cases for functions on interfaces:
         for (function in irClass.functions) {
             when {
                 /**
@@ -160,19 +161,26 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                 }
 
                 /**
-                 * 5) JVM default declaration is bridged in DefaultImpls via accessor if in compatibility mode, ...
+                 * 5) ... otherwise we simply leave the default function implementation on the interface.
+                 *    If we're in the compatibility mode, we also generate an accessor in DefaultImpls.
                  */
-                isCompatibilityMode -> {
+                else -> {
                     val visibility =
                         if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
                             function.defaultArgumentsOriginalFunction!!.visibility
                         else function.visibility
                     if (!DescriptorVisibilities.isPrivate(visibility)) {
-                        createJvmDefaultCompatibilityDelegate(function)
+                        if (isCompatibilityMode) {
+                            createJvmDefaultCompatibilityDelegate(function)
+                        }
+                    } else {
+                        // In kapt mode with JVM target < 9, private interface methods need to be generated as public (or not generated
+                        // at all), because private methods in interfaces are supported in Java sources only starting from Java 9.
+                        if (context.config.target == JvmTarget.JVM_1_8 && !context.state.classBuilderMode.generateBodies) {
+                            function.visibility = DescriptorVisibilities.PUBLIC
+                        }
                     }
                 }
-
-                // 6) ... otherwise we simply leave the default function implementation on the interface.
             }
         }
 

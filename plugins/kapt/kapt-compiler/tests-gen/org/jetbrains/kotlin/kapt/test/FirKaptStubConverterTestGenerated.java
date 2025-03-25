@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kapt.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -411,18 +412,6 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   @TestMetadata("javadoc.kt")
   public void testJavadoc() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/javadoc.kt");
-  }
-
-  @Test
-  @TestMetadata("jvmDefaultAll.kt")
-  public void testJvmDefaultAll() {
-    runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefaultAll.kt");
-  }
-
-  @Test
-  @TestMetadata("jvmDefaultAllCompatibility.kt")
-  public void testJvmDefaultAllCompatibility() {
-    runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefaultAllCompatibility.kt");
   }
 
   @Test
@@ -831,5 +820,51 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   @TestMetadata("unsafePropertyInitializers.kt")
   public void testUnsafePropertyInitializers() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/unsafePropertyInitializers.kt");
+  }
+
+  @Nested
+  @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/jvmDefault")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmDefault {
+    @Test
+    public void testAllFilesPresentInJvmDefault() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-compiler/testData/converter/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("disable.kt")
+    public void testDisable() {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefault/disable.kt");
+    }
+
+    @Test
+    @TestMetadata("disable1.8.kt")
+    public void testDisable1_8() {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefault/disable1.8.kt");
+    }
+
+    @Test
+    @TestMetadata("enable.kt")
+    public void testEnable() {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefault/enable.kt");
+    }
+
+    @Test
+    @TestMetadata("enable1.8.kt")
+    public void testEnable1_8() {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefault/enable1.8.kt");
+    }
+
+    @Test
+    @TestMetadata("noCompatibility.kt")
+    public void testNoCompatibility() {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefault/noCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("noCompatibility1.8.kt")
+    public void testNoCompatibility1_8() {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmDefault/noCompatibility1.8.kt");
+    }
   }
 }

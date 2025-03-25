@@ -10,8 +10,11 @@
  *   // signature: foo2(I)V
  *   public open fun foo2(a: kotlin/Int): kotlin/Unit
  *
- *   // signature: privateMethodWithDefault()V
- *   private final fun privateMethodWithDefault(): kotlin/Unit
+ *   // signature: privateDefaultMethod(Ljava/lang/String;)V
+ *   private final fun privateDefaultMethod(x: kotlin/String? (* = ... *)): kotlin/Unit
+ *
+ *   // signature: privateMethod()V
+ *   private final fun privateMethod(): kotlin/Unit
  *
  *   // module name: main
  *
@@ -31,7 +34,10 @@ public abstract interface Foo {
 
     public abstract void bar();
 
-    private void privateMethodWithDefault() {
+    private void privateMethod() {
+    }
+
+    private void privateDefaultMethod(java.lang.String x) {
     }
 
     /**
