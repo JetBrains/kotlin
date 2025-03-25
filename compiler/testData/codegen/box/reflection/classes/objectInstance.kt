@@ -1,5 +1,12 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// FILE: J.java
+public class J {
+    public static final J INSTANCE = new J();
+}
+
+// FILE: box.kt
+package test
 
 import kotlin.test.assertEquals
 
@@ -30,6 +37,7 @@ fun box(): String {
     assertEquals(null, String::class.objectInstance)
     assertEquals(Unit, Unit::class.objectInstance)
     assertEquals(null, object {}::class.objectInstance)
+    assertEquals(null, J::class.objectInstance)
 
     return "OK"
 }
