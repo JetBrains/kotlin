@@ -26,13 +26,7 @@ context -> FirRegularClassSymbol Positive
 context -> FirRegularClassSymbol WithSimpleOperations
 @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
-context -> FirRegularClassSymbol WithStringLiteral
-@StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
 context -> FirRegularClassSymbol WithStringLiteralConcat
-@StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol WithStringInterpolationPrefix
 @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
 context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
