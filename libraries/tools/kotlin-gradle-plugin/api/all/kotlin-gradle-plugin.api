@@ -2385,6 +2385,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/NpmVersions : java/io/
 	public final fun getKarmaIeLauncher ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getKarmaMocha ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getKarmaOperaLauncher ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
+	public final fun getKarmaPhantomjsLauncher ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getKarmaSafariLauncher ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getKarmaSourcemapLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getKarmaWebpack ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
@@ -4167,6 +4168,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPackag
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask$Companion;
+	public static final field KOTLIN_NPM_TOOLING_NAME Ljava/lang/String;
 	public static final field NAME Ljava/lang/String;
 	public abstract fun getArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getDestination ()Lorg/gradle/api/file/DirectoryProperty;
