@@ -27553,6 +27553,12 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
 
+          @Test
+          @TestMetadata("kt55083_indyLambdaForFunInterface.kt")
+          public void testKt55083_indyLambdaForFunInterface() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt55083_indyLambdaForFunInterface.kt");
+          }
+
           @Nested
           @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
           @TestDataPath("$PROJECT_ROOT")

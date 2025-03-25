@@ -37008,6 +37008,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("kt12466_superCallKJK.kt")
+        public void testKt12466_superCallKJK() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt12466_superCallKJK.kt");
+        }
+
+        @Test
         @TestMetadata("kt14243.kt")
         public void testKt14243() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt14243.kt");
@@ -37035,6 +37041,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("kt42674.kt")
         public void testKt42674() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt42674.kt");
+        }
+
+        @Test
+        @TestMetadata("kt42697_mutableMapMixedDisableEnable.kt")
+        public void testKt42697_mutableMapMixedDisableEnable() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt42697_mutableMapMixedDisableEnable.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55083_indyLambdaForFunInterface.kt")
+        public void testKt55083_indyLambdaForFunInterface() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt55083_indyLambdaForFunInterface.kt");
         }
 
         @Test
@@ -37283,6 +37301,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("kt11969.kt")
         public void testKt11969() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt11969.kt");
+        }
+
+        @Test
+        @TestMetadata("kt12466_superCallKJK.kt")
+        public void testKt12466_superCallKJK() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/kt12466_superCallKJK.kt");
         }
 
         @Test
@@ -52738,6 +52762,24 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("functionExpressionInProperty.kt")
       public void testFunctionExpressionInProperty() {
         runTest("compiler/testData/codegen/box/reflection/enclosing/functionExpressionInProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("kt16727_anonymousInInterface.kt")
+      public void testKt16727_anonymousInInterface() {
+        runTest("compiler/testData/codegen/box/reflection/enclosing/kt16727_anonymousInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("kt33097_anonymousInInterfaceCompanion.kt")
+      public void testKt33097_anonymousInInterfaceCompanion() {
+        runTest("compiler/testData/codegen/box/reflection/enclosing/kt33097_anonymousInInterfaceCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("kt33097_anonymousInInterfaceCompanionJvmDefaultDisable.kt")
+      public void testKt33097_anonymousInInterfaceCompanionJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/box/reflection/enclosing/kt33097_anonymousInInterfaceCompanionJvmDefaultDisable.kt");
       }
 
       @Test

@@ -26426,6 +26426,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @TestDataPath("$PROJECT_ROOT")
         @Tag("klib")
         public class Enable {
+          @Test
+          @TestMetadata("kt55083_indyLambdaForFunInterface.kt")
+          public void testKt55083_indyLambdaForFunInterface() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/enable/kt55083_indyLambdaForFunInterface.kt");
+          }
+
           @Nested
           @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
           @TestDataPath("$PROJECT_ROOT")
