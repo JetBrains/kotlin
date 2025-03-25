@@ -2,11 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     val jvmWithoutJava = jvm("jvmWithoutJava")
     val js = js {
