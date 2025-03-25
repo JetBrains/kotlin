@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.structure.Java16SealedRecordLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -179,11 +180,17 @@ internal class KClassImpl<T : Any>(
         }
 
         val sealedSubclasses: List<KClass<out T>> by ReflectProperties.lazySoft {
-            descriptor.sealedSubclasses.mapNotNull { subclass ->
-                @Suppress("UNCHECKED_CAST")
-                val jClass = (subclass as ClassDescriptor).toJavaClass() as Class<out T>?
-                jClass?.let { KClassImpl(it) }
+            val classLoader = jClass.safeClassLoader
+            val kmClass = kmClass
+            val result = when {
+                kmClass != null ->
+                    kmClass.sealedSubclasses.mapNotNull(classLoader::loadKClass)
+                Java16SealedRecordLoader.loadIsSealed(jClass) == true ->
+                    Java16SealedRecordLoader.loadGetPermittedSubclasses(jClass)?.map { it.kotlin }.orEmpty()
+                else -> emptyList()
             }
+            @Suppress("UNCHECKED_CAST")
+            result as List<KClass<out T>>
         }
 
         val declaredNonStaticMembers: Collection<KCallableImpl<*>>

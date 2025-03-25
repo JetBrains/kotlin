@@ -52669,6 +52669,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("sealedSubclassesJava.kt")
+      public void testSealedSubclassesJava() {
+        runTest("compiler/testData/codegen/box/reflection/classes/sealedSubclassesJava.kt");
+      }
+
+      @Test
       @TestMetadata("starProjectedType.kt")
       public void testStarProjectedType() {
         runTest("compiler/testData/codegen/box/reflection/classes/starProjectedType.kt");
