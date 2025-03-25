@@ -5,19 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-val nativePlatformVariants = listOf(
-    "windows-amd64",
-    "windows-i386",
-    "osx-amd64",
-    "osx-i386",
-    "linux-amd64",
-    "linux-i386",
-    "freebsd-amd64-libcpp",
-    "freebsd-amd64-libstdcpp",
-    "freebsd-i386-libcpp",
-    "freebsd-i386-libstdcpp"
-)
-
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":daemon-common"))
