@@ -18,14 +18,11 @@ dependencies {
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
     compileOnly RepoDependencies.kotlinStdlib(project)
-    compileOnly project(':compiler')
-    compileOnly project(':compiler:plugin-api')
-    compileOnly project(':compiler:cli-common')
-    compileOnly project(':compiler:cli')
+    // kotlin-for-gradle-plugins-compilation
+    String btaBootstrapVersion = libs.versions.kotlin.for.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$btaBootstrapVersion")
     
     compileOnly gradleApi()
-
-    compileOnly project(':dependencies:intellij-core')
 }
 
 GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false, false)
