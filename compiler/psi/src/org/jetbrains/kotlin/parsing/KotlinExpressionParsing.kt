@@ -68,11 +68,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
 
         private var higher: Precedence? = null
         @JvmField
-        val operations: TokenSet
-
-        init {
-            this.operations = TokenSet.create(*operations)
-        }
+        val operations: TokenSet = TokenSet.create(*operations)
 
         open fun parseHigherPrecedence(parser: KotlinExpressionParsing) {
             checkNotNull(higher)
@@ -169,7 +165,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
      */
     private fun parsePrefixExpression() {
         if (at(KtTokens.AT)) {
-            if (!parseLocalDeclaration( /* rollbackIfDefinitelyNotExpression = */false, false)) {
+            if (!parseLocalDeclaration(rollbackIfDefinitelyNotExpression = false, isScriptTopLevel = false)) {
                 val expression = mark()
                 myKotlinParsing.parseAnnotations(KotlinParsing.AnnotationParsingMode.DEFAULT)
                 parsePrefixExpression()
@@ -442,7 +438,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
             KtTokens.IDENTIFIER_Id -> {
                 // Try to parse anonymous function with context parameters
                 if (at(KtTokens.CONTEXT_KEYWORD) && lookahead(1) === KtTokens.LPAR) {
-                    if (parseLocalDeclaration(true, false)) {
+                    if (parseLocalDeclaration(rollbackIfDefinitelyNotExpression = true, isScriptTopLevel = false)) {
                         return true
                     } else {
                         at(KtTokens.IDENTIFIER)
@@ -542,7 +538,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
                 reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
                 thisExpression.done(KtNodeTypes.THIS_EXPRESSION)
             } else {
-                val keyword: KtToken? = KEYWORD_TEXTS.get(myBuilder.getTokenText())
+                val keyword: KtToken? = KEYWORD_TEXTS.get(myBuilder.tokenText)
                 if (keyword != null) {
                     myBuilder.remapCurrentToken(keyword)
                     errorAndAdvance("Keyword cannot be used as a reference")
@@ -560,7 +556,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
             advance() // LONG_TEMPLATE_ENTRY_START
 
             while (!eof()) {
-                val offset = myBuilder.getCurrentOffset()
+                val offset = myBuilder.currentOffset
 
                 parseExpression()
 
@@ -569,7 +565,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
                     break
                 } else {
                     error("Expecting '}'")
-                    if (offset == myBuilder.getCurrentOffset()) {
+                    if (offset == myBuilder.currentOffset) {
                         // Prevent hang if can't advance with parseExpression()
                         advance()
                     }
@@ -895,7 +891,7 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
      *   ;
      */
     private fun parseFunctionLiteral() {
-        parseFunctionLiteral( /* preferBlock = */false,  /* collapse = */true)
+        parseFunctionLiteral(preferBlock = false, collapse = true)
     }
 
     /**
@@ -1868,16 +1864,16 @@ open class KotlinExpressionParsing @JvmOverloads constructor(
             val operations: MutableSet<IElementType?> = HashSet<IElementType?>()
             val values = Precedence.entries.toTypedArray()
             for (precedence in values) {
-                operations.addAll(Arrays.asList<IElementType?>(*precedence.operations.getTypes()))
+                operations.addAll(listOf<IElementType?>(*precedence.operations.getTypes()))
             }
             ALL_OPERATIONS = TokenSet.create(*operations.toTypedArray<IElementType?>())
         }
 
         init {
             val operations = KtTokens.OPERATIONS.getTypes()
-            val opSet: MutableSet<IElementType?> = HashSet<IElementType?>(Arrays.asList<IElementType?>(*operations))
-            val usedOperations: Array<IElementType> = ALL_OPERATIONS!!.getTypes()
-            val usedSet: MutableSet<IElementType?> = HashSet<IElementType?>(Arrays.asList<IElementType?>(*usedOperations))
+            val opSet: MutableSet<IElementType?> = HashSet<IElementType?>(listOf<IElementType?>(*operations))
+            val usedOperations: Array<IElementType> = ALL_OPERATIONS.getTypes()
+            val usedSet: MutableSet<IElementType?> = HashSet<IElementType?>(listOf<IElementType?>(*usedOperations))
 
             if (opSet.size > usedSet.size) {
                 opSet.removeAll(usedSet)
