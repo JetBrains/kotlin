@@ -19,7 +19,7 @@ object RangeTo : IntrinsicMethod() {
     ): IntrinsicFunction {
         val argType = mapRangeTypeToPrimitiveType(signature.returnType)
         return object : IntrinsicFunction(
-            expression, signature, classCodegen, listOf(argType) + signature.valueParameters.map { argType }
+            expression, signature, classCodegen, listOf(argType) + signature.parameters.map { argType }
         ) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokespecial(

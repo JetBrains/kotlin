@@ -31,7 +31,7 @@ abstract class IntrinsicMethod : IntrinsicMarker {
             val newMethod = with(asmMethod) {
                 Method(name, type, argumentTypes)
             }
-            return JvmMethodSignature(newMethod, valueParameters)
+            return JvmMethodSignature(newMethod, parameters)
         }
     }
 }

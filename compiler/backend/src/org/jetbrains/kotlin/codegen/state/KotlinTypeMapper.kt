@@ -419,7 +419,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         if (specialSignatureInfo != null) {
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
-            return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
+            return JvmMethodGenericSignature(signature.asmMethod, signature.parameters, newGenericSignature)
         }
 
         return signature

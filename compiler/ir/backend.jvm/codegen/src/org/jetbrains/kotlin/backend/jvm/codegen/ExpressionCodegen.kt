@@ -564,7 +564,7 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(parameter, argument, asmType, this, data)
         }
 
-        val valueParameterAsmTypes = callable.signature.valueParameters
+        val parameterAsmTypes = callable.signature.parameters
         val hasDispatchReceiver = callee.dispatchReceiverParameter != null
 
         for ((parameter, argument) in callee.parameters zip expression.arguments) {
@@ -572,7 +572,7 @@ class ExpressionCodegen(
             val type = if (parameter.kind == IrParameterKind.DispatchReceiver) {
                 if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(argument.type) else callable.owner
             } else {
-                valueParameterAsmTypes[parameter.indexInParameters - if (hasDispatchReceiver) 1 else 0].asmType
+                parameterAsmTypes[parameter.indexInParameters - if (hasDispatchReceiver) 1 else 0].asmType
             }
             handleParameter(parameter, argument, type)
         }
@@ -700,7 +700,7 @@ class ExpressionCodegen(
     private fun generateConstructorArguments(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, data: BlockInfo) {
         for (parameter in expression.symbol.owner.parameters) {
             val arg = expression.arguments[parameter] ?: error("Null argument in ExpressionCodegen for parameter ${parameter.render()}")
-            gen(arg, signature.valueParameters[parameter.indexInParameters].asmType, parameter.type, data)
+            gen(arg, signature.parameters[parameter.indexInParameters].asmType, parameter.type, data)
         }
     }
 

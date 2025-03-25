@@ -13,14 +13,14 @@ import java.util.List;
 
 public class JvmMethodSignature {
     private final Method asmMethod;
-    private final List<JvmMethodParameterSignature> valueParameters;
+    private final List<JvmMethodParameterSignature> parameters;
 
     public JvmMethodSignature(
             @NotNull Method asmMethod,
-            @NotNull List<JvmMethodParameterSignature> valueParameters
+            @NotNull List<JvmMethodParameterSignature> parameters
     ) {
         this.asmMethod = asmMethod;
-        this.valueParameters = valueParameters;
+        this.parameters = parameters;
     }
 
     @NotNull
@@ -30,8 +30,8 @@ public class JvmMethodSignature {
 
 
     @NotNull
-    public List<JvmMethodParameterSignature> getValueParameters() {
-        return valueParameters;
+    public List<JvmMethodParameterSignature> getParameters() {
+        return parameters;
     }
 
     @NotNull
@@ -47,13 +47,13 @@ public class JvmMethodSignature {
         JvmMethodSignature that = (JvmMethodSignature) o;
 
         return asmMethod.equals(that.asmMethod) &&
-               valueParameters.equals(that.valueParameters);
+               parameters.equals(that.parameters);
     }
 
     @Override
     public int hashCode() {
         int result = asmMethod.hashCode();
-        result = 31 * result + valueParameters.hashCode();
+        result = 31 * result + parameters.hashCode();
         return result;
     }
 

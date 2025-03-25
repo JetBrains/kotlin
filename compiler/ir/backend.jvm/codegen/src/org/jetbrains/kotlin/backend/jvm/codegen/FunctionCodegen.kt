@@ -170,7 +170,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                     })
         }
 
-        val isVararg = valueParameters.lastOrNull()?.varargElementType != null && !isBridge()
+        val isVararg = parameters.lastOrNull()?.varargElementType != null && !isBridge()
         val modalityFlag =
             if (parentAsClass.isAnnotationClass) {
                 if (isStatic) 0 else Opcodes.ACC_ABSTRACT
@@ -223,7 +223,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         ) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
-        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.getValueArgument(0) ?: return null
+        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.arguments[0] ?: return null
         return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
             classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
         }
@@ -259,16 +259,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         receiver?.let {
             frameMap.enter(it, classCodegen.typeMapper.mapTypeAsDeclaration(it.type))
         }
-        val contextReceivers = valueParameters.subList(0, contextReceiverParametersCount)
-        for (contextReceiver in contextReceivers) {
-            frameMap.enter(contextReceiver, classCodegen.typeMapper.mapType(contextReceiver.type))
-        }
-        extensionReceiverParameter?.let {
-            frameMap.enter(it, classCodegen.typeMapper.mapType(it))
-        }
-        val regularParameters = valueParameters.subList(contextReceiverParametersCount, valueParameters.size)
-        for (parameter in regularParameters) {
-            frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
+        for (parameter in nonDispatchParameters) {
+            frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter))
         }
         return frameMap
     }
@@ -280,18 +272,14 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         classCodegen: ClassCodegen,
         generateNullabilityAnnotations: Boolean,
     ) {
-        val iterator = irFunction.valueParameters.iterator()
-        val kotlinParameterTypes = jvmSignature.valueParameters
-        val syntheticParameterCount = irFunction.valueParameters.count { it.isSkippedInGenericSignature }
-        val extensionReceiverParameter = irFunction.extensionReceiverParameter
+        val nonDispatchParameters = irFunction.nonDispatchParameters
+        val kotlinParameterTypes = jvmSignature.parameters
+        val syntheticParameterCount = nonDispatchParameters.count { it.isSkippedInGenericSignature }
 
         visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
         for ((i, parameterSignature) in kotlinParameterTypes.withIndex()) {
-            val parameter = if (extensionReceiverParameter != null && i == irFunction.contextReceiverParametersCount)
-                extensionReceiverParameter
-            else
-                iterator.next()
+            val parameter = nonDispatchParameters[i]
 
             if (i < syntheticParameterCount || parameter.isSyntheticMarkerParameter()) continue
 
@@ -345,22 +333,25 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
     origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
-    irFunction.extensionReceiverParameter?.let {
-        mv.visitParameter(irFunction.extensionReceiverName(config), 0)
-    }
-    for (irParameter in irFunction.valueParameters) {
-        val origin = irParameter.origin
+    for (parameter in irFunction.parameters) {
+        val name = when (parameter.kind) {
+            IrParameterKind.DispatchReceiver -> continue
+            IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
+            IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
+        }
+        val origin = parameter.origin
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
         // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
         // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
         // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
-        val access = when {
-            origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
-            origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
-            origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
-            origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
+        val access = when (origin) {
+            JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
+            IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
+            IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
+            IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER -> Opcodes.ACC_SYNTHETIC
+            else if origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
             else -> 0
         }
-        mv.visitParameter(irParameter.name.asString(), access)
+        mv.visitParameter(name, access)
     }
 }
