@@ -133,7 +133,6 @@ projectTest(
         JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
     )
 ) {
-    workingDir = rootDir
     useJUnitPlatform()
 }
 
