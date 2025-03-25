@@ -1,3 +1,10 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
+    //js id("org.jetbrains.kotlin.js")
 }
+
+//js kotlin {
+//js     js {
+//js         nodejs()
+//js     }
+//js }

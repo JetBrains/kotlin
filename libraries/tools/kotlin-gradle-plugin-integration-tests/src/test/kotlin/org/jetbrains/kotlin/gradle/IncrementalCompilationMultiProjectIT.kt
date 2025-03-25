@@ -21,12 +21,17 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         buildOptions: BuildOptions,
         test: TestProject.() -> Unit,
     ): TestProject = project(defaultProjectName, gradleVersion) {
-        listOf("app", "lib").forEach {
-            val subProject = subProject(it)
+        listOf("app", "lib").forEach { subProjectName ->
+            val subProject = subProject(subProjectName)
             subProject.javaSourcesDir().deleteRecursively()
-            val buildGradleJs = subProject.projectPath.resolve("build-js.gradle")
-            subProject.buildGradle.writeText(buildGradleJs.readText())
-            buildGradleJs.deleteExisting()
+            subProject.buildGradle.modify {
+                it
+                    .replace("//js ", "")
+                    .replace(
+                        """    id("org.jetbrains.kotlin.jvm")""",
+                        """    id("org.jetbrains.kotlin.js")""",
+                    )
+            }
         }
         test()
     }

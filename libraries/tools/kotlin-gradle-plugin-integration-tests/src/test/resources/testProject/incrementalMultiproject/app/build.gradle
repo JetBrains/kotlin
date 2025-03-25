@@ -1,8 +1,15 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm"
+    id("org.jetbrains.kotlin.jvm")
+    //js id("org.jetbrains.kotlin.js")
     // kapt-plugin marker
 }
 
 dependencies {
     implementation project(':lib')
 }
+
+//js kotlin {
+//js     js {
+//js         nodejs()
+//js     }
+//js }
