@@ -52,6 +52,44 @@ dependencies {
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
+tasks.processTestResources.configure {
+    from(project(":compiler").layout.projectDirectory.dir("testData")) {
+        include("/diagnostics/helpers/**")
+        include("/codegen/helpers/**")
+        include("/ir/interpreter/helpers/**")
+    }
+    into("stdlib") {
+        from(project(":kotlin-stdlib").layout.projectDirectory.dir("src/kotlin")) {
+            into("src/kotlin")
+            include("ranges/Progressions.kt")
+            include("ranges/ProgressionIterators.kt")
+            include("internal/progressionUtil.kt")
+            include("text/regex/MatchResult.kt")
+            include("collections/Sequence.kt")
+            include("annotations/WasExperimental.kt")
+            include("annotations/ExperimentalStdlibApi.kt")
+            include("annotations/OptIn.kt")
+            include("internal/Annotations.kt")
+            include("experimental/inferenceMarker.kt")
+        }
+        from(project(":kotlin-stdlib").layout.projectDirectory.dir("unsigned/src/kotlin")) {
+            into("unsigned/src/kotlin")
+        }
+        from(project(":kotlin-stdlib").layout.projectDirectory.dir("jvm/src/kotlin")) {
+            into("jvm/src/kotlin")
+            include("util/UnsignedJVM.kt")
+            include("collections/TypeAliases.kt")
+            include("reflect/**")
+        }
+        from(project(":kotlin-stdlib").layout.projectDirectory.dir("jvm/runtime/kotlin")) {
+            into("jvm/runtime/kotlin")
+            include("TypeAliases.kt")
+            include("text/TypeAliases.kt")
+            include("jvm/annotations/JvmPlatformAnnotations.kt")
+        }
+    }
+}
+
 sourceSets {
     "main" { none() }
     "test" {
@@ -93,10 +131,6 @@ projectTest(
 ) {
     workingDir = rootDir
     useJUnitPlatform()
-    inputs.dir(File(rootDir, "libraries/stdlib/unsigned/src/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.dir(File(rootDir, "libraries/stdlib/jvm/src/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE) //util/UnsignedJVM.kt
-    inputs.dir(File(rootDir, "libraries/stdlib/src/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE) //ranges/Progressions.kt
-    inputs.dir(File(rootDir, "libraries/stdlib/jvm/runtime/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE) //TypeAliases.kt
 }
 
 testsJar()

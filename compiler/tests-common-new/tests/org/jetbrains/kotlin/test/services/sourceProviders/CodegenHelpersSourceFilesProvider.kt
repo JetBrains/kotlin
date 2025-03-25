@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
-import java.io.File
 
 class CodegenHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        private const val HELPERS_PATH = "./compiler/testData/codegen/helpers"
-        private const val CLASSIC_BACKEND_PATH = "$HELPERS_PATH/CodegenTestHelpersOldBackend.kt"
-        private const val IR_BACKEND_PATH = "$HELPERS_PATH/CodegenTestHelpersIR.kt"
+        private val HELPERS_PATH = "codegen/helpers"
+        private val CLASSIC_BACKEND_PATH = "$HELPERS_PATH/CodegenTestHelpersOldBackend.kt"
+        private val IR_BACKEND_PATH = "$HELPERS_PATH/CodegenTestHelpersIR.kt"
     }
 
     override val directiveContainers: List<DirectivesContainer> =
@@ -40,7 +39,7 @@ class CodegenHelpersSourceFilesProvider(testServices: TestServices) : Additional
             } else {
                 CLASSIC_BACKEND_PATH
             }
-            add(File(helpersPath).toTestFile())
+            add(this::class.java.classLoader.getResource(helpersPath)!!.toTestFile())
         }
     }
 }

@@ -98,8 +98,8 @@ open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
             )
 
             useAdditionalSourceProviders(
-                ::AdditionalDiagnosticsSourceFilesProvider.bind(baseDir),
-                ::CoroutineHelpersSourceFilesProvider.bind(baseDir),
+                ::AdditionalDiagnosticsSourceFilesProvider,
+                ::CoroutineHelpersSourceFilesProvider,
             )
             configureFirParser(FirParser.Psi)
             useConfigurators(

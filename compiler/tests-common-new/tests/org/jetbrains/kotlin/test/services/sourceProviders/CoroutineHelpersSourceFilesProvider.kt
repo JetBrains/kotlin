@@ -16,10 +16,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import java.io.File
 
-class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPath: String = ".") : AdditionalSourceProvider(testServices) {
-    private val helpersPath = "$testDataPath/compiler/testData/diagnostics/helpers/coroutines"
+class CoroutineHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+    private val helpersPath = "diagnostics/helpers/coroutines"
 
     private val coroutineHelpersPath = "$helpersPath/CoroutineHelpers.kt"
     private val coroutineUtilPath = "$helpersPath/CoroutineUtil.kt"
@@ -37,13 +36,14 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPa
     ): List<TestFile> {
         if (WITH_COROUTINES !in module.directives) return emptyList()
         return buildList {
-            add(File(coroutineHelpersPath).toTestFile())
+            val classLoader = this::class.java.classLoader
+            add(classLoader.getResource(coroutineHelpersPath)!!.toTestFile())
             if (CHECK_STATE_MACHINE in module.directives) {
-                add(File(coroutineUtilPath).toTestFile())
-                add(File(stateMachineCheckerPath).toTestFile())
+                add(classLoader.getResource(coroutineUtilPath)!!.toTestFile())
+                add(classLoader.getResource(stateMachineCheckerPath)!!.toTestFile())
             }
             if (CHECK_TAIL_CALL_OPTIMIZATION in module.directives) {
-                add(File(tailCallOptimizationCheckerPath).toTestFile())
+                add(classLoader.getResource(tailCallOptimizationCheckerPath)!!.toTestFile())
             }
         }
     }
