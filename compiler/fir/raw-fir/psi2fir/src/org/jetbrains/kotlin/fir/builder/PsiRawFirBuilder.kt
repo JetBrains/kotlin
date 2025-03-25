@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.AstLoadingFilter
@@ -98,7 +99,10 @@ open class PsiRawFirBuilder(
     }
 
     override val PsiElement.elementType: IElementType
-        get() = node.elementType
+        get() {
+            val stubBasedElement = this as? StubBasedPsiElementBase<*>
+            return stubBasedElement?.elementType ?: node.elementType
+        }
 
     override val PsiElement.asText: String
         get() = text
