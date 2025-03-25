@@ -158,7 +158,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
             return KotlinParsing(builder, isTopLevel = true, isLazy = false)
         }
 
-        private fun createForByClause(builder: SemanticWhitespaceAwarePsiBuilder?, isLazy: Boolean): KotlinParsing {
+        private fun createForByClause(builder: SemanticWhitespaceAwarePsiBuilder, isLazy: Boolean): KotlinParsing {
             return KotlinParsing(SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy)
         }
 

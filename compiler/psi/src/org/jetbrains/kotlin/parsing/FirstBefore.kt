@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
-
-public class FirstBefore extends AbstractTokenStreamPattern {
-    private final TokenStreamPredicate lookFor;
-    private final TokenStreamPredicate stopAt;
-
-    public FirstBefore(TokenStreamPredicate lookFor, TokenStreamPredicate stopAt) {
-        this.lookFor = lookFor;
-        this.stopAt = stopAt;
-    }
-
-    @Override
-    public boolean processToken(int offset, boolean topLevel) {
+class FirstBefore(private val lookFor: TokenStreamPredicate, private val stopAt: TokenStreamPredicate) : AbstractTokenStreamPattern() {
+    override fun processToken(offset: Int, topLevel: Boolean): Boolean {
         if (lookFor.matching(topLevel)) {
-            lastOccurrence = offset;
-            return true;
+            lastOccurrence = offset
+            return true
         }
         if (stopAt.matching(topLevel)) {
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 }

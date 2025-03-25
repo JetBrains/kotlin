@@ -13,36 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.psi.tree.IElementType
 
-import com.intellij.psi.tree.IElementType;
-
-public interface TokenStreamPattern {
+interface TokenStreamPattern {
     /**
      * Called on each token
      *
      * @param offset
-     * @param topLevel see {@link #isTopLevel(int, int, int, int)}
-     * @return <code>true</code> to stop
+     * @param topLevel see [.isTopLevel]
+     * @return `true` to stop
      */
-    boolean processToken(int offset, boolean topLevel);
+    fun processToken(offset: Int, topLevel: Boolean): Boolean
 
     /**
      * @return the position where the predicate has matched, -1 if no match was found
      */
-    int result();
+    fun result(): Int
 
     /**
      * Decides if the combination of open bracket counts makes a "top level position"
      * Straightforward meaning would be: if all counts are zero, then it's a top level
      */
-    boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses);
+    fun isTopLevel(openAngleBrackets: Int, openBrackets: Int, openBraces: Int, openParentheses: Int): Boolean
 
     /**
      * Called on right parentheses, brackets, braces and angles (>)
      * @param token the closing bracket
      * @return true to stop matching, false to proceed
      */
-    boolean handleUnmatchedClosing(IElementType token);
+    fun handleUnmatchedClosing(token: IElementType?): Boolean
 }

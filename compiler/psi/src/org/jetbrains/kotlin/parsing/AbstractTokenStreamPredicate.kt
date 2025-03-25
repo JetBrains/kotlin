@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
-
-public abstract class AbstractTokenStreamPredicate implements TokenStreamPredicate {
-
-    @Override
-    public TokenStreamPredicate or(TokenStreamPredicate other) {
-        return new AbstractTokenStreamPredicate() {
-            @Override
-            public boolean matching(boolean topLevel) {
-                if (AbstractTokenStreamPredicate.this.matching(topLevel)) return true;
-                return other.matching(topLevel);
+abstract class AbstractTokenStreamPredicate : TokenStreamPredicate {
+    override fun or(other: TokenStreamPredicate): TokenStreamPredicate {
+        return object : AbstractTokenStreamPredicate() {
+            override fun matching(topLevel: Boolean): Boolean {
+                if (this@AbstractTokenStreamPredicate.matching(topLevel)) return true
+                return other.matching(topLevel)
             }
-        };
+        }
     }
 }

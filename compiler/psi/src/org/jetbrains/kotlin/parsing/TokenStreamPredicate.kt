@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+interface TokenStreamPredicate {
+    fun matching(topLevel: Boolean): Boolean
 
-public interface TokenStreamPredicate {
-    boolean matching(boolean topLevel);
-
-    TokenStreamPredicate or(TokenStreamPredicate other);
+    fun or(other: TokenStreamPredicate): TokenStreamPredicate
 }

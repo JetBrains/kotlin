@@ -13,36 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+class SemanticWhitespaceAwarePsiBuilderForByClause(builder: SemanticWhitespaceAwarePsiBuilder) :
+    SemanticWhitespaceAwarePsiBuilderAdapter(builder) {
+    var stackSize: Int = 0
+        private set
 
-public class SemanticWhitespaceAwarePsiBuilderForByClause extends SemanticWhitespaceAwarePsiBuilderAdapter {
-
-    private int stackSize = 0;
-
-    public SemanticWhitespaceAwarePsiBuilderForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
-        super(builder);
+    public override fun disableNewlines() {
+        super.disableNewlines()
+        stackSize++
     }
 
-    @Override
-    public void disableNewlines() {
-        super.disableNewlines();
-        stackSize++;
+    public override fun enableNewlines() {
+        super.enableNewlines()
+        stackSize++
     }
 
-    @Override
-    public void enableNewlines() {
-        super.enableNewlines();
-        stackSize++;
-    }
-
-    @Override
-    public void restoreNewlinesState() {
-        super.restoreNewlinesState();
-        stackSize--;
-    }
-
-    public int getStackSize() {
-        return stackSize;
+    public override fun restoreNewlinesState() {
+        super.restoreNewlinesState()
+        stackSize--
     }
 }

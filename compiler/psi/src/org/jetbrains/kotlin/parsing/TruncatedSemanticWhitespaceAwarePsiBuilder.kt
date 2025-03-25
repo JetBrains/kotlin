@@ -13,66 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.psi.tree.IElementType
 
-import com.intellij.psi.tree.IElementType;
-
-public class TruncatedSemanticWhitespaceAwarePsiBuilder extends SemanticWhitespaceAwarePsiBuilderAdapter {
-
-    private final int myEOFPosition;
-
-    public TruncatedSemanticWhitespaceAwarePsiBuilder(SemanticWhitespaceAwarePsiBuilder builder, int eofPosition) {
-        super(builder);
-        this.myEOFPosition = eofPosition;
+class TruncatedSemanticWhitespaceAwarePsiBuilder(builder: SemanticWhitespaceAwarePsiBuilder, private val myEOFPosition: Int) :
+    SemanticWhitespaceAwarePsiBuilderAdapter(builder) {
+    override fun eof(): Boolean {
+        return super.eof() || isOffsetBeyondEof(getCurrentOffset())
     }
 
-    @Override
-    public boolean eof() {
-        return super.eof() || isOffsetBeyondEof(getCurrentOffset());
+    override fun getTokenText(): String? {
+        if (eof()) return null
+        return super.getTokenText()
     }
 
-    @Override
-    public String getTokenText() {
-        if (eof()) return null;
-        return super.getTokenText();
+    override fun getTokenType(): IElementType? {
+        if (eof()) return null
+        return super.getTokenType()
     }
 
-    @Override
-    public IElementType getTokenType() {
-        if (eof()) return null;
-        return super.getTokenType();
+    override fun lookAhead(steps: Int): IElementType? {
+        if (eof()) return null
+
+        val rawLookAheadSteps = rawLookAhead(steps)
+        if (isOffsetBeyondEof(rawTokenTypeStart(rawLookAheadSteps))) return null
+
+        return super.rawLookup(rawLookAheadSteps)
     }
 
-    @Override
-    public IElementType lookAhead(int steps) {
-        if (eof()) return null;
-
-        int rawLookAheadSteps = rawLookAhead(steps);
-        if (isOffsetBeyondEof(rawTokenTypeStart(rawLookAheadSteps))) return null;
-
-        return super.rawLookup(rawLookAheadSteps);
-    }
-
-    private int rawLookAhead(int steps) {
+    private fun rawLookAhead(steps: Int): Int {
         // This code reproduces the behavior of PsiBuilderImpl.lookAhead(), but returns a number of raw steps instead of a token type
         // This is required for implementing truncated builder behavior
-        int cur = 0;
+        var steps = steps
+        var cur = 0
         while (steps > 0) {
-            cur++;
+            cur++
 
-            IElementType rawTokenType = rawLookup(cur);
+            var rawTokenType = rawLookup(cur)
             while (rawTokenType != null && isWhitespaceOrComment(rawTokenType)) {
-                cur++;
-                rawTokenType = rawLookup(cur);
+                cur++
+                rawTokenType = rawLookup(cur)
             }
 
-            steps--;
+            steps--
         }
-        return cur;
+        return cur
     }
 
-    private boolean isOffsetBeyondEof(int offsetFromCurrent) {
-        return myEOFPosition >= 0 && offsetFromCurrent >= myEOFPosition;
+    private fun isOffsetBeyondEof(offsetFromCurrent: Int): Boolean {
+        return myEOFPosition >= 0 && offsetFromCurrent >= myEOFPosition
     }
 }

@@ -13,43 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+class LastBefore private constructor(
+    private val lookFor: TokenStreamPredicate,
+    private val stopAt: TokenStreamPredicate,
+    private val dontStopRightAfterOccurrence: Boolean
+) : AbstractTokenStreamPattern() {
+    private var previousLookForResult = false
 
-public class LastBefore extends AbstractTokenStreamPattern {
-    private final boolean dontStopRightAfterOccurrence;
-    private final TokenStreamPredicate lookFor;
-    private final TokenStreamPredicate stopAt;
-    private boolean previousLookForResult;
+    constructor(lookFor: TokenStreamPredicate, stopAt: TokenStreamPredicate) : this(lookFor, stopAt, false)
 
-    private LastBefore(TokenStreamPredicate lookFor, TokenStreamPredicate stopAt, boolean dontStopRightAfterOccurrence) {
-        this.lookFor = lookFor;
-        this.stopAt = stopAt;
-        this.dontStopRightAfterOccurrence = dontStopRightAfterOccurrence;
-    }
-
-    public LastBefore(TokenStreamPredicate lookFor, TokenStreamPredicate stopAt) {
-        this(lookFor, stopAt, false);
-    }
-
-    @Override
-    public boolean processToken(int offset, boolean topLevel) {
-        boolean lookForResult = lookFor.matching(topLevel);
+    override fun processToken(offset: Int, topLevel: Boolean): Boolean {
+        val lookForResult = lookFor.matching(topLevel)
         if (lookForResult) {
-            lastOccurrence = offset;
+            lastOccurrence = offset
         }
         if (stopAt.matching(topLevel)) {
             if (topLevel
                 && (!dontStopRightAfterOccurrence
-                    || !previousLookForResult)) return true;
+                        || !previousLookForResult)
+            ) return true
         }
-        previousLookForResult = lookForResult;
-        return false;
+        previousLookForResult = lookForResult
+        return false
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        previousLookForResult = false;
+    public override fun reset() {
+        super.reset()
+        previousLookForResult = false
     }
 }
