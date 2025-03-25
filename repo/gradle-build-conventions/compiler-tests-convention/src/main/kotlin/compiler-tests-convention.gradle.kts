@@ -28,7 +28,9 @@ tasks.withType<Test>().configureEach {
     outputs.doNotCacheIf("Caching tests is manually disabled using `kotlin.build.cache.tests.disabled` property") { disableTestsCache.get() == "true" }
     jvmArgumentProviders.add(provider)
     inputs.property("os.name", org.gradle.internal.os.OperatingSystem.current().name)
-    inputs.files(extension.testData).withPathSensitivity(PathSensitivity.RELATIVE)
+
+    val rootDir = project.rootDir
+    outputs.cacheIf { workingDir != rootDir }
 
     develocity.testRetry {
         maxRetries = if (kotlinBuildProperties.isTeamcityBuild) 3 else 0
