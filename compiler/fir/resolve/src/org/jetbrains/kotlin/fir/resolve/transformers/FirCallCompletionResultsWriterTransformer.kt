@@ -650,12 +650,12 @@ class FirCallCompletionResultsWriterTransformer(
         // Type parameters are replaced with type variables
         val initialType = candidate.substitutor.substituteOrSelf(this)
         // Type variables are replaced with final type arguments
-        val substitutedType = finallySubstituteOrNull(initialType, substitutor)
+        val substitutedType = finallySubstituteOrNull(initialType, substitutor) ?: initialType
         // Everything is approximated
         val finalType = typeApproximator.approximateToSuperType(
-            type = substitutedType ?: initialType,
+            type = substitutedType,
             TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2,
-        ) ?: substitutedType ?: initialType
+        ) ?: substitutedType
 
         // This is probably a temporary hack, but it seems necessary because elvis has that attribute and it may leak further like
         // fun <E> foo() = materializeNullable<E>() ?: materialize<E>() // `foo` return type unexpectedly gets inferred to @Exact E
