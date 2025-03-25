@@ -14,8 +14,6 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.reader
 import kotlin.test.assertNotNull
 
-// TODO: This suite is failing with deprecation error on Gradle <7.0 versions
-// Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
 abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(

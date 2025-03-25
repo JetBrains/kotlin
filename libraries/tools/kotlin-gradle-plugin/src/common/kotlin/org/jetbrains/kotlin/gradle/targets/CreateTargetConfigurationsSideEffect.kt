@@ -117,7 +117,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         }
     }
 
-    if (target is KotlinJsIrTarget && !target.isMpp!!) {
+    if (target is KotlinJsIrTarget && !target.isMpp) {
         target.project.configurations.maybeCreateConsumable(
             target.commonFakeApiElementsConfigurationName
         ).apply {
