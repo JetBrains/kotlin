@@ -124,7 +124,7 @@ class JvmCachedDeclarations(
                     copyAnnotationsFrom(jvmStaticFunction)
                     copyCorrespondingPropertyFrom(jvmStaticFunction)
                     copyValueAndTypeParametersFrom(jvmStaticFunction)
-                    dispatchReceiverParameter = null
+                    parameters = nonDispatchParameters
                     metadata = jvmStaticFunction.metadata
                 }
                 staticExternal to companion.makeProxy(staticExternal, isStatic = false)
