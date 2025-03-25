@@ -1,5 +1,3 @@
-import com.gradle.develocity.agent.gradle.test.TestRetryConfiguration
-
 val extension = extensions.create("compilerTests", CompilerTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
@@ -21,6 +19,8 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     thirdPartyJava8Annotations.value(extension.thirdPartyJava8Annotations)
     thirdPartyJava9Annotations.value(extension.thirdPartyJava9Annotations)
     thirdPartyJsr305.value(extension.thirdPartyJsr305)
+    testDataMap.value(extension.testDataMap)
+    testDataFiles.from(extension.testDataFiles)
 }
 
 tasks.withType<Test>().configureEach {

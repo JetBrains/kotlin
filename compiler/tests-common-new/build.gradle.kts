@@ -102,10 +102,11 @@ sourceSets {
 }
 
 compilerTests {
-    testData("../testData/diagnostics")
-    testData("../testData/codegen")
-    testData("../testData/debug")
-    testData("../testData/ir")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
     withStdlibCommon()
     withScriptRuntime()
     withTestJar()

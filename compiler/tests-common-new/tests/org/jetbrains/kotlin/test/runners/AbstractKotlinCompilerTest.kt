@@ -48,6 +48,7 @@ abstract class AbstractKotlinCompilerTest {
             useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
             useDirectives(*defaultDirectiveContainers.toTypedArray())
+            useMetaTestConfigurators(::SystemPropertyTestDataRootConfigurator)
             configureDebugFlags()
             startingArtifactFactory = { ResultingArtifact.Source() }
         }

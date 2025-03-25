@@ -23,10 +23,9 @@ import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JSR305_PATH
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.CommandLineArgumentProvider
 
@@ -70,6 +69,13 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:InputFiles
     @get:Classpath
     abstract val testJsRuntimeForTests: ConfigurableFileCollection
+
+    @get:Input
+    abstract val testDataMap: MapProperty<String, String>
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val testDataFiles: ConfigurableFileCollection
 
     @get:InputFile
     @get:Classpath
@@ -130,7 +136,6 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_JS_STDLIB_KLIB_PATH, stdlibJsRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH, testJsRuntimeForTests),
-        )
             mockJdkRuntimeJar.orNull?.let { "-D$KOTLIN_MOCKJDK_RUNTIME_PATH=${it.asFile.absolutePath}" },
             mockJDKModifiedRuntime.orNull?.let { "-D$KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH=${it.asFile.absolutePath}" },
             mockJdkAnnotationsJar.orNull?.let { "-D$KOTLIN_MOCKJDK_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
@@ -138,5 +143,6 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             thirdPartyJava8Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
             thirdPartyJava9Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
             thirdPartyJsr305.orNull?.let { "-D$KOTLIN_THIRDPARTY_JSR305_PATH=${it.asFile.absolutePath}" }
+        ) + testDataMap.get().map { it.key + "=" + it.value }.joinToString(prefix = "-D$KOTLIN_TESTDATA_ROOTS=", separator = ";")
     }
 }
