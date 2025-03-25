@@ -1,1 +1,3 @@
+rootProject.name = "incrementalMultiproject"
+
 include ':app', ':lib'

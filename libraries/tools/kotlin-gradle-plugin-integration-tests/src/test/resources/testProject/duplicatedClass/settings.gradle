@@ -1,1 +1,3 @@
+rootProject.name = "duplicatedClass"
+
 include ':lib', ':app'
