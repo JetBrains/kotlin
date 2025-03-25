@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_ANNOTATIONS_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_JSR305_PATH
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
@@ -33,10 +37,10 @@ import java.io.File
 import kotlin.io.path.createTempDirectory
 
 enum class JavaForeignAnnotationType(val path: String) {
-    Annotations("third-party/annotations"),
-    Java8Annotations("third-party/java8-annotations"),
-    Java9Annotations("third-party/java9-annotations"),
-    Jsr305("third-party/jsr305");
+    Annotations(System.getProperty(KOTLIN_THIRDPARTY_ANNOTATIONS_PATH) ?: "third-party/annotations"),
+    Java8Annotations(System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH) ?: "third-party/java8-annotations"),
+    Java9Annotations(System.getProperty(KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH) ?: "third-party/java9-annotations"),
+    Jsr305(System.getProperty(KOTLIN_THIRDPARTY_JSR305_PATH) ?: "third-party/jsr305")
 }
 
 open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {

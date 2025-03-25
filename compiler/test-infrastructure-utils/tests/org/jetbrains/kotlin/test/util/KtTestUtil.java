@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.*;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -188,13 +189,23 @@ public class KtTestUtil {
     }
 
     public static File findMockJdkRtJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
+        String property = System.getProperty(KOTLIN_MOCKJDK_RUNTIME_PATH);
+        if (property!= null) {
+            return new File(property);
+        } else {
+            return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
+        }
     }
 
     // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
     // It's needed to test the way we load additional built-ins members that neither in black nor white lists
     public static File findMockJdkRtModified() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDKModified/rt.jar");
+        String property = System.getProperty(KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH);
+        if (property!= null) {
+            return new File(property);
+        } else {
+            return new File(getHomeDirectory(), "compiler/testData/mockJDKModified/rt.jar");
+        }
     }
 
     public static File findAndroidApiJar() {
@@ -227,7 +238,12 @@ public class KtTestUtil {
     }
 
     public static File getAnnotationsJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
+        String property = System.getProperty(KOTLIN_MOCKJDK_ANNOTATIONS_PATH);
+        if (property!= null) {
+            return new File(property);
+        } else {
+            return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
+        }
     }
 
     public static void mkdirs(@NotNull File file) {

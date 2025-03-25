@@ -13,6 +13,14 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     scriptingPluginForTests.from(extension.scriptingPluginForTests)
     stdlibJsRuntimeForTests.from(extension.stdlibJsRuntimeForTests)
     testJsRuntimeForTests.from(extension.testJsRuntimeForTests)
+    mockJdkRuntimeJar.value(extension.mockJdkRuntime)
+    mockJdkRuntime.value(extension.mockJdkRuntime)
+    mockJDKModifiedRuntime.value(extension.mockJDKModifiedRuntime)
+    mockJdkAnnotationsJar.value(extension.mockJdkAnnotationsJar)
+    thirdPartyAnnotations.value(extension.thirdPartyAnnotations)
+    thirdPartyJava8Annotations.value(extension.thirdPartyJava8Annotations)
+    thirdPartyJava9Annotations.value(extension.thirdPartyJava9Annotations)
+    thirdPartyJsr305.value(extension.thirdPartyJsr305)
 }
 
 tasks.withType<Test>().configureEach {
