@@ -177,12 +177,14 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             if (analyzerCount == 0) {
                 val existingLatch = cleanupLatch
                 if (existingLatch != null) {
-                    performCleanup()
-
-                    // Unpause all waiting analyses.
-                    // Even if some new block comes before the 'cleanupLatch' is set to `null`, the old latch will be already open.
-                    existingLatch.countDown()
-                    cleanupLatch = null
+                    try {
+                        performCleanup()
+                    } finally {
+                        // Unpause all waiting analyses.
+                        // Even if some new block comes before the 'cleanupLatch' is set to `null`, the old latch will be already open.
+                        existingLatch.countDown()
+                        cleanupLatch = null
+                    }
                 }
             }
         }
@@ -208,14 +210,17 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
                 // We cannot start a new read/write action here as there might be already a pending write action waiting for 'this' monitor.
                 // However, we are still sure no threads can get a session until the cleanup is complete.
                 cleanupScheduleMs = System.currentTimeMillis()
-                performCleanup()
 
-                if (existingLatch != null) {
-                    // Error recovery in case if things went really bad.
-                    // Should never happen unless there is some flaw in the algorithm
-                    existingLatch.countDown()
-                    cleanupLatch = null
-                    LOG.error("K2 cache cleanup was expected to happen right after the last analysis block completion")
+                try {
+                    performCleanup()
+                } finally {
+                    if (existingLatch != null) {
+                        // Error recovery in case if things went really bad.
+                        // Should never happen unless there is some flaw in the algorithm
+                        existingLatch.countDown()
+                        cleanupLatch = null
+                        LOG.error("K2 cache cleanup was expected to happen right after the last analysis block completion")
+                    }
                 }
             } else if (existingLatch == null) {
                 LOG.debug { "K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left" }
@@ -229,6 +234,8 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
      * Cleans all K2 resolution caches.
      *
      * Must always run in `synchronized(this)` to prevent concurrent cleanups.
+     *
+     * N.B.: May re-throw exceptions from IJ Platform [rethrowIntellijPlatformExceptionIfNeeded].
      */
     @OptIn(LLFirInternals::class)
     private fun performCleanup() {
