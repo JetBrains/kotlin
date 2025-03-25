@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -25,6 +26,21 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+compilerTests {
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/klib")
+    withScriptRuntime()
+    withScriptingPlugin()
+    withAnnotations()
+    withMockJdkRuntime()
+    withTestJar()
+
+    withMockJDKModifiedRuntime()
+    withMockJdkAnnotationsJar()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+}
+
 fun Project.codegenTest(
     target: Int,
     jdk: JdkMajorVersion,
@@ -36,8 +52,6 @@ fun Project.codegenTest(
     jUnitMode = JUnitMode.JUnit5,
     maxMetaspaceSizeMb = 1024
 ) {
-    dependsOn(":dist")
-    workingDir = rootDir
     useJUnitPlatform()
 
     val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
