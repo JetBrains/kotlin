@@ -28,9 +28,11 @@ class BuildSessionLogger(
         private const val DEFAULT_MAX_FILE_AGE = 30 * 24 * 3600 * 1000L //30 days
 
         fun listProfileFiles(statisticsFolder: File): List<File> {
+            if (!statisticsFolder.isDirectory) return emptyList()
             return Files.newDirectoryStream(statisticsFolder.toPath()).use { dirStream ->
                 dirStream.map { it.toFile() }
                     .filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN) }
+                    .filter { it.isFile }
                     .sortedBy { it.lastModified() }
             }
         }
