@@ -8,6 +8,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import kotlin.metadata.ClassName
+import kotlin.reflect.KClass
 
 internal fun ClassName.toClassId(): ClassId {
     val isLocal = startsWith(".")
@@ -23,3 +24,6 @@ internal fun ClassName.toNonLocalSimpleName(): String {
     require(!startsWith(".")) { "Local class is not supported: $this" }
     return substringAfterLast('/').substringAfterLast('.')
 }
+
+internal fun ClassLoader.loadKClass(name: ClassName): KClass<*>? =
+    loadClass(name.toClassId())?.kotlin

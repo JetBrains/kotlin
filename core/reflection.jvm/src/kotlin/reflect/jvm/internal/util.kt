@@ -72,15 +72,15 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
             // If this is neither a Kotlin class nor a Java class, it's likely either a built-in or some fake class descriptor like the one
             // that's created for java.io.Serializable in JvmBuiltInsSettings
             val classId = classId ?: return null
-            loadClass(javaClass.safeClassLoader, classId, 0)
+            javaClass.safeClassLoader.loadClass(classId)
         }
     }
 }
 
-private fun loadClass(classLoader: ClassLoader, kotlinClassId: ClassId, arrayDimensions: Int = 0): Class<*>? {
+internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int = 0): Class<*>? {
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinClassId.asSingleFqName().toUnsafe()) ?: kotlinClassId
     // All pseudo-classes like kotlin.String.Companion must be accessible from the current class loader
-    return loadClass(classLoader, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
+    return loadClass(this, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
 }
 
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
@@ -172,14 +172,14 @@ private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = wh
     is ArrayValue -> arrayToRuntimeValue(classLoader)
     is EnumValue -> {
         val (enumClassId, entryName) = value
-        loadClass(classLoader, enumClassId)?.let { enumClass ->
+        classLoader.loadClass(enumClassId)?.let { enumClass ->
             @Suppress("UNCHECKED_CAST")
             Util.getEnumConstantByName(enumClass as Class<out Enum<*>>, entryName.asString())
         }
     }
     is KClassValue -> when (val classValue = value) {
         is KClassValue.Value.NormalClass ->
-            loadClass(classLoader, classValue.classId, classValue.arrayDimensions)
+            classLoader.loadClass(classValue.classId, classValue.arrayDimensions)
         is KClassValue.Value.LocalClass -> {
             // TODO: this doesn't work because of KT-30013
             (classValue.type.constructor.declarationDescriptor as? ClassDescriptor)?.toJavaClass()
@@ -210,7 +210,7 @@ private fun ArrayValue.arrayToRuntimeValue(classLoader: ClassLoader): Any? {
                 KotlinBuiltIns.isString(argType) -> Array(value.size) { values[it] as String }
                 KotlinBuiltIns.isKClass(classifier) -> Array(value.size) { values[it] as Class<*> }
                 else -> {
-                    val argClass = classifier.classId?.let { loadClass(classLoader, it) } ?: return null
+                    val argClass = classifier.classId?.let(classLoader::loadClass) ?: return null
 
                     @Suppress("UNCHECKED_CAST")
                     val array = java.lang.reflect.Array.newInstance(argClass, value.size) as Array<in Any?>
