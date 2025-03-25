@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -80,7 +81,9 @@ internal class KClassImpl<T : Any>(
             descriptor ?: createSyntheticClassOrFail(classId, moduleData)
         }
 
-        val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
+        val annotations: List<Annotation> by ReflectProperties.lazySoft {
+            jClass.annotations.filterNot { it.annotationClass.java.name in SPECIAL_JVM_ANNOTATION_NAMES }.unwrapRepeatableAnnotations()
+        }
 
         val simpleName: String? by ReflectProperties.lazySoft {
             if (jClass.isAnonymousClass) return@lazySoft null
@@ -395,4 +398,10 @@ internal class KClassImpl<T : Any>(
                 override fun computeDeclaredFunctions(): List<FunctionDescriptor> = emptyList()
             }, emptySet(), null)
         }
+
+    companion object {
+        private val SPECIAL_JVM_ANNOTATION_NAMES: Set<String> = SpecialJvmAnnotations.SPECIAL_ANNOTATIONS.mapTo(HashSet()) {
+            it.asSingleFqName().toString()
+        }
+    }
 }

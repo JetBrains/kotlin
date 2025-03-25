@@ -50315,9 +50315,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
       }
 
       @Test
-      @TestMetadata("annotationRetentionAnnotation.kt")
-      public void testAnnotationRetentionAnnotation() {
-        runTest("compiler/testData/codegen/box/reflection/annotations/annotationRetentionAnnotation.kt");
+      @TestMetadata("annotationRetentionAndTarget.kt")
+      public void testAnnotationRetentionAndTarget() {
+        runTest("compiler/testData/codegen/box/reflection/annotations/annotationRetentionAndTarget.kt");
       }
 
       @Test
