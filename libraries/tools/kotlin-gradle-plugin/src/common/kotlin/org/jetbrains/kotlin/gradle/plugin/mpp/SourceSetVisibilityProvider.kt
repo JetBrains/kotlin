@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -85,18 +86,39 @@ internal class SourceSetVisibilityProvider(
         resolvedRootMppDependency: ResolvedDependencyResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean,
+        resolveWithLenientPSMResolutionScheme: Boolean,
     ): SourceSetVisibilityResult {
         val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
 
-        val visiblePlatformVariantNames: List<Set<String>> = platformCompilations
-            .filter { visibleFromSourceSet in it.allSourceSets }
+        val compilationsContainingSourceSetDoingGMT = platformCompilations.filter { visibleFromSourceSet in it.allSourceSets }
+
+        val visiblePlatformVariantNames: List<Set<String>> = compilationsContainingSourceSetDoingGMT
             .mapNotNull { platformCompilationData ->
                 val resolvedPlatformDependencies = platformCompilationData
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
                     .filter { it.selected.id isEqualsIgnoringVersion resolvedRootMppDependencyId }
+                    .filter {
+                        // Pre lenient resolve logic
+                        if (!resolveWithLenientPSMResolutionScheme) return@filter true
+                        /**
+                         * Detect that platform compilation's resolvedDependenciesConfiguration resolved metadata variant as a fallback
+                         *
+                         * This likely means that the dependency is missing the target of the platform compilation and we must therefore not
+                         * see this dependency in the [visiblePlatformVariantNames]
+                         *
+                         * @see [UklibResolutionTestsWithMockComponents] and [KmpResolutionIT]
+                         */
+                        val platformCompilationResolvedToMetadataJarVariant = it.resolvedVariant.attributes.getAttribute(
+                            KotlinPlatformType.attribute
+                        ) == KotlinPlatformType.common || it.resolvedVariant.attributes.getAttribute(
+                            Attribute.of(KotlinPlatformType.attribute.name, String::class.java)
+                        ) == KotlinPlatformType.common.name
+
+                        return@filter !platformCompilationResolvedToMetadataJarVariant
+                    }
                     /*
                     Returning null if we can't find the given dependency in a certain platform compilations dependencies.
                     This is not expected, since this means the dependency does not support the given targets which will
@@ -125,6 +147,16 @@ internal class SourceSetVisibilityProvider(
             }
 
         if (visiblePlatformVariantNames.isEmpty()) {
+            return SourceSetVisibilityResult(emptySet(), emptyMap())
+        }
+
+        /**
+         * If we are resolving with the new resolution scheme and we couldn't resolve all [visiblePlatformVariantNames] to valid platform
+         * KMP variants, assume the dependency is missing some targets that this source set compiles to and don't return any metadata klibs
+         *
+         * FIXME: Consider making this check simpler and return early above
+         */
+        if (resolveWithLenientPSMResolutionScheme && compilationsContainingSourceSetDoingGMT.size > visiblePlatformVariantNames.size) {
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
 

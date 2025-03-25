@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
+import java.io.File
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -116,6 +118,7 @@ internal class GranularMetadataTransformation(
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
         val transformProjectDependencies: Boolean,
         val computeTransformedLibraryChecksum: Boolean,
+        val kmpResolutionStrategy: KmpResolutionStrategy,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependencies: Boolean = true) : this(
             build = project.currentBuild,
@@ -139,6 +142,7 @@ internal class GranularMetadataTransformation(
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             transformProjectDependencies = transformProjectDependencies,
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
+            kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
         )
     }
 
@@ -259,7 +263,8 @@ internal class GranularMetadataTransformation(
             params.sourceSetName,
             dependency,
             projectStructureMetadata,
-            isResolvedToProject
+            isResolvedToProject,
+            resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
         )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
@@ -278,7 +283,11 @@ internal class GranularMetadataTransformation(
 
         val transitiveDependenciesToVisit = module.dependencies
             .filterIsInstance<ResolvedDependencyResult>()
-            .filterTo(mutableSetOf()) { it.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
+            .filterTo(mutableSetOf()) {
+                it.toModuleDependencyIdentifier() in requestedTransitiveDependencies
+                        // Don't filter dependencies in PSM with the lenient resolution model. This is slightly incorrect, but means we see transitive dependencies as in interlibrary dependencies
+                        || params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
+            }
 
         if (params.sourceSetName in params.platformCompilationSourceSets && !isResolvedToProject)
             return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(module, transitiveDependenciesToVisit)
