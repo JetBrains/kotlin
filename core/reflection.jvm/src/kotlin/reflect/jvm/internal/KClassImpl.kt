@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -130,11 +129,16 @@ internal class KClassImpl<T : Any>(
 
         @Suppress("UNCHECKED_CAST")
         val objectInstance: T? by lazy(PUBLICATION) {
-            val descriptor = descriptor
-            if (descriptor.kind != DescriptorClassKind.OBJECT) return@lazy null
+            val kmClass = kmClass
+            if (kmClass == null || (kmClass.kind != ClassKind.OBJECT && kmClass.kind != ClassKind.COMPANION_OBJECT))
+                return@lazy null
 
-            val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
-                jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
+            val field = if (
+                kmClass.kind == ClassKind.COMPANION_OBJECT &&
+                kmClass.name.toClassId().outerClassId !in CompanionObjectMapping.classIds
+            ) {
+                // Note that `kmClass.name` cannot be local because local objects are not allowed.
+                jClass.enclosingClass.getDeclaredField(kmClass.name.toNonLocalSimpleName())
             } else {
                 jClass.getDeclaredField(JvmAbi.INSTANCE_FIELD)
             }
