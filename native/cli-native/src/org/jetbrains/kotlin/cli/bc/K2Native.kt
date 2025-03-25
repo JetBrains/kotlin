@@ -60,6 +60,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
         val environment = prepareEnvironment(arguments, configuration, rootDisposable)
+        if (configuration.messageCollector.hasErrors()) {
+            // Some errors during KotlinCoreEnvironment setup.
+            return ExitCode.COMPILATION_ERROR
+        }
 
         try {
             runKonanDriver(configuration, environment, rootDisposable)
