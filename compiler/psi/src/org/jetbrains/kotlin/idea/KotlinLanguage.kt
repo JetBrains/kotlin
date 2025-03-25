@@ -13,29 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.idea
 
-package org.jetbrains.kotlin.idea;
+import com.intellij.lang.Language
 
-import com.intellij.lang.Language;
-import org.jetbrains.annotations.NotNull;
-
-public class KotlinLanguage extends Language {
-    @NotNull
-    public static final KotlinLanguage INSTANCE = new KotlinLanguage();
-    public static final String NAME = "Kotlin";
-
-    private KotlinLanguage() {
-        super("kotlin");
+class KotlinLanguage private constructor() : Language("kotlin") {
+    override fun getDisplayName(): String {
+        return NAME
     }
 
-    @NotNull
-    @Override
-    public String getDisplayName() {
-        return NAME;
+    override fun isCaseSensitive(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isCaseSensitive() {
-        return true;
+    companion object {
+        @JvmField
+        val INSTANCE: KotlinLanguage = KotlinLanguage()
+        const val NAME: String = "Kotlin"
     }
 }
