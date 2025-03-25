@@ -53,11 +53,13 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
@@ -82,7 +84,7 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
 
 private fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): IrConst? {
     // @JvmExposeBoxed should have no effect on not exposed functions
-    if (origin != JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS) return null
+    if (!hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
     return getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.arguments[0] as? IrConst
 }
 
@@ -247,6 +249,7 @@ val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
 
 fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: LanguageVersionSettings): Boolean {
     if (!isFunctionWhichCanBeExposed()) return false
+    if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return false
 
     return getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
             parentClassOrNull?.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
@@ -254,7 +257,7 @@ fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: Lan
 }
 
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
-fun IrDeclaration.isFunctionWhichCanBeExposed(): Boolean {
+private fun IrDeclaration.isFunctionWhichCanBeExposed(): Boolean {
     if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
     if (isSuspend) return false
     if (parameters.any { it.type.isInlineClassType() }) return true

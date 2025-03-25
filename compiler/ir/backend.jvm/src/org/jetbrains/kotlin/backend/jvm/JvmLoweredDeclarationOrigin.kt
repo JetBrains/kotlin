@@ -31,7 +31,6 @@ object JvmLoweredDeclarationOrigin {
     val STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT by IrDeclarationOriginImpl
     val STATIC_INLINE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl
     val STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl
-    val FUNCTION_WITH_EXPOSED_INLINE_CLASS by IrDeclarationOriginImpl
     val INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl
     val NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl
     val EXPOSED_INLINE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl

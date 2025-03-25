@@ -71,7 +71,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             updateFrom(source)
             name = mangledName
             if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
-                origin = JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
                 if (modality == Modality.ABSTRACT) {
                     modality = Modality.OPEN
                 }
@@ -314,7 +313,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         constructor.parentAsClass.factory.buildConstructor {
             updateFrom(constructor)
             isPrimary = false
-            origin = JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
             returnType = constructor.returnType
         }.apply {
             copyValueAndTypeParametersFrom(constructor)
@@ -550,12 +548,11 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         valueClass.declarations += function
 
         if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
-            valueClass.addExposedConstructor(irConstructor, primaryConstructor, function)
+            valueClass.addExposedForJavaConstructor(irConstructor, primaryConstructor, function)
         }
     }
 
-    // Add constructor, which is exposed to Java
-    private fun IrClass.addExposedConstructor(
+    private fun IrClass.addExposedForJavaConstructor(
         irConstructor: IrConstructor,
         primaryConstructor: IrConstructor,
         function: IrSimpleFunction,

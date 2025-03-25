@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFinalClass
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 @PhaseDescription(
     name = "DefaultArgumentsStubGenerator",
@@ -35,7 +37,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
     skipExternalMethods = false
 ) {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS) return null
+        if (declaration is IrFunction && declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
         return super.transformFlat(declaration)
     }
 

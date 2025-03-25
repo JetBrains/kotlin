@@ -185,7 +185,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
-        (function.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS && function.returnType.isInlineClassType()) ||
+        (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && function.returnType.isInlineClassType()) ||
                 isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
@@ -352,8 +352,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private fun IrDeclaration.wrapInlineClassForExposeFunction(mode: TypeMappingMode, type: IrType): TypeMappingMode {
-        // In case of @JvmStatic @JvmExposeBoxed methods origin is JVM_STATIC_WRAPPER, so,
-        // we cannot rely on origins to determine exposed methods.
         if (hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && type.isInlineClassType()) {
             return mode.wrapInlineClassesMode()
         }
