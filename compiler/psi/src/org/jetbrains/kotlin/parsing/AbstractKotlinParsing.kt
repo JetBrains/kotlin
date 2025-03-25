@@ -33,7 +33,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
     protected val lastToken: IElementType?
         get() {
             var i = 1
-            val currentOffset = myBuilder.getCurrentOffset()
+            val currentOffset = myBuilder.currentOffset
             while (i <= currentOffset && KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-i))) {
                 i++
             }
@@ -64,7 +64,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
             return true
         }
 
-        if (expectation === KtTokens.IDENTIFIER && "`" == myBuilder.getTokenText()) {
+        if (expectation === KtTokens.IDENTIFIER && "`" == myBuilder.tokenText) {
             advance()
         }
 
@@ -151,7 +151,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
         val token = tt()
         if (token === KtTokens.IDENTIFIER && expectation is KtKeywordToken) {
             val expectedKeyword = expectation
-            if (expectedKeyword.isSoft && expectedKeyword.getValue() == myBuilder.getTokenText()) {
+            if (expectedKeyword.isSoft && expectedKeyword.value == myBuilder.tokenText) {
                 myBuilder.remapCurrentToken(expectation)
                 return true
             }
@@ -184,7 +184,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
         if (_atSet(set)) return true
         val token = tt()
         if (token === KtTokens.IDENTIFIER) {
-            val keywordToken: KtKeywordToken? = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText())
+            val keywordToken: KtKeywordToken? = SOFT_KEYWORD_TEXTS[myBuilder.tokenText]
             if (keywordToken != null && set.contains(keywordToken)) {
                 myBuilder.remapCurrentToken(keywordToken)
                 return true
@@ -192,7 +192,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
         } else {
             // We know at this point that <code>set</code> does not contain <code>token</code>
             if (set.contains(KtTokens.IDENTIFIER) && token is KtKeywordToken) {
-                if (token.isSoft()) {
+                if (token.isSoft) {
                     myBuilder.remapCurrentToken(KtTokens.IDENTIFIER)
                     return true
                 }
@@ -230,13 +230,8 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
     }
 
     protected inner class OptionalMarker(actuallyMark: Boolean) {
-        private val marker: PsiBuilder.Marker?
-        private val offset: Int
-
-        init {
-            marker = if (actuallyMark) mark() else null
-            offset = myBuilder.getCurrentOffset()
-        }
+        private val marker: PsiBuilder.Marker? = if (actuallyMark) mark() else null
+        private val offset: Int = myBuilder.currentOffset
 
         fun done(elementType: IElementType) {
             if (marker == null) return
@@ -245,7 +240,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
 
         fun error(message: String) {
             if (marker == null) return
-            if (offset == myBuilder.getCurrentOffset()) {
+            if (offset == myBuilder.currentOffset) {
                 marker.drop() // no empty errors
             } else {
                 marker.error(message)
@@ -267,7 +262,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
         var openBrackets = 0
         while (!eof()) {
             if (pattern.processToken(
-                    myBuilder.getCurrentOffset(),
+                    myBuilder.currentOffset,
                     pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses)
                 )
             ) {
@@ -337,7 +332,7 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
 
     @TestOnly
     fun currentContext(): String {
-        return myBuilder.originalText.substringWithContext(myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20)
+        return myBuilder.originalText.substringWithContext(myBuilder.currentOffset, myBuilder.currentOffset, 20)
     }
 
     companion object {
@@ -346,15 +341,15 @@ abstract class AbstractKotlinParsing @JvmOverloads constructor(
         init {
             for (type in KtTokens.SOFT_KEYWORDS.getTypes()) {
                 val keywordToken = type as KtKeywordToken
-                assert(keywordToken.isSoft())
-                SOFT_KEYWORD_TEXTS.put(keywordToken.getValue(), keywordToken)
+                assert(keywordToken.isSoft)
+                SOFT_KEYWORD_TEXTS.put(keywordToken.value, keywordToken)
             }
         }
 
         init {
             for (token in KtTokens.KEYWORDS.getTypes()) {
-                assert(token is KtKeywordToken) { "Must be KtKeywordToken: " + token }
-                assert(!(token as KtKeywordToken).isSoft()) { "Must not be soft: " + token }
+                assert(token is KtKeywordToken) { "Must be KtKeywordToken: $token" }
+                assert(!(token as KtKeywordToken).isSoft) { "Must not be soft: $token" }
             }
         }
 

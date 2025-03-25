@@ -27,7 +27,159 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuilder, isTopLevel: Boolean, isLazy: Boolean) :
     AbstractKotlinParsing(builder, isLazy) {
-    private val myExpressionParsing: KotlinExpressionParsing
+    companion object {
+        private val GT_COMMA_COLON_SET = TokenSet.create(KtTokens.GT, KtTokens.COMMA, KtTokens.COLON)
+        private val LOG = Logger.getInstance(KotlinParsing::class.java)
+
+        private val TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
+            KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD,
+            KtTokens.FUN_KEYWORD, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD, KtTokens.PACKAGE_KEYWORD
+        )
+        private val TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET =
+            TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(KtTokens.SEMICOLON))
+        private val LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(KtTokens.LT, KtTokens.EQ, KtTokens.SEMICOLON), TOP_LEVEL_DECLARATION_FIRST)
+        private val DECLARATION_FIRST = TokenSet.orSet(
+            TOP_LEVEL_DECLARATION_FIRST,
+            TokenSet.create(KtTokens.INIT_KEYWORD, KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD, KtTokens.CONSTRUCTOR_KEYWORD)
+        )
+
+        private val CLASS_NAME_RECOVERY_SET = TokenSet.orSet(
+            TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.COLON, KtTokens.LBRACE),
+            TOP_LEVEL_DECLARATION_FIRST
+        )
+        private val TYPE_PARAMETER_GT_RECOVERY_SET =
+            TokenSet.create(KtTokens.WHERE_KEYWORD, KtTokens.LPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.GT)
+        val PARAMETER_NAME_RECOVERY_SET: TokenSet =
+            TokenSet.create(KtTokens.COLON, KtTokens.EQ, KtTokens.COMMA, KtTokens.RPAR, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
+        private val PACKAGE_NAME_RECOVERY_SET = TokenSet.create(KtTokens.DOT, KtTokens.EOL_OR_SEMICOLON)
+        private val IMPORT_RECOVERY_SET = TokenSet.create(KtTokens.AS_KEYWORD, KtTokens.DOT, KtTokens.EOL_OR_SEMICOLON)
+        private val TYPE_REF_FIRST =
+            TokenSet.create(KtTokens.LBRACKET, KtTokens.IDENTIFIER, KtTokens.LPAR, KtTokens.HASH, KtTokens.DYNAMIC_KEYWORD)
+        private val LBRACE_RBRACE_TYPE_REF_FIRST_SET = TokenSet.orSet(TokenSet.create(KtTokens.LBRACE, KtTokens.RBRACE), TYPE_REF_FIRST)
+        private val COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(KtTokens.COLON, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE), TYPE_REF_FIRST)
+        private val RECEIVER_TYPE_TERMINATORS = TokenSet.create(KtTokens.DOT, KtTokens.SAFE_ACCESS)
+        private val VALUE_PARAMETER_FIRST = TokenSet.orSet(
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACKET, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD),
+            TokenSet.andNot(KtTokens.MODIFIER_KEYWORDS, TokenSet.create(KtTokens.FUN_KEYWORD))
+        )
+        private val LAMBDA_VALUE_PARAMETER_FIRST = TokenSet.orSet(
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACKET),
+            TokenSet.andNot(KtTokens.MODIFIER_KEYWORDS, TokenSet.create(KtTokens.FUN_KEYWORD))
+        )
+        private val SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.INIT_KEYWORD)
+        private val ANNOTATION_TARGETS = TokenSet.create(
+            KtTokens.ALL_KEYWORD,
+            KtTokens.FILE_KEYWORD,
+            KtTokens.FIELD_KEYWORD,
+            KtTokens.GET_KEYWORD,
+            KtTokens.SET_KEYWORD,
+            KtTokens.PROPERTY_KEYWORD,
+            KtTokens.RECEIVER_KEYWORD,
+            KtTokens.PARAM_KEYWORD,
+            KtTokens.SETPARAM_KEYWORD,
+            KtTokens.DELEGATE_KEYWORD
+        )
+        private val BLOCK_DOC_COMMENT_SET = TokenSet.create(KtTokens.BLOCK_COMMENT, KtTokens.DOC_COMMENT)
+        private val SEMICOLON_SET = TokenSet.create(KtTokens.SEMICOLON)
+        private val COMMA_COLON_GT_SET = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.GT)
+        private val IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(KtTokens.IDENTIFIER, KtTokens.RBRACKET, KtTokens.LBRACKET)
+        private val LBRACE_RBRACE_SET = TokenSet.create(KtTokens.LBRACE, KtTokens.RBRACE)
+        private val COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(KtTokens.COMMA, KtTokens.SEMICOLON, KtTokens.RBRACE)
+        private val VALUE_ARGS_RECOVERY_SET =
+            TokenSet.create(KtTokens.LBRACE, KtTokens.SEMICOLON, KtTokens.RPAR, KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
+        private val PROPERTY_NAME_FOLLOW_SET = TokenSet.create(
+            KtTokens.COLON,
+            KtTokens.EQ,
+            KtTokens.LBRACE,
+            KtTokens.RBRACE,
+            KtTokens.SEMICOLON,
+            KtTokens.VAL_KEYWORD,
+            KtTokens.VAR_KEYWORD,
+            KtTokens.FUN_KEYWORD,
+            KtTokens.CLASS_KEYWORD
+        )
+        private val PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET =
+            TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET)
+        private val PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET =
+            TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST)
+        private val IDENTIFIER_EQ_COLON_SEMICOLON_SET =
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.EQ, KtTokens.COLON, KtTokens.SEMICOLON)
+        private val COMMA_RPAR_COLON_EQ_SET = TokenSet.create(KtTokens.COMMA, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
+        private val ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(
+            KtTokens.MODIFIER_KEYWORDS,
+            TokenSet.create(
+                KtTokens.AT,
+                KtTokens.GET_KEYWORD,
+                KtTokens.SET_KEYWORD,
+                KtTokens.FIELD_KEYWORD,
+                KtTokens.EOL_OR_SEMICOLON,
+                KtTokens.RBRACE
+            )
+        )
+        private val RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET =
+            TokenSet.create(KtTokens.RPAR, KtTokens.IDENTIFIER, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
+        private val COMMA_COLON_RPAR_SET = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.RPAR)
+        private val RPAR_COLON_LBRACE_EQ_SET = TokenSet.create(KtTokens.RPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
+        private val LBRACKET_LBRACE_RBRACE_LPAR_SET = TokenSet.create(KtTokens.LBRACKET, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.LPAR)
+        private val FUNCTION_NAME_FOLLOW_SET = TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
+        private val FUNCTION_NAME_RECOVERY_SET = TokenSet.orSet(
+            TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ),
+            LBRACE_RBRACE_SET,
+            TOP_LEVEL_DECLARATION_FIRST
+        )
+        private val VALUE_PARAMETERS_FOLLOW_SET =
+            TokenSet.create(KtTokens.EQ, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.SEMICOLON, KtTokens.RPAR)
+        private val CONTEXT_PARAMETERS_FOLLOW_SET = TokenSet.create(
+            KtTokens.CLASS_KEYWORD,
+            KtTokens.OBJECT_KEYWORD,
+            KtTokens.FUN_KEYWORD,
+            KtTokens.VAL_KEYWORD,
+            KtTokens.VAR_KEYWORD
+        )
+        private val LPAR_VALUE_PARAMETERS_FOLLOW_SET = TokenSet.orSet(TokenSet.create(KtTokens.LPAR), VALUE_PARAMETERS_FOLLOW_SET)
+        private val LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET =
+            TokenSet.create(KtTokens.LPAR, KtTokens.LBRACE, KtTokens.COLON, KtTokens.CONSTRUCTOR_KEYWORD)
+        private val definitelyOutOfReceiverSet = TokenSet.orSet(
+            TokenSet.create(KtTokens.EQ, KtTokens.COLON, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.BY_KEYWORD),
+            TOP_LEVEL_DECLARATION_FIRST
+        )
+        private val EOL_OR_SEMICOLON_RBRACE_SET = TokenSet.create(KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
+        private val CLASS_INTERFACE_SET = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
+
+        @JvmStatic
+        fun createForTopLevel(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+            return KotlinParsing(builder, isTopLevel = true, isLazy = true)
+        }
+
+        @JvmStatic
+        fun createForTopLevelNonLazy(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+            return KotlinParsing(builder, isTopLevel = true, isLazy = false)
+        }
+
+        private fun createForByClause(builder: SemanticWhitespaceAwarePsiBuilder?, isLazy: Boolean): KotlinParsing {
+            return KotlinParsing(SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy)
+        }
+
+        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
+    }
+
+    private val myExpressionParsing: KotlinExpressionParsing = if (isTopLevel)
+        KotlinExpressionParsing(builder, this, isLazy)
+    else
+        object : KotlinExpressionParsing(builder, this@KotlinParsing, isLazy) {
+            override fun parseCallWithClosure(): Boolean {
+                if ((builder as SemanticWhitespaceAwarePsiBuilderForByClause).stackSize > 0) {
+                    return super.parseCallWithClosure()
+                }
+                return false
+            }
+
+            override fun create(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
+                return createForByClause(builder, isLazy)
+            }
+        }
 
     private val lastDotAfterReceiverLParPattern = FirstBefore(
         AtSet(RECEIVER_TYPE_TERMINATORS),
@@ -76,7 +228,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         if (BLOCK_DOC_COMMENT_SET.contains(myBuilder.rawLookup(-1))) {
             val startOffset = myBuilder.rawTokenTypeStart(-1)
             val endOffset = myBuilder.rawTokenTypeStart(0)
-            val tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset)
+            val tokenChars = myBuilder.originalText.subSequence(startOffset, endOffset)
             if (!(tokenChars.length > 2 && tokenChars.subSequence(tokenChars.length - 2, tokenChars.length).toString() == "*/")) {
                 val marker = myBuilder.mark()
                 marker.error("Unclosed comment")
@@ -122,11 +274,11 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
     }
 
     fun parseLambdaExpression() {
-        myExpressionParsing.parseFunctionLiteral( /* preferBlock = */false,  /* collapse = */false)
+        myExpressionParsing.parseFunctionLiteral(preferBlock = false, collapse = false)
     }
 
     fun parseBlockExpression() {
-        parseBlock( /* collapse = */false)
+        parseBlock(collapse = false)
     }
 
     fun parseScript() {
@@ -138,7 +290,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
 
         val blockMarker = mark()
 
-        myExpressionParsing.parseStatements( /*isScriptTopLevel = */true)
+        myExpressionParsing.parseStatements(isScriptTopLevel = true)
 
         checkForUnexpectedSymbols()
 
@@ -337,9 +489,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         errorMessage: String
     ): Boolean {
         if (myBuilder.newlineBeforeCurrentToken()) {
-            if (importAlias != null) {
-                importAlias.done(KtNodeTypes.IMPORT_ALIAS)
-            }
+            importAlias?.done(KtNodeTypes.IMPORT_ALIAS)
             error(errorMessage)
             importDirective.done(KtNodeTypes.IMPORT_DIRECTIVE)
             return true
@@ -388,15 +538,19 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
             declType = KtNodeTypes.FUN
         }
 
-        if (declType == null && at(KtTokens.IMPORT_KEYWORD)) {
-            error("imports are only allowed in the beginning of file")
-            parseImportDirectives()
-            decl.drop()
-        } else if (declType == null) {
-            errorAndAdvance("Expecting a top level declaration")
-            decl.drop()
-        } else {
-            closeDeclarationWithCommentBinders(decl, declType, true)
+        when (declType) {
+            null if at(KtTokens.IMPORT_KEYWORD) -> {
+                error("imports are only allowed in the beginning of file")
+                parseImportDirectives()
+                decl.drop()
+            }
+            null -> {
+                errorAndAdvance("Expecting a top level declaration")
+                decl.drop()
+            }
+            else -> {
+                closeDeclarationWithCommentBinders(decl, declType, true)
+            }
         }
     }
 
@@ -417,7 +571,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
                 return KtNodeTypes.OBJECT_DECLARATION
             }
             KtTokens.IDENTIFIER_Id -> if (detector.isEnumDetected && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
-                return parseClass(true, false)
+                return parseClass(enumClass = true, expectKindKeyword = false)
             }
         }
 
@@ -548,9 +702,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
 
             if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
                 val tt = tt()
-                if (tokenConsumer != null) {
-                    tokenConsumer.consume(tt)
-                }
+                tokenConsumer?.consume(tt)
                 advance() // MODIFIER
                 marker.collapse(tt!!)
                 return true
@@ -577,7 +729,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
             error("Empty context parameter list")
             advance() // RPAR
         } else {
-            valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, Runnable { parseContextReceiver(inFunctionType) })
+            valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET) { parseContextReceiver(inFunctionType) }
         }
 
         contextReceiverList.done(KtNodeTypes.CONTEXT_RECEIVER_LIST)
@@ -607,7 +759,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
      */
     private fun parseFileAnnotationList(mode: AnnotationParsingMode) {
         if (!mode.isFileAnnotationParsingMode) {
-            LOG.error("expected file annotation parsing mode, but:" + mode)
+            LOG.error("expected file annotation parsing mode, but:$mode")
         }
 
         val fileAnnotationsList = mark()
@@ -762,7 +914,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
 
     private fun parseAnnotationTarget(keyword: KtKeywordToken) {
         val message =
-            "Expecting \"" + keyword.getValue() + KtTokens.COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations"
+            "Expecting \"" + keyword.value + KtTokens.COLON.value + "\" prefix for " + keyword.value + " annotations"
 
         val marker = mark()
 
@@ -795,7 +947,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         assert(
             _at(KtTokens.IDENTIFIER) ||  // We have "@ann" or "@:ann" or "@ :ann", but not "@ ann"
                     // (it's guaranteed that call sites do not allow the latter case)
-                    (_at(KtTokens.AT) && (!this.isNextRawTokenCommentOrWhitespace || lookahead(1) === KtTokens.COLON))
+                    (_at(KtTokens.AT) && (!isNextRawTokenCommentOrWhitespace || lookahead(1) === KtTokens.COLON))
         ) { "Invalid annotation prefix" }
 
         val annotation = mark()
@@ -927,7 +1079,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         }
 
         if (at(KtTokens.LPAR)) {
-            parseValueParameterList(false,  /* typeRequired  = */true, LBRACE_RBRACE_SET)
+            parseValueParameterList(isFunctionTypeContents = false, typeRequired = true, recoverySet = LBRACE_RBRACE_SET)
             primaryConstructorMarker.done(KtNodeTypes.PRIMARY_CONSTRUCTOR)
         } else if (hasConstructorModifiers || hasConstructorKeyword) {
             // A comprehensive error message for cases like:
@@ -973,7 +1125,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
     }
 
     fun parseObject(nameParsingMode: NameParsingMode?, optionalBody: Boolean) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false, true)
+        parseClassOrObject(true, nameParsingMode, optionalBody, enumClass = false, expectKindKeyword = true)
     }
 
     /*
@@ -1197,7 +1349,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         advance() // CONSTRUCTOR_KEYWORD
 
         if (at(KtTokens.LPAR)) {
-            parseValueParameterList(false,  /*typeRequired = */true, VALUE_ARGS_RECOVERY_SET)
+            parseValueParameterList(isFunctionTypeContents = false, typeRequired = true, recoverySet = VALUE_ARGS_RECOVERY_SET)
         } else {
             errorWithRecovery("Expecting '('", TokenSet.orSet(VALUE_ARGS_RECOVERY_SET, TokenSet.create(KtTokens.COLON)))
         }
@@ -1462,7 +1614,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         SET,
         FIELD;
 
-        internal class Collector {
+        class Collector {
             private val collected = booleanArrayOf(false, false, false)
 
             fun collect(kind: PropertyComponentKind) {
@@ -1491,14 +1643,12 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         val propertyComponent = mark()
 
         parseModifierList(TokenSet.EMPTY)
-
-        val propertyComponentKind: PropertyComponentKind?
-        if (at(KtTokens.GET_KEYWORD)) {
-            propertyComponentKind = PropertyComponentKind.GET
+        val propertyComponentKind = if (at(KtTokens.GET_KEYWORD)) {
+            PropertyComponentKind.GET
         } else if (at(KtTokens.SET_KEYWORD)) {
-            propertyComponentKind = PropertyComponentKind.SET
+            PropertyComponentKind.SET
         } else if (at(KtTokens.FIELD_KEYWORD)) {
-            propertyComponentKind = PropertyComponentKind.FIELD
+            PropertyComponentKind.FIELD
         } else {
             propertyComponent.rollbackTo()
             return null
@@ -1655,7 +1805,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         }
 
         if (at(KtTokens.LPAR)) {
-            parseValueParameterList(false,  /* typeRequired  = */false, VALUE_PARAMETERS_FOLLOW_SET)
+            parseValueParameterList(isFunctionTypeContents = false, typeRequired = false, recoverySet = VALUE_PARAMETERS_FOLLOW_SET)
         } else {
             error("Expecting '('")
         }
@@ -1708,7 +1858,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         if (atSet(RECEIVER_TYPE_TERMINATORS)) {
             advance() // expectation
         } else {
-            errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow)
+            errorWithRecovery("Expecting '.' before a $title name", nameFollow)
         }
         return true
     }
@@ -1766,7 +1916,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
      *   ;
      */
     fun parseBlock() {
-        parseBlock( /*collapse*/true)
+        parseBlock(collapse = true)
     }
 
     private fun parseBlock(collapse: Boolean) {
@@ -2011,7 +2161,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
      */
     @JvmOverloads
     fun parseTypeRef(extraRecoverySet: TokenSet? = TokenSet.EMPTY) {
-        parseTypeRef(extraRecoverySet,  /* allowSimpleIntersectionTypes */true)
+        parseTypeRef(extraRecoverySet, allowSimpleIntersectionTypes = true)
     }
 
     private fun parseTypeRef(extraRecoverySet: TokenSet?, allowSimpleIntersectionTypes: Boolean) {
@@ -2111,7 +2261,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
             leftTypeRef.done(KtNodeTypes.TYPE_REFERENCE)
 
             advance() // &
-            parseTypeRef(extraRecoverySet,  /* allowSimpleIntersectionTypes */true)
+            parseTypeRef(extraRecoverySet, allowSimpleIntersectionTypes = true)
 
             intersectionType.done(KtNodeTypes.INTERSECTION_TYPE)
             wasIntersection = true
@@ -2253,7 +2403,7 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
             advance(offset)
 
             advance() // LPAR
-            if (word != myBuilder.getTokenText()) {
+            if (word != myBuilder.tokenText) {
                 // something other than "out" / "Mutable"
                 error.rollbackTo()
                 return false
@@ -2343,30 +2493,12 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
     private fun parseFunctionTypeContents(functionType: PsiBuilder.Marker?): PsiBuilder.Marker? {
         assert(_at(KtTokens.LPAR)) { tt()!! }
 
-        parseValueParameterList(true,  /* typeRequired  = */true, TokenSet.EMPTY)
+        parseValueParameterList(isFunctionTypeContents = true, typeRequired = true, recoverySet = TokenSet.EMPTY)
 
         expect(KtTokens.ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST)
         parseTypeRef()
 
         return functionType
-    }
-
-    init {
-        myExpressionParsing = if (isTopLevel)
-            KotlinExpressionParsing(builder, this, isLazy)
-        else
-            object : KotlinExpressionParsing(builder, this@KotlinParsing, isLazy) {
-                override fun parseCallWithClosure(): Boolean {
-                    if ((builder as SemanticWhitespaceAwarePsiBuilderForByClause).getStackSize() > 0) {
-                        return super.parseCallWithClosure()
-                    }
-                    return false
-                }
-
-                override fun create(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
-                    return createForByClause(builder, isLazy)
-                }
-            }
     }
 
     /*
@@ -2390,19 +2522,19 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
 
         valueParameterLoop(
             isFunctionTypeContents,
-            recoverySet,
-            Runnable {
-                if (isFunctionTypeContents) {
-                    if (!tryParseValueParameter(typeRequired)) {
-                        val valueParameter = mark()
-                        parseFunctionTypeValueParameterModifierList()
-                        parseTypeRef()
-                        closeDeclarationWithCommentBinders(valueParameter, KtNodeTypes.VALUE_PARAMETER, false)
-                    }
-                } else {
-                    parseValueParameter(typeRequired)
+            recoverySet
+        ) {
+            if (isFunctionTypeContents) {
+                if (!tryParseValueParameter(typeRequired)) {
+                    val valueParameter = mark()
+                    parseFunctionTypeValueParameterModifierList()
+                    parseTypeRef()
+                    closeDeclarationWithCommentBinders(valueParameter, KtNodeTypes.VALUE_PARAMETER, false)
                 }
-            })
+            } else {
+                parseValueParameter(typeRequired)
+            }
+        }
 
         myBuilder.restoreNewlinesState()
 
@@ -2550,143 +2682,5 @@ class KotlinParsing private constructor(builder: SemanticWhitespaceAwarePsiBuild
         WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS(false, true, true, true, true),
         WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS_NO_CONTEXT(false, true, false, true, true),
         NO_ANNOTATIONS_NO_CONTEXT(false, false, false, false, false)
-    }
-
-    companion object {
-        private val GT_COMMA_COLON_SET = TokenSet.create(KtTokens.GT, KtTokens.COMMA, KtTokens.COLON)
-        private val LOG = Logger.getInstance(KotlinParsing::class.java)
-
-        private val TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
-            KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD,
-            KtTokens.FUN_KEYWORD, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD, KtTokens.PACKAGE_KEYWORD
-        )
-        private val TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET =
-            TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(KtTokens.SEMICOLON))
-        private val LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET =
-            TokenSet.orSet(TokenSet.create(KtTokens.LT, KtTokens.EQ, KtTokens.SEMICOLON), TOP_LEVEL_DECLARATION_FIRST)
-        private val DECLARATION_FIRST = TokenSet.orSet(
-            TOP_LEVEL_DECLARATION_FIRST,
-            TokenSet.create(KtTokens.INIT_KEYWORD, KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD, KtTokens.CONSTRUCTOR_KEYWORD)
-        )
-
-        private val CLASS_NAME_RECOVERY_SET = TokenSet.orSet(
-            TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.COLON, KtTokens.LBRACE),
-            TOP_LEVEL_DECLARATION_FIRST
-        )
-        private val TYPE_PARAMETER_GT_RECOVERY_SET =
-            TokenSet.create(KtTokens.WHERE_KEYWORD, KtTokens.LPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.GT)
-        val PARAMETER_NAME_RECOVERY_SET: TokenSet =
-            TokenSet.create(KtTokens.COLON, KtTokens.EQ, KtTokens.COMMA, KtTokens.RPAR, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
-        private val PACKAGE_NAME_RECOVERY_SET = TokenSet.create(KtTokens.DOT, KtTokens.EOL_OR_SEMICOLON)
-        private val IMPORT_RECOVERY_SET = TokenSet.create(KtTokens.AS_KEYWORD, KtTokens.DOT, KtTokens.EOL_OR_SEMICOLON)
-        private val TYPE_REF_FIRST =
-            TokenSet.create(KtTokens.LBRACKET, KtTokens.IDENTIFIER, KtTokens.LPAR, KtTokens.HASH, KtTokens.DYNAMIC_KEYWORD)
-        private val LBRACE_RBRACE_TYPE_REF_FIRST_SET = TokenSet.orSet(TokenSet.create(KtTokens.LBRACE, KtTokens.RBRACE), TYPE_REF_FIRST)
-        private val COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
-            TokenSet.orSet(TokenSet.create(KtTokens.COLON, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE), TYPE_REF_FIRST)
-        private val RECEIVER_TYPE_TERMINATORS = TokenSet.create(KtTokens.DOT, KtTokens.SAFE_ACCESS)
-        private val VALUE_PARAMETER_FIRST = TokenSet.orSet(
-            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACKET, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD),
-            TokenSet.andNot(KtTokens.MODIFIER_KEYWORDS, TokenSet.create(KtTokens.FUN_KEYWORD))
-        )
-        private val LAMBDA_VALUE_PARAMETER_FIRST = TokenSet.orSet(
-            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.LBRACKET),
-            TokenSet.andNot(KtTokens.MODIFIER_KEYWORDS, TokenSet.create(KtTokens.FUN_KEYWORD))
-        )
-        private val SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.INIT_KEYWORD)
-        private val ANNOTATION_TARGETS = TokenSet.create(
-            KtTokens.ALL_KEYWORD,
-            KtTokens.FILE_KEYWORD,
-            KtTokens.FIELD_KEYWORD,
-            KtTokens.GET_KEYWORD,
-            KtTokens.SET_KEYWORD,
-            KtTokens.PROPERTY_KEYWORD,
-            KtTokens.RECEIVER_KEYWORD,
-            KtTokens.PARAM_KEYWORD,
-            KtTokens.SETPARAM_KEYWORD,
-            KtTokens.DELEGATE_KEYWORD
-        )
-        private val BLOCK_DOC_COMMENT_SET = TokenSet.create(KtTokens.BLOCK_COMMENT, KtTokens.DOC_COMMENT)
-        private val SEMICOLON_SET = TokenSet.create(KtTokens.SEMICOLON)
-        private val COMMA_COLON_GT_SET = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.GT)
-        private val IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(KtTokens.IDENTIFIER, KtTokens.RBRACKET, KtTokens.LBRACKET)
-        private val LBRACE_RBRACE_SET = TokenSet.create(KtTokens.LBRACE, KtTokens.RBRACE)
-        private val COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(KtTokens.COMMA, KtTokens.SEMICOLON, KtTokens.RBRACE)
-        private val VALUE_ARGS_RECOVERY_SET =
-            TokenSet.create(KtTokens.LBRACE, KtTokens.SEMICOLON, KtTokens.RPAR, KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
-        private val PROPERTY_NAME_FOLLOW_SET = TokenSet.create(
-            KtTokens.COLON,
-            KtTokens.EQ,
-            KtTokens.LBRACE,
-            KtTokens.RBRACE,
-            KtTokens.SEMICOLON,
-            KtTokens.VAL_KEYWORD,
-            KtTokens.VAR_KEYWORD,
-            KtTokens.FUN_KEYWORD,
-            KtTokens.CLASS_KEYWORD
-        )
-        private val PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET =
-            TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET)
-        private val PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET =
-            TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST)
-        private val IDENTIFIER_EQ_COLON_SEMICOLON_SET =
-            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.EQ, KtTokens.COLON, KtTokens.SEMICOLON)
-        private val COMMA_RPAR_COLON_EQ_SET = TokenSet.create(KtTokens.COMMA, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
-        private val ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(
-            KtTokens.MODIFIER_KEYWORDS,
-            TokenSet.create(
-                KtTokens.AT,
-                KtTokens.GET_KEYWORD,
-                KtTokens.SET_KEYWORD,
-                KtTokens.FIELD_KEYWORD,
-                KtTokens.EOL_OR_SEMICOLON,
-                KtTokens.RBRACE
-            )
-        )
-        private val RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET =
-            TokenSet.create(KtTokens.RPAR, KtTokens.IDENTIFIER, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
-        private val COMMA_COLON_RPAR_SET = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.RPAR)
-        private val RPAR_COLON_LBRACE_EQ_SET = TokenSet.create(KtTokens.RPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
-        private val LBRACKET_LBRACE_RBRACE_LPAR_SET = TokenSet.create(KtTokens.LBRACKET, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.LPAR)
-        private val FUNCTION_NAME_FOLLOW_SET = TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
-        private val FUNCTION_NAME_RECOVERY_SET = TokenSet.orSet(
-            TokenSet.create(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ),
-            LBRACE_RBRACE_SET,
-            TOP_LEVEL_DECLARATION_FIRST
-        )
-        private val VALUE_PARAMETERS_FOLLOW_SET =
-            TokenSet.create(KtTokens.EQ, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.SEMICOLON, KtTokens.RPAR)
-        private val CONTEXT_PARAMETERS_FOLLOW_SET = TokenSet.create(
-            KtTokens.CLASS_KEYWORD,
-            KtTokens.OBJECT_KEYWORD,
-            KtTokens.FUN_KEYWORD,
-            KtTokens.VAL_KEYWORD,
-            KtTokens.VAR_KEYWORD
-        )
-        private val LPAR_VALUE_PARAMETERS_FOLLOW_SET = TokenSet.orSet(TokenSet.create(KtTokens.LPAR), VALUE_PARAMETERS_FOLLOW_SET)
-        private val LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET =
-            TokenSet.create(KtTokens.LPAR, KtTokens.LBRACE, KtTokens.COLON, KtTokens.CONSTRUCTOR_KEYWORD)
-        private val definitelyOutOfReceiverSet = TokenSet.orSet(
-            TokenSet.create(KtTokens.EQ, KtTokens.COLON, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.BY_KEYWORD),
-            TOP_LEVEL_DECLARATION_FIRST
-        )
-        private val EOL_OR_SEMICOLON_RBRACE_SET = TokenSet.create(KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
-        private val CLASS_INTERFACE_SET = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
-
-        @JvmStatic
-        fun createForTopLevel(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
-            return KotlinParsing(builder, true, true)
-        }
-
-        @JvmStatic
-        fun createForTopLevelNonLazy(builder: SemanticWhitespaceAwarePsiBuilder): KotlinParsing {
-            return KotlinParsing(builder, true, false)
-        }
-
-        private fun createForByClause(builder: SemanticWhitespaceAwarePsiBuilder?, isLazy: Boolean): KotlinParsing {
-            return KotlinParsing(SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy)
-        }
-
-        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = TokenSet.create(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
     }
 }
