@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -16,36 +15,39 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import java.net.URI
+import java.nio.file.FileSystems
 
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        private const val HELPERS_PATH = "./compiler/testData/ir/interpreter/helpers"
+        private val HELPERS_PATH = "ir/interpreter/helpers"
+        private val STDLIB_PATH = "stdlib"
         private val UNSIGNED_PATH = arrayOf(
-            "./libraries/stdlib/unsigned/src/kotlin",
-            "./libraries/stdlib/jvm/src/kotlin/util/UnsignedJVM.kt"
+            "$STDLIB_PATH/unsigned/src/kotlin",
+            "$STDLIB_PATH/jvm/src/kotlin/util/UnsignedJVM.kt"
         )
         private val RUNTIME_PATHS = arrayOf(
-            "./libraries/stdlib/src/kotlin/ranges/Progressions.kt",
-            "./libraries/stdlib/src/kotlin/ranges/ProgressionIterators.kt",
-            "./libraries/stdlib/src/kotlin/internal/progressionUtil.kt",
-            "./libraries/stdlib/jvm/runtime/kotlin/TypeAliases.kt",
-            "./libraries/stdlib/jvm/runtime/kotlin/text/TypeAliases.kt",
-            "./libraries/stdlib/jvm/src/kotlin/collections/TypeAliases.kt",
-            "./libraries/stdlib/src/kotlin/text/regex/MatchResult.kt",
-            "./libraries/stdlib/src/kotlin/collections/Sequence.kt",
+            "$STDLIB_PATH/src/kotlin/ranges/Progressions.kt",
+            "$STDLIB_PATH/src/kotlin/ranges/ProgressionIterators.kt",
+            "$STDLIB_PATH/src/kotlin/internal/progressionUtil.kt",
+            "$STDLIB_PATH/jvm/runtime/kotlin/TypeAliases.kt",
+            "$STDLIB_PATH/jvm/runtime/kotlin/text/TypeAliases.kt",
+            "$STDLIB_PATH/jvm/src/kotlin/collections/TypeAliases.kt",
+            "$STDLIB_PATH/src/kotlin/text/regex/MatchResult.kt",
+            "$STDLIB_PATH/src/kotlin/collections/Sequence.kt",
         )
         private val ANNOTATIONS_PATHS = arrayOf(
-            "./libraries/stdlib/src/kotlin/annotations/WasExperimental.kt",
-            "./libraries/stdlib/src/kotlin/annotations/ExperimentalStdlibApi.kt",
-            "./libraries/stdlib/src/kotlin/annotations/OptIn.kt",
-            "./libraries/stdlib/src/kotlin/internal/Annotations.kt",
-            "./libraries/stdlib/src/kotlin/experimental/inferenceMarker.kt",
-            "./libraries/stdlib/jvm/runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
+            "$STDLIB_PATH/src/kotlin/annotations/WasExperimental.kt",
+            "$STDLIB_PATH/src/kotlin/annotations/ExperimentalStdlibApi.kt",
+            "$STDLIB_PATH/src/kotlin/annotations/OptIn.kt",
+            "$STDLIB_PATH/src/kotlin/internal/Annotations.kt",
+            "$STDLIB_PATH/src/kotlin/experimental/inferenceMarker.kt",
+            "$STDLIB_PATH/jvm/runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
         )
-        private const val REFLECT_PATH = "./libraries/stdlib/jvm/src/kotlin/reflect"
+        private val REFLECT_PATH = "$STDLIB_PATH/jvm/src/kotlin/reflect"
         private val EXCLUDES = listOf(
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
-            "libraries/stdlib/unsigned/src/kotlin/UnsignedCommon.kt",
+            "stdlib/unsigned/src/kotlin/UnsignedCommon.kt",
         ).map(::File)
     }
 
@@ -53,18 +55,41 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         listOf(AdditionalFilesDirectives)
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
-        val stdlibPath = File("./libraries/stdlib").canonicalPath
+        val stdlibPath = File(this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI())
+
         return directories.flatMap { directory ->
-            File(directory)
-                .also { check(it.exists()) { "$it path is not found" } }
-                .walkTopDown().mapNotNull { file ->
-                    val parentPath = file.parentFile.canonicalPath
-                    val relativePath = runIf(parentPath.startsWith(stdlibPath)) { parentPath.removePrefix("$stdlibPath/") }
-                    file.takeUnless { it.isDirectory }
-                        ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
-                        ?.toTestFile(relativePath = relativePath)
-                }.toList()
+            this::class.java.classLoader.getResource(directory)!!.let {
+                val resourceUri = it.toURI()
+                when (resourceUri.scheme) {
+                    "jar" -> handleJarFileSystem(resourceUri)
+                    "file" -> handleFileSystem(resourceUri, stdlibPath)
+                    else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
+                }
+            }
         }
+    }
+
+    private fun handleFileSystem(resourceUri: URI, stdlibPath: File): List<TestFile> {
+        val resource = File(resourceUri)
+        return resource.walkTopDown()
+            .mapNotNull { file ->
+                val canonicalPath = file.parentFile.canonicalPath
+                val relativePath = runIf(canonicalPath.startsWith(stdlibPath.canonicalPath)) {
+                    canonicalPath.removePrefix(stdlibPath.canonicalPath + File.separatorChar)
+                }
+                file.takeIf { it.isFile }
+                    ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
+                    ?.toTestFile(relativePath)
+            }
+            .toList()
+    }
+
+    private fun handleJarFileSystem(resourceUri: URI): List<TestFile> {
+        val array = resourceUri.toString().split("!")
+        val fs = FileSystems.newFileSystem(URI.create(array[0]), emptyMap<String, String>())
+        return fs.getPath(array[1]).toFile().walkTopDown()
+            .mapNotNull { file -> file.toTestFile() }
+            .toList()
     }
 
     override fun produceAdditionalFiles(

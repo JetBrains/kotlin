@@ -185,7 +185,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val multiModule = testServices.moduleStructure.modules.size > 1
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
 
-        val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
+        val sourceDirs = module.files.mapNotNull { it.originalFile.parent }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
 

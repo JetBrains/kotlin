@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.nio.file.Files
+import java.util.zip.ZipInputStream
 import kotlin.io.path.createTempDirectory
 
 enum class JavaForeignAnnotationType(val path: String) {
@@ -45,7 +47,7 @@ enum class JavaForeignAnnotationType(val path: String) {
 
 open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        const val JSR_305_TEST_ANNOTATIONS_PATH = "compiler/testData/diagnostics/helpers/jsr305_test_annotations"
+        val JSR_305_TEST_ANNOTATIONS_PATH = this::class.java.classLoader.getResource("jsr305_test_annotations.jar")!!
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -109,7 +111,18 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
             val jsr305AnnotationsDir = createTempDirectory().toFile().also {
-                File(JSR_305_TEST_ANNOTATIONS_PATH).copyRecursively(it)
+                ZipInputStream(JSR_305_TEST_ANNOTATIONS_PATH.openStream()).use { zip ->
+                    while (true) {
+                        val entry = zip.nextEntry ?: break
+                        val file = File(it, entry.name)
+                        if (entry.isDirectory) {
+                            file.mkdirs()
+                        } else {
+                            file.parentFile.mkdirs()
+                            Files.newOutputStream(file.toPath()).use { zip.copyTo(it) }
+                        }
+                    }
+                }
             }
             configuration.addJvmClasspathRoot(
                 MockLibraryUtil.compileJavaFilesLibraryToJar(

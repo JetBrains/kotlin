@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigura
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.utils.bind
 
 /**
  * General test configuration for FIR-based diagnostic tests
@@ -105,7 +104,6 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
  * - source dependency kind between modules
  * - target platform is JVM
  *
- * @param [baseDir] is used in Kotlin plugin from IJ infra
  * @param [testDataConsistencyHandler] is used to ensure consistency between `.kt` and `.xxx.kt` files if they are present.
  * Known usages:
  * - `.fir.kt` for diagnostics testdata shared between the K1 and K2
@@ -114,7 +112,6 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
  * - `.reversed.fir.kt` for reversed AA tests
  */
 fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
-    baseDir: String = ".",
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
@@ -137,8 +134,8 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     )
 
     useAdditionalSourceProviders(
-        ::AdditionalDiagnosticsSourceFilesProvider.bind(baseDir),
-        ::CoroutineHelpersSourceFilesProvider.bind(baseDir),
+        ::AdditionalDiagnosticsSourceFilesProvider,
+        ::CoroutineHelpersSourceFilesProvider,
     )
 
     facadeStep(frontendFacade)
