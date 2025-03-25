@@ -13,59 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.lang.impl.PsiBuilderAdapter
+import com.intellij.psi.tree.IElementType
 
-import com.intellij.lang.impl.PsiBuilderAdapter;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-
-public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-
-    private final SemanticWhitespaceAwarePsiBuilder myBuilder;
-
-    public SemanticWhitespaceAwarePsiBuilderAdapter(SemanticWhitespaceAwarePsiBuilder builder) {
-        super(builder);
-        this.myBuilder = builder;
+open class SemanticWhitespaceAwarePsiBuilderAdapter(private val myBuilder: SemanticWhitespaceAwarePsiBuilder) : PsiBuilderAdapter(
+    myBuilder
+), SemanticWhitespaceAwarePsiBuilder {
+    override fun newlineBeforeCurrentToken(): Boolean {
+        return myBuilder.newlineBeforeCurrentToken()
     }
 
-    @Override
-    public boolean newlineBeforeCurrentToken() {
-        return myBuilder.newlineBeforeCurrentToken();
+    override fun disableNewlines() {
+        myBuilder.disableNewlines()
     }
 
-    @Override
-    public void disableNewlines() {
-        myBuilder.disableNewlines();
+    override fun enableNewlines() {
+        myBuilder.enableNewlines()
     }
 
-    @Override
-    public void enableNewlines() {
-        myBuilder.enableNewlines();
+    override fun restoreNewlinesState() {
+        myBuilder.restoreNewlinesState()
     }
 
-    @Override
-    public void restoreNewlinesState() {
-        myBuilder.restoreNewlinesState();
+    override fun restoreJoiningComplexTokensState() {
+        myBuilder.restoreJoiningComplexTokensState()
     }
 
-    @Override
-    public void restoreJoiningComplexTokensState() {
-        myBuilder.restoreJoiningComplexTokensState();
+    override fun enableJoiningComplexTokens() {
+        myBuilder.enableJoiningComplexTokens()
     }
 
-    @Override
-    public void enableJoiningComplexTokens() {
-        myBuilder.enableJoiningComplexTokens();
+    override fun disableJoiningComplexTokens() {
+        myBuilder.disableJoiningComplexTokens()
     }
 
-    @Override
-    public void disableJoiningComplexTokens() {
-        myBuilder.disableJoiningComplexTokens();
-    }
-
-    @Override
-    public boolean isWhitespaceOrComment(@NotNull IElementType elementType) {
-        return myBuilder.isWhitespaceOrComment(elementType);
+    override fun isWhitespaceOrComment(elementType: IElementType): Boolean {
+        return myBuilder.isWhitespaceOrComment(elementType)
     }
 }

@@ -13,187 +13,166 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.impl.PsiBuilderAdapter
+import com.intellij.lang.impl.PsiBuilderImpl
+import com.intellij.psi.TokenType
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
+import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.lexer.KtTokens
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.impl.PsiBuilderAdapter;
-import com.intellij.lang.impl.PsiBuilderImpl;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.KtTokens;
+class SemanticWhitespaceAwarePsiBuilderImpl(delegate: PsiBuilder) : PsiBuilderAdapter(delegate), SemanticWhitespaceAwarePsiBuilder {
+    private val complexTokens = TokenSet.create(KtTokens.SAFE_ACCESS, KtTokens.ELVIS, KtTokens.EXCLEXCL)
+    private val joinComplexTokens = Stack<Boolean?>()
 
-import static org.jetbrains.kotlin.lexer.KtTokens.*;
+    private val newlinesEnabled = Stack<Boolean?>()
 
-public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
-    private final Stack<Boolean> joinComplexTokens = new Stack<>();
+    private val delegateImpl: PsiBuilderImpl?
 
-    private final Stack<Boolean> newlinesEnabled = new Stack<>();
+    init {
+        newlinesEnabled.push(true)
+        joinComplexTokens.push(true)
 
-    private final PsiBuilderImpl delegateImpl;
-
-    public SemanticWhitespaceAwarePsiBuilderImpl(PsiBuilder delegate) {
-        super(delegate);
-        newlinesEnabled.push(true);
-        joinComplexTokens.push(true);
-
-        delegateImpl = findPsiBuilderImpl(delegate);
+        delegateImpl = findPsiBuilderImpl(delegate)
     }
 
-    @Nullable
-    private static PsiBuilderImpl findPsiBuilderImpl(PsiBuilder builder) {
-        // This is a hackish workaround for PsiBuilder interface not exposing isWhitespaceOrComment() method
-        // We have to unwrap all the adapters to find an Impl inside
-        while (true) {
-            if (builder instanceof PsiBuilderImpl) {
-                return (PsiBuilderImpl) builder;
-            }
-            if (!(builder instanceof PsiBuilderAdapter)) {
-                return null;
-            }
-
-            builder = ((PsiBuilderAdapter) builder).getDelegate();
-        }
+    override fun isWhitespaceOrComment(elementType: IElementType): Boolean {
+        checkNotNull(delegateImpl) { "PsiBuilderImpl not found" }
+        return delegateImpl.whitespaceOrComment(elementType)
     }
 
-    @Override
-    public boolean isWhitespaceOrComment(@NotNull IElementType elementType) {
-        assert delegateImpl != null : "PsiBuilderImpl not found";
-        return delegateImpl.whitespaceOrComment(elementType);
-    }
+    override fun newlineBeforeCurrentToken(): Boolean {
+        if (!newlinesEnabled.peek()!!) return false
 
-    @Override
-    public boolean newlineBeforeCurrentToken() {
-        if (!newlinesEnabled.peek()) return false;
-
-        if (eof()) return true;
+        if (eof()) return true
 
         // TODO: maybe, memoize this somehow?
-        for (int i = 1; i <= getCurrentOffset(); i++) {
-            IElementType previousToken = rawLookup(-i);
+        for (i in 1..getCurrentOffset()) {
+            val previousToken = rawLookup(-i)
 
-            if (previousToken == KtTokens.BLOCK_COMMENT
-                    || previousToken == KtTokens.DOC_COMMENT
-                    || previousToken == KtTokens.EOL_COMMENT
-                    || previousToken == SHEBANG_COMMENT) {
-                continue;
+            if (previousToken === KtTokens.BLOCK_COMMENT || previousToken === KtTokens.DOC_COMMENT || previousToken === KtTokens.EOL_COMMENT || previousToken === KtTokens.SHEBANG_COMMENT) {
+                continue
             }
 
-            if (previousToken != TokenType.WHITE_SPACE) {
-                break;
+            if (previousToken !== TokenType.WHITE_SPACE) {
+                break
             }
 
-            int previousTokenStart = rawTokenTypeStart(-i);
-            int previousTokenEnd = rawTokenTypeStart(-i + 1);
+            val previousTokenStart = rawTokenTypeStart(-i)
+            val previousTokenEnd = rawTokenTypeStart(-i + 1)
 
-            assert previousTokenStart >= 0;
-            assert previousTokenEnd < getOriginalText().length();
+            assert(previousTokenStart >= 0)
+            assert(previousTokenEnd < getOriginalText().length)
 
-            for (int j = previousTokenStart; j < previousTokenEnd; j++) {
-                if (getOriginalText().charAt(j) == '\n') {
-                    return true;
+            for (j in previousTokenStart..<previousTokenEnd) {
+                if (getOriginalText().get(j) == '\n') {
+                    return true
                 }
             }
         }
 
-        return false;
+        return false
     }
 
-    @Override
-    public void disableNewlines() {
-        newlinesEnabled.push(false);
+    override fun disableNewlines() {
+        newlinesEnabled.push(false)
     }
 
-    @Override
-    public void enableNewlines() {
-        newlinesEnabled.push(true);
+    override fun enableNewlines() {
+        newlinesEnabled.push(true)
     }
 
-    @Override
-    public void restoreNewlinesState() {
-        assert newlinesEnabled.size() > 1;
-        newlinesEnabled.pop();
+    override fun restoreNewlinesState() {
+        assert(newlinesEnabled.size > 1)
+        newlinesEnabled.pop()
     }
 
-    private boolean joinComplexTokens() {
-        return joinComplexTokens.peek();
+    private fun joinComplexTokens(): Boolean {
+        return joinComplexTokens.peek()!!
     }
 
-    @Override
-    public void restoreJoiningComplexTokensState() {
-        joinComplexTokens.pop();
+    override fun restoreJoiningComplexTokensState() {
+        joinComplexTokens.pop()
     }
 
-    @Override
-    public void enableJoiningComplexTokens() {
-        joinComplexTokens.push(true);
+    override fun enableJoiningComplexTokens() {
+        joinComplexTokens.push(true)
     }
 
-    @Override
-    public void disableJoiningComplexTokens() {
-        joinComplexTokens.push(false);
+    override fun disableJoiningComplexTokens() {
+        joinComplexTokens.push(false)
     }
 
-    @Override
-    public IElementType getTokenType() {
-        if (!joinComplexTokens()) return super.getTokenType();
-        return getJoinedTokenType(super.getTokenType(), 1);
+    override fun getTokenType(): IElementType? {
+        if (!joinComplexTokens()) return super.getTokenType()
+        return getJoinedTokenType(super.getTokenType(), 1)
     }
 
-    private IElementType getJoinedTokenType(IElementType rawTokenType, int rawLookupSteps) {
-        if (rawTokenType == QUEST) {
-            IElementType nextRawToken = rawLookup(rawLookupSteps);
-            if (nextRawToken == DOT) return SAFE_ACCESS;
-            if (nextRawToken == COLON) return ELVIS;
+    private fun getJoinedTokenType(rawTokenType: IElementType?, rawLookupSteps: Int): IElementType? {
+        if (rawTokenType === KtTokens.QUEST) {
+            val nextRawToken = rawLookup(rawLookupSteps)
+            if (nextRawToken === KtTokens.DOT) return KtTokens.SAFE_ACCESS
+            if (nextRawToken === KtTokens.COLON) return KtTokens.ELVIS
+        } else if (rawTokenType === KtTokens.EXCL) {
+            val nextRawToken = rawLookup(rawLookupSteps)
+            if (nextRawToken === KtTokens.EXCL) return KtTokens.EXCLEXCL
         }
-        else if (rawTokenType == EXCL) {
-            IElementType nextRawToken = rawLookup(rawLookupSteps);
-            if (nextRawToken == EXCL) return EXCLEXCL;
-        }
-        return rawTokenType;
+        return rawTokenType
     }
 
-    @Override
-    public void advanceLexer() {
+    override fun advanceLexer() {
         if (!joinComplexTokens()) {
-            super.advanceLexer();
-            return;
+            super.advanceLexer()
+            return
         }
-        IElementType tokenType = getTokenType();
+        val tokenType = getTokenType()
         if (complexTokens.contains(tokenType)) {
-            Marker mark = mark();
-            super.advanceLexer();
-            super.advanceLexer();
-            mark.collapse(tokenType);
-        }
-        else {
-            super.advanceLexer();
+            val mark = mark()
+            super.advanceLexer()
+            super.advanceLexer()
+            mark.collapse(tokenType!!)
+        } else {
+            super.advanceLexer()
         }
     }
 
-    @Override
-    public String getTokenText() {
-        if (!joinComplexTokens()) return super.getTokenText();
-        IElementType tokenType = getTokenType();
+    override fun getTokenText(): String? {
+        if (!joinComplexTokens()) return super.getTokenText()
+        val tokenType = getTokenType()
         if (complexTokens.contains(tokenType)) {
-                if (tokenType == ELVIS) return "?:";
-                if (tokenType == SAFE_ACCESS) return "?.";
-            }
-        return super.getTokenText();
+            if (tokenType === KtTokens.ELVIS) return "?:"
+            if (tokenType === KtTokens.SAFE_ACCESS) return "?."
+        }
+        return super.getTokenText()
     }
 
-    @Override
-    public IElementType lookAhead(int steps) {
-        if (!joinComplexTokens()) return super.lookAhead(steps);
+    override fun lookAhead(steps: Int): IElementType? {
+        if (!joinComplexTokens()) return super.lookAhead(steps)
 
         if (complexTokens.contains(getTokenType())) {
-            return super.lookAhead(steps + 1);
+            return super.lookAhead(steps + 1)
         }
-        return getJoinedTokenType(super.lookAhead(steps), 2);
+        return getJoinedTokenType(super.lookAhead(steps), 2)
+    }
+
+    companion object {
+        private fun findPsiBuilderImpl(builder: PsiBuilder?): PsiBuilderImpl? {
+            // This is a hackish workaround for PsiBuilder interface not exposing isWhitespaceOrComment() method
+            // We have to unwrap all the adapters to find an Impl inside
+            var builder = builder
+            while (true) {
+                if (builder is PsiBuilderImpl) {
+                    return builder
+                }
+                if (builder !is PsiBuilderAdapter) {
+                    return null
+                }
+
+                builder = builder.getDelegate()
+            }
+        }
     }
 }

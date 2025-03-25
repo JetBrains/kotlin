@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
-
-public interface Consumer<T> {
-    void consume(T item);
+interface Consumer<T> {
+    fun consume(item: T?)
 }

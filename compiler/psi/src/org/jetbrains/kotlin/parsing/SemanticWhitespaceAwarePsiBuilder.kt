@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.lang.PsiBuilder
+import com.intellij.psi.tree.IElementType
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-
-public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
+interface SemanticWhitespaceAwarePsiBuilder : PsiBuilder {
     // TODO: comments go to wrong place when an empty element is created, see IElementType.isLeftBound()
+    fun newlineBeforeCurrentToken(): Boolean
+    fun disableNewlines()
+    fun enableNewlines()
+    fun restoreNewlinesState()
 
-    boolean newlineBeforeCurrentToken();
-    void disableNewlines();
-    void enableNewlines();
-    void restoreNewlinesState();
+    fun restoreJoiningComplexTokensState()
+    fun enableJoiningComplexTokens()
+    fun disableJoiningComplexTokens()
 
-    void restoreJoiningComplexTokensState();
-    void enableJoiningComplexTokens();
-    void disableJoiningComplexTokens();
-
-    @Override
-    boolean isWhitespaceOrComment(@NotNull IElementType elementType);
+    override fun isWhitespaceOrComment(elementType: IElementType): Boolean
 }
