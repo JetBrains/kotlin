@@ -1360,6 +1360,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("setterWithoutBodyOnValPropertyWithSyntaxErrors.kt")
+    public void testSetterWithoutBodyOnValPropertyWithSyntaxErrors() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/setterWithoutBodyOnValPropertyWithSyntaxErrors.kt");
+    }
+
+    @Test
     @TestMetadata("setterWithoutBodyValueParameterType.kt")
     public void testSetterWithoutBodyValueParameterType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/setterWithoutBodyValueParameterType.kt");
