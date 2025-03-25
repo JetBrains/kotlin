@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
@@ -191,6 +192,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             KmpResolutionStrategy.fromProperty(it)
         } ?: KmpResolutionStrategy.StandardKMPResolution
 
+    // This property disables -${checksum} output path suffix in the GMT transformed output klib to make them testable
+    val computeTransformedLibraryChecksum: Boolean
+        get() = booleanProperty(KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM) ?: true
 
     val enableKotlinToolingMetadataArtifact: Boolean
         get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
@@ -683,6 +687,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT = property("kotlin.stdlib.jdk.variants.version.alignment")
         val KOTLIN_JS_STDLIB_DOM_API_INCLUDED = property("kotlin.js.stdlib.dom.api.included")
         val KOTLIN_JS_YARN = property("kotlin.js.yarn")
+        val KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM = property("kotlin.internal.mpp.computeTransformedLibraryChecksum")
         val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = property("kotlin.mpp.enableGranularSourceSetsMetadata")
         val KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT = property("kotlin.mpp.enableCompatibilityMetadataVariant")
         val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = property("kotlin.mpp.enableCInteropCommonization")

@@ -115,6 +115,7 @@ internal class GranularMetadataTransformation(
         val kotlinKmpProjectIsolationEnabled: Boolean,
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
         val transformProjectDependencies: Boolean,
+        val computeTransformedLibraryChecksum: Boolean,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependencies: Boolean = true) : this(
             build = project.currentBuild,
@@ -137,6 +138,7 @@ internal class GranularMetadataTransformation(
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             transformProjectDependencies = transformProjectDependencies,
+            computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
         )
     }
 
@@ -339,7 +341,8 @@ internal class GranularMetadataTransformation(
                     moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
                     kotlinProjectStructureMetadata = projectStructureMetadata,
                     primaryArtifactFile = compositeMetadataArtifact.file,
-                    hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet
+                    hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet,
+                    computeChecksum = params.computeTransformedLibraryChecksum
                 )
             )
         }
