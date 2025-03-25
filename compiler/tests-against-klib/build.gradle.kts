@@ -29,17 +29,12 @@ compilerTests {
     // only 2 files are really needed:
     // - compiler/testData/codegen/boxKlib/properties.kt
     // - compiler/testData/codegen/boxKlib/simple.kt
-    testData("../testData/codegen/boxKlib")
+    testData(project(":compiler").isolated, "testData/codegen/boxKlib")
 }
 
 projectTest(parallel = true) {
     workingDir = rootDir
     useJUnitPlatform()
-
-    // only 2 files are really needed:
-    // - compiler/testData/codegen/boxKlib/properties.kt
-    // - compiler/testData/codegen/boxKlib/simple.kt
-    inputs.dir(layout.projectDirectory.dir("../testData")).withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")
