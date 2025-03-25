@@ -13,46 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.idea
 
-package org.jetbrains.kotlin.idea;
+import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.util.NotNullLazyValue
+import java.util.function.Supplier
+import javax.swing.Icon
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.NotNullLazyValue;
-import org.jetbrains.annotations.NotNull;
+class KotlinFileType private constructor() : LanguageFileType(KotlinLanguage.Companion.INSTANCE) {
+    private val myIcon = NotNullLazyValue.lazy<Icon>(Supplier { KotlinIconProviderService.Companion.instance.getFileIcon() })
 
-import javax.swing.*;
-
-public class KotlinFileType extends LanguageFileType {
-    public static final String EXTENSION = "kt";
-    public static final String DOT_DEFAULT_EXTENSION = "." + EXTENSION;
-    public static final KotlinFileType INSTANCE = new KotlinFileType();
-
-    private final NotNullLazyValue<Icon> myIcon = NotNullLazyValue.lazy(() -> KotlinIconProviderService.getInstance().getFileIcon());
-
-    private KotlinFileType() {
-        super(KotlinLanguage.INSTANCE);
+    override fun getName(): String {
+        return KotlinLanguage.Companion.NAME
     }
 
-    @Override
-    @NotNull
-    public String getName() {
-        return KotlinLanguage.NAME;
+    override fun getDescription(): String {
+        return name
     }
 
-    @Override
-    @NotNull
-    public String getDescription() {
-        return getName();
+    override fun getDefaultExtension(): String {
+        return EXTENSION
     }
 
-    @Override
-    @NotNull
-    public String getDefaultExtension() {
-        return EXTENSION;
+    override fun getIcon(): Icon? {
+        return myIcon.getValue()
     }
 
-    @Override
-    public Icon getIcon() {
-        return myIcon.getValue();
+    companion object {
+        const val EXTENSION: String = "kt"
+        const val DOT_DEFAULT_EXTENSION: String = ".$EXTENSION"
+        @JvmField
+        val INSTANCE: KotlinFileType = KotlinFileType()
     }
 }
