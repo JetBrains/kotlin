@@ -17,7 +17,7 @@ object KotlinBuiltInFileType : FileType {
 
     override fun getDefaultExtension() = BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
 
-    override fun getIcon(): Icon? = KotlinIconProviderService.instance.builtInFileIcon
+    override fun getIcon(): Icon? = KotlinIconProviderService.instance.getBuiltInFileIcon()
 
     override fun isBinary() = true
 

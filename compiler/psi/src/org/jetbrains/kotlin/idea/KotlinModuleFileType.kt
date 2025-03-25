@@ -22,7 +22,7 @@ import java.util.function.Supplier
 import javax.swing.Icon
 
 class KotlinModuleFileType private constructor() : FileType {
-    private val myIcon = NotNullLazyValue.lazy<Icon?>(Supplier { KotlinIconProviderService.Companion.instance.fileIcon })
+    private val myIcon = NotNullLazyValue.lazy<Icon>(Supplier { KotlinIconProviderService.Companion.instance.getFileIcon() })
 
     override fun getName(): String {
         return EXTENSION
@@ -36,7 +36,7 @@ class KotlinModuleFileType private constructor() : FileType {
         return EXTENSION
     }
 
-    override fun getIcon(): Icon? {
+    override fun getIcon(): Icon {
         return myIcon.getValue()
     }
 

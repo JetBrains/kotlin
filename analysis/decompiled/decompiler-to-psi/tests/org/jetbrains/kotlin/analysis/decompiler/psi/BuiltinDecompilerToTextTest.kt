@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractDecompiledClassTest
-import org.jetbrains.kotlin.idea.KotlinLanguage.INSTANCE
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Files
@@ -47,7 +46,7 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
         virtualFile: VirtualFile,
     ): KtFile? {
         val fileViewProvider = builtInDecompiler.createFileViewProvider(virtualFile, psiManager, physical = true)
-        val psiFile = fileViewProvider.getPsi(INSTANCE)
+        val psiFile = fileViewProvider.getPsi(KotlinLanguage.INSTANCE)
         return psiFile as KtFile?
     }
 

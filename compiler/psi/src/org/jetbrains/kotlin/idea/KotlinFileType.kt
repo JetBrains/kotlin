@@ -21,7 +21,7 @@ import java.util.function.Supplier
 import javax.swing.Icon
 
 class KotlinFileType private constructor() : LanguageFileType(KotlinLanguage.Companion.INSTANCE) {
-    private val myIcon = NotNullLazyValue.lazy<Icon?>(Supplier { KotlinIconProviderService.Companion.instance.fileIcon })
+    private val myIcon = NotNullLazyValue.lazy<Icon>(Supplier { KotlinIconProviderService.Companion.instance.getFileIcon() })
 
     override fun getName(): String {
         return KotlinLanguage.Companion.NAME

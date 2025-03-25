@@ -8,12 +8,13 @@ import com.intellij.openapi.application.ApplicationManager
 import javax.swing.Icon
 
 abstract class KotlinIconProviderService {
-    abstract val fileIcon: Icon?
-    abstract val builtInFileIcon: Icon?
+    abstract fun getFileIcon(): Icon?
+    abstract fun getBuiltInFileIcon(): Icon?
 
     class CompilerKotlinFileIconProviderService : KotlinIconProviderService() {
-        override val fileIcon: Icon? = null
-        override val builtInFileIcon: Icon? = null
+        override fun getFileIcon(): Icon? = null
+
+        override fun getBuiltInFileIcon(): Icon? = null
     }
 
     companion object {
