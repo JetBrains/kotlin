@@ -729,6 +729,8 @@ private fun setupProjectFromTestResources(
         if (!hasSettingsFile) {
             val safeProjectName = projectName
                 .map {
+                    // replace invalid project name chars,
+                    // see https://github.com/gradle/gradle/blob/v8.13.0/subprojects/core/src/main/java/org/gradle/util/NameValidator.java#L40
                     if (it in setOf('/', '\\', ':', '<', '>', '"', '?', '*', '|')) {
                         '-'
                     } else {
