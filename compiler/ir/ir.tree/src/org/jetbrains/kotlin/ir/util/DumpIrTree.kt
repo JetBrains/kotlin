@@ -77,8 +77,6 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  * @property filePathRenderer allows to post-process the rendered IrFile name
  * @property printSourceOffsets If source offsets of elements should be printed.
- * @property guessTypeBySignatureOfUnboundClassifierSymbol If an unbound symbol is met in [IrSimpleType], should we try to guess
- *   the fully qualified name of the class by symbol's signature or just render the standard "unbound symbol" text.
  * @property referenceRenderingStrategy Determines the exact way how [IrSymbol] references are rendered in IR expressions and IR declarations.
  */
 data class DumpIrTreeOptions(
@@ -104,7 +102,6 @@ data class DumpIrTreeOptions(
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
     val filePathRenderer: (IrFile, String) -> String = { _, name -> name },
     val printSourceOffsets: Boolean = false,
-    val guessTypeBySignatureOfUnboundClassifierSymbol: Boolean = false,
     val referenceRenderingStrategy: ReferenceRenderingStrategy = ReferenceRenderingStrategy.Default,
 ) {
     /**

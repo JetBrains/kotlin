@@ -712,7 +712,7 @@ internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions):
 
     return when (this) {
         is IrClassSymbol if isBound -> owner.renderClassFqn(options)
-        is IrClassSymbol if options.guessTypeBySignatureOfUnboundClassifierSymbol -> (signature as? CommonSignature)?.guessClassFqnBySignature()
+        is IrClassSymbol -> (signature as? CommonSignature)?.guessClassFqnBySignature()
         is IrTypeParameterSymbol if isBound -> owner.renderTypeParameterFqn(options)
         is IrScriptSymbol if isBound -> owner.renderScriptFqn(options)
         else -> null
@@ -1026,7 +1026,7 @@ private fun StringBuilder.renderAsAnnotation(
     options: DumpIrTreeOptions,
 ) {
     val annotationClassName = irAnnotation.symbol.getOwnerIfBound()?.parentAsClass?.name?.asString()
-        ?: runIf(options.guessTypeBySignatureOfUnboundClassifierSymbol) {
+        ?: run {
             val nameSegments = (irAnnotation.symbol.signature as? CommonSignature)?.nameSegments.orEmpty()
             runIf(nameSegments.size >= 2 && nameSegments[nameSegments.lastIndex] == SpecialNames.INIT.asString()) {
                 nameSegments[nameSegments.lastIndex - 1]

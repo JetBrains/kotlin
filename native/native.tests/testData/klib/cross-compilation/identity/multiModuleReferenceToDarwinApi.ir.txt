@@ -1,24 +1,24 @@
 // MODULE: lib
 MODULE_FRAGMENT name:<lib>
   FILE fqName:lib fileName:/lib.kt
-    FUN name:createNSString signature:lib/createNSString|createNSString(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
+    FUN name:createNSString signature:lib/createNSString|createNSString(){}[0] visibility:public modality:FINAL returnType:platform.Foundation.NSString
       BLOCK_BODY
-        VAR name:x type:<unbound IrClassSymbolImpl> [val]
-          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-        RETURN type=<unbound IrClassSymbolImpl> from='public final fun createNSString (): <unbound IrClassSymbolImpl> declared in lib'
-          GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in lib.createNSString' type=<unbound IrClassSymbolImpl> origin=null
+        VAR name:x type:platform.Foundation.NSString [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=platform.Foundation.NSString origin=null
+        RETURN type=kotlin.Nothing from='public final fun createNSString (): platform.Foundation.NSString declared in lib'
+          GET_VAR 'val x: platform.Foundation.NSString [val] declared in lib.createNSString' type=platform.Foundation.NSString origin=null
 
 // MODULE: app
 MODULE_FRAGMENT name:<app>
   FILE fqName:app fileName:/app.kt
-    FUN name:main signature:app/main|main(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
+    FUN name:main signature:app/main|main(){}[0] visibility:public modality:FINAL returnType:kotlin.Unit
       BLOCK_BODY
-        VAR name:x type:<unbound IrClassSymbolImpl> [val]
-          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          ARG 1: CALL 'public final fun EQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQ
-            ARG arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-              ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
-                ARG 1: GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in app.main' type=<unbound IrClassSymbolImpl> origin=null
-            ARG arg1: CONST Int type=<unbound IrClassSymbolImpl> value=0
+        VAR name:x type:platform.Foundation.NSString [val]
+          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=platform.Foundation.NSString origin=null
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Unit origin=null
+          ARG 1: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=null
+              ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.ULong origin=GET_PROPERTY
+                ARG 1: GET_VAR 'val x: platform.Foundation.NSString [val] declared in app.main' type=platform.Foundation.NSString origin=null
+            ARG arg1: CONST Int type=kotlin.Int value=0
 
