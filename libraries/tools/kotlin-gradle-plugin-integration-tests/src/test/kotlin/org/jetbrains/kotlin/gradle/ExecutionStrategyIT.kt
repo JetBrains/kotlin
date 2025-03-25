@@ -4,7 +4,9 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
@@ -12,6 +14,10 @@ import kotlin.io.path.appendText
 
 @DisplayName("Kotlin JS compile execution strategy")
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     override fun setupProject(project: TestProject) {
         super.setupProject(project)
 
@@ -170,17 +176,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             // This task configuration action is registered before all the KGP configuration actions,
             // so this test also checks if KGP doesn't override value that is set before KGP configuration actions
             // KT-53617
-            //language=Gradle
-            buildGradle.append(
-                """
-                subprojects {
-                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).configureEach {
-                        compilerExecutionStrategy = org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy.IN_PROCESS
-                    }
+            subProject("app").buildScriptInjection {
+                project.tasks.withType<AbstractKotlinCompile<*>>().configureEach { task ->
+                    task.compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS)
                 }
-                """.trimIndent()
-            )
-
+            }
         }
     }
 
