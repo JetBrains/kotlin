@@ -13,36 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.psi.tree.IElementType
 
-import com.intellij.psi.tree.IElementType;
+abstract class AbstractTokenStreamPattern : TokenStreamPattern {
+    @JvmField
+    protected var lastOccurrence: Int = -1
 
-public abstract class AbstractTokenStreamPattern implements TokenStreamPattern {
-
-    protected int lastOccurrence = -1;
-
-    protected void fail() {
-        lastOccurrence = -1;
+    protected fun fail() {
+        lastOccurrence = -1
     }
 
-    @Override
-    public int result() {
-        return lastOccurrence;
+    override fun result(): Int {
+        return lastOccurrence
     }
 
-    @Override
-    public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-        return openBraces == 0 && openBrackets == 0 && openParentheses == 0 && openAngleBrackets == 0;
+    override fun isTopLevel(openAngleBrackets: Int, openBrackets: Int, openBraces: Int, openParentheses: Int): Boolean {
+        return openBraces == 0 && openBrackets == 0 && openParentheses == 0 && openAngleBrackets == 0
     }
 
-    @Override
-    public boolean handleUnmatchedClosing(IElementType token) {
-        return false;
+    override fun handleUnmatchedClosing(token: IElementType?): Boolean {
+        return false
     }
 
-    public void reset() {
-        lastOccurrence = -1;
+    open fun reset() {
+        lastOccurrence = -1
     }
 }
 
