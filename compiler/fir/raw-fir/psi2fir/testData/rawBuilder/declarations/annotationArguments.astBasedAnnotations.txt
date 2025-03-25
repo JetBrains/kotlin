@@ -5,15 +5,6 @@ See KT-71787 for reference.
 context -> FirRegularClassSymbol WithExplicitArrays
 @Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
-context -> FirRegularClassSymbol OneVararg
-@VarArg(LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol TwoVararg
-@VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol ThreeVararg
-@VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
 context -> FirRegularClassSymbol WithNested
 @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION)
 
@@ -31,12 +22,6 @@ context -> FirRegularClassSymbol Negative2
 
 context -> FirRegularClassSymbol Positive
 @Simple(LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol WithSimple
-@Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
-context -> FirRegularClassSymbol WithNamedSimple
-@Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 
 context -> FirRegularClassSymbol WithSimpleOperations
 @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)

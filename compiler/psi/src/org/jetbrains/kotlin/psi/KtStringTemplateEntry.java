@@ -40,4 +40,14 @@ public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlac
     public KtExpression getExpression() {
         return findChildByClass(KtExpression.class);
     }
+
+    @Override
+    public String getText() {
+        KotlinPlaceHolderWithTextStub<?> stub = getGreenStub();
+        if (stub != null) {
+            return stub.text();
+        }
+
+        return super.getText();
+    }
 }

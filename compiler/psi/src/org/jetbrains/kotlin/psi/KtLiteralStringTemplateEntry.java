@@ -34,14 +34,4 @@ public class KtLiteralStringTemplateEntry extends KtStringTemplateEntry {
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitLiteralStringTemplateEntry(this, data);
     }
-
-    @Override
-    public String getText() {
-        KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry> stub = getStub();
-        if (stub != null) {
-            return stub.text();
-        }
-
-        return super.getText();
-    }
 }
