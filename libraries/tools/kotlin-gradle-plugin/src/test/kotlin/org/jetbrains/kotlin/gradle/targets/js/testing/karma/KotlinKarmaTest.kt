@@ -24,9 +24,10 @@ class KotlinKarmaTest {
 
         assertEquals(
             """
-            import { startUnitTests } from "../kotlin/main.mjs"
+            import * as exports from "../kotlin/main.mjs"
             try {
-                startUnitTests()
+                const startUnitTests = "startUnitTests"
+                exports[startUnitTests]?.()
                 window.__karma__.loaded();
             } catch (e) {
                 window.__karma__.error("Problem with loading", void 0, void 0, void 0, e)

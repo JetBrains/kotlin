@@ -688,9 +688,10 @@ internal fun createLoadWasm(npmProjectDir: File, file: File): File {
         val relativePath = file.relativeTo(static).invariantSeparatorsPath
         writer.println(
             """
-                import { startUnitTests } from "$relativePath"
+                import * as exports from "$relativePath"
                 try {
-                    startUnitTests()
+                    const startUnitTests = "startUnitTests"
+                    exports[startUnitTests]?.()
                     window.__karma__.loaded();
                 } catch (e) {
                     window.__karma__.error("Problem with loading", void 0, void 0, void 0, e)
