@@ -6,7 +6,7 @@
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type1
+@R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type1<@R|lowlevel/Anno|(position = <strcat>(String(nested param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type2>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 

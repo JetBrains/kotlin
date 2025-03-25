@@ -15,12 +15,12 @@ class Klass<T> {
 
 fun <A> fooA(arg: A?): A {
     <!DEBUG_INFO_EXPRESSION_TYPE("A?")!>fooB(arg)<!>
-    <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("A? (of fun <A> fooA); C (of fun <C> fooC) & Any")!>arg<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("A? (of fun <A> fooA); uninferred C (of fun <C> fooC)")!>arg<!>)
     return null!!
 }
 fun <B> fooB(arg: B): B {
     <!DEBUG_INFO_EXPRESSION_TYPE("B & Any")!>fooA(arg)<!>
-    <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("B (of fun <B> fooB); C (of fun <C> fooC) & Any")!>arg<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("B (of fun <B> fooB); uninferred C (of fun <C> fooC)")!>arg<!>)
     return null!!
 }
 fun <C> fooC(arg: C & Any): C {

@@ -32,13 +32,13 @@ KtNameReferenceExpression(183,194): 'suspendHere'
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR CLASS: Symbol not found for Continuation): kotlin.Unit
+            symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR CLASS: Symbol not found for Continuation<kotlin.Unit>): kotlin.Unit
             valueParameters = [
               KaVariableSignature:
                 name = x
                 receiverType = null
-                returnType = ERROR CLASS: Symbol not found for Continuation
-                symbol = x: ERROR CLASS: Symbol not found for Continuation
+                returnType = ERROR CLASS: Symbol not found for Continuation<kotlin.Unit>
+                symbol = x: ERROR CLASS: Symbol not found for Continuation<kotlin.Unit>
                 contextParameters = []
                 callableId = null
             ]

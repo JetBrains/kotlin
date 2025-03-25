@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnsafeExpressionUtility
 import org.jetbrains.kotlin.fir.expressions.toReferenceUnsafe
@@ -237,7 +238,7 @@ object FirDiagnosticRenderers {
                 }
 
                 val simpleRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
-                    buildString { ConeTypeRendererForReadability(this) { ConeIdShortRenderer() }.renderConstructor(it) }
+                    buildString { ConeTypeRendererForReadability(this) { ConeIdShortRenderer() }.renderConstructor(it.delegatedConstructorOrSelf()) }
                 }
 
                 val constructorsByRepresentation: Map<String, List<TypeConstructorMarker>> =
@@ -248,13 +249,18 @@ object FirDiagnosticRenderers {
 
                     val typesWithSameRepresentation = constructorsByRepresentation.getValue(representation)
                     val isAmbiguous = typesWithSameRepresentation.size > 1
+                    val isError = it is ConeClassLikeErrorLookupTag
+                    val isTypeParameter = it !is ConeTypeParameterLookupTag && !isError
+                    val isClassLike = it is ConeClassLikeLookupTag && !isError
 
-                    if (!isAmbiguous && typesWithSameRepresentation.single() !is ConeTypeParameterLookupTag) {
+                    if (!isAmbiguous && isTypeParameter) {
                         return@associateWith "$representation^"
                     }
 
                     buildString {
-                        val isClassLike = it is ConeClassLikeLookupTag
+                        if (isError && it.diagnostic is ConeCannotInferTypeParameterType) {
+                            append("uninferred ")
+                        }
 
                         if (isClassLike && isAmbiguous) {
                             ConeTypeRendererForReadability(this) { ConeIdRendererForDiagnostics() }.renderConstructor(it)
@@ -262,16 +268,21 @@ object FirDiagnosticRenderers {
                             append(representation)
                         }
 
-                        if (!isClassLike && isAmbiguous) {
+                        if (!isClassLike && !isError && isAmbiguous) {
                             append('#')
                             append(typesWithSameRepresentation.indexOf(it) + 1)
                         }
                         // Special symbol to be replaced with a nullability marker, like "", "?", "!", or maybe something else in future
                         append("^")
 
-                        if (it is ConeTypeParameterLookupTag) {
+                        val typeParameterSymbol =
+                            ((it as? ConeClassLikeErrorLookupTag)?.delegatedType?.lowerBoundIfFlexible()
+                                ?.getConstructor() as? ConeTypeParameterLookupTag)?.typeParameterSymbol
+                                ?: (it as? ConeTypeParameterLookupTag)?.typeParameterSymbol
+
+                        if (typeParameterSymbol != null) {
                             append(" (of ")
-                            append(TYPE_PARAMETER_OWNER_SYMBOL.render(it.typeParameterSymbol.containingDeclarationSymbol))
+                            append(TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
                             append(')')
                         }
                     }
@@ -279,6 +290,14 @@ object FirDiagnosticRenderers {
 
                 return coneTypes.associateWith {
                     it.renderReadableWithFqNames(finalRepresentationsByConstructor)
+                }
+            }
+
+            private fun TypeConstructorMarker.delegatedConstructorOrSelf(): TypeConstructorMarker {
+                return if (this is ConeClassLikeErrorLookupTag && this.diagnostic is ConeCannotInferTypeParameterType) {
+                    this.delegatedType?.lowerBoundIfFlexible()?.getConstructor() ?: this
+                } else {
+                    this
                 }
             }
         }

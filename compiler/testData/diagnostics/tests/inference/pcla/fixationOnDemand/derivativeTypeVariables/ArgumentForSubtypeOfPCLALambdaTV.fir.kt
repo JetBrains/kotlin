@@ -16,7 +16,7 @@ fun test() {
         otvOwner.provide().unbox().function()
 
         // expected: Interloper </: Box<ScopeOwner>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; Box<PNT (of fun <PNT> createDerivativeTypeVariable)> & Box<ScopeOwner>")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; Box<uninferred PNT (of fun <PNT> createDerivativeTypeVariable)> & Box<ScopeOwner>")!>Interloper<!>)
     }
     // expected: Box<ScopeOwner>
     <!DEBUG_INFO_EXPRESSION_TYPE("Box<ScopeOwner>")!>resultA<!>

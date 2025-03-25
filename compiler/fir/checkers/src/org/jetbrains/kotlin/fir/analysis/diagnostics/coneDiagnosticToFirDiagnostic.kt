@@ -801,7 +801,7 @@ private fun ConeKotlinType.substituteTypeVariableTypes(
     val nonErrorSubstitutionMap = candidate.system.asReadOnlyStorage().fixedTypeVariables.filterValues { it !is ConeErrorType }
     val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap) as ConeSubstitutor
 
-    return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext)
+    return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext, TypeVariableReplacement.ErrorType)
 }
 
 private fun AbstractCallCandidate<*>.sourceOfCallToSymbolWith(

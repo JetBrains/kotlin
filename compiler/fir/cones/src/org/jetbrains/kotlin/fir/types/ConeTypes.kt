@@ -58,19 +58,28 @@ sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
  */
 sealed class ConeSimpleKotlinType : ConeRigidType(), SimpleTypeMarker
 
-class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
+class ConeClassLikeErrorLookupTag(
+    override val classId: ClassId,
+    val diagnostic: ConeDiagnostic,
+    /**
+     * A type the error type is somehow related to, e.g., a type parameter type that is uninferred.
+     */
+    val delegatedType: ConeKotlinType? = null,
+) : ConeClassLikeLookupTag()
 
 class ConeErrorType(
-    val diagnostic: ConeDiagnostic,
+    diagnostic: ConeDiagnostic,
     val isUninferredParameter: Boolean = false,
-    val delegatedType: ConeKotlinType? = null,
+    delegatedType: ConeKotlinType? = null,
     override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeClassLikeType() {
-    override val lookupTag: ConeClassLikeLookupTag = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
-
+    override val lookupTag: ConeClassLikeErrorLookupTag =
+        ConeClassLikeErrorLookupTag(delegatedType?.classId ?: ClassId.fromString("<error>"), diagnostic, delegatedType),
     override val isMarkedNullable: Boolean
         get() = (diagnostic as? ConeDiagnosticWithNullability)?.isNullable == true
+    val diagnostic: ConeDiagnostic get() = lookupTag.diagnostic
+    val delegatedType: ConeKotlinType? get() = lookupTag.delegatedType
 
     override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = System.identityHashCode(this)

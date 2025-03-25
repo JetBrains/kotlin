@@ -14,7 +14,7 @@ FILE: typeArgumentsNotAllowed.kt
     }
     public final fun <T> foo(): R|kotlin/Unit| {
         R|rest/bar<Inapplicable(INAPPLICABLE): rest/bar>#|<<ERROR TYPE REF: Type arguments not allowed for type parameters>>()
-        R|rest/bar|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>>|>()
+        R|rest/bar|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters<kotlin/Boolean>>>|>()
     }
     public final fun <T> bar(): R|kotlin/Unit| {
     }
@@ -43,9 +43,9 @@ FILE: typeArgumentsNotAllowed.kt
     public final fun <G> gest(): R|kotlin/Unit| {
     }
     public final fun <T> fest(): R|kotlin/Unit| {
-        lval b: R|kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>|
+        lval b: R|kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters<kotlin/Double>>|
         R|rest/gest<Inapplicable(INAPPLICABLE): rest/gest>#|<<ERROR TYPE REF: Type arguments not allowed for type parameters>>()
         R|rest/gest|<R|T|>()
-        lval c: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>>>|
-        R|rest/gest|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>>|>()
+        lval c: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters<kotlin/String>>>>|
+        R|rest/gest|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters<kotlin/Boolean>>>|>()
     }

@@ -4,12 +4,12 @@
 
 /main.kt:(128,133): error: Cannot infer type for this parameter. Specify it explicitly.
 
-/main.kt:(134,139): error: Argument type mismatch: actual type is 'V (of fun <V> SLRUMap<V>.getOrPut)', but 'E (of fun <E : Any!> takeE) & Any' was expected.
+/main.kt:(134,139): error: Argument type mismatch: actual type is 'V (of fun <V> SLRUMap<V>.getOrPut)', but 'uninferred E (of fun <E : Any!> takeE)' was expected.
 
 /main.kt:(145,154): error: Cannot infer type for this parameter. Specify it explicitly.
 
-/main.kt:(155,156): error: Argument type mismatch: actual type is 'List<V (of fun <V> SLRUMap<V>.getOrPut)>', but '(Mutable)List<@NotNull() E (of fun <E : Any!> takeEList) & Any>' was expected.
+/main.kt:(155,156): error: Argument type mismatch: actual type is 'List<V (of fun <V> SLRUMap<V>.getOrPut)>', but '(Mutable)List<uninferred E (of fun <E : Any!> takeEList)>' was expected.
 
 /main.kt:(162,167): error: Cannot infer type for this parameter. Specify it explicitly.
 
-/main.kt:(168,177): error: Argument type mismatch: actual type is 'V! (of fun <V> SLRUMap<V>.getOrPut)', but 'E (of fun <E : Any!> takeE) & Any' was expected.
+/main.kt:(168,177): error: Argument type mismatch: actual type is 'V! (of fun <V> SLRUMap<V>.getOrPut)', but 'uninferred E (of fun <E : Any!> takeE)' was expected.

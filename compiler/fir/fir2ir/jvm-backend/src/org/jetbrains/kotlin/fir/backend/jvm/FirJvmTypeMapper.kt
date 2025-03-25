@@ -309,7 +309,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     private fun possiblyErrorTypeConstructorByClassId(classId: ClassId): ConeClassLikeLookupTag {
         return symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
-            ?: ConeClassLikeErrorLookupTag(classId)
+            ?: ConeClassLikeErrorLookupTag(classId, ConeUnresolvedSymbolError(classId))
     }
 
     override fun KotlinTypeMarker.getNameForErrorType(): String? {

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.calls.TypeVariableReplacement
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.removeTypeVariableTypes
@@ -536,7 +537,10 @@ class ConeOverloadConflictResolver(
                 // Return type isn't needed here       v
                 typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
-                        TypeWithConversion((it as ConeKotlinType).prepareType(session, call).removeTypeVariableTypes(session.typeContext))
+                        TypeWithConversion(
+                            (it as ConeKotlinType).prepareType(session, call)
+                                .removeTypeVariableTypes(session.typeContext, TypeVariableReplacement.TypeParameter)
+                        )
                     }
             } else {
                 if (!contextParametersEnabled) {

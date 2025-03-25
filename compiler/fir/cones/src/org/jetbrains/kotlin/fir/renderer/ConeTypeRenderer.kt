@@ -90,8 +90,6 @@ open class ConeTypeRenderer(
                 render(type)
             }
 
-            is ConeErrorType -> builder.append("ERROR CLASS: ${type.diagnostic.reason}")
-
             is ConeSimpleKotlinType -> {
                 val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
                 renderConstructor(type.getConstructor(), nullabilityMarker = nullabilityMarker.takeIf { !hasTypeArguments } ?: "")
@@ -119,6 +117,8 @@ open class ConeTypeRenderer(
                 constructor.projection.render()
                 builder.append(")")
             }
+
+            is ConeClassLikeErrorLookupTag -> builder.append("ERROR CLASS: ${constructor.diagnostic?.reason}")
 
             is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
             is ConeClassifierLookupTag -> builder.append(constructor.name.asString())
