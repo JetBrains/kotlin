@@ -274,3 +274,10 @@ internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy 
         strategy.propertyName,
     )
 }
+
+fun Project.computeTransformedLibraryChecksum(enable: Boolean = false) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM,
+        enable.toString(),
+    )
+}
