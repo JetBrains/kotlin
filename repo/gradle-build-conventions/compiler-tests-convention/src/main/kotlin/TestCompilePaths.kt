@@ -16,4 +16,11 @@ object TestCompilePaths {
     const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
+    const val KOTLIN_MOCKJDK_RUNTIME_PATH = "kotlin.mockJDK.runtime.path"
+    const val KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH = "kotlin.mockJDKModified.runtime.path"
+    const val KOTLIN_MOCKJDK_ANNOTATIONS_PATH = "kotlin.mockJDK.annotations.path"
+    const val KOTLIN_THIRDPARTY_ANNOTATIONS_PATH = "third-party/annotations"
+    const val KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH = "third-party/java8-annotations"
+    const val KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH = "third-party/java9-annotations"
+    const val KOTLIN_THIRDPARTY_JSR305_PATH = "third-party/jsr305"
 }

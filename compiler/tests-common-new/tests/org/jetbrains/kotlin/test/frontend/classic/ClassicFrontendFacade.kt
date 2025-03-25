@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_MOCKJDK_RUNTIME_PATH
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.JVM_TARGET
@@ -135,7 +136,10 @@ class ClassicFrontendFacade(
     ) {
         if (JvmEnvironmentConfigurationDirectives.USE_JAVAC !in module.directives) return
         val mockJdk = runIf(JvmEnvironmentConfigurationDirectives.FULL_JDK !in module.directives) {
-            File(KtTestUtil.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar")
+            System.getProperty(KOTLIN_MOCKJDK_RUNTIME_PATH)?.let { File(it) } ?: File(
+                KtTestUtil.getHomeDirectory(),
+                "compiler/testData/mockJDK/jre/lib/rt.jar"
+            )
         }
         testServices.compilerConfigurationProvider.registerJavacForModule(module, ktFiles, mockJdk)
         configuration.put(JVMConfigurationKeys.USE_JAVAC, true)

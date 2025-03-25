@@ -10,13 +10,24 @@ import TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
 import TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
 import TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
 import TestCompilePaths.KOTLIN_MINIMAL_STDLIB_PATH
+import TestCompilePaths.KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH
+import TestCompilePaths.KOTLIN_MOCKJDK_ANNOTATIONS_PATH
+import TestCompilePaths.KOTLIN_MOCKJDK_RUNTIME_PATH
 import TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
 import TestCompilePaths.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH
 import TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH
+import TestCompilePaths.KOTLIN_TESTDATA_ROOTS
 import TestCompilePaths.KOTLIN_TEST_JAR_PATH
+import TestCompilePaths.KOTLIN_THIRDPARTY_ANNOTATIONS_PATH
+import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH
+import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH
+import TestCompilePaths.KOTLIN_THIRDPARTY_JSR305_PATH
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.*
 import org.gradle.process.CommandLineArgumentProvider
 
 abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider {
@@ -60,6 +71,46 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:Classpath
     abstract val testJsRuntimeForTests: ConfigurableFileCollection
 
+    @get:InputFile
+    @get:Classpath
+    @get:Optional
+    abstract val mockJdkRuntimeJar: RegularFileProperty
+
+    @get:InputFile
+    @get:Classpath
+    @get:Optional
+    abstract val mockJdkRuntime: RegularFileProperty
+
+    @get:InputFile
+    @get:Classpath
+    @get:Optional
+    abstract val mockJDKModifiedRuntime: RegularFileProperty
+
+    @get:InputFile
+    @get:Classpath
+    @get:Optional
+    abstract val mockJdkAnnotationsJar: RegularFileProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    abstract val thirdPartyAnnotations: DirectoryProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    abstract val thirdPartyJava8Annotations: DirectoryProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    abstract val thirdPartyJava9Annotations: DirectoryProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    abstract val thirdPartyJsr305: DirectoryProperty
+
     private fun ifNotEmpty(property: String, fileCollection: ConfigurableFileCollection): String? =
         if (fileCollection.isEmpty) null else argument(property, fileCollection)
 
@@ -80,5 +131,12 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH, testJsRuntimeForTests),
         )
+            mockJdkRuntimeJar.orNull?.let { "-D$KOTLIN_MOCKJDK_RUNTIME_PATH=${it.asFile.absolutePath}" },
+            mockJDKModifiedRuntime.orNull?.let { "-D$KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH=${it.asFile.absolutePath}" },
+            mockJdkAnnotationsJar.orNull?.let { "-D$KOTLIN_MOCKJDK_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
+            thirdPartyAnnotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
+            thirdPartyJava8Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
+            thirdPartyJava9Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
+            thirdPartyJsr305.orNull?.let { "-D$KOTLIN_THIRDPARTY_JSR305_PATH=${it.asFile.absolutePath}" }
     }
 }

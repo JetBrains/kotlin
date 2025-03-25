@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_KO
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_MINIMAL_STDLIB_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_MOCKJDK_ANNOTATIONS_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH
@@ -149,8 +150,10 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
     override fun getAnnotationsJar(): File =
-        KtTestUtil.getAnnotationsJar().also {
-            assert(it.exists()) { "AnnotationJar missing: $it does not exist" }
+        extractFromPropertyFirstFile(KOTLIN_MOCKJDK_ANNOTATIONS_PATH) {
+            KtTestUtil.getAnnotationsJar().also {
+                assert(it.exists()) { "AnnotationJar missing: $it does not exist" }
+            }
         }
 
     override fun fullJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_STDLIB_KLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
