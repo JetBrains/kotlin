@@ -10,7 +10,64 @@ import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
-import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.KtNodeTypes.ANNOTATION
+import org.jetbrains.kotlin.KtNodeTypes.ANNOTATION_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.ANNOTATION_TARGET
+import org.jetbrains.kotlin.KtNodeTypes.BACKING_FIELD
+import org.jetbrains.kotlin.KtNodeTypes.BLOCK
+import org.jetbrains.kotlin.KtNodeTypes.CLASS
+import org.jetbrains.kotlin.KtNodeTypes.CLASS_BODY
+import org.jetbrains.kotlin.KtNodeTypes.CLASS_INITIALIZER
+import org.jetbrains.kotlin.KtNodeTypes.CONSTRUCTOR_CALLEE
+import org.jetbrains.kotlin.KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL
+import org.jetbrains.kotlin.KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE
+import org.jetbrains.kotlin.KtNodeTypes.CONTEXT_RECEIVER
+import org.jetbrains.kotlin.KtNodeTypes.CONTEXT_RECEIVER_LIST
+import org.jetbrains.kotlin.KtNodeTypes.CONTRACT_EFFECT
+import org.jetbrains.kotlin.KtNodeTypes.CONTRACT_EFFECT_LIST
+import org.jetbrains.kotlin.KtNodeTypes.DELEGATED_SUPER_TYPE_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.DESTRUCTURING_DECLARATION
+import org.jetbrains.kotlin.KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.DYNAMIC_TYPE
+import org.jetbrains.kotlin.KtNodeTypes.ENUM_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.FILE_ANNOTATION_LIST
+import org.jetbrains.kotlin.KtNodeTypes.FUN
+import org.jetbrains.kotlin.KtNodeTypes.FUNCTION_TYPE
+import org.jetbrains.kotlin.KtNodeTypes.FUNCTION_TYPE_RECEIVER
+import org.jetbrains.kotlin.KtNodeTypes.IMPORT_ALIAS
+import org.jetbrains.kotlin.KtNodeTypes.IMPORT_DIRECTIVE
+import org.jetbrains.kotlin.KtNodeTypes.IMPORT_LIST
+import org.jetbrains.kotlin.KtNodeTypes.INITIALIZER_LIST
+import org.jetbrains.kotlin.KtNodeTypes.INTERSECTION_TYPE
+import org.jetbrains.kotlin.KtNodeTypes.KT_FILE
+import org.jetbrains.kotlin.KtNodeTypes.LABEL
+import org.jetbrains.kotlin.KtNodeTypes.LABEL_QUALIFIER
+import org.jetbrains.kotlin.KtNodeTypes.MODIFIER_LIST
+import org.jetbrains.kotlin.KtNodeTypes.NULLABLE_TYPE
+import org.jetbrains.kotlin.KtNodeTypes.OBJECT_DECLARATION
+import org.jetbrains.kotlin.KtNodeTypes.PACKAGE_DIRECTIVE
+import org.jetbrains.kotlin.KtNodeTypes.PRIMARY_CONSTRUCTOR
+import org.jetbrains.kotlin.KtNodeTypes.PROPERTY_ACCESSOR
+import org.jetbrains.kotlin.KtNodeTypes.PROPERTY_DELEGATE
+import org.jetbrains.kotlin.KtNodeTypes.REFERENCE_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.SCRIPT
+import org.jetbrains.kotlin.KtNodeTypes.SECONDARY_CONSTRUCTOR
+import org.jetbrains.kotlin.KtNodeTypes.SUPER_TYPE_CALL_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.SUPER_TYPE_ENTRY
+import org.jetbrains.kotlin.KtNodeTypes.SUPER_TYPE_LIST
+import org.jetbrains.kotlin.KtNodeTypes.TYPEALIAS
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_ARGUMENT_LIST
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_CONSTRAINT
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_CONSTRAINT_LIST
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_PARAMETER
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_PARAMETER_LIST
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_PROJECTION
+import org.jetbrains.kotlin.KtNodeTypes.TYPE_REFERENCE
+import org.jetbrains.kotlin.KtNodeTypes.USER_TYPE
+import org.jetbrains.kotlin.KtNodeTypes.VALUE_ARGUMENT_LIST
+import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
+import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER_LIST
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -381,7 +438,7 @@ class LightTreeRawFirDeclarationBuilder(
                 ALL_KEYWORD -> annotationTarget = ALL
                 FIELD_KEYWORD -> annotationTarget = FIELD
                 FILE_KEYWORD -> annotationTarget = FILE
-                PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
+                PROPERTY_KEYWORD -> annotationTarget = PROPERTY
                 GET_KEYWORD -> annotationTarget = PROPERTY_GETTER
                 SET_KEYWORD -> annotationTarget = PROPERTY_SETTER
                 RECEIVER_KEYWORD -> annotationTarget = RECEIVER
@@ -1100,7 +1157,7 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertAnonymousInitializer(
         anonymousInitializer: LighterASTNode,
-        classWrapper: ClassWrapper
+        classWrapper: ClassWrapper,
     ): FirDeclaration {
         val initializerSymbol = FirAnonymousInitializerSymbol()
         withContainerSymbol(initializerSymbol) {
@@ -1788,7 +1845,10 @@ class LightTreeRawFirDeclarationBuilder(
                     val effect = it.getFirstChild()
                     if (effect == null) {
                         val errorExpression =
-                            buildErrorExpression(rawContractDescription.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+                            buildErrorExpression(
+                                rawContractDescription.toFirSourceElement(),
+                                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+                            )
                         destination.add(errorExpression)
                     } else {
                         val expression = expressionConverter.convertExpression(effect, errorReason)
@@ -2025,7 +2085,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertFunctionBody(
         blockNode: LighterASTNode?,
         expression: LighterASTNode?,
-        allowLegacyContractDescription: Boolean
+        allowLegacyContractDescription: Boolean,
     ): Pair<FirBlock?, FirContractDescription?> {
         return when {
             blockNode != null -> {
@@ -2142,7 +2202,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertExplicitDelegation(
         explicitDelegation: LighterASTNode,
         delegateFieldsMap: MutableMap<Int, FirFieldSymbol>,
-        index: Int
+        index: Int,
     ): FirTypeRef {
         lateinit var firTypeRef: FirTypeRef
         var expressionNode: LighterASTNode? = null
@@ -2184,7 +2244,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertTypeParameters(
         typeParameterList: LighterASTNode,
         typeConstraints: List<TypeConstraint>,
-        containingDeclarationSymbol: FirBasedSymbol<*>
+        containingDeclarationSymbol: FirBasedSymbol<*>,
     ): List<FirTypeParameter> {
         return typeParameterList.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
@@ -2246,7 +2306,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertTypeParameter(
         typeParameter: LighterASTNode,
         typeConstraints: List<TypeConstraint>,
-        containingSymbol: FirBasedSymbol<*>
+        containingSymbol: FirBasedSymbol<*>,
     ): FirTypeParameter {
         var typeParameterModifiers: TypeParameterModifierList? = null
         var identifier: String? = null
@@ -2378,7 +2438,7 @@ class LightTreeRawFirDeclarationBuilder(
         typeRefSource: KtSourceElement,
         nullableType: LighterASTNode,
         allTypeModifiers: MutableList<ModifierList>,
-        isNullable: Boolean = true
+        isNullable: Boolean = true,
     ): FirTypeRef {
         lateinit var firType: FirTypeRef
         nullableType.forEachChildren {
@@ -2404,7 +2464,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertUserType(
         typeRefSource: KtSourceElement,
         userType: LighterASTNode,
-        isNullable: Boolean = false
+        isNullable: Boolean = false,
     ): FirTypeRef {
         var simpleFirUserType: FirUserTypeRef? = null
         var identifier: String? = null
@@ -2579,7 +2639,7 @@ class LightTreeRawFirDeclarationBuilder(
         valueParameters: LighterASTNode,
         functionSymbol: FirFunctionSymbol<*>,
         valueParameterDeclaration: ValueParameterDeclaration,
-        additionalAnnotations: List<FirAnnotation> = emptyList()
+        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
@@ -2600,7 +2660,7 @@ class LightTreeRawFirDeclarationBuilder(
         valueParameter: LighterASTNode,
         containingDeclarationSymbol: FirBasedSymbol<*>?,
         valueParameterDeclaration: ValueParameterDeclaration,
-        additionalAnnotations: List<FirAnnotation> = emptyList()
+        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): ValueParameter {
         var modifiers: ModifierList? = null
         var isVal = false
@@ -2660,7 +2720,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun <T> fillDanglingConstraintsTo(
         typeParameters: List<FirTypeParameter>,
         typeConstraints: List<TypeConstraint>,
-        to: T
+        to: T,
     ) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
         val typeParamNames = typeParameters.map { it.name }.toSet()
         val result = typeConstraints.mapNotNull { constraint ->

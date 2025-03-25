@@ -13,159 +13,236 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin
 
-package org.jetbrains.kotlin;
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.IFileElementType
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+object KtNodeTypes {
+    @JvmField
+    val KT_FILE: IFileElementType = IFileElementType(KotlinLanguage.INSTANCE)
 
-public interface KtNodeTypes {
-    IFileElementType KT_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
+    val CLASS: IElementType = KtStubElementTypes.CLASS
+    val FUN: IElementType = KtStubElementTypes.FUNCTION
 
-    IElementType CLASS     = KtStubElementTypes.CLASS;
-    IElementType FUN       = KtStubElementTypes.FUNCTION;
-    IElementType PROPERTY  = KtStubElementTypes.PROPERTY;
-    IElementType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration.class);
-    IElementType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry.class);
+    @JvmField
+    val PROPERTY: IElementType = KtStubElementTypes.PROPERTY
 
-    IElementType OBJECT_DECLARATION = KtStubElementTypes.OBJECT_DECLARATION;
-    IElementType TYPEALIAS = KtStubElementTypes.TYPEALIAS;
+    @JvmField
+    val DESTRUCTURING_DECLARATION: IElementType = KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration::class.java)
 
-    IElementType ENUM_ENTRY             = KtStubElementTypes.ENUM_ENTRY;
-    IElementType CLASS_INITIALIZER      = KtStubElementTypes.CLASS_INITIALIZER;
-    IElementType SCRIPT_INITIALIZER     = new KtNodeType("SCRIPT_INITIALIZER", KtScriptInitializer.class);
-    IElementType SECONDARY_CONSTRUCTOR  = KtStubElementTypes.SECONDARY_CONSTRUCTOR;
-    IElementType PRIMARY_CONSTRUCTOR    = KtStubElementTypes.PRIMARY_CONSTRUCTOR;
-    IElementType CONTEXT_RECEIVER       = KtStubElementTypes.CONTEXT_RECEIVER;
-    IElementType CONTEXT_RECEIVER_LIST  = KtStubElementTypes.CONTEXT_RECEIVER_LIST;
+    @JvmField
+    val DESTRUCTURING_DECLARATION_ENTRY: IElementType =
+        KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry::class.java)
 
-    IElementType TYPE_PARAMETER_LIST                = KtStubElementTypes.TYPE_PARAMETER_LIST;
-    IElementType TYPE_PARAMETER                     = KtStubElementTypes.TYPE_PARAMETER;
-    IElementType SUPER_TYPE_LIST                    = KtStubElementTypes.SUPER_TYPE_LIST;
-    IElementType DELEGATED_SUPER_TYPE_ENTRY         = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY;
-    IElementType SUPER_TYPE_CALL_ENTRY              = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY;
-    IElementType SUPER_TYPE_ENTRY                   = KtStubElementTypes.SUPER_TYPE_ENTRY;
-    IElementType PROPERTY_DELEGATE                  = new KtNodeType("PROPERTY_DELEGATE", KtPropertyDelegate.class);
-    IElementType CONSTRUCTOR_CALLEE                 = KtStubElementTypes.CONSTRUCTOR_CALLEE;
-    IElementType VALUE_PARAMETER_LIST               = KtStubElementTypes.VALUE_PARAMETER_LIST;
-    IElementType VALUE_PARAMETER                    = KtStubElementTypes.VALUE_PARAMETER;
+    @JvmField
+    val OBJECT_DECLARATION: IElementType = KtStubElementTypes.OBJECT_DECLARATION
+    val TYPEALIAS: IElementType = KtStubElementTypes.TYPEALIAS
 
-    IElementType CLASS_BODY                         = KtStubElementTypes.CLASS_BODY;
-    IElementType IMPORT_LIST                        = KtStubElementTypes.IMPORT_LIST;
-    IElementType FILE_ANNOTATION_LIST               = KtStubElementTypes.FILE_ANNOTATION_LIST;
-    IElementType IMPORT_DIRECTIVE                   = KtStubElementTypes.IMPORT_DIRECTIVE;
-    IElementType IMPORT_ALIAS                       = KtStubElementTypes.IMPORT_ALIAS;
-    IElementType MODIFIER_LIST                      = KtStubElementTypes.MODIFIER_LIST;
-    IElementType ANNOTATION                         = KtStubElementTypes.ANNOTATION;
-    IElementType ANNOTATION_ENTRY                   = KtStubElementTypes.ANNOTATION_ENTRY;
-    IElementType ANNOTATION_TARGET                  = KtStubElementTypes.ANNOTATION_TARGET;
+    val ENUM_ENTRY: IElementType = KtStubElementTypes.ENUM_ENTRY
+    val CLASS_INITIALIZER: IElementType = KtStubElementTypes.CLASS_INITIALIZER
+    val SCRIPT_INITIALIZER: IElementType = KtNodeType("SCRIPT_INITIALIZER", KtScriptInitializer::class.java)
+    val SECONDARY_CONSTRUCTOR: IElementType = KtStubElementTypes.SECONDARY_CONSTRUCTOR
+    val PRIMARY_CONSTRUCTOR: IElementType = KtStubElementTypes.PRIMARY_CONSTRUCTOR
+    val CONTEXT_RECEIVER: IElementType = KtStubElementTypes.CONTEXT_RECEIVER
+    val CONTEXT_RECEIVER_LIST: IElementType = KtStubElementTypes.CONTEXT_RECEIVER_LIST
 
-    IElementType TYPE_ARGUMENT_LIST                 = KtStubElementTypes.TYPE_ARGUMENT_LIST;
-    IElementType VALUE_ARGUMENT_LIST                = KtStubElementTypes.VALUE_ARGUMENT_LIST;
-    IElementType VALUE_ARGUMENT                     = KtStubElementTypes.VALUE_ARGUMENT;
-    IElementType CONTRACT_EFFECT_LIST               = KtStubElementTypes.CONTRACT_EFFECT_LIST;
-    IElementType CONTRACT_EFFECT                    = KtStubElementTypes.CONTRACT_EFFECT;
-    IElementType LAMBDA_ARGUMENT                    = KtStubElementTypes.LAMBDA_ARGUMENT;
-    IElementType VALUE_ARGUMENT_NAME                = KtStubElementTypes.VALUE_ARGUMENT_NAME;
-    IElementType TYPE_REFERENCE                     = KtStubElementTypes.TYPE_REFERENCE;
+    @JvmField
+    val TYPE_PARAMETER_LIST: IElementType = KtStubElementTypes.TYPE_PARAMETER_LIST
+    val TYPE_PARAMETER: IElementType = KtStubElementTypes.TYPE_PARAMETER
+    val SUPER_TYPE_LIST: IElementType = KtStubElementTypes.SUPER_TYPE_LIST
+    val DELEGATED_SUPER_TYPE_ENTRY: IElementType = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY
+    val SUPER_TYPE_CALL_ENTRY: IElementType = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY
+    val SUPER_TYPE_ENTRY: IElementType = KtStubElementTypes.SUPER_TYPE_ENTRY
 
-    IElementType USER_TYPE                = KtStubElementTypes.USER_TYPE;
-    IElementType DYNAMIC_TYPE             = KtStubElementTypes.DYNAMIC_TYPE;
-    IElementType FUNCTION_TYPE            = KtStubElementTypes.FUNCTION_TYPE;
-    IElementType FUNCTION_TYPE_RECEIVER   = KtStubElementTypes.FUNCTION_TYPE_RECEIVER;
-    IElementType NULLABLE_TYPE            = KtStubElementTypes.NULLABLE_TYPE;
-    IElementType INTERSECTION_TYPE        = KtStubElementTypes.INTERSECTION_TYPE;
-    IElementType TYPE_PROJECTION          = KtStubElementTypes.TYPE_PROJECTION;
+    @JvmField
+    val PROPERTY_DELEGATE: IElementType = KtNodeType("PROPERTY_DELEGATE", KtPropertyDelegate::class.java)
+    val CONSTRUCTOR_CALLEE: IElementType = KtStubElementTypes.CONSTRUCTOR_CALLEE
 
-    IElementType PROPERTY_ACCESSOR       = KtStubElementTypes.PROPERTY_ACCESSOR;
-    IElementType BACKING_FIELD           = KtStubElementTypes.BACKING_FIELD;
-    IElementType INITIALIZER_LIST        = KtStubElementTypes.INITIALIZER_LIST;
-    IElementType TYPE_CONSTRAINT_LIST    = KtStubElementTypes.TYPE_CONSTRAINT_LIST;
-    IElementType TYPE_CONSTRAINT         = KtStubElementTypes.TYPE_CONSTRAINT;
+    @JvmField
+    val VALUE_PARAMETER_LIST: IElementType = KtStubElementTypes.VALUE_PARAMETER_LIST
 
-    IElementType CONSTRUCTOR_DELEGATION_CALL = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_CALL", KtConstructorDelegationCall.class);
-    IElementType CONSTRUCTOR_DELEGATION_REFERENCE = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression.class);
+    @JvmField
+    val VALUE_PARAMETER: IElementType = KtStubElementTypes.VALUE_PARAMETER
 
-    IElementType NULL               = KtStubElementTypes.NULL;
-    IElementType BOOLEAN_CONSTANT   = KtStubElementTypes.BOOLEAN_CONSTANT;
-    IElementType FLOAT_CONSTANT     = KtStubElementTypes.FLOAT_CONSTANT;
-    IElementType CHARACTER_CONSTANT = KtStubElementTypes.CHARACTER_CONSTANT;
-    IElementType INTEGER_CONSTANT   = KtStubElementTypes.INTEGER_CONSTANT;
+    val CLASS_BODY: IElementType = KtStubElementTypes.CLASS_BODY
+    val IMPORT_LIST: IElementType = KtStubElementTypes.IMPORT_LIST
+    val FILE_ANNOTATION_LIST: IElementType = KtStubElementTypes.FILE_ANNOTATION_LIST
+    val IMPORT_DIRECTIVE: IElementType = KtStubElementTypes.IMPORT_DIRECTIVE
+    val IMPORT_ALIAS: IElementType = KtStubElementTypes.IMPORT_ALIAS
 
-    IElementType STRING_TEMPLATE               = KtStubElementTypes.STRING_TEMPLATE;
-    IElementType LONG_STRING_TEMPLATE_ENTRY    = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY;
-    IElementType SHORT_STRING_TEMPLATE_ENTRY   = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY;
-    IElementType LITERAL_STRING_TEMPLATE_ENTRY = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY;
-    IElementType ESCAPE_STRING_TEMPLATE_ENTRY  = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY;
+    @JvmField
+    val MODIFIER_LIST: IElementType = KtStubElementTypes.MODIFIER_LIST
 
-    IElementType PARENTHESIZED             = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression.class);
-    IElementType RETURN                    = new KtNodeType("RETURN", KtReturnExpression.class);
-    IElementType THROW                     = new KtNodeType("THROW", KtThrowExpression.class);
-    IElementType CONTINUE                  = new KtNodeType("CONTINUE", KtContinueExpression.class);
-    IElementType BREAK                     = new KtNodeType("BREAK", KtBreakExpression.class);
-    IElementType IF                        = new KtNodeType("IF", KtIfExpression.class);
-    IElementType CONDITION                 = new KtNodeType("CONDITION", KtContainerNode.class);
-    IElementType THEN                      = new KtNodeType("THEN", KtContainerNodeForControlStructureBody.class);
-    IElementType ELSE                      = new KtNodeType("ELSE", KtContainerNodeForControlStructureBody.class);
-    IElementType TRY                       = new KtNodeType("TRY", KtTryExpression.class);
-    IElementType CATCH                     = new KtNodeType("CATCH", KtCatchClause.class);
-    IElementType FINALLY                   = new KtNodeType("FINALLY", KtFinallySection.class);
-    IElementType FOR                       = new KtNodeType("FOR", KtForExpression.class);
-    IElementType WHILE                     = new KtNodeType("WHILE", KtWhileExpression.class);
-    IElementType DO_WHILE                  = new KtNodeType("DO_WHILE", KtDoWhileExpression.class);
-    IElementType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
-    IElementType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
+    @JvmField
+    val ANNOTATION: IElementType = KtStubElementTypes.ANNOTATION
+    val ANNOTATION_ENTRY: IElementType = KtStubElementTypes.ANNOTATION_ENTRY
+    val ANNOTATION_TARGET: IElementType = KtStubElementTypes.ANNOTATION_TARGET
 
-    IElementType BLOCK                     = new BlockExpressionElementType();
+    @JvmField
+    val TYPE_ARGUMENT_LIST: IElementType = KtStubElementTypes.TYPE_ARGUMENT_LIST
 
-    IElementType LAMBDA_EXPRESSION         = new LambdaExpressionElementType();
+    @JvmField
+    val VALUE_ARGUMENT_LIST: IElementType = KtStubElementTypes.VALUE_ARGUMENT_LIST
+    val VALUE_ARGUMENT: IElementType = KtStubElementTypes.VALUE_ARGUMENT
+    val CONTRACT_EFFECT_LIST: IElementType = KtStubElementTypes.CONTRACT_EFFECT_LIST
+    val CONTRACT_EFFECT: IElementType = KtStubElementTypes.CONTRACT_EFFECT
 
-    IElementType FUNCTION_LITERAL          = new KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral.class);
-    IElementType ANNOTATED_EXPRESSION      = new KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression.class);
+    @JvmField
+    val LAMBDA_ARGUMENT: IElementType = KtStubElementTypes.LAMBDA_ARGUMENT
+    val VALUE_ARGUMENT_NAME: IElementType = KtStubElementTypes.VALUE_ARGUMENT_NAME
 
-    IElementType REFERENCE_EXPRESSION     = KtStubElementTypes.REFERENCE_EXPRESSION;
-    IElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION;
-    IElementType OPERATION_REFERENCE       = new KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression.class);
-    IElementType LABEL                     = new KtNodeType("LABEL", KtLabelReferenceExpression.class);
+    @JvmField
+    val TYPE_REFERENCE: IElementType = KtStubElementTypes.TYPE_REFERENCE
 
-    IElementType LABEL_QUALIFIER           = new KtNodeType("LABEL_QUALIFIER", KtContainerNode.class);
+    val USER_TYPE: IElementType = KtStubElementTypes.USER_TYPE
+    val DYNAMIC_TYPE: IElementType = KtStubElementTypes.DYNAMIC_TYPE
+    val FUNCTION_TYPE: IElementType = KtStubElementTypes.FUNCTION_TYPE
+    val FUNCTION_TYPE_RECEIVER: IElementType = KtStubElementTypes.FUNCTION_TYPE_RECEIVER
+    val NULLABLE_TYPE: IElementType = KtStubElementTypes.NULLABLE_TYPE
+    val INTERSECTION_TYPE: IElementType = KtStubElementTypes.INTERSECTION_TYPE
+    val TYPE_PROJECTION: IElementType = KtStubElementTypes.TYPE_PROJECTION
 
-    IElementType THIS_EXPRESSION           = new KtNodeType("THIS_EXPRESSION", KtThisExpression.class);
-    IElementType SUPER_EXPRESSION          = new KtNodeType("SUPER_EXPRESSION", KtSuperExpression.class);
-    IElementType BINARY_EXPRESSION         = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression.class);
-    IElementType BINARY_WITH_TYPE          = new KtNodeType("BINARY_WITH_TYPE", KtBinaryExpressionWithTypeRHS.class);
-    IElementType IS_EXPRESSION             = new KtNodeType("IS_EXPRESSION", KtIsExpression.class);
-    IElementType PREFIX_EXPRESSION         = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression.class);
-    IElementType POSTFIX_EXPRESSION        = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression.class);
-    IElementType LABELED_EXPRESSION        = new KtNodeType("LABELED_EXPRESSION", KtLabeledExpression.class);
-    IElementType CALL_EXPRESSION           = new KtNodeType("CALL_EXPRESSION", KtCallExpression.class);
-    IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression.class);
-    IElementType INDICES                   = new KtNodeType("INDICES", KtContainerNode.class);
-    IElementType DOT_QUALIFIED_EXPRESSION  = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION;
-    IElementType CALLABLE_REFERENCE_EXPRESSION = new KtNodeType("CALLABLE_REFERENCE_EXPRESSION", KtCallableReferenceExpression.class);
-    IElementType CLASS_LITERAL_EXPRESSION  = KtStubElementTypes.CLASS_LITERAL_EXPRESSION;
-    IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression.class);
+    val PROPERTY_ACCESSOR: IElementType = KtStubElementTypes.PROPERTY_ACCESSOR
+    val BACKING_FIELD: IElementType = KtStubElementTypes.BACKING_FIELD
+    val INITIALIZER_LIST: IElementType = KtStubElementTypes.INITIALIZER_LIST
 
-    IElementType OBJECT_LITERAL            = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression.class);
+    @JvmField
+    val TYPE_CONSTRAINT_LIST: IElementType = KtStubElementTypes.TYPE_CONSTRAINT_LIST
+    val TYPE_CONSTRAINT: IElementType = KtStubElementTypes.TYPE_CONSTRAINT
 
-    IElementType WHEN                      = new KtNodeType("WHEN", KtWhenExpression.class);
-    IElementType WHEN_ENTRY                = new KtNodeType("WHEN_ENTRY", KtWhenEntry.class);
-    IElementType WHEN_ENTRY_GUARD          = new KtNodeType("WHEN_ENTRY_GUARD", KtWhenEntryGuard.class);
+    val CONSTRUCTOR_DELEGATION_CALL: IElementType =
+        KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_CALL", KtConstructorDelegationCall::class.java)
+    val CONSTRUCTOR_DELEGATION_REFERENCE: IElementType =
+        KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression::class.java)
 
-    IElementType WHEN_CONDITION_IN_RANGE   = new KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange.class);
-    IElementType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
-    IElementType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
+    @JvmField
+    val NULL: IElementType = KtStubElementTypes.NULL
 
-    IElementType COLLECTION_LITERAL_EXPRESSION = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION;
+    @JvmField
+    val BOOLEAN_CONSTANT: IElementType = KtStubElementTypes.BOOLEAN_CONSTANT
 
-    IElementType PACKAGE_DIRECTIVE = KtStubElementTypes.PACKAGE_DIRECTIVE;
+    @JvmField
+    val FLOAT_CONSTANT: IElementType = KtStubElementTypes.FLOAT_CONSTANT
 
-    IElementType SCRIPT = KtStubElementTypes.SCRIPT;
+    @JvmField
+    val CHARACTER_CONSTANT: IElementType = KtStubElementTypes.CHARACTER_CONSTANT
 
-    IFileElementType TYPE_CODE_FRAGMENT = KtStubElementTypes.TYPE_CODE_FRAGMENT;
-    IFileElementType EXPRESSION_CODE_FRAGMENT = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT;
-    IFileElementType BLOCK_CODE_FRAGMENT = KtStubElementTypes.BLOCK_CODE_FRAGMENT;
+    @JvmField
+    val INTEGER_CONSTANT: IElementType = KtStubElementTypes.INTEGER_CONSTANT
+
+    val STRING_TEMPLATE: IElementType = KtStubElementTypes.STRING_TEMPLATE
+    val LONG_STRING_TEMPLATE_ENTRY: IElementType = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY
+    val SHORT_STRING_TEMPLATE_ENTRY: IElementType = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY
+    @JvmField
+    val LITERAL_STRING_TEMPLATE_ENTRY: IElementType = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY
+    val ESCAPE_STRING_TEMPLATE_ENTRY: IElementType = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+
+    val PARENTHESIZED: IElementType = KtNodeType("PARENTHESIZED", KtParenthesizedExpression::class.java)
+    val RETURN: IElementType = KtNodeType("RETURN", KtReturnExpression::class.java)
+    val THROW: IElementType = KtNodeType("THROW", KtThrowExpression::class.java)
+    val CONTINUE: IElementType = KtNodeType("CONTINUE", KtContinueExpression::class.java)
+    val BREAK: IElementType = KtNodeType("BREAK", KtBreakExpression::class.java)
+    val IF: IElementType = KtNodeType("IF", KtIfExpression::class.java)
+
+    @JvmField
+    val CONDITION: IElementType = KtNodeType("CONDITION", KtContainerNode::class.java)
+
+    @JvmField
+    val THEN: IElementType = KtNodeType("THEN", KtContainerNodeForControlStructureBody::class.java)
+
+    @JvmField
+    val ELSE: IElementType = KtNodeType("ELSE", KtContainerNodeForControlStructureBody::class.java)
+    val TRY: IElementType = KtNodeType("TRY", KtTryExpression::class.java)
+
+    @JvmField
+    val CATCH: IElementType = KtNodeType("CATCH", KtCatchClause::class.java)
+
+    @JvmField
+    val FINALLY: IElementType = KtNodeType("FINALLY", KtFinallySection::class.java)
+    val FOR: IElementType = KtNodeType("FOR", KtForExpression::class.java)
+    val WHILE: IElementType = KtNodeType("WHILE", KtWhileExpression::class.java)
+    val DO_WHILE: IElementType = KtNodeType("DO_WHILE", KtDoWhileExpression::class.java)
+
+    @JvmField
+    val LOOP_RANGE: IElementType = KtNodeType("LOOP_RANGE", KtContainerNode::class.java)
+
+    @JvmField
+    val BODY: IElementType = KtNodeType("BODY", KtContainerNodeForControlStructureBody::class.java)
+
+    @JvmField
+    val BLOCK: IElementType = BlockExpressionElementType()
+
+    @JvmField
+    val LAMBDA_EXPRESSION: IElementType = LambdaExpressionElementType()
+
+    @JvmField
+    val FUNCTION_LITERAL: IElementType = KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral::class.java)
+    val ANNOTATED_EXPRESSION: IElementType = KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression::class.java)
+
+    @JvmField
+    val REFERENCE_EXPRESSION: IElementType = KtStubElementTypes.REFERENCE_EXPRESSION
+    val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION: IElementType = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+
+    @JvmField
+    val OPERATION_REFERENCE: IElementType = KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression::class.java)
+    val LABEL: IElementType = KtNodeType("LABEL", KtLabelReferenceExpression::class.java)
+
+    @JvmField
+    val LABEL_QUALIFIER: IElementType = KtNodeType("LABEL_QUALIFIER", KtContainerNode::class.java)
+
+    val THIS_EXPRESSION: IElementType = KtNodeType("THIS_EXPRESSION", KtThisExpression::class.java)
+    val SUPER_EXPRESSION: IElementType = KtNodeType("SUPER_EXPRESSION", KtSuperExpression::class.java)
+    val BINARY_EXPRESSION: IElementType = KtNodeType("BINARY_EXPRESSION", KtBinaryExpression::class.java)
+    val BINARY_WITH_TYPE: IElementType = KtNodeType("BINARY_WITH_TYPE", KtBinaryExpressionWithTypeRHS::class.java)
+    val IS_EXPRESSION: IElementType = KtNodeType("IS_EXPRESSION", KtIsExpression::class.java)
+    val PREFIX_EXPRESSION: IElementType = KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression::class.java)
+    val POSTFIX_EXPRESSION: IElementType = KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression::class.java)
+    val LABELED_EXPRESSION: IElementType = KtNodeType("LABELED_EXPRESSION", KtLabeledExpression::class.java)
+    val CALL_EXPRESSION: IElementType = KtNodeType("CALL_EXPRESSION", KtCallExpression::class.java)
+    val ARRAY_ACCESS_EXPRESSION: IElementType = KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression::class.java)
+
+    @JvmField
+    val INDICES: IElementType = KtNodeType("INDICES", KtContainerNode::class.java)
+
+    @JvmField
+    val DOT_QUALIFIED_EXPRESSION: IElementType = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
+    val CALLABLE_REFERENCE_EXPRESSION: IElementType =
+        KtNodeType("CALLABLE_REFERENCE_EXPRESSION", KtCallableReferenceExpression::class.java)
+    val CLASS_LITERAL_EXPRESSION: IElementType = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
+
+    @JvmField
+    val SAFE_ACCESS_EXPRESSION: IElementType = KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression::class.java)
+
+    val OBJECT_LITERAL: IElementType = KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression::class.java)
+
+    val WHEN: IElementType = KtNodeType("WHEN", KtWhenExpression::class.java)
+
+    @JvmField
+    val WHEN_ENTRY: IElementType = KtNodeType("WHEN_ENTRY", KtWhenEntry::class.java)
+    val WHEN_ENTRY_GUARD: IElementType = KtNodeType("WHEN_ENTRY_GUARD", KtWhenEntryGuard::class.java)
+
+    val WHEN_CONDITION_IN_RANGE: IElementType = KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange::class.java)
+    val WHEN_CONDITION_IS_PATTERN: IElementType = KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern::class.java)
+
+    @JvmField
+    val WHEN_CONDITION_EXPRESSION: IElementType =
+        KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression::class.java)
+
+    val COLLECTION_LITERAL_EXPRESSION: IElementType = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
+
+    val PACKAGE_DIRECTIVE: IElementType = KtStubElementTypes.PACKAGE_DIRECTIVE
+
+    val SCRIPT: IElementType = KtStubElementTypes.SCRIPT
+
+    val TYPE_CODE_FRAGMENT: IFileElementType = KtStubElementTypes.TYPE_CODE_FRAGMENT
+
+    @JvmField
+    val EXPRESSION_CODE_FRAGMENT: IFileElementType = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT
+
+    @JvmField
+    val BLOCK_CODE_FRAGMENT: IFileElementType = KtStubElementTypes.BLOCK_CODE_FRAGMENT
 }
