@@ -139,7 +139,7 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
         }
     }.unwrapRepeatableAnnotations()
 
-private fun List<Annotation>.unwrapRepeatableAnnotations(): List<Annotation> =
+fun List<Annotation>.unwrapRepeatableAnnotations(): List<Annotation> =
     if (any { it.annotationClass.java.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME })
         flatMap {
             val klass = it.annotationClass.java

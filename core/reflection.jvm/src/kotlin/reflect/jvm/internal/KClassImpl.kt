@@ -80,7 +80,9 @@ internal class KClassImpl<T : Any>(
             descriptor ?: createSyntheticClassOrFail(classId, moduleData)
         }
 
-        val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
+        val annotations: List<Annotation> by ReflectProperties.lazySoft {
+            jClass.annotations.filterNot { it.annotationClass == Metadata::class }.unwrapRepeatableAnnotations()
+        }
 
         val simpleName: String? by ReflectProperties.lazySoft {
             if (jClass.isAnonymousClass) return@lazySoft null
