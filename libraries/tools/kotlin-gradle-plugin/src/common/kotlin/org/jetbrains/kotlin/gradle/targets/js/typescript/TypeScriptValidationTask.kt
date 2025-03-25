@@ -50,8 +50,6 @@ internal constructor(
 
     private val npmProject: NpmProject = compilation.npmProject
 
-    private val npmProjectDir = npmProject.dir
-
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
 
@@ -78,6 +76,8 @@ internal constructor(
         if (validationStrategy == KotlinIrJsGeneratedTSValidationStrategy.IGNORE) return
 
         val files = generatedDts.map { it.absolutePath }
+
+        val npmProjectDir = npmProject.dir
 
         val modules = NpmProjectModules(npmProjectDir.getFile())
 

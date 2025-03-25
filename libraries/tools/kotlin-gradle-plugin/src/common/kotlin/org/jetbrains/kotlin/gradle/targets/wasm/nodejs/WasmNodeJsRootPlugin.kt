@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingInstallTask.Companion.KOTLIN_NPM_TOOLING_NAME
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
@@ -69,7 +70,7 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
             this.allDeps.set(allDeps)
             this.defaultInstallationDir.set(
                 target.objects.directoryProperty()
-                    .fileValue(target.userKotlinPersistentDir.resolve("kotlin-npm-tooling"))
+                    .fileValue(target.userKotlinPersistentDir.resolve(KOTLIN_NPM_TOOLING_NAME))
                     .zip(packageManagerName) { toolingDir, name ->
                         toolingDir.dir(name)
                     }

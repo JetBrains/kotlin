@@ -128,7 +128,7 @@ class KotlinKarma internal constructor(
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
-    internal val toolingExtracted: Boolean = compilation.webTargetVariant(
+    internal val isWasm: Boolean = compilation.webTargetVariant(
         jsVariant = false,
         wasmVariant = true,
     )
@@ -152,7 +152,7 @@ class KotlinKarma internal constructor(
         progressReporter = true,
         rules = project.objects.webpackRulesContainer(),
         experiments = mutableSetOf("topLevelAwait"),
-        resolveLoadersFromKotlinToolingDir = toolingExtracted
+        resolveLoadersFromKotlinToolingDir = isWasm
     )
 
     init {
@@ -509,7 +509,7 @@ class KotlinKarma internal constructor(
             this.executable.set(this@KotlinKarma.executable)
         }
 
-        if (toolingExtracted) {
+        if (isWasm) {
             processLaunchOpts.environment.put(
                 "NODE_PATH",
                 listOf(

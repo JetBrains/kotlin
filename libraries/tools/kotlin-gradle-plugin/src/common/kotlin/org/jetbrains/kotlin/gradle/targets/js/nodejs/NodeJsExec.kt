@@ -135,7 +135,7 @@ constructor(
                 )
             )
 
-            val toolingExtracted: Boolean = compilation.webTargetVariant(
+            val isWasm: Boolean = compilation.webTargetVariant(
                 jsVariant = false,
                 wasmVariant = true,
             )
@@ -156,7 +156,7 @@ constructor(
                 }
 
                 it.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
-                if (toolingExtracted) {
+                if (isWasm) {
                     it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
                 }
 

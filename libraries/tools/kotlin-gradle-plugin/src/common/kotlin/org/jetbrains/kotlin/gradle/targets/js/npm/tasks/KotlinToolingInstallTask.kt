@@ -70,7 +70,7 @@ internal constructor() :
                 val packageJsonFile = destinationDir.resolve(NpmProject.PACKAGE_JSON)
                 if (nodeModules.getFile().exists()) return // return from install
                 val toolingPackageJson = PackageJson(
-                    "kotlin-npm-tooling",
+                    KOTLIN_NPM_TOOLING_NAME,
                     versionsHash.get()
                 ).apply {
                     private = true
@@ -97,5 +97,7 @@ internal constructor() :
 
     companion object {
         const val NAME = "kotlinToolingInstall"
+
+        const val KOTLIN_NPM_TOOLING_NAME = "kotlin-npm-tooling"
     }
 }
