@@ -262,6 +262,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
                 it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
                 it is KtStringTemplateEntry ||
+                it is KtStringInterpolationPrefix ||
                 it is KtOperationReferenceExpression ||
                 it is KtLabelReferenceExpression ||
                 it is KtConstructorDelegationReferenceExpression ||

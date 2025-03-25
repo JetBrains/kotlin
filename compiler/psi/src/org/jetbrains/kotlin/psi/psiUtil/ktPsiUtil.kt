@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -399,7 +399,7 @@ tailrec fun findAssignment(element: PsiElement?): KtBinaryExpression? =
 fun KtStringTemplateExpression.getContentRange(): TextRange {
     val interpolationPrefixOrOpenQuote = node.firstChildNode ?: return TextRange.EMPTY_RANGE
     val openQuoteAfterPrefixOrNull = interpolationPrefixOrOpenQuote.treeNext?.takeIf { secondNode ->
-        interpolationPrefixOrOpenQuote.elementType == KtTokens.INTERPOLATION_PREFIX && secondNode.elementType == KtTokens.OPEN_QUOTE
+        interpolationPrefixOrOpenQuote.elementType == KtNodeTypes.STRING_INTERPOLATION_PREFIX && secondNode.elementType == KtTokens.OPEN_QUOTE
     }
     val start = interpolationPrefixOrOpenQuote.textLength + (openQuoteAfterPrefixOrNull?.textLength ?: 0)
     val lastChild = node.lastChildNode

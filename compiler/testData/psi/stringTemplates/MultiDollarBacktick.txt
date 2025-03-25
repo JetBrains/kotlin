@@ -166,7 +166,8 @@ KtFile: MultiDollarBacktick.kt
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
                 STRING_TEMPLATE
-                  PsiElement(INTERPOLATION_PREFIX)('$$$')
+                  STRING_INTERPOLATION_PREFIX
+                    PsiElement(INTERPOLATION_PREFIX)('$$$')
                   PsiElement(OPEN_QUOTE)('"')
                   LITERAL_STRING_TEMPLATE_ENTRY
                     PsiElement(REGULAR_STRING_PART)('$$')
@@ -215,7 +216,8 @@ KtFile: MultiDollarBacktick.kt
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
                 STRING_TEMPLATE
-                  PsiElement(INTERPOLATION_PREFIX)('$$$')
+                  STRING_INTERPOLATION_PREFIX
+                    PsiElement(INTERPOLATION_PREFIX)('$$$')
                   PsiElement(OPEN_QUOTE)('"')
                   SHORT_STRING_TEMPLATE_ENTRY
                     PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$')
@@ -254,7 +256,8 @@ KtFile: MultiDollarBacktick.kt
               LONG_STRING_TEMPLATE_ENTRY
                 PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
                 STRING_TEMPLATE
-                  PsiElement(INTERPOLATION_PREFIX)('$$$')
+                  STRING_INTERPOLATION_PREFIX
+                    PsiElement(INTERPOLATION_PREFIX)('$$$')
                   PsiElement(OPEN_QUOTE)('"')
                   LITERAL_STRING_TEMPLATE_ENTRY
                     PsiElement(REGULAR_STRING_PART)('$$')
@@ -290,7 +293,8 @@ KtFile: MultiDollarBacktick.kt
       PsiComment(EOL_COMMENT)('// on simple strings')
       PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
-        PsiElement(INTERPOLATION_PREFIX)('$$$')
+        STRING_INTERPOLATION_PREFIX
+          PsiElement(INTERPOLATION_PREFIX)('$$$')
         PsiElement(OPEN_QUOTE)('"')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('$$')
@@ -303,7 +307,8 @@ KtFile: MultiDollarBacktick.kt
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
           STRING_TEMPLATE
-            PsiElement(INTERPOLATION_PREFIX)('$$$')
+            STRING_INTERPOLATION_PREFIX
+              PsiElement(INTERPOLATION_PREFIX)('$$$')
             PsiElement(OPEN_QUOTE)('"')
             LITERAL_STRING_TEMPLATE_ENTRY
               PsiElement(REGULAR_STRING_PART)('$$')
@@ -319,7 +324,8 @@ KtFile: MultiDollarBacktick.kt
         LONG_STRING_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
           STRING_TEMPLATE
-            PsiElement(INTERPOLATION_PREFIX)('$$$')
+            STRING_INTERPOLATION_PREFIX
+              PsiElement(INTERPOLATION_PREFIX)('$$$')
             PsiElement(OPEN_QUOTE)('"')
             SHORT_STRING_TEMPLATE_ENTRY
               PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$')

@@ -53,6 +53,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -65,6 +66,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -77,6 +79,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -89,6 +92,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -113,6 +117,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -125,6 +130,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -137,6 +143,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -149,6 +156,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -172,6 +180,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -183,6 +192,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=$${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -194,6 +204,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=$$$${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -205,6 +216,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=$$$$$$$${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -228,6 +240,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -240,6 +253,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -252,6 +266,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -264,6 +279,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$runTimeConstant]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -288,6 +304,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -300,6 +317,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -312,6 +330,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -324,6 +343,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$`runTimeConstant`]
                 REFERENCE_EXPRESSION[referencedName=runTimeConstant]
@@ -347,6 +367,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -358,6 +379,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=$${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -369,6 +391,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=$$$${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
@@ -380,6 +403,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
+              STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
               LONG_STRING_TEMPLATE_ENTRY[text=$$$$$$$${0 + runTimeConstant}]
               LITERAL_STRING_TEMPLATE_ENTRY[text= padding]

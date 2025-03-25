@@ -36,14 +36,17 @@ WithStringInterpolationPrefix.kt:
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
+                STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
                 SHORT_STRING_TEMPLATE_ENTRY[text=$CONSTANT]
                   REFERENCE_EXPRESSION[referencedName=CONSTANT]
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
+                STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
                 SHORT_STRING_TEMPLATE_ENTRY[text=$$CONSTANT]
                   REFERENCE_EXPRESSION[referencedName=CONSTANT]
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
+                STRING_INTERPOLATION_PREFIX[dollarSignCount=3]
                 SHORT_STRING_TEMPLATE_ENTRY[text=$$$CONSTANT]
                   REFERENCE_EXPRESSION[referencedName=CONSTANT]
 

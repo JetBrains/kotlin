@@ -10,6 +10,3 @@ context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /f
 
 context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 @ParameterTypeAnnotation(LAZY_EXPRESSION)
-
-context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
-@ParameterAnnotation(LAZY_EXPRESSION)

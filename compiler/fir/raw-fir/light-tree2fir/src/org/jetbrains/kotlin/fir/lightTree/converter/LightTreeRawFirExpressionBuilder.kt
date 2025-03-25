@@ -822,7 +822,7 @@ class LightTreeRawFirExpressionBuilder(
         return children.toInterpolatingCall(
             stringTemplate,
             convertTemplateEntry = { convertShortOrLongStringTemplate(it) },
-            prefix = { children.firstOrNull { it?.tokenType == INTERPOLATION_PREFIX }?.asText ?: "" }
+            prefix = { children.firstOrNull { it?.tokenType == STRING_INTERPOLATION_PREFIX }?.asText ?: "" }
         )
     }
 
