@@ -302,7 +302,15 @@ fun FirMemberDeclaration.isInlineOnly(session: FirSession): Boolean =
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)
     val supertypeFullyExpanded = supertype.fullyExpandedType(context.session)
-    return AbstractTypeChecker.isSubtypeOf(context, subtypeFullyExpanded, supertypeFullyExpanded)
+    return AbstractTypeChecker.isSubtypeOf(
+        context.newTypeCheckerState(
+            errorTypesEqualToAnything = true,
+            stubTypesEqualToAnything = false,
+            dnnTypesEqualToFlexible = false
+        ),
+        subtypeFullyExpanded,
+        supertypeFullyExpanded
+    )
 }
 
 fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {

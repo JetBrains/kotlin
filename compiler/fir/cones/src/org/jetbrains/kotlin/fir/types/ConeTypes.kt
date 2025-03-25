@@ -65,10 +65,9 @@ class ConeErrorType(
     val isUninferredParameter: Boolean = false,
     val delegatedType: ConeKotlinType? = null,
     override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
+    override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeClassLikeType() {
-    override val lookupTag: ConeClassLikeLookupTag
-        get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
+    override val lookupTag: ConeClassLikeLookupTag = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val isMarkedNullable: Boolean
         get() = (diagnostic as? ConeDiagnosticWithNullability)?.isNullable == true

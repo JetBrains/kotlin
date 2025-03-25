@@ -338,7 +338,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is ConeTypeConstructorMarker)
         return when (this) {
-            is ConeClassifierLookupTag -> true
+            is ConeClassifierLookupTag -> this !is ConeClassLikeErrorLookupTag
 
             is ConeStubTypeConstructor,
             is ConeCapturedTypeConstructor,

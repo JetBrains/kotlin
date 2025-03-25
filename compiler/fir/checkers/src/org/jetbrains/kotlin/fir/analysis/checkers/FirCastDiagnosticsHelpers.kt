@@ -67,7 +67,15 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
 
     // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
     // If not, it's wrong to use it
-    return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownSubtype, subtype, stubTypesEqualToAnything = false)
+    return !AbstractTypeChecker.isSubtypeOf(
+        context.session.typeContext.newTypeCheckerState(
+            errorTypesEqualToAnything = true,
+            stubTypesEqualToAnything = false,
+            dnnTypesEqualToFlexible = false
+        ),
+        staticallyKnownSubtype,
+        subtype
+    )
 }
 
 /**
