@@ -1,5 +1,4 @@
 // ISSUE: KT-76058
-// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
 
 // MODULE: lib
