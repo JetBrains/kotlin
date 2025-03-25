@@ -124,12 +124,12 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.wasm.internal.ClosureBoxFloat",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.ClosureBoxDouble",  // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.ClosureBoxAny",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.wasmTypeId",
-    "kotlin.coroutines.CoroutineImpl",
-    "kotlin.native.internal.KClassImpl",
-    "kotlin.native.internal.KTypeImpl",
-    "kotlin.native.internal.KTypeProjectionList",
-    "kotlin.native.internal.KTypeParameterImpl",
+//    "kotlin.wasm.internal.wasmTypeId",
+//    "kotlin.coroutines.CoroutineImpl",
+//    "kotlin.native.internal.KClassImpl",
+//    "kotlin.native.internal.KTypeImpl",
+//    "kotlin.native.internal.KTypeProjectionList",
+//    "kotlin.native.internal.KTypeParameterImpl",
 ).mapTo(hashSetOf(), ::FqName)
 
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
