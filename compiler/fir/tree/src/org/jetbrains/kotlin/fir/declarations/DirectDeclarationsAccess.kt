@@ -10,9 +10,18 @@ package org.jetbrains.kotlin.fir.declarations
  *
  * Direct access to .declarations can be risky for various reasons:
  * - one doesn't see any plugin-generated declarations
- * - in IDE mode, there is no guarantees about resolve phase
+ * - in IDE mode, there are no guarantees about a reached resolve phase
  *
- * It's recommended to use scope-based methods, like processAllDeclarations, processAllDeclaredCallables etc.
+ * It's recommended, especially in checkers, to use scope-based methods,
+ * like processAllDeclarations, processAllDeclaredCallables, declaredProperties, declaredFunctions, constructors, etc.
+ * The typical way looks like this:
+ * ```
+ * someClass(Symbol).processAllDeclarations(session) { it: FirBasedSymbol<*> ->
+ *     // it is a declaration symbol
+ * }
+ * ```
  */
-@RequiresOptIn(message = "Please use processAllDeclarations or similar functions instead")
+@RequiresOptIn(
+    message = "Please use FirClass(Symbol).processAllDeclarations or similar functions instead, see also KDoc of DirectDeclarationsAccess"
+)
 annotation class DirectDeclarationsAccess

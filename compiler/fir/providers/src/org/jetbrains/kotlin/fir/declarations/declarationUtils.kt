@@ -21,18 +21,37 @@ import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 
+/**
+ * Returns all constructors of a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
     session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
 }
 
+/**
+ * Returns all constructors of a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
     session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
 }
 
+/**
+ * Process all callables (including functions, enum entries and properties, excluding constructors) declared directly in a given class.
+ *
+ * This function processed only declared callables, including generated callables, but excluding constructors.
+ * Inherited callables are not processed.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for processed members, status phase is the default one
+ */
 fun FirClassSymbol<*>.processAllDeclaredCallables(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
@@ -41,6 +60,12 @@ fun FirClassSymbol<*>.processAllDeclaredCallables(
     session.declaredMemberScope(this, memberRequiredPhase).processAllCallables(processor)
 }
 
+/**
+ * Returns all properties and enum entries declared in a given class, including generated ones. Inherited properties are excluded.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for properties, status phase is the default one
+ */
 fun FirClassSymbol<*>.declaredProperties(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
@@ -54,6 +79,12 @@ fun FirClassSymbol<*>.declaredProperties(
     return result
 }
 
+/**
+ * Returns all functions declared in a given class, including generated functions. Inherited functions are excluded.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for functions, status phase is the default one
+ */
 fun FirClassSymbol<*>.declaredFunctions(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
@@ -67,6 +98,12 @@ fun FirClassSymbol<*>.declaredFunctions(
     return result
 }
 
+/**
+ * Process all classifiers (nested type aliases, objects and classes, including generated ones) declared directly in a given class.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for processed members, status phase is the default one
+ */
 fun FirClassSymbol<*>.processAllClassifiers(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
@@ -75,6 +112,16 @@ fun FirClassSymbol<*>.processAllClassifiers(
     session.declaredMemberScope(this, memberRequiredPhase).processAllClassifiers(processor)
 }
 
+/**
+ * Returns all declarations declared in a given class, including generated ones. Inherited declarations are excluded.
+ *
+ * This function processes nested classes, nested objects, nested type aliases,
+ * member functions, member properties, enum entries, constructors.
+ * Anonymous initializers can't be processed this way.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for declarations, status phase is the default one
+ */
 fun FirClass.processAllDeclarations(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
@@ -91,14 +138,46 @@ fun FirClass.processAllDeclarations(
     }
 }
 
+/**
+ * Returns all declarations declared in a given class, including generated ones. Inherited declarations are excluded.
+ *
+ * This function processes nested classes, nested objects, nested type aliases,
+ * member functions, member properties, enum entries, constructors.
+ * Anonymous initializers can't be processed this way.
+ *
+ * @param session given use-site session
+ * @param memberRequiredPhase the required phase for declarations, status phase is the default one
+ */
+@Suppress("unused")
+fun FirClassSymbol<*>.processAllDeclarations(
+    session: FirSession,
+    memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
+    processor: (FirBasedSymbol<*>) -> Unit
+) = fir.processAllDeclarations(session, memberRequiredPhase, processor)
+
+/**
+ * Returns the primary constructor of a given class, if any. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
     return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
+/**
+ * Returns the primary constructor of a given class, if any. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClassSymbol<*>.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol? {
     return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
+/**
+ * Returns all enum entries declared in a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClass.collectEnumEntries(session: FirSession): List<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
     val result = mutableListOf<FirEnumEntry>()
@@ -110,6 +189,11 @@ fun FirClass.collectEnumEntries(session: FirSession): List<FirEnumEntry> {
     return result
 }
 
+/**
+ * Returns all enum entries declared in a given class, including generated ones. Resolve phase is not guaranteed.
+ *
+ * @param session given use-site session
+ */
 fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntrySymbol> {
     return fir.collectEnumEntries(session).map { it.symbol }
 }
