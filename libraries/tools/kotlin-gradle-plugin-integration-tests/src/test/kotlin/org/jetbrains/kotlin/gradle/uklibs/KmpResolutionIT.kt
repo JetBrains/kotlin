@@ -15,6 +15,11 @@ import kotlin.test.assertEquals
 @DisplayName("Test the GMT runtime behavior")
 class KmpResolutionIT : KGPBaseTest() {
 
+    /**
+     * FIXME: Make cross-compilation a requirement of resolution with [KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs]
+     * or test resolution without cross-compilation
+     */
+
     @GradleTest
     fun `smoke lenient kmp resolution - GMT and platform compilation - direct and transitive are kmp publications`(
         version: GradleVersion,
@@ -230,6 +235,7 @@ class KmpResolutionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             transitiveConfiguration()
             buildScriptInjection {
+                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     js()
                     jvm()
@@ -249,6 +255,7 @@ class KmpResolutionIT : KGPBaseTest() {
             addPublishedProjectToRepositories(transitiveProducer)
             directConfiguration()
             buildScriptInjection {
+                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     linuxArm64()
                     linuxX64()
@@ -270,6 +277,7 @@ class KmpResolutionIT : KGPBaseTest() {
             consumerConfiguration()
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
+                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     js()
                     jvm()

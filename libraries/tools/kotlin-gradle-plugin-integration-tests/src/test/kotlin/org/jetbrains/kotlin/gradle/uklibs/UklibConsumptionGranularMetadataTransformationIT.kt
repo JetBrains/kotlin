@@ -18,6 +18,11 @@ import kotlin.test.assertEquals
 @DisplayName("Test the GMT runtime behavior")
 class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
 
+    /**
+     * FIXME: Make cross-compilation a requirement of resolution with [KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs]
+     * or test resolution without cross-compilation
+     */
+
     @GradleTest
     fun `lenient PSM consumption in GMT`(
         version: GradleVersion
@@ -44,6 +49,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
                 project.setUklibResolutionStrategy()
+                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     iosArm64()
                     iosX64()
