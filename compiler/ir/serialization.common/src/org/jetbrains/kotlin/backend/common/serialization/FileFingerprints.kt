@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 import java.nio.ByteBuffer
 
@@ -54,7 +53,7 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withSignaturesHash = cityHash128WithSeed(withTypesHash, file.signatures)
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, file.strings)
             val withBodiesHash = cityHash128WithSeed(withStringsHash, file.bodies)
-            val withFileEntriesHash = cityHash128WithSeed(withBodiesHash, file.fileEntries)
+            val withFileEntriesHash = file.fileEntries?.let { cityHash128WithSeed(withBodiesHash, it) } ?: withBodiesHash
             return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, file.declarations))
         }
 
@@ -64,10 +63,7 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withSignaturesHash = cityHash128WithSeed(withTypesHash, lib.signatures(fileIndex))
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, lib.strings(fileIndex))
             val withBodiesHash = cityHash128WithSeed(withStringsHash, lib.bodies(fileIndex))
-            val fileEntries = lib.fileEntries(fileIndex)
-            val withFileEntriesHash = withBodiesHash.applyIf(fileEntries != null) {
-                cityHash128WithSeed(this, fileEntries!!)
-            }
+            val withFileEntriesHash = lib.fileEntries(fileIndex)?.let { cityHash128WithSeed(withBodiesHash, it) } ?: withBodiesHash
             return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, lib.declarations(fileIndex)))
         }
     }

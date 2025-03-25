@@ -262,13 +262,21 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
         output.writeArray(value.fileMetadata)
-        value.debugInfo?.let { output.writeArray(it) }
-        output.writeArray(value.fileEntries)
+        output.writeOptionalArray(value.debugInfo)
+        output.writeOptionalArray(value.fileEntries)
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
         writeInt(array.size)
         write(array)
+    }
+
+    private fun DataOutput.writeOptionalArray(array: ByteArray?) {
+        if (array != null)
+            writeArray(array)
+        else {
+            writeInt(-1)
+        }
     }
 
     private fun DataInput.readArray(): ByteArray {
@@ -278,14 +286,14 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         return filedata
     }
 
-    private fun DataInput.readArrayOrNull(): ByteArray? {
-        try {
-            val dataSize = readInt()
+    private fun DataInput.readOptionalArray(): ByteArray? {
+        val dataSize = readInt()
+        return if (dataSize == -1)
+            null
+        else {
             val filedata = ByteArray(dataSize)
             readFully(filedata)
-            return filedata
-        } catch (e: Throwable) {
-            return null
+            filedata
         }
     }
 
@@ -298,8 +306,8 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val bodies = input.readArray()
         val fqn = input.readArray()
         val fileMetadata = input.readArray()
-        val debugInfos = input.readArrayOrNull()
-        val fileEntries = input.readArray()
+        val debugInfos = input.readOptionalArray()
+        val fileEntries = input.readOptionalArray()
 
         return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries)
     }
@@ -336,7 +344,7 @@ private class IrTranslationResultMap(
         fqn: ByteArray,
         newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
-        fileEntries: ByteArray,
+        fileEntries: ByteArray?,
     ) {
         this[sourceFile] =
             IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries)

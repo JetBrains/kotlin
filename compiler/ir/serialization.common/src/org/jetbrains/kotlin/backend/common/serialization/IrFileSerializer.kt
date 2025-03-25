@@ -1555,7 +1555,14 @@ open class IrFileSerializer(
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
-            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
+            fileEntries = with(protoIrFileEntryArray) {
+                if (isNotEmpty()) {
+                    requireAbiAtLeast(ABI_LEVEL_2_2, { "IR file entries table" }) { file }
+                    IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory()
+                } else {
+                    null
+                }
+            },
         )
     }
 

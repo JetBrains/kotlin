@@ -7,24 +7,48 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.IrWriter
+import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
     override fun addIr(ir: SerializedIrModule) {
         irLayout.irDir.mkdirs()
 
         with(ir.files.sortedBy { it.path }) {
-            IrArrayWriter(map { it.fileData }).writeIntoFile(irLayout.irFiles.absolutePath)
-            IrArrayWriter(map { it.declarations }).writeIntoFile(irLayout.irDeclarations.absolutePath)
-            IrArrayWriter(map { it.types }).writeIntoFile(irLayout.irTypes.absolutePath)
-            IrArrayWriter(map { it.signatures }).writeIntoFile(irLayout.irSignatures.absolutePath)
-            IrArrayWriter(map { it.strings }).writeIntoFile(irLayout.irStrings.absolutePath)
-            IrArrayWriter(map { it.bodies }).writeIntoFile(irLayout.irBodies.absolutePath)
-            IrArrayWriter(mapNotNull { it.debugInfo }).writeIntoFile(irLayout.irDebugInfo.absolutePath)
-            val fileEntries = map { it.fileEntries }
-            if (fileEntries.any { it.isNotEmpty() }) {
-                IrArrayWriter(fileEntries).writeIntoFile(irLayout.irFileEntries.absolutePath)
-            }
+            serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFiles)
+            serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarations)
+            serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypes)
+            serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignatures)
+            serializeNonNullableEntities(SerializedIrFile::strings, irLayout::irStrings)
+            serializeNonNullableEntities(SerializedIrFile::bodies, irLayout::irBodies)
+            serializeNullableEntries(SerializedIrFile::debugInfo, irLayout::irDebugInfo)
+            serializeNullableEntries(SerializedIrFile::fileEntries, irLayout::irFileEntries)
         }
+    }
+
+    private inline fun List<SerializedIrFile>.serializeNonNullableEntities(
+        accessor: (SerializedIrFile) -> ByteArray,
+        destination: () -> KFile,
+    ): Unit = IrArrayWriter(map { accessor(it) }).writeIntoFile(destination().absolutePath)
+
+    private inline fun List<SerializedIrFile>.serializeNullableEntries(
+        accessor: (SerializedIrFile) -> ByteArray?,
+        destination: () -> KFile,
+    ) {
+        val nonNullEntries: List<ByteArray> = mapNotNull(accessor)
+        if (nonNullEntries.isEmpty()) {
+            // No entries -> nothing to write to `destination`.
+            return
+        }
+
+        // The number of entries should be strictly the same as the number of serialized IR files.
+        // Otherwise, the resulting byte table will be incorrectly read during deserialization.
+        check(nonNullEntries.size == size) {
+            "Error while writing IR to ${destination()}:" +
+                    "\nOnly ${nonNullEntries.size} out of $size serialized IR files have non-nullable values."
+        }
+
+        IrArrayWriter(nonNullEntries).writeIntoFile(destination().absolutePath)
     }
 }

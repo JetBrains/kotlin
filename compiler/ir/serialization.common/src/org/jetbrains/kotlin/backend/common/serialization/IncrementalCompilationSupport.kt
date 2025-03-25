@@ -87,7 +87,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
 
     override fun fileEntry(index: Int, fileIndex: Int): ByteArray? =
         indexedFileEntries.itemNullableBytes(fileIndex, index) {
-            IrArrayReader(icData[fileIndex].fileEntries)
+            icData[fileIndex].fileEntries?.let { IrArrayReader(it) }
         }
 
     override fun file(index: Int): ByteArray = icData[index].fileData
