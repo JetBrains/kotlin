@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSmartCastExpressionImpl
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -30,6 +31,7 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
     lateinit var originalExpression: FirExpression
     lateinit var typesFromSmartCast: Collection<ConeKotlinType>
     lateinit var nonTypesFromSmartCast: Collection<ConeKotlinType>
+    lateinit var nonValuesFromSmartCast: Collection<FirBasedSymbol<*>>
     lateinit var smartcastType: FirTypeRef
     var smartcastTypeWithoutNullableNothing: FirTypeRef? = null
     lateinit var smartcastStability: SmartcastStability
@@ -41,6 +43,7 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
             originalExpression,
             typesFromSmartCast,
             nonTypesFromSmartCast,
+            nonValuesFromSmartCast,
             smartcastType,
             smartcastTypeWithoutNullableNothing,
             smartcastStability,

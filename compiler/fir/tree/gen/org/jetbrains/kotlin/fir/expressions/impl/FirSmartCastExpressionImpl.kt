@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -34,6 +35,7 @@ internal class FirSmartCastExpressionImpl(
     override var originalExpression: FirExpression,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
     override val nonTypesFromSmartCast: Collection<ConeKotlinType>,
+    override val nonValuesFromSmartCast: Collection<FirBasedSymbol<*>>,
     override var smartcastType: FirTypeRef,
     override var smartcastTypeWithoutNullableNothing: FirTypeRef?,
     override val smartcastStability: SmartcastStability,

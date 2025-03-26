@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -27,6 +28,7 @@ abstract class FirSmartCastExpression : FirExpression() {
     abstract val originalExpression: FirExpression
     abstract val typesFromSmartCast: Collection<ConeKotlinType>
     abstract val nonTypesFromSmartCast: Collection<ConeKotlinType>
+    abstract val nonValuesFromSmartCast: Collection<FirBasedSymbol<*>>
     abstract val smartcastType: FirTypeRef
     abstract val smartcastTypeWithoutNullableNothing: FirTypeRef?
     abstract val isStable: Boolean
