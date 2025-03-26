@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
@@ -119,6 +116,13 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                             )
                         }
                     }
+                )
+                it.arguments[10] = IrClassReferenceImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    context.irBuiltIns.kClassClass.defaultType,
+                    context.irBuiltIns.stringClass,
+                    context.irBuiltIns.stringType,
                 )
             }
             context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(declaration, annotationCall)

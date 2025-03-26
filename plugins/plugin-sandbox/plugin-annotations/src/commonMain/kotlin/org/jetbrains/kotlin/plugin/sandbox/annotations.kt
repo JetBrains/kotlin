@@ -65,7 +65,8 @@ annotation class AnnotationToAdd(
     val longValue: Long,
     val shortValue: Short,
     val stringValue: String,
-    vararg val vararg: ArrayAnnotation
+    vararg val vararg: ArrayAnnotation,
+    val kClassValue: KClass<*>
 )
 
 annotation class AddNestedClassesBasedOnArgument(val kClass: KClass<*>)

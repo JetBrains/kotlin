@@ -1,6 +1,7 @@
 // PLATFORM_DEPENDANT_METADATA
 // DUMP_KT_IR
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: JS_IR
 // MODULE: common
 package test
 
