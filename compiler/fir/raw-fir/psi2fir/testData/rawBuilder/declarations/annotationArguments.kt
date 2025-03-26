@@ -113,3 +113,6 @@ class WithStringLiteralConcat
 
 @StringLiteral($"$CONSTANT", $$"$$CONSTANT", $$$"$$$CONSTANT")
 class WithStringInterpolationPrefix
+
+@InvalidArguments("${CONSTANT ${}}")
+class LongStringTemplateEntryWithTwoExpressions

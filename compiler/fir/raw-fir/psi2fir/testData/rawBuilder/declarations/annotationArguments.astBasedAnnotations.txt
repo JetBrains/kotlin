@@ -34,3 +34,6 @@ context -> FirRegularClassSymbol WithStringLiteralConcat
 
 context -> FirRegularClassSymbol WithStringInterpolationPrefix
 @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
+@InvalidArguments(LAZY_EXPRESSION)

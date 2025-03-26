@@ -125,3 +125,12 @@ FILE: annotationArguments.kt
         }
 
     }
+    @InvalidArguments(<strcat>(CONSTANT#, fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        ^ Unit
+    }
+    )) public final? class LongStringTemplateEntryWithTwoExpressions : R|kotlin/Any| {
+        public? [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|LongStringTemplateEntryWithTwoExpressions| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

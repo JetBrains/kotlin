@@ -81,3 +81,10 @@ context -> FirRegularClassSymbol WithStringLiteralConcat
 @StringLiteral(<strcat>(CONSTANT#), <strcat>(CONSTANT#), <strcat>(CONSTANT#))
 owner -> FirRegularClassSymbol WithStringInterpolationPrefix
 context -> FirRegularClassSymbol WithStringInterpolationPrefix
+
+@InvalidArguments(<strcat>(CONSTANT#, fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+    ^ Unit
+}
+))
+owner -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
+context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions

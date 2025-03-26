@@ -125,3 +125,9 @@ FILE: annotationArguments.kt
         }
 
     }
+    @InvalidArguments(LAZY_EXPRESSION) public final? class LongStringTemplateEntryWithTwoExpressions : R|kotlin/Any| {
+        public? constructor(): R|LongStringTemplateEntryWithTwoExpressions| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
