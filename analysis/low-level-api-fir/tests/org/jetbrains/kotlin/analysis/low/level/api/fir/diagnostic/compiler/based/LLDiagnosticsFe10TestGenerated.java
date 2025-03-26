@@ -46836,6 +46836,36 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         public void testExhaustiveStarProjection() {
           runTest("compiler/testData/diagnostics/tests/when/exhaustive/ExhaustiveStarProjection.kt");
         }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeDataClasses.kt")
+        public void testExhaustiveWithNegativeDataClasses() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeDataClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeEnums.kt")
+        public void testExhaustiveWithNegativeEnums() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeEnums.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeSealedDataObjects.kt")
+        public void testExhaustiveWithNegativeSealedDataObjects() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeSealedDataObjects.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeSealedTypes.kt")
+        public void testExhaustiveWithNegativeSealedTypes() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeSealedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeValueClasses.kt")
+        public void testExhaustiveWithNegativeValueClasses() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeValueClasses.kt");
+        }
       }
 
       @Nested
