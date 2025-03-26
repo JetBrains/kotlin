@@ -1,23 +1,9 @@
-// RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
+// RUN_PIPELINE_TILL: FRONTEND
 
-// MODULE: transitive
-// FILE: Transitive.kt
+// MODULE: direct
+// FILE: Direct.kt
 annotation class Ann
 
-class Transitive(
-    val finalConstructorProperty: Any = "",
-    @get:Ann val annotatedConstructorProperty: Any = "",
-) {
-    val finalClassProperty: Any = ""
-
-    @get:Ann
-    val annotatedClassProperty: Any = ""
-}
-
-
-// MODULE: direct()()(transitive)
-// FILE: Direct.kt
 class Direct(
     val finalConstructorProperty: Any = "",
     @get:Ann val annotatedConstructorProperty: Any = "",
@@ -28,7 +14,7 @@ class Direct(
     val annotatedClassProperty: Any = ""
 }
 
-// MODULE: app()()(direct)
+// MODULE: app()(direct)
 class Same(
     val finalConstructorProperty: Any = "",
     @get:Ann val annotatedConstructorProperty: Any = "",
@@ -39,7 +25,7 @@ class Same(
     val annotatedClassProperty: Any = ""
 }
 
-fun isCast(s: Same, d: Direct, t: Transitive) {
+fun isCast(s: Same, d: Direct) {
     if (s.finalConstructorProperty is String) {
         s.finalConstructorProperty.length
     }
@@ -48,20 +34,12 @@ fun isCast(s: Same, d: Direct, t: Transitive) {
         d.finalConstructorProperty.length
     }
 
-    if (t.finalConstructorProperty is String) {
-        t.finalConstructorProperty.length
-    }
-
     if (s.annotatedConstructorProperty is String) {
         s.annotatedConstructorProperty.length
     }
 
     if (d.annotatedConstructorProperty is String) {
-        d.annotatedConstructorProperty.length
-    }
-
-    if (t.annotatedConstructorProperty is String) {
-        t.annotatedConstructorProperty.length
+        <!SMARTCAST_IMPOSSIBLE!>d.annotatedConstructorProperty<!>.length
     }
 
     if (s.finalClassProperty is String) {
@@ -72,41 +50,27 @@ fun isCast(s: Same, d: Direct, t: Transitive) {
         d.finalClassProperty.length
     }
 
-    if (t.finalClassProperty is String) {
-        t.finalClassProperty.length
-    }
-
     if (s.annotatedClassProperty is String) {
         s.annotatedClassProperty.length
     }
 
     if (d.annotatedClassProperty is String) {
-        d.annotatedClassProperty.length
-    }
-
-    if (t.annotatedClassProperty is String) {
-        t.annotatedClassProperty.length
+        <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
     }
 }
 
-fun asCast(s: Same, d: Direct, t: Transitive) {
+fun asCast(s: Same, d: Direct) {
     s.finalConstructorProperty as String
     s.finalConstructorProperty.length
 
     d.finalConstructorProperty as String
     d.finalConstructorProperty.length
 
-    t.finalConstructorProperty as String
-    t.finalConstructorProperty.length
-
     s.annotatedConstructorProperty as String
     s.annotatedConstructorProperty.length
 
     d.annotatedConstructorProperty as String
-    d.annotatedConstructorProperty.length
-
-    t.annotatedConstructorProperty as String
-    t.annotatedConstructorProperty.length
+    <!SMARTCAST_IMPOSSIBLE!>d.annotatedConstructorProperty<!>.length
 
     s.finalClassProperty as String
     s.finalClassProperty.length
@@ -114,15 +78,9 @@ fun asCast(s: Same, d: Direct, t: Transitive) {
     d.finalClassProperty as String
     d.finalClassProperty.length
 
-    t.finalClassProperty as String
-    t.finalClassProperty.length
-
     s.annotatedClassProperty as String
     s.annotatedClassProperty.length
 
     d.annotatedClassProperty as String
-    d.annotatedClassProperty.length
-
-    t.annotatedClassProperty as String
-    t.annotatedClassProperty.length
+    <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
 }

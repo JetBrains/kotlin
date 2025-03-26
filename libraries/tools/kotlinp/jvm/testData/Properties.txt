@@ -1,9 +1,18 @@
+// Ann.class
+// ------------------------------------------
+public final annotation class Ann : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
 // C.class
 // ------------------------------------------
 public final class C : kotlin/Any {
 
-  // signature: <init>(Ljava/lang/String;)V
-  public constructor(constructorParam: kotlin/String /* = ... */)
+  // signature: <init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+  public constructor(constructorParam: kotlin/String /* = ... */, constructorValWithAnnotation: kotlin/String /* = ... */, constructorValWithGetterAnnotation: kotlin/String /* = ... */, constructorVarWithAnnotation: kotlin/String /* = ... */, constructorVarWithGetterAnnotation: kotlin/String /* = ... */, constructorVarWithSetterAnnotation: kotlin/String /* = ... */, constructorValWithInternal: kotlin/String /* = ... */)
 
   // signature: getValue(Ljava/lang/Void;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;
   public final operator fun kotlin/Nothing?.getValue(x: kotlin/Any?, y: kotlin/Any?): kotlin/collections/List<kotlin/Nothing>
@@ -14,10 +23,93 @@ public final class C : kotlin/Any {
     public final /* non-default */ get
     public final /* non-default */ set(value: kotlin/Int)
 
+  // field: classValWithAnnotation:Ljava/lang/String;
+  // getter: getClassValWithAnnotation()Ljava/lang/String;
+  // synthetic method for annotations: getClassValWithAnnotation$annotations()V
+  public final val classValWithAnnotation: kotlin/String /* = ... */
+    public final get
+
+  // field: classValWithGetterAnnotation:Ljava/lang/String;
+  // getter: getClassValWithGetterAnnotation()Ljava/lang/String;
+  public final val classValWithGetterAnnotation: kotlin/String /* = ... */
+    public final /* non-default */ get
+
+  // field: classVarWithAnnotation:Ljava/lang/String;
+  // getter: getClassVarWithAnnotation()Ljava/lang/String;
+  // setter: setClassVarWithAnnotation(Ljava/lang/String;)V
+  // synthetic method for annotations: getClassVarWithAnnotation$annotations()V
+  public final var classVarWithAnnotation: kotlin/String
+    public final get
+    public final set
+
+  // field: classVarWithGetterAnnotation:Ljava/lang/String;
+  // getter: getClassVarWithGetterAnnotation()Ljava/lang/String;
+  // setter: setClassVarWithGetterAnnotation(Ljava/lang/String;)V
+  public final var classVarWithGetterAnnotation: kotlin/String
+    public final /* non-default */ get
+    public final set
+
+  // field: classVarWithInternal:Ljava/lang/String;
+  // getter: getClassVarWithInternal$test_module()Ljava/lang/String;
+  // setter: setClassVarWithInternal$test_module(Ljava/lang/String;)V
+  internal final var classVarWithInternal: kotlin/String
+    internal final get
+    internal final set
+
+  // field: classVarWithSetterAnnotation:Ljava/lang/String;
+  // getter: getClassVarWithSetterAnnotation()Ljava/lang/String;
+  // setter: setClassVarWithSetterAnnotation(Ljava/lang/String;)V
+  public final var classVarWithSetterAnnotation: kotlin/String
+    public final get
+    public final /* non-default */ set(value: kotlin/String)
+
+  // field: classVarWithSetterInternal:Ljava/lang/String;
+  // getter: getClassVarWithSetterInternal()Ljava/lang/String;
+  // setter: setClassVarWithSetterInternal$test_module(Ljava/lang/String;)V
+  public final var classVarWithSetterInternal: kotlin/String
+    public final get
+    internal final /* non-default */ set(value: kotlin/String)
+
   // field: constructorParam:Ljava/lang/String;
   // getter: getConstructorParam()Ljava/lang/String;
   public final val constructorParam: kotlin/String
     public final get
+
+  // field: constructorValWithAnnotation:Ljava/lang/String;
+  // getter: getConstructorValWithAnnotation()Ljava/lang/String;
+  public final val constructorValWithAnnotation: kotlin/String
+    public final get
+
+  // field: constructorValWithGetterAnnotation:Ljava/lang/String;
+  // getter: getConstructorValWithGetterAnnotation()Ljava/lang/String;
+  public final val constructorValWithGetterAnnotation: kotlin/String
+    public final /* non-default */ get
+
+  // field: constructorValWithInternal:Ljava/lang/String;
+  // getter: getConstructorValWithInternal$test_module()Ljava/lang/String;
+  internal final val constructorValWithInternal: kotlin/String
+    internal final get
+
+  // field: constructorVarWithAnnotation:Ljava/lang/String;
+  // getter: getConstructorVarWithAnnotation()Ljava/lang/String;
+  // setter: setConstructorVarWithAnnotation(Ljava/lang/String;)V
+  public final var constructorVarWithAnnotation: kotlin/String
+    public final get
+    public final set
+
+  // field: constructorVarWithGetterAnnotation:Ljava/lang/String;
+  // getter: getConstructorVarWithGetterAnnotation()Ljava/lang/String;
+  // setter: setConstructorVarWithGetterAnnotation(Ljava/lang/String;)V
+  public final var constructorVarWithGetterAnnotation: kotlin/String
+    public final /* non-default */ get
+    public final set
+
+  // field: constructorVarWithSetterAnnotation:Ljava/lang/String;
+  // getter: getConstructorVarWithSetterAnnotation()Ljava/lang/String;
+  // setter: setConstructorVarWithSetterAnnotation(Ljava/lang/String;)V
+  public final var constructorVarWithSetterAnnotation: kotlin/String
+    public final get
+    public final /* non-default */ set(value: kotlin/String)
 
   // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;
   // synthetic method for delegate: getDelegated$delegate(LC;Ljava/lang/Number;)Ljava/lang/Object;

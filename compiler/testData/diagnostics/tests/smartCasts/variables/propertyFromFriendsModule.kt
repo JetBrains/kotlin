@@ -1,23 +1,9 @@
-// RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
+// RUN_PIPELINE_TILL: FRONTEND
 
-// MODULE: transitive
-// FILE: Transitive.kt
+// MODULE: direct
+// FILE: Direct.kt
 annotation class Ann
 
-class Transitive(
-    val finalConstructorProperty: Any = "",
-    @get:Ann val annotatedConstructorProperty: Any = "",
-) {
-    val finalClassProperty: Any = ""
-
-    @get:Ann
-    val annotatedClassProperty: Any = ""
-}
-
-
-// MODULE: direct()()(transitive)
-// FILE: Direct.kt
 class Direct(
     val finalConstructorProperty: Any = "",
     @get:Ann val annotatedConstructorProperty: Any = "",
@@ -28,7 +14,7 @@ class Direct(
     val annotatedClassProperty: Any = ""
 }
 
-// MODULE: app()()(direct)
+// MODULE: app()(direct)
 class Same(
     val finalConstructorProperty: Any = "",
     @get:Ann val annotatedConstructorProperty: Any = "",
@@ -39,17 +25,13 @@ class Same(
     val annotatedClassProperty: Any = ""
 }
 
-fun isCast(s: Same, d: Direct, t: Transitive) {
+fun isCast(s: Same, d: Direct) {
     if (s.finalConstructorProperty is String) {
         <!DEBUG_INFO_SMARTCAST!>s.finalConstructorProperty<!>.length
     }
 
     if (d.finalConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>d.finalConstructorProperty<!>.length
-    }
-
-    if (t.finalConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>t.finalConstructorProperty<!>.length
+        <!SMARTCAST_IMPOSSIBLE!>d.finalConstructorProperty<!>.length
     }
 
     if (s.annotatedConstructorProperty is String) {
@@ -57,11 +39,7 @@ fun isCast(s: Same, d: Direct, t: Transitive) {
     }
 
     if (d.annotatedConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>d.annotatedConstructorProperty<!>.length
-    }
-
-    if (t.annotatedConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>t.annotatedConstructorProperty<!>.length
+        <!SMARTCAST_IMPOSSIBLE!>d.annotatedConstructorProperty<!>.length
     }
 
     if (s.finalClassProperty is String) {
@@ -69,11 +47,7 @@ fun isCast(s: Same, d: Direct, t: Transitive) {
     }
 
     if (d.finalClassProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>d.finalClassProperty<!>.length
-    }
-
-    if (t.finalClassProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>t.finalClassProperty<!>.length
+        <!SMARTCAST_IMPOSSIBLE!>d.finalClassProperty<!>.length
     }
 
     if (s.annotatedClassProperty is String) {
@@ -83,46 +57,30 @@ fun isCast(s: Same, d: Direct, t: Transitive) {
     if (d.annotatedClassProperty is String) {
         <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
     }
-
-    if (t.annotatedClassProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>t.annotatedClassProperty<!>.length
-    }
 }
 
-fun asCast(s: Same, d: Direct, t: Transitive) {
+fun asCast(s: Same, d: Direct) {
     s.finalConstructorProperty as String
     <!DEBUG_INFO_SMARTCAST!>s.finalConstructorProperty<!>.length
 
     d.finalConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>d.finalConstructorProperty<!>.length
-
-    t.finalConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>t.finalConstructorProperty<!>.length
+    <!SMARTCAST_IMPOSSIBLE!>d.finalConstructorProperty<!>.length
 
     s.annotatedConstructorProperty as String
     <!DEBUG_INFO_SMARTCAST!>s.annotatedConstructorProperty<!>.length
 
     d.annotatedConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>d.annotatedConstructorProperty<!>.length
-
-    t.annotatedConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>t.annotatedConstructorProperty<!>.length
+    <!SMARTCAST_IMPOSSIBLE!>d.annotatedConstructorProperty<!>.length
 
     s.finalClassProperty as String
     <!DEBUG_INFO_SMARTCAST!>s.finalClassProperty<!>.length
 
     d.finalClassProperty as String
-    <!DEBUG_INFO_SMARTCAST!>d.finalClassProperty<!>.length
-
-    t.finalClassProperty as String
-    <!DEBUG_INFO_SMARTCAST!>t.finalClassProperty<!>.length
+    <!SMARTCAST_IMPOSSIBLE!>d.finalClassProperty<!>.length
 
     s.annotatedClassProperty as String
     <!SMARTCAST_IMPOSSIBLE!>s.annotatedClassProperty<!>.length
 
     d.annotatedClassProperty as String
     <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
-
-    t.annotatedClassProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>t.annotatedClassProperty<!>.length
 }
