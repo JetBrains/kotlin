@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -401,17 +400,16 @@ fun ConeKotlinType.toFirResolvedTypeRef(
     source: KtSourceElement? = null,
     delegatedTypeRef: FirTypeRef? = null
 ): FirResolvedTypeRef {
-    return if (this is ConeErrorType) {
-        buildErrorTypeRef {
+    return when (val lowerBoundIfFlexible = lowerBoundIfFlexible()) {
+        is ConeErrorType -> buildErrorTypeRef {
             this.source = source
-            diagnostic = this@toFirResolvedTypeRef.diagnostic
-            coneType = this@toFirResolvedTypeRef
+            this.diagnostic = lowerBoundIfFlexible.diagnostic
+            this.coneType = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
-    } else {
-        buildResolvedTypeRef {
+        else -> buildResolvedTypeRef {
             this.source = source
-            coneType = this@toFirResolvedTypeRef
+            this.coneType = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
     }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
@@ -56,9 +55,7 @@ internal class KaFirClassErrorType(
         get() = withValidityAssertion {
             val coneType = coneType
             if (coneType is ConeErrorType) {
-                val diagnostic = coneType.diagnostic as? ConeDiagnosticWithNullability
-                    ?: return@withValidityAssertion KaTypeNullability.UNKNOWN
-                KaTypeNullability.create(diagnostic.isNullable)
+                coneType.nullable?.let(KaTypeNullability::create) ?: KaTypeNullability.UNKNOWN
             } else {
                 KaTypeNullability.create(coneType.isMarkedNullable)
             }
@@ -114,7 +111,8 @@ private class KaFirClassErrorTypePointer(
                 isUninferredParameter = false,
                 delegatedType = null,
                 typeArguments = coneType.typeArguments,
-                attributes = coneType.attributes
+                attributes = coneType.attributes,
+                nullable = coneType.isMarkedNullable,
             )
             coneErrorType.createPointer(builder)
         }

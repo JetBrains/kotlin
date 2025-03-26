@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
@@ -36,9 +35,7 @@ internal class KaFirErrorType(
 
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
-            val diagnostic = coneType.diagnostic as? ConeDiagnosticWithNullability
-                ?: return@withValidityAssertion KaTypeNullability.UNKNOWN
-            KaTypeNullability.create(diagnostic.isNullable)
+            coneType.nullable?.let(KaTypeNullability::create) ?: KaTypeNullability.UNKNOWN
         }
 
     @KaNonPublicApi

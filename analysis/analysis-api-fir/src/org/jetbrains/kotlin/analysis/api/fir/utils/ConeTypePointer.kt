@@ -258,6 +258,7 @@ private class ConeErrorTypePointer(coneType: ConeErrorType, builder: KaSymbolByF
     private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder)
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder) }
+    private val nullable = coneType.nullable
 
     override fun restore(session: KaFirSession): ConeErrorType? {
         val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
@@ -268,7 +269,8 @@ private class ConeErrorTypePointer(coneType: ConeErrorType, builder: KaSymbolByF
             diagnostic = coneDiagnostic,
             isUninferredParameter = isUninferredParameter,
             delegatedType = delegatedConeType,
-            typeArguments = typeArguments.toTypedArray()
+            typeArguments = typeArguments.toTypedArray(),
+            nullable = nullable,
         )
     }
 }

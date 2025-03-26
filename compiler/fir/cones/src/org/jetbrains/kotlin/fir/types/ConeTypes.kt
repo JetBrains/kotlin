@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
@@ -73,11 +72,12 @@ class ConeErrorType(
     delegatedType: ConeKotlinType? = null,
     override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
-) : ConeClassLikeType() {
+    val nullable: Boolean? = null,
     override val lookupTag: ConeClassLikeErrorLookupTag =
-        ConeClassLikeErrorLookupTag(delegatedType?.classId ?: ClassId.fromString("<error>"), diagnostic, delegatedType),
+        ConeClassLikeErrorLookupTag(delegatedType?.classId ?: ClassId.fromString("<error>"), diagnostic, delegatedType)
+) : ConeClassLikeType() {
     override val isMarkedNullable: Boolean
-        get() = (diagnostic as? ConeDiagnosticWithNullability)?.isNullable == true
+        get() = nullable == true
     val diagnostic: ConeDiagnostic get() = lookupTag.diagnostic
     val delegatedType: ConeKotlinType? get() = lookupTag.delegatedType
 

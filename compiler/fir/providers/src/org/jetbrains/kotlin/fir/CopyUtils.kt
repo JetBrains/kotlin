@@ -44,23 +44,9 @@ fun FirTypeRef.resolvedTypeFromPrototype(
     fallbackSource: KtSourceElement?,
 ): FirResolvedTypeRef {
     if (this is FirResolvedTypeRef) {
-        return withReplacedSourceAndType(this@resolvedTypeFromPrototype.source ?: fallbackSource, type)
+        return withReplacedSourceAndType(source ?: fallbackSource, type)
     }
-    return if (type is ConeErrorType) {
-        buildErrorTypeRef {
-            source = this@resolvedTypeFromPrototype.source ?: fallbackSource
-            this.coneType = type
-            diagnostic = type.diagnostic
-            annotations += this@resolvedTypeFromPrototype.annotations
-        }
-    } else {
-        buildResolvedTypeRef {
-            source = this@resolvedTypeFromPrototype.source ?: fallbackSource
-            this.coneType = type
-            delegatedTypeRef = this@resolvedTypeFromPrototype as? FirUserTypeRef
-            annotations += this@resolvedTypeFromPrototype.annotations
-        }
-    }
+    return type.toFirResolvedTypeRef(source ?: fallbackSource, this as? FirUserTypeRef)
 }
 
 /**

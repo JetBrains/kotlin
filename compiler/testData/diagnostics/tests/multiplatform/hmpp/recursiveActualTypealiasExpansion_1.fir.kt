@@ -14,6 +14,6 @@ actual typealias A = B
 actual typealias B = <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!>
 
 // MODULE: main()()(intermediate2)
-actual fun <!ACTUAL_WITHOUT_EXPECT!>commonFun<!>(a: A) {}
+actual fun commonFun(a: A) {}
 
 fun test() { <!UNRESOLVED_REFERENCE!>A<!>(); <!UNRESOLVED_REFERENCE!>B<!>(); }

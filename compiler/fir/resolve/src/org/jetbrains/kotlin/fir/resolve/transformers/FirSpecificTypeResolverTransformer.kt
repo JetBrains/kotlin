@@ -176,10 +176,7 @@ class FirSpecificTypeResolverTransformer(
 
             this.diagnostic = when {
                 diagnostic is ConeUnresolvedTypeQualifierError -> {
-                    ConeUnresolvedTypeQualifierError(
-                        smallestUnresolvablePrefix(diagnostic.qualifiers, partiallyResolvedTypeRef),
-                        diagnostic.isNullable
-                    )
+                    ConeUnresolvedTypeQualifierError(smallestUnresolvablePrefix(diagnostic.qualifiers, partiallyResolvedTypeRef))
                 }
                 diagnostic is ConeVisibilityError && typeRef is FirUserTypeRef -> {
                     ConeTypeVisibilityError(diagnostic.symbol, smallestUnresolvablePrefix(typeRef.qualifier, partiallyResolvedTypeRef))
