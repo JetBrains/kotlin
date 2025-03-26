@@ -536,7 +536,6 @@ sealed class IdSignature {
      *
      * @property id An ordered index of the declaration inside the file.
      *   **Important**: For fake overrides, this is the hash of the mangle name.
-     *   TODO: Consider using specialized signatures for local fake overrides, KT-72296
      */
     class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = false
