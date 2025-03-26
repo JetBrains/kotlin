@@ -190,6 +190,18 @@ internal class FileStructure private constructor(
         return structureElements.toList().asReversed()
     }
 
+    private fun createRootStructure(): RootStructureElement {
+        val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+        firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
+        return RootStructureElement(firFile, moduleComponents)
+    }
+
+    private fun createCodeFragmentStructure(): DeclarationStructureElement {
+        val firCodeFragment = firFile.codeFragment
+        firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return DeclarationStructureElement(firFile, firCodeFragment, moduleComponents)
+    }
+
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
         val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFile, firProvider)
         return FileElementFactory.createFileStructureElement(
@@ -209,24 +221,11 @@ internal class FileStructure private constructor(
         return DeclarationStructureElement(firFile, firDanglingModifierList, moduleComponents)
     }
 
-    private fun createStructureElement(container: KtElement): FileStructureElement = when {
-        container is KtCodeFragment -> {
-            val firCodeFragment = firFile.codeFragment
-            firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
-            DeclarationStructureElement(firFile, firCodeFragment, moduleComponents)
-        }
-
-        container is KtFile -> {
-            val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
-
-            RootStructureElement(firFile, moduleComponents)
-        }
-
-        container is KtDeclaration -> createDeclarationStructure(container)
-        container is KtModifierList -> createDanglingModifierListStructure(container)
-
+    private fun createStructureElement(container: KtElement): FileStructureElement = when (container) {
+        is KtCodeFragment -> createCodeFragmentStructure()
+        is KtFile -> createRootStructure()
+        is KtDeclaration -> createDeclarationStructure(container)
+        is KtModifierList -> createDanglingModifierListStructure(container)
         else -> errorWithAttachment("Invalid container ${container::class}") {
             withPsiEntry("container", container)
         }
