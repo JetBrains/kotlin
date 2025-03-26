@@ -106,9 +106,21 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotationOnEnumEntry.kt")
+    public void testAnnotationOnEnumEntry() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnEnumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnReturnType.kt")
     public void testAnnotationOnReturnType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationReferenceOnEnumEntry.kt")
+    public void testAnnotationReferenceOnEnumEntry() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationReferenceOnEnumEntry.kt");
     }
 
     @Test
