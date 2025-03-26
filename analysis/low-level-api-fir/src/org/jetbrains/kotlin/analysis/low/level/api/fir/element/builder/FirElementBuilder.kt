@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
@@ -108,15 +109,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         }
 
         val nonLocalContainer = element.getNonLocalContainingOrThisElement()
-        val nonLocalDeclaration = nonLocalContainer as? KtDeclaration
-
-        // Optimizations for specific cases
-        getFirForElementInsideAnnotations(element, nonLocalDeclaration)?.let { return it }
-        if (nonLocalDeclaration != null) {
-            getFirForElementInsideTypes(element, nonLocalDeclaration)?.let { return it }
-        } else {
-            getFirForElementInsideFileHeader(element)?.let { return it }
-        }
+        tryGetFirWithoutBodyResolve(nonLocalContainer, element)?.let { return it }
 
         val psi = getPsiAsFirElementSource(element) ?: return null
         val firFile = element.containingKtFile
@@ -125,6 +118,37 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         val structureElement = fileStructure.getStructureElementFor(element, nonLocalContainer)
         val mappings = structureElement.mappings
         return mappings.getFir(psi)
+    }
+
+    /**
+     * Provides a fast path for well-known psi-to-fir mappings to avoid [FirResolvePhase.BODY_RESOLVE] there it is possible.
+     *
+     * This optimization makes sense only for [nonLocalContainer]s which might have such expensive resolution.
+     * For instance, there is no need to avoid [FirResolvePhase.BODY_RESOLVE] for dangling modifiers as they don't
+     * have bodies, so effectively it is the same as [FirResolvePhase.ANNOTATION_ARGUMENTS].
+     *
+     * Declaration containers ([KtFile], [KtScript], [KtClassOrObject]) are resolved till [FirResolvePhase.ANNOTATION_ARGUMENTS]
+     * by default in [FileStructure.getStructureElementFor],
+     * so there is no need to use optimized search via [getFirForElementInsideAnnotations]/[getFirForElementInsideTypes]
+     * as this is redundant work and effectively duplicate the logic of [KtToFirMapping].
+     *
+     * [KtClassOrObject] is not excluded yet as in some cases it might trigger additional resolution.
+     * For instance, currently it resolves generated members (fake constructor, data class members, enum members, etc.).
+     *
+     * [KtEnumEntry] is not a declaration container as it is treated as callable in K2.
+     *
+     * @see getFirForElementInsideFileHeader
+     * @see getFirForElementInsideAnnotations
+     * @see getFirForElementInsideTypes
+     */
+    private fun tryGetFirWithoutBodyResolve(nonLocalContainer: KtElement?, element: KtElement): FirElement? = when (nonLocalContainer) {
+        is KtScript -> null
+        is KtFile -> getFirForElementInsideFileHeader(element)
+
+        is KtDeclaration -> getFirForElementInsideAnnotations(element, nonLocalContainer)
+            ?: getFirForElementInsideTypes(element, nonLocalContainer)
+
+        else -> null
     }
 
     private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
@@ -168,7 +192,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
     private fun getFirForElementInsideAnnotations(
         element: KtElement,
-        nonLocalDeclaration: KtDeclaration?, // `null` means it is a file annotation
+        nonLocalDeclaration: KtDeclaration,
     ): FirElement? = getFirForNonBodyElement(
         element = element,
         nonLocalDeclaration = nonLocalDeclaration,
