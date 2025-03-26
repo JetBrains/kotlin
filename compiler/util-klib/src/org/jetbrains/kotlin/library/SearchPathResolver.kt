@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-@Deprecated("Use KOTLIN_NATIVE_STDLIB_NAME, KOTLIN_JS_STDLIB_NAME or KOTLIN_WASM_STDLIB_NAME instead", level = DeprecationLevel.HIDDEN)
-const val KOTLIN_STDLIB_NAME: String = "stdlib"
-
 const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
 const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
 const val KOTLIN_WASM_STDLIB_NAME: String = "kotlin"
@@ -294,6 +291,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     @Deprecated(
         "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' and 'localKotlinDir' value parameters",
         ReplaceWith("KotlinLibraryProperResolverWithAttributes<L>(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)"),
+        DeprecationLevel.ERROR
     )
     constructor(
         @Suppress("UNUSED_PARAMETER") repositories: List<String>,
