@@ -36,7 +36,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApi
          * This directive has to be in sync with [AbstractRawFirBuilderLazyBodiesByStubTest]
          * as [AbstractLLAnnotationArgumentsCalculatorTest] is supposed to work as an extension to the stub test.
          */
-        val IGNORE_TREE_ACCESS by directive("Disables the test")
+        val IGNORE_TREE_ACCESS by stringDirective("Disables the test. The YT issue number has to be provided")
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
