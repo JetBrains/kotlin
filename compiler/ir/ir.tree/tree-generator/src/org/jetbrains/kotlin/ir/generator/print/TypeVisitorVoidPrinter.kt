@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.typeVisitorType
 
-internal class TypeVisitorVoidPrinter(
+internal open class TypeVisitorVoidPrinter(
     printer: ImportCollectingPrinter,
     visitorType: ClassRef<*>,
     rootElement: Element,
@@ -67,13 +68,15 @@ internal class TypeVisitorVoidPrinter(
         if (element.parentInVisitor == null && !element.isRootElement) return
         val irTypeFields = element.getFieldsWithIrTypeType()
         printer.run {
-            println()
-            printVisitMethodDeclaration(element, hasDataParameter = true, modality = Modality.FINAL, override = true)
-            printBlock {
-                println(element.visitFunctionName, "(", element.visitorParameterName, ")")
+            if (shouldPrintVisitWithDataMethod()) {
+                println()
+                printVisitMethodDeclaration(element, hasDataParameter = true, modality = Modality.FINAL, override = true)
+                printBlock {
+                    println(element.visitFunctionName, "(", element.visitorParameterName, ")")
+                }
             }
             println()
-            printVisitMethodDeclaration(element, hasDataParameter = false,  modality = Modality.OPEN, override = false)
+            printVisitVoidMethodDeclaration(element)
             printBlock {
                 printTypeRemappings(
                     element,
@@ -85,8 +88,14 @@ internal class TypeVisitorVoidPrinter(
                 }
                 if (element.isRootElement) {
                     println(element.visitorParameterName, ".acceptChildrenVoid(this)")
+                    addImport(ArbitraryImportable("org.jetbrains.kotlin.ir.visitors", "acceptChildrenVoid"))
                 }
             }
         }
+    }
+
+    protected open fun shouldPrintVisitWithDataMethod(): Boolean = true
+    protected open fun printVisitVoidMethodDeclaration(element: Element): Unit = with(printer) {
+        printVisitMethodDeclaration(element, hasDataParameter = false, modality = Modality.OPEN, override = false)
     }
 }

@@ -19,6 +19,11 @@ fun symbolRemapperMethodName(symbolClass: Symbol, role: SymbolFieldRole): String
     return "get${role.name.lowercase().capitalizeAsciiOnly()}$elementName"
 }
 
+fun symbolVisitorMethodName(symbolClass: Symbol, role: SymbolFieldRole): String {
+    val elementName = symbolClass.name.removeSuffix("Symbol")
+    return "visit${role.name.lowercase().capitalizeAsciiOnly()}$elementName"
+}
+
 data class FieldWithSymbol(
     val symbolType: Symbol,
     val fieldName: String,

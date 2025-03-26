@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.withIndent
 
 internal open class TypeVisitorPrinter(
@@ -107,15 +108,20 @@ internal open class TypeVisitorPrinter(
         println()
         println()
         printVisitTypeRecursivelyKDoc()
-        printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = true, modality = Modality.OPEN, override = false)
+        printVisitTypeRecursively()
+    }
+
+    protected fun ImportCollectingPrinter.printVisitTypeRecursively(hasDataParameter: Boolean = true) {
+        printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter, modality = Modality.OPEN, override = false)
         printBlock {
+            val data = runIf(hasDataParameter) { ", data" } ?: ""
             printlnMultiLine(
                 """
-                visitType(container, type, data)
+                visitType(container, type$data)
                 if (type is ${irSimpleTypeType.render()}) {
                     type.arguments.forEach {
                         if (it is ${irTypeProjectionType.render()}) {
-                            visitTypeRecursively(container, it.type, data)
+                            visitTypeRecursively(container, it.type$data)
                         }
                     }
                 }
@@ -124,12 +130,22 @@ internal open class TypeVisitorPrinter(
         }
     }
 
-    protected open fun ImportCollectingPrinter.printTypeRemappings(
+    protected fun ImportCollectingPrinter.printTypeRemappings(
         element: Element,
         irTypeFields: List<Field>,
         hasDataParameter: Boolean,
         transformTypes: Boolean = false,
     ) {
+        printTypeRemappingsOverridable(this, element, irTypeFields, hasDataParameter, transformTypes)
+    }
+
+    protected open fun printTypeRemappingsOverridable(
+        printer: ImportCollectingPrinter,
+        element: Element,
+        irTypeFields: List<Field>,
+        hasDataParameter: Boolean,
+        transformTypes: Boolean = false,
+    ): Unit = with(printer) {
         val visitTypeMethodName = if (transformTypes) "transformTypeRecursively" else "visitTypeRecursively"
         val visitorParam = element.visitorParameterName
         fun addVisitTypeStatement(field: Field) {
