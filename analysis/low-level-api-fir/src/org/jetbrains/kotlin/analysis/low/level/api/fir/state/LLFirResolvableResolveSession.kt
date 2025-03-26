@@ -88,29 +88,26 @@ internal class LLFirResolvableResolveSession(
     private fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
         val targetDeclaration = ktDeclaration.originalDeclaration ?: ktDeclaration
         val targetModule = getModule(targetDeclaration)
-        return findSourceFirDeclarationByDeclaration(targetDeclaration, targetModule)
-    }
 
-    private fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
-        require(getModuleResolutionStrategy(module) == LLModuleResolutionStrategy.LAZY) {
-            "Declaration should be resolvable module, instead it had ${module::class}"
+        require(getModuleResolutionStrategy(targetModule) == LLModuleResolutionStrategy.LAZY) {
+            "Declaration should be resolvable module, instead it had ${targetModule::class}"
         }
 
-        val nonLocalContainer = ktDeclaration.getNonLocalContainingOrThisElement(codeFragmentAware = true)
+        val nonLocalContainer = targetDeclaration.getNonLocalContainingOrThisElement(codeFragmentAware = true)
             ?: errorWithAttachment("Declaration should have non-local container") {
-                withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
-                withEntry("module", module) { it.moduleDescription }
+                withPsiEntry("ktDeclaration", targetDeclaration, ::getModule)
+                withEntry("module", targetModule) { it.moduleDescription }
             }
 
-        if ((nonLocalContainer as? KtDeclaration) == ktDeclaration) {
-            val session = sessionProvider.getResolvableSession(module)
-            return nonLocalContainer.findSourceNonLocalFirDeclaration(
+        return if ((nonLocalContainer as? KtDeclaration) == targetDeclaration) {
+            val session = sessionProvider.getResolvableSession(targetModule)
+            nonLocalContainer.findSourceNonLocalFirDeclaration(
                 firFileBuilder = session.moduleComponents.firFileBuilder,
                 provider = session.firProvider,
             ).symbol
+        } else {
+            findDeclarationInSourceViaResolve(targetDeclaration)
         }
-
-        return findDeclarationInSourceViaResolve(ktDeclaration)
     }
 
     private fun getModuleResolutionStrategy(module: KaModule): LLModuleResolutionStrategy {
