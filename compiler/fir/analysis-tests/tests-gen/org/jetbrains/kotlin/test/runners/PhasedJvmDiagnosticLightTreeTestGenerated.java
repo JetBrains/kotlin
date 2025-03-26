@@ -47111,6 +47111,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("kt37456.kt")
+      public void testKt37456() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt37456.kt");
+      }
+
+      @Test
       @TestMetadata("kt38179.kt")
       public void testKt38179() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt38179.kt");
