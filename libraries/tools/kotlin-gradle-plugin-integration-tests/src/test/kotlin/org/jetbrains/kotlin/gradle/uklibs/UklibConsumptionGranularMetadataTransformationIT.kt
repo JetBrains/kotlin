@@ -30,6 +30,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
         val subsetProducer = project("empty", version) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
+                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     iosArm64()
                     iosX64()

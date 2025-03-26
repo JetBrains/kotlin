@@ -109,7 +109,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     ),
                     configuration = "jvmApiElements-published",
                 ),
-                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
                             "artifactType" to "jar",
@@ -145,7 +145,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     ),
                     configuration = "metadataApiElements",
                 ),
-                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         // This is a stub in stdlib publication for native
                     ),
@@ -212,7 +212,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     ),
                     configuration = "linuxArm64ApiElements-published",
                 ),
-                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                     ),
                     configuration = "nativeApiElements",
