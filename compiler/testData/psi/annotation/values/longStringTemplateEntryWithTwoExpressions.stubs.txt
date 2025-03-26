@@ -13,6 +13,6 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
-              LONG_STRING_TEMPLATE_ENTRY[text=${CONSTANT ${}}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=true, text=${CONSTANT ${}}]
                 REFERENCE_EXPRESSION[referencedName=CONSTANT]
     VALUE_PARAMETER_LIST

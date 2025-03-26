@@ -186,3 +186,17 @@ interface KotlinStringInterpolationPrefixStub : StubElement<KtStringInterpolatio
      */
     val dollarSignCount: Int
 }
+
+interface KotlinBlockStringTemplateEntryStub : KotlinPlaceHolderWithTextStub<KtBlockStringTemplateEntry> {
+    /**
+     * Whether the entry has more than one expression which is illegal code.
+     *
+     * ### Examples
+     *
+     * ```kotlin
+     * @InvalidAnnotation("${CONSTANT ${}}")
+     * fun foo() {}
+     * ```
+     */
+    val hasMultipleExpressions: Boolean
+}

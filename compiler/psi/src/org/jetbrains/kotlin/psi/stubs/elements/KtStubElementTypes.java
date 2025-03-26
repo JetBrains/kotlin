@@ -162,8 +162,8 @@ public interface KtStubElementTypes {
             COLLECTION_LITERAL_EXPRESSION
     );
 
-    KtPlaceHolderWithTextStubElementType<KtBlockStringTemplateEntry> LONG_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
+    KtBlockStringTemplateEntryElementType LONG_STRING_TEMPLATE_ENTRY =
+            new KtBlockStringTemplateEntryElementType("LONG_STRING_TEMPLATE_ENTRY");
 
     KtPlaceHolderWithTextStubElementType<KtSimpleNameStringTemplateEntry> SHORT_STRING_TEMPLATE_ENTRY =
             new KtPlaceHolderWithTextStubElementType<>("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);

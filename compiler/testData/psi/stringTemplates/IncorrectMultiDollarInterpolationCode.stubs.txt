@@ -149,7 +149,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
-              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -159,7 +159,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
-              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -169,7 +169,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
-              LONG_STRING_TEMPLATE_ENTRY[text=$${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -179,7 +179,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
-              LONG_STRING_TEMPLATE_ENTRY[text=$$$${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -189,7 +189,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
-              LONG_STRING_TEMPLATE_ENTRY[text=$$$$$$$${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$$$$$${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -306,7 +306,7 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
-              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -316,7 +316,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
-              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -326,7 +326,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
-              LONG_STRING_TEMPLATE_ENTRY[text=$${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -336,7 +336,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
-              LONG_STRING_TEMPLATE_ENTRY[text=$$$${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$${0 + runTimeConstant}]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -346,7 +346,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
-              LONG_STRING_TEMPLATE_ENTRY[text=$$$$$$$${0 + runTimeConstant}]
+              LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$$$$$${0 + runTimeConstant}]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer01, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer01]
     MODIFIER_LIST[const]

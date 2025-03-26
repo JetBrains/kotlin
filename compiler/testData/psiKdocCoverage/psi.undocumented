@@ -259,7 +259,7 @@ psi/KtBlockExpression.java:KtBlockExpression:@SuppressWarnings({"unused", "Metho
 psi/KtBlockExpression.java:KtBlockExpression:KtBlockExpression(CharSequence)
 psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry
 psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry:KtBlockStringTemplateEntry(ASTNode)
-psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry:KtBlockStringTemplateEntry(KotlinPlaceHolderWithTextStub<KtBlockStringTemplateEntry>)
+psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry:KtBlockStringTemplateEntry(KotlinBlockStringTemplateEntryStub)
 psi/KtBreakExpression.java:KtBreakExpression
 psi/KtBreakExpression.java:KtBreakExpression:KtBreakExpression(ASTNode)
 psi/KtCallElement.java:KtCallElement
@@ -1897,6 +1897,7 @@ psi/stubs/StubInterfaces.kt:KotlinAnnotationUseSiteTargetStub
 psi/stubs/StubInterfaces.kt:KotlinAnnotationUseSiteTargetStub:getUseSiteTarget()
 psi/stubs/StubInterfaces.kt:KotlinBackingFieldStub
 psi/stubs/StubInterfaces.kt:KotlinBackingFieldStub:hasInitializer()
+psi/stubs/StubInterfaces.kt:KotlinBlockStringTemplateEntryStub
 psi/stubs/StubInterfaces.kt:KotlinCallableStubBase
 psi/stubs/StubInterfaces.kt:KotlinCallableStubBase:isExtension()
 psi/stubs/StubInterfaces.kt:KotlinCallableStubBase:isTopLevel()
@@ -1989,6 +1990,7 @@ psi/stubs/elements/KtAnnotationEntryElementType.java:KtAnnotationEntryElementTyp
 psi/stubs/elements/KtAnnotationUseSiteTargetElementType.kt:KtAnnotationUseSiteTargetElementType
 psi/stubs/elements/KtBackingFieldElementType.java:KtBackingFieldElementType
 psi/stubs/elements/KtBackingFieldElementType.java:KtBackingFieldElementType:KtBackingFieldElementType(String)
+psi/stubs/elements/KtBlockStringTemplateEntryElementType.kt:KtBlockStringTemplateEntryElementType
 psi/stubs/elements/KtClassElementType.java:KtClassElementType
 psi/stubs/elements/KtClassElementType.java:KtClassElementType:KtClassElementType(String)
 psi/stubs/elements/KtClassElementType.java:KtClassElementType:static getStubType(boolean)
@@ -2141,6 +2143,7 @@ psi/stubs/impl/KotlinAnnotationEntryStubImpl.kt:KotlinAnnotationEntryStubImpl
 psi/stubs/impl/KotlinAnnotationUseSiteStubImpl.kt:KotlinAnnotationUseSiteTargetStubImpl
 psi/stubs/impl/KotlinBackingFieldStubImpl.java:KotlinBackingFieldStubImpl
 psi/stubs/impl/KotlinBackingFieldStubImpl.java:KotlinBackingFieldStubImpl:KotlinBackingFieldStubImpl(StubElement<?>, boolean)
+psi/stubs/impl/KotlinBlockStringTemplateEntryStubImpl.kt:KotlinBlockStringTemplateEntryStubImpl
 psi/stubs/impl/KotlinClassLiteralExpressionStubImpl.kt:KotlinClassLiteralExpressionStubImpl
 psi/stubs/impl/KotlinClassStubImpl.kt:KotlinClassStubImpl
 psi/stubs/impl/KotlinCollectionLiteralExpressionStubImpl.kt:KotlinCollectionLiteralExpressionStubImpl
