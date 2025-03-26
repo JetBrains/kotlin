@@ -219,43 +219,56 @@ internal class ClassDeclarationStructureElement(
         )
     ),
 ) {
+    /**
+     * The recorder is supposed to visit only elements that belong to the [class][firClass].
+     * For instance, it should visit type parameters, annotations, but not regular methods.
+     */
     class Recorder(private val firClass: FirRegularClass) : FirElementsRecorder() {
-        override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
-        }
-
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
-        }
-
-        override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
-            if (constructor.isImplicitConstructor) {
-                DeclarationStructureElement.Recorder.visitConstructor(constructor, data)
-            }
-        }
-
-        override fun visitField(field: FirField, data: MutableMap<KtElement, FirElement>) {
-            if (field.source?.kind == KtFakeSourceElementKind.ClassDelegationField) {
-                DeclarationStructureElement.Recorder.visitField(field, data)
-            }
-        }
-
-        override fun visitErrorPrimaryConstructor(
-            errorPrimaryConstructor: FirErrorPrimaryConstructor,
-            data: MutableMap<KtElement, FirElement>,
-        ) = visitConstructor(errorPrimaryConstructor, data)
-
-        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MutableMap<KtElement, FirElement>) {
-        }
+        private val declarationsToIgnore = firClass.declarations.toSet()
 
         override fun visitRegularClass(regularClass: FirRegularClass, data: MutableMap<KtElement, FirElement>) {
+            // Entry point to the visitor
             if (regularClass === firClass) {
-                super.visitRegularClass(regularClass, data)
+                super.visitElement(regularClass, data)
             }
         }
 
-        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: MutableMap<KtElement, FirElement>) {
+        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+            val recordElementFully = if (element is FirDeclaration) {
+                element.isPartOfClassStructureElement || element !in declarationsToIgnore
+            } else {
+                true
+            }
+
+            if (recordElementFully) {
+                // A separate recorder is called here as we don't have to check
+                // conditions for nested elements – they should be recorder fully
+                element.accept(DeclarationStructureElement.Recorder, data)
+            }
         }
     }
 }
+
+/**
+ * Whether a class member declaration is a part of the [ClassDeclarationStructureElement].
+ *
+ * [FirRegularClass] stands as an anchor for synthetic declarations which it produces (like an implicit constructor).
+ * This is necessary to process diagnostics from such elements as they don't have real sources
+ * (and a dedicated [FileStructureElement] as a consequence).
+ *
+ * @see ClassDeclarationStructureElement
+ * @see ClassDiagnosticRetriever
+ */
+internal val FirDeclaration.isPartOfClassStructureElement: Boolean
+    get() = when (source?.kind) {
+        KtFakeSourceElementKind.ImplicitConstructor,
+        KtFakeSourceElementKind.DataClassGeneratedMembers,
+        KtFakeSourceElementKind.EnumGeneratedDeclaration,
+        KtFakeSourceElementKind.ClassDelegationField,
+            -> true
+
+        else -> false
+    }
 
 internal class DeclarationStructureElement(
     file: FirFile,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.isPartOfClassStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.visitScriptDependentElements
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.FirElement
@@ -76,7 +77,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
 }
 
 internal class ClassDiagnosticRetriever(
-    declaration: FirDeclaration,
+    declaration: FirRegularClass,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElementDiagnosticRetriever(
@@ -88,32 +89,20 @@ internal class ClassDiagnosticRetriever(
         return Visitor(declaration, context, components)
     }
 
+    /**
+     * The visitor is supposed to check the class itself and all declarations that belongs to its structure element.
+     *
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.ClassDeclarationStructureElement
+     */
     private class Visitor(
-        private val structureElementDeclaration: FirDeclaration,
+        structureElementDeclaration: FirDeclaration,
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
     ) : LLFirDiagnosticVisitor(context, components) {
-        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean = when {
-            declaration === structureElementDeclaration -> true
-            insideFakeDeclaration -> true
-            declaration.isImplicitConstructor -> true
-            declaration is FirValueParameter && declaration.valueParameterKind != FirValueParameterKind.Regular -> true
-            else -> false
-        }
+        private val declarationsToIgnore = (structureElementDeclaration as FirRegularClass).declarations.toSet()
 
-        private var insideFakeDeclaration: Boolean = false
-
-        override fun visitNestedElements(element: FirElement) {
-            if (element.isImplicitConstructor) {
-                insideFakeDeclaration = true
-                try {
-                    super.visitNestedElements(element)
-                } finally {
-                    insideFakeDeclaration = false
-                }
-            } else {
-                super.visitNestedElements(element)
-            }
+        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
+            return declaration !in declarationsToIgnore || declaration.isPartOfClassStructureElement
         }
     }
 
@@ -125,9 +114,6 @@ internal class ClassDiagnosticRetriever(
         }
     }
 }
-
-internal val FirElement.isImplicitConstructor: Boolean
-    get() = this is FirConstructor && source?.kind == KtFakeSourceElementKind.ImplicitConstructor
 
 internal class SingleNonLocalDeclarationDiagnosticRetriever(
     declaration: FirDeclaration,

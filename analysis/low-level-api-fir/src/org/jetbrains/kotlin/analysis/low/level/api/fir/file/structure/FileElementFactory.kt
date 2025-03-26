@@ -1,16 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassSpecificMembersResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.resolve
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.isImplicitConstructor
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -47,31 +45,7 @@ internal object FileElementFactory {
     }
 
     private fun lazyResolveClassGeneratedMembers(firClass: FirRegularClass) {
-        val classMembersToResolve = buildList {
-            for (member in firClass.declarations) {
-                when {
-                    member is FirSimpleFunction && member.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers -> {
-                        add(member)
-                    }
-
-                    member.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration -> {
-                        add(member)
-                    }
-
-                    member.isImplicitConstructor -> {
-                        add(member)
-                    }
-
-                    member is FirField && member.source?.kind == KtFakeSourceElementKind.ClassDelegationField -> {
-                        add(member)
-                    }
-
-                    member is FirDanglingModifierList -> {
-                        add(member)
-                    }
-                }
-            }
-        }
+        val classMembersToResolve = firClass.declarations.filter(FirDeclaration::isPartOfClassStructureElement)
 
         if (classMembersToResolve.isEmpty()) return
         val firClassDesignation = firClass.collectDesignation()
