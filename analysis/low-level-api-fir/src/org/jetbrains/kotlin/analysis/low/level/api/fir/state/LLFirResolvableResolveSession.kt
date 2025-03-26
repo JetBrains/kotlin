@@ -106,7 +106,7 @@ internal class LLFirResolvableResolveSession(
                 provider = session.firProvider,
             ).symbol
         } else {
-            findDeclarationInSourceViaResolve(targetDeclaration)
+            findSourceFirDeclarationViaResolve(targetDeclaration)
         }
     }
 
@@ -114,7 +114,7 @@ internal class LLFirResolvableResolveSession(
         return resolutionStrategyProvider.getKind(module)
     }
 
-    private fun findDeclarationInSourceViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
+    private fun findSourceFirDeclarationViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
         val firDeclaration = when (val fir = getOrBuildFirFor(ktDeclaration)) {
             is FirDeclaration -> fir
             is FirAnonymousFunctionExpression -> fir.anonymousFunction
