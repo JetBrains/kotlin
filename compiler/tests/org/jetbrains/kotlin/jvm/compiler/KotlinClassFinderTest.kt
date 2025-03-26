@@ -62,7 +62,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         assertNotNull(psiClass, "Psi class not found for $className")
         assertTrue(psiClass !is KtLightClass, "Kotlin light classes are not not expected")
 
-        val binaryClass = VirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(
+        val binaryClass = VirtualFileFinder.getInstance(project, module = null).findKotlinClass(
             JavaClassImpl(JavaElementSourceFactory.getInstance(project).createPsiSource(psiClass)), MetadataVersion.INSTANCE
         )
         assertNotNull(binaryClass, "No binary class for $className")

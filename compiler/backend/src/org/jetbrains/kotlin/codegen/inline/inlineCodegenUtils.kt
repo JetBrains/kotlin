@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
@@ -98,7 +99,8 @@ fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
     (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
-    return VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
+    val moduleInfo = state.module.getCapability(ModuleInfo.Capability)
+    return VirtualFileFinder.getInstance(state.project, moduleInfo).findVirtualFileWithHeader(classId)
 }
 
 internal fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {

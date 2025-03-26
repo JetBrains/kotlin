@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -59,11 +58,12 @@ abstract class VirtualFileFinder(
     }
 
     companion object SERVICE {
-        fun getInstance(project: Project, module: ModuleDescriptor): VirtualFileFinder =
-            VirtualFileFinderFactory.getInstance(project).create(project, module)
-
-        @TestOnly
-        fun getInstance(project: Project): VirtualFileFinder =
-            VirtualFileFinderFactory.getInstance(project).create(GlobalSearchScope.allScope(project))
+        fun getInstance(project: Project, module: ModuleInfo?): VirtualFileFinder {
+            val factory = VirtualFileFinderFactory.getInstance(project)
+            return if (module == null)
+                factory.create(GlobalSearchScope.allScope(project))
+            else
+                factory.create(project, module)
+        }
     }
 }

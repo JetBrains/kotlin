@@ -201,8 +201,9 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
         File(fooPackageDir, "$className.java").writeText(text)
 
-        @Suppress("UNUSED_VARIABLE") // used to implicitly initialize classpath/index in the manager
-        val coreJavaFileFinder = VirtualFileFinder.SERVICE.getInstance(project)
+        // Initialize classpath/index in the manager
+        VirtualFileFinder.getInstance(project, module = null)
+
         val coreJavaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
