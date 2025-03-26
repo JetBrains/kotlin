@@ -27,7 +27,7 @@ class MppDslLibWithTestsIt : KGPBaseTest() {
     fun testLibWithTestsKotlinDsl(gradleVersion: GradleVersion) {
         nativeProject("new-mpp-lib-with-tests", gradleVersion) {
             buildGradle.deleteIfExists()
-            projectPath.resolve("alternative.build.gradle.kts").moveTo(buildGradleKts)
+            projectPath.resolve("alternative/build.gradle.kts").moveTo(buildGradleKts)
             doTestLibWithTests()
         }
     }
