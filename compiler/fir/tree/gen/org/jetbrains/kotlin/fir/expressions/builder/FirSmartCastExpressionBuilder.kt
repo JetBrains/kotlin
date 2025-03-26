@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -29,6 +30,7 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var originalExpression: FirExpression
     lateinit var upperTypesFromSmartCast: Collection<ConeKotlinType>
+    lateinit var lowerTypesFromSmartCast: Collection<DfaType>
     lateinit var smartcastType: FirTypeRef
     var smartcastTypeWithoutNullableNothing: FirTypeRef? = null
     lateinit var smartcastStability: SmartcastStability
@@ -39,6 +41,7 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
             annotations.toMutableOrEmpty(),
             originalExpression,
             upperTypesFromSmartCast,
+            lowerTypesFromSmartCast,
             smartcastType,
             smartcastTypeWithoutNullableNothing,
             smartcastStability,
