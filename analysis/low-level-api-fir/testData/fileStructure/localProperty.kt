@@ -1,4 +1,4 @@
-fun foo() {/* DeclarationStructureElement */
+/* RootStructureElement */fun foo() {/* DeclarationStructureElement */
     var x: Int
 }
 class A {/* ClassDeclarationStructureElement */

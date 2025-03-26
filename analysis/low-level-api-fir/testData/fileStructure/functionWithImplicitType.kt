@@ -1,4 +1,4 @@
-import java.util.Collections
+/* RootStructureElement */import java.util.Collections
 
 fun <T> checkSubtype(t: T) = t/* DeclarationStructureElement */
 

@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */class X {/* ClassDeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */class X {/* ClassDeclarationStructureElement */
     var x: Int/* DeclarationStructureElement */
         get() = field
         set(value) {

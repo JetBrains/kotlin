@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */class Builder {/* ClassDeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */class Builder {/* ClassDeclarationStructureElement */
     var version: String = ""/* DeclarationStructureElement */
 
     fun execute() {/* DeclarationStructureElement */

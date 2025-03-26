@@ -1,1 +1,1 @@
-/* RootScriptStructureElement */fun foo() = 42/* DeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */fun foo() = 42/* DeclarationStructureElement */

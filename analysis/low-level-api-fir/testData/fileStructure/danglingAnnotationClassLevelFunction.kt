@@ -1,4 +1,4 @@
-class Foo {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class Foo {/* ClassDeclarationStructureElement */
     @Suppress(
     fun foo() {}/* DeclarationStructureElement */
 }

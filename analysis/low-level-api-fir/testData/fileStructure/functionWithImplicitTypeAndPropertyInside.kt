@@ -1,4 +1,4 @@
-package myPack
+package myPack/* RootStructureElement */
 
 @Target(AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)

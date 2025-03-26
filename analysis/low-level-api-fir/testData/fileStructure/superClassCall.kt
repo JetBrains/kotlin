@@ -1,4 +1,4 @@
-open class A
+/* RootStructureElement */open class A
     (init: A.() -> Unit)/* DeclarationStructureElement */
 {/* ClassDeclarationStructureElement */
     val prop: String = ""/* DeclarationStructureElement */

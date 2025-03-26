@@ -1,4 +1,4 @@
-class X {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class X {/* ClassDeclarationStructureElement */
     var x: Int/* DeclarationStructureElement */
         get() = field
         set(value) {

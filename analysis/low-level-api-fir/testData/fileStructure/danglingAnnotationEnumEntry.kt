@@ -1,4 +1,4 @@
-enum class Abc {/* ClassDeclarationStructureElement */
+/* RootStructureElement */enum class Abc {/* ClassDeclarationStructureElement */
     Entry {/* DeclarationStructureElement */
         @Suppress("") @MustBeDocumented
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,82 +19,54 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.services.TestServices
 
+/**
+ * The test visualizes the [FileStructure] structure in human-readable form
+ */
 abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val fileStructure = mainFile.getFileStructure()
         val allStructureElements = fileStructure.getAllStructureElements(mainFile)
-        val declarationToStructureElement = allStructureElements.associateBy { it.declaration.psi }
-        val elementToComment = mutableMapOf<PsiElement, String>()
-        mainFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
-            val structureElement = declarationToStructureElement[ktDeclaration] ?: return@forEachDescendantOfType
-            val comment = structureElement.createComment()
-            when (ktDeclaration) {
-                is KtClassOrObject -> {
-                    val body = ktDeclaration.body
-                    val lBrace = body?.lBrace
-                    if (lBrace != null) {
-                        elementToComment[lBrace] = comment
-                    } else {
-                        elementToComment[ktDeclaration] = comment
-                    }
-                }
-                is KtFunction -> {
-                    val lBrace = ktDeclaration.bodyBlockExpression?.lBrace
-                    if (lBrace != null) {
-                        elementToComment[lBrace] = comment
-                    } else {
-                        elementToComment[ktDeclaration] = comment
-                    }
-                }
-                is KtProperty -> {
-                    val initializerOrTypeReference = ktDeclaration.initializer ?: ktDeclaration.typeReference
-                    if (initializerOrTypeReference != null) {
-                        elementToComment[initializerOrTypeReference] = comment
-                    } else {
-                        elementToComment[ktDeclaration] = comment
-                    }
-                }
-                is KtTypeAlias -> {
-                    elementToComment[ktDeclaration.getTypeReference()!!] = comment
-                }
-                is KtClassInitializer -> {
-                    elementToComment[ktDeclaration.openBraceNode!!] = comment
-                }
-                is KtScript -> {
-                    elementToComment[mainFile.importList!!] = comment
-                }
-                is KtScriptInitializer -> {
-                    elementToComment[ktDeclaration.body!!] = comment
-                }
-                is KtDestructuringDeclaration, is KtDestructuringDeclarationEntry -> {
-                    elementToComment[ktDeclaration] = comment
-                }
-                else -> error("Unsupported declaration $ktDeclaration")
+        val elementsToStructureElementMap = allStructureElements.associateBy { it.declaration.psi }
+        val elementToComments = elementsToStructureElementMap.entries.fold(
+            initial = listMultimapOf<PsiElement, String>()
+        ) { map, (anchorElement, structureElement) ->
+            val specialKey: PsiElement? = when (anchorElement) {
+                is KtClassOrObject -> anchorElement.body?.lBrace
+                is KtFunction -> anchorElement.bodyBlockExpression?.lBrace
+                is KtProperty -> anchorElement.initializer ?: anchorElement.typeReference
+                is KtTypeAlias -> anchorElement.getTypeReference()!!
+                is KtClassInitializer -> anchorElement.openBraceNode!!
+                is KtScript -> mainFile.importList!!
+                is KtFile -> anchorElement.packageDirective ?: anchorElement.importList
+                is KtScriptInitializer -> anchorElement.body!!
+                is KtDestructuringDeclaration, is KtDestructuringDeclarationEntry, is KtModifierList -> null
+                else -> error("Unsupported declaration ${anchorElement?.let { it::class.simpleName }}")
+            }
+
+            map.apply {
+                put(key = specialKey ?: anchorElement, value = structureElement.createComment())
             }
         }
 
-        for (modifierList in mainFile.collectDescendantsOfType<KtModifierList>()) {
-            val structureElement = declarationToStructureElement[modifierList] ?: continue
-            val comment = structureElement.createComment()
-            elementToComment[modifierList] = comment
-        }
+        val anchorElements = elementsToStructureElementMap.keys.toMutableSet()
 
         val text = buildString {
             mainFile.accept(object : PsiElementVisitor() {
                 override fun visitElement(element: PsiElement) {
+                    anchorElements -= element
+
                     if (element is LeafPsiElement) {
                         append(element.text)
                     }
+
                     element.acceptChildren(this)
-                    elementToComment[element]?.let {
-                        append(it)
-                    }
+                    elementToComments[element].forEach(this@buildString::append)
                 }
 
                 override fun visitComment(comment: PsiComment) {}
@@ -102,6 +74,15 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
         }
 
         KotlinTestUtils.assertEqualsToFile(testDataPath, text)
+
+        if (anchorElements.isNotEmpty()) {
+            error(
+                "An anchor element is not found in the file:\n" +
+                        anchorElements.joinToString(separator = "\n") { element ->
+                            element?.let { it::class.simpleName }.toString()
+                        }
+            )
+        }
     }
 
     private fun FileStructureElement.createComment(): String {

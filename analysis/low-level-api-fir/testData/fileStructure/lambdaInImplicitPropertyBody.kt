@@ -1,4 +1,4 @@
-inline fun <T, R> with(receiver: T, block: T.() -> R): R {/* DeclarationStructureElement */
+/* RootStructureElement */inline fun <T, R> with(receiver: T, block: T.() -> R): R {/* DeclarationStructureElement */
     return receiver.block()
 }
 

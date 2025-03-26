@@ -1,4 +1,4 @@
-open class A(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
+/* RootStructureElement */open class A(x: () -> Unit)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
 
 class B : A {/* ClassDeclarationStructureElement */
     constructor(i: Int) : super(

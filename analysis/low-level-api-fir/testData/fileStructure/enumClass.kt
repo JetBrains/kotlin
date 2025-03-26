@@ -1,4 +1,4 @@
-enum class A {/* ClassDeclarationStructureElement */
+/* RootStructureElement */enum class A {/* ClassDeclarationStructureElement */
     X,/* DeclarationStructureElement */
     Y,/* DeclarationStructureElement */
     Z

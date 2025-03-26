@@ -1,4 +1,4 @@
-fun foo1() {/* DeclarationStructureElement */
+/* RootStructureElement */fun foo1() {/* DeclarationStructureElement */
     println("foo1")
 }
 

@@ -1,4 +1,4 @@
-val x = myRun {
+/* RootStructureElement */val x = myRun {
     val inLambda = 10
     println(inLambda)
     inLambda

@@ -1,4 +1,4 @@
-fun a() {/* DeclarationStructureElement */
+/* RootStructureElement */fun a() {/* DeclarationStructureElement */
     class X
 }
 

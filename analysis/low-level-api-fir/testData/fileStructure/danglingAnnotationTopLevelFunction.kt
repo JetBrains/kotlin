@@ -1,2 +1,2 @@
-@Suppress(""
+/* RootStructureElement */@Suppress(""
 fun foo() {}/* DeclarationStructureElement */

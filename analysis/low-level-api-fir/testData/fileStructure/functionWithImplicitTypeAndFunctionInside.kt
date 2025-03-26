@@ -1,4 +1,4 @@
-package myPack
+package myPack/* RootStructureElement */
 
 @Target(
     AnnotationTarget.PROPERTY,

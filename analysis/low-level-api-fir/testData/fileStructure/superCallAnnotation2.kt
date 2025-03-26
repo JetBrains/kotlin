@@ -1,4 +1,4 @@
-@Target(AnnotationTarget.TYPE)
+/* RootStructureElement */@Target(AnnotationTarget.TYPE)
 annotation class Anno/* ClassDeclarationStructureElement */
 
 interface A/* ClassDeclarationStructureElement */

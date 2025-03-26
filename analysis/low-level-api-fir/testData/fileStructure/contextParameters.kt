@@ -1,4 +1,4 @@
-package one
+package one/* RootStructureElement */
 
 class A {/* ClassDeclarationStructureElement */
 
@@ -26,5 +26,3 @@ val bar: Boolean/* DeclarationStructureElement */ get() = true
 
 context(_: String, i: Int)
 val Long.bar: Boolean/* DeclarationStructureElement */ get() = true
-
-

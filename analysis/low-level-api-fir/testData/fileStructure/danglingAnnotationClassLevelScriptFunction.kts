@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */class Foo {/* ClassDeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */class Foo {/* ClassDeclarationStructureElement */
     @Suppress(""
     fun foo() {}/* DeclarationStructureElement */
 }

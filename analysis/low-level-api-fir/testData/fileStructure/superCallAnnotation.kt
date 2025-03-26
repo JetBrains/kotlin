@@ -1,4 +1,4 @@
-@Target(AnnotationTarget.TYPE)
+/* RootStructureElement */@Target(AnnotationTarget.TYPE)
 annotation class Anno/* ClassDeclarationStructureElement */
 
 open class A/* ClassDeclarationStructureElement */

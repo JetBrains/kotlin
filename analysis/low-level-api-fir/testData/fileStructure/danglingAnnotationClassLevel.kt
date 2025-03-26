@@ -1,4 +1,4 @@
-class Foo {/* ClassDeclarationStructureElement */
+/* RootStructureElement */class Foo {/* ClassDeclarationStructureElement */
     @Suppress("") @MustBeDocumented/* DeclarationStructureElement */
 }
 class Bar {/* ClassDeclarationStructureElement */

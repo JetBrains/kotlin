@@ -1,4 +1,4 @@
-interface A<T>/* ClassDeclarationStructureElement */
+/* RootStructureElement */interface A<T>/* ClassDeclarationStructureElement */
 
 typealias AS = A<String>/* DeclarationStructureElement */
 

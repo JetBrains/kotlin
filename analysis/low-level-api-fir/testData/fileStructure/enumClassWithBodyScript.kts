@@ -1,4 +1,4 @@
-/* RootScriptStructureElement */enum class A {/* ClassDeclarationStructureElement */
+/* RootStructureElement *//* RootScriptStructureElement */enum class A {/* ClassDeclarationStructureElement */
     X {/* DeclarationStructureElement */
         fun localInX() = 1
     },

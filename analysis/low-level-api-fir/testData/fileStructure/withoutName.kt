@@ -1,4 +1,4 @@
-fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
+/* RootStructureElement */fun (a: Int = 1): String = "str"/* DeclarationStructureElement */
 
 fun () {/* DeclarationStructureElement */
 
