@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -39,8 +38,8 @@ internal sealed class FileStructureElement(
 
     companion object {
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
-            is FirFile -> RootStructureElement.Recorder
-            is FirScript -> RootScriptStructureElement.Recorder
+            is FirFile -> RootStructureElement.Recorder(fir)
+            is FirScript -> RootScriptStructureElement.Recorder(fir)
             is FirRegularClass -> ClassDeclarationStructureElement.Recorder(fir)
             else -> DeclarationStructureElement.Recorder
         }
@@ -192,18 +191,15 @@ internal class RootScriptStructureElement(
         )
     ),
 ) {
-    object Recorder : FirElementsRecorder() {
-        override fun visitScript(script: FirScript, data: MutableMap<KtElement, FirElement>) {
-            cacheElement(script, data)
-            visitScriptDependentElements(script, this, data)
-        }
-    }
+    class Recorder(script: FirScript) : FirElementContainerRecorder(
+        container = script,
+        declarationsToIgnore = script.declarationsToIgnore,
+    )
 }
 
-internal fun <T, R> visitScriptDependentElements(script: FirScript, visitor: FirVisitor<T, R>, data: R) {
-    script.annotations.forEach { it.accept(visitor, data) }
-    script.receivers.forEach { it.accept(visitor, data) }
-}
+/** @see RootScriptStructureElement */
+internal val FirScript.declarationsToIgnore: Set<FirDeclaration>
+    get() = parameters.plus(declarations).toSet()
 
 internal class ClassDeclarationStructureElement(
     file: FirFile,
@@ -219,32 +215,41 @@ internal class ClassDeclarationStructureElement(
         )
     ),
 ) {
-    /**
-     * The recorder is supposed to visit only elements that belong to the [class][firClass].
-     * For instance, it should visit type parameters, annotations, but not regular methods.
-     */
-    class Recorder(private val firClass: FirRegularClass) : FirElementsRecorder() {
-        private val declarationsToIgnore = firClass.declarations.toSet()
+    class Recorder(firClass: FirRegularClass) : FirElementContainerRecorder(
+        container = firClass,
+        declarationsToIgnore = firClass.declarationsToIgnore,
+    )
+}
 
-        override fun visitRegularClass(regularClass: FirRegularClass, data: MutableMap<KtElement, FirElement>) {
-            // Entry point to the visitor
-            if (regularClass === firClass) {
-                super.visitElement(regularClass, data)
-            }
+/** @see ClassDeclarationStructureElement */
+internal val FirRegularClass.declarationsToIgnore: Set<FirDeclaration>
+    get() = declarations.filterNot(FirDeclaration::isPartOfClassStructureElement).toSet()
+
+/**
+ * The recorder is supposed to visit only elements that belong to the [container].
+ *
+ * For instance, it should visit annotations, but not regular declarations.
+ */
+internal abstract class FirElementContainerRecorder(
+    private val container: FirDeclaration,
+    private val declarationsToIgnore: Set<FirDeclaration>,
+) : FirElementsRecorder() {
+    override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+        // Entry point to the visitor
+        if (element === container) {
+            return super.visitElement(element, data)
         }
 
-        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
-            val recordElementFully = if (element is FirDeclaration) {
-                element.isPartOfClassStructureElement || element !in declarationsToIgnore
-            } else {
-                true
-            }
+        val recordElement = if (element is FirDeclaration) {
+            element !in declarationsToIgnore
+        } else {
+            true
+        }
 
-            if (recordElementFully) {
-                // A separate recorder is called here as we don't have to check
-                // conditions for nested elements – they should be recorder fully
-                element.accept(DeclarationStructureElement.Recorder, data)
-            }
+        if (recordElement) {
+            // A separate recorder is called here as we don't have to check
+            // conditions for nested elements – they should be recorded deeply
+            element.accept(DeclarationStructureElement.Recorder, data)
         }
     }
 }
@@ -306,17 +311,17 @@ internal class RootStructureElement(
     declaration = file,
     diagnostics = FileStructureElementDiagnostics(
         FileDiagnosticRetriever(
-            declaration = file,
             file = file,
             moduleComponents = moduleComponents,
         )
     ),
 ) {
-    object Recorder : FirElementsRecorder() {
-        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
-            if (element !is FirDeclaration || element is FirFile) {
-                super.visitElement(element, data)
-            }
-        }
-    }
+    class Recorder(file: FirFile) : FirElementContainerRecorder(
+        container = file,
+        declarationsToIgnore = file.declarationsToIgnore,
+    )
 }
+
+/** @see RootStructureElement */
+internal val FirFile.declarationsToIgnore: Set<FirDeclaration>
+    get() = declarations.toSet()

@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.isPartOfClassStructureElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.visitScriptDependentElements
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.declarationsToIgnore
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
@@ -76,35 +75,39 @@ internal sealed class FileStructureElementDiagnosticRetriever(
     }
 }
 
+/**
+ * The visitor is supposed to check the container itself and all declarations that belong to its structure element.
+ *
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementContainerRecorder
+ */
+private abstract class LLFirContainerDiagnosticVisitor(
+    private val declarationsToIgnore: Set<FirDeclaration>,
+    context: CheckerContextForProvider,
+    components: DiagnosticCollectorComponents,
+) : LLFirDiagnosticVisitor(context, components) {
+    override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
+        return declaration !in declarationsToIgnore
+    }
+}
+
 internal class ClassDiagnosticRetriever(
     declaration: FirRegularClass,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElementDiagnosticRetriever(
-    declaration,
-    file,
-    moduleComponents,
-) {
+) : FileStructureElementDiagnosticRetriever(declaration, file, moduleComponents) {
     override fun createVisitor(context: CheckerContextForProvider, components: DiagnosticCollectorComponents): LLFirDiagnosticVisitor {
-        return Visitor(declaration, context, components)
+        return Visitor(declaration as FirRegularClass, context, components)
     }
 
-    /**
-     * The visitor is supposed to check the class itself and all declarations that belongs to its structure element.
-     *
-     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.ClassDeclarationStructureElement
-     */
     private class Visitor(
-        structureElementDeclaration: FirDeclaration,
+        regularClass: FirRegularClass,
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
-    ) : LLFirDiagnosticVisitor(context, components) {
-        private val declarationsToIgnore = (structureElementDeclaration as FirRegularClass).declarations.toSet()
-
-        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
-            return declaration !in declarationsToIgnore || declaration.isPartOfClassStructureElement
-        }
-    }
+    ) : LLFirContainerDiagnosticVisitor(
+        declarationsToIgnore = regularClass.declarationsToIgnore,
+        context = context,
+        components = components,
+    )
 
     companion object {
         fun shouldDiagnosticsAlwaysBeCheckedOn(firElement: FirElement) = when (firElement.source?.kind) {
@@ -119,11 +122,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
     declaration: FirDeclaration,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElementDiagnosticRetriever(
-    declaration,
-    file,
-    moduleComponents,
-) {
+) : FileStructureElementDiagnosticRetriever(declaration, file, moduleComponents) {
     override fun createVisitor(context: CheckerContextForProvider, components: DiagnosticCollectorComponents): LLFirDiagnosticVisitor {
         return Visitor(context, components)
     }
@@ -147,59 +146,40 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
 }
 
 internal class FileDiagnosticRetriever(
-    declaration: FirDeclaration,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElementDiagnosticRetriever(
-    declaration,
-    file,
-    moduleComponents,
-) {
+) : FileStructureElementDiagnosticRetriever(file, file, moduleComponents) {
     override fun createVisitor(context: CheckerContextForProvider, components: DiagnosticCollectorComponents): LLFirDiagnosticVisitor {
-        return Visitor(context, components)
+        return Visitor(declaration as FirFile, context, components)
     }
 
     private class Visitor(
+        file: FirFile,
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
-    ) : LLFirDiagnosticVisitor(context, components) {
-        override fun visitFile(file: FirFile, data: Nothing?) {
-            withAnnotationContainer(file) {
-                visitWithFile(file) {
-                    file.annotations.forEach { it.accept(this, data) }
-                    file.packageDirective.accept(this, data)
-                    file.imports.forEach { it.accept(this, data) }
-                    // do not visit declarations here
-                }
-            }
-        }
-    }
+    ) : LLFirContainerDiagnosticVisitor(
+        declarationsToIgnore = file.declarationsToIgnore,
+        context = context,
+        components = components,
+    )
 }
 
 internal class ScriptDiagnosticRetriever(
-    declaration: FirDeclaration,
+    declaration: FirScript,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElementDiagnosticRetriever(
-    declaration,
-    file,
-    moduleComponents,
-) {
+) : FileStructureElementDiagnosticRetriever(declaration, file, moduleComponents) {
     override fun createVisitor(context: CheckerContextForProvider, components: DiagnosticCollectorComponents): LLFirDiagnosticVisitor {
-        return Visitor(context, components)
+        return Visitor(declaration as FirScript, context, components)
     }
 
     private class Visitor(
+        script: FirScript,
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
-    ) : LLFirDiagnosticVisitor(context, components) {
-        override fun visitScript(script: FirScript, data: Nothing?) {
-            withAnnotationContainer(script) {
-                checkElement(script)
-                withDeclaration(script) {
-                    visitScriptDependentElements(script, this, data)
-                }
-            }
-        }
-    }
+    ) : LLFirContainerDiagnosticVisitor(
+        declarationsToIgnore = script.declarationsToIgnore,
+        context = context,
+        components = components,
+    )
 }
