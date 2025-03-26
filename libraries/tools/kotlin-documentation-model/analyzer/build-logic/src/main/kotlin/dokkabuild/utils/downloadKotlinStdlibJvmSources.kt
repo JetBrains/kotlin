@@ -29,7 +29,7 @@ fun downloadKotlinStdlibJvmSources(project: Project): Provider<File> {
     val kotlinStdlibJvmSources: Configuration by project.configurations.creating {
         description = "kotlin-stdlib JVM source code."
         declarable()
-        withDependencies {
+        defaultDependencies {
             add(project.dependencies.run { create(kotlin("stdlib")) })
         }
     }
