@@ -383,8 +383,7 @@ sealed class IdSignature {
         override fun asPublic(): CommonSignature = accessorSignature
 
         override fun equals(other: Any?): Boolean =
-            if (other is AccessorSignature) accessorSignature == other.accessorSignature
-            else accessorSignature == other
+            other is AccessorSignature && accessorSignature == other.accessorSignature
 
         private val hashCode = accessorSignature.hashCode()
 
