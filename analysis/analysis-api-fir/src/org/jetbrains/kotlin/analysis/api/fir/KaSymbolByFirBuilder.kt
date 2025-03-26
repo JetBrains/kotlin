@@ -258,6 +258,7 @@ internal class KaSymbolByFirBuilder(
 
     inner class VariableSymbolBuilder {
         fun buildVariableSymbol(firSymbol: FirVariableSymbol<*>): KaVariableSymbol = when (firSymbol) {
+            is FirErrorPropertySymbol -> buildErrorVariableSymbol(firSymbol)
             is FirPropertySymbol -> when {
                 firSymbol.isLocal -> buildLocalVariableSymbol(firSymbol)
                 firSymbol is FirSyntheticPropertySymbol -> buildSyntheticJavaPropertySymbol(firSymbol)
@@ -267,8 +268,6 @@ internal class KaSymbolByFirBuilder(
             is FirFieldSymbol -> buildFieldSymbol(firSymbol)
             is FirEnumEntrySymbol -> buildEnumEntrySymbol(firSymbol) // TODO enum entry should not be callable
             is FirBackingFieldSymbol -> buildBackingFieldSymbol(firSymbol)
-            is FirErrorPropertySymbol -> buildErrorVariableSymbol(firSymbol)
-
             is FirDelegateFieldSymbol -> throwUnexpectedElementError(firSymbol)
         }
 
