@@ -67,11 +67,11 @@ internal class LLFirResolvableResolveSession(
 
         return when (getModuleResolutionStrategy(module)) {
             LLModuleResolutionStrategy.LAZY -> findSourceFirSymbol(ktDeclaration).also { resolveFirToPhase(it.fir, phase) }
-            LLModuleResolutionStrategy.STATIC -> findFirCompiledSymbol(ktDeclaration, module)
+            LLModuleResolutionStrategy.STATIC -> findCompiledFirSymbol(ktDeclaration, module)
         }
     }
 
-    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
+    private fun findCompiledFirSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
         requireWithAttachment(
             ktDeclaration.containingKtFile.isCompiled,
             { "`findFirCompiledSymbol` only works on compiled declarations, but the given declaration is not compiled." },
