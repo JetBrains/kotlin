@@ -231,7 +231,9 @@ private fun BuildResult.getActualTasksAsString(): String {
  */
 private fun BuildResult.getAllTasksFromTheOutput(): List<String> {
 
-    val taskPattern = Regex("^([:\\w]+) - (.*)$")
+    // with Isolated Projects enabled, task names include a leading colon, so we ignore it
+    // https://github.com/gradle/gradle/issues/32852
+    val taskPattern = Regex("^:?([:\\w]+) - (.*)$")
     val tasks = mutableListOf<String>()
 
     output.lines().forEach { line ->
