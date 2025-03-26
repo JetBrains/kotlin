@@ -78,7 +78,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             }
         }
 
-        check(deserializedFunction != null) { "Inline function is not found: $functionSignature" }
+        if (deserializedFunction == null) return
 
         val deserializedBody: IrBody? = deserializedFunction.body
         check(deserializedBody != null) { "Deserialized inline function has no body: $functionSignature" }
@@ -158,7 +158,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             FileDeserializer(library, fileIndex)
         }
 
-        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrDeclaration? =
+        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? =
             fileDeserializers.firstNotNullOfOrNull { it.getTopLevelDeclarationOrNull(topLevelSignature) }
     }
 
@@ -201,22 +201,30 @@ class NonLinkingIrInlineFunctionDeserializer(
             irInterner = irInterner,
         )
 
+        private val originalSignatureToPreprocessed: Map<Int, Int> = fileProto.originalToPreprocessedInlineFunctionsList
+            .chunked(2) { it[0] to it[1] }
+            .toMap()
+
         /**
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
-        private val indexWithLazyValues: Map<IdSignature, Lazy<IrDeclaration>> = fileProto.declarationIdList.associate { declarationId ->
-            val signature = symbolDeserializer.deserializeIdSignature(declarationId)
+        private val indexWithLazyValues: Map<IdSignature, Lazy<IrFunction>> =
+            fileProto.originalToPreprocessedInlineFunctionsList.filterIndexed { index, _ -> index % 2 == 0 }
+                .associate { originalDeclarationId ->
+                    val originalIdSignature = symbolDeserializer.deserializeIdSignature(originalDeclarationId)
+                    val preprocessedInlineFunctionId = originalSignatureToPreprocessed[originalDeclarationId]
+                        ?: error("No preprocessed inline function found for $originalIdSignature")
 
-            val lazyDeclaration = lazy {
-                val declarationProto = fileReader.declaration(declarationId)
-                declarationDeserializer.deserializeDeclaration(declarationProto)
-            }
+                    val lazyDeclaration = lazy {
+                        val declarationProto = fileReader.declaration(preprocessedInlineFunctionId)
+                        declarationDeserializer.deserializeDeclaration(declarationProto) as IrFunction
+                    }
 
-            signature to lazyDeclaration
-        }
+                    originalIdSignature to lazyDeclaration
+                }
 
-        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrDeclaration? = indexWithLazyValues[topLevelSignature]?.value
+        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? = indexWithLazyValues[topLevelSignature]?.value
     }
 }
 
