@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -410,6 +412,20 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         arguments.addAll(varargElements)
                         coneTypeOrNull = type
                         coneElementTypeOrNull = elemType
+                    }
+                }
+            }
+            is IrClassReference -> {
+                buildGetClassCall {
+                    with(emptyTypeConverter) {
+                        val resolvedType = this@toFirExpression.type.toConeType()
+                        coneTypeOrNull = resolvedType
+                        argumentList = buildUnaryArgumentList(
+                            buildClassReferenceExpression {
+                                coneTypeOrNull = this@toFirExpression.classType.toConeType()
+                                classTypeRef = buildResolvedTypeRef { coneType = resolvedType }
+                            }
+                        )
                     }
                 }
             }

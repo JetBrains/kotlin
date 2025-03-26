@@ -1,6 +1,5 @@
 // PLATFORM_DEPENDANT_METADATA
 // DUMP_KT_IR
-// IGNORE_BACKEND: JS_IR
 package test
 
 import org.jetbrains.kotlin.plugin.sandbox.AddAnnotations
