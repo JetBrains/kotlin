@@ -25,10 +25,3 @@ kotlin {
     watchosSimulatorArm64()
     watchosX64()
 }
-
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}

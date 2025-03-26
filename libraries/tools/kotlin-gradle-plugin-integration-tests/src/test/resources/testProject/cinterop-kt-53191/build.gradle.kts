@@ -2,11 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     linuxX64("linux") {
         compilations.getByName("main") {

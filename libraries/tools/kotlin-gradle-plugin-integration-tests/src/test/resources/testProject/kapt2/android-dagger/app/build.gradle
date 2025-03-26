@@ -1,6 +1,8 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
+}
 
 android {
     namespace = "com.example.dagger.kotlin"
@@ -38,5 +40,5 @@ dependencies {
     kapt 'javax.annotation:javax.annotation-api:1.3.2'
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.9'
     kaptAndroidTest 'javax.annotation:javax.annotation-api:1.3.2'
-    compileOnly  'org.glassfish:javax.annotation:10.0-b28'
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
 }

@@ -1,12 +1,5 @@
 plugins {
     kotlin("multiplatform")
-    `maven-publish`
-}
-
-repositories {
-    mavenLocal()
-    maven("../repo")
-    mavenCentral()
 }
 
 group = "com.example.bar"
@@ -37,11 +30,5 @@ kotlin {
         linuxX64().compilations["main"].defaultSourceSet {
             dependsOn(linuxAndJsMain)
         }
-    }
-}
-
-publishing {
-    repositories {
-        maven("../repo")
     }
 }

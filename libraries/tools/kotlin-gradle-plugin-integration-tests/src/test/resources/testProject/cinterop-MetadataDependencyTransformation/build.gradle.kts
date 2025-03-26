@@ -6,11 +6,6 @@ plugins {
 }
 
 allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
     afterEvaluate {
         extensions.findByType<KotlinMultiplatformExtension>()?.let { kotlin ->
             val compileAll by tasks.creating

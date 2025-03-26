@@ -1,8 +1,10 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+}
+
 group = 'org.jetbrains.qa.combompp'
 version = publishing_version
-
-apply plugin: 'kotlin-multiplatform'
-apply plugin: 'maven-publish'
 
 kotlin {
     sourceSets.all {
@@ -22,10 +24,10 @@ kotlin {
 
     sourceSets {
         commonMain {
-            dependencies { }
+            dependencies {}
         }
         commonTest {
-            dependencies { }
+            dependencies {}
         }
 
         // creating a diamond
@@ -53,17 +55,17 @@ kotlin {
         }
         jsMain {
             dependsOn jsLinuxMain
-            dependencies { }
+            dependencies {}
         }
         jsTest {
-            dependencies { }
+            dependencies {}
         }
         jvmMain {
             dependsOn jvmMacosMain
-            dependencies { }
+            dependencies {}
         }
         jvmTest {
-            dependencies { }
+            dependencies {}
         }
         linuxMain {
             dependsOn jsLinuxMain
@@ -71,7 +73,7 @@ kotlin {
             dependencies {}
         }
         linuxTest {
-            dependencies { }
+            dependencies {}
         }
         macosMain {
             dependsOn jvmMacosMain
@@ -80,7 +82,7 @@ kotlin {
 
         }
         macosTest {
-            dependencies { }
+            dependencies {}
         }
     }
 }

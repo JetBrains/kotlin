@@ -3,12 +3,6 @@ plugins {
     id 'maven-publish'
 }
 
-repositories {
-    mavenLocal()
-    google()
-    mavenCentral()
-}
-
 kotlin {
     jvmToolchain(8)
 
@@ -16,13 +10,3 @@ kotlin {
         withJava()
     }
 }
-
-
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        mavenCentral()
-    }
-}
-

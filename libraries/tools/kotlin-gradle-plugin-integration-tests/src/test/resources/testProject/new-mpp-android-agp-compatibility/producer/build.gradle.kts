@@ -1,4 +1,3 @@
-val kotlin_version: String by extra
 plugins {
     `maven-publish`
     id("com.android.library")
@@ -7,7 +6,6 @@ plugins {
 
 group = "com.example"
 version = "1.0.0-SNAPSHOT"
-
 
 publishing {
     repositories {

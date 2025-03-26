@@ -1,12 +1,11 @@
+plugins {
+    id("java")
+    id("org.jetbrains.kotlin.jvm")
+    id("maven-publish")
+}
+
 group = 'org.jetbrains.qa.combompp'
 version = publishing_version
-
-apply plugin: 'java'
-apply plugin: 'kotlin'
-//apply plugin: "application"
-apply plugin: 'maven-publish'
-
-
 
 dependencies {
     api project(":bottom-mpp")

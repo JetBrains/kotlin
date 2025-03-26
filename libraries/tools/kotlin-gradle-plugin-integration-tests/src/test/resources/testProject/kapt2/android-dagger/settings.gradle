@@ -1,1 +1,3 @@
+rootProject.name = "android-dagger"
+
 include ':app'

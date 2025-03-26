@@ -4,13 +4,6 @@ plugins {
 
 group = "org.sample.root"
 
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
-
 kotlin {
     linuxX64("linux")
     js {

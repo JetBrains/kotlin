@@ -3,11 +3,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    maven("<localRepo>")
-    mavenCentral()
-}
-
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }

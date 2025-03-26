@@ -2,11 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     jvm()
     iosArm64()
@@ -50,13 +45,3 @@ kotlin {
         }
     }
 }
-
-
-allprojects {
-    repositories {
-        mavenCentral()
-        google()
-        mavenLocal()
-    }
-}
-

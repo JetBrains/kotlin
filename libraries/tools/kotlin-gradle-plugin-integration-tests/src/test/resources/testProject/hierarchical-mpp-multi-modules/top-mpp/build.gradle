@@ -1,22 +1,10 @@
-apply plugin: 'kotlin-multiplatform'
-apply plugin: 'maven-publish'
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+}
 
 group = 'org.jetbrains.qa.combompp'
 version = publishing_version
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    gradlePluginPortal()
-}
 
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 

@@ -1,8 +1,10 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+}
+
 group = 'org.jetbrains.qa.combompp'
 version = '1.0'
-
-apply plugin: 'kotlin-multiplatform'
-apply plugin: 'maven-publish'
 
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
@@ -47,10 +49,10 @@ kotlin {
 
     sourceSets {
         commonMain {
-            dependencies { }
+            dependencies {}
         }
         commonTest {
-            dependencies { }
+            dependencies {}
         }
 
         // creating a diamond
@@ -78,26 +80,26 @@ kotlin {
 
         // setting up the targets source sets
         jvm9Main {
-            dependencies { }
+            dependencies {}
 
             // connecting to the diamond
             dependsOn jvmJavaJvm9Main
         }
         jvm9Test {
-            dependencies { }
+            dependencies {}
 
             // connecting to the diamond
             dependsOn jvmJavaJvm9Test
         }
         jvmWithJavaMain {
-            dependencies {  }
+            dependencies {}
 
             // connecting to the diamond
             dependsOn jvmJavaJvm9Main
             dependsOn jvmWithJavaiOSMain
         }
         jvmWithJavaTest {
-            dependencies { }
+            dependencies {}
 
             // connecting to the diamond
             dependsOn jvmJavaJvm9Test
@@ -105,13 +107,13 @@ kotlin {
         }
 
         iosSimLibMain {
-            dependencies {  }
+            dependencies {}
 
             // connecting to the diamond
             dependsOn jvmWithJavaiOSMain
         }
         iosSimLibTest {
-            dependencies { }
+            dependencies {}
 
             // connecting to the diamond
             dependsOn jvmWithJavaiOSTest

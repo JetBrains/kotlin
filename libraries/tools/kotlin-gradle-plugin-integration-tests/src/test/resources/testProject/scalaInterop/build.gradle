@@ -3,14 +3,9 @@ plugins {
     id "java"
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testImplementation'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.13.2'
     implementation project(":lib")
 }
 
