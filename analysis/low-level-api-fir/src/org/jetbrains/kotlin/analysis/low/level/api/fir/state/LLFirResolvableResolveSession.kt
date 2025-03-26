@@ -99,23 +99,25 @@ internal class LLFirResolvableResolveSession(
                 withEntry("module", targetModule) { it.moduleDescription }
             }
 
-        return if ((nonLocalContainer as? KtDeclaration) == targetDeclaration) {
+        val firDeclaration = if ((nonLocalContainer as? KtDeclaration) == targetDeclaration) {
             val session = sessionProvider.getResolvableSession(targetModule)
             nonLocalContainer.findSourceNonLocalFirDeclaration(
                 firFileBuilder = session.moduleComponents.firFileBuilder,
                 provider = session.firProvider,
-            ).symbol
+            )
         } else {
             findSourceFirDeclarationViaResolve(targetDeclaration)
         }
+
+        return firDeclaration.symbol
     }
 
     private fun getModuleResolutionStrategy(module: KaModule): LLModuleResolutionStrategy {
         return resolutionStrategyProvider.getKind(module)
     }
 
-    private fun findSourceFirDeclarationViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
-        val firDeclaration = when (val fir = getOrBuildFirFor(ktDeclaration)) {
+    private fun findSourceFirDeclarationViaResolve(ktDeclaration: KtExpression): FirDeclaration {
+        return when (val fir = getOrBuildFirFor(ktDeclaration)) {
             is FirDeclaration -> fir
             is FirAnonymousFunctionExpression -> fir.anonymousFunction
             is FirAnonymousObjectExpression -> fir.anonymousObject
@@ -125,7 +127,6 @@ internal class LLFirResolvableResolveSession(
                 psi = ktDeclaration,
             )
         }
-        return firDeclaration.symbol
     }
 
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
