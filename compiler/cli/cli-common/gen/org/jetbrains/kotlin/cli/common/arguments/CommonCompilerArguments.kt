@@ -2,19 +2,24 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
-import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 
-@SuppressWarnings("WeakerAccess")
+// This file was generated automatically. See compiler/cli/cli-arguments-generator
+
 abstract class CommonCompilerArguments : CommonToolArguments() {
     @get:Transient
-    var autoAdvanceLanguageVersion = true
+    var autoAdvanceLanguageVersion: Boolean = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @get:Transient
+    var autoAdvanceApiVersion: Boolean = true
         set(value) {
             checkFrozen()
             field = value
@@ -28,19 +33,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
-        description = "Provide source compatibility with the specified version of Kotlin."
+        description = "Provide source compatibility with the specified version of Kotlin.",
     )
     var languageVersion: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @get:Transient
-    var autoAdvanceApiVersion = true
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @GradleOption(
@@ -51,7 +49,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
-        description = "Allow using declarations from only the specified version of bundled libraries."
+        description = "Allow using declarations from only the specified version of bundled libraries.",
     )
     var apiVersion: String? = null
         set(value) {
@@ -62,7 +60,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-kotlin-home",
         valueDescription = "<path>",
-        description = "Path to the Kotlin compiler home directory used for the discovery of runtime libraries."
+        description = "Path to the Kotlin compiler home directory used for the discovery of runtime libraries.",
     )
     var kotlinHome: String? = null
         set(value) {
@@ -72,7 +70,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
     )
     @Argument(
         value = "-progressive",
@@ -81,23 +79,29 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 In this mode, deprecations and bug fixes for unstable code take effect immediately
 instead of going through a graceful migration cycle.
 Code written in progressive mode is backward compatible; however, code written without
-progressive mode enabled may cause compilation errors in progressive mode."""
+progressive mode enabled may cause compilation errors in progressive mode.""",
     )
-    var progressiveMode = false
+    var progressiveMode: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-script", description = "Evaluate the given Kotlin script (*.kts) file.")
-    var script = false
+    @Argument(
+        value = "-script",
+        description = "Evaluate the given Kotlin script (*.kts) file.",
+    )
+    var script: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xrepl", description = "Run Kotlin REPL (deprecated)")
-    var repl = false
+    @Argument(
+        value = "-Xrepl",
+        description = "Run Kotlin REPL (deprecated)",
+    )
+    var repl: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -105,13 +109,13 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @GradleOption(
         value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
     )
     @Argument(
         value = "-opt-in",
         deprecatedName = "-Xopt-in",
         valueDescription = "<fq.name>",
-        description = "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name."
+        description = "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.",
     )
     var optIn: Array<String>? = null
         set(value) {
@@ -119,10 +123,11 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
-    // Advanced options
-
-    @Argument(value = "-Xno-inline", description = "Disable method inlining.")
-    var noInline = false
+    @Argument(
+        value = "-Xno-inline",
+        description = "Disable method inlining.",
+    )
+    var noInline: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -130,16 +135,19 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xskip-metadata-version-check",
-        description = "Allow loading classes with bad metadata versions and pre-release classes."
+        description = "Allow loading classes with bad metadata versions and pre-release classes.",
     )
-    var skipMetadataVersionCheck = false
+    var skipMetadataVersionCheck: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xskip-prerelease-check", description = "Allow loading pre-release classes.")
-    var skipPrereleaseCheck = false
+    @Argument(
+        value = "-Xskip-prerelease-check",
+        description = "Allow loading pre-release classes.",
+    )
+    var skipPrereleaseCheck: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -147,9 +155,9 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xallow-kotlin-package",
-        description = "Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'."
+        description = "Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.",
     )
-    var allowKotlinPackage = false
+    var allowKotlinPackage: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -159,27 +167,38 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         value = "-Xstdlib-compilation",
         description = "Enables special features which are relevant only for stdlib compilation.",
     )
-    var stdlibCompilation = false
+    var stdlibCompilation: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xreport-output-files", description = "Report the source-to-output file mapping.")
-    var reportOutputFiles = false
+    @Argument(
+        value = "-Xreport-output-files",
+        description = "Report the source-to-output file mapping.",
+    )
+    var reportOutputFiles: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath.")
+    @Argument(
+        value = "-Xplugin",
+        valueDescription = "<path>",
+        description = "Load plugins from the given classpath.",
+    )
     var pluginClasspaths: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-P", valueDescription = "plugin:<pluginId>:<optionName>=<value>", description = "Pass an option to a plugin.")
+    @Argument(
+        value = "-P",
+        valueDescription = "plugin:<pluginId>:<optionName>=<value>",
+        description = "Pass an option to a plugin.",
+    )
     var pluginOptions: Array<String>? = null
         set(value) {
             checkFrozen()
@@ -198,16 +217,22 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
-    @Argument(value = "-Xmulti-platform", description = "Enable language support for multiplatform projects.")
+    @Argument(
+        value = "-Xmulti-platform",
+        description = "Enable language support for multiplatform projects.",
+    )
     @Enables(LanguageFeature.MultiPlatformProjects)
-    var multiPlatform = false
+    var multiPlatform: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xno-check-actual", description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.")
-    var noCheckActual = false
+    @Argument(
+        value = "-Xno-check-actual",
+        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.",
+    )
+    var noCheckActual: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -216,7 +241,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
     @Argument(
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",
-        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found."
+        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
     )
     var intellijPluginRoot: String? = null
         set(value) {
@@ -226,13 +251,13 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xnew-inference",
-        description = "Enable the new experimental generic type inference algorithm."
+        description = "Enable the new experimental generic type inference algorithm.",
     )
     @Enables(LanguageFeature.NewInference)
     @Enables(LanguageFeature.SamConversionPerArgument)
     @Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
     @Enables(LanguageFeature.DisableCompatibilityModeForNewInference)
-    var newInference = false
+    var newInference: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -240,10 +265,10 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xinline-classes",
-        description = "Enable experimental inline classes."
+        description = "Enable experimental inline classes.",
     )
     @Enables(LanguageFeature.InlineClasses)
-    var inlineClasses = false
+    var inlineClasses: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -251,17 +276,20 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xlegacy-smart-cast-after-try",
-        description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks."
+        description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks.",
     )
     @Disables(LanguageFeature.SoundSmartCastsAfterTry)
-    var legacySmartCastAfterTry = false
+    var legacySmartCastAfterTry: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics.")
-    var reportPerf = false
+    @Argument(
+        value = "-Xreport-perf",
+        description = "Report detailed performance statistics.",
+    )
+    var reportPerf: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -270,7 +298,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
     @Argument(
         value = "-Xdump-perf",
         valueDescription = "<path>",
-        description = "Dump detailed performance statistics to the specified file."
+        description = "Dump detailed performance statistics to the specified file.",
     )
     var dumpPerf: String? = null
         set(value) {
@@ -280,19 +308,19 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xmetadata-version",
-        description = "Change the metadata version of the generated binary files."
+        description = "Change the metadata version of the generated binary files.",
     )
     var metadataVersion: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
         value = "-Xcommon-sources",
         valueDescription = "<path>",
         description = """Sources of the common module that need to be compiled together with this module in multiplatform mode.
-They should be a subset of sources passed as free arguments."""
+They should be a subset of sources passed as free arguments.""",
     )
     var commonSources: Array<String>? = null
         set(value) {
@@ -302,9 +330,9 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xlist-phases",
-        description = "List backend phases."
+        description = "List backend phases.",
     )
-    var listPhases = false
+    var listPhases: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -312,7 +340,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xdisable-phases",
-        description = "Disable backend phases."
+        description = "Disable backend phases.",
     )
     var disablePhases: Array<String>? = null
         set(value) {
@@ -322,7 +350,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xverbose-phases",
-        description = "Be verbose while performing the given backend phases."
+        description = "Be verbose while performing the given backend phases.",
     )
     var verbosePhases: Array<String>? = null
         set(value) {
@@ -332,7 +360,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xphases-to-dump-before",
-        description = "Dump the backend's state before these phases."
+        description = "Dump the backend's state before these phases.",
     )
     var phasesToDumpBefore: Array<String>? = null
         set(value) {
@@ -342,7 +370,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xphases-to-dump-after",
-        description = "Dump the backend's state after these phases."
+        description = "Dump the backend's state after these phases.",
     )
     var phasesToDumpAfter: Array<String>? = null
         set(value) {
@@ -352,7 +380,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xphases-to-dump",
-        description = "Dump the backend's state both before and after these phases."
+        description = "Dump the backend's state both before and after these phases.",
     )
     var phasesToDump: Array<String>? = null
         set(value) {
@@ -362,27 +390,27 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xdump-directory",
-        description = "Dump the backend state into this directory."
+        description = "Dump the backend state into this directory.",
     )
     var dumpDirectory: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
         value = "-Xdump-fqname",
-        description = "Dump the declaration with the given FqName."
+        description = "Dump the declaration with the given FqName.",
     )
     var dumpOnlyFqName: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
         value = "-Xphases-to-validate-before",
-        description = "Validate the backend's state before these phases."
+        description = "Validate the backend's state before these phases.",
     )
     var phasesToValidateBefore: Array<String>? = null
         set(value) {
@@ -392,7 +420,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xphases-to-validate-after",
-        description = "Validate the backend's state after these phases."
+        description = "Validate the backend's state after these phases.",
     )
     var phasesToValidateAfter: Array<String>? = null
         set(value) {
@@ -402,7 +430,7 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xphases-to-validate",
-        description = "Validate the backend's state both before and after these phases."
+        description = "Validate the backend's state both before and after these phases.",
     )
     var phasesToValidate: Array<String>? = null
         set(value) {
@@ -413,18 +441,17 @@ They should be a subset of sources passed as free arguments."""
     @Argument(
         value = "-Xverify-ir",
         valueDescription = "{none|warning|error}",
-        description = "IR verification mode (no verification by default)."
+        description = "IR verification mode (no verification by default).",
     )
     var verifyIr: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
         value = "-Xverify-ir-visibility",
-        description = "Check for visibility violations in IR when validating it before running any lowerings. " +
-                "Only has effect if '-Xverify-ir' is not 'none'.",
+        description = "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.",
     )
     var verifyIrVisibility: Boolean = false
         set(value) {
@@ -434,9 +461,9 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xprofile-phases",
-        description = "Profile backend phases."
+        description = "Profile backend phases.",
     )
-    var profilePhases = false
+    var profilePhases: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -444,30 +471,28 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xcheck-phase-conditions",
-        description = "Check pre- and postconditions of IR lowering phases."
+        description = "Check pre- and postconditions of IR lowering phases.",
     )
-    var checkPhaseConditions = false
+    var checkPhaseConditions: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+    )
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.HIDDEN,
         removeAfter = LanguageVersion.KOTLIN_2_2,
-    )
-    @GradleOption(
-        DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = false,
+        level = DeprecationLevel.HIDDEN
     )
     @Argument(
         value = "-Xuse-k2",
-        deprecatedName = "-Xuse-fir",
-        description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet."
+        description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
     )
-    var useK2 = false
+    var useK2: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -475,9 +500,9 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
-        description = "Enable experimental frontend IR checkers that are not yet ready for production."
+        description = "Enable experimental frontend IR checkers that are not yet ready for production.",
     )
-    var useFirExperimentalCheckers = false
+    var useFirExperimentalCheckers: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -485,9 +510,10 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xuse-fir-ic",
-        description = "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready."
+        description = """Compile using frontend IR internal incremental compilation.
+Warning: This feature is not yet production-ready.""",
     )
-    var useFirIC = false
+    var useFirIC: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -495,9 +521,9 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xuse-fir-lt",
-        description = "Compile using the LightTree parser with the frontend IR."
+        description = "Compile using the LightTree parser with the frontend IR.",
     )
-    var useFirLT = true
+    var useFirLT: Boolean = true
         set(value) {
             checkFrozen()
             field = value
@@ -505,8 +531,8 @@ They should be a subset of sources passed as free arguments."""
 
     @Argument(
         value = "-Xmetadata-klib",
+        deprecatedName = "-Xexpect-actual-linker",
         description = "Produce a klib that only contains the metadata of declarations.",
-        deprecatedName = "-Xexpect-actual-linker"
     )
     var metadataKlib: Boolean = false
         set(value) {
@@ -514,8 +540,11 @@ They should be a subset of sources passed as free arguments."""
             field = value
         }
 
-    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Don't enable the scripting plugin by default.")
-    var disableDefaultScriptingPlugin = false
+    @Argument(
+        value = "-Xdisable-default-scripting-plugin",
+        description = "Don't enable the scripting plugin by default.",
+    )
+    var disableDefaultScriptingPlugin: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -525,9 +554,9 @@ They should be a subset of sources passed as free arguments."""
         value = "-Xexplicit-api",
         valueDescription = "{strict|warning|disable}",
         description = """Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
-Use the 'warning' level to issue warnings instead of errors."""
+Use the 'warning' level to issue warnings instead of errors.""",
     )
-    var explicitApi: String = ExplicitApiMode.DISABLED.state
+    var explicitApi: String = "disable"
         set(value) {
             checkFrozen()
             field = value
@@ -538,9 +567,9 @@ Use the 'warning' level to issue warnings instead of errors."""
         valueDescription = "{strict|warning|disable}",
         description = """Force the compiler to report errors on all public API declarations without an explicit return type.
 Use the 'warning' level to issue warnings instead of errors.
-This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether"""
+This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""",
     )
-    var explicitReturnTypes: String = ExplicitApiMode.DISABLED.state
+    var explicitReturnTypes: String = "disable"
         set(value) {
             checkFrozen()
             field = value
@@ -549,9 +578,9 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
     @Argument(
         value = "-Xreturn-value-checker",
         valueDescription = "{check|full|disable}",
-        description = """Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."""
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
     )
-    var returnValueChecker: String = ReturnValueCheckerMode.DISABLED.state
+    var returnValueChecker: String = "disable"
         set(value) {
             checkFrozen()
             field = value
@@ -559,10 +588,10 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
 
     @Argument(
         value = "-Xinference-compatibility",
-        description = "Enable compatibility changes for the generic type inference algorithm."
+        description = "Enable compatibility changes for the generic type inference algorithm.",
     )
     @Enables(LanguageFeature.InferenceCompatibility)
-    var inferenceCompatibility = false
+    var inferenceCompatibility: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -570,19 +599,18 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
 
     @Argument(
         value = "-Xsuppress-version-warnings",
-        description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions."
+        description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.",
     )
-    var suppressVersionWarnings = false
+    var suppressVersionWarnings: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    // TODO(KT-56076): remove this argument after stdlib started to be built with 2.0
     @Argument(
         value = "-Xsuppress-api-version-greater-than-language-version-error",
-        description = "Suppress error about API version greater than language version.\n" +
-                "Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build."
+        description = """Suppress error about API version greater than language version.
+Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.""",
     )
     var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
         set(value) {
@@ -593,9 +621,9 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
     @Argument(
         value = "-Xexpect-actual-classes",
         description = """'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
-Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning."""
+Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.""",
     )
-    var expectActualClasses = false
+    var expectActualClasses: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -603,11 +631,10 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
     @Argument(
         value = "-Xconsistent-data-class-copy-visibility",
-        description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
-                "See https://youtrack.jetbrains.com/issue/KT-11914"
+        description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914",
     )
     @Enables(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
-    var consistentDataClassCopyVisibility = false
+    var consistentDataClassCopyVisibility: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -615,10 +642,10 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
     @Argument(
         value = "-Xunrestricted-builder-inference",
-        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls."
+        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.",
     )
     @Enables(LanguageFeature.UnrestrictedBuilderInference)
-    var unrestrictedBuilderInference = false
+    var unrestrictedBuilderInference: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -627,10 +654,10 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
     @Argument(
         value = "-Xenable-builder-inference",
         description = """Use builder inference by default for all calls with lambdas that can't be resolved without it.
-The corresponding calls' declarations may not be marked with @BuilderInference."""
+The corresponding calls' declarations may not be marked with @BuilderInference.""",
     )
     @Enables(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
-    var enableBuilderInference = false
+    var enableBuilderInference: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -638,10 +665,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xself-upper-bound-inference",
-        description = "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters."
+        description = "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.",
     )
     @Enables(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
-    var selfUpperBoundInference = false
+    var selfUpperBoundInference: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -649,10 +676,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xcontext-receivers",
-        description = "Enable experimental context receivers."
+        description = "Enable experimental context receivers.",
     )
     @Enables(LanguageFeature.ContextReceivers)
-    var contextReceivers = false
+    var contextReceivers: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -660,10 +687,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xcontext-parameters",
-        description = "Enable experimental context parameters."
+        description = "Enable experimental context parameters.",
     )
     @Enables(LanguageFeature.ContextParameters)
-    var contextParameters = false
+    var contextParameters: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -671,10 +698,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xcontext-sensitive-resolution",
-        description = "Enable experimental context-sensitive resolution."
+        description = "Enable experimental context-sensitive resolution.",
     )
     @Enables(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)
-    var contextSensitiveResolution = false
+    var contextSensitiveResolution: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -682,10 +709,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xnon-local-break-continue",
-        description = "Enable experimental non-local break and continue."
+        description = "Enable experimental non-local break and continue.",
     )
     @Enables(LanguageFeature.BreakContinueInInlineLambdas)
-    var nonLocalBreakContinue = false
+    var nonLocalBreakContinue: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -693,10 +720,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xdirect-java-actualization",
-        description = "Enable experimental direct Java actualization support."
+        description = "Enable experimental direct Java actualization support.",
     )
     @Enables(LanguageFeature.DirectJavaActualization)
-    var directJavaActualization = false
+    var directJavaActualization: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -704,39 +731,51 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xmulti-dollar-interpolation",
-        description = "Enable experimental multi-dollar interpolation."
+        description = "Enable experimental multi-dollar interpolation.",
     )
     @Enables(LanguageFeature.MultiDollarInterpolation)
-    var multiDollarInterpolation = false
+    var multiDollarInterpolation: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation.")
+    @Argument(
+        value = "-Xenable-incremental-compilation",
+        description = "Enable incremental compilation.",
+    )
     var incrementalCompilation: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render the internal names of warnings and errors.")
-    var renderInternalDiagnosticNames = false
+    @Argument(
+        value = "-Xrender-internal-diagnostic-names",
+        description = "Render the internal names of warnings and errors.",
+    )
+    var renderInternalDiagnosticNames: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow compiling scripts along with regular Kotlin sources.")
+    @Argument(
+        value = "-Xallow-any-scripts-in-source-roots",
+        description = "Allow compiling scripts along with regular Kotlin sources.",
+    )
     @Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
-    var allowAnyScriptsInSourceRoots = false
+    var allowAnyScriptsInSourceRoots: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xreport-all-warnings", description = "Report all warnings even if errors are found.")
-    var reportAllWarnings = false
+    @Argument(
+        value = "-Xreport-all-warnings",
+        description = "Report all warnings even if errors are found.",
+    )
+    var reportAllWarnings: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -745,9 +784,13 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
     @Argument(
         value = "-Xfragments",
         valueDescription = "<fragment name>",
-        description = "Declare all known fragments of a multiplatform compilation."
+        description = "Declare all known fragments of a multiplatform compilation.",
     )
     var fragments: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xfragment-sources",
@@ -773,9 +816,9 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xignore-const-optimization-errors",
-        description = "Ignore all compilation exceptions while optimizing some constant expressions."
+        description = "Ignore all compilation exceptions while optimizing some constant expressions.",
     )
-    var ignoreConstOptimizationErrors = false
+    var ignoreConstOptimizationErrors: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -783,9 +826,9 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xdont-warn-on-error-suppression",
-        description = "Don't report warnings when errors are suppressed. This only affects K2."
+        description = "Don't report warnings when errors are suppressed. This only affects K2.",
     )
-    var dontWarnOnErrorSuppression = false
+    var dontWarnOnErrorSuppression: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -793,10 +836,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xwhen-guards",
-        description = "Enable experimental language support for when guards."
+        description = "Enable experimental language support for when guards.",
     )
     @Enables(LanguageFeature.WhenGuards)
-    var whenGuards = false
+    var whenGuards: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -804,10 +847,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xnested-type-aliases",
-        description = "Enable experimental language support for nested type aliases."
+        description = "Enable experimental language support for nested type aliases.",
     )
     @Enables(LanguageFeature.NestedTypeAliases)
-    var nestedTypeAliases = false
+    var nestedTypeAliases: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -816,7 +859,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
     @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
-        description = """Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag"""
+        description = "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag",
     )
     var suppressedDiagnostics: Array<String>? = null
         set(value) {
@@ -830,7 +873,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         description = """Set the severity of the given warning.
 - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)
 - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
-- `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)"""
+- `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)""",
     )
     var warningLevels: Array<String>? = null
         set(value) {
@@ -845,19 +888,19 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before."""
+default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""",
     )
     var annotationDefaultTarget: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
         value = "-XXdebug-level-compiler-checks",
-        description = "Enable debug level compiler checks. ATTENTION: these checks can slow compiler down or even crash it."
+        description = "Enable debug level compiler checks. ATTENTION: these checks can slow compiler down or even crash it.",
     )
-    var debugLevelCompilerChecks = false
+    var debugLevelCompilerChecks: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -865,10 +908,10 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
     @Argument(
         value = "-Xannotation-target-all",
-        description = "Enable experimental language support for @all: annotation use-site target."
+        description = "Enable experimental language support for @all: annotation use-site target.",
     )
     @Enables(LanguageFeature.AnnotationAllUseSiteTarget)
-    var annotationTargetAll = false
+    var annotationTargetAll: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -883,8 +926,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
         @get:Transient
         @field:kotlin.jvm.Transient
-        override val configurator: CommonCompilerArgumentsConfigurator =
-            CommonCompilerArgumentsConfigurator()
+        override val configurator: CommonCompilerArgumentsConfigurator = CommonCompilerArgumentsConfigurator()
     }
 }
-

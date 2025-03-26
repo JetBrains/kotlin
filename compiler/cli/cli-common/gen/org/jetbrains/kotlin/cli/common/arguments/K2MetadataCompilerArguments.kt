@@ -1,25 +1,19 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
 
+// This file was generated automatically. See compiler/cli/cli-arguments-generator
+
 class K2MetadataCompilerArguments : CommonCompilerArguments() {
-    @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated .kotlin_metadata files.")
+    @Argument(
+        value = "-d",
+        valueDescription = "<directory|jar>",
+        description = "Destination for generated .kotlin_metadata files.",
+    )
     var destination: String? = null
         set(value) {
             checkFrozen()
@@ -30,7 +24,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         value = "-classpath",
         shortName = "-cp",
         valueDescription = "<path>",
-        description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files."
+        description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.",
     )
     var classpath: String? = null
         set(value) {
@@ -38,7 +32,11 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file.")
+    @Argument(
+        value = "-module-name",
+        valueDescription = "<name>",
+        description = "Name of the generated .kotlin_module file.",
+    )
     var moduleName: String? = null
         set(value) {
             checkFrozen()
@@ -47,9 +45,9 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xjps",
-        description = "Enable in JPS."
+        description = "Enable in JPS.",
     )
-    var enabledInJps = false
+    var enabledInJps: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -58,7 +56,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xfriend-paths",
         valueDescription = "<path>",
-        description = "Paths to output directories for friend modules (modules whose internals should be visible)."
+        description = "Paths to output directories for friend modules (modules whose internals should be visible).",
     )
     var friendPaths: Array<String>? = null
         set(value) {
@@ -69,7 +67,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xrefines-paths",
         valueDescription = "<path>",
-        description = "Paths to output directories for refined modules (modules whose expects this module can actualize)."
+        description = "Paths to output directories for refined modules (modules whose expects this module can actualize).",
     )
     var refinesPaths: Array<String>? = null
         set(value) {
@@ -79,7 +77,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xlegacy-metadata-jar-k2",
-        description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation"
+        description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation",
     )
     var legacyMetadataJar: Boolean = false
         set(value) {
