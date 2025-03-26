@@ -1112,4 +1112,24 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """
     )
+
+    @Test
+    fun composableLambdaInInlineDefaultParam() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            class NavGraphBuilder
+            object BottomSheetDefaults {
+                @Composable fun DragHandle() {}
+            }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            public inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
+              noinline dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
+            ) {
+            }
+        """,
+    )
 }

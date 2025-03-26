@@ -286,6 +286,24 @@ class CompositionTests {
         assertEquals(2, counter)
     }
 
+    @Test
+    fun inlineWithNoinlineDefault() = compositionTest {
+        compose {
+            inlineWithNoinlineDefault {
+                it?.invoke()
+            }
+            inlineWithNoinlineDefault(
+                default = { Text("Not default") }
+            ) {
+                it?.invoke()
+            }
+        }
+        validate {
+            Text("Default")
+            Text("Not default")
+        }
+    }
+
     // this test emulates behavior of Circuit / Molecule which rely on functions being
     // restartable in interfaces
     @Test
@@ -393,6 +411,13 @@ class CrossInlineState(content: @Composable () -> Unit = { }) {
     fun place() {
         content()
     }
+}
+
+public inline fun inlineWithNoinlineDefault(
+    noinline default: @Composable (() -> Unit)? = { Text("Default") },
+    content: (@Composable (() -> Unit)?) -> Unit
+) {
+    content(default)
 }
 
 @JvmInline
