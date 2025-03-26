@@ -1127,7 +1127,9 @@ class FirCallCompletionResultsWriterTransformer(
         block.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, context.file.source)
         transformElement(block, data)
-        if (block.resolvedType is ConeErrorType) {
+        if ((block.resultType as? ConeErrorType)?.diagnostic is ConePostponedInferenceDiagnostic) {
+            // If a lambda was the last expression of the block, it's type may not have been resolved yet.
+            // It should be now, so rewrite the result type for the block.
             block.writeResultType(session)
         }
         return block

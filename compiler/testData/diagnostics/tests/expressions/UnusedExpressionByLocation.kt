@@ -57,6 +57,15 @@ fun testWhen() {
     }
 }
 
+fun testIfElse(
+    x: String?,
+    transformer: (String) -> Int,
+) {
+    val a =
+        if (x == null) transformer
+        else { str -> str.length }
+}
+
 fun testTry() {
     try {
         <!UNUSED_EXPRESSION!>""<!>

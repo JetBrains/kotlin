@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePostponedInferenceDiagnostic
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -91,14 +92,16 @@ internal fun remapArgumentsWithVararg(
 }
 
 fun FirBlock.writeResultType(session: FirSession) {
-    val resultExpression = when (val statement = statements.lastOrNull()) {
-        is FirExpression -> statement
-        else -> null
-    }
+    val resultExpression = statements.lastOrNull() as? FirExpression
 
-    // If a lambda contains another lambda as result expression, it won't be resolved at this point
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    resultType = resultExpression?.coneTypeOrNull ?: session.builtinTypes.unitType.coneType
+    resultType = if (resultExpression == null) {
+        session.builtinTypes.unitType.coneType
+    } else {
+        // If a lambda contains another lambda as the result expression, it won't be resolved at this point.
+        // Set the block return type to an error so it is rewritten during call completion.
+        resultExpression.coneTypeOrNull ?: ConeErrorType(ConePostponedInferenceDiagnostic)
+    }
 }
 
 fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
