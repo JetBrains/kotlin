@@ -328,6 +328,12 @@ public class LLSourceAnnotationArgumentsCalculatorTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("importAlias.kt")
+    public void testImportAlias() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/importAlias.kt");
+    }
+
+    @Test
     @TestMetadata("incompletePropertyWithDelegate.kt")
     public void testIncompletePropertyWithDelegate() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/incompletePropertyWithDelegate.kt");
