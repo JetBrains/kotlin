@@ -10,15 +10,15 @@ import kotlin.io.path.name
 import kotlin.io.path.walk
 
 internal fun Path.applyPlugin(pluginId: String, artifactId: String, artifactVersionProperty: String) {
-    val groovyBuildScripts = setOf("build.gradle", "build-js.gradle")
-    val kotlinBuildScripts = setOf("build.gradle.kts", "build-js.gradle.kts", "alternative.build.gradle.kts")
     walk()
-        .filter { it.name in groovyBuildScripts || it.name in kotlinBuildScripts }
+        .filter { it.name == "build.gradle" }
         .forEach { file ->
-            when (file.name) {
-                in groovyBuildScripts -> file.updateBuildGradle(pluginId, artifactId, artifactVersionProperty)
-                in kotlinBuildScripts -> file.updateBuildGradleKts(pluginId, artifactId, artifactVersionProperty)
-            }
+            file.updateBuildGradle(pluginId, artifactId, artifactVersionProperty)
+        }
+    walk()
+        .filter { it.name == "build.gradle.kts" }
+        .forEach { file ->
+            file.updateBuildGradleKts(pluginId, artifactId, artifactVersionProperty)
         }
 }
 
