@@ -520,11 +520,11 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 }
             }.buildAndReturn()
 
-            val transformedFiles = buildScriptReturn {
+            val transformedFiles = providerBuildScriptReturn {
                 with(kotlinMultiplatform) {
                     project.locateOrRegisterMetadataDependencyTransformationTask(
                         sourceSets.commonMain.get()
-                    ).get().allTransformedLibraries().get()
+                    ).flatMap { it.allTransformedLibraries() }
                 }
             }.buildAndReturn(metadataTransformationTaskName)
 
