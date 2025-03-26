@@ -108,7 +108,8 @@ class VariableFixationFinder(
         // Might be fixed, but this condition should come earlier than the next one,
         // because self-type-based cases do not have proper constraints, though they assumed to be fixed
         isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
-            TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
+            if (isK2 && !isReified(variable)) TypeVariableFixationReadiness.READY_FOR_FIXATION
+            else TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
 
         // Prevents from fixation
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
