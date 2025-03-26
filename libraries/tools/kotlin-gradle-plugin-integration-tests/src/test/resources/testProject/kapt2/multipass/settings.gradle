@@ -1,1 +1,3 @@
+rootProject.name = "multipass"
+
 include ':annotation-processors', ':example'
