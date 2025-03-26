@@ -29,7 +29,7 @@ interface NamedDomainImmutableCollection<T : Any> {
      * Returns the names of the objects in this collection as a Set of Strings.
      *
      *
-     * The set of names is in *natural ordering*.
+     * The set of names is in *the natural order*.
      *
      * @return The names. Returns an empty set if this collection is empty.
      */
@@ -37,17 +37,17 @@ interface NamedDomainImmutableCollection<T : Any> {
 
 
     /**
-     * Locates a object by name, without triggering its creation or configuration, failing if there is no such object.
+     * Locates an object by name, without triggering its creation or configuration, failing if there is no such object.
      *
      * @param name The object's name
      * @return A [Provider] that will return the object when queried. The object may be created and configured at this point, if not already.
-     * @throws UnknownDomainObjectException If a object with the given name is not defined.
+     * @throws UnknownDomainObjectException If an object with the given name is not defined.
      * @since 4.10
      */
     fun named(name: String): NamedDomainObjectProvider<T>
 
     /**
-     * Locates a object by name, without triggering its creation or configuration, failing if there is no such object.
+     * Locates an object by name, without triggering its creation or configuration, failing if there is no such object.
      * The given configure action is executed against the object before it is returned from the provider.
      *
      * @param name The object's name
@@ -58,7 +58,7 @@ interface NamedDomainImmutableCollection<T : Any> {
     fun named(name: String, configurationAction: Action<in T>): NamedDomainObjectProvider<T>
 
     /**
-     * Locates a object by name and type, without triggering its creation or configuration, failing if there is no such object.
+     * Locates an object by name and type, without triggering its creation or configuration, failing if there is no such object.
      *
      * @param name The object's name
      * @param type The object's type
@@ -69,7 +69,7 @@ interface NamedDomainImmutableCollection<T : Any> {
     fun <S : T> named(name: String, type: Class<S>): NamedDomainObjectProvider<S>
 
     /**
-     * Locates a object by name and type, without triggering its creation or configuration, failing if there is no such object.
+     * Locates an object by name and type, without triggering its creation or configuration, failing if there is no such object.
      * The given configure action is executed against the object before it is returned from the provider.
      *
      * @param name The object's name
@@ -140,7 +140,7 @@ interface NamedDomainImmutableCollection<T : Any> {
     /**
      * Configures each element in this collection using the given action, as each element is required. Actions are run in the order added.
      *
-     * @param action A [Action] that can configure the element when required.
+     * @param action An [Action] that can configure the element when required.
      * @since 4.9
      */
     fun configureEach(action: Action<in T>)
