@@ -20,7 +20,7 @@ fun testUnresolved() {
 
     when(<!UNRESOLVED_REFERENCE!>a<!>) {
         is Int -> <!UNRESOLVED_REFERENCE!>a<!>
-        is String -> <!UNRESOLVED_REFERENCE!>a<!>
+        <!UNRESOLVED_REFERENCE!>is String<!> -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
     for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {

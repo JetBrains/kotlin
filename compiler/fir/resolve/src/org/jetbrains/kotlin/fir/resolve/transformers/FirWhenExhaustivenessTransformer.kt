@@ -466,6 +466,11 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 FirOperation.NOT_IS -> true
                 else -> return
             }
+            val knownNonTypes = (typeOperatorCall.arguments.firstOrNull() as? FirSmartCastExpression)
+                ?.nonTypesFromSmartCast
+                ?.mapNotNull { it.toSymbol(data.session) }
+                .orEmpty()
+            data.checkedSubclasses.addAll(knownNonTypes)
             val symbol = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(data.session).toSymbol(data.session) ?: return
             processBranch(symbol, isNegated, data)
         }

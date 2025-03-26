@@ -167,13 +167,24 @@ abstract class FirDataFlowAnalyzer(
      *
      * @param expression The variable access expression.
      */
-    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? {
+    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastTypesWithStability, SmartcastTypesWithStability>? {
         val flow = currentSmartCastPosition ?: return null
         // Can have an unstable alias to a stable variable, so don't resolve aliases here.
         val variable = flow.getRealVariableWithoutUnwrappingAlias(expression) ?: return null
-        val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
-        return variable.getStability(flow, types) to types
+        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty } ?: return null
+        val types = typeStatement.exactType
+        val nonTypes = typeStatement.exactNonType
+        if (types.isEmpty() && nonTypes.isEmpty()) return null
+        return SmartcastTypesWithStability(variable.getStability(flow, targetTypes = types), types) to
+                // If there are any assignments to local variables, we can no longer guarantee
+                // that the lower type bound is correct.
+                SmartcastTypesWithStability(variable.getStability(flow, targetTypes = null), nonTypes)
     }
+
+    data class SmartcastTypesWithStability(
+        val stability: SmartcastStability,
+        val types: Set<ConeKotlinType>,
+    )
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo> =
         graphBuilder.returnExpressionsOfAnonymousFunction(function) ?: error("anonymous function ${function.render()} not analyzed")
@@ -409,6 +420,7 @@ abstract class FirDataFlowAnalyzer(
                         val expressionVariable = SyntheticVariable(typeOperatorCall)
                         if (operandVariable.isReal()) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
+                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
                         }
                         if (!type.canBeNull(components.session)) {
                             // x is (T & Any) => x != null

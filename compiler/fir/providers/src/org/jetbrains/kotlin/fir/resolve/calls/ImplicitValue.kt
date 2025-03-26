@@ -87,6 +87,7 @@ sealed class ImplicitValue<S>(
                 typesFromSmartCast = listOf(this@ImplicitValue.type)
                 smartcastStability = SmartcastStability.STABLE_VALUE
                 coneTypeOrNull = this@ImplicitValue.type
+                nonTypesFromSmartCast = emptyList()
             }
         } else {
             originalExpression

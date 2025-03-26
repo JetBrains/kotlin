@@ -47,6 +47,10 @@ infix fun OperationStatement.implies(effect: Statement): Implication = Implicati
 infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
 
+infix fun RealVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
+    MutableTypeStatement(this, exactNonType = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
+
+
 // --------------------------------------- Utils ---------------------------------------
 
 @OptIn(ExperimentalContracts::class)

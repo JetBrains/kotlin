@@ -526,23 +526,36 @@ private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
 fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    val (typesSmartcastInfo, nonTypesSmartcastInfo) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    val (stability, typesFromSmartCast) = typesSmartcastInfo
 
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType(session)
 
     val allTypes = if (originalType !is ConeStubType) typesFromSmartCast + originalType else typesFromSmartCast
-    if (allTypes.all { it is ConeDynamicType }) return expression
 
-    val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
-    if (intersectedType == originalType && intersectedType !is ConeDynamicType) return expression
+    val intersectedType = when {
+        allTypes.any { it !is ConeDynamicType } -> ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
+        else -> null
+    }.takeUnless {
+        it == originalType && it !is ConeDynamicType
+    }
+
+    val (nonTypesStability, nonTypesFromSmartCast) = nonTypesSmartcastInfo
+
+    if (
+        nonTypesFromSmartCast.isEmpty() &&
+        (intersectedType == null || intersectedType == originalType)
+    ) {
+        return expression
+    }
 
     return buildSmartCastExpression {
         originalExpression = expression
         smartcastStability = stability
         smartcastType = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            coneType = intersectedType
+            coneType = intersectedType ?: originalType
         }
         // Example (1): if (x is String) { ... }, where x: dynamic
         //   the dynamic type will "consume" all other, erasing information.
@@ -550,7 +563,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
         val nonNothingTypes = allTypes.filter { !it.isKindOfNothing }
         if (
-            intersectedType.isKindOfNothing &&
+            intersectedType?.isKindOfNothing == true &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
             originalType !is ConeStubType &&
@@ -562,7 +575,15 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
             }
         }
         this.typesFromSmartCast = typesFromSmartCast
-        coneTypeOrNull = if (stability == SmartcastStability.STABLE_VALUE) intersectedType else originalTypeWithAliases
+        coneTypeOrNull = when {
+            stability == SmartcastStability.STABLE_VALUE && intersectedType != null -> intersectedType
+            else -> originalTypeWithAliases
+        }
+        // We don't have an analogue of `coneTypeOrNull` for non-types because we can't denote a union,
+        // and `commonSuperClass()` would not be correct.
+        // Imagine a `sealed class S` with variants `A : S()`, `B : S()`, `C : S()`.
+        // If `x: ¬(A | B)`, this doesn't yet mean that `x: ¬S`.
+        this.nonTypesFromSmartCast = nonTypesFromSmartCast.takeIf { nonTypesStability == SmartcastStability.STABLE_VALUE }.orEmpty()
     }
 }
 
