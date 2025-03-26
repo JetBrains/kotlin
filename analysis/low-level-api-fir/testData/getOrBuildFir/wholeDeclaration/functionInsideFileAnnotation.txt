@@ -1,0 +1,25 @@
+KT element: KtProperty
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] functionInsideFileAnnotation.kt
+    @FILE:R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/String] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval s: R|kotlin/Int| = String(str)
+        ^ R|<local>/s|
+    }
+    )
+    package one
+
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }

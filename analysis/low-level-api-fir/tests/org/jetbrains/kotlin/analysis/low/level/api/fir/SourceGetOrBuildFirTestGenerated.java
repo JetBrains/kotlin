@@ -1720,6 +1720,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("functionInsideFileAnnotation.kt")
+    public void testFunctionInsideFileAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/functionInsideFileAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("functionTypeParemeter.kt")
     public void testFunctionTypeParemeter() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/functionTypeParemeter.kt");
