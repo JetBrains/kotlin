@@ -1841,6 +1841,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
       }
 
       @Test
+      @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
+      public void testLongStringTemplateEntryWithTwoExpressions() {
+        runTest("compiler/testData/psi/annotation/values/longStringTemplateEntryWithTwoExpressions.kt");
+      }
+
+      @Test
       @TestMetadata("nestedAnnotation.kt")
       public void testNestedAnnotation() {
         runTest("compiler/testData/psi/annotation/values/nestedAnnotation.kt");
