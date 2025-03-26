@@ -222,6 +222,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirJsCodegenBoxWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("boxInline")
             }
 
             testClass<AbstractFirJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
