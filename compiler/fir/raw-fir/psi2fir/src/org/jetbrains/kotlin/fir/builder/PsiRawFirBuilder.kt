@@ -1264,7 +1264,7 @@ open class PsiRawFirBuilder(
                         importedFqName = importDirective.importedFqName
                         isAllUnder = importDirective.isAllUnder
                         aliasName = importDirective.aliasName?.let { Name.identifier(it) }
-                        aliasSource = importDirective.alias?.nameIdentifier?.toFirSourceElement()
+                        aliasSource = importDirective.alias?.toFirSourceElement()
                     }
                 }
 

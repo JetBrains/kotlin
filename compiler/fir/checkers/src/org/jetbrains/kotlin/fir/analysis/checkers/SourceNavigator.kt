@@ -172,6 +172,7 @@ private object PsiSourceNavigator : LightTreeSourceNavigator() {
         is KtTypeProjection -> typeReference?.typeElement?.text
         is LeafPsiElement if elementType == KtTokens.IDENTIFIER -> chars
         is KtQualifiedExpression -> selectorExpression?.getRawIdentifier()
+        is KtImportAlias -> name
         else -> null
     }
 

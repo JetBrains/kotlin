@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,9 +14,7 @@ import com.intellij.psi.util.descendants
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.ENUM_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
-import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
@@ -1222,6 +1220,7 @@ object PositioningStrategies {
                 is KtAnnotationEntry -> element.calleeExpression ?: element
                 is KtTypeReference -> (element.typeElement as? KtNullableType)?.innerType ?: element
                 is KtImportDirective -> element.importedReference ?: element
+                is KtImportAlias -> element.nameIdentifier ?: element
                 else -> element
             }
             while (locateReferencedName && result is KtParenthesizedExpression) {
