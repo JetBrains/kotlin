@@ -213,7 +213,6 @@ class PostponedArgumentsAnalyzer(
 
         val additionalBinding: Pair<TypeConstructorMarker, KotlinTypeMarker>? =
             (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { pclaInferenceSession ->
-                // TODO: Fix variables for context receivers, too (KT-64859)
                 lambda.receiverType
                     ?.let {
                         pclaInferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
