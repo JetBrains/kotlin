@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.ir.util.render as newRender
 
 /**
  * [IdSignature] is a unique key that corresponds to each Kotlin Declaration. It is used to reference declarations in klib.
@@ -249,13 +248,7 @@ sealed class IdSignature {
 
     open fun asPublic(): CommonSignature? = null
 
-    @Deprecated(
-        "Rendering of signatures has been extracted to IdSignatureRenderer.render()",
-        replaceWith = ReplaceWith("render()", "org.jetbrains.kotlin.ir.util.render"),
-        level = DeprecationLevel.HIDDEN
-    )
-    fun render(): String = newRender()
-    final override fun toString() = newRender()
+    final override fun toString() = render()
 
     fun Flags.test(): Boolean = decode(flags())
 
@@ -281,19 +274,6 @@ sealed class IdSignature {
         val mask: Long,
         val description: String?,
     ) : IdSignature() {
-
-        @Deprecated(
-            "When constructing 'CommonSignature', you need to set 'description' to the mangled name from which 'id' was " +
-                    "computed, or to null if it's not applicable",
-            level = DeprecationLevel.WARNING,
-        )
-        constructor(
-            packageFqName: String,
-            declarationFqName: String,
-            id: Long?,
-            mask: Long,
-        ) : this(packageFqName, declarationFqName, id, mask, null)
-
         override val isPubliclyVisible: Boolean get() = true
 
         override fun packageFqName(): FqName = FqName(packageFqName)
