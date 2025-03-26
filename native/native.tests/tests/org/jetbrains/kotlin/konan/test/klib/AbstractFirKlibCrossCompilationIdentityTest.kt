@@ -130,7 +130,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         val defaultDir = klibFile.resolve("default")
 
         metadataDumper[module] += klibFile.dumpMetadata(kotlinNativeClassLoader, printSignatures = false, signatureVersion = null)
-        irDumper[module] += klibFile.dumpIr(kotlinNativeClassLoader, printSignatures = true, signatureVersion = KotlinIrSignatureVersion.V2)
+        irDumper[module] += klibFile.dumpIr(kotlinNativeClassLoader)
 
         // Ideally, text dumps should change if MD5 changes. But there's a concern that dumping algorithm
         // might miss some cases. So, these hashes are computed as a "safety net".

@@ -44,20 +44,16 @@ abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
             else ""
 
         val expectedContentsNoSig = File("$testPathNoExtension.ir$firSpecificExt.txt")
-        assertIrMatchesExpected(testCompilationResult, expectedContentsNoSig, printSignatures = false)
-
-        val expectedContentsWithSig = File("$testPathNoExtension.sig.ir$firSpecificExt.txt")
-        assertIrMatchesExpected(testCompilationResult, expectedContentsWithSig, printSignatures = true)
+        assertIrMatchesExpected(testCompilationResult, expectedContentsNoSig)
     }
 
     private fun assertIrMatchesExpected(
         compilationResult: TestCompilationResult<out TestCompilationArtifact.KLIB>,
         expectedContents: File,
-        printSignatures: Boolean
     ) {
         val artifact = compilationResult.assertSuccess().resultingArtifact
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
-        val klibIr = artifact.dumpIr(kotlinNativeClassLoader.classLoader, printSignatures, null) // TODO: test for all signature versions, KT-62828
+        val klibIr = artifact.dumpIr(kotlinNativeClassLoader.classLoader) // TODO: test for all signature versions, KT-62828
         assertEqualsToFile(expectedContents, klibIr)
     }
 

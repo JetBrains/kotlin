@@ -4,21 +4,21 @@ MODULE_FRAGMENT name:<stdlibReferences>
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.Foo
       CONSTRUCTOR signature:test/Foo.<init>|<init>(){}[0] visibility:public returnType:test.Foo [primary]
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='test/Foo|null[0]' type=kotlin.Unit
     PROPERTY name:boolean signature:test/boolean|{}boolean[0] visibility:public modality:FINAL [val]
       FUN name:<get-boolean> signature:test/boolean.<get-boolean>|<get-boolean>(){}[0] visibility:public modality:FINAL returnType:kotlin.Boolean
         correspondingProperty: PROPERTY name:boolean signature:test/boolean|{}boolean[0] visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-boolean> (): kotlin.Boolean declared in test'
+          RETURN type=kotlin.Nothing from='test/boolean.<get-boolean>|<get-boolean>(){}[0]'
             CONST Boolean type=kotlin.Boolean value=true
     CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[kotlin.Enum<test.E>]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.E
       CONSTRUCTOR signature:test/E.<init>|<init>(){}[0] visibility:private returnType:test.E [primary]
         BLOCK_BODY
-          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          ENUM_CONSTRUCTOR_CALL 'kotlin/Enum.<init>|<init>(kotlin.String;kotlin.Int){}[0]'
             TYPE_ARG 1: test.E
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[kotlin.Enum<test.E>]' type=kotlin.Unit
+          INSTANCE_INITIALIZER_CALL classDescriptor='test/E|null[0]' type=kotlin.Unit
       ENUM_ENTRY name:A signature:test/E.A|null[0]
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.E'
@@ -36,30 +36,30 @@ MODULE_FRAGMENT name:<stdlibReferences>
         ExperimentalNativeApi
       BLOCK_BODY
         VAR name:a type:kotlin.collections.Set<kotlin.Int> [val]
-          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.collections.Set<kotlin.Int> origin=null
+          CALL 'kotlin.collections/setOf|setOf(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]' type=kotlin.collections.Set<kotlin.Int> origin=null
             TYPE_ARG 1: kotlin.Int
             ARG 1: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
               CONST Int type=kotlin.Int value=1
               CONST Int type=kotlin.Int value=2
               CONST Int type=kotlin.Int value=3
-        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Unit origin=null
-          ARG 1: CALL 'public final fun <get-boolean> (): kotlin.Boolean declared in test' type=kotlin.Boolean origin=GET_PROPERTY
+        CALL 'kotlin/require|require(kotlin.Boolean;kotlin.Function0<kotlin.Any>){}[0]' type=kotlin.Unit origin=null
+          ARG 1: CALL 'test/boolean.<get-boolean>|<get-boolean>(){}[0]' type=kotlin.Boolean origin=GET_PROPERTY
           ARG 2: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in test.main'
                   CONST String type=kotlin.String value="Some message"
         VAR name:c type:kotlin.reflect.KClass<*> [val]
-          CLASS_REFERENCE 'CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<test.Foo>
+          CLASS_REFERENCE 'test/Foo|null[0]' type=kotlin.reflect.KClass<test.Foo>
         VAR name:d type:kotlin.time.Duration [val]
-          CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.time.Duration origin=null
+          CALL 'kotlin.time/measureTime|measureTime(kotlin.Function0<kotlin.Unit>){}[0]' type=kotlin.time.Duration origin=null
             ARG 1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in test.main'
-                    GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=kotlin.Unit
+                    GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
         VAR name:e type:kotlin.Comparable<*> [val]
-          GET_ENUM 'ENUM_ENTRY name:A signature:test/E.A|null[0]' type=test.E
+          GET_ENUM 'test/E.A|null[0]' type=test.E
         VAR name:f type:kotlin.native.OsFamily [val]
-          GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=kotlin.native.OsFamily
+          GET_ENUM 'kotlin.native/OsFamily.MACOSX|null[0]' type=kotlin.native.OsFamily
 

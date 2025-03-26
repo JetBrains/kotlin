@@ -93,7 +93,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                                              Render IR signatures of a specific version. By default, the most up-to-date signature version
                                                that is supported in the library is used.
                    -print-signatures {true|false}
-                                             Print IR signature for every declaration. Applicable only to "dump-metadata" and "dump-ir" commands.
+                                             Print IR signature for every declaration. Applicable only to the "dump-metadata" command.
                 """.trimIndent()
         )
     }

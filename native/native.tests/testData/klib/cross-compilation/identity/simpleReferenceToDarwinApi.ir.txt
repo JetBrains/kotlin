@@ -3,7 +3,7 @@ MODULE_FRAGMENT name:<simpleReferenceToDarwinApi>
     FUN name:use signature:simple/use|use(){}[0] visibility:public modality:FINAL returnType:platform.Foundation.NSString
       BLOCK_BODY
         VAR name:x type:platform.Foundation.NSString [val]
-          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=platform.Foundation.NSString origin=null
-        RETURN type=kotlin.Nothing from='public final fun use (): platform.Foundation.NSString declared in simple'
+          CONSTRUCTOR_CALL 'platform.Foundation/NSString.<init>|objc:init#Constructor[100]' type=platform.Foundation.NSString origin=null
+        RETURN type=kotlin.Nothing from='simple/use|use(){}[0]'
           GET_VAR 'val x: platform.Foundation.NSString [val] declared in simple.use' type=platform.Foundation.NSString origin=null
 
