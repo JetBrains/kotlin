@@ -379,6 +379,24 @@ class CompositionTests {
         advance()
         revalidate()
     }
+
+    @Test
+    fun inlineWithNoinlineDefault() = compositionTest {
+        compose {
+            inlineWithNoinlineDefault {
+                it?.invoke()
+            }
+            inlineWithNoinlineDefault(
+                default = { Text("Not default") }
+            ) {
+                it?.invoke()
+            }
+        }
+        validate {
+            Text("Default")
+            Text("Not default")
+        }
+    }
 }
 
 @Composable
@@ -412,6 +430,13 @@ class CrossInlineState(content: @Composable () -> Unit = { }) {
     fun place() {
         content()
     }
+}
+
+public inline fun inlineWithNoinlineDefault(
+    noinline default: @Composable (() -> Unit)? = { Text("Default") },
+    content: (@Composable (() -> Unit)?) -> Unit
+) {
+    content(default)
 }
 
 @JvmInline

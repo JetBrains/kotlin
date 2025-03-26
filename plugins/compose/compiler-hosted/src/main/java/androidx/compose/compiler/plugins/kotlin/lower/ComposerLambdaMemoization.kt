@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -742,7 +741,12 @@ class ComposerLambdaMemoization(
                 // Public inline functions can't use singleton instance because changes to the function body
                 // can cause ABI incompatibilities. Note that we still generate singleton instances
                 // to ensure that we don't break existing consumers.
-                wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
+                wrapFunctionExpression(
+                    declarationContext,
+                    functionExpression.deepCopyWithSymbols(functionExpression.function.parent),
+                    collector,
+                    declarationContext.composable
+                )
                     .also {
                         it.associatedComposableSingletonStub = singleton
                     }
@@ -904,10 +908,6 @@ class ComposerLambdaMemoization(
             endOffset = expression.endOffset
         )
 
-        // FIXME: We should remove this call once we are sure that there is nothing relying on it.
-        //        `IrPluginContextImpl` is K1 specific and `getDeclaration` doesn't do anything on
-        //        the JVM backend where we produce lazy declarations for unbound symbols.
-        (context as? IrPluginContextImpl)?.linker?.getDeclaration(restartFactorySymbol)
         val composableLambdaExpression = irBuilder.irCall(restartFactorySymbol).apply {
             var index = 0
 
