@@ -41,6 +41,8 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.moduleName = from.moduleName
     to.optimizeGeneratedJs = from.optimizeGeneratedJs
     to.outputDir = from.outputDir
+    @Suppress("DEPRECATION")
+    to.outputFile = from.outputFile
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs

@@ -1996,6 +1996,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/jsHelp.args");
     }
 
+    @TestMetadata("jsObsoleteOutputArgument.args")
+    public void testJsObsoleteOutputArgument() {
+      runTest("compiler/testData/cli/js/jsObsoleteOutputArgument.args");
+    }
+
     @TestMetadata("kotlinPackage.args")
     public void testKotlinPackage() {
       runTest("compiler/testData/cli/js/kotlinPackage.args");

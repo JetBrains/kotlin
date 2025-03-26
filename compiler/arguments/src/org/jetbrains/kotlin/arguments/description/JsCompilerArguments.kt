@@ -19,6 +19,29 @@ import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.config.LanguageVersion
 
 val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
+    compilerArgument {
+        // This option should have been removed in Kotlin 2.2, but it was left here because removing it breaks importing some ancient
+        // Gradle projects in IDEA.
+        // IDEA uses this class to parse the arguments passed by KGP to build its project model.
+        // If it encounters unknown arguments, it just ignores them, which is fine,
+        // but this one is special: it expects a value as the next argument.
+        // So, even though IDEA ignores it, its value is not ignored and is treated as a free positional argument,
+        // which is wrong.
+        // For the import of old Kotlin/JS projects to continue working (and ignore this flag _correctly_),
+        // we have to keep this option around, even though its formal deprecation cycle allows use to drop it completely right now.
+        name = "output"
+        compilerName = "outputFile"
+        valueType = StringType.defaultNull
+        description = "".asReleaseDependent()
+        valueDescription = "<filepath>".asReleaseDependent()
+        isObsolete = true
+
+        additionalAnnotations(
+            Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
+        )
+
+        stubLifecycle()
+    }
 
     compilerArgument {
         name = "ir-output-dir"

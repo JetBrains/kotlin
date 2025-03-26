@@ -26,6 +26,10 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
+/**
+ * @property isObsolete Set to `true`if you want the compiler to treat this option as unknown and show the appropriate diagnostics,
+ * but you still want it around for some reason.
+ */
 @Target(AnnotationTarget.FIELD)
 annotation class Argument(
     val value: String,
@@ -34,7 +38,8 @@ annotation class Argument(
     @property:RawDelimiter
     val delimiter: String = Delimiters.default,
     val valueDescription: String = "",
-    val description: String
+    val description: String,
+    val isObsolete: Boolean = false,
 ) {
     @RequiresOptIn(
         message = "The raw delimiter value needs to be resolved. See 'resolvedDelimiter'. Using the raw value requires opt-in",
@@ -211,6 +216,11 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         if (key != arg && key == argument.shortName) {
             errors.value.unknownArgs.add(arg)
             continue
+        }
+
+        if (argument.isObsolete) {
+            // Add to unknown to show the diagnostic, but keep parsing.
+            errors.value.unknownArgs.add(arg)
         }
 
         val deprecatedName = argument.deprecatedName
