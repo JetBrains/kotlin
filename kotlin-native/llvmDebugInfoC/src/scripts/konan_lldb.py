@@ -53,11 +53,61 @@ def bench(start, msg):
         print("{}: {}".format(msg(), time.monotonic() - start))
 
 def evaluate(expr):
-    result = lldb.debugger.GetSelectedTarget().EvaluateExpression(expr)
+    target = lldb.debugger.GetSelectedTarget()
+    if not target:
+        raise DebuggerException("No target selected")
+
+    process = target.GetProcess()
+    if not process:
+        raise DebuggerException("No process found")
+
+    thread = process.GetSelectedThread()
+    if not thread:
+        # Try to select the first thread if none is selected
+        if process.GetNumThreads() > 0:
+            thread = process.GetThreadAtIndex(0)
+            process.SetSelectedThread(thread)
+        else:
+            raise DebuggerException("No threads available")
+
+    frame = thread.GetSelectedFrame()
+    if not frame:
+        # Try to select the first frame if none is selected
+        if thread.GetNumFrames() > 0:
+            frame = thread.GetFrameAtIndex(0)
+            thread.SetSelectedFrame(0)
+        else:
+            raise DebuggerException("No frames available")
+
+    # Store original frame information
+    original_frame = frame
+    original_pc = frame.GetPC()
+    original_line_entry = frame.GetLineEntry()
+    original_file = original_line_entry.GetFileSpec().GetFilename() if original_line_entry else None
+    original_line = original_line_entry.GetLine() if original_line_entry else 0
+    original_frame_id = frame.GetFrameID()
+
+    result = frame.EvaluateExpression(expr)
+
+    # Try to find and restore the original frame
+    current_frame = thread.GetSelectedFrame()
+    if current_frame != original_frame:
+        log(lambda: "Warning: Frame changed during evaluation from {} to {}".format(original_frame, current_frame))
+        # Try to find and restore the original frame
+        for idx in range(thread.GetNumFrames()):
+            frame = thread.GetFrameAtIndex(idx)
+            if frame.GetFrameID() == original_frame_id:
+                thread.SetSelectedFrame(idx)
+                frame = original_frame
+                log(lambda: "Restored original frame")
+                break
+
     err = result.GetError()
     if not err.Success():
+        log(lambda: "Expression evaluation failed: {} - {}".format(expr, err.description))
         raise EvaluateDebuggerException(expr, err)
-    log(lambda : "evaluate: {} => {}".format(expr, result))
+
+    log(lambda: "evaluate: {} => {}".format(expr, result))
     return result
 
 
