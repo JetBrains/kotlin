@@ -1690,6 +1690,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("enumClassWithDanglingModifierList.kt")
+    public void testEnumClassWithDanglingModifierList() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/enumClassWithDanglingModifierList.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntry.kt")
     public void testEnumEntry() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/enumEntry.kt");
