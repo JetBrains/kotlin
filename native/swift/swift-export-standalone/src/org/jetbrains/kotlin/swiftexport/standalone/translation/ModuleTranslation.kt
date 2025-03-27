@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.sir.SirImport
-import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.SirAndKaSession
@@ -32,8 +31,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
-import kotlin.collections.contains
-import kotlin.collections.plusAssign
 
 /**
  * Translates the whole public API surface of the given [module] to [SirModule] and generates compiler bridges between them.
@@ -131,6 +128,7 @@ internal fun translateCrossReferencingModulesTransitively(
                 it.processedReferences += inputQueue
                 // We build bridges at every iteration as new references might appear.
                 it.bridgeRequests += it.sirSession.withSessions { buildBridgeRequests(bridgeGenerator, sirModule) }
+                forceComputeSupertypes(sirModule)
             }
     }
     return translationStates.mapNotNull {
@@ -145,6 +143,21 @@ internal fun translateCrossReferencingModulesTransitively(
             it.bridgeRequests
         )
     }
+}
+
+/**
+ * A little hack to force computation of supertypes when exporting a module transitively.
+ * Otherwise, we might encounter a new type declaration during SIR printing which is too late.
+ */
+private fun forceComputeSupertypes(container: SirDeclarationContainer) {
+    when (container) {
+            // This invokes SirKaClassReferenceHandler under the hood for Kotlin-exported types.
+        is SirProtocolConformingDeclaration -> container.protocols
+            // This invokes SirKaClassReferenceHandler under the hood for Kotlin-exported types.
+        is SirClassInhertingDeclaration -> container.superClass
+        else -> {}
+    }
+    container.allContainers().forEach { forceComputeSupertypes(it) }
 }
 
 private fun SirSession.createTranslationResult(
