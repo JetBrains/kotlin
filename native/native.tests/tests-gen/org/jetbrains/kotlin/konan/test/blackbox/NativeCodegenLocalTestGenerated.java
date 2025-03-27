@@ -412,12 +412,6 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       }
 
       @Test
-      @TestMetadata("unsupported.kt")
-      public void testUnsupported() {
-        runTest("native/native.tests/testData/codegen/cinterop/basics/unsupported.kt");
-      }
-
-      @Test
       @TestMetadata("values.kt")
       public void testValues() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/values.kt");
