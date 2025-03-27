@@ -142,7 +142,8 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             thirdPartyAnnotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
             thirdPartyJava8Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
             thirdPartyJava9Annotations.orNull?.let { "-D$KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },
-            thirdPartyJsr305.orNull?.let { "-D$KOTLIN_THIRDPARTY_JSR305_PATH=${it.asFile.absolutePath}" }
-        ) + testDataMap.get().map { it.key + "=" + it.value }.joinToString(prefix = "-D$KOTLIN_TESTDATA_ROOTS=", separator = ";")
+            thirdPartyJsr305.orNull?.let { "-D$KOTLIN_THIRDPARTY_JSR305_PATH=${it.asFile.absolutePath}" },
+            testDataMap.get().map { it.key + "=" + it.value }.joinToString(prefix = "-D$KOTLIN_TESTDATA_ROOTS=", separator = ";"),
+        )
     }
 }
