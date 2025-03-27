@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
@@ -17,6 +19,11 @@ sourceSets {
         kotlin {
         }
     }
+    recursiveDeletionTest {
+        kotlin {
+            srcDir 'recursiveDeletionTest'
+        }
+    }
     java9 {
         java {
             srcDir 'java9'
@@ -26,6 +33,9 @@ sourceSets {
 
 dependencies {
     api project(':kotlin-stdlib')
+    recursiveDeletionTestApi project(":kotlin-stdlib")
+    recursiveDeletionTestApi project
+    recursiveDeletionTestApi RepoDependencies.kotlinTest(project, "junit")
 }
 
 jar {
@@ -36,7 +46,6 @@ jar {
 sourcesJar {
     from sourceSets.java9.allSource
 }
-
 
 artifacts {
     archives sourcesJar
@@ -55,4 +64,21 @@ compileTestKotlin {
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
 
+// The test removes a directory inside a current working directory.
+// This task isolates it from all other tests and provides it with a dedicated working directory.
+check.dependsOn(tasks.register("recursiveDeletionTest", Test) {test ->
+    test.dependsOn(recursiveDeletionTestClasses)
+    test.group = "verification"
+    test.testClassesDirs = sourceSets.recursiveDeletionTest.output.classesDirs
+    test.classpath = files(sourceSets.recursiveDeletionTest.runtimeClasspath, tasks.jar)
 
+    var buildDir = layout.buildDirectory.get().asFile.toPath()
+
+    doFirst {
+        test.workingDir(Files.createTempDirectory(buildDir, "rec-deletion-tests-"))
+    }
+
+    doLast {
+        workingDir.deleteDir()
+    }
+})
