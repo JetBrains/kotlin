@@ -17,13 +17,13 @@ Tower Data Context:
                 Type: foo.MyClass
 
 FILE: [ResolvedTo(IMPORTS)] functionInsideClassLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] value: String): R|foo/Anno| {
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] value: R|kotlin/String|): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val value: String = R|<local>/value|
-            public? [ResolvedTo(RAW_FIR)] get(): String
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
@@ -31,5 +31,5 @@ FILE: [ResolvedTo(IMPORTS)] functionInsideClassLevel.kt
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = ERROR_EXPR(Argument is absent)) <DANGLING MODIFIER: Top level declaration expected>
     }

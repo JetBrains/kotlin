@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
@@ -128,8 +126,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirDanglingModifierList {
         if (implicitTypeOnly) return danglingModifierList
 
-        @OptIn(PrivateForInline::class)
-        context.withContainer(danglingModifierList) {
+        context.withDanglingModifierList(danglingModifierList) {
             danglingModifierList.transformAnnotations(transformer, data)
         }
 

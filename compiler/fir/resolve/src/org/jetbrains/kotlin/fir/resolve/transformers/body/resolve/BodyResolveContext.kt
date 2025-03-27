@@ -779,6 +779,14 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
+    fun <T> withDanglingModifierList(
+        danglingModifierList: FirDanglingModifierList,
+        f: () -> T
+    ): T = withTowerDataCleanup {
+        withContainer(danglingModifierList, f)
+    }
+
+    @OptIn(PrivateForInline::class)
     fun <T> withAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         holder: SessionHolder,

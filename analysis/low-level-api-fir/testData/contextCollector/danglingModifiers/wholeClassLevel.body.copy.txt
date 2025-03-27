@@ -25,7 +25,7 @@ Tower Data Context:
             FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
                 Type: foo.MyClass
 
-FILE: [ResolvedTo(IMPORTS)] classLevelAnnotation.kt
+FILE: [ResolvedTo(IMPORTS)] wholeClassLevel.kt
     public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -37,12 +37,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevelAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] get(): String
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final companion [ResolvedTo(ANNOTATION_ARGUMENTS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/MyClass.Companion| {
                 super<R|kotlin/Any|>()
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelAnnotation.kt
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|foo/MyClass.NestedAnnotation| {
                 super<R|kotlin/Any|>()
             }
@@ -62,5 +62,5 @@ FILE: [ResolvedTo(IMPORTS)] classLevelAnnotation.kt
 
         }
 
-        [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @NestedAnnotation[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str).R|kotlin/String.plus|(R|foo/CONSTANT|)) @R|foo/MyClass.NestedAnnotation|[Types](i = this@R|foo/MyClass.Companion|.R|foo/MyClass.Companion.NESTED_CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
     }

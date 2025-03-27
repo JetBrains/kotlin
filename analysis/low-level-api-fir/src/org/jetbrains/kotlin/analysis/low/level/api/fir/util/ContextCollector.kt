@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -623,6 +623,23 @@ private class ContextCollectorVisitor(
                     onActive {
                         processChildren(enumEntry)
                     }
+                }
+            }
+        }
+    }
+
+    override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList) = withProcessor(danglingModifierList) {
+        dumpContext(danglingModifierList, ContextKind.SELF)
+
+        processSignatureAnnotations(danglingModifierList)
+
+        onActiveBody {
+            danglingModifierList.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+            context.withDanglingModifierList(danglingModifierList) {
+                dumpContext(danglingModifierList, ContextKind.BODY)
+                onActive {
+                    processChildren(danglingModifierList)
                 }
             }
         }

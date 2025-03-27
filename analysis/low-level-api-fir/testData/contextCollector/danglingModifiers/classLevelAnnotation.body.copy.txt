@@ -49,5 +49,5 @@ FILE: [ResolvedTo(IMPORTS)] classLevelAnnotation.kt
 
         }
 
-        [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @NestedAnnotation[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str).R|kotlin/String.plus|(R|foo/CONSTANT|)) @R|foo/MyClass.NestedAnnotation|[Types](i = this@R|foo/MyClass.Companion|.R|foo/MyClass.Companion.NESTED_CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
     }

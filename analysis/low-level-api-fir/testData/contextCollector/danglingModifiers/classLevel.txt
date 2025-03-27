@@ -26,15 +26,15 @@ Tower Data Context:
                 Type: foo.MyClass
 
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] s: String): R|foo/Anno| {
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT: R|kotlin/Int| = Int(5)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] get(): String
+        public final [ResolvedTo(STATUS)] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
@@ -62,5 +62,5 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        [ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) @NestedAnnotation[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str).R|kotlin/String.plus|(R|foo/CONSTANT|)) @R|foo/MyClass.NestedAnnotation|[Types](i = this@R|foo/MyClass.Companion|.R|foo/MyClass.Companion.NESTED_CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
     }
