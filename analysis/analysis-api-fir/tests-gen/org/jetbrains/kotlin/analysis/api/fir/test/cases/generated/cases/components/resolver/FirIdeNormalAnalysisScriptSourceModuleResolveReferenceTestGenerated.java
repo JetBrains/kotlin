@@ -58,6 +58,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveReferenceTestGenerated
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ScriptResult.kts");
   }
 
+  @Test
+  @TestMetadata("ScriptThis.kts")
+  public void testScriptThis() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ScriptThis.kts");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayAccess")
   @TestDataPath("$PROJECT_ROOT")

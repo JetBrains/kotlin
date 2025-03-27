@@ -68,6 +68,7 @@ object TestReferenceResolveResultRenderer {
                     append("extension receiver with type ")
                     append(symbol.returnType.render(renderer.typeRenderer, position = Variance.INVARIANT))
                 }
+                is KaScriptSymbol -> append("script ${symbol.name}")
                 is KaDeclarationSymbol -> {
                     append(symbol.render(renderer))
                 }
