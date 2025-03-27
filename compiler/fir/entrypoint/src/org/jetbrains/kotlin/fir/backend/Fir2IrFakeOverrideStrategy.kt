@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -377,13 +378,9 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 if (delegateField.type.isSubtypeOfClass(baseType.classOrFail)) return@let it
                 it.implicitCastTo(baseType)
             }
-            dispatchReceiver = getField
-            extensionReceiver = delegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                IrGetValueImpl(offset, offset, extensionReceiver.type, extensionReceiver.symbol)
-            }
-            delegatedFunction.valueParameters.forEach {
-                putValueArgument(it.indexInOldValueParameters, IrGetValueImpl(offset, offset, it.type, it.symbol))
-            }
+            arguments.assignFrom(listOf(getField) + delegatedFunction.nonDispatchParameters.map {
+                IrGetValueImpl(offset, offset, it.type, it.symbol)
+            })
             for (index in delegatedFunction.typeParameters.indices) {
                 val parameter = delegatedFunction.typeParameters[index]
                 typeArguments[index] = IrSimpleTypeImpl(
