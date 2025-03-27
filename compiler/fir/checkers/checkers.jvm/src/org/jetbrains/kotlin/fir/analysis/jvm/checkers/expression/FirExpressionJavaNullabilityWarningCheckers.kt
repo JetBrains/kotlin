@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.rendering.appendDeprecationWarningSuffix
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -161,22 +162,16 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
         // Don't report anything if the original types didn't match.
         actualType.isSubtypeOf(context.session.typeContext, expectedType)
     ) {
-        val suffix =
+        val suffix = buildString {
             when {
                 actualType.isEnhancedTypeForWarningDeprecation || expectedType.isEnhancedTypeForWarningDeprecation -> {
-                    val versionString =
-                        LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced.sinceVersion?.versionString
-                    "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-63209"
+                    appendDeprecationWarningSuffix(LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced, "KT-63209")
                 }
                 actualType.isMadeFlexibleSynthetically() || expectedType.isMadeFlexibleSynthetically() -> {
-                    val versionString =
-                        LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible.sinceVersion?.versionString
-                    "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-71718"
-                }
-                else -> {
-                    ""
+                    appendDeprecationWarningSuffix(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible, "KT-71718")
                 }
             }
+        }
         reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, suffix, context)
     }
 }

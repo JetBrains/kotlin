@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
@@ -2896,8 +2897,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION,
-            "Public-API inline {1} cannot access non-public-API {0}. " +
-                    "This will become an error in ${LanguageFeature.ProhibitPrivateOperatorCallInInline.formatKotlinWithVersion()}.",
+            "Public-API inline {1} cannot access non-public-API {0}.".toDeprecationWarningMessage(LanguageFeature.ProhibitPrivateOperatorCallInInline),
             SYMBOL_KIND,
             SYMBOL_KIND
         )
@@ -3121,14 +3121,5 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING,
             TO_STRING
         )
-    }
-}
-
-fun LanguageFeature.formatKotlinWithVersion(): String {
-    val sinceVersion = sinceVersion
-    return if (sinceVersion != null) {
-        "Kotlin ${sinceVersion.versionString}"
-    } else {
-        "a future release"
     }
 }
