@@ -87,12 +87,8 @@ class VariableFixationFinder(
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
-        READY_FOR_FIXATION,
         READY_FOR_FIXATION_REIFIED,
     }
-
-    private val inferenceCompatibilityModeEnabled: Boolean
-        get() = languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
 
     private val isTypeInferenceForSelfTypesSupported: Boolean
         get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
@@ -123,13 +119,12 @@ class VariableFixationFinder(
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
-        inferenceCompatibilityModeEnabled -> {
+        else -> {
             when {
                 variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
                 else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
             }
         }
-        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
     }
 
     private fun Context.variableHasUnprocessedConstraintsInForks(variableConstructor: TypeConstructorMarker): Boolean {

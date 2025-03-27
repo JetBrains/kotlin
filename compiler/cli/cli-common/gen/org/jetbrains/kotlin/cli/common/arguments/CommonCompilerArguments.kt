@@ -589,17 +589,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
-        value = "-Xinference-compatibility",
-        description = "Enable compatibility changes for the generic type inference algorithm.",
-    )
-    @Enables(LanguageFeature.InferenceCompatibility)
-    var inferenceCompatibility: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xsuppress-version-warnings",
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.",
     )

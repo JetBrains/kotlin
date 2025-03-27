@@ -86,7 +86,6 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::useFirExperimentalCheckers,
             CommonCompilerArguments::metadataKlib,
             CommonCompilerArguments::disableDefaultScriptingPlugin,
-            CommonCompilerArguments::inferenceCompatibility,
             CommonCompilerArguments::suppressVersionWarnings
         )
 

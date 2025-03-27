@@ -168,7 +168,6 @@ enum class LanguageFeature(
     CorrectSourceMappingSyntax(KOTLIN_1_5, kind = UNSTABLE_FEATURE),
     ProperArrayConventionSetterWithDefaultCalls(KOTLIN_1_5, kind = OTHER),
     AdaptedCallableReferenceAgainstReflectiveType(null),
-    InferenceCompatibility(KOTLIN_1_5, kind = BUG_FIX),
     RequiredPrimaryConstructorDelegationCallInEnums(KOTLIN_1_5, kind = BUG_FIX),
     ApproximateAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
     ForbidReferencingToUnderscoreNamedParameterOfCatchBlock(KOTLIN_1_5, kind = BUG_FIX),

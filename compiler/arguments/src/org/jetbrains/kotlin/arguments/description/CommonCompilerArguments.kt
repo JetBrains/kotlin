@@ -554,19 +554,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
 
 
     compilerArgument {
-        name = "Xinference-compatibility"
-        description = "Enable compatibility changes for the generic type inference algorithm.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Enables(LanguageFeature.InferenceCompatibility)
-        )
-
-        stubLifecycle()
-    }
-
-
-    compilerArgument {
         name = "Xsuppress-version-warnings"
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
