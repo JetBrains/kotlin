@@ -58,6 +58,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_Znwm", // new
         "_Znwy", // operator new(unsigned long long)
         "_ZdlPv", // delete
+        "_ZdlPvm", // operator delete(void*, unsigned long)
         "_ZNSt3__16thread20hardware_concurrencyEv", // std::__1::thread::hardware_concurrency()
         "_ZNSt6thread20hardware_concurrencyEv", // std::thread::hardware_concurrency()
         "__mingw_vsnprintf",
@@ -236,7 +237,9 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.cttz.*",
         "llvm.dbg.*",
         "llvm.eh.typeid.for",
+        "llvm.eh.typeid.for.p0",
         "llvm.exp.*",
+        "llvm.exp10.*",
         "llvm.experimental.noalias.scope.decl",
         "llvm.fabs.*",
         "llvm.fabs.*",
@@ -264,6 +267,13 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.pow.*",
         "llvm.rint.*",
         "llvm.sin.*",
+        "llvm.sinh.*",
+        "llvm.cosh.*",
+        "llvm.asin.*",
+        "llvm.acos.*",
+        "llvm.tan.*",
+        "llvm.tanh.*",
+        "llvm.atan.*",
         "llvm.smax.*",
         "llvm.smin.*",
         "llvm.sqrt.*",
