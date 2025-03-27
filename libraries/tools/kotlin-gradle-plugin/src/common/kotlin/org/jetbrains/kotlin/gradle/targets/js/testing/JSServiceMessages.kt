@@ -6,23 +6,23 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.slf4j.Logger
 
 internal open class JSServiceMessagesTestExecutionSpec(
-    forkOptions: ProcessForkOptions,
-    args: List<String>,
+    processLaunchOpts: ProcessLaunchOptions,
+    processArgs: List<String>,
     checkExitCode: Boolean,
-    clientSettings: TCServiceMessagesClientSettings
+    clientSettings: TCServiceMessagesClientSettings,
 ) : TCServiceMessagesTestExecutionSpec(
-    forkOptions,
-    args,
+    processLaunchOpts,
+    processArgs,
     checkExitCode,
-    clientSettings
+    clientSettings,
 ) {
     override fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient {
         return JSServiceMessagesClient(

@@ -9,6 +9,7 @@ import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
+import java.io.InputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.management.ManagementFactory
@@ -47,7 +49,6 @@ fun KGPBaseTest.project(
     projectName: String,
     gradleVersion: GradleVersion,
     buildOptions: BuildOptions = defaultBuildOptions,
-    forceOutput: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
@@ -85,12 +86,11 @@ fun KGPBaseTest.project(
         .withGradleVersion(gradleVersion.version)
 
     val testProject = TestProject(
-        gradleRunner,
-        projectName,
-        projectPath,
-        buildOptions,
-        gradleVersion,
-        forceOutput = forceOutput,
+        gradleRunner = gradleRunner,
+        projectName = projectName,
+        projectPath = projectPath,
+        buildOptions = buildOptions,
+        gradleVersion = gradleVersion,
         enableBuildScan = enableBuildScan,
         enableGradleDebug = enableGradleDebug,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
@@ -114,7 +114,7 @@ fun KGPBaseTest.project(
 /**
  * Create a new test project with configuring single native target.
  *
- * @param [projectName] test project name in 'src/test/resources/testProject` directory.
+ * @param [projectName] test project name in `src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
  * @param [enableKotlinDaemonMemoryLimitInMb] limit max heap size for Kotlin Daemon.
@@ -125,8 +125,8 @@ fun KGPBaseTest.nativeProject(
     projectName: String,
     gradleVersion: GradleVersion,
     buildOptions: BuildOptions = defaultBuildOptions,
-    forceOutput: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableBuildScan: Boolean = false,
+    dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableGradleDaemonMemoryLimitInMb: Int? = 1024,
@@ -136,14 +136,12 @@ fun KGPBaseTest.nativeProject(
     localRepoDir: Path? = null,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
     configureSubProjects: Boolean = false,
-    dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     test: TestProject.() -> Unit = {},
 ): TestProject {
     val project = project(
         projectName = projectName,
         gradleVersion = gradleVersion,
         buildOptions = buildOptions,
-        forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
         dependencyManagement = dependencyManagement,
         addHeapDumpOptions = addHeapDumpOptions,
@@ -165,7 +163,6 @@ fun KGPBaseTest.nativeProject(
  */
 fun TestProject.build(
     vararg buildArguments: String,
-    forceOutput: EnableGradleDebug = this.forceOutput,
     enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
     kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
@@ -174,12 +171,15 @@ fun TestProject.build(
     enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    inputStream: InputStream? = null,
+    forwardBuildOutput: Boolean = enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace),
     assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
     ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
 
-    val runWithDebug = enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace)
+    val runWithDebug =
+        enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace)
     if (runWithDebug && isTeamCityRun) {
         fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
     }
@@ -195,10 +195,15 @@ fun TestProject.build(
         kotlinDaemonDebugPort
     )
     val gradleRunnerForBuild = gradleRunner
-        .also { if (forceOutput.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = null)) it.forwardOutput() }
+        .also { if (forwardBuildOutput) it.forwardOutput() }
         .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
         .withDebug(runWithDebug)
         .withArguments(allBuildArguments)
+
+    inputStream?.let {
+        (gradleRunnerForBuild as DefaultGradleRunner).withStandardInput(it)
+    }
+
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.build()
         if (enableBuildScan) buildResult.printBuildScanUrl()
@@ -212,7 +217,6 @@ fun TestProject.build(
  */
 fun TestProject.buildAndFail(
     vararg buildArguments: String,
-    forceOutput: EnableGradleDebug = this.forceOutput,
     enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
     kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
@@ -221,6 +225,8 @@ fun TestProject.buildAndFail(
     enableGradleDaemonMemoryLimitInMb: Int? = this.enableGradleDaemonMemoryLimitInMb,
     enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    inputStream: InputStream? = null,
+    forwardBuildOutput: Boolean = enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace),
     assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
@@ -237,10 +243,15 @@ fun TestProject.buildAndFail(
         kotlinDaemonDebugPort
     )
     val gradleRunnerForBuild = gradleRunner
-        .also { if (forceOutput.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = null)) it.forwardOutput() }
+        .also { if (forwardBuildOutput) it.forwardOutput() }
         .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
         .withDebug(enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace))
         .withArguments(allBuildArguments)
+
+    inputStream?.let {
+        (gradleRunnerForBuild as DefaultGradleRunner).withStandardInput(it)
+    }
+
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.buildAndFail()
         if (enableBuildScan) buildResult.printBuildScanUrl()
@@ -403,7 +414,6 @@ class TestProject(
     projectPath: Path,
     val buildOptions: BuildOptions,
     val gradleVersion: GradleVersion,
-    val forceOutput: EnableGradleDebug,
     val enableBuildScan: Boolean,
     val enableGradleDaemonMemoryLimitInMb: Int?,
     val enableKotlinDaemonMemoryLimitInMb: Int?,
@@ -1089,7 +1099,7 @@ private fun acceptAndroidSdkLicenses(androidHome: File) {
  * Indicates if the test and the Gradle build started by the test should run in the same process.
  * This setup allows using a single debugger for both the test and the build process (including build script injections).
  *
- * Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE.
+ * Add `kotlin.gradle.autoDebugIT=false` to `local.properties` to opt out of implicit withDebug when debugging the tests in IDE.
  */
 enum class EnableGradleDebug {
     DISABLED,

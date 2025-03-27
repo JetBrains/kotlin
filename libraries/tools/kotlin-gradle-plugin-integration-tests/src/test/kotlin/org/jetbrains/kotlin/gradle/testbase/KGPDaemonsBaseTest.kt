@@ -15,7 +15,7 @@ abstract class KGPDaemonsBaseTest : KGPBaseTest() {
      */
     private val kotlinDaemonRunFilesDir get() = kgpTestInfraWorkingDirectory.resolve("kotlin-daemon-run-files")
 
-    override val defaultBuildOptions =
+    override val defaultBuildOptions: BuildOptions =
         super.defaultBuildOptions.copy(customKotlinDaemonRunFilesDirectory = kotlinDaemonRunFilesDir.toFile())
 
     @AfterEach

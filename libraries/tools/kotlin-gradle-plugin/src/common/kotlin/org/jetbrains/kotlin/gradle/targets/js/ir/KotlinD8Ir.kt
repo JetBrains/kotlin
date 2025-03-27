@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
@@ -16,9 +18,24 @@ import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
 @OptIn(ExperimentalWasmDsl::class)
-abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
+abstract class KotlinD8Ir
+@Inject
+internal constructor(
+    target: KotlinJsIrTarget,
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) :
     KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        target: KotlinJsIrTarget,
+    ) : this(
+        target = target,
+        objects = target.project.objects,
+        providers = target.project.providers,
+    )
 
     private val d8 = D8Plugin.applyWithEnvSpec(project)
 
@@ -34,7 +51,7 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
-        test.testFramework = KotlinWasmD8(test)
+        test.testFramework = KotlinWasmD8(test, objects, providers)
     }
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {

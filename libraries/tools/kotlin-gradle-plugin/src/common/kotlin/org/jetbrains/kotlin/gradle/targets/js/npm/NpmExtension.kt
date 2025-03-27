@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 
 open class NpmExtension(
     val project: Project,
-    val nodeJsRoot: NodeJsRootExtension
+    nodeJsRoot: NodeJsRootExtension,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
         check(project == project.rootProject)
@@ -29,7 +30,11 @@ open class NpmExtension(
     }
 
     override val packageManager: Npm by lazy {
-        Npm()
+        Npm(
+            @Suppress("DEPRECATION")
+            project.getExecOperations(),
+            project.objects,
+        )
     }
 
     override val environment: NpmEnvironment by lazy {

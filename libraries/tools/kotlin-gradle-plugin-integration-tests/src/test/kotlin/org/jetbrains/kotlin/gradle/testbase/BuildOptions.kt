@@ -12,8 +12,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -37,7 +37,13 @@ data class BuildOptions(
     val incremental: Boolean? = null,
     val useGradleClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
-    // On Windows OS enabling watch-fs prevents deleting temp directory, which fails the tests
+    /**
+     * Enable File System Watching
+     *
+     * Disabled by default on Windows OS because  enabling watch-fs prevents deleting temp directory, which fails the tests.
+     *
+     * See https://docs.gradle.org/current/userguide/file_system_watching.html
+     */
     val fileSystemWatchEnabled: Boolean = !OS.WINDOWS.isCurrentOs,
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
@@ -71,6 +77,18 @@ data class BuildOptions(
      * @see [KGPDaemonsBaseTest]
      */
     val customKotlinDaemonRunFilesDirectory: File? = null,
+    /**
+     * Enable verbose VFS logging to view information about Virtual File System (VFS) changes at the beginning and end of a build.
+     *
+     * https://docs.gradle.org/current/userguide/file_system_watching.html#logging
+     */
+    val verboseVfsLogging: Boolean? = null,
+    /**
+     * Enable `--continuous` build.
+     *
+     * Note that `--continuous` *disables* `--no-daemon`.
+     */
+    val continuousBuild: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -206,6 +224,14 @@ data class BuildOptions(
             arguments.add("--watch-fs")
         } else {
             arguments.add("--no-watch-fs")
+        }
+
+        if (verboseVfsLogging != null) {
+            arguments.add("-Dorg.gradle.vfs.verbose=$verboseVfsLogging")
+        }
+
+        if (continuousBuild == true) {
+            arguments.add("--continuous")
         }
 
         arguments.add(if (buildCacheEnabled) "--build-cache" else "--no-build-cache")

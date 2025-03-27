@@ -9,23 +9,47 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_NAME
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
+import javax.inject.Inject
 
-open class YarnRootExtension(
-    val project: Project,
-    val nodeJsRoot: NodeJsRootExtension,
+open class YarnRootExtension
+@Inject
+internal constructor(
+    private val project: Project,
+    private val nodeJsRoot: NodeJsRootExtension,
     private val yarnSpec: YarnRootEnvSpec,
+    private val objects: ObjectFactory,
+    private val execOps: ExecOperations,
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
+
+    @Deprecated("Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    constructor(
+        project: Project,
+        nodeJsRoot: NodeJsRootExtension,
+        yarnSpec: YarnRootEnvSpec,
+    ) : this(
+        project = project,
+        nodeJsRoot = nodeJsRoot,
+        yarnSpec = yarnSpec,
+        objects = project.objects,
+        execOps = @Suppress("DEPRECATION") project.getExecOperations(),
+    )
+
     init {
         check(project == project.rootProject)
     }
@@ -35,7 +59,10 @@ open class YarnRootExtension(
     }
 
     override val packageManager: Yarn by lazy {
-        Yarn()
+        Yarn(
+            execOps = execOps,
+            objects = objects,
+        )
     }
 
     override val environment: YarnEnvironment by lazy {

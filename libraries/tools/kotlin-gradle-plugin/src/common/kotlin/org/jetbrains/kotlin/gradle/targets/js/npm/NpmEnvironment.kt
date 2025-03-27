@@ -11,7 +11,7 @@ data class NpmEnvironment(
     val executable: String,
     val ignoreScripts: Boolean,
     val standalone: Boolean,
-    val overrides: List<NpmOverride>
+    val overrides: List<NpmOverride>,
 ) : PackageManagerEnvironment
 
 internal val NpmEnv.asNpmEnvironment

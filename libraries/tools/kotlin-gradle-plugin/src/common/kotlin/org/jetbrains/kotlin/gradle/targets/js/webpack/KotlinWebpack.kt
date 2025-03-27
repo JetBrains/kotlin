@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.RegularFile
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -19,8 +20,7 @@ import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
-import org.gradle.process.internal.ExecHandle
-import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
@@ -38,18 +38,31 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinWebpack
 @Inject
-constructor(
+internal constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
+    private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("DEPRECATION")
+    constructor(
+        compilation: KotlinJsIrCompilation,
+    ) : this(
+        compilation = compilation,
+        objects = compilation.project.objects,
+        execOps = compilation.project.getExecOperations(),
+    )
+
     @Transient
     private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
     private val versions = nodeJs.versions
@@ -59,8 +72,13 @@ constructor(
     override val rules: KotlinWebpackRulesContainer =
         project.objects.webpackRulesContainer()
 
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
+    @get:Internal
+    @Deprecated(
+        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.",
+        ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+    )
+    @Suppress("unused")
+    open val execHandleFactory: Nothing
         get() = injected
 
     private val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
@@ -268,14 +286,15 @@ constructor(
         }
 
         return KotlinWebpackRunner(
-            npmProject,
-            logger,
-            configFile.get(),
-            execHandleFactory,
-            bin,
-            webpackArgs,
-            nodeArgs,
-            config
+            npmProject = npmProject,
+            logger = logger,
+            configFile = configFile.get(),
+            tool = bin,
+            args = webpackArgs,
+            nodeArgs = nodeArgs,
+            config = config,
+            objects = objects,
+            execOps = execOps,
         )
     }
 
@@ -297,14 +316,14 @@ constructor(
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
             if (deploymentHandle == null) {
-                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner, path)
             }
         } else {
             runner.copy(
                 config = runner.config.copy(
                     progressReporter = true,
                 )
-            ).execute(services)
+            ).execute()
 
             val buildMetrics = metrics.get()
             outputDirectory.get().asFile.walkTopDown()
@@ -320,18 +339,26 @@ constructor(
         }
     }
 
-    internal open class Handle @Inject constructor(val runner: KotlinWebpackRunner) : DeploymentHandle {
-        var process: ExecHandle? = null
+    internal abstract class Handle @Inject constructor(
+        private val runner: KotlinWebpackRunner,
+        /** [KotlinWebpack.getPath], used for logging. */
+        private val taskPath: String,
+    ) : DeploymentHandle {
+        private var process: ExecAsyncHandle? = null
 
-        override fun isRunning() = process != null
+        private val logger = Logging.getLogger(Handle::class.java)
+
+        override fun isRunning(): Boolean =
+            process?.isAlive() == true
 
         override fun start(deployment: Deployment) {
             process = runner.start()
+            logger.info("[$taskPath] webpack-dev-server started ${process?.displayName}")
         }
 
         override fun stop() {
             process?.abort()
+            logger.info("[$taskPath] webpack-dev-server stopped ${process?.displayName}")
         }
     }
-
 }
