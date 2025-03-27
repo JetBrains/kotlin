@@ -67,12 +67,14 @@ class MemoizedMultiFieldValueClassReplacements(
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
         targetFunction: IrFunction,
         originWhenFlattened: IrDeclarationOrigin,
+        originWhenNotFlattened: IrDeclarationOrigin,
     ): RemappedParameter {
         val oldParam = this
         if (!type.needsMfvcFlattening()) return RegularMapping(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
                 this.name = oldParam.name
+                this.origin = originWhenNotFlattened
             }.apply {
                 defaultValue = oldParam.defaultValue
                 copyAnnotationsFrom(oldParam)
@@ -104,7 +106,8 @@ class MemoizedMultiFieldValueClassReplacements(
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
         targetFunction: IrFunction,
         originWhenFlattened: IrDeclarationOrigin,
-    ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened) }
+        originWhenNotFlattened: IrDeclarationOrigin,
+    ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened, originWhenNotFlattened) }
 
     private fun buildReplacement(
         function: IrFunction,
@@ -143,18 +146,23 @@ class MemoizedMultiFieldValueClassReplacements(
                 IrParameterKind.ExtensionReceiver -> sourceFunction.extensionReceiverName(context.config)
                 IrParameterKind.Regular -> null
             }
-            val origin = when (param.kind) {
+            val originWhenNotFlattened = when (param.kind) {
                 IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
                 IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                IrParameterKind.Regular -> param.origin
+            }
+            val originWhenFlattened = when (param.kind) {
                 IrParameterKind.Regular -> JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER
+                else -> originWhenNotFlattened
             }
 
             sourceParam?.grouped(
                 name,
                 substitutionMap,
                 targetFunction,
-                origin
+                originWhenFlattened,
+                originWhenNotFlattened
             )
         }
     }
