@@ -493,7 +493,7 @@ tasks.withType<Test>().configureEach {
 
     testLogging {
         // set options for log level LIFECYCLE
-        events("passed", "skipped", "failed", "standardOut")
+        events("started", "passed", "skipped", "failed", "standardOut")
         showExceptions = true
         exceptionFormat = TestExceptionFormat.FULL
         showCauses = true
