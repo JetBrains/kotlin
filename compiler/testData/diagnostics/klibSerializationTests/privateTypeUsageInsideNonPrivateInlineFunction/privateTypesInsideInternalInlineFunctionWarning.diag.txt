@@ -10,6 +10,8 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:37:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
+/privateTypesInsideInternalInlineFunctionWarning.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
 /privateTypesInsideInternalInlineFunctionWarning.kt:40:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
@@ -36,6 +38,8 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:56:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
+/privateTypesInsideInternalInlineFunctionWarning.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
 /privateTypesInsideInternalInlineFunctionWarning.kt:58:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
@@ -43,3 +47,5 @@
 /privateTypesInsideInternalInlineFunctionWarning.kt:60:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:61:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarning.kt:120:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.

@@ -37,7 +37,7 @@ internal inline fun internalInline() {
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>makeEffectivelyPrivateLocal()<!>
     publicMakeLocal()
     privateInline()
-    class Local : <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>Generic<A>()<!> {}
+    class Local : <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>()<!> {}
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>val withContext = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>makeWithContext()<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>withContext<!>.toString()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as A<!>
@@ -55,7 +55,7 @@ internal inline fun referencePrivateInsideAnonymousObject() {
             publicMakeLocal()
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>makeEffectivelyPrivateLocal()<!>
             privateInline()
-            class Local : <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>Generic<A>()<!> {}
+            class Local : <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>()<!> {}
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as A<!>
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as A.Nested<!>
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>A::class<!>
@@ -117,7 +117,7 @@ internal fun inlineInsideAnonymousObject() {
             makeEffectivelyPrivateLocal()
             privateInline()
             Inner()
-            class Local : Generic<A>() {}
+            class Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
             null as A
             null as A.Nested
             A::class

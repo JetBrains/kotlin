@@ -15,6 +15,8 @@ private inline fun privateInline(): Any
 
 This will become an error in Kotlin 2.2.
 
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
@@ -46,6 +48,8 @@ private inline fun privateInline(): Any
 
 This will become an error in Kotlin 2.2.
 
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
@@ -53,3 +57,5 @@ This will become an error in Kotlin 2.2.
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:60:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:61:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:120:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.

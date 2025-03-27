@@ -322,7 +322,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             if (
                 isInlineFunPublicOrPublishedApi &&
                 inlineFunEffectiveVisibility.toVisibility() !== Visibilities.Protected &&
-                calledFunEffectiveVisibility.toVisibility() === Visibilities.Protected
+                calledFunEffectiveVisibility.toVisibility() === Visibilities.Protected &&
+                accessExpression !is FirDelegatedConstructorCall
             ) {
                 val factory = when {
                     isConstructorCall -> FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
