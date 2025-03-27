@@ -346,6 +346,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return conditionalEffect.argumentsCondition.accept(this, data)
         }
 
+        override fun visitHoldsInEffectDeclaration(
+            holdsInEffect: KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+            data: Nothing?,
+        ): ConeDiagnostic? {
+            return holdsInEffect.argumentsCondition.accept(this, data)
+        }
+
         override fun visitIsInstancePredicate(
             isInstancePredicate: KtIsInstancePredicate<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?

@@ -49068,6 +49068,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("lambdaInvariantContractsK2.kt")
+        public void testLambdaInvariantContractsK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/lambdaInvariantContractsK2.kt");
+        }
+
+        @Test
         @TestMetadata("operatorsAllowedInK2.kt")
         public void testOperatorsAllowedInK2() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsAllowedInK2.kt");

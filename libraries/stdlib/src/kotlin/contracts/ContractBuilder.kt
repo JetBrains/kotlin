@@ -106,6 +106,13 @@ public interface ContractBuilder {
     @ExperimentalExtendedContracts
     @ContractsDsl
     public infix fun Boolean.implies(value: ReturnsNotNull)
+
+    /**
+     * Specifies the condition, passed as a receiver argument, that is guaranteed to be true in the body of a function parameter [lambda]
+     */
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public infix fun <R> Boolean.holdsIn(lambda: Function<R>): HoldsIn
 }
 
 /**

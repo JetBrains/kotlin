@@ -140,6 +140,16 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         conditionalEffect.returnsEffect.accept(this, data)
     }
 
+    override fun visitHoldsInEffectDeclaration(
+        holdsInEffect: KtHoldsInEffectDeclaration<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
+        holdsInEffect.argumentsCondition.accept(this, data)
+        buffer.append(" HoldsIn(")
+        holdsInEffect.valueParameterReference.accept(this, data)
+        buffer.append(")")
+    }
+
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
         buffer.append("Returns(")
         returnsEffect.value.accept(this, data)

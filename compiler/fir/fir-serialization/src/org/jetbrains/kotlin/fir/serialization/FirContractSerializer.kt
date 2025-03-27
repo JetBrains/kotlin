@@ -87,6 +87,11 @@ class FirContractSerializer {
                     builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
                     fillEffectProto(builder, effectDeclaration.returnsEffect, contractDescription)
                 }
+
+                is ConeHoldsInEffectDeclaration -> {
+                    // TODO:
+                }
+
                 else -> {
                     throw IllegalStateException("Unsupported effect type: ${effectDeclaration::class.simpleName}")
                 }
