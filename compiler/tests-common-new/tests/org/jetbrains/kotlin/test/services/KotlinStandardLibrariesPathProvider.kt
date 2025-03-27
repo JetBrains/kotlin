@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_COMMON_STDLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_FULL_STDLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
@@ -99,6 +100,11 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
     abstract fun kotlinTestJsKLib(): File
 
     /**
+     * kotlin-stdlib-common.klib
+     */
+    abstract fun commonStdlibForTests(): File
+
+    /**
      * scriptingPlugin classpath jars
      */
     abstract fun scriptingPluginFilesForTests(): Collection<File>
@@ -179,6 +185,8 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
             pluginClasspath
         }
 
+    override fun commonStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_COMMON_STDLIB_PATH) { "kotlin-stdlib-common.klib".distCommon() }
+
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()
         assert(File(path).exists()) { "$path not found" }
@@ -204,6 +212,10 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     private fun String.dist(): String {
         return "dist/kotlinc/lib/$this"
     }
+
+    private fun String.distCommon(): String {
+        return "dist/common/$this"
+    }
 }
 
 object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPathProvider() {
@@ -214,6 +226,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     const val KOTLIN_TEST_PROP = "org.jetbrains.kotlin.test.kotlin-test"
     const val KOTLIN_TEST_JS_PROP = "org.jetbrains.kotlin.test.kotlin-test-js"
     const val KOTLIN_SCRIPT_RUNTIME_PROP = "org.jetbrains.kotlin.test.kotlin-script-runtime"
+    const val KOTLIN_COMMON_STDLIB_PATH = "org.jetbrains.kotlin.test.kotlin-common-stdlib"
     const val KOTLIN_ANNOTATIONS_JVM_PROP = "org.jetbrains.kotlin.test.kotlin-annotations-jvm"
 
     fun getFile(propertyName: String): File {
@@ -234,6 +247,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun fullJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun defaultJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun kotlinTestJsKLib(): File = getFile(KOTLIN_TEST_JS_PROP)
+    override fun commonStdlibForTests(): File = getFile(KOTLIN_COMMON_STDLIB_PATH)
     override fun scriptingPluginFilesForTests(): Collection<File> {
         TODO("KT-67573")
     }
