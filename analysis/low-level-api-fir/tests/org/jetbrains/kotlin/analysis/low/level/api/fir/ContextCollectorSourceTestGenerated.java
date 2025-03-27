@@ -274,6 +274,30 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("classAnnotation.kt")
+    public void testClassAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("classAnnotation2.kt")
+    public void testClassAnnotation2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotation2.kt");
+    }
+
+    @Test
+    @TestMetadata("classAnnotationArgument.kt")
+    public void testClassAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("classAnnotationArgument2.kt")
+    public void testClassAnnotationArgument2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotationArgument2.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/contextReceiver.kt");
@@ -295,6 +319,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("innerClass.kt")
     public void testInnerClass() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassAnnotation.kt")
+    public void testInnerClassAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClassAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassAnnotationArgument.kt")
+    public void testInnerClassAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClassAnnotationArgument.kt");
     }
 
     @Test
