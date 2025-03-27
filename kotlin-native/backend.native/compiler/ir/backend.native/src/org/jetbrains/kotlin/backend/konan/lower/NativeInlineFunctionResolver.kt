@@ -37,7 +37,7 @@ internal class NativeInlineFunctionResolver(
 
         if (function.body != null) {
             // TODO this `if` check can be dropped after KT-72441
-            if (function.getPackageFragment().konanLibrary?.isHeader == true && function.wasLowered != true) {
+            if (function.wasLowered != true) {
                 lower(function)
                 function.wasLowered = true
             }
@@ -46,6 +46,7 @@ internal class NativeInlineFunctionResolver(
 
         context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
+        function.wasLowered = true
 
         return function
     }
