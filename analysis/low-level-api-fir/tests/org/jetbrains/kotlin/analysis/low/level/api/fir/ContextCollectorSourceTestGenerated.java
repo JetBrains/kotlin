@@ -855,6 +855,88 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DanglingModifiers {
+    @Test
+    public void testAllFilesPresentInDanglingModifiers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classLevel.kt")
+    public void testClassLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/classLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("classLevelAnnotation.kt")
+    public void testClassLevelAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/classLevelAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryLevel.kt")
+    public void testEnumEntryLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/enumEntryLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("fileLevel.kt")
+    public void testFileLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/fileLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("fileLevelAnnotation.kt")
+    public void testFileLevelAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/fileLevelAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("functionInsideClassLevel.kt")
+    public void testFunctionInsideClassLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/functionInsideClassLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("functionInsideClassLevel2.kt")
+    public void testFunctionInsideClassLevel2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/functionInsideClassLevel2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionInsideFileLevel.kt")
+    public void testFunctionInsideFileLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/functionInsideFileLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("functionInsideFileLevel2.kt")
+    public void testFunctionInsideFileLevel2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/functionInsideFileLevel2.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass.kt")
+    public void testLocalClass() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/localClass.kt");
+    }
+
+    @Test
+    @TestMetadata("wholeClassLevel.kt")
+    public void testWholeClassLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/wholeClassLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("wholeFileLevel.kt")
+    public void testWholeFileLevel() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/wholeFileLevel.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
   @TestDataPath("$PROJECT_ROOT")
   public class Error {

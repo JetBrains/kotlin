@@ -45,6 +45,16 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DanglingModifiers {
+    @Test
+    public void testAllFilesPresentInDanglingModifiers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
   @TestDataPath("$PROJECT_ROOT")
   public class Error {
