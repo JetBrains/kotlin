@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.*
 import kotlin.io.path.isDirectory
 
 private const val ROOT_PROPERTY_NAME = "kotlin.native.llvm"
@@ -127,7 +127,7 @@ private val List<RemoteLLVMDistribution>.remoteAsProperties: Map<String, String>
 private val LLVMDistributionSource.Local.localAsProperties: Map<String, String>
     get() = buildMap {
         val host = HostManager.host
-        val absolutePath = path.absolutePathString()
+        val absolutePath = path.absolute().invariantSeparatorsPathString
         LLVMDistributionKind.values().forEach { kind ->
             put("llvm.$host.${kind.nameForProperties}", absolutePath)
         }
