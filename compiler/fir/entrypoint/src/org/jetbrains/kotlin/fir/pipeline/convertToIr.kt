@@ -113,13 +113,15 @@ private class Fir2IrPipeline(
     private class Fir2IrConversionResult(
         val mainIrFragment: IrModuleFragmentImpl,
         val dependentIrFragments: List<IrModuleFragmentImpl>,
-        val componentsStorage: Fir2IrComponentsStorage,
+        val componentsStoragePerSourceSession: Map<FirSession, Fir2IrComponentsStorage>,
         val commonMemberStorage: Fir2IrCommonMemberStorage,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val irTypeSystemContext: IrTypeSystemContext,
         val fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
-    )
+    ) {
+        val componentsStorage: Fir2IrComponentsStorage = componentsStoragePerSourceSession.values.last()
+    }
 
     fun convertToIrAndActualize(): Fir2IrActualizedResult {
         require(outputs.isNotEmpty()) { "No modules found" }
@@ -141,13 +143,12 @@ private class Fir2IrPipeline(
 
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
 
-        lateinit var componentsStorage: Fir2IrComponentsStorage
-
-        val fragments = outputs.map {
-            componentsStorage = Fir2IrComponentsStorage(
-                it.session,
-                it.scopeSession,
-                it.fir,
+        val componentsStorages = mutableMapOf<FirSession, Fir2IrComponentsStorage>()
+        val fragments = outputs.map { output ->
+            val componentsStorage = Fir2IrComponentsStorage(
+                output.session,
+                output.scopeSession,
+                output.fir,
                 fir2IrExtensions,
                 fir2IrConfiguration,
                 visibilityConverter,
@@ -155,26 +156,31 @@ private class Fir2IrPipeline(
                 irMangler,
                 kotlinBuiltIns,
                 specialAnnotationsProvider,
-                firProvidersWithGeneratedFiles.getValue(it.session.moduleData),
+                firProvidersWithGeneratedFiles.getValue(output.session.moduleData),
                 syntheticIrBuiltinsSymbolsContainer,
                 fakeOverrideResolver,
-            )
+            ).also {
+                componentsStorages[output.session] = it
+            }
 
-            Fir2IrConverter.generateIrModuleFragment(componentsStorage, it.fir).also { moduleFragment ->
+            Fir2IrConverter.generateIrModuleFragment(componentsStorage, output.fir).also { moduleFragment ->
                 irModuleFragmentPostCompute(moduleFragment)
             }
         }
 
         val dependentIrFragments = fragments.dropLast(1)
         val mainIrFragment = fragments.last()
-        val (irBuiltIns, symbolTable) = createBuiltInsAndSymbolTable(componentsStorage, syntheticIrBuiltinsSymbolsContainer)
+        val (irBuiltIns, symbolTable) = createBuiltInsAndSymbolTable(
+            componentsStorages.values.last(),
+            syntheticIrBuiltinsSymbolsContainer
+        )
 
         val irTypeSystemContext = typeSystemContextProvider(irBuiltIns)
 
         return Fir2IrConversionResult(
             mainIrFragment,
             dependentIrFragments,
-            componentsStorage,
+            componentsStorages,
             commonMemberStorage,
             irBuiltIns,
             symbolTable,
@@ -251,6 +257,8 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.createIrActualizer(): IrActualizer? {
         return runIf(dependentIrFragments.isNotEmpty()) {
+            referenceAllCommonDependencies(outputs)
+
             IrActualizer(
                 KtDiagnosticReporterWithImplicitIrBasedContext(
                     fir2IrConfiguration.diagnosticReporter,
@@ -262,9 +270,12 @@ private class Fir2IrPipeline(
                 dependentIrFragments,
                 extraActualDeclarationExtractorsInitializer(componentsStorage),
                 missingActualProvider = LenientModeMissingActualDeclarationProvider.initializeIfNeeded(componentsStorage),
+                IrCommonToPlatformDependencyActualizerMapContributor.create(
+                    outputs.last().session,
+                    componentsStoragePerSourceSession,
+                )
             )
         }
-
     }
 
     private fun Fir2IrConversionResult.generateSyntheticBodiesOfDataValueMembers() {
