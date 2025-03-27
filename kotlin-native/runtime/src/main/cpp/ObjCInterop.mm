@@ -110,8 +110,7 @@ void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
   auto* classData = GetKotlinClassData(self);
   Class clazz = classData->objcClass;
   struct objc_super s = {self, clazz};
-  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-  messenger(&s, @selector(release));
+  objc_msgSendSuper2(&s, @selector(release)); // FIXME is this correct?
 }
 
 void deallocImp(id self, SEL _cmd) {
@@ -121,8 +120,7 @@ void deallocImp(id self, SEL _cmd) {
   auto* classData = GetKotlinClassData(self);
   Class clazz = classData->objcClass;
   struct objc_super s = {self, clazz};
-  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-  messenger(&s, @selector(dealloc));
+  objc_msgSendSuper2(&s, @selector(dealloc)); // FIXME is this correct?
 }
 
 }

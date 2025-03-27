@@ -30,7 +30,9 @@ TEST_F(CustomAllocatorTest, SmallAllocNonNull) {
     const int N = 200;
     TypeInfo fakeTypes[N];
     for (int i = 1; i < N; ++i) {
-        fakeTypes[i] = {.typeInfo_ = &fakeTypes[i], .instanceSize_ = 8 * i, .flags_ = 0};
+        fakeTypes[i].typeInfo_ = &fakeTypes[i];
+        fakeTypes[i].instanceSize_ = 8 * i;
+        fakeTypes[i].flags_ = 0;
     }
     Heap heap;
     CustomAllocator ca(heap);
@@ -49,7 +51,10 @@ TEST_F(CustomAllocatorTest, SmallAllocSameFixedBlockPage) {
     for (int blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
         Heap heap;
         CustomAllocator ca(heap);
-        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType{};
+        fakeType.typeInfo_ = &fakeType,
+        fakeType.instanceSize_ = 8 * blocks,
+        fakeType.flags_ = 0;
         uint8_t* first = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
         for (int i = 1; i < N; ++i) {
             uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
@@ -67,7 +72,9 @@ TEST_F(CustomAllocatorTest, FixedBlockPageThreshold) {
     const int TO = FixedBlockPage::MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
         auto& type = types.emplace_back();
-        type = {.typeInfo_ = &type, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        type.typeInfo_ = &type;
+        type.instanceSize_ = 8 * blocks;
+        type.flags_ = 0;
         ca.CreateObject(&type);
     }
 }
@@ -81,7 +88,9 @@ TEST_F(CustomAllocatorTest, NextFitPageThreshold) {
     const int TO = MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
         auto& type = types.emplace_back();
-        type = {.typeInfo_ = &type, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        type.typeInfo_ = &type;
+        type.instanceSize_ = 8 * blocks;
+        type.flags_ = 0;
         ca.CreateObject(&type);
     }
 }
@@ -93,7 +102,10 @@ TEST_F(CustomAllocatorTest, TwoAllocatorsDifferentPages) {
         Heap heap;
         CustomAllocator ca1(heap);
         CustomAllocator ca2(heap);
-        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType{};
+        fakeType.typeInfo_ = &fakeType;
+        fakeType.instanceSize_ = 8 * blocks;
+        fakeType.flags_ = 0;
         uint8_t* obj1 = reinterpret_cast<uint8_t*>(ca1.CreateObject(&fakeType));
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
         uintptr_t dist = abs(obj2 - obj1);
