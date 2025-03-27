@@ -583,11 +583,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     )
 
     val llvmEhTypeidFor = llvmIntrinsic(
-            "llvm.eh.typeid.for",
+            "llvm.eh.typeid.for.p0",
             functionType(int32Type, false, int8PtrType),
             *listOfNotNull(
                     "nounwind",
-                    "readnone".takeIf { HostManager.hostIsMac } // See https://youtrack.jetbrains.com/issue/KT-69002
             ).toTypedArray()
     )
 
