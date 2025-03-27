@@ -53,8 +53,8 @@ internal class GenerateWasmTests(private val context: WasmBackendContext) : Modu
                 origin = JsIrBuilder.SYNTHESIZED_DECLARATION
             }.apply {
                 val call = context.createIrBuilder(symbol).irCall(context.wasmSymbols.registerRootSuiteBlock!!.owner).also { call ->
-                    call.putValueArgument(0, suitName)
-                    call.putValueArgument(1, testFunReference)
+                    call.arguments[0] = suitName
+                    call.arguments[1] = testFunReference
                 }
                 body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
             }
