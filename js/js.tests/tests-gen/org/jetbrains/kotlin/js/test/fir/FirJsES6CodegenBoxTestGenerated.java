@@ -18681,6 +18681,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("capturedTypeWhenSubject.kt")
+    public void testCapturedTypeWhenSubject() {
+      runTest("compiler/testData/codegen/box/inference/capturedTypeWhenSubject.kt");
+    }
+
+    @Test
     @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
     public void testCapturedTypesSubstitutionIntoAbbreviation() {
       runTest("compiler/testData/codegen/box/inference/capturedTypesSubstitutionIntoAbbreviation.kt");
