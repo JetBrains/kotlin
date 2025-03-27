@@ -191,7 +191,6 @@ enum class LanguageFeature(
     SuspendFunctionAsSupertype(KOTLIN_1_6),
     UnrestrictedBuilderInference(KOTLIN_1_6),
     ClassTypeParameterAnnotations(KOTLIN_1_6),
-    TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
     WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
     InstantiationOfAnnotationClasses(KOTLIN_1_6),
     OptInContagiousSignatures(KOTLIN_1_6, kind = BUG_FIX),

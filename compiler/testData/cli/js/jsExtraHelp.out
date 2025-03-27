@@ -142,7 +142,6 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
-  -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
   -Xcontext-receivers        Enable experimental context receivers.
   -Xcontext-parameters       Enable experimental context parameters.
   -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.

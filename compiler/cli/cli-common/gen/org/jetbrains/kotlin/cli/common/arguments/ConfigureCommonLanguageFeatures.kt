@@ -38,10 +38,6 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.UseBuilderInferenceWithoutAnnotation, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.selfUpperBoundInference) {
-        put(LanguageFeature.TypeInferenceOnCallsWithSelfTypes, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.contextReceivers) {
         put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
     }
