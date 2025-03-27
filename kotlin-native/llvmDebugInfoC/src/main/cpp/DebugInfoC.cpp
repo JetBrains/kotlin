@@ -105,7 +105,7 @@ static DISubprogramRef DICreateFunctionShared(DIBuilderRef builderRef, DIScopeOp
                                             llvm::unwrap(type),
                                             scopeLine, llvm::DINode::DIFlags::FlagZero, spFlags);
   auto tmp = subprogram->getRetainedNodes().get();
-  if (!tmp && tmp->isTemporary())
+  if (tmp && tmp->isTemporary())
     llvm::MDTuple::deleteTemporary(tmp);
 
   builder->finalizeSubprogram(subprogram);
