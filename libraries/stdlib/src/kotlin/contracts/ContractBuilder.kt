@@ -106,6 +106,13 @@ public interface ContractBuilder {
     @ExperimentalExtendedContracts
     @ContractsDsl
     public infix fun Boolean.implies(value: ReturnsNotNull)
+
+    /**
+     * TODO
+     */
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public infix fun <R> Boolean.holdsIn(lambda: Function<R>): HoldsIn
 }
 
 /**

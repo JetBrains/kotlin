@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentHoldsInTruths
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
@@ -222,13 +223,18 @@ abstract class FirDataFlowAnalyzer(
         }
         localFunctionNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow { _, flow ->
-            /*
+            if (function is FirAnonymousFunction) {
+                /*
              * Anonymous functions which can be revisited, either in-place or not in-place, are treated as repeatable statements. This
              * causes any assignments to local variables within the anonymous function body to clear type statements for those local
              * variables.
              */
-            if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
-                enterRepeatableStatement(flow, assignedInside)
+                if (function.invocationKind?.canBeRevisited() != false) {
+                    enterRepeatableStatement(flow, assignedInside)
+                }
+                function.lambdaArgumentHoldsInTruths?.let {
+                    processInsideLambdaContract(function, it, flow)
+                }
             }
         }
     }
@@ -1047,40 +1053,55 @@ abstract class FirDataFlowAnalyzer(
             arguments[i]?.let { argument -> flow.getOrCreateVariable(argument) }
         }
 
-        val typeParameters = callee.typeParameters
-        val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
-            @Suppress("UNCHECKED_CAST")
-            val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
-                typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
-            }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
-            substitutorByMap(substitutionFromArguments, components.session)
-        } else {
-            ConeSubstitutor.Empty
-        }
-
-
-        val substitutor = if (originalFunction == null) {
-            typeArgumentsSubstitutor
-        } else {
-            val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
-            substitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
-        }
+        val substitutor = getSubstitutor(callee, qualifiedAccess, originalFunction)
 
         if (argumentVariablesForConditionalEffects.any { it != null }) {
             for (conditionalEffect in conditionalEffects) {
-                val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
-                val operation = effect.value.toOperation()
-                val statements =
-                    logicSystem.approveContractStatement(conditionalEffect.condition, argumentVariablesForConditionalEffects, substitutor) {
-                        logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
-                    } ?: continue // TODO: do what if the result is known to be false?
-                if (operation == null) {
-                    flow.addAllStatements(statements)
-                } else if (qualifiedAccess is FirExpression) {
-                    val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
-                    if (functionCallVariable != null) {
-                        flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
+                when (val effect = conditionalEffect.effect) {
+                    is ConeReturnsEffectDeclaration -> {
+                        val operation = effect.value.toOperation()
+                        val statements =
+                            logicSystem.approveContractStatement(
+                                conditionalEffect.condition,
+                                argumentVariablesForConditionalEffects,
+                                substitutor
+                            ) {
+                                logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
+                            } ?: continue // TODO: do what if the result is known to be false?
+                        if (operation == null) {
+                            flow.addAllStatements(statements)
+                        } else if (qualifiedAccess is FirExpression) {
+                            val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
+                            if (functionCallVariable != null) {
+                                flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
+                            }
+                        }
                     }
+//                    is ConeInsideLambdaEffectDeclaration -> {
+//                        val statements =
+//                            logicSystem.approveContractStatement(
+//                                conditionalEffect.condition,
+//                                argumentVariablesForConditionalEffects,
+//                                substitutor
+//                            ) {
+//                                logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = false)
+//                            } ?: continue // TODO: do what if the result is known to be false?
+//                        val lambdaCallVariable =
+//                            argumentVariablesForConditionalEffects.getOrNull(effect.valueParameterReference.parameterIndex) ?: continue
+////                        flow.addAllConditionally(OperationStatement(lambdaCallVariable, operation), statements)
+//                        Unit
+////                        val conditionVariable = flow.getOrCreateVariable(effect.valueParameterReference)
+////                        val operation = effect.valueParameterReference.toOperation()
+////                        val statements =
+////                            logicSystem.approveContractStatement(
+////                                conditionalEffect.condition,
+////                                argumentVariablesForConditionalEffects,
+////                                substitutor
+////                            ) {
+////                                logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
+////                            } ?: continue // TODO: do what if the result is known to be false?
+//                    }
+                    else -> continue
                 }
             }
         }
@@ -1100,6 +1121,44 @@ abstract class FirDataFlowAnalyzer(
                     flow.addAllStatements(logicSystem.approveOperationStatement(flow, cond, removeApprovedOrImpossible = false))
                 }
             }
+        }
+    }
+
+    private fun getSubstitutor(
+        callee: FirFunction,
+        qualifiedAccess: FirStatement,
+        originalFunction: FirFunction?,
+    ): ConeSubstitutor {
+        val typeParameters = callee.typeParameters
+        val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
+            @Suppress("UNCHECKED_CAST")
+            val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
+                typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
+            }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
+            substitutorByMap(substitutionFromArguments, components.session)
+        } else {
+            ConeSubstitutor.Empty
+        }
+        return if (originalFunction == null) {
+            typeArgumentsSubstitutor
+        } else {
+            val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
+            substitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
+        }
+    }
+
+    private fun processInsideLambdaContract(lambda: FirAnonymousFunction, truths: List<FirExpression>, flow: MutableFlow) {
+        // contracts has no effect on non-body resolve stages
+        if (!components.transformer.baseTransformerPhase.isBodyResolve) return
+
+        for (conditionExpression in truths) {
+            val conditionVariable = flow.getOrCreateVariable(conditionExpression) ?: continue
+            val statements =
+                logicSystem.approveOperationStatement(
+                    flow, OperationStatement(conditionVariable, Operation.EqTrue), removeApprovedOrImpossible = false
+                )
+            flow.addAllStatements(statements)
+            Unit
         }
     }
 

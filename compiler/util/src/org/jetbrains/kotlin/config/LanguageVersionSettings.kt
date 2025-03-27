@@ -429,6 +429,7 @@ enum class LanguageFeature(
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
     AllowContractsOnPropertyAccessors(KOTLIN_2_3, "KT-27090"),
     AllowReverseImpliesReturnsContracts(KOTLIN_2_3, "KT-8889"),
+    AllowHoldsInContracts(KOTLIN_2_3, "KT-32993"),
 
     // 2.4 TODO set sinceVersion to 2.4 when it becomes available
 
