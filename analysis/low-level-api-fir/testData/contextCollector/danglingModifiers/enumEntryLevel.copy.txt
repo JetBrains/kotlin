@@ -31,8 +31,8 @@ Tower Data Context:
                     public get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
     Element 9
         Implicit receiver:
-            FirRegularClassSymbol public final enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>|
-                Type: foo.MyEnumClass
+            FirAnonymousObjectSymbol object : R|foo/MyEnumClass|
+                Type: foo.<anonymous>
 
 FILE: [ResolvedTo(IMPORTS)] enumEntryLevel.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -56,6 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryLevel.kt
                 super<R|foo/MyEnumClass|>()
             }
 
+            [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](i = R|foo/CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public final static [ResolvedTo(RAW_FIR)] fun values(): R|kotlin/Array<foo/MyEnumClass>| {

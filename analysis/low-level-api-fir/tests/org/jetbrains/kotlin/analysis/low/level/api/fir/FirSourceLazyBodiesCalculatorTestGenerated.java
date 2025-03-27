@@ -190,6 +190,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("danglingModifierInsideEnumEntry.kt")
+    public void testDanglingModifierInsideEnumEntry() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingModifierInsideEnumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("dataClassWithAnnotations.kt")
     public void testDataClassWithAnnotations() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/dataClassWithAnnotations.kt");

@@ -31,21 +31,21 @@ Tower Data Context:
                     public get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
     Element 9
         Implicit receiver:
-            FirRegularClassSymbol public final enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>|
-                Type: foo.MyEnumClass
+            FirAnonymousObjectSymbol object : R|foo/MyEnumClass|
+                Type: foo.<anonymous>
 
 FILE: [ResolvedTo(IMPORTS)] enumEntryLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] i: Int): R|foo/Anno| {
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val i: Int = R|<local>/i|
-            public? [ResolvedTo(RAW_FIR)] get(): Int
+        public final [ResolvedTo(STATUS)] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
     }
-    public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(STATUS)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
         private [ResolvedTo(STATUS)] constructor(): R|foo/MyEnumClass| {
             LAZY_super<R|kotlin/Enum<foo/MyEnumClass>|>
@@ -56,6 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryLevel.kt
                 super<R|foo/MyEnumClass|>()
             }
 
+            [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](i = R|foo/CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public final static [ResolvedTo(STATUS)] fun values(): R|kotlin/Array<foo/MyEnumClass>| {

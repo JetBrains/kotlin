@@ -1,25 +1,25 @@
 KT element: KtNameReferenceExpression
-FIR element: null
-FIR source kind: null
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+R|foo/CONSTANT|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingModifierInsideEnumEntry.kt
     package foo
 
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.i] i: Int): R|foo/Anno| {
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.i] i: R|kotlin/Int|): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(STATUS)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] constructor(): R|foo/MyEnumClass| {
             LAZY_super<R|kotlin/Enum<foo/MyEnumClass>|>
@@ -30,6 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] danglingModifierInsideEnumEntry.kt
                 super<R|foo/MyEnumClass|>()
             }
 
+            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] @R|foo/Anno|[Types](i = R|foo/CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {

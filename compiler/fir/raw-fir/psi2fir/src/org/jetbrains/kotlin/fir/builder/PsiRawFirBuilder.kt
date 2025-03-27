@@ -1674,6 +1674,12 @@ open class PsiRawFirBuilder(
                                                 ownerTypeParameters = emptyList()
                                             )
                                         }
+
+                                        for (danglingModifier in ktEnumEntry.body?.danglingModifierLists.orEmpty()) {
+                                            declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
+                                                containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                                            }
+                                        }
                                     }
                                 }
                             }
