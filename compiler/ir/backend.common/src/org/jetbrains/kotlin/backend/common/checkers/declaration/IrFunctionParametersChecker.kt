@@ -14,6 +14,7 @@ internal object IrFunctionParametersChecker : IrFunctionChecker {
         declaration: IrFunction,
         context: CheckerContext,
     ) {
+        @Suppress("DEPRECATED_COMPILER_API")
         for ((i, param) in declaration.valueParameters.withIndex()) {
             if (param.indexInOldValueParameters != i) {
                 context.error(declaration, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")

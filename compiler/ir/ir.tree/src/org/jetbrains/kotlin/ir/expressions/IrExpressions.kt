@@ -38,6 +38,7 @@ var IrDynamicOperatorExpression.right: IrExpression
     }
 
 @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+@Suppress("DEPRECATED_COMPILER_API")
 fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
     putArgument(symbol.owner, parameter, argument)
 
