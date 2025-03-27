@@ -183,7 +183,7 @@ class ModuleTests : IndexerTests() {
             getModulesInfo(compilation, modules = listOf("Foo"))
         }
 
-        assertContains(error.message.orEmpty(), "testModuleWithBadCode/Foo.h:1:1: error: unknown type name 'bad'")
+        assertContains(error.message.orEmpty(), "testModuleWithBadCode${File.separator}Foo.h:1:1: error: unknown type name 'bad'")
     }
 
     private fun List<IncludeInfo>.canonicalize(): List<String> = this.map { File(it.headerPath).canonicalPath }
