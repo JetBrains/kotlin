@@ -149,7 +149,7 @@ dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    api(libs.kotlinx.coroutines.core)
+    fatJarContents("com.intellij.platform:kotlinx-coroutines-core-jvm:1.8.0-intellij-13") { isTransitive = false }
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -167,8 +167,6 @@ dependencies {
         libraries(kotlinStdlib(classifier = "distJsJar"))
         libraries(kotlinStdlib(classifier = "distJsKlib"))
     }
-
-    librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }

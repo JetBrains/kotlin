@@ -17,7 +17,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
-    runtimeOnly(libs.kotlinx.coroutines.core)
+    runtimeOnly("com.intellij.platform:kotlinx-coroutines-core-jvm:1.8.0-intellij-13")
 }
 
 sourceSets {

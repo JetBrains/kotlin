@@ -115,7 +115,7 @@ interface KotlinPaths {
                 else -> emptyList()
             }
         }),
-        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
+        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
         MainKts(StdLib, Jar.MainKts, Jar.ScriptRuntime, Jar.Reflect)
         ;

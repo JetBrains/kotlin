@@ -256,7 +256,7 @@ fun Project.toolsJar(): FileCollection = files(
 )
 
 val compilerManifestClassPath
-    get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar kotlinx-coroutines-core-jvm.jar"
+    get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
 object EmbeddedComponents {
     const val CONFIGURATION_NAME = "embedded"
