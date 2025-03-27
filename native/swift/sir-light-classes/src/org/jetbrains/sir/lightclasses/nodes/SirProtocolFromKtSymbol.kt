@@ -45,7 +45,7 @@ internal open class SirProtocolFromKtSymbol(
         }
         set(_) = Unit
 
-    override val superClass: SirType? by lazy {
+    override val superClass: SirNominalType? by lazy {
         SirNominalType(KotlinRuntimeModule.kotlinBase)
     }
 

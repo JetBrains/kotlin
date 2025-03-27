@@ -21,7 +21,7 @@ abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration, SirCla
     abstract override val attributes: List<SirAttribute>
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
-    abstract override val superClass: SirType?
+    abstract override val superClass: SirNominalType?
     abstract override val protocols: List<SirProtocol>
     abstract val modality: SirModality
     override fun toString(): String {

@@ -12,5 +12,5 @@ package org.jetbrains.kotlin.sir
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.classInhertingDeclaration]
  */
 sealed interface SirClassInhertingDeclaration : SirElement {
-    val superClass: SirType?
+    val superClass: SirNominalType?
 }

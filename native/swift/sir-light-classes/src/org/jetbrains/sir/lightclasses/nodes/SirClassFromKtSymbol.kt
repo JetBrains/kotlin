@@ -73,7 +73,7 @@ internal class SirEnumClassFromKtSymbol(
     ktSymbol,
     sirSession
 ) {
-    override val superClass: SirType? by lazyWithSessions {
+    override val superClass: SirNominalType? by lazyWithSessions {
         // TODO: this super class as default will become obsolete with the KT-66855
         SirNominalType(KotlinRuntimeModule.kotlinBase).also {
             ktSymbol.containingModule.sirModule()
@@ -118,7 +118,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         }
         set(_) = Unit
 
-    override val superClass: SirType? by lazyWithSessions {
+    override val superClass: SirNominalType? by lazyWithSessions {
         ktSymbol.superTypes.filterIsInstanceAnd<KaClassType> {
             it.isRegularClass && it.classId != DefaultTypeClassIds.ANY
         }.firstOrNull()?.let {

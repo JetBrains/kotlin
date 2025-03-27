@@ -22,7 +22,7 @@ class SirProtocolBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
-    var superClass: SirType? = null
+    var superClass: SirNominalType? = null
     val protocols: MutableList<SirProtocol> = mutableListOf()
 
     fun build(): SirProtocol {
