@@ -89,23 +89,19 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? {
-        assert(this is ConeKotlinType)
         return this as? ConeFlexibleType
     }
 
     override fun KotlinTypeMarker.isError(): Boolean {
-        assert(this is ConeKotlinType)
         return this is ConeErrorType || this is ConeErrorType || this.typeConstructor().isError() ||
                 (this is ConeClassLikeType && this.lookupTag is ConeClassLikeErrorLookupTag)
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
-        assert(this is ConeKotlinType)
         return this is ConeErrorType && this.isUninferredParameter
     }
 
     override fun FlexibleTypeMarker.asDynamicType(): ConeDynamicType? {
-        assert(this is ConeKotlinType)
         return this as? ConeDynamicType
     }
 
@@ -129,7 +125,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
-        require(this is ConeKotlinType)
         return this as? ConeDefinitelyNotNullType
     }
 
@@ -192,7 +187,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
-        require(this is ConeTypeProjection)
         return this is ConeStarProjection
     }
 
