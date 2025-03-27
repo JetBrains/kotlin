@@ -23,7 +23,7 @@ fun StringBuilder.appendDeprecationWarningSuffix(deprecatingFeature: LanguageFea
     append("This will become an error")
     val sinceVersion = deprecatingFeature.sinceVersion
     if (sinceVersion != null) {
-        append(" in Kotlin ")
+        append(" in language version ")
         append(sinceVersion.versionString)
     } else {
         append(" in a future release")
