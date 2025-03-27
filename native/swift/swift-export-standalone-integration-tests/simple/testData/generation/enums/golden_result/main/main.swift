@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
-import stdlib
+import KotlinStdlib
 
 public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
     public static var a: main.Enum {

@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
 import KotlinRuntime
-import stdlib
+import KotlinStdlib
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinSerialization
 

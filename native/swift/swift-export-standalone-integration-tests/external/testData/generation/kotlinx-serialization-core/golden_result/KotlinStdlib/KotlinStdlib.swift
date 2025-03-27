@@ -1,10 +1,19 @@
 @_exported import ExportedKotlinPackages
 import KotlinRuntimeSupport
 import KotlinRuntime
-@_implementationOnly import KotlinBridges_stdlib
+@_implementationOnly import KotlinBridges_KotlinStdlib
 
 public extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase {
+    }
+    public protocol CharSequence: KotlinRuntime.KotlinBase {
+        var length: Swift.Int32 {
+            get
+        }
+        func subSequence(
+            startIndex: Swift.Int32,
+            endIndex: Swift.Int32
+        ) -> any ExportedKotlinPackages.kotlin.CharSequence
     }
     public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -158,6 +167,42 @@ public extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    open class Number: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        open func toDouble() -> Swift.Double {
+            return kotlin_Number_toDouble(self.__externalRCRef())
+        }
+        open func toFloat() -> Swift.Float {
+            return kotlin_Number_toFloat(self.__externalRCRef())
+        }
+        open func toLong() -> Swift.Int64 {
+            return kotlin_Number_toLong(self.__externalRCRef())
+        }
+        open func toInt() -> Swift.Int32 {
+            return kotlin_Number_toInt(self.__externalRCRef())
+        }
+        @available(*, deprecated, message: """
+Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
+If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
+""")
+        open func toChar() -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_Number_toChar(self.__externalRCRef())
+        }
+        open func toShort() -> Swift.Int16 {
+            return kotlin_Number_toShort(self.__externalRCRef())
+        }
+        open func toByte() -> Swift.Int8 {
+            return kotlin_Number_toByte(self.__externalRCRef())
+        }
+        package override init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRef: Swift.UnsafeMutableRawPointer?
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
     public final class Byte: ExportedKotlinPackages.kotlin.Number {
     }
     public final class Short: ExportedKotlinPackages.kotlin.Number {
@@ -239,4 +284,17 @@ public extension ExportedKotlinPackages.kotlin.time {
     }
 }
 public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
+    public var length: Swift.Int32 {
+        get {
+            return kotlin_CharSequence_length_get(self.__externalRCRef())
+        }
+    }
+    public func subSequence(
+        startIndex: Swift.Int32,
+        endIndex: Swift.Int32
+    ) -> any ExportedKotlinPackages.kotlin.CharSequence {
+        return KotlinRuntime.KotlinBase(__externalRCRef: kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.CharSequence
+    }
 }

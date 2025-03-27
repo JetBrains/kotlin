@@ -2,7 +2,7 @@
 @_implementationOnly import KotlinBridges_state
 import KotlinRuntime
 import KotlinRuntimeSupport
-import stdlib
+import KotlinStdlib
 
 public extension ExportedKotlinPackages.oh.my.state {
     public final class State: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {

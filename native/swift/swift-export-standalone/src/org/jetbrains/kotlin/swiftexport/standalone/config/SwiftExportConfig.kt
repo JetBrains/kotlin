@@ -39,7 +39,7 @@ public data class SwiftExportConfig(
 
     private fun createInputModuleForStdlib(distribution: Distribution) =
         InputModule(
-            "stdlib",
+            "KotlinStdlib",
             Path(distribution.stdlib),
             SwiftModuleConfig(shouldBeFullyExported = false)
         )

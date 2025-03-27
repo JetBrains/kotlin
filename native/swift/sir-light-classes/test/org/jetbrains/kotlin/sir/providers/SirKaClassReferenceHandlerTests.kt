@@ -77,7 +77,7 @@ class SirKaClassReferenceHandlerTests : SirTranslationTest() {
             // _KotlinBridged + CharSequence
             assertEquals(2, A.protocols.size)
             assertContains(referencedTypes, fqName("kotlin", "CharSequence"))
-            assertNotEquals(SirUnsupportedType, MyNumber.superClass)
+            assert(MyNumber.superClass != null)
             assertContains(referencedTypes, fqName("kotlin", "Number"))
         }
     }

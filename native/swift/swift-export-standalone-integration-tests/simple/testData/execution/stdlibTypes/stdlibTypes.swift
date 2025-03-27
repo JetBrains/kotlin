@@ -1,6 +1,6 @@
 import Testing
 import StdlibUsages
-import stdlib
+import KotlinStdlib
 
 @Test
 func testByteArray() throws {

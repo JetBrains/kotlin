@@ -2,7 +2,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
-import stdlib
+import KotlinStdlib
 
 public extension ExportedKotlinPackages.generation.stdlibTypes.stdlibTypes {
     public static func buildString(
