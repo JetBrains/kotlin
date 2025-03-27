@@ -29,9 +29,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 @PhaseDescription("UpgradeCallableReferences")
 open class UpgradeCallableReferences(
     val context: LoweringContext,
-    val upgradeFunctionReferencesAndLambdas: Boolean = true,
-    val upgradePropertyReferences: Boolean = true,
-    val upgradeLocalDelegatedPropertyReferences: Boolean = true,
     val upgradeSamConversions: Boolean = true,
 ) : FileLoweringPass {
 
@@ -85,7 +82,6 @@ open class UpgradeCallableReferences(
 
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclarationParent): IrElement {
             expression.transformChildren(this, data)
-            if (!upgradeFunctionReferencesAndLambdas) return expression
             val isRestrictedSuspension = expression.function.isRestrictedSuspensionFunction()
             expression.function.flattenParameters()
             return IrRichFunctionReferenceImpl(
@@ -160,7 +156,6 @@ open class UpgradeCallableReferences(
         }
 
         override fun visitBlock(expression: IrBlock, data: IrDeclarationParent): IrExpression {
-            if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
             val (function, reference, samType, referenceType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
             function.transformChildren(this, function)
             reference.transformChildren(this, data)
@@ -216,7 +211,6 @@ open class UpgradeCallableReferences(
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
-            if (!upgradeFunctionReferencesAndLambdas) return expression
             val arguments = expression.getArgumentsWithIr()
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
@@ -235,7 +229,6 @@ open class UpgradeCallableReferences(
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
-            if (!upgradePropertyReferences) return expression
             val getter = expression.getter?.owner
             val arguments = expression.getArgumentsWithIr()
             val getterFun: IrSimpleFunction
@@ -274,7 +267,6 @@ open class UpgradeCallableReferences(
             data: IrDeclarationParent
         ): IrExpression {
             expression.transformChildren(this, data)
-            if (!upgradeLocalDelegatedPropertyReferences) return expression
             return IrRichPropertyReferenceImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,

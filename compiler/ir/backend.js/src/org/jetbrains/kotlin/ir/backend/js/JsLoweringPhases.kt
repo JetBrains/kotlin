@@ -329,9 +329,6 @@ private val upgradeCallableReferences = makeIrModulePhase(
     { ctx: LoweringContext ->
         UpgradeCallableReferences(
             ctx,
-            upgradeFunctionReferencesAndLambdas = true,
-            upgradePropertyReferences = true,
-            upgradeLocalDelegatedPropertyReferences = true,
             upgradeSamConversions = false,
         )
     },
