@@ -2,12 +2,12 @@ FILE: Example.kt
     public final fun test(): R|kotlin/Unit| {
         lval v1: R|Bar<ERROR CLASS: Cannot infer argument for type parameter T, out Foo<ERROR CLASS: Uninferred type c: ConeTypeVariableTypeConstructor(T), *>>| = R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>()
         R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|><Inapplicable(INAPPLICABLE): /Bar.multiply>#|(R|<local>/v1|)
-        lval v2: R|Bar<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter Q>| = R|/doX<CS errors: /doX>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter Q>>()
-        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|>|(R|<local>/v2|)
+        lval v2: R|Bar<kotlin/String, out Foo<ERROR CLASS: Uninferred type c: ConeTypeVariableTypeConstructor(T), *>>| = R|/doX<CS errors: /doX>#|<R|kotlin/String|, R|CapturedType(*)|>()
+        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|><Inapplicable(INAPPLICABLE): /Bar.multiply>#|(R|<local>/v2|)
         lval v3: R|Bar<ERROR CLASS: Cannot infer argument for type parameter T, out Foo<ERROR CLASS: Uninferred type c: ConeTypeVariableTypeConstructor(T), *>>| = R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>()
         R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|><Inapplicable(INAPPLICABLE): /Bar.multiply>#|(R|<local>/v3|)
-        lval v4: R|Bar<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter Q>| = R|/doX<CS errors: /doX>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter Q>>(String())
-        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|>|(R|<local>/v4|)
+        lval v4: R|Bar<kotlin/String, out Foo<ERROR CLASS: Uninferred type c: ConeTypeVariableTypeConstructor(T), *>>| = R|/doX<CS errors: /doX>#|<R|kotlin/String|, R|CapturedType(*)|>(String())
+        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|><Inapplicable(INAPPLICABLE): /Bar.multiply>#|(R|<local>/v4|)
     }
     public final fun <T, Q : R|Foo<T, Q>|> doX(): R|Bar<T, Q>| {
         ^doX R|kotlin/TODO|()
