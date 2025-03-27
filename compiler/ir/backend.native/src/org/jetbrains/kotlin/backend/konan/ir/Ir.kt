@@ -232,7 +232,7 @@ class KonanSymbols(
     // TODO: this is strange. It should be a map from IrClassSymbol
     val areEqualByValue: Map<PrimitiveBinaryType, IrSimpleFunctionSymbol> by lazy {
         areEqualByValueFunctions.associateBy {
-            it.owner.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()!!
+            it.owner.parameters[0].type.computePrimitiveBinaryTypeOrNull()!!
         }
     }
 
