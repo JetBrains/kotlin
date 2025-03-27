@@ -70,11 +70,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
-            if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
-                if (modality == Modality.ABSTRACT) {
-                    modality = Modality.OPEN
-                }
-            }
             returnType = source.returnType
         }.apply {
             copyValueAndTypeParametersFrom(source)

@@ -241,7 +241,7 @@ internal abstract class JvmValueClassAbstractLowering(
     }
 
     private fun IrSimpleFunction.signatureRequiresMangling(): Boolean {
-	if (shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) return false
+        if (shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) return false
         val includeInline = specificMangle == SpecificMangle.Inline
         val includeMFVC = specificMangle == SpecificMangle.MultiField
         return nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
