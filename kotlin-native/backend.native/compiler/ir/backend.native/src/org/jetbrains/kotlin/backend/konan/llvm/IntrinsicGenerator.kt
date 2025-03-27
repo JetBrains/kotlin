@@ -547,12 +547,16 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val bitsWithPaddingType = LLVMIntTypeInContext(llvm.llvmContext, bitsWithPaddingNum)!!
 
         // 0011111000:
-        val discardBitsMask = LLVMConstShl(
-                LLVMConstZExt(
+        val discardBitsMask = LLVMBuildShl(
+                builder,
+                LLVMBuildZExt(
+                        builder,
                         LLVMConstAllOnes(bitsType), // 11111
-                        bitsWithPaddingType
+                        bitsWithPaddingType,
+                        ""
                 ), // 1111100000
-                LLVMConstInt(bitsWithPaddingType, prefixBitsNum.toLong(), 0)
+                LLVMConstInt(bitsWithPaddingType, prefixBitsNum.toLong(), 0),
+                ""
         )
 
         val preservedBitsMask = LLVMConstNot(discardBitsMask)!!
