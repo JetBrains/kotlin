@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
+import com.intellij.openapi.application.PathManager
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -15,8 +16,6 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
-import java.net.URI
-import java.nio.file.FileSystems
 
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
@@ -58,38 +57,20 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         val stdlibPath = File(this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI())
 
         return directories.flatMap { directory ->
-            this::class.java.classLoader.getResource(directory)!!.let {
-                val resourceUri = it.toURI()
-                when (resourceUri.scheme) {
-                    "jar" -> handleJarFileSystem(resourceUri)
-                    "file" -> handleFileSystem(resourceUri, stdlibPath)
-                    else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
-                }
-            }
+            PathManager.getResourceRoot(this::class.java.classLoader, directory)?.let {
+                File(it).walkTopDown()
+                    .mapNotNull { file ->
+                        val canonicalPath = file.parentFile.canonicalPath
+                        val relativePath = runIf(canonicalPath.startsWith(stdlibPath.canonicalPath)) {
+                            canonicalPath.removePrefix(stdlibPath.canonicalPath + File.separatorChar)
+                        }
+                        file.takeIf { it.isFile }
+                            ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
+                            ?.toTestFile(relativePath)
+                    }
+                    .toList()
+            }!!
         }
-    }
-
-    private fun handleFileSystem(resourceUri: URI, stdlibPath: File): List<TestFile> {
-        val resource = File(resourceUri)
-        return resource.walkTopDown()
-            .mapNotNull { file ->
-                val canonicalPath = file.parentFile.canonicalPath
-                val relativePath = runIf(canonicalPath.startsWith(stdlibPath.canonicalPath)) {
-                    canonicalPath.removePrefix(stdlibPath.canonicalPath + File.separatorChar)
-                }
-                file.takeIf { it.isFile }
-                    ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
-                    ?.toTestFile(relativePath)
-            }
-            .toList()
-    }
-
-    private fun handleJarFileSystem(resourceUri: URI): List<TestFile> {
-        val array = resourceUri.toString().split("!")
-        val fs = FileSystems.newFileSystem(URI.create(array[0]), emptyMap<String, String>())
-        return fs.getPath(array[1]).toFile().walkTopDown()
-            .mapNotNull { file -> file.toTestFile() }
-            .toList()
     }
 
     override fun produceAdditionalFiles(

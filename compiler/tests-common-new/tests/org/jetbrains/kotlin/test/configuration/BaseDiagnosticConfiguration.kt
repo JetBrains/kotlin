@@ -112,6 +112,7 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
  * - `.reversed.fir.kt` for reversed AA tests
  */
 fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
+    @Suppress("unused") baseDir: String = ".",
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
