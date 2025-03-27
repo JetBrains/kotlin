@@ -8,3 +8,5 @@ fun produceByteArray(): ByteArray {
 
 fun ByteArray.getElementAt(index: Int) =
     this[index]
+
+fun computeStringBuilder(sb: StringBuilder) = sb.toString()
