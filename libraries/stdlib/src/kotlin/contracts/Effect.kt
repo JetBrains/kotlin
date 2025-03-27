@@ -92,3 +92,14 @@ public interface ReturnsNotNull : SimpleEffect
 @ExperimentalContracts
 @SinceKotlin("1.3")
 public interface CallsInPlace : Effect
+
+/**
+ * Describes a situation when a provided condition guarantees to be true in the body of a functional parameter.
+ *
+ * @see ContractBuilder.holdsIn
+ */
+@ContractsDsl
+@ExperimentalContracts
+@ExperimentalExtendedContracts
+@SinceKotlin("2.2")
+public interface HoldsIn : Effect

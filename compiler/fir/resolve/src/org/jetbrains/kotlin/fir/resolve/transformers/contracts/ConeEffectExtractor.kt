@@ -103,6 +103,16 @@ class ConeEffectExtractor(
                 }
             }
 
+            FirContractsDslNames.HOLDS_IN -> {
+                if (session.languageVersionSettings.supportsFeature(LanguageFeature.HoldsInContracts)) {
+                    val condition = functionCall.explicitReceiver?.asContractElement() as? ConeBooleanExpression ?: noReceiver(resolvedId)
+                    val reference = functionCall.arguments[0].asContractValueExpression()
+                    ConeHoldsInEffectDeclaration(condition, reference)
+                } else {
+                    ConeContractDescriptionError.NotContractDsl(resolvedId).asElement()
+                }
+            }
+
             BOOLEAN_AND, BOOLEAN_OR -> {
                 val left = functionCall.explicitReceiver?.asContractBooleanExpression() ?: noReceiver(resolvedId)
                 val right = functionCall.arguments.firstOrNull()?.asContractBooleanExpression() ?: noArgument(resolvedId)
