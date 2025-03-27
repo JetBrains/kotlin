@@ -1,0 +1,44 @@
+KT element: KtNameReferenceExpression
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingModifierInsideEnumEntry.kt
+    package foo
+
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.i] i: Int): R|foo/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] constructor(): R|foo/MyEnumClass| {
+            LAZY_super<R|kotlin/Enum<foo/MyEnumClass>|>
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] enum entry Entry: R|foo/MyEnumClass| = object : R|foo/MyEnumClass| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|foo/<anonymous>| {
+                super<R|foo/MyEnumClass|>()
+            }
+
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|foo/MyEnumClass| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+
+    }

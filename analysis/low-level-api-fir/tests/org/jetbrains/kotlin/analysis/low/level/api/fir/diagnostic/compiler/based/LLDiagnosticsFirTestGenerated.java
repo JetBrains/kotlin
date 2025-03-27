@@ -828,6 +828,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("danglingModifierInsideEnumEntry.kt")
+      public void testDanglingModifierInsideEnumEntry() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/danglingModifierInsideEnumEntry.kt");
+      }
+
+      @Test
       @TestMetadata("kindaCompilerRequiredNestedAnnotation.kt")
       public void testKindaCompilerRequiredNestedAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kindaCompilerRequiredNestedAnnotation.kt");

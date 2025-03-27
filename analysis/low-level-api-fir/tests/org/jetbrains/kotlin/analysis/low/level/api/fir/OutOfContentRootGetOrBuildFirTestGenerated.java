@@ -136,6 +136,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("danglingModifierInsideEnumEntry.kt")
+    public void testDanglingModifierInsideEnumEntry() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingModifierInsideEnumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("fileAnnotation.kt")
     public void testFileAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation.kt");
