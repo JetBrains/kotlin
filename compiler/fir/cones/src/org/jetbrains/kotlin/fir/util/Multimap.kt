@@ -5,6 +5,28 @@
 
 package org.jetbrains.kotlin.fir.util
 
+/**
+ * `Multimap` is a flexible, type-safe way to represent a key-to-collection mapping.
+ * It:
+ * * Generalizes the concept of a `Map` by allowing multiple values per key.
+ * * Supports different collection types (e.g., [SetMultimap], [ListMultimap]).
+ *
+ * ### Example usage
+ *
+ * ```kotlin
+ * val setMultimap = setMultimapOf<String, Int>()
+ * setMultimap.put("even", 2)
+ * setMultimap.put("even", 4)
+ * setMultimap.put("even", 2) // Duplicate ignored
+ * println(setMultimap["even"]) // {2, 4}
+ *
+ * val listMultimap = listMultimapOf<String, Int>()
+ * listMultimap.put("odds", 1)
+ * listMultimap.put("odds", 3)
+ * listMultimap.put("odds", 1) // Duplicate allowed
+ * println(listMultimap["odds"]) // [1, 3, 1]
+ * ```
+ */
 interface Multimap<K, out V, out C : Collection<V>> : Iterable<Map.Entry<K, C>> {
     operator fun get(key: K): C
     operator fun contains(key: K): Boolean
