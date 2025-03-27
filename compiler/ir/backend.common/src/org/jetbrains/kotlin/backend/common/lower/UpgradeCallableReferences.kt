@@ -110,7 +110,9 @@ open class UpgradeCallableReferences(
 
         // IrTransformer defines this to not calling visitElement, which leads to incorrect parent creation
         override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-            return visitElement(declaration, data) as IrStatement
+            return context.irFactory.stageController.restrictTo(declaration) {
+                visitElement(declaration, data) as IrStatement
+            }
         }
 
         override fun visitFile(declaration: IrFile, data: IrDeclarationParent): IrFile {
