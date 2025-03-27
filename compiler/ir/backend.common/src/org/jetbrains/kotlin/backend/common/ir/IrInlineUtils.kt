@@ -56,7 +56,7 @@ private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrI
         else -> return asInlinableFunctionReference()?.let { reference ->
             IrInlinableLambda(
                 reference.symbol.owner as IrSimpleFunction,
-                listOfNotNull(reference.extensionReceiver?.let { builder.irTemporary(it) })
+                reference.arguments.filterNotNull().map { builder.irTemporary(it) }
             )
         }
     }
