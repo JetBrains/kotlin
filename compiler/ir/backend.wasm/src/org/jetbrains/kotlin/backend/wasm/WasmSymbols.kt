@@ -272,10 +272,6 @@ class WasmSymbols(
     val kMutableProperty1Impl: IrClassSymbol = getInternalClass("KMutableProperty1Impl")
     val kMutableProperty2Impl: IrClassSymbol = getInternalClass("KMutableProperty2Impl")
 
-    val kMutableProperty0: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty0"))
-    val kMutableProperty1: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty1"))
-    val kMutableProperty2: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty2"))
-
     val arraysCopyInto = symbolFinder.topLevelFunctions(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "copyInto")
 
     private val contentToString: List<IrSimpleFunctionSymbol> =

@@ -6,14 +6,23 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.irRichFunctionReference
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -21,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.copyParametersFrom
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -145,3 +155,34 @@ fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
 val IrFile.isJvmBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotations.JvmBuiltin)
 
 val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)
+
+fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: CommonBackendContext): IrRichFunctionReference {
+    require(this.typeParameters.isEmpty())
+    val wrapper = factory.buildFun {
+        setSourceRange(this@wrapWithLambdaCall)
+        name = this@wrapWithLambdaCall.name
+        visibility = DescriptorVisibilities.LOCAL
+        returnType = this@wrapWithLambdaCall.returnType
+    }.apply {
+        this.parent = parent
+        copyParametersFrom(this@wrapWithLambdaCall)
+        val builder = context.createIrBuilder(this@apply.symbol).at(this@wrapWithLambdaCall)
+        body = builder.irBlockBody {
+            +irReturn(irCall(this@wrapWithLambdaCall).apply {
+                for ((index, param) in parameters.withIndex()) {
+                    arguments[index] = irGet(param)
+                }
+            })
+        }
+    }
+    val builder = context.createIrBuilder(symbol).at(this@wrapWithLambdaCall)
+    val referenceType = context.irBuiltIns.functionN(parameters.size).typeWith(parameters.map { it.type } + this@wrapWithLambdaCall.returnType)
+    return builder.irRichFunctionReference(
+        superType = referenceType,
+        reflectionTargetSymbol = symbol,
+        overriddenFunctionSymbol = UpgradeCallableReferences.selectSAMOverriddenFunction(referenceType),
+        invokeFunction = wrapper,
+        captures = emptyList(),
+        origin = IrStatementOrigin.LAMBDA,
+    )
+}
