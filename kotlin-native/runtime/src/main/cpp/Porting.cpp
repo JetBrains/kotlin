@@ -30,6 +30,7 @@
 #endif
 
 #include <chrono>
+#include <vector>
 
 #include "CallsChecker.hpp"
 #include "Common.h"
@@ -85,9 +86,9 @@ int getLastErrorMessage(char* message, uint32_t size) {
   if (errCode) {
     auto flags = FORMAT_MESSAGE_FROM_SYSTEM;
     auto errMsgBufSize = size / 4;
-    wchar_t errMsgBuffer[errMsgBufSize];
-    ::FormatMessageW(flags, NULL, errCode, 0, errMsgBuffer, errMsgBufSize, NULL);
-    ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer, -1, message, size, NULL, NULL);
+    std::vector<wchar_t> errMsgBuffer(errMsgBufSize);
+    ::FormatMessageW(flags, NULL, errCode, 0, errMsgBuffer.data(), errMsgBufSize, NULL);
+    ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer.data(), -1, message, size, NULL, NULL);
   }
   return errCode;
 }
@@ -101,9 +102,9 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
     unsigned long bufferRead;
     // In UTF-16 there are surrogate pairs that a 2 * 16-bit long (4 bytes).
     auto bufferLength = maxSizeBytes / 4 - 1;
-    wchar_t buffer[bufferLength];
-    if (::ReadConsoleW(stdInHandle, buffer, bufferLength, &bufferRead, NULL)) {
-      length = ::WideCharToMultiByte(CP_UTF8, 0, buffer, bufferRead, (char*) utf8,
+    std::vector<wchar_t> buffer(bufferLength);
+    if (::ReadConsoleW(stdInHandle, buffer.data(), bufferLength, &bufferRead, NULL)) {
+      length = ::WideCharToMultiByte(CP_UTF8, 0, buffer.data(), bufferRead, (char*) utf8,
                                      maxSizeBytes - 1, NULL, NULL);
       if (!length && kotlin::compiler::shouldContainDebugInfo()) {
         char msg[512];

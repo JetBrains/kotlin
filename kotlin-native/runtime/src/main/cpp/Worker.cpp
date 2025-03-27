@@ -878,7 +878,7 @@ bool Worker::waitDelayed(bool blocking) {
 Job Worker::getJob(bool blocking) {
   Locker locker(&lock_);
   RuntimeAssert(!terminated_, "Must not be terminated");
-  if (queue_.size() == 0 && !blocking) return Job { .kind = JOB_NONE };
+  if (queue_.size() == 0 && !blocking) return Job { .kind = JOB_NONE, .regularJob = {} };
   waitForQueueLocked(-1, nullptr);
   auto result = queue_.front();
   queue_.pop_front();
