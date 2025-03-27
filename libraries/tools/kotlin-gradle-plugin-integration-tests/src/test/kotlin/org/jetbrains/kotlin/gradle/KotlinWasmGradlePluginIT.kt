@@ -437,4 +437,38 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             build("help")
         }
     }
+
+    @DisplayName("Check js target test without kotlin-test")
+    @GradleTest
+    fun nodejsTestWithoutKotlinTest(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace(
+                    "<JsEngine> {",
+                    // filter is necessary to mute Gradle error
+                    // https://docs.gradle.org/8.12.1/userguide/upgrading_version_8.html#test_task_fail_on_no_test_executed
+                    """
+                        |nodejs {
+                        |    testTask {
+                        |        filter.isFailOnNoMatchingTests = false
+                        |        filter.includeTest("Foo", "bar")
+                        |    }
+                    """.trimMargin()
+                )
+            }
+
+            projectPath.resolve("src/wasmJsTest/kotlin/foo.kt").apply {
+                toFile().parentFile.mkdirs()
+                writeText(
+                    """
+                    fun foo() = 73
+                """.trimIndent()
+                )
+            }
+
+            build("wasmJsTest") {
+                assertTasksExecuted(":wasmJsTest")
+            }
+        }
+    }
 }
