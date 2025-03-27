@@ -634,11 +634,18 @@ tasks.named("install") {
         add(":kotlin-stdlib-common")
         add(":kotlin-stdlib-jdk7")
         add(":kotlin-stdlib-jdk8")
+        add(":kotlin-dom-api-compat")
+        add(":kotlin-test")
         //endregion
+        add(":kotlin-reflect")
         add(":libraries:tools:abi-validation:abi-tools")
         add(":compiler:build-tools:kotlin-build-tools-impl")
+        add(":native:swift:swift-export-embeddable")
+        add(":native:kotlin-klib-commonizer-embeddable")
     }
     for (dependencyProject in implicitDependencies) {
         dependsOn("$dependencyProject:install")
+        File("/Users/Alexander.Likhachev/Work/IdeaProjects/kotlin/kgp-auto-tasks.log").appendText(dependencyProject + '\n')
+        project(dependencyProject).tasks.findByName("install")
     }
 }

@@ -6,7 +6,6 @@
 package plugins
 
 import capitalize
-import gradle.kotlin.dsl.accessors._1efd8fbcd0db49a81470bda782f0062d.kotlin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
@@ -20,6 +19,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import java.util.*
 import javax.inject.Inject
@@ -269,8 +269,6 @@ fun Project.configureDefaultPublishing(
                             dependencies.withType<ProjectDependency> {
                                 println("KOTLIN_MPP Adding dependency on ${path} to install task from ${installTask.path} (${this@sourceSet.name})")
                                 installTask.dependsOn("${path}:install")
-                                @Suppress("DEPRECATION")
-                                dependencyProject.tasks.findByName("install")
                             }
                         }
                     }
@@ -278,8 +276,8 @@ fun Project.configureDefaultPublishing(
             }
         }
         pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
-            val kotlinExtension = kotlin
-            kotlin.sourceSets.configureEach sourceSets@{
+            val kotlinExtension = project.extensions.getByType<KotlinJvmProjectExtension>()
+            kotlinExtension.sourceSets.configureEach sourceSets@{
                 val kotlinCompilations = kotlinExtension.target.compilations.filter { it.allKotlinSourceSets.contains(this) }
                 // use an heuristic that if there's any non-test compilation having this source set, its dependencies should be published
                 val isMainSourceSet = kotlinCompilations.any { !excludedSourceSetNames.contains(it.name) }
@@ -299,8 +297,6 @@ fun Project.configureDefaultPublishing(
                         dependencies.withType<ProjectDependency> {
                             println("KOTLIN Adding dependency on ${path} to install task from ${installTask.path} (${this@sourceSets.name})")
                             installTask.dependsOn("${path}:install")
-                            @Suppress("DEPRECATION")
-                            dependencyProject.tasks.findByName("install")
                         }
                     }
                 }
@@ -317,8 +313,6 @@ fun Project.configureDefaultPublishing(
                     dependencies.withType<ProjectDependency> {
                         println("JAVA Adding dependency on ${path} to install task from ${installTask.path}")
                         installTask.dependsOn("${path}:install")
-                        @Suppress("DEPRECATION")
-                        dependencyProject.tasks.findByName("install")
                     }
                 }
             }
@@ -334,8 +328,6 @@ fun Project.configureDefaultPublishing(
                     dependencies.withType<ProjectDependency> {
                         println("JAVA_LIBRARY Adding dependency on ${path} to install task from ${installTask.path}")
                         installTask.dependsOn("${path}:install")
-                        @Suppress("DEPRECATION")
-                        dependencyProject.tasks.findByName("install")
                     }
                 }
             }

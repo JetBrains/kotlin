@@ -1,2 +1,5 @@
 :kotlin-reflect – isn't added by KGP, isn't required
-:kotlin-build-common – it's not even published anymore
+:kotlin-build-common – it's not even published anymor
+:kotlin-tooling-metadata – it's embedded
+:examples:annotation-processor-example – added in kgp-it
+:kotlin-gradle-subplugin-example – added in kgp-it

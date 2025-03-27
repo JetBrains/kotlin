@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":native:swift:sir-printer"))
 
     compileOnly(project(":analysis:analysis-api"))
+    compileOnly(project(":core:compiler.common"))
 
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
