@@ -620,18 +620,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
 
     compilerArgument {
-        name = "Xself-upper-bound-inference"
-        description =
-            "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.TypeInferenceOnCallsWithSelfTypes))
-
-        stubLifecycle()
-    }
-
-
-    compilerArgument {
         name = "Xcontext-receivers"
         description = "Enable experimental context receivers.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

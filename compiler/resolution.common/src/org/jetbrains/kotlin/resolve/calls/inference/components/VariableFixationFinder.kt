@@ -90,9 +90,6 @@ class VariableFixationFinder(
         READY_FOR_FIXATION_REIFIED,
     }
 
-    private val isTypeInferenceForSelfTypesSupported: Boolean
-        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
-
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
@@ -103,7 +100,7 @@ class VariableFixationFinder(
 
         // Might be fixed, but this condition should come earlier than the next one,
         // because self-type-based cases do not have proper constraints, though they assumed to be fixed
-        isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
+        areAllProperConstraintsSelfTypeBased(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
 
         // Prevents from fixation
@@ -119,12 +116,8 @@ class VariableFixationFinder(
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
-        else -> {
-            when {
-                variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
-                else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
-            }
-        }
+        variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
     }
 
     private fun Context.variableHasUnprocessedConstraintsInForks(variableConstructor: TypeConstructorMarker): Boolean {

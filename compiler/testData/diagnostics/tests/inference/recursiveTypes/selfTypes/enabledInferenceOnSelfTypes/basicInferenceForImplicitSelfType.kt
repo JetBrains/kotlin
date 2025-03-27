@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaBuilder.java
 public class JavaBuilder<B extends JavaBuilder<B>> {

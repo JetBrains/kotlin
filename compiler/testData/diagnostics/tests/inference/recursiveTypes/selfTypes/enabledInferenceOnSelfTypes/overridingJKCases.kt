@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-59012
-// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 // FILE: I.java
 public interface I<G extends I<G>> {
     <T extends G> T foo();

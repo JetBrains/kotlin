@@ -655,17 +655,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
-        value = "-Xself-upper-bound-inference",
-        description = "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.",
-    )
-    @Enables(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
-    var selfUpperBoundInference: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xcontext-receivers",
         description = "Enable experimental context receivers.",
     )

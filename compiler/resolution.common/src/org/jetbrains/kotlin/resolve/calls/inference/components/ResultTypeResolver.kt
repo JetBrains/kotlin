@@ -31,9 +31,6 @@ class ResultTypeResolver(
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
-    private val isTypeInferenceForSelfTypesSupported: Boolean
-        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
-
     private fun Context.getDefaultTypeForSelfType(
         constraints: List<Constraint>,
         typeVariable: TypeVariableMarker,
@@ -53,9 +50,7 @@ class ResultTypeResolver(
         constraints: List<Constraint>,
         typeVariable: TypeVariableMarker,
     ): KotlinTypeMarker {
-        if (isTypeInferenceForSelfTypesSupported) {
-            getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
-        }
+        getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
 
         return if (direction == ResolveDirection.TO_SUBTYPE) nothingType() else nullableAnyType()
     }
