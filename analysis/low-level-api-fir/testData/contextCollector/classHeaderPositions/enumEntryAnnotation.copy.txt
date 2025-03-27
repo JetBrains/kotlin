@@ -37,7 +37,7 @@ Tower Data Context:
                 FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
                     public get(): R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
 
-FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotation.kt
+FILE: [ResolvedTo(RAW_FIR)] enumEntryAnnotation.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] s: String): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -55,13 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotation.kt
         public? final? [ResolvedTo(RAW_FIR)] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
-        @R|pack/Anno|[Types](s = this@R|pack/MyEnumClass.Companion|.R|pack/MyEnumClass.Companion.CONSTANT|) public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|pack/MyEnumClass| = object : R|pack/MyEnumClass| {
-            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|pack/<anonymous>| {
-                super<R|pack/MyEnumClass|>(Int(0))
-            }
-
-        }
-
+        @Anno[Unresolved](LAZY_EXPRESSION) public final static [ResolvedTo(RAW_FIR)] enum entry ENTRY: R|pack/MyEnumClass| = LAZY_EXPRESSION
         public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] constructor(): R|pack/MyEnumClass.Companion| {
                 LAZY_super<R|kotlin/Any|>

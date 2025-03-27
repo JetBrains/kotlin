@@ -22,12 +22,12 @@ Tower Data Context:
         Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
     Element 8
         Implicit receiver:
-            FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
                 Type: pack.MyEnumClass.Companion
     Element 9
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
-                FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
         Scope: FirNameAwareOnlyCallablesScope
             Functions
                 FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|pack/MyEnumClass|
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] enum class MyEnumClass : R|kotlin/Enum<pack/MyEnumClass>| {
+    public final? [ResolvedTo(RAW_FIR)] enum class MyEnumClass : R|kotlin/Enum<pack/MyEnumClass>| {
         private [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] i: Int): R|pack/MyEnumClass| {
             LAZY_super<R|kotlin/Enum<pack/MyEnumClass>|>
         }
@@ -55,7 +55,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotation.kt
         public? final? [ResolvedTo(RAW_FIR)] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public final static [ResolvedTo(RAW_FIR)] enum entry ENTRY: R|pack/MyEnumClass| = LAZY_EXPRESSION
+        @R|pack/Anno|[Types](s = this@R|pack/MyEnumClass.Companion|.R|pack/MyEnumClass.Companion.CONSTANT|) public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|pack/MyEnumClass| = object : R|pack/MyEnumClass| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|pack/<anonymous>| {
+                super<R|pack/MyEnumClass|>(Int(0))
+            }
+
+        }
+
         public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] constructor(): R|pack/MyEnumClass.Companion| {
                 LAZY_super<R|kotlin/Any|>

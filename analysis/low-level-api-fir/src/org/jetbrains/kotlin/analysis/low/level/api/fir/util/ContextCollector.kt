@@ -607,17 +607,22 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+    override fun visitEnumEntry(enumEntry: FirEnumEntry) = withProcessor(enumEntry) {
         dumpContext(enumEntry, ContextKind.SELF)
 
         onActiveBody {
-            enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
+            // We have to wrap annotation processing into withEnumEntry as well as it provides the correct context
+            // Otherwise there will be the enum entry as an implicit receiver
             context.withEnumEntry(enumEntry) {
-                dumpContext(enumEntry, ContextKind.BODY)
+                processSignatureAnnotations(enumEntry)
 
-                onActive {
-                    super.visitEnumEntry(enumEntry)
+                onActiveBody {
+                    enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                    dumpContext(enumEntry, ContextKind.BODY)
+
+                    onActive {
+                        processChildren(enumEntry)
+                    }
                 }
             }
         }
