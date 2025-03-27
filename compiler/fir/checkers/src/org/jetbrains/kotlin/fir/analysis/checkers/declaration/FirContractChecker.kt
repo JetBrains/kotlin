@@ -283,6 +283,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return conditionalEffect.argumentsCondition.accept(this, null) ?: conditionalEffect.returnsEffect.accept(this, null)
         }
 
+        override fun visitHoldsInEffectDeclaration(
+            holdsInEffect: KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+            data: Nothing?,
+        ): ConeDiagnostic? {
+            return holdsInEffect.argumentsCondition.accept(this, null) ?: holdsInEffect.valueParameterReference.accept(this, null)
+        }
+
         override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Nothing?): ConeDiagnostic? {
             return returnsEffect.value.accept(this, null)
         }
@@ -366,6 +373,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             data: Nothing?,
         ): ConeDiagnostic? {
             return conditionalEffect.argumentsCondition.accept(this, data)
+        }
+
+        override fun visitHoldsInEffectDeclaration(
+            holdsInEffect: KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+            data: Nothing?,
+        ): ConeDiagnostic? {
+            return holdsInEffect.argumentsCondition.accept(this, data)
         }
 
         override fun visitIsInstancePredicate(
