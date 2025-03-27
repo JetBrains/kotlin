@@ -81,10 +81,10 @@ fun Int.foo(i: Int) {}
 @JvmExposeBoxed(<!ILLEGAL_JVM_NAME!>"..."<!>)
 fun todo(ic: IC) {}
 
-<!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
+<!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED!>@JvmExposeBoxed<!>
 inline fun <reified T> inlineMe(ic: IC) {}
 
-<!USELESS_JVM_EXPOSE_BOXED!>@get:JvmExposeBoxed("foo")<!>
+<!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED!>@get:JvmExposeBoxed("foo")<!>
 inline val <reified T> T.bar: IC
         get() = TODO()
 
@@ -125,10 +125,12 @@ abstract class Abstract {
     abstract fun abstractIC(ic: IC)
 }
 
+<!JVM_EXPOSE_BOXED_ON_INTERFACE!>@JvmExposeBoxed<!>
 interface Interface {
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
     fun foo(ic: IC) {}
 
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
     fun bar(ic: IC)
 }
 
@@ -140,3 +142,8 @@ class Class: Interface {
 @JvmSynthetic
 <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC!>@JvmExposeBoxed<!>
 fun syntheticFun(ic: IC) {}
+
+fun withLocal() {
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS, USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
+    fun local() {}
+}
