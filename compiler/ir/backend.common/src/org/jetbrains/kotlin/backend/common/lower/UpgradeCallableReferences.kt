@@ -109,7 +109,9 @@ open class UpgradeCallableReferences(
 
         // IrTransformer defines this to not calling visitElement, which leads to incorrect parent creation
         override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-            return visitElement(declaration, data) as IrStatement
+            return context.irFactory.stageController.restrictTo(declaration) {
+                visitElement(declaration, data) as IrStatement
+            }
         }
 
         override fun visitFile(declaration: IrFile, data: IrDeclarationParent): IrFile {
@@ -373,14 +375,20 @@ open class UpgradeCallableReferences(
             ) { parameters ->
                 // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
                 // we already have such klib, so need to handle it. We just ignore extra type parameters
-                val cleanedTypeArgumentCount = minOf(typeArguments.size, referencedFunction.allTypeParameters.size)
+                val allTypeParameters = referencedFunction.allTypeParameters
+                val cleanedTypeArguments = allTypeParameters.indices.map { typeArguments.getOrNull(it) ?: context.irBuiltIns.anyNType }
+
+                val typeArgumentsMap = allTypeParameters.mapIndexed { i, typeParameter ->
+                    typeParameter.symbol to cleanedTypeArguments[i]
+                }.toMap()
+
                 val exprToReturn = this@UpgradeCallableReferences
                     .context
                     .createIrBuilder(symbol)
                     .at(this@wrapFunction)
                     .irCallWithSubstitutedType(
                         referencedFunction.symbol,
-                        typeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType },
+                        typeArguments = cleanedTypeArguments,
                     ).apply {
                         val bound = captured.map { it.first }.toSet()
                         val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
@@ -388,7 +396,8 @@ open class UpgradeCallableReferences(
                             "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
                         }
                         for ((originalParameter, localParameter) in (boundParameters + unboundParameters).zip(parameters)) {
-                            arguments[originalParameter.indexInParameters] = irGet(localParameter)
+                            arguments[originalParameter.indexInParameters] =
+                                irGet(localParameter).implicitCastIfNeededTo(originalParameter.type.substitute(typeArgumentsMap))
                         }
                     }
                 +irReturn(exprToReturn)

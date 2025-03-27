@@ -784,6 +784,14 @@ tasks {
             enabled = false  // Causes out-of-memory in CI: KTI-2150
         }
     }
+
+    named("compileTestDevelopmentExecutableKotlinWasmJs", KotlinJsIrLink::class) {
+        enabled = false
+    }
+    named("compileTestDevelopmentExecutableKotlinWasmWasi", KotlinJsIrLink::class) {
+        enabled = false
+    }
+
     val wasmWasiNodeTest by existing {
         if (!kotlinBuildProperties.getBoolean("kotlin.stdlib.wasi.tests")) {
             enabled = false

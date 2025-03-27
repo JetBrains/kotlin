@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -104,14 +105,22 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        nodejs {
+            testTask {
+                enabled = false
+            }
+        }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        nodejs {
+            testTask {
+                enabled = false
+            }
+        }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
@@ -227,6 +236,19 @@ kotlin {
 }
 
 tasks {
+    named("compileTestDevelopmentExecutableKotlinWasmJs", KotlinJsIrLink::class) {
+        enabled = false
+    }
+    named("compileTestDevelopmentExecutableKotlinWasmWasi", KotlinJsIrLink::class) {
+        enabled = false
+    }
+    named("compileTestProductionExecutableKotlinWasmJs", KotlinJsIrLink::class) {
+        enabled = false
+    }
+    named("compileTestProductionExecutableKotlinWasmWasi", KotlinJsIrLink::class) {
+        enabled = false
+    }
+
     val allMetadataJar by existing(Jar::class) {
         archiveClassifier = "all"
     }
