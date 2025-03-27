@@ -40,7 +40,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fragments = from.fragments?.copyOf()
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
-    to.inferenceCompatibility = from.inferenceCompatibility
     to.inlineClasses = from.inlineClasses
     to.intellijPluginRoot = from.intellijPluginRoot
     to.kotlinHome = from.kotlinHome

@@ -130,7 +130,6 @@ where advanced options include:
                              Use the 'warning' level to issue warnings instead of errors.
   -Xreturn-value-checker={check|full|disable}
                              Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
-  -Xinference-compatibility  Enable compatibility changes for the generic type inference algorithm.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-api-version-greater-than-language-version-error
                              Suppress error about API version greater than language version.

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.config.LanguageFeature.InferenceCompatibility
 import org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.NoInferConstraint
@@ -286,18 +285,11 @@ abstract class TypeCheckerStateForConstraintSystem(
                         val needToMakeDefNotNull = subTypeConstructor.isTypeVariable() ||
                                 typeVariableTypeConstructor !is TypeVariableTypeConstructorMarker ||
                                 !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
-                        val inferenceCompatibilityEnabled = languageVersionSettings.supportsFeature(InferenceCompatibility)
 
                         val resultType = if (needToMakeDefNotNull) {
                             subType.makeDefinitelyNotNullOrNotNull()
                         } else {
-                            val notNullType = if (!inferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
-                                // TODO: KT-71134 (consider getting rid of withNotNullProjection)
-                                subType.withNotNullProjection()
-                            } else {
-                                subType.withNullability(false)
-                            }
-
+                            val notNullType = subType.withNullability(false)
                             if (addForkPointForDifferentDnnAndMarkedNotNullable(
                                     subType, notNullType, typeVariableTypeConstructor, isFromNullabilityConstraint
                                 )
@@ -402,7 +394,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     }
 
     private fun KotlinTypeMarker.withCapturedNonNullProjection(): KotlinTypeMarker =
-        if (languageVersionSettings.supportsFeature(InferenceCompatibility) && this is CapturedTypeMarker) {
+        if (this is CapturedTypeMarker) {
             // TODO: KT-71134 (consider getting rid of withNotNullProjection)
             with(extensionTypeContext) { withNotNullProjection() }
         } else {

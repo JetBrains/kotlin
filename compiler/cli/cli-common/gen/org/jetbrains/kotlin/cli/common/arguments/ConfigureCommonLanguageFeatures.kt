@@ -26,10 +26,6 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
     }
 
-    if (arguments.inferenceCompatibility) {
-        put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.consistentDataClassCopyVisibility) {
         put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
     }
