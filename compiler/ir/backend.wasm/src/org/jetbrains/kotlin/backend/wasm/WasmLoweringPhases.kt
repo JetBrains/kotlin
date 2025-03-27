@@ -120,21 +120,10 @@ private val rangeContainsLoweringPhase = makeIrModulePhase(
     name = "RangeContainsLowering",
 )
 
-private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
-    ::WasmInlineCallableReferenceToLambdaPhase,
-    name = "WasmInlineCallableReferenceToLambdaPhase",
-)
-
-
-private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeIrModulePhase(
-    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    name = "WrapInlineDeclarationsWithReifiedTypeParametersLowering",
-)
 
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
-    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -159,7 +148,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         )
     },
     name = "InlineOnlyPrivateFunctions",
-    prerequisite = setOf(wrapInlineDeclarationsWithReifiedTypeParametersLowering, arrayConstructorPhase)
+    prerequisite = setOf(arrayConstructorPhase)
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -605,18 +594,16 @@ fun getWasmLowerings(
     configuration: CompilerConfiguration,
     isIncremental: Boolean,
 ): List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> {
-    val syntheticAccessorsDumpDir = configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR]
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
     return listOfNotNull(
         // BEGIN: Common Native/JS/Wasm prefix.
         validateIrBeforeLowering,
+        upgradeCallableReferences,
         lateinitPhase,
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase,
-        inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlineOnlyPrivateFunctionsPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,
         syntheticAccessorGenerationPhase,
@@ -624,7 +611,7 @@ fun getWasmLowerings(
         // just because it goes so in Native.
         validateIrAfterInliningOnlyPrivateFunctionsPhase,
         inlineAllFunctionsPhase,
-        dumpSyntheticAccessorsPhase.takeIf { syntheticAccessorsDumpDir != null },
+        dumpSyntheticAccessorsPhase.takeIf { configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null },
         validateIrAfterInliningAllFunctionsPhase,
         // END: Common Native/JS/Wasm prefix.
 
@@ -652,7 +639,6 @@ fun getWasmLowerings(
         enumEntryCreateGetInstancesFunsLoweringPhase,
         enumSyntheticFunsLoweringPhase,
 
-        upgradeCallableReferences,
         propertyReferenceLowering,
         callableReferencePhase,
 
