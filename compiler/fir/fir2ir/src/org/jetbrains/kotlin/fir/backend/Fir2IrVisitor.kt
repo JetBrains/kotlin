@@ -241,7 +241,7 @@ class Fir2IrVisitor(
                             it.parent = irScript
                             if (!isSelf) {
                                 @OptIn(DelicateIrParameterIndexSetter::class)
-                                it.indexInOldValueParameters = index
+                                it.indexInParameters = index
                             }
                         }
                     }
@@ -835,7 +835,7 @@ class Fir2IrVisitor(
         val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
         val contextParameterNumber = firScriptSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
         val receiverParameter =
-            irScript.implicitReceiversParameters.find { it.indexInOldValueParameters == contextParameterNumber } ?: irScript.thisReceiver
+            irScript.implicitReceiversParameters.find { it.indexInParameters == contextParameterNumber } ?: irScript.thisReceiver
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol, origin)
