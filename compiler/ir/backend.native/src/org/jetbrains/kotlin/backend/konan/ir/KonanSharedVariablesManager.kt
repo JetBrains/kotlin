@@ -59,11 +59,10 @@ class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: K
                 IrCallImpl(initializer.startOffset, initializer.endOffset,
                         irBuiltIns.unitType, elementProperty.setter!!.symbol,
                         elementProperty.setter!!.typeParameters.size)
-        sharedVariableInitialization.dispatchReceiver =
+        sharedVariableInitialization.arguments[0] =
                 IrGetValueImpl(initializer.startOffset, initializer.endOffset,
                         sharedVariableDeclaration.type, sharedVariableDeclaration.symbol)
-
-        sharedVariableInitialization.putValueArgument(0, initializer)
+        sharedVariableInitialization.arguments[1] = initializer
 
         return IrCompositeImpl(
                 originalDeclaration.startOffset, originalDeclaration.endOffset, irBuiltIns.unitType, null,
@@ -75,7 +74,7 @@ class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: K
             IrCallImpl(originalGet.startOffset, originalGet.endOffset,
                     originalGet.type, elementProperty.getter!!.symbol,
                     elementProperty.getter!!.typeParameters.size).apply {
-                dispatchReceiver = IrGetValueImpl(
+                arguments[0] = IrGetValueImpl(
                         originalGet.startOffset, originalGet.endOffset,
                         sharedVariableSymbol.owner.type, sharedVariableSymbol
                 )
@@ -85,11 +84,11 @@ class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: K
             IrCallImpl(originalSet.startOffset, originalSet.endOffset, irBuiltIns.unitType,
                     elementProperty.setter!!.symbol, elementProperty.setter!!.typeParameters.size
             ).apply {
-                dispatchReceiver = IrGetValueImpl(
+                arguments[0] = IrGetValueImpl(
                         originalSet.startOffset, originalSet.endOffset,
                         sharedVariableSymbol.owner.type, sharedVariableSymbol
                 )
-                putValueArgument(0, originalSet.value)
+                arguments[1] = originalSet.value
             }
 
 }
