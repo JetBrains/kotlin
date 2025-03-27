@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/capturedSelfInsideIntersection.kt
     VALUE_PARAMETER kind:Regular name:expected index:1 type:U of <root>.isEqualTo?
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        WHEN type=<root>.GraphQlTester.Path origin=IF
+        WHEN type=<root>.GraphQlTester.Traversable origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               ARG arg0: CONST Null type=kotlin.Nothing? value=null
@@ -160,8 +160,8 @@ FILE fqName:<root> fileName:/capturedSelfInsideIntersection.kt
               ARG <this>: GET_VAR '<this>: <root>.GraphQlTester.Path declared in <root>.isEqualTo' type=<root>.GraphQlTester.Path origin=IMPLICIT_ARGUMENT
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public abstract fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.GraphQlTester.Entity.isEqualTo declared in <root>.GraphQlTester.Entity' type=<root>.GraphQlTester.Traversable origin=null
-              TYPE_ARG T: <root>.GraphQlTester.Traversable
+            then: CALL 'public abstract fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.GraphQlTester.Entity.isEqualTo declared in <root>.GraphQlTester.Entity' type=<root>.GraphQlTester.Entity<U of <root>.isEqualTo, *> origin=null
+              TYPE_ARG T: <root>.GraphQlTester.Entity<U of <root>.isEqualTo, *>
               ARG <this>: CALL 'public abstract fun entity <E> (entityType: kotlin.reflect.KClass<E of <root>.GraphQlTester.Path.entity>): <root>.GraphQlTester.Entity<E of <root>.GraphQlTester.Path.entity, *> declared in <root>.GraphQlTester.Path' type=<root>.GraphQlTester.Entity<U of <root>.isEqualTo, *> origin=null
                 TYPE_ARG E: U of <root>.isEqualTo
                 ARG <this>: GET_VAR '<this>: <root>.GraphQlTester.Path declared in <root>.isEqualTo' type=<root>.GraphQlTester.Path origin=IMPLICIT_ARGUMENT

@@ -79,16 +79,33 @@ class VariableFixationFinder(
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
         OUTER_TYPE_VARIABLE_DEPENDENCY,
+
+        // This is used for self-type-based bounds and deprioritized in 1.5+.
+        // 2.2+ uses this kind of readiness for reified type parameters only, otherwise
+        // READY_FOR_FIXATION_CAPTURED_UPPER is in use
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
+
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT, // Same as before but also has a constraint T = ... not dependent on others
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
+
+        // We prefer LOWER T >: SomeRegularType to UPPER T <: SomeRegularType, KT-41934 is the only reason known
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
+
+        // Currently used in 2.2+ ONLY for self-type based declared upper bounds
+        // Captured types are difficult to manipulate, so with T <: Captured(...)
+        // it's better to fix T earlier than T >: SomeRegularType / T <: SomeRegularType
+        // TODO: it would be probably better to use READY_FOR_FIXATION_UPPER here and to have
+        // it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
+        READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
         READY_FOR_FIXATION_REIFIED,
     }
+
+    private val fixationEnhancementsIn22: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.FixationEnhancementsIn22)
 
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
@@ -98,10 +115,16 @@ class VariableFixationFinder(
                 variableHasUnprocessedConstraintsInForks(variable) ->
             TypeVariableFixationReadiness.FORBIDDEN
 
-        // Might be fixed, but this condition should come earlier than the next one,
+        // Pre-2.2: might be fixed, but this condition should come earlier than the next one,
         // because self-type-based cases do not have proper constraints, though they assumed to be fixed
-        areAllProperConstraintsSelfTypeBased(variable) ->
+        // 2.2+: self-type-based upper bounds are considered captured upper bounds
+        // and have higher priority as upper/lower (affects e.g. KT-74999)
+        // For reified variables we keep old behavior, as captured types aren't usable for their substitutions (see KT-49838, KT-51040)
+        areAllProperConstraintsSelfTypeBased(variable) -> if (!fixationEnhancementsIn22 || isReified(variable)) {
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
+        } else {
+            TypeVariableFixationReadiness.READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+        }
 
         // Prevents from fixation
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
@@ -116,6 +139,9 @@ class VariableFixationFinder(
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
+
+        // 1.5+ (questionable) logic: we prefer LOWER constraints to UPPER constraints, mostly because of KT-41934
+        // TODO: try to reconsider (see KT-76518)
         variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
         else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
     }
