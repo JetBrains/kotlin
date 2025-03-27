@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.nio.file.Path
 import kotlin.system.measureTimeMillis
 
 class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
@@ -589,10 +590,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                 if (filesToDelete.isNotEmpty()) {
                     val deletedForThisSource = mutableSetOf<String>()
-                    val parentDirs = mutableSetOf<File>()
+                    val parentDirs = mutableSetOf<Path>()
 
                     for (kjsmFile in filesToDelete) {
-                        BuildOperations.deleteRecursively(kjsmFile.path, deletedForThisSource, parentDirs)
+                        BuildOperations.deleteRecursivelyAndCollectDeleted(kjsmFile.toPath(), deletedForThisSource, parentDirs)
                     }
 
                     FSOperations.pruneEmptyDirs(context, parentDirs)

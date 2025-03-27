@@ -50,6 +50,7 @@ import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.extension
 
 private const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
 
@@ -333,10 +334,9 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val result = mutableListOf<JvmSourceRoot>()
         for (root in roots) {
             val file = root.rootFile
-            val filePath = file.toPath()
             val prefix = root.packagePrefix
-            if (Files.exists(filePath) && (Files.isDirectory(filePath) || file.extension == "java")) {
-                result.add(JvmSourceRoot(file, prefix.ifEmpty { null }))
+            if (Files.exists(file) && (Files.isDirectory(file) || file.extension == "java")) {
+                result.add(JvmSourceRoot(file.toFile(), prefix.ifEmpty { null }))
             }
         }
         return result

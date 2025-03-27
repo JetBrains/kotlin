@@ -13,13 +13,16 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.tree.StubFileElementType
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.StringRef
@@ -587,13 +590,13 @@ private fun <T : PsiElement> cloneStubRecursively(
         )
 
         is PsiFileStub -> {
-            val serializer = originalStub.type
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
+            val serializer = originalStub.type as StubFileElementType<PsiFileStub<PsiFile>>
+            serializer.serialize(originalStub as PsiFileStub<PsiFile>, StubOutputStream(buffer, storage))
             serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
         }
 
         else -> {
-            val serializer = originalStub.stubType
+            val serializer = originalStub.stubType as IStubElementType<StubElement<*>, PsiElement>
             serializer.serialize(originalStub, StubOutputStream(buffer, storage))
             serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
         }

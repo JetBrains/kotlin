@@ -42,15 +42,19 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
+    compileOnly(intellijPlatformUtil())
     compileOnly(jpsModelSerialization())
+    compileOnly("com.jetbrains.intellij.platform:jps-build-javac-rt:$intellijVersion")
     compileOnly(intellijJDom())
     testRuntimeOnly(jpsModel())
 
     // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests
+    testCompileOnly("org.jetbrains:annotations:24.0.0")
     testImplementation(jpsModelSerialization()) { isTransitive = false }
     testImplementation(testFramework()) { isTransitive = false }
     testImplementation("com.jetbrains.intellij.platform:test-framework-core:$intellijVersion") { isTransitive = false }
     testImplementation("com.jetbrains.intellij.platform:test-framework-common:$intellijVersion") { isTransitive = false }
+    testImplementation("com.jetbrains.intellij.platform:jps-build-javac-rt:$intellijVersion")
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:boot:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis:$intellijVersion") { isTransitive = false }
