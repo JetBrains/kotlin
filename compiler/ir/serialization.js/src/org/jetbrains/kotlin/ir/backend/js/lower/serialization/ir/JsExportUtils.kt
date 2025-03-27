@@ -29,7 +29,7 @@ private val IrDeclarationWithName.exportedName: String
     get() = getAnnotation(JsStandardClassIds.Annotations.JsName.asSingleFqName())?.getSingleConstStringArgument() ?: name.toString()
 
 private fun IrConstructorCall.getSingleConstStringArgument() =
-    (getValueArgument(0) as IrConst).value as String
+    (arguments[0] as IrConst).value as String
 
 fun IrModuleFragment.collectExportedNames(): Map<IrFile, Map<IrDeclarationWithName, String>> {
     return files.associateWith { irFile ->
