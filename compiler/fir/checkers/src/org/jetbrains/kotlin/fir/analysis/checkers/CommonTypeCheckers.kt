@@ -14,7 +14,6 @@ object CommonTypeCheckers : TypeCheckers() {
 
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
         FirTypeAnnotationChecker,
-        FirSuspendModifierChecker,
         FirDeprecatedTypeChecker,
         FirOptInUsageTypeRefChecker,
         FirStarProjectionModifierChecker,

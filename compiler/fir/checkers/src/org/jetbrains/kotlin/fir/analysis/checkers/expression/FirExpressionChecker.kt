@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
-abstract class FirExpressionChecker<in E : FirStatement>(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
+// We don't declare it as `in E` because we want to prevent accidentally adding more general checkers to sets of specific checkers.
+abstract class FirExpressionChecker<E : FirStatement>(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
     abstract fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter)
 }

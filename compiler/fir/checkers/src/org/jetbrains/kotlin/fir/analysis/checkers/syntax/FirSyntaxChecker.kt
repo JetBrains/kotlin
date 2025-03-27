@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
  * - implement `checkPsiOrLightTree` in an AST-agnostic manner, or
  * - implement both `checkPsi` and `checkLightTree` if it's difficult to handle PSI and LT tree in a unified way.
  */
-interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
+interface FirSyntaxChecker<D : FirElement, P : PsiElement> {
 
     fun checkSyntax(element: D, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = element.source ?: return
@@ -52,7 +52,7 @@ interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
     fun checkPsiOrLightTree(element: D, source: KtSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {}
 }
 
-abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration, P : PsiElement> :
+abstract class FirDeclarationSyntaxChecker<D : FirDeclaration, P : PsiElement> :
     FirDeclarationChecker<D>(MppCheckerKind.Common),
     FirSyntaxChecker<D, P> {
     final override fun check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -60,7 +60,7 @@ abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration, P : PsiElement
     }
 }
 
-abstract class FirExpressionSyntaxChecker<in E : FirStatement, P : PsiElement> :
+abstract class FirExpressionSyntaxChecker<E : FirStatement, P : PsiElement> :
     FirExpressionChecker<E>(MppCheckerKind.Common),
     FirSyntaxChecker<E, P> {
     final override fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {

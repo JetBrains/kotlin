@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
  * DO NOT MODIFY IT MANUALLY
  */
 
+@Suppress("UNCHECKED_CAST")
 abstract class TypeCheckers {
     companion object {
         val EMPTY: TypeCheckers = object : TypeCheckers() {}
@@ -23,7 +24,7 @@ abstract class TypeCheckers {
     open val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = emptySet()
 
     @CheckersComponentInternal internal val allTypeRefCheckers: Array<FirTypeRefChecker> by lazy { typeRefCheckers.toTypedArray() }
-    @CheckersComponentInternal internal val allResolvedTypeRefCheckers: Array<FirResolvedTypeRefChecker> by lazy { (resolvedTypeRefCheckers + typeRefCheckers).toTypedArray() }
-    @CheckersComponentInternal internal val allFunctionTypeRefCheckers: Array<FirFunctionTypeRefChecker> by lazy { (functionTypeRefCheckers + typeRefCheckers).toTypedArray() }
-    @CheckersComponentInternal internal val allIntersectionTypeRefCheckers: Array<FirIntersectionTypeRefChecker> by lazy { (intersectionTypeRefCheckers + typeRefCheckers).toTypedArray() }
+    @CheckersComponentInternal internal val allResolvedTypeRefCheckers: Array<FirResolvedTypeRefChecker> by lazy { (resolvedTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirResolvedTypeRefChecker> }
+    @CheckersComponentInternal internal val allFunctionTypeRefCheckers: Array<FirFunctionTypeRefChecker> by lazy { (functionTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirFunctionTypeRefChecker> }
+    @CheckersComponentInternal internal val allIntersectionTypeRefCheckers: Array<FirIntersectionTypeRefChecker> by lazy { (intersectionTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirIntersectionTypeRefChecker> }
 }

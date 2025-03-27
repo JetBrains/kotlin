@@ -74,6 +74,7 @@ class Generator(
             printImports()
             printGeneratedMessage()
 
+            println("@Suppress(\"UNCHECKED_CAST\")")
             println("abstract class $checkersComponentName {")
             withIndent {
                 println("companion object {")
@@ -110,7 +111,18 @@ class Generator(
                     if (parents.isNotEmpty()) {
                         print(')')
                     }
-                    println(".toTypedArray() }")
+                    print(".toTypedArray()")
+                    if (parents.isNotEmpty()) {
+                        // Checker base classes are declared as invariant.
+                        // However, they only accept their generic type as input, so it is safe
+                        // to cast `FirChecker<Base>` to `FirChecker<Specific>`
+                        // because calling `fun check(Base)` with an argument of type `Specific` is safe.
+                        // The cast wouldn't be necessary if the checker base classes were declared as `class FirChecker<in T>'.
+                        // However, we specifically don't want to do that to prevent us from accidentally adding generic checkers to
+                        // sets of more specific checkers in the `*Checkers` implementations.
+                        print(" as ${alias.component1().arrayType}")
+                    }
+                    println(" }")
                 }
             }
             println("}")

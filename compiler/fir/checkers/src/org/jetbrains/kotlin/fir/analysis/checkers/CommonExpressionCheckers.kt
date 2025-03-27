@@ -73,7 +73,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirConstructorCallChecker,
             FirSpreadOfNullableChecker,
             FirAssignmentOperatorCallChecker,
-            FirNamedVarargChecker,
             FirUnderscoredTypeArgumentSyntaxChecker,
             FirContractNotFirstStatementChecker,
             FirProtectedConstructorNotInSuperCallChecker,
