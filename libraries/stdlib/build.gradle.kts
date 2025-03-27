@@ -1,13 +1,11 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -28,6 +26,7 @@ plugins {
     signing
     id("nodejs-cache-redirector-configuration")
     id("d8-configuration")
+    id("binaryen-configuration")
 }
 
 description = "Kotlin Standard Library"

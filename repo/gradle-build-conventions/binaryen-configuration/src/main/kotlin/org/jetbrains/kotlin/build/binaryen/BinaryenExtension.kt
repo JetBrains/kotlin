@@ -4,23 +4,26 @@
  */
 
 @file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.build.binaryen
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 
 @OptIn(ExperimentalWasmDsl::class)
 abstract class BinaryenExtension(
-    private val binaryenRoot: BinaryenRootEnvSpec,
+    private val binaryen: BinaryenEnvSpec,
 ) {
     val Project.binaryenVersion: String get() = property("versions.binaryen") as String
 
     fun Test.setupBinaryen() {
-        // use from BinaryenSetupTask after bootstrap
-        dependsOn(project.rootProject.tasks.named("kotlinBinaryenSetup"))
-        val binaryenExecutablePath = binaryenRoot.executable
+        with(binaryen) {
+            dependsOn(project.binaryenSetupTaskProvider)
+        }
+
+        val binaryenExecutablePath = binaryen.executable
         doFirst {
             systemProperty("binaryen.path", binaryenExecutablePath.get())
         }
