@@ -119,7 +119,7 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
 
 
 fun loweringsOfTheFirstPhase(
-    @Suppress("UNUSED_PARAMETER") irMangler: IrMangler,
+    irMangler: IrMangler,
     languageVersionSettings: LanguageVersionSettings
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
@@ -136,6 +136,5 @@ fun loweringsOfTheFirstPhase(
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(irMangler)
         this += inlineFunctionSerializationPreProcessing
-        //this += validateIrAfterInliningAllFunctions
     }
 }
