@@ -32154,6 +32154,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("contexts.kt")
+      public void testContexts() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/contexts.kt");
+      }
+
+      @Test
+      @TestMetadata("extension.kt")
+      public void testExtension() {
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/extension.kt");
+      }
+
+      @Test
       @TestMetadata("getter.kt")
       public void testGetter() {
         runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/getter.kt");
