@@ -287,8 +287,8 @@ private val upgradeCallableReferences = makeIrModulePhase(
         UpgradeCallableReferences(
             ctx,
             upgradeFunctionReferencesAndLambdas = true,
-            upgradePropertyReferences = false,
-            upgradeLocalDelegatedPropertyReferences = false,
+            upgradePropertyReferences = true,
+            upgradeLocalDelegatedPropertyReferences = true,
             upgradeSamConversions = false,
         )
     },
@@ -652,9 +652,10 @@ fun getWasmLowerings(
         enumEntryCreateGetInstancesFunsLoweringPhase,
         enumSyntheticFunsLoweringPhase,
 
-        propertyReferenceLowering,
         upgradeCallableReferences,
+        propertyReferenceLowering,
         callableReferencePhase,
+
         singleAbstractMethodPhase,
         localDelegatedPropertiesLoweringPhase,
         localDeclarationsLoweringPhase,
