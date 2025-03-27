@@ -26,7 +26,6 @@ nativeInteropPlugin {
             // Let some symbols be undefined to avoid linking unnecessary parts.
             listOf(
                     "_futimens",
-                    "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
                     "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
                     "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
                     "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
@@ -44,6 +43,11 @@ nativeInteropPlugin {
                     "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
+                    "__ZN4llvm3omp20getDirectiveCategoryENS0_9DirectiveE",
+                    "__ZN4llvm3omp23getDirectiveAssociationENS0_9DirectiveE",
+                    "__ZN4llvm3omp23getLeafConstructsOrSelfENS0_9DirectiveE",
+                    "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS2_8optionalINS_9StringRefEEE",
+                    "__ZN4llvm3omp17getLeafConstructsENS0_9DirectiveE",
             ).mapTo(this) { "-Wl,-U,$it" }
             addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
         }
@@ -64,7 +68,10 @@ nativeInteropPlugin {
                     "clangToolingCore",
                     "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
                     "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
-                    "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle"
+                    "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle",
+                    "LLVMTargetParser", "LLVMBitReader",
+                    "LLVMFrontendOpenMP", "LLVMFrontendOffloading", "LLVMBitstreamReader", "LLVMTransformUtils", "LLVMScalarOpts", "LLVMCASUtil",
+                    "LLVMRemarks",
             ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
         }
     })
