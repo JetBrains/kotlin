@@ -57,9 +57,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAUL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_ON_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
@@ -318,11 +321,23 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT,
-            "'@JvmExposeBoxed' cannot expose open and abstract functions."
+            "'@JvmExposeBoxed' cannot expose open and abstract functions, as well as functions in interfaces."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC,
             "'@JvmExposeBoxed' cannot expose synthetic functions."
+        )
+        map.put(
+            JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS,
+            "'@JvmExposeBoxed' cannot expose local functions."
+        )
+        map.put(
+            JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED,
+            "'@JvmExposeBoxed' cannot expose inline functions with reified type parameters."
+        )
+        map.put(
+            JVM_EXPOSE_BOXED_ON_INTERFACE,
+            "'@JvmExposeBoxed' cannot be applied to interfaces, since it cannot expose open and abstract methods."
         )
 
         map.put(
