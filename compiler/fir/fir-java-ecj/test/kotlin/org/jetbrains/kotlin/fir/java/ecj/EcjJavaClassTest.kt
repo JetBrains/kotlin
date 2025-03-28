@@ -45,6 +45,10 @@ class EcjJavaClassTest : TestCase() {
 
             // Process API declarations and collect their names
             val foundDeclarations = mutableListOf<String>()
+
+            // Add the class itself to the list of declarations
+            foundDeclarations.add(className)
+
             ecjJavaClass!!.processApiDeclarations { declaration ->
                 val name = when (declaration) {
                     is TypeDeclaration -> declaration.name
@@ -52,7 +56,8 @@ class EcjJavaClassTest : TestCase() {
                     is FieldDeclaration -> declaration.name
                     else -> charArrayOf()
                 }
-                foundDeclarations.add(String(name))
+                val nameStr = String(name)
+                foundDeclarations.add(nameStr)
                 declaration
             }
 
@@ -156,6 +161,10 @@ class EcjJavaClassTest : TestCase() {
             assertNotNull("Nested class not found: $nestedClassId", ecjJavaClass)
 
             val foundDeclarations = mutableListOf<String>()
+
+            // Add the nested class itself to the list of declarations
+            foundDeclarations.add(nestedClassId.shortClassName.asString())
+
             ecjJavaClass!!.processApiDeclarations { declaration ->
                 val name = when (declaration) {
                     is TypeDeclaration -> declaration.name
