@@ -149,7 +149,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                         ?: error("No preprocessed inline function found for $originalIdSignature")
 
                     val lazyDeclaration = lazy {
-                        val declarationProto = fileReader.declaration(preprocessedInlineFunctionId)
+                        val declarationProto = fileReader.inlineDeclaration(preprocessedInlineFunctionId)
                         declarationDeserializer.deserializeDeclaration(declarationProto) as IrFunction
                     }
 
