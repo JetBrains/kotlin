@@ -61,3 +61,4 @@ kotlin-ide/
 .teamcity/
 .npmrc
 /.idea/AndroidProjectSystem.xml
+.junie
