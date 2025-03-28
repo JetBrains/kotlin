@@ -106,6 +106,12 @@ public class FirIdeNormalAnalysisSourceModuleTypeReferenceTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("danglingAnnotationInsideEnumEntry.kt")
+  public void testDanglingAnnotationInsideEnumEntry() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/danglingAnnotationInsideEnumEntry.kt");
+  }
+
+  @Test
   @TestMetadata("functionReceiver.kt")
   public void testFunctionReceiver() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReceiver.kt");
