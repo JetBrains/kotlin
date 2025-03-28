@@ -2715,7 +2715,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
-        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
+        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies.reversed() + listOf(null)/* Null for "current" non-library module */)
 
         val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<RuntimeInitializer>() }
 
