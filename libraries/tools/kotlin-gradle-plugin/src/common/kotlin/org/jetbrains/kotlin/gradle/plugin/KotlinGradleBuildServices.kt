@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.io.File
@@ -74,8 +78,20 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
         fun registerIfAbsent(project: Project): Provider<KotlinGradleBuildServices> =
             project.gradle.registerClassLoaderScopedBuildService(KotlinGradleBuildServices::class) {
                 it.parameters.sessionsDir.set(project.kotlinSessionsDir)
+            }.also { serviceProvider ->
+                SingleActionPerProject.run(project, UsesKotlinGradleBuildServices::class.java.name) {
+                    project.tasks.withType<UsesKotlinGradleBuildServices>().configureEach { task ->
+                        task.usesService(serviceProvider)
+                        task.kotlinGradleBuildServices.set(serviceProvider)
+                    }
+                }
             }
     }
+}
+
+internal interface UsesKotlinGradleBuildServices : Task {
+    @get:Internal
+    val kotlinGradleBuildServices: Property<KotlinGradleBuildServices>
 }
 
 

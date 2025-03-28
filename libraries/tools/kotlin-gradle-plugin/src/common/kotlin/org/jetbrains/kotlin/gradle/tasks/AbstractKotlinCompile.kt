@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.UsesBuildFinishedListenerService
+import org.jetbrains.kotlin.gradle.plugin.UsesKotlinGradleBuildServices
 import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.internal.UsesBuildIdProviderService
@@ -51,6 +52,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
+    UsesKotlinGradleBuildServices,
     UsesBuildMetricsService,
     UsesIncrementalModuleInfoBuildService,
     UsesCompilerSystemPropertiesService,
@@ -226,6 +228,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
+        kotlinGradleBuildServices.orNull // KT-76379: just instantiate the build service if it wasn't yet
         val buildMetrics = metrics.get()
         buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
         buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
