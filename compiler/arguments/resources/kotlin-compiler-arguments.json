@@ -20,6 +20,12 @@
             "patch": 0
         },
         {
+            "name": "1.7.0",
+            "major": 1,
+            "minor": 7,
+            "patch": 0
+        },
+        {
             "name": "1.8.0",
             "major": 1,
             "minor": 8,
@@ -82,11 +88,20 @@
                     }
                 },
                 {
+                    "name": "1.8",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.8.0",
+                        "deprecatedVersion": "2.2.0",
+                        "removedVersion": null
+                    }
+                },
+                {
                     "name": "1.9",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "1.8.0",
                         "stabilizedVersion": "1.9.0",
-                        "deprecatedVersion": null,
+                        "deprecatedVersion": "2.2.0",
                         "removedVersion": null
                     }
                 },
@@ -113,6 +128,15 @@
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.1.0",
                         "stabilizedVersion": "2.2.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "2.3",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": null,
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }

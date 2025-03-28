@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 import org.jetbrains.kotlin.arguments.serialization.json.KotlinVersionAsNameSerializer
 
+@Suppress("EnumEntryName")
 @Serializable(with = KotlinVersionAsNameSerializer::class)
 enum class KotlinVersion(
     val versionName: String,
@@ -25,11 +26,20 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v1_4_0,
         )
     ),
+    v1_8(
+        versionName = "1.8",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_8_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    ),
     v1_9(
         versionName = "1.9",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
             stabilizedVersion = KotlinReleaseVersion.v1_9_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
     v2_0(
@@ -51,6 +61,12 @@ enum class KotlinVersion(
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    ),
+    v2_3(
+        versionName = "2.3",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
 }

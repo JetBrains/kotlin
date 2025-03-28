@@ -23,6 +23,8 @@ dependencies {
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+
+    testImplementation(project(":compiler:util"))
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
