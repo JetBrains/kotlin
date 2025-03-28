@@ -11,6 +11,9 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
@@ -60,14 +63,21 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfigurationName(buildTyp
     lowerCamelCaseName(buildType.configuration, "exported", "swift", "export", "api", "configuration")
 )
 
-internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(buildType: NativeBuildType): Configuration =
+internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
+    buildType: NativeBuildType,
+    extendConfiguration: Configuration
+): Configuration =
     project.configurations.maybeCreateResolvable(exportedSwiftExportApiConfigurationName(buildType)) {
         description = "Swift Export dependencies configuration for $name"
         isVisible = false
-        isTransitive = false
+        extendsFrom(extendConfiguration)
+        shouldResolveConsistentlyWith(extendConfiguration)
         usesPlatformOf(this@exportedSwiftExportApiConfiguration)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
+        if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+            KlibPackaging.setAttributeTo(project, attributes, false)
+        }
     }
 
 internal val String.normalizedSwiftExportModuleName get() = dashSeparatedToUpperCamelCase(this)

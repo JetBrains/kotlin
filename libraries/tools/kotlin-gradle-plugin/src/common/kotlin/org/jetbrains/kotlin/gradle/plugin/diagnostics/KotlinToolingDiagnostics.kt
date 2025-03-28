@@ -1557,6 +1557,38 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportModuleResolutionError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(modules: List<String>) = build {
+            title("Swift Module Resolution Error")
+                .description {
+                    "The following modules specified in swiftExport { export() } were not found in the resolved components: ${
+                        modules.joinToString(
+                            ", "
+                        )
+                    }"
+                }
+                .solution {
+                    "Please check the module name and ensure it is correct."
+                }
+        }
+    }
+
+    object SwiftExportArtifactResolution : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(component: String, artifacts: List<String>) = build(severity = if (artifacts.isEmpty()) WARNING else ERROR) {
+            title("Swift Export Artifact Resolution Error")
+                .description {
+                    if (artifacts.isEmpty()) {
+                        "Component $component doesn't have suitable artifacts"
+                    } else {
+                        "Component $component has too many artifacts: $artifacts"
+                    }
+                }
+                .solution {
+                    "Please check the component and ensure it has the correct artifacts."
+                }
+        }
+    }
+
     object IcFirMisconfigurationLV : ToolingDiagnosticFactory(
         predefinedSeverity = FATAL,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration

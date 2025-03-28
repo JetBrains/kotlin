@@ -34,7 +34,6 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             SwiftExportLogger.Severity.Info -> Level.INFO
             SwiftExportLogger.Severity.Warning -> Level.WARNING
             SwiftExportLogger.Severity.Error -> Level.SEVERE
-            else -> Level.INFO
         }
     }
 
@@ -42,7 +41,13 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         val exportSettings = parameters.swiftExportSettings
         val exportModules = parameters.swiftModules.zip(exportSettings) { modules, settings ->
             modules.map { module ->
-                module.toInputModule(createModuleConfig(module.flattenPackage, settings))
+                module.toInputModule(
+                    createModuleConfig(
+                        module.flattenPackage,
+                        module.shouldBeFullyExported,
+                        settings
+                    )
+                )
             }.toSet()
         }.get()
 
@@ -55,12 +60,16 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         parameters.swiftModulesFile.getFile().writeText(json)
     }
 
-    private fun createModuleConfig(flattenPackage: String?, settings: Map<String, String>): SwiftModuleConfig {
+    private fun createModuleConfig(
+        flattenPackage: String?,
+        shouldBeFullyExported: Boolean,
+        settings: Map<String, String>,
+    ): SwiftModuleConfig {
         return SwiftModuleConfig(
             bridgeModuleName = parameters.bridgeModuleName.getOrElse(SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME),
             rootPackage = flattenPackage,
             experimentalFeatures = settings,
-            shouldBeFullyExported = true,
+            shouldBeFullyExported = shouldBeFullyExported,
         )
     }
 
