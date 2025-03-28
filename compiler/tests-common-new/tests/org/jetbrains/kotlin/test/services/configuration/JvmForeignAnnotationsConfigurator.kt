@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.nio.file.Files
-import java.util.zip.ZipInputStream
+import java.net.URI
+import java.util.zip.ZipFile
 import kotlin.io.path.createTempDirectory
 
 enum class JavaForeignAnnotationType(val path: String) {
@@ -47,7 +47,7 @@ enum class JavaForeignAnnotationType(val path: String) {
 
 open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        val JSR_305_TEST_ANNOTATIONS_PATH = this::class.java.classLoader.getResource("jsr305_test_annotations.jar")!!
+        const val JSR_305_TEST_ANNOTATIONS_PATH = "diagnostics/helpers/jsr305_test_annotations"
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -110,23 +110,36 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.jvmAnnotationsForTests())
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
-            val jsr305AnnotationsDir = createTempDirectory().toFile().also {
-                ZipInputStream(JSR_305_TEST_ANNOTATIONS_PATH.openStream()).use { zip ->
-                    while (true) {
-                        val entry = zip.nextEntry ?: break
-                        val file = File(it, entry.name)
-                        if (entry.isDirectory) {
-                            file.mkdirs()
-                        } else {
-                            file.parentFile.mkdirs()
-                            Files.newOutputStream(file.toPath()).use { zip.copyTo(it) }
-                        }
+            val resourceUri = this::class.java.classLoader.getResource(JSR_305_TEST_ANNOTATIONS_PATH)!!.toURI()
+            val target = createTempDirectory().toFile()
+            when (resourceUri.scheme) {
+                "jar" -> {
+                    val array = resourceUri.toString().split("!")
+                    val jarUri = URI.create(array[0])
+                    val pathInsideJar = array[1]
+                    val path = jarUri.toString().substringAfterLast(":")
+                    ZipFile(path).use { zipFile ->
+                        val prefix = pathInsideJar.removePrefix("/")
+                        zipFile.entries().asSequence()
+                            .filter { entry -> !entry.isDirectory && entry.name.startsWith(prefix) }
+                            .forEach { entry ->
+                                val relativePath = entry.name.removePrefix(prefix)
+                                val targetFile = File(target, relativePath)
+                                targetFile.parentFile.mkdirs()
+                                zipFile.getInputStream(entry).use { input ->
+                                    targetFile.outputStream().use { output ->
+                                        input.copyTo(output)
+                                    }
+                                }
+                            }
                     }
                 }
+                "file" -> File(resourceUri).copyRecursively(target)
+                else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
             }
             configuration.addJvmClasspathRoot(
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
-                    jsr305AnnotationsDir.path,
+                    target.path,
                     "jsr-305-test-annotations",
                     assertions = JUnit5Assertions,
                     extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath

@@ -49,13 +49,7 @@ dependencies {
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
-val zipJsr305TestAnnotations = tasks.register<Zip>("zipJsr305TestAnnotations") {
-    archiveFileName.set("jsr305_test_annotations.jar")
-    from { project(":compiler").layout.projectDirectory.dir("testData/diagnostics/helpers/jsr305_test_annotations") }
-}
-
 tasks.processTestResources.configure {
-    from(zipJsr305TestAnnotations)
     from(project(":compiler").layout.projectDirectory.dir("testData")) {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")

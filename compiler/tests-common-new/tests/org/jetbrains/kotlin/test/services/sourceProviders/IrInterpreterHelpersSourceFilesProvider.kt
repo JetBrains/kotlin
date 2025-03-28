@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
-import com.intellij.openapi.application.PathManager
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -57,19 +56,24 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         val stdlibPath = File(this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI())
 
         return directories.flatMap { directory ->
-            PathManager.getResourceRoot(this::class.java.classLoader, directory)?.let {
-                File(it).walkTopDown()
-                    .mapNotNull { file ->
-                        val canonicalPath = file.parentFile.canonicalPath
-                        val relativePath = runIf(canonicalPath.startsWith(stdlibPath.canonicalPath)) {
-                            canonicalPath.removePrefix(stdlibPath.canonicalPath + File.separatorChar)
+            val resourceUri = this::class.java.classLoader.getResource(directory)!!.toURI()
+            when (resourceUri.scheme) {
+                "file" -> {
+                    File(resourceUri).walkTopDown()
+                        .mapNotNull { file ->
+                            val canonicalPath = file.parentFile.canonicalPath
+                            val relativePath = runIf(canonicalPath.startsWith(stdlibPath.canonicalPath)) {
+                                canonicalPath.removePrefix(stdlibPath.canonicalPath + File.separatorChar)
+                            }
+                            file.takeIf { it.isFile }
+                                ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
+                                ?.toTestFile(relativePath)
                         }
-                        file.takeIf { it.isFile }
-                            ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
-                            ?.toTestFile(relativePath)
-                    }
-                    .toList()
-            }!!
+                        .toList()
+                }
+                // TODO(KT-76305) add support for resources in jars
+                else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
+            }
         }
     }
 
