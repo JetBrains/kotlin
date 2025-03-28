@@ -64,14 +64,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         ) { session, moduleData, scopeProvider, extensionSyntheticFunctionInterfaceProvider ->
             listOfNotNull(
                 extensionSyntheticFunctionInterfaceProvider,
-                runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                    initializeBuiltinsProvider(
-                        session,
-                        moduleData,
-                        scopeProvider,
-                        projectEnvironment.getKotlinClassFinder(scope)
-                    )
-                },
                 FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, scopeProvider),
                 FirCloneableSymbolProvider(session, moduleData, scopeProvider),
                 OptionalAnnotationClassesProvider(
@@ -110,15 +102,24 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
             languageVersionSettings,
             extensionRegistrars,
             createProviders = { session, kotlinScopeProvider ->
-                listOf(
+                val moduleData = moduleDataProvider.allModuleData.last()
+                listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,
                         moduleDataProvider,
                         kotlinScopeProvider,
                         packagePartProvider,
                         kotlinClassFinder,
-                        projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
+                        projectEnvironment.getFirJavaFacade(session, moduleData, scope)
                     ),
+                    runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                        initializeBuiltinsProvider(
+                            session,
+                            moduleData,
+                            kotlinScopeProvider,
+                            kotlinClassFinder
+                        )
+                    }
                 )
             }
         )
