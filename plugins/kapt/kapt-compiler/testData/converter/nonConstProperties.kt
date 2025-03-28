@@ -59,3 +59,8 @@ object ConstReferences {
         const val string: String = "Hello, world!"
     }
 }
+
+object Other {
+    val reference = Consts::string
+    val thiz = this
+}
