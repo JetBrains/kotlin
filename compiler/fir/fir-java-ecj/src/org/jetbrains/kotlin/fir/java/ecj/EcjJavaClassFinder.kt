@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.java.ecj
 
+import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.eclipse.jdt.internal.compiler.batch.CompilationUnit
-import org.eclipse.jdt.internal.compiler.Compiler
-import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies
-import org.eclipse.jdt.internal.compiler.env.INameEnvironment
-import org.eclipse.jdt.internal.compiler.env.NameEnvironmentAnswer
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions
+import org.eclipse.jdt.internal.compiler.parser.Parser
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory
+import org.eclipse.jdt.internal.compiler.problem.ProblemReporter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -60,41 +59,38 @@ class EcjJavaClassFinder(private val sourceFiles: List<File>) {
             // Set Java version to Java 17
             sourceLevel = 0x110000 // Java 17
             targetJDK = sourceLevel
+            // Enable parser
+            parseLiteralExpressionsAsConstants = true
         }
 
-        // Create compiler with a simple name environment
-        val compiler = Compiler(
-            object : INameEnvironment {
-                override fun findType(typeName: CharArray, packageName: Array<out CharArray>): NameEnvironmentAnswer? = null
-                override fun findType(compoundTypeName: Array<out CharArray>): NameEnvironmentAnswer? = null
-                override fun isPackage(parentPackageName: Array<out CharArray>?, packageName: CharArray): Boolean = true
-                override fun cleanup() {}
-            },
+        // Create a problem reporter and parser
+        val problemReporter = ProblemReporter(
             DefaultErrorHandlingPolicies.proceedWithAllProblems(),
             options,
-            object : org.eclipse.jdt.internal.compiler.ICompilerRequestor {
-                override fun acceptResult(result: org.eclipse.jdt.internal.compiler.CompilationResult) {}
-            },
             DefaultProblemFactory(Locale.getDefault())
         )
-
-        // Use reflection to access the parser and parse the compilation units
-        val parserField = Compiler::class.java.getDeclaredField("parser")
-        parserField.isAccessible = true
-        val parser = parserField.get(compiler)
-
-        val parseMethod = parser.javaClass.getDeclaredMethod("parse", CompilationUnit::class.java)
-        parseMethod.isAccessible = true
+        val parser = Parser(problemReporter, true)
 
         // Parse each source file
         for (unit in compilationUnits) {
             try {
-                val parsedUnit = parseMethod.invoke(parser, unit) as? CompilationUnitDeclaration
+                // Create a compilation result
+                val compilationResult = org.eclipse.jdt.internal.compiler.CompilationResult(
+                    unit,
+                    0,
+                    1,
+                    options.maxProblemsPerUnit
+                )
+
+                // Parse the compilation unit
+                val parsedUnit = parser.parse(unit, compilationResult)
                 if (parsedUnit != null) {
                     processCompilationUnit(parsedUnit, result)
                 }
             } catch (e: Exception) {
-                // Ignore parsing errors
+                // Log the error for debugging
+                println("Error parsing ${unit.fileName}: ${e.message}")
+                e.printStackTrace()
             }
         }
 

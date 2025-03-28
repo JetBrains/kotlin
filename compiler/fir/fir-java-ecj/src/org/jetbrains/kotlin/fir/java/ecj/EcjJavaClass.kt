@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.java.ecj
 
+import org.eclipse.jdt.internal.compiler.ast.FieldDeclaration
+import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants
 import org.jetbrains.kotlin.name.ClassId
@@ -24,12 +26,26 @@ class EcjJavaClass(
      *
      * @param processor A lambda that processes each declaration.
      */
-    fun <T> processApiDeclarations(processor: (TypeDeclaration) -> T): List<T> {
+    fun <T> processApiDeclarations(processor: (Any) -> T): List<T> {
         val results = mutableListOf<T>()
 
         // Process the main class declaration
         if (isApiRelated(typeDeclaration)) {
             results.add(processor(typeDeclaration))
+
+            // Process methods
+            typeDeclaration.methods?.forEach { method ->
+                if (isApiRelated(method)) {
+                    results.add(processor(method))
+                }
+            }
+
+            // Process fields
+            typeDeclaration.fields?.forEach { field ->
+                if (isApiRelated(field)) {
+                    results.add(processor(field))
+                }
+            }
         }
 
         // Process member types (nested classes)
@@ -43,10 +59,16 @@ class EcjJavaClass(
     }
 
     /**
-     * Determines if a type declaration is API-related (public or otherwise affecting the API).
+     * Determines if a declaration is API-related (public or otherwise affecting the API).
      */
-    private fun isApiRelated(declaration: TypeDeclaration): Boolean {
+    private fun isApiRelated(declaration: Any): Boolean {
         // Check if the declaration is public or protected
-        return declaration.modifiers and (ClassFileConstants.AccPublic or ClassFileConstants.AccProtected) != 0
+        val modifiers = when (declaration) {
+            is TypeDeclaration -> declaration.modifiers
+            is MethodDeclaration -> declaration.modifiers
+            is FieldDeclaration -> declaration.modifiers
+            else -> return false
+        }
+        return modifiers and (ClassFileConstants.AccPublic or ClassFileConstants.AccProtected) != 0
     }
 }
