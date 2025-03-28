@@ -572,6 +572,11 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
     }
 
+    @TestMetadata("removeImportedClass")
+    public void testRemoveImportedClass() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeImportedClass/");
+    }
+
     @TestMetadata("removeMemberTypeAlias")
     public void testRemoveMemberTypeAlias() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeMemberTypeAlias/");
@@ -1863,6 +1868,11 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
         runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/funRenamed/");
       }
 
+      @TestMetadata("importedClassRemoved")
+      public void testImportedClassRemoved() {
+        runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/importedClassRemoved/");
+      }
+
       @TestMetadata("jvmFieldChanged")
       public void testJvmFieldChanged() {
         runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldChanged/");
@@ -1973,6 +1983,19 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
 
         public void testAllFilesPresentInFunRenamed() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/funRenamed"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
+        }
+      }
+
+      @TestMetadata("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/importedClassRemoved")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class ImportedClassRemoved extends AbstractIncrementalK1JvmCompilerRunnerTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInImportedClassRemoved() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/importedClassRemoved"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
         }
       }
 

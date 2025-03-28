@@ -571,6 +571,11 @@ public class IncrementalK1JsKlibCompilerRunnerTestGenerated extends AbstractIncr
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
     }
 
+    @TestMetadata("removeImportedClass")
+    public void testRemoveImportedClass() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeImportedClass/");
+    }
+
     @TestMetadata("removeMemberTypeAlias")
     public void testRemoveMemberTypeAlias() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeMemberTypeAlias/");

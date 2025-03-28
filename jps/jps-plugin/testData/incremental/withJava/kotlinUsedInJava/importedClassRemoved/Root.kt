@@ -1,0 +1,4 @@
+package root
+
+class Root {
+}

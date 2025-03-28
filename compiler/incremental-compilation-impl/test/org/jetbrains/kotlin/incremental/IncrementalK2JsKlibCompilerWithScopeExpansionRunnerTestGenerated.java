@@ -551,6 +551,11 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
     }
 
+    @TestMetadata("removeImportedClass")
+    public void testRemoveImportedClass() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeImportedClass/");
+    }
+
     @TestMetadata("removeMemberTypeAlias")
     public void testRemoveMemberTypeAlias() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeMemberTypeAlias/");
