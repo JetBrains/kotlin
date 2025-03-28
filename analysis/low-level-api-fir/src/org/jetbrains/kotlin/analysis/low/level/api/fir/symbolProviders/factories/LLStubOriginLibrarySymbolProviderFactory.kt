@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinPlatformLibraryScopeFilter
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLBuiltinSymbolProviderMarker
@@ -134,10 +135,8 @@ private fun createStubBasedLibrarySymbolProviderForClassFiles(
     baseScope,
     JvmAndBuiltinsDeserializedContainerSourceProvider,
     isFallbackDependenciesProvider,
-) { file ->
-    val extension = file.extension
-    extension == JavaClassFileType.INSTANCE.defaultExtension || extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
-}
+    KotlinPlatformLibraryScopeFilter.JVM
+)
 
 private fun createStubBasedLibrarySymbolProviderForCommonMetadataFiles(
     session: LLFirSession,
@@ -148,13 +147,8 @@ private fun createStubBasedLibrarySymbolProviderForCommonMetadataFiles(
     baseScope,
     NullDeserializedContainerSourceProvider,
     isFallbackDependenciesProvider,
-) { file ->
-    val extension = file.extension
-    extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION ||
-            extension == METADATA_FILE_EXTENSION ||
-            // klib metadata symbol provider
-            extension == KLIB_METADATA_FILE_EXTENSION
-}
+    KotlinPlatformLibraryScopeFilter.METADATA
+)
 
 private fun createStubBasedLibrarySymbolProviderForKotlinNativeMetadataFiles(
     session: LLFirSession,
@@ -165,14 +159,15 @@ private fun createStubBasedLibrarySymbolProviderForKotlinNativeMetadataFiles(
     baseScope,
     NullDeserializedContainerSourceProvider,
     isFallbackDependenciesProvider,
-) { file -> file.extension == KLIB_METADATA_FILE_EXTENSION }
+    KotlinPlatformLibraryScopeFilter.KLIB
+)
 
 private fun createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
     deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     isFallbackDependenciesProvider: Boolean,
-    fileFilter: (VirtualFile) -> Boolean,
+    fileFilter: KotlinPlatformLibraryScopeFilter,
 ): LLKotlinStubBasedLibrarySymbolProvider {
     return createFirSymbolProviderForScopeLimitedByFiles(
         session.project, baseScope, fileFilter,
@@ -190,12 +185,12 @@ private fun createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
 private fun <T : FirSymbolProvider> createFirSymbolProviderForScopeLimitedByFiles(
     project: Project,
     baseScope: GlobalSearchScope,
-    fileFilter: (VirtualFile) -> Boolean,
+    fileFilter: KotlinPlatformLibraryScopeFilter,
     symbolProviderFactory: (reducedScope: GlobalSearchScope) -> T,
 ): T {
     val scopeWithFileFiltering = object : DelegatingGlobalSearchScope(project, baseScope) {
         override fun contains(file: VirtualFile): Boolean =
-            fileFilter(file) && super.contains(file)
+            fileFilter.matches(file) && super.contains(file)
     }
 
     return symbolProviderFactory(scopeWithFileFiltering)
