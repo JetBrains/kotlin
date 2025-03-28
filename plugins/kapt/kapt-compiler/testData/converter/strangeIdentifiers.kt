@@ -37,4 +37,7 @@ class `A B` {
     class C
 }
 
+var id: String
+    set(_) {}
+
 // EXPECTED_ERROR: (other:-1:-1) '60x60' is an invalid Java enum value name
