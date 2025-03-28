@@ -11,6 +11,19 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: foo.MyClass.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                FirRegularClassSymbol public final annotation class NestedAnnotation : R|kotlin/Annotation|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+                Type: foo.MyClass
 
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
     public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION

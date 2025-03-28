@@ -11,6 +11,10 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+                Type: foo.MyClass
 
 FILE: [ResolvedTo(IMPORTS)] functionInsideClassLevel2.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

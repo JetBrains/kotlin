@@ -393,7 +393,7 @@ private class ContextCollectorVisitor(
     override fun visitScript(script: FirScript) = withProcessor(script) {
         dumpContext(script, ContextKind.SELF)
 
-        processSignatureAnnotations(script)
+        processAnnotations(script)
 
         onActiveBody {
             val holder = getSessionHolder(script)
@@ -506,7 +506,7 @@ private class ContextCollectorVisitor(
         dumpContext(regularClass, ContextKind.SELF)
 
         context.withClassHeader(regularClass) {
-            processSignatureAnnotations(regularClass)
+            processRawAnnotations(regularClass)
         }
 
         onActiveBody {
@@ -552,11 +552,10 @@ private class ContextCollectorVisitor(
         }
     }
 
-    @OptIn(PrivateForInline::class)
     private fun Processor.processFileHeader(file: FirFile) {
         process(file.packageDirective)
         processList(file.imports)
-        processList(file.annotations)
+        processRawAnnotations(file)
     }
 
     /**
@@ -575,7 +574,8 @@ private class ContextCollectorVisitor(
     override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 
-        processSignatureAnnotations(constructor)
+        // no need to wrap with the constructor as it should be treated as a class header
+        processRawAnnotations(constructor)
 
         onActiveBody {
             constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -618,7 +618,7 @@ private class ContextCollectorVisitor(
             // We have to wrap annotation processing into withEnumEntry as well as it provides the correct context
             // Otherwise there will be the enum entry as an implicit receiver
             context.withEnumEntry(enumEntry) {
-                processSignatureAnnotations(enumEntry)
+                processRawAnnotations(enumEntry)
 
                 onActiveBody {
                     enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -635,7 +635,7 @@ private class ContextCollectorVisitor(
     override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList) = withProcessor(danglingModifierList) {
         dumpContext(danglingModifierList, ContextKind.SELF)
 
-        processSignatureAnnotations(danglingModifierList)
+        processAnnotations(danglingModifierList)
 
         onActiveBody {
             danglingModifierList.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -652,7 +652,7 @@ private class ContextCollectorVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor(simpleFunction) {
         dumpContext(simpleFunction, ContextKind.SELF)
 
-        processSignatureAnnotations(simpleFunction)
+        processAnnotations(simpleFunction)
 
         onActiveBody {
             simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -692,7 +692,7 @@ private class ContextCollectorVisitor(
     override fun visitProperty(property: FirProperty) = withProcessor(property) {
         dumpContext(property, ContextKind.SELF)
 
-        processSignatureAnnotations(property)
+        processAnnotations(property)
 
         onActiveBody {
             property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -777,7 +777,7 @@ private class ContextCollectorVisitor(
     override fun visitField(field: FirField) = withProcessor(field) {
         dumpContext(field, ContextKind.SELF)
 
-        processSignatureAnnotations(field)
+        processAnnotations(field)
 
         onActiveBody {
             field.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -795,7 +795,7 @@ private class ContextCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor(propertyAccessor) {
         dumpContext(propertyAccessor, ContextKind.SELF)
 
-        processSignatureAnnotations(propertyAccessor)
+        processAnnotations(propertyAccessor)
 
         onActiveBody {
             val holder = getSessionHolder(propertyAccessor)
@@ -813,7 +813,7 @@ private class ContextCollectorVisitor(
     override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor(valueParameter) {
         dumpContext(valueParameter, ContextKind.SELF)
 
-        processSignatureAnnotations(valueParameter)
+        processAnnotations(valueParameter)
 
         onActiveBody {
             context.withValueParameter(valueParameter, valueParameter.moduleData.session) {
@@ -824,13 +824,12 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor(anonymousInitializer) {
         dumpContext(anonymousInitializer, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousInitializer)
+        processAnnotations(anonymousInitializer)
 
         onActiveBody {
             context.withAnonymousInitializer(anonymousInitializer, anonymousInitializer.moduleData.session) {
@@ -847,7 +846,7 @@ private class ContextCollectorVisitor(
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor(anonymousFunction) {
         dumpContext(anonymousFunction, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousFunction)
+        processAnnotations(anonymousFunction)
 
         onActiveBody {
             @OptIn(PrivateForInline::class)
@@ -888,7 +887,7 @@ private class ContextCollectorVisitor(
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor(anonymousObject) {
         dumpContext(anonymousObject, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousObject)
+        processAnnotations(anonymousObject)
 
         onActiveBody {
             processAnonymousObjectHeader(anonymousObject)
@@ -915,12 +914,35 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Iterates directly through annotations without any [context] adjustments.
+     *
+     * This function is needed in the case if special modification of [context] is required.
+     * In this case such adjustments have to be done before this function.
+     *
+     * [processAnnotations] should be used by default.
+     *
+     * @see processAnnotations
+     */
     @ContextCollectorDsl
-    private fun Processor.processSignatureAnnotations(declaration: FirDeclaration) {
+    private fun Processor.processRawAnnotations(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             onActive {
                 process(annotation)
             }
+        }
+    }
+
+    /**
+     * Processes [FirDeclaration.annotations] in the context of [declaration].
+     *
+     * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
+     */
+    @ContextCollectorDsl
+    private fun Processor.processAnnotations(declaration: FirDeclaration) {
+        @OptIn(PrivateForInline::class)
+        context.withContainer(declaration) {
+            processRawAnnotations(declaration)
         }
     }
 
