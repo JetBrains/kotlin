@@ -619,6 +619,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("maxValues.kt")
+  public void testMaxValues() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/maxValues.kt");
+  }
+
+  @Test
   @TestMetadata("methodParameterNames.kt")
   public void testMethodParameterNames() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/methodParameterNames.kt");
