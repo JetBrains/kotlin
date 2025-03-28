@@ -163,10 +163,10 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
                 incompatibility = null,
             )
 
-            functionUnderTest.partiallyLinkedIrFunction = emulateInlineFunctionRepresentedByLazyIr(
+            val lazyIrFunction = emulateInlineFunctionRepresentedByLazyIr(
                 functionUnderTest.fullyLinkedIrFunction, deserializedContainerSource
             )
-            deserializer.deserializeInlineFunction(functionUnderTest.partiallyLinkedIrFunction)
+            functionUnderTest.partiallyLinkedIrFunction = deserializer.deserializeInlineFunction(lazyIrFunction) as IrSimpleFunction
         }
 
         checkFunctionsSerialization(configuration, irBuiltIns, functionsUnderTest)
@@ -222,10 +222,12 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         )
 
         for (function in functionsUnderTest) {
+            val erasedTopLevelCopy = function.fullyLinkedIrFunction.erasedTopLevelCopy
+                ?: error("No erased copy found for ${function.fullyLinkedIrFunction.render()}")
             function.fullyLinkedSerializedFunction = SingleFunctionSerializer(
                 irSerializationSettings,
                 irBuiltIns
-            ).serializeSingleFunction(function.fullyLinkedIrFunction)
+            ).serializeSingleFunction(erasedTopLevelCopy)
         }
 
         for (function in functionsUnderTest) {

@@ -133,7 +133,7 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol)
         if (function != null && function.body == null) {
-            deserializer.deserializeInlineFunction(function)
+            return deserializer.deserializeInlineFunction(function)
         }
         return function
     }
