@@ -17,11 +17,21 @@ import kotlin.contracts.*
  * @sample samples.collections.Arrays.Transformations.flattenArray
  */
 public fun <T> Array<out Array<out T>>.flatten(): List<T> {
-    val result = ArrayList<T>(sumOf { it.size })
-    for (element in this) {
-        result.addAll(element)
+    val totalSizeLong = sumOf { it.size.toLong() }
+    if (totalSizeLong == 0L) return emptyList()
+    require(totalSizeLong <= Int.MAX_VALUE.toLong()) {
+        "Sum of all arrays lengths ($totalSizeLong) exceeds maximum list size (${Int.MAX_VALUE})"
     }
-    return result
+
+    val outputArray = arrayOfNulls<Any?>(totalSizeLong.toInt())
+    var offset = 0
+    for (innerArray in this) {
+        innerArray.copyInto(outputArray, offset)
+        offset += innerArray.size
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    return outputArray.asList() as List<T>
 }
 
 /**
