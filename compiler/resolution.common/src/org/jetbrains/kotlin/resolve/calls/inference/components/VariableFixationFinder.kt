@@ -78,7 +78,7 @@ class VariableFixationFinder(
     enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
-        OUTER_TYPE_VARIABLE_DEPENDENCY,
+        OUTER_TYPE_VARIABLE_DEPENDENCY, // PCLA-only readiness
 
         // This is used for self-type-based bounds and deprioritized in 1.5+.
         // 2.2+ uses this kind of readiness for reified type parameters only, otherwise
@@ -99,6 +99,12 @@ class VariableFixationFinder(
         // Captured types are difficult to manipulate, so with T <: Captured(...)
         // it's better to fix T earlier than T >: SomeRegularType / T <: SomeRegularType
         READY_FOR_FIXATION_CAPTURED_UPPER,
+
+        // K1 used this for reified type parameters, mainly to get discriminateNothingForReifiedParameter.kt working
+        // KT-55691 lessens the need for this readiness kind in K2,
+        // however K2 still needs this e.g. for reifiedToNothing.kt example.
+        // TODO: consider deprioritizing Nothing in relation systems like Nothing <: T <: SomeType (see KT-76443)
+        // and not using anymore this readiness kind in K2. Related issues: KT-32358 (especially kt32358_3.kt test)
         READY_FOR_FIXATION_REIFIED,
     }
 
