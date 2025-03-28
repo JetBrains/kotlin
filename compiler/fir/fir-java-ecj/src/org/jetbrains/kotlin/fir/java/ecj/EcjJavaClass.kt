@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -62,6 +63,151 @@ class EcjJavaClass(
             }
             return modifiers and (ClassFileConstants.AccPublic or ClassFileConstants.AccProtected) != 0
         }
+    }
+
+    /**
+     * Converts this [EcjJavaClass] to a [FirJavaClass].
+     *
+     * This function builds a [FirJavaClass] from the API declarations found in this [EcjJavaClass].
+     * It follows the same pattern as [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir].
+     *
+     * @param classSymbol The symbol for the class being converted.
+     * @param parentClassSymbol The symbol for the parent class, if any.
+     * @param moduleData The module data for the class.
+     * @return A [FirJavaClass] representing the converted class.
+     */
+    fun convertJavaClassToFir(
+        classSymbol: FirRegularClassSymbol,
+        parentClassSymbol: FirRegularClassSymbol?,
+        moduleData: FirModuleData
+    ): FirJavaClass {
+        val javaTypeParameterStack = MutableJavaTypeParameterStack()
+
+        if (parentClassSymbol != null) {
+            @OptIn(SymbolInternals::class)
+            val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack
+            javaTypeParameterStack.addStack(parentStack)
+        }
+
+        // Determine class kind based on modifiers
+        val isInterface = (typeDeclaration.modifiers and ClassFileConstants.AccInterface) != 0
+        val isEnum = (typeDeclaration.modifiers and ClassFileConstants.AccEnum) != 0
+        val isAnnotation = (typeDeclaration.modifiers and ClassFileConstants.AccAnnotation) != 0
+
+        val classKind = when {
+            isAnnotation -> ClassKind.ANNOTATION_CLASS
+            isInterface -> ClassKind.INTERFACE
+            isEnum -> ClassKind.ENUM_CLASS
+            else -> ClassKind.CLASS
+        }
+
+        // Determine modality based on modifiers
+        val isFinal = (typeDeclaration.modifiers and ClassFileConstants.AccFinal) != 0
+        val isAbstract = (typeDeclaration.modifiers and ClassFileConstants.AccAbstract) != 0
+
+        val modality = when {
+            isInterface || isAnnotation -> Modality.ABSTRACT
+            isAbstract -> Modality.ABSTRACT
+            isFinal -> Modality.FINAL
+            else -> Modality.OPEN
+        }
+
+        // Determine visibility based on modifiers
+        val isPublic = (typeDeclaration.modifiers and ClassFileConstants.AccPublic) != 0
+        val isProtected = (typeDeclaration.modifiers and ClassFileConstants.AccProtected) != 0
+        val isPrivate = (typeDeclaration.modifiers and ClassFileConstants.AccPrivate) != 0
+
+        val visibility = when {
+            isPublic -> Visibilities.Public
+            isProtected -> Visibilities.Protected
+            isPrivate -> Visibilities.Private
+            else -> JavaVisibilities.PackageVisibility
+        }
+
+        // Determine if the class is static
+        val isStatic = (typeDeclaration.modifiers and ClassFileConstants.AccStatic) != 0
+
+        // Get nested class names
+        val nestedClassNames = typeDeclaration.memberTypes?.mapNotNull { 
+            if (isApiRelated(it)) Name.identifier(String(it.name)) else null 
+        } ?: emptyList()
+
+        val firJavaClass = buildJavaClass {
+            containingClassSymbol = parentClassSymbol
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            annotationList = FirLazyJavaAnnotationList(object : JavaClass {
+                override val fqName: FqName? = classId.asSingleFqName()
+                override val supertypes: Collection<JavaClassifierType> = emptyList()
+                override val innerClassNames: Collection<Name> = nestedClassNames
+                override fun findInnerClass(name: Name): JavaClass? = null
+                override val outerClass: JavaClass? = null
+                override val isInterface: Boolean = isInterface
+                override val isAnnotationType: Boolean = isAnnotation
+                override val isEnum: Boolean = isEnum
+                override val isRecord: Boolean = false // ECJ doesn't have a specific flag for records
+                override val isSealed: Boolean = false // ECJ doesn't have a specific flag for sealed classes
+                override val permittedTypes: Sequence<JavaClassifierType> = emptySequence()
+                override val lightClassOriginKind: org.jetbrains.kotlin.load.java.structure.LightClassOriginKind? = null
+                override val methods: Collection<org.jetbrains.kotlin.load.java.structure.JavaMethod> = emptyList()
+                override val fields: Collection<org.jetbrains.kotlin.load.java.structure.JavaField> = emptyList()
+                override val constructors: Collection<org.jetbrains.kotlin.load.java.structure.JavaConstructor> = emptyList()
+                override val recordComponents: Collection<org.jetbrains.kotlin.load.java.structure.JavaRecordComponent> = emptyList()
+                override fun hasDefaultConstructor(): Boolean = false
+                override val name: Name = classId.shortClassName
+                override val isFromSource: Boolean = true
+                override val annotations: Collection<org.jetbrains.kotlin.load.java.structure.JavaAnnotation> = emptyList()
+                override val isDeprecatedInJavaDoc: Boolean = false
+                override fun findAnnotation(fqName: FqName): org.jetbrains.kotlin.load.java.structure.JavaAnnotation? = null
+                override val isAbstract: Boolean = isAbstract
+                override val isStatic: Boolean = isStatic
+                override val isFinal: Boolean = isFinal
+                override val visibility: Visibilities.Public = visibility as? Visibilities.Public ?: Visibilities.Public
+                override val typeParameters: List<JavaTypeParameter> = emptyList()
+            }, moduleData)
+            this.source = null
+            this.moduleData = moduleData
+            symbol = classSymbol
+            name = classId.shortClassName
+            this.isFromSource = true
+            this.visibility = visibility
+            this.classKind = classKind
+            this.modality = modality
+            this.isTopLevel = classId.outerClassId == null
+            this.isStatic = isStatic
+            this.javaPackage = null
+            this.javaTypeParameterStack = javaTypeParameterStack
+            existingNestedClassifierNames += nestedClassNames
+            scopeProvider = JavaScopeProvider
+
+            val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
+            val parentEffectiveVisibility = parentClassSymbol?.let {
+                // We can't access originalStatus directly, so we'll use EffectiveVisibility.Public as a fallback
+                EffectiveVisibility.Public
+            } ?: EffectiveVisibility.Public
+
+            val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, moduleData.session.typeContext)
+
+            status = FirResolvedDeclarationStatusImpl(
+                visibility,
+                modality,
+                effectiveVisibility
+            ).apply {
+                this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+                isFun = classKind == ClassKind.INTERFACE
+            }
+
+            // Add supertype references
+            // For now, just add Any as the supertype
+            superTypeRefs.add(
+                buildResolvedTypeRef {
+                    coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                }
+            )
+
+            declarationList = EcjLazyJavaDeclarationList(this@EcjJavaClass, classSymbol)
+        }
+
+        return firJavaClass
     }
     /**
      * Iterates over Java class declarations (API-related ones) and passes them to the provided [processor].
@@ -139,99 +285,3 @@ private class EcjLazyJavaDeclarationList(
     }
 }
 
-/**
- * Converts an [EcjJavaClass] to a [FirJavaClass].
- *
- * This function builds a [FirJavaClass] from the API declarations found in the [EcjJavaClass].
- * It follows the same pattern as [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir].
- *
- * @param classSymbol The symbol for the class being converted.
- * @param parentClassSymbol The symbol for the parent class, if any.
- * @param moduleData The module data for the class.
- * @return A [FirJavaClass] representing the converted class.
- */
-fun EcjJavaClass.convertJavaClassToFir(
-    classSymbol: FirRegularClassSymbol,
-    parentClassSymbol: FirRegularClassSymbol?,
-    moduleData: FirModuleData
-): FirJavaClass {
-    val javaTypeParameterStack = MutableJavaTypeParameterStack()
-
-    if (parentClassSymbol != null) {
-        @OptIn(SymbolInternals::class)
-        val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack
-        javaTypeParameterStack.addStack(parentStack)
-    }
-
-    val firJavaClass = buildJavaClass {
-        containingClassSymbol = parentClassSymbol
-        resolvePhase = FirResolvePhase.BODY_RESOLVE
-        annotationList = FirLazyJavaAnnotationList(object : JavaClass {
-            override val fqName: FqName? = classId.asSingleFqName()
-            override val supertypes: Collection<JavaClassifierType> = emptyList()
-            override val innerClassNames: Collection<Name> = emptyList()
-            override fun findInnerClass(name: Name): JavaClass? = null
-            override val outerClass: JavaClass? = null
-            override val isInterface: Boolean = false
-            override val isAnnotationType: Boolean = false
-            override val isEnum: Boolean = false
-            override val isRecord: Boolean = false
-            override val isSealed: Boolean = false
-            override val permittedTypes: Sequence<JavaClassifierType> = emptySequence()
-            override val lightClassOriginKind: org.jetbrains.kotlin.load.java.structure.LightClassOriginKind? = null
-            override val methods: Collection<org.jetbrains.kotlin.load.java.structure.JavaMethod> = emptyList()
-            override val fields: Collection<org.jetbrains.kotlin.load.java.structure.JavaField> = emptyList()
-            override val constructors: Collection<org.jetbrains.kotlin.load.java.structure.JavaConstructor> = emptyList()
-            override val recordComponents: Collection<org.jetbrains.kotlin.load.java.structure.JavaRecordComponent> = emptyList()
-            override fun hasDefaultConstructor(): Boolean = false
-            override val name: Name = classId.shortClassName
-            override val isFromSource: Boolean = true
-            override val annotations: Collection<org.jetbrains.kotlin.load.java.structure.JavaAnnotation> = emptyList()
-            override val isDeprecatedInJavaDoc: Boolean = false
-            override fun findAnnotation(fqName: FqName): org.jetbrains.kotlin.load.java.structure.JavaAnnotation? = null
-            override val isAbstract: Boolean = false
-            override val isStatic: Boolean = false
-            override val isFinal: Boolean = false
-            override val visibility: Visibilities.Public = Visibilities.Public
-            override val typeParameters: List<JavaTypeParameter> = emptyList()
-        }, moduleData)
-        this.source = null
-        this.moduleData = moduleData
-        symbol = classSymbol
-        name = classId.shortClassName
-        this.isFromSource = true
-        this.visibility = Visibilities.Public
-        this.classKind = ClassKind.CLASS
-        this.modality = Modality.FINAL
-        this.isTopLevel = classId.outerClassId == null
-        this.isStatic = false
-        this.javaPackage = null
-        this.javaTypeParameterStack = javaTypeParameterStack
-        existingNestedClassifierNames += emptyList<Name>()
-        scopeProvider = JavaScopeProvider
-
-        val selfEffectiveVisibility = Visibilities.Public.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
-        val parentEffectiveVisibility = EffectiveVisibility.Public
-
-        val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, moduleData.session.typeContext)
-
-        status = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            Modality.FINAL,
-            effectiveVisibility
-        ).apply {
-            this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
-            isFun = classKind == ClassKind.INTERFACE
-        }
-
-        superTypeRefs.add(
-            buildResolvedTypeRef {
-                coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false)
-            }
-        )
-
-        declarationList = EcjLazyJavaDeclarationList(this@convertJavaClassToFir, classSymbol)
-    }
-
-    return firJavaClass
-}
