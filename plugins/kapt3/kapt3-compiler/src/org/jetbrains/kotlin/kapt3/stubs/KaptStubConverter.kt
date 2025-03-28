@@ -1120,7 +1120,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 Annotations.EMPTY /* TODO */
             )
 
-            val name = info.name.takeIf { isValidIdentifier(it) } ?: ("p" + index + "_" + info.name.hashCode().ushr(1))
+            val name = when {
+                info.name == "_" -> "p$index"
+                isValidIdentifier(info.name) -> info.name
+                else -> "p" + index + "_" + info.name.hashCode().ushr(1)
+            }
             val type = treeMaker.Type(info.type)
             treeMaker.VarDef(modifiers, treeMaker.name(name), type, null)
         }
