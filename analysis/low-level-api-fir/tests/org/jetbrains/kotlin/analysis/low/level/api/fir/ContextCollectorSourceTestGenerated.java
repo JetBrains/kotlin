@@ -91,12 +91,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
-  @TestMetadata("fileAnnotation.kt")
-  public void testFileAnnotation() {
-    runTest("analysis/low-level-api-fir/testData/contextCollector/fileAnnotation.kt");
-  }
-
-  @Test
   @TestMetadata("fileImport.kt")
   public void testFileImport() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/fileImport.kt");
@@ -265,6 +259,70 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/annotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Annotations {
+    @Test
+    public void testAllFilesPresentInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/annotations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classAnnotation.kt")
+    public void testClassAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/classAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("classAnnotation2.kt")
+    public void testClassAnnotation2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/classAnnotation2.kt");
+    }
+
+    @Test
+    @TestMetadata("classAnnotationArgument.kt")
+    public void testClassAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/classAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("classAnnotationArgument2.kt")
+    public void testClassAnnotationArgument2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/classAnnotationArgument2.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryAnnotation.kt")
+    public void testEnumEntryAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/enumEntryAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryAnnotationArgument.kt")
+    public void testEnumEntryAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/enumEntryAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("fileAnnotation.kt")
+    public void testFileAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/fileAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassAnnotation.kt")
+    public void testInnerClassAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/innerClassAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassAnnotationArgument.kt")
+    public void testInnerClassAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/innerClassAnnotationArgument.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassHeaderPositions {
@@ -274,63 +332,15 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("classAnnotation.kt")
-    public void testClassAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotation.kt");
-    }
-
-    @Test
-    @TestMetadata("classAnnotation2.kt")
-    public void testClassAnnotation2() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotation2.kt");
-    }
-
-    @Test
-    @TestMetadata("classAnnotationArgument.kt")
-    public void testClassAnnotationArgument() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotationArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("classAnnotationArgument2.kt")
-    public void testClassAnnotationArgument2() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/classAnnotationArgument2.kt");
-    }
-
-    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/contextReceiver.kt");
     }
 
     @Test
-    @TestMetadata("enumEntryAnnotation.kt")
-    public void testEnumEntryAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/enumEntryAnnotation.kt");
-    }
-
-    @Test
-    @TestMetadata("enumEntryAnnotationArgument.kt")
-    public void testEnumEntryAnnotationArgument() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/enumEntryAnnotationArgument.kt");
-    }
-
-    @Test
     @TestMetadata("innerClass.kt")
     public void testInnerClass() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClass.kt");
-    }
-
-    @Test
-    @TestMetadata("innerClassAnnotation.kt")
-    public void testInnerClassAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClassAnnotation.kt");
-    }
-
-    @Test
-    @TestMetadata("innerClassAnnotationArgument.kt")
-    public void testInnerClassAnnotationArgument() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClassAnnotationArgument.kt");
     }
 
     @Test

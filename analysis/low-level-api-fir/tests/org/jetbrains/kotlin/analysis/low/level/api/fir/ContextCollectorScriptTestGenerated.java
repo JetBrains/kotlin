@@ -25,6 +25,16 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/annotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Annotations {
+    @Test
+    public void testAllFilesPresentInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/annotations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassHeaderPositions {
