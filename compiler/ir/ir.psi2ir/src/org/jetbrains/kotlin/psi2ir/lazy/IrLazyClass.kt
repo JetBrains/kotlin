@@ -40,7 +40,7 @@ class IrLazyClass(
     override var hasEnumEntries: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrClass(), IrLazyClassBase {
+) : IrClass(), IrLazyClassBase, Psi2IrLazyDeclarationBase {
     init {
         symbol.bind(this)
         this.deserializedIr = lazy {

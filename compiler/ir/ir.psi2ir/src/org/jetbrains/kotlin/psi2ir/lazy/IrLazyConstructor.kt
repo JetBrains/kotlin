@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -38,7 +37,7 @@ class IrLazyConstructor(
     override var isExpect: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrConstructor(), IrLazyFunctionBase {
+) : IrConstructor(), Psi2IrLazyFunctionBase {
     init {
         this.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
     }

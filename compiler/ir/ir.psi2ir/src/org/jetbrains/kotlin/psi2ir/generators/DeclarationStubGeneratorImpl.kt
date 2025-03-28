@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -228,7 +227,7 @@ class DeclarationStubGeneratorImpl(
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    private fun IrLazyFunctionBase.createValueParameters(): List<IrValueParameter> =
+    private fun Psi2IrLazyFunctionBase.createValueParameters(): List<IrValueParameter> =
         typeTranslator.buildWithScope(this) {
             val result = arrayListOf<IrValueParameter>()
             result.addIfNotNull(createReceiverParameter(descriptor.dispatchReceiverParameter, IrParameterKind.DispatchReceiver))
@@ -269,7 +268,7 @@ class DeclarationStubGeneratorImpl(
         }.generateParentDeclaration()
     }
 
-    private fun IrLazyFunctionBase.createReceiverParameter(
+    private fun Psi2IrLazyFunctionBase.createReceiverParameter(
         parameter: ReceiverParameterDescriptor?,
         kind: IrParameterKind,
     ): IrValueParameter? = typeTranslator.buildWithScope(this) {

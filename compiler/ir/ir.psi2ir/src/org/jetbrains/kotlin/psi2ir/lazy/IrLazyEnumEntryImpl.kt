@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -28,7 +27,7 @@ class IrLazyEnumEntryImpl(
     override val descriptor: ClassDescriptor,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrEnumEntry(), IrLazyDeclarationBase {
+) : IrEnumEntry(), Psi2IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }
