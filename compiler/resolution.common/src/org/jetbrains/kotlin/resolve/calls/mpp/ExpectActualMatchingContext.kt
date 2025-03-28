@@ -218,6 +218,8 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
      */
     fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean
 
+    fun skipCheckingOnExpectActualPair(expectMember: DeclarationSymbolMarker, actualMember: DeclarationSymbolMarker): Boolean = false
+
     fun findPotentialExpectClassMembersForActual(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,

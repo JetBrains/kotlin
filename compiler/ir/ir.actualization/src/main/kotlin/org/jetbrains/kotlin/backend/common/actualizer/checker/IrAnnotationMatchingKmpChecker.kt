@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.reportActualAnnotationsNotMatchExpect
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 
 internal object IrAnnotationMatchingKmpChecker : IrExpectActualChecker {
-
+    @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         val languageVersionSettings = diagnosticsReporter.languageVersionSettings
         if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {

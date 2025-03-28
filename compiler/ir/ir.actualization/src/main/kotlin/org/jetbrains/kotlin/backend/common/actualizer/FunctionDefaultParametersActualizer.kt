@@ -20,7 +20,7 @@ internal class FunctionDefaultParametersActualizer(
     private val visitor = FunctionDefaultParametersActualizerVisitor(symbolRemapper)
 
     fun actualize() {
-        for ((expect, actual) in expectActualMap.expectToActual) {
+        for ((expect, actual) in expectActualMap.symbolMap) {
             if (expect is IrFunctionSymbol) {
                 actualize(expect.owner, (actual as IrFunctionSymbol).owner)
             }

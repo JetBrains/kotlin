@@ -77,7 +77,7 @@ internal class ExpectActualCollector(
 
         // We can't add generated actuals to their parents' list of declarations during visiting because it would lead to CME.
         if (missingActualProvider != null) {
-            for (symbol in linkCollectorContext.expectActualMap.expectToActual.values) {
+            for (symbol in linkCollectorContext.expectActualMap.symbolMap.values) {
                 val declaration = symbol.owner as IrDeclaration
                 if (declaration.origin == IrDeclarationOrigin.STUB_FOR_LENIENT && !declaration.isPropertyAccessor) {
                     (declaration.parent as IrDeclarationContainer).declarations.add(declaration)

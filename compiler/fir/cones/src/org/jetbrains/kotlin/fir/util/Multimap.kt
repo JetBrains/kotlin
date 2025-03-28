@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.util
 
+import org.jetbrains.kotlin.utils.addToStdlib.ChainedIterator
+
 /**
  * `Multimap` is a flexible, type-safe way to represent a key-to-collection mapping.
  * It:

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 internal object IrKotlinActualAnnotationOnJavaKmpChecker : IrExpectActualChecker {
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
+        @OptIn(IrExpectActualMap.MappingForCheckers::class)
         for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
             if (actualSymbol !is IrClassSymbol) continue
             if (expectSymbol !is IrClassSymbol) continue

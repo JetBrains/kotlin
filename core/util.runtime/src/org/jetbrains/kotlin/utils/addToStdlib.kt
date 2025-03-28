@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.AbstractMap
+import kotlin.collections.AbstractSet
 import kotlin.reflect.KMutableProperty0
 
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
@@ -412,4 +414,75 @@ fun <T> MutableList<T>.assignFrom(other: Iterable<T>) {
 fun <T : Any> List<T>.plusIfNotNull(element: T?): List<T> = when (element) {
     null -> this
     else -> this + element
+}
+
+/**
+ * [CombinedMap] is a view over the several maps.
+ * Underlying maps could be modified after creation of the [CombinedMap], all modifications will be reflected.
+ */
+class CombinedMap<K, T>(val maps: List<Map<K, T>>) : AbstractMap<K, T>() {
+    constructor(vararg maps: Map<K, T>) : this(maps.toList())
+
+    override val entries: Set<Map.Entry<K, T>> = CombinedSet(maps.map { it.entries })
+
+    override fun get(key: K): T? {
+        return maps.firstNotNullOfOrNull { it[key] }
+    }
+
+    override fun containsKey(key: K): Boolean {
+        return maps.any { it.containsKey(key) }
+    }
+
+    override fun containsValue(value: T): Boolean {
+        return maps.any { it.containsValue(value) }
+    }
+
+    override val size: Int
+        get() = maps.sumOf { it.size }
+}
+
+/**
+ * [CombinedSet] is a view over the several sets.
+ * Underlying maps could be modified after creation of the [CombinedSet], all modifications will be reflected.
+ */
+class CombinedSet<E>(val sets: List<Set<E>>) : AbstractSet<E>() {
+    constructor(vararg sets: Set<E>) : this(sets.toList())
+
+    override val size: Int
+        get() = sets.sumOf { it.size }
+
+    override fun iterator(): Iterator<E> {
+        return ChainedIterator(sets.map { it.iterator() })
+    }
+
+    override fun contains(element: E): Boolean {
+        return sets.any { it.contains(element) }
+    }
+}
+
+/**
+ * Note that this iterator don't properly support throwing of [ConcurrentModificationException]
+ * if one of underlying collections was modified
+ */
+class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
+    private var metaIterator = delegates.iterator()
+    private var currentIterator: Iterator<T>? = null
+
+    private fun promote() {
+        if (currentIterator?.hasNext() == true) return
+        while (metaIterator.hasNext()) {
+            currentIterator = metaIterator.next()
+            if (currentIterator!!.hasNext()) return
+        }
+    }
+
+    override fun hasNext(): Boolean {
+        promote()
+        return currentIterator?.hasNext() == true
+    }
+
+    override fun next(): T {
+        promote()
+        return currentIterator?.next() ?: throw NoSuchElementException()
+    }
 }

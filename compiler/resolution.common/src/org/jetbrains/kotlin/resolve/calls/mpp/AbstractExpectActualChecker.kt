@@ -106,16 +106,13 @@ object AbstractExpectActualChecker {
             "This function should be invoked only for declarations with the same name: $expectClassSymbol, $actualClassLikeSymbol"
         }
 
-        val actualClass = when (actualClassLikeSymbol) {
-            is RegularClassSymbolMarker -> actualClassLikeSymbol
-            is TypeAliasSymbolMarker -> if (actualClassLikeSymbol.classId.isNestedClass) {
-                return ExpectActualCheckingCompatibility.NestedTypeAlias
-            } else {
-                // do not report extra error on erroneous typealias
-                actualClassLikeSymbol.expandToRegularClass() ?: return ExpectActualCheckingCompatibility.Compatible
-            }
-            else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
-        }
+        val actualClass = computeActualClassFromPotentialActualTypealias(
+            expectClassSymbol,
+            actualClassLikeSymbol,
+            onNestedTypealias = { return ExpectActualCheckingCompatibility.NestedTypeAlias },
+            // do not report extra error on erroneous typealias
+            onErroneousTypealias = { return ExpectActualCheckingCompatibility.Compatible },
+        )!!
 
         if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) return ExpectActualCheckingCompatibility.ClassKind
 
@@ -165,6 +162,22 @@ object AbstractExpectActualChecker {
         getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor, languageVersionSettings)?.let { return it }
 
         return ExpectActualCheckingCompatibility.Compatible
+    }
+
+    private inline fun ExpectActualMatchingContext<*>.computeActualClassFromPotentialActualTypealias(
+        expectClassSymbol: RegularClassSymbolMarker,
+        actualClassLikeSymbol: ClassLikeSymbolMarker,
+        onNestedTypealias: () -> Nothing?,
+        onErroneousTypealias: () -> Nothing?
+    ): RegularClassSymbolMarker? = when (actualClassLikeSymbol) {
+        is RegularClassSymbolMarker -> actualClassLikeSymbol
+        is TypeAliasSymbolMarker -> if (actualClassLikeSymbol.classId.isNestedClass) {
+            onNestedTypealias()
+        } else {
+            // do not report extra error on erroneous typealias
+            actualClassLikeSymbol.expandToRegularClass() ?: onErroneousTypealias()
+        }
+        else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
     }
 
     private fun ExpectActualMatchingContext<*>.areCompatibleSupertypes(
@@ -279,8 +292,31 @@ object AbstractExpectActualChecker {
         incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
         languageVersionSettings: LanguageVersionSettings,
     ) {
-        val compatibility = when (expectMember) {
-            is CallableSymbolMarker -> getCallablesCompatibility(
+        val compatibility = when {
+            skipCheckingOnExpectActualPair(expectMember, actualMember) -> {
+                if (expectMember is RegularClassSymbolMarker && actualMember is ClassLikeSymbolMarker) {
+                    computeActualClassFromPotentialActualTypealias(
+                        expectMember,
+                        actualMember,
+                        onNestedTypealias = { null },
+                        onErroneousTypealias = { null }
+                    )?.let { actualClass ->
+                        val parentSubstitutor = substitutor?.takeIf { !innerClassesCapturesOuterTypeParameters }
+                        val substitutor = createExpectActualTypeParameterSubstitutor(
+                            (expectMember.typeParameters zipIfSizesAreEqual actualClass.typeParameters)
+                                ?: error("expect/actual type parameters sizes are checked earlier"),
+                            parentSubstitutor
+                        )
+
+                        // Here we call check for two classes only to match the scopes of these classes, so the return value is ignored.
+                        // Abstraction of matching leaked into checking in this place :sad:
+                        getClassScopesIncompatibility(expectMember, actualClass, substitutor, languageVersionSettings)
+                    }
+                }
+                ExpectActualCheckingCompatibility.Compatible
+            }
+
+            expectMember is CallableSymbolMarker -> getCallablesCompatibility(
                 expectMember,
                 actualMember as CallableSymbolMarker,
                 substitutor,
@@ -289,7 +325,7 @@ object AbstractExpectActualChecker {
                 languageVersionSettings,
             )
 
-            is RegularClassSymbolMarker -> {
+            expectMember is RegularClassSymbolMarker -> {
                 val parentSubstitutor = substitutor?.takeIf { !innerClassesCapturesOuterTypeParameters }
                 getClassifiersCompatibility(
                     expectMember,
