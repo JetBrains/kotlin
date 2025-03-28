@@ -18,6 +18,7 @@ class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
         with(ir.files.sortedBy { it.path }) {
             serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFiles)
             serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarations)
+            serializeNonNullableEntities(SerializedIrFile::inlineDeclarations, irLayout::irInlineDeclarations)
             serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypes)
             serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignatures)
             serializeNonNullableEntities(SerializedIrFile::strings, irLayout::irStrings)

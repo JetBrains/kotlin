@@ -132,8 +132,10 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries) = irData
-            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries)
+            val (fileData, types, signatures, strings, declarations, inlineDeclarations, bodies, fqn, fileMetadata, debugInfos, fileEntries) = irData
+            irTranslationResults.put(
+                srcFile, fileData, types, signatures, strings, declarations, inlineDeclarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+            )
         }
     }
 
@@ -259,6 +261,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.signatures)
         output.writeArray(value.strings)
         output.writeArray(value.declarations)
+        output.writeArray(value.inlineDeclarations)
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
         output.writeArray(value.fileMetadata)
@@ -303,13 +306,16 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val signatures = input.readArray()
         val strings = input.readArray()
         val declarations = input.readArray()
+        val inlineDeclarations = input.readArray()
         val bodies = input.readArray()
         val fqn = input.readArray()
         val fileMetadata = input.readArray()
         val debugInfos = input.readOptionalArray()
         val fileEntries = input.readOptionalArray()
 
-        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries)
+        return IrTranslationResultValue(
+            fileData, types, signatures, strings, declarations, inlineDeclarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+        )
     }
 }
 
@@ -330,6 +336,7 @@ private class IrTranslationResultMap(
                 "Signatures: ${value.signatures.md5()}, " +
                 "Strings: ${value.strings.md5()}, " +
                 "Declarations: ${value.declarations.md5()}, " +
+                "Inline declarations: ${value.inlineDeclarations.md5()}, " +
                 "Bodies: ${value.bodies.md5()}"
 
     @Synchronized
@@ -340,6 +347,7 @@ private class IrTranslationResultMap(
         newSignatures: ByteArray,
         newStrings: ByteArray,
         newDeclarations: ByteArray,
+        newInlineDeclarations: ByteArray,
         newBodies: ByteArray,
         fqn: ByteArray,
         newFileMetadata: ByteArray,
@@ -347,7 +355,9 @@ private class IrTranslationResultMap(
         fileEntries: ByteArray?,
     ) {
         this[sourceFile] =
-            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries)
+            IrTranslationResultValue(
+                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newInlineDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries
+            )
     }
 }
 

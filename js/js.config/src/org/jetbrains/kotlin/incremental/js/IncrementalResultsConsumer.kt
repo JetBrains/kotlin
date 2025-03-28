@@ -34,6 +34,7 @@ interface IncrementalResultsConsumer {
         signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
+        inlineDeclarations: ByteArray,
         bodies: ByteArray,
         fqn: ByteArray,
         fileMetadata: ByteArray,
@@ -83,12 +84,15 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
+        inlineDeclarations: ByteArray,
         bodies: ByteArray,
         fqn: ByteArray,
         fileMetadata: ByteArray,
         debugInfo: ByteArray?,
         fileEntries: ByteArray?,
     ) {
-        _irFileData[sourceFile] = IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfo, fileEntries)
+        _irFileData[sourceFile] = IrTranslationResultValue(
+            fileData, types, signatures, strings, declarations, inlineDeclarations, bodies, fqn, fileMetadata, debugInfo, fileEntries
+        )
     }
 }
