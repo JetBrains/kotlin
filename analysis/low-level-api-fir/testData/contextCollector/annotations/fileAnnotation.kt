@@ -1,4 +1,4 @@
 <expr>@file:Anno</expr>
 
-@Target(FILE)
+@Target(AnnotationTarget.FILE)
 annotation class Anno

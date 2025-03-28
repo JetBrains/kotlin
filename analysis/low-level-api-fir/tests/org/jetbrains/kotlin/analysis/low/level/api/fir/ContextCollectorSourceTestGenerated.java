@@ -310,6 +310,36 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("fileAnnotationArgument.kt")
+    public void testFileAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/fileAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionAnnotation.kt")
+    public void testFunctionAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/functionAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("functionAnnotationArgument.kt")
+    public void testFunctionAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/functionAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("initAnnotation.kt")
+    public void testInitAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/initAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("initAnnotationArgument.kt")
+    public void testInitAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/initAnnotationArgument.kt");
+    }
+
+    @Test
     @TestMetadata("innerClassAnnotation.kt")
     public void testInnerClassAnnotation() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/innerClassAnnotation.kt");
@@ -319,6 +349,90 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("innerClassAnnotationArgument.kt")
     public void testInnerClassAnnotationArgument() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/innerClassAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorAnnotation.kt")
+    public void testPrimaryConstructorAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/primaryConstructorAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorAnnotationArgument.kt")
+    public void testPrimaryConstructorAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/primaryConstructorAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAnnotation.kt")
+    public void testPropertyAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/propertyAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAnnotationArgument.kt")
+    public void testPropertyAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/propertyAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyExplicitSetterAnnotation.kt")
+    public void testPropertyExplicitSetterAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/propertyExplicitSetterAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyExplicitSetterAnnotationArgument.kt")
+    public void testPropertyExplicitSetterAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/propertyExplicitSetterAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyGetterAnnotation.kt")
+    public void testPropertyGetterAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/propertyGetterAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyGetterAnnotationArgument.kt")
+    public void testPropertyGetterAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/propertyGetterAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorAnnotation.kt")
+    public void testSecondaryConstructorAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/secondaryConstructorAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorAnnotationArgument.kt")
+    public void testSecondaryConstructorAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/secondaryConstructorAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasAnnotation.kt")
+    public void testTypealiasAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/typealiasAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasAnnotationArgument.kt")
+    public void testTypealiasAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/typealiasAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameterAnnotation.kt")
+    public void testValueParameterAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/valueParameterAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameterAnnotationArgument.kt")
+    public void testValueParameterAnnotationArgument() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/valueParameterAnnotationArgument.kt");
     }
   }
 
