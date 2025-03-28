@@ -382,14 +382,13 @@ enum class LanguageFeature(
     ForbidSyntheticPropertiesWithoutBaseJavaGetter(KOTLIN_2_2, kind = BUG_FIX), // KT-72305, KT-64358
     AnnotationDefaultTargetMigrationWarning(KOTLIN_2_2, kind = BUG_FIX), // KT-73255, KT-73494
     AllowDnnTypeOverridingFlexibleType(KOTLIN_2_2, kind = OTHER), // KT-74049
-    PreferDependentTypeVariablesWithProperArgumentConstraint(KOTLIN_2_2, kind = OTHER), // KT-71854
     ForbidEnumEntryNamedEntries(KOTLIN_2_2, kind = BUG_FIX), // KT-72829, KT-58920
     WhenGuards(KOTLIN_2_2, kind = OTHER), // KT-13626
     MultiDollarInterpolation(KOTLIN_2_2, kind = OTHER), // KT-2425
     JvmDefaultEnableByDefault(KOTLIN_2_2, kind = OTHER), // KT-71768
     ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs(sinceVersion = KOTLIN_2_2, kind = BUG_FIX), // KT-70916
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_2, kind = OTHER), // KT-76606
-    FixationEnhancementsIn22(KOTLIN_2_2, kind = OTHER), // KT-76345
+    FixationEnhancementsIn22(KOTLIN_2_2, kind = OTHER), // KT-76345, KT-71854
 
     // 2.3
 

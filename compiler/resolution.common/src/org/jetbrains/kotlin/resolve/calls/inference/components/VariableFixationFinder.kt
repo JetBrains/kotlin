@@ -227,9 +227,7 @@ class VariableFixationFinder(
     }
 
     private fun Context.computeReadinessForVariableWithDependencies(typeVariable: TypeConstructorMarker): TypeVariableFixationReadiness {
-        return if (!languageVersionSettings.supportsFeature(LanguageFeature.PreferDependentTypeVariablesWithProperArgumentConstraint) ||
-            !hasProperArgumentConstraint(typeVariable)
-        ) {
+        return if (!fixationEnhancementsIn22 || !hasProperArgumentConstraint(typeVariable)) {
             TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         } else {
             TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
