@@ -164,6 +164,7 @@ tasks.withType<KotlinCompile<*>>().configureEach {
         "-Xdont-warn-on-error-suppression",
         "-opt-in=kotlin.ExperimentalMultiplatform",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
+        "-Xcontext-parameters",
     )
 }
 
