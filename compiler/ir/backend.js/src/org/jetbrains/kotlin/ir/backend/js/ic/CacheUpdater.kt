@@ -147,6 +147,7 @@ class CacheUpdater(
                 ),
             )
 
+            ////
             allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
                 val mainLibraryIndex = resolvedLibraries.indexOfLast {
                     KotlinLibraryFile(it) == mainLibraryFile
