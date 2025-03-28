@@ -8,39 +8,75 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleVersionMetadata
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import java.io.File
 import java.io.Serializable
-import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
 internal interface SwiftExportedModule : Serializable {
     val moduleName: String
     val flattenPackage: String?
     val artifact: File
+    val shouldBeFullyExported: Boolean
 }
 
-internal fun createSwiftExportedModule(
+internal fun createFullyExportedSwiftExportedModule(
     moduleName: String,
     flattenPackage: String?,
-    artifact: File,
+    artifact: File
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
         moduleName,
         flattenPackage,
-        artifact
+        artifact,
+        true
     )
 }
 
-internal fun LazyResolvedConfiguration.swiftExportedModules(
+internal fun Project.collectModules(
+    swiftExportConfigurationProvider: Provider<LazyResolvedConfiguration>,
+    compileConfigurationProvider: Provider<LazyResolvedConfiguration>,
+    exportedModulesProvider: Provider<Set<SwiftExportedModuleVersionMetadata>>,
+): Provider<List<SwiftExportedModule>> {
+    val swiftExportedModules = swiftExportConfigurationProvider.zip(exportedModulesProvider) { configuration, modules ->
+        configuration.swiftExportedModules(modules, project)
+    }
+
+    val transitiveModules = compileConfigurationProvider.map { configuration ->
+        configuration.transitiveModules(project)
+    }
+
+    return swiftExportedModules.zip(transitiveModules) { export, transitive ->
+        export.toSet().plus(transitive).toList()
+    }
+}
+
+private fun LazyResolvedConfiguration.transitiveModules(
+    project: Project,
+): List<SwiftExportedModule> {
+    return artifactComponents().map { (component, artifact) ->
+        val resolvedModule = requireNotNull(component.moduleVersion)
+        SwiftExportedModuleImp(
+            resolvedModule.name.normalizedSwiftExportModuleName.also { project.validateSwiftExportModuleName(it) },
+            null,
+            artifact,
+            false
+        )
+    }
+}
+
+private fun LazyResolvedConfiguration.swiftExportedModules(
     exportedModules: Set<SwiftExportedModuleVersionMetadata>,
     project: Project,
 ): List<SwiftExportedModule> {
-    return allResolvedDependencies.asSequence().filterNot { dependencyResult ->
-        dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib" }
-    }.map { it.selected }.map { component ->
+    return artifactComponents().map { (component, artifact) ->
+        project.findAndCreateSwiftExportedModule(exportedModules, component, artifact)
+    }
+}
+
+private fun LazyResolvedConfiguration.artifactComponents(): List<Pair<ResolvedComponentResult, File>> {
+    return filteredDependencies().map { component ->
         val dependencyArtifacts = getArtifacts(component)
             .map { it.file }
             .filterNotCinteropKlibs()
@@ -57,9 +93,13 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
         Pair(component, dependencyArtifacts.single())
     }.distinctBy { (_, artifact) ->
         artifact
-    }.map { (component, artifact) ->
-        project.findAndCreateSwiftExportedModule(exportedModules, component, artifact)
     }.toList()
+}
+
+private fun LazyResolvedConfiguration.filteredDependencies(): Sequence<ResolvedComponentResult> {
+    return allResolvedDependencies.asSequence().filterNot { dependencyResult ->
+        dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib" }
+    }.map { it.selected }
 }
 
 private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.contains("Cinterop-")
@@ -81,7 +121,8 @@ private fun Project.findAndCreateSwiftExportedModule(
             module.moduleVersion.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) }
         ).get(),
         module.flattenPackage.orNull,
-        artifact
+        artifact,
+        true
     )
 }
 
@@ -89,4 +130,19 @@ private data class SwiftExportedModuleImp(
     override val moduleName: String,
     override val flattenPackage: String?,
     override val artifact: File,
-) : SwiftExportedModule
+    override val shouldBeFullyExported: Boolean,
+) : SwiftExportedModule {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SwiftExportedModuleImp
+
+        return artifact == other.artifact
+    }
+
+    override fun hashCode(): Int {
+        return artifact.hashCode()
+    }
+}

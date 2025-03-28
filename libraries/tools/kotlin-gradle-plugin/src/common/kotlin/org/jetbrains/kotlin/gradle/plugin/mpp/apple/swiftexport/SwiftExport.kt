@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.swiftExportedModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -124,7 +124,7 @@ private fun Project.registerSwiftExportRun(
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>>,
-    customSetting: Provider<Map<String, String>>
+    customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
         taskNamePrefix,
@@ -135,6 +135,9 @@ private fun Project.registerSwiftExportRun(
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
     val configurationProvider = provider { LazyResolvedConfiguration(exportConfiguration) }
+    val compileDependencyConfigurationProvider = provider {
+        LazyResolvedConfiguration(mainCompilation.internal.configurations.compileDependencyConfiguration)
+    }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
@@ -149,9 +152,11 @@ private fun Project.registerSwiftExportRun(
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
-            configurationProvider.zip(exportedModules) { configuration, modules ->
-                configuration.swiftExportedModules(modules, project)
-            }
+            collectModules(
+                configurationProvider,
+                compileDependencyConfigurationProvider,
+                exportedModules
+            )
         )
 
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
