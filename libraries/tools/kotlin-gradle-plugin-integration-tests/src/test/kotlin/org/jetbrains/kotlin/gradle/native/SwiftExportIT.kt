@@ -29,13 +29,7 @@ class SwiftExportIT : KGPBaseTest() {
     fun shouldFailWithExecutingEmbedSwiftExportForXcode(
         gradleVersion: GradleVersion
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
-        ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
             buildAndFail(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}"
@@ -52,13 +46,7 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
-        ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
@@ -92,13 +80,7 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
-        ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
@@ -149,13 +131,7 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
-        ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
@@ -186,13 +162,7 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
-        ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
@@ -221,13 +191,7 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
-        ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",

@@ -25,13 +25,7 @@ class SwiftExportXCIT : KGPBaseTest() {
                 boot()
             }
 
-            nativeProject(
-                "simpleSwiftExport",
-                gradleVersion,
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
-            ) {
+            nativeProject("simpleSwiftExport", gradleVersion) {
                 buildXcodeProject(
                     xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
                     destination = "platform=iOS Simulator,id=${simulator.udid}",

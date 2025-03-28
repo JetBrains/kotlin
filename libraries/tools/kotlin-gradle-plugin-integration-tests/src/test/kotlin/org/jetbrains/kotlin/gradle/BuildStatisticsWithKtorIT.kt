@@ -238,14 +238,13 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     fun testConfigurationCache(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
 
-            val buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
             project("incrementalMultiproject", gradleVersion) {
                 setProjectForTest(port)
-                build("assemble", buildOptions = buildOptions) {
+                build("assemble") {
                     assertOutputDoesNotContain("Failed to send statistic to")
                 }
                 projectPath.resolve("lib/src/main/kotlin/bar/B.kt").modify { it.replace("fun b() {}", "fun b() = 1") }
-                build("assemble", buildOptions = buildOptions) {
+                build("assemble") {
                     assertOutputDoesNotContain("Failed to send statistic to")
                 }
             }

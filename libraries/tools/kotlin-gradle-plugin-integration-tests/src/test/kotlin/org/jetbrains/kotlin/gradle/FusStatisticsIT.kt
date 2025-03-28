@@ -95,11 +95,7 @@ class FusStatisticsIT : KGPBaseTest() {
     }
 
     private fun testDokkaPlugin(gradleVersion: GradleVersion, pluginName: String, expectedDokkaFusMetrics: Array<String>) {
-        project(
-            "simpleProject",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
-        ) {
+        project("simpleProject", gradleVersion) {
             settingsGradle.replaceText(
                 "repositories {",
                 """
@@ -261,11 +257,7 @@ class FusStatisticsIT : KGPBaseTest() {
         //KT-64022
         //there are a different build instances in buildSrc and rest project
 
-        project(
-            "instantExecutionWithIncludedBuildPlugin",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
-        ) {
+        project("instantExecutionWithIncludedBuildPlugin", gradleVersion) {
             build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
                 projectPath.resolve("kotlin-profile").listDirectoryEntries().forEach {
                     assertFileContains(it, *expectedMetrics)
@@ -362,7 +354,6 @@ class FusStatisticsIT : KGPBaseTest() {
             "simpleProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 isolatedProjects = isProjectIsolationEnabled,
                 buildReport = listOf(BuildReportType.FILE)
             ),

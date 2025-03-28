@@ -54,7 +54,7 @@ class MppJvmRunIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - jvmRun - works with Gradle configuration cache`(version: GradleVersion) {
-        project("mppRunJvm", version, buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {
+        project("mppRunJvm", version) {
             build("jvmRun", "-DmainClass=JvmMainKt") {
                 assertOutputContains("Jvm: OK!")
                 assertOutputContains("Executed: JvmMain")

@@ -61,10 +61,11 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             }
 
 
-            // enabled incremental cache parameter
+            // enabled incremental cache parameter, disabled configuration cache
             val withIncrementalCacheBuildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    incremental = true
+                    incremental = true,
                 )
             )
             build("clean", "linkDebugExecutableHost", buildOptions = withIncrementalCacheBuildOptions) {
@@ -75,7 +76,6 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
 
             // enabled incremental cache and configuration cache parameters
             val withIncrementalCacheAndConfigurationCacheBuildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     incremental = true
                 )

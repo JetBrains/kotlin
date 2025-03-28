@@ -81,13 +81,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
     @TestMetadata("errorDiagnosticBuildFails")
     fun testErrorDiagnosticBuildFailsWithConfigurationCache(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildFails", gradleVersion) {
-            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {
+            buildAndFail("assemble") {
                 assertConfigurationCacheStored()
                 assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
             }
 
             // fails again
-            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {
+            buildAndFail("assemble") {
                 assertConfigurationCacheReused()
                 assertEqualsToFile(expectedOutputFile("assemble-cache-reused"), extractProjectsAndTheirDiagnostics())
             }
