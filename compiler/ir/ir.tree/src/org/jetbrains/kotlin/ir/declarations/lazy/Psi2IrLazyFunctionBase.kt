@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
-interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer {
+interface Psi2IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: FunctionDescriptor
 

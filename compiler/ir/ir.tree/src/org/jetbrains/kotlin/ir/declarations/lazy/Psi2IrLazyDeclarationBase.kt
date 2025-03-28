@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,7 +20,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.ReadWriteProperty
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-interface IrLazyDeclarationBase : IrDeclaration {
+interface Psi2IrLazyDeclarationBase : IrDeclaration {
     val stubGenerator: DeclarationStubGenerator
     val typeTranslator: TypeTranslator
 
