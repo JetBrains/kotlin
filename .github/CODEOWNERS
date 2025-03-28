@@ -331,6 +331,7 @@
 /libraries/tools/kotlin-maven-power-assert/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-maven-sam-with-receiver/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-maven-serialization/ @JetBrains/kotlin-build-tools
+/libraries/tools/kotlin-maven-dataframe/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-osgi-bundle/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-noarg/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-prepush-hook/ @JetBrains/kotlin-build-infrastructure
