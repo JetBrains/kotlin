@@ -42,7 +42,12 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     @DisplayName("Kotlin daemon is reused in multiproject")
     @GradleTest
     fun testDaemonMultiproject(gradleVersion: GradleVersion) {
-        project("multiprojectWithDependency", gradleVersion) {
+        project(
+            "multiprojectWithDependency",
+            gradleVersion,
+            // FIXME rewrite the test to be CC compatible
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             gradleProperties.append(
                 "\nkotlin.compiler.execution.strategy=daemon"
             )
@@ -147,7 +152,9 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         project(
             "daemonJvmResourceLimits",
             gradleVersion,
-            buildJdk = jdk.location
+            buildJdk = jdk.location,
+            // FIXME rewrite the test to be CC compatible
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
         ) {
             for (iteration in 0..300) {
                 build("clean", "assemble") {
