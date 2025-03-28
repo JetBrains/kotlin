@@ -183,5 +183,15 @@
       <artifactId>kotlin-assignment-compiler-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-maven-dataframe</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kotlin-dataframe-compiler-plugin-experimental</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
