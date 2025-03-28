@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Other plugins tests")
-class SubpuginsIT : KGPBaseTest() {
+class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
@@ -21,7 +21,6 @@ class SubpuginsIT : KGPBaseTest() {
         project(
             "kotlinGradleSubplugin",
             gradleVersion,
-            // second build reuses the configuration cache, so no "ExampleSubplugin loaded" is logged
             buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
         ) {
             build("compileKotlin", "build") {
@@ -33,6 +32,29 @@ class SubpuginsIT : KGPBaseTest() {
             build("compileKotlin", "build") {
                 assertTasksUpToDate(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
+                assertOutputDoesNotContain("Project component registration: exampleValue")
+            }
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("Subplugin example works as expected with configuration cache")
+    @GradleTest
+    fun testGradleSubpluginWithCC(gradleVersion: GradleVersion) {
+        project(
+            "kotlinGradleSubplugin",
+            gradleVersion,
+        ) {
+            build("compileKotlin", "build") {
+                assertTasksExecuted(":compileKotlin")
+                assertOutputContains("ExampleSubplugin loaded")
+                assertOutputContains("Project component registration: exampleValue")
+            }
+
+            build("compileKotlin", "build") {
+                assertTasksUpToDate(":compileKotlin")
+                assertConfigurationCacheReused()
+                assertOutputDoesNotContain("ExampleSubplugin loaded")
                 assertOutputDoesNotContain("Project component registration: exampleValue")
             }
         }
