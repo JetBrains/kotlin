@@ -498,7 +498,7 @@ private fun resolveDependencies(
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
         noEndorsedLibs = noEndorsedLibs
-    ).getFullList(TopologicalLibraryOrder)
+    ).getFullList(TopologicalLibraryOrder).reversed()
     validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
     return resolvedLibraries
 }
