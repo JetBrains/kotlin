@@ -382,3 +382,49 @@ public final class Literals {
         return null;
     }
 }
+
+////////////////////
+
+
+/**
+ * public final object Other : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: reference:Lkotlin/reflect/KProperty0;
+ *   // getter: getReference()Lkotlin/reflect/KProperty0;
+ *   public final val reference: kotlin/reflect/KProperty0<kotlin/String>
+ *     public final get
+ *
+ *   // field: thiz:LOther;
+ *   // getter: getThiz()LOther;
+ *   public final val thiz: Other
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Other {
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.reflect.KProperty0<java.lang.String> reference = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final Other thiz = null;
+    @org.jetbrains.annotations.NotNull()
+    public static final Other INSTANCE = null;
+
+    private Other() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.reflect.KProperty0<java.lang.String> getReference() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Other getThiz() {
+        return null;
+    }
+}
