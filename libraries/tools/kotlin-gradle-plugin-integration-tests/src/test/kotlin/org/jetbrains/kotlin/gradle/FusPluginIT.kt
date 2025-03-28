@@ -60,7 +60,6 @@ class FusPluginIT : KGPBaseTest() {
             "incrementalMultiproject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.ENABLED,
             ),
         ) {
@@ -186,11 +185,7 @@ class FusPluginIT : KGPBaseTest() {
     @DisplayName("test configuration metrics with different classloaders")
     @GradleTest
     fun testConfigurationMetricsOnly(gradleVersion: GradleVersion) {
-        project(
-            "multiClassloaderProject",
-            gradleVersion,
-            defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED),
-        ) {
+        project("multiClassloaderProject", gradleVersion) {
 
             listOf("subProjectA", "subProjectB").forEach { subProject ->
                 subProject(subProject).buildGradleKts.modify {

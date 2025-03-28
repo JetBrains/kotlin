@@ -19,13 +19,6 @@ import org.junit.jupiter.api.condition.OS
 @OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @NativeGradlePluginTests
 class JsSetupConfigurationCacheIT : KGPBaseTest() {
-
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            configurationCacheProblems = ConfigurationCacheProblems.FAIL
-        )
-
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest

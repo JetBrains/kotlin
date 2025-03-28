@@ -212,13 +212,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldFailWithExecutingEmbedAndSignAppleFrameworkForXcode(
         gradleVersion: GradleVersion
     ) {
-        nativeProject(
-            "sharedAppleFramework",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
-            )
-        ) {
+        nativeProject("sharedAppleFramework", gradleVersion) {
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode") {
                 assertOutputContains("Please run the embedAndSignAppleFrameworkForXcode task from Xcode")
                 assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
@@ -619,12 +613,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Xcode version too high diagnostic isn't emitted")
     @GradleTest
     fun testXcodeVersionTooHighDiagnosticNotEmitted(gradleVersion: GradleVersion) {
-        nativeProject(
-            "sharedAppleFramework",
-            gradleVersion,
-            // enable CC to make sure that external process isn't run during configuration
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED),
-        ) {
+        nativeProject("sharedAppleFramework", gradleVersion) {
             build(":shared:linkReleaseFrameworkIosSimulatorArm64") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.XcodeVersionTooHighWarning)
             }

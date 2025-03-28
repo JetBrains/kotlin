@@ -393,10 +393,7 @@ private fun TestProject.patchKmpSampleLibForIsolatedProjects() =
 
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
 
-    override val defaultBuildOptions =
-        super.defaultBuildOptions
-            .copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
-            .enableIsolatedProjects()
+    override val defaultBuildOptions = super.defaultBuildOptions.enableIsolatedProjects()
 
     protected fun TestProject.testConfigurationCacheOf(
         vararg taskNames: String,
@@ -421,7 +418,6 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
                 )
             )
         } else defaultBuildOptions.copy(
-            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             konanDataDir = konanTempDir,
             nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
                 // set the KGP's default Kotlin Native version, because in CI we don't have K/N versions in maven repo for each build

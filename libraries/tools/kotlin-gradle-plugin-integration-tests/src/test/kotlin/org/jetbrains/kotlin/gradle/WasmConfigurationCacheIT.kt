@@ -12,11 +12,6 @@ import kotlin.io.path.appendText
 
 @MppGradlePluginTests
 class WasmConfigurationCacheIT : KGPBaseTest() {
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-        )
-
     @DisplayName("configuration cache is working for wasm")
     @GradleTest
     fun testKotlinWasmCompilation(gradleVersion: GradleVersion) {
