@@ -6819,6 +6819,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt72039.kt")
+    public void testKt72039() {
+      runTest("compiler/testData/codegen/box/collections/kt72039.kt");
+    }
+
+    @Test
     @TestMetadata("removeClash.kt")
     public void testRemoveClash() {
       runTest("compiler/testData/codegen/box/collections/removeClash.kt");
