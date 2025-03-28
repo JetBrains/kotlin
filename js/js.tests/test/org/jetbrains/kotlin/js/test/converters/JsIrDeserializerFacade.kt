@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
+import org.jetbrains.kotlin.backend.common.serialization.sortDependenciesBroken
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -66,7 +66,7 @@ class JsIrDeserializerFacade(
 
         val moduleInfo = getIrModuleInfoForKlib(
             moduleDescriptor,
-            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
+            sortDependenciesBroken(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
             friendModules,
             filesToLoad,
             configuration,

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.classic
 
-import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
+import org.jetbrains.kotlin.backend.common.serialization.sortDependenciesBroken
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
@@ -88,7 +88,7 @@ class ClassicFrontend2IrConverter(
             sourceFiles,
             configuration,
             analysisResult,
-            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            sortDependenciesBroken(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
             icData,
             IrFactoryImpl,
         ) {
@@ -131,7 +131,7 @@ class ClassicFrontend2IrConverter(
             sourceFiles,
             configuration,
             analysisResult,
-            sortDependencies(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            sortDependenciesBroken(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
             icData,
             IrFactoryImpl,
         ) {

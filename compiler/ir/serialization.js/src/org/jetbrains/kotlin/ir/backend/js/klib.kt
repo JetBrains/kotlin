@@ -175,7 +175,7 @@ fun loadIr(
                 project,
                 configuration,
                 mainModule.files,
-                sortDependencies(depsDescriptors.moduleDependencies),
+                sortDependenciesBroken(depsDescriptors.moduleDependencies),
                 friendModules,
                 symbolTable,
                 messageLogger,
@@ -187,7 +187,7 @@ fun loadIr(
             val mainModuleLib = allDependencies.find { it.libraryFile.canonicalPath == mainPath }
                 ?: error("No module with ${mainModule.libPath} found")
             val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModuleLib)
-            val sortedDependencies = sortDependencies(depsDescriptors.moduleDependencies)
+            val sortedDependencies = sortDependenciesBroken(depsDescriptors.moduleDependencies)
             val friendModules = mapOf(mainModuleLib.uniqueName to depsDescriptors.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(

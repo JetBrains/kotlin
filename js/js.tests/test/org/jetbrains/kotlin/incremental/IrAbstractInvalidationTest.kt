@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
+import org.jetbrains.kotlin.backend.common.serialization.sortDependenciesBroken
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
@@ -105,7 +105,7 @@ abstract class IrAbstractInvalidationTest(
             moduleSourceFiles,
             configuration,
             sourceModule.jsFrontEndResult.jsAnalysisResult,
-            sortDependencies(sourceModule.moduleDependencies),
+            sortDependenciesBroken(sourceModule.moduleDependencies),
             icData,
             IrFactoryImpl,
         ) {

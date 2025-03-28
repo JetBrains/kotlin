@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
@@ -270,8 +271,21 @@ open class CurrentModuleDeserializer(
     override val kind get() = IrModuleDeserializerKind.CURRENT
 }
 
-fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
+fun <T> sortDependencies(moduleDependencies: Map<T, Collection<T>>): List<T> {
     return DFS.topologicalOrder(moduleDependencies.keys) { m ->
         moduleDependencies.getValue(m)
     }.reversed()
+}
+
+fun <T : KotlinLibrary> sortDependenciesBroken(moduleDependencies: Map<T, Collection<T>>): List<T> {
+    val tmp = sortDependencies(moduleDependencies).reversed()
+
+    val result = ArrayList<T>(tmp.size)
+    for (library in tmp) {
+        if (library.isAnyPlatformStdlib)
+            result.add(0, library)
+        else
+            result.add(library)
+    }
+    return result
 }
