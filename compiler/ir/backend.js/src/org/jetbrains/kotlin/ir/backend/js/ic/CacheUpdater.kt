@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -134,8 +134,8 @@ class CacheUpdater(
     private inner class CacheUpdaterInternal {
         val signatureHashCalculator = IdSignatureHashCalculator(icHasher)
 
-        // libraries in topological order: [stdlib, ..., main]
-        val orderedLibraries = stopwatch.measure("Resolving and loading klib dependencies") {
+        // libraries in JS-specific order: [stdlib, <dependencies in CLI order>, main]
+        val orderedLibraries: List<KotlinLibrary> = stopwatch.measure("Resolving and loading klib dependencies") {
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
             val allResolvedDependencies = CommonKLibResolver.resolve(
                 allModules,
@@ -147,17 +147,20 @@ class CacheUpdater(
                 ),
             )
 
-            allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
-                val mainLibraryIndex = resolvedLibraries.indexOfLast {
-                    KotlinLibraryFile(it) == mainLibraryFile
-                }.takeIf { it >= 0 } ?: notFoundIcError("main library", mainLibraryFile)
+            val resolvedLibraries: List<KotlinLibrary> = allResolvedDependencies
+                .getFullList()
+                .partition { it.isAnyPlatformStdlib }
+                .let { (stdlib, other) -> stdlib + other.reversed()}
 
-                when (mainLibraryIndex) {
-                    resolvedLibraries.lastIndex -> resolvedLibraries
-                    else -> resolvedLibraries.filterIndexedTo(ArrayList(resolvedLibraries.size)) { index, _ ->
-                        index != mainLibraryIndex
-                    }.apply { add(resolvedLibraries[mainLibraryIndex]) }
-                }
+            val mainLibraryIndex = resolvedLibraries.indexOfLast {
+                KotlinLibraryFile(it) == mainLibraryFile
+            }.takeIf { it >= 0 } ?: notFoundIcError("main library", mainLibraryFile)
+
+            when (mainLibraryIndex) {
+                resolvedLibraries.lastIndex -> resolvedLibraries
+                else -> resolvedLibraries.filterIndexedTo(ArrayList(resolvedLibraries.size)) { index, _ ->
+                    index != mainLibraryIndex
+                }.apply { add(resolvedLibraries[mainLibraryIndex]) }
             }
         }
 
