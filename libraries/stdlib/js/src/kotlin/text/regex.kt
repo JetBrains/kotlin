@@ -83,19 +83,13 @@ public actual class Regex public actual constructor(pattern: String, options: Se
 
     private var nativeMatchesEntirePattern: RegExp? = null
     private fun initMatchesEntirePattern(): RegExp =
-        nativeMatchesEntirePattern ?: run {
-            if (pattern.startsWith('^') && pattern.endsWith('$'))
-                nativePattern
-            else
-                return RegExp("^${pattern.trimStart('^').trimEnd('$')}$", options.toFlags("gu"))
-        }.also { nativeMatchesEntirePattern = it }
-
+        nativeMatchesEntirePattern ?: RegExp("^(?:$pattern)$", options.toFlags("gu")).also { nativeMatchesEntirePattern = it }
 
     /** Indicates whether the regular expression matches the entire [input]. */
     public actual infix fun matches(input: CharSequence): Boolean {
-        nativePattern.reset()
-        val match = nativePattern.exec(input.toString())
-        return match != null && match.index == 0 && nativePattern.lastIndex == input.length
+        val pattern = initMatchesEntirePattern()
+        pattern.reset()
+        return pattern.exec(input.toString()) != null
     }
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
@@ -151,8 +145,11 @@ public actual class Regex public actual constructor(pattern: String, options: Se
      *
      * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
      */
-    public actual fun matchEntire(input: CharSequence): MatchResult? =
-        initMatchesEntirePattern().findNext(input.toString(), 0, nativePattern)
+    public actual fun matchEntire(input: CharSequence): MatchResult? {
+        val pattern = initMatchesEntirePattern()
+        pattern.reset()
+        return pattern.findNext(input.toString(), 0, nativePattern)
+    }
 
     @SinceKotlin("1.7")
     @WasExperimental(ExperimentalStdlibApi::class)
