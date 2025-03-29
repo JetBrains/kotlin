@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -22,6 +23,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.canBeNull
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -82,7 +87,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
                 } else if (tryScopeCount > 0 || catchScopeCount > 0 || finallyScopeCount > 0) {
                     reporter.reportOn(functionCall.source, FirErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, context)
-                } else if (node.hasMoreFollowingInstructions(declaration)) {
+                } else if (node.hasMoreFollowingInstructions(declaration, context.session)) {
                     reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
                 } else if (!node.isDead) {
                     tailrecCount++
@@ -94,7 +99,8 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun CFGNode<*>.hasMoreFollowingInstructions(tailrecFunction: FirFunction): Boolean {
+    private fun CFGNode<*>.hasMoreFollowingInstructions(tailrecFunction: FirFunction, session: FirSession): Boolean {
+        val returnTypeMayBeNullable = tailrecFunction.returnTypeRef.coneType.canBeNull(session)
         for (next in followingNodes) {
             val edge = edgeTo(next)
             if (!edge.kind.usedInCfa || edge.kind.isDead) continue
@@ -102,13 +108,17 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val hasMore = when (next) {
                 // If exiting another function, then it means this call is inside a nested local function, in which case, it's not a tailrec call.
                 is FunctionExitNode -> return next.fir != tailrecFunction
-                is JumpNode, is BooleanOperatorExitNode, is WhenBranchResultExitNode, is WhenExitNode, is BlockExitNode,
-                is ExitSafeCallNode
-                -> next.hasMoreFollowingInstructions(tailrecFunction)
+                is ElvisLhsExitNode if !returnTypeMayBeNullable ->
+                    next.correspondingElvisExitNode?.hasMoreFollowingInstructions(tailrecFunction, session) ?: return true
+                is TailrecExitNodeMarker ->
+                    next.hasMoreFollowingInstructions(tailrecFunction, session)
                 else -> return true
             }
-            if (hasMore) return hasMore
+            if (hasMore) return true
         }
         return false
     }
+
+    val ElvisLhsExitNode.correspondingElvisExitNode: ElvisExitNode?
+        get() = followingNodes.firstIsInstanceOrNull<ElvisLhsIsNotNullNode>()?.followingNodes?.firstIsInstanceOrNull<ElvisExitNode>()
 }

@@ -2010,6 +2010,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("tailRecShortCircuit.kt")
+    public void testTailRecShortCircuit() {
+      runTest("compiler/testData/diagnostics/tests/tailRecShortCircuit.kt");
+    }
+
+    @Test
     @TestMetadata("tailRecSingleton.kt")
     public void testTailRecSingleton() {
       runTest("compiler/testData/diagnostics/tests/tailRecSingleton.kt");

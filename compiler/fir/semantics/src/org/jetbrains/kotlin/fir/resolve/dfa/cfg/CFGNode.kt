@@ -179,6 +179,7 @@ interface EnterNodeMarker
 interface ExitNodeMarker
 interface GraphEnterNodeMarker : EnterNodeMarker
 interface GraphExitNodeMarker : ExitNodeMarker
+interface TailrecExitNodeMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
@@ -462,7 +463,7 @@ class BlockEnterNode(owner: ControlFlowGraph, override val fir: FirBlock, level:
     }
 }
 class BlockExitNode(owner: ControlFlowGraph, override val fir: FirBlock, level: Int) : CFGNode<FirBlock>(owner, level),
-    ExitNodeMarker {
+    ExitNodeMarker, TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBlockExitNode(this, data)
     }
@@ -477,7 +478,7 @@ class WhenEnterNode(owner: ControlFlowGraph, override val fir: FirWhenExpression
     }
 }
 class WhenExitNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, level: Int) : CFGNode<FirWhenExpression>(owner, level),
-    ExitNodeMarker {
+    ExitNodeMarker, TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitWhenExitNode(this, data)
     }
@@ -499,7 +500,8 @@ class WhenBranchResultEnterNode(owner: ControlFlowGraph, override val fir: FirWh
         return visitor.visitWhenBranchResultEnterNode(this, data)
     }
 }
-class WhenBranchResultExitNode(owner: ControlFlowGraph, override val fir: FirWhenBranch, level: Int) : CFGNode<FirWhenBranch>(owner, level) {
+class WhenBranchResultExitNode(owner: ControlFlowGraph, override val fir: FirWhenBranch, level: Int) : CFGNode<FirWhenBranch>(owner, level),
+    TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitWhenBranchResultExitNode(this, data)
     }
@@ -642,7 +644,7 @@ class BooleanOperatorExitNode(
     val leftOperandNode: CFGNode<*>,
     val rightOperandNode: CFGNode<*>,
     level: Int,
-) : CFGNode<FirBooleanOperatorExpression>(owner, level), ExitNodeMarker {
+) : CFGNode<FirBooleanOperatorExpression>(owner, level), ExitNodeMarker, TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBooleanOperatorExitNode(this, data)
     }
@@ -670,7 +672,8 @@ class EqualityOperatorCallNode(owner: ControlFlowGraph, override val fir: FirEqu
 
 // ----------------------------------- Jump -----------------------------------
 
-class JumpNode(owner: ControlFlowGraph, override val fir: FirJump<*>, level: Int) : CFGNode<FirJump<*>>(owner, level) {
+class JumpNode(owner: ControlFlowGraph, override val fir: FirJump<*>, level: Int) : CFGNode<FirJump<*>>(owner, level),
+    TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitJumpNode(this, data)
     }
@@ -844,7 +847,8 @@ class EnterSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallEx
         return visitor.visitEnterSafeCallNode(this, data)
     }
 }
-class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExpression, level: Int) : CFGNode<FirSafeCallExpression>(owner, level) {
+class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExpression, level: Int) : CFGNode<FirSafeCallExpression>(owner, level),
+    TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitExitSafeCallNode(this, data)
     }
@@ -870,7 +874,8 @@ class ElvisRhsEnterNode(owner: ControlFlowGraph, override val fir: FirElvisExpre
     }
 }
 
-class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisExpression, level: Int) : CFGNode<FirElvisExpression>(owner, level) {
+class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisExpression, level: Int) : CFGNode<FirElvisExpression>(owner, level),
+    TailrecExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitElvisExitNode(this, data)
     }

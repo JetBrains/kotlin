@@ -14606,6 +14606,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
           }
 
           @Test
+          @TestMetadata("shortCircuit.kt")
+          public void testShortCircuit() {
+            runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/shortCircuit.kt");
+          }
+
+          @Test
           @TestMetadata("simpleBlock.kt")
           public void testSimpleBlock() {
             runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/simpleBlock.kt");
