@@ -99,6 +99,30 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     }
 
     @Test
+    @TestMetadata("jakartaDefault.kt")
+    public void testJakartaDefault() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakartaDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("jakartaErrors.kt")
+    public void testJakartaErrors() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakartaErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("jakartaIgnore.kt")
+    public void testJakartaIgnore() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakartaIgnore.kt");
+    }
+
+    @Test
+    @TestMetadata("jakartaWarnings.kt")
+    public void testJakartaWarnings() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakartaWarnings.kt");
+    }
+
+    @Test
     @TestMetadata("kt47833.kt")
     public void testKt47833() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47833.kt");
