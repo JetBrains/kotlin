@@ -461,6 +461,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
                 ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
+            copyAttributes(target)
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
             context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)
 

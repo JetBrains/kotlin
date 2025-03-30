@@ -289,6 +289,24 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("bridgeAndFakeOverride.kt")
+      public void testBridgeAndFakeOverride() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/bridgeAndFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("bridgeAndFakeOverrideFromGeneric.kt")
+      public void testBridgeAndFakeOverrideFromGeneric() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/bridgeAndFakeOverrideFromGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("bridgeAndFakeOverrideGenericImplementation.kt")
+      public void testBridgeAndFakeOverrideGenericImplementation() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/bridgeAndFakeOverrideGenericImplementation.kt");
+      }
+
+      @Test
       @TestMetadata("class.kt")
       public void testClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/class.kt");
@@ -298,6 +316,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       @TestMetadata("fakeOverrideTrait.kt")
       public void testFakeOverrideTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/fakeOverrideTrait.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritedBridgeAndFakeOverride.kt")
+      public void testInheritedBridgeAndFakeOverride() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/inheritedBridgeAndFakeOverride.kt");
       }
 
       @Test
