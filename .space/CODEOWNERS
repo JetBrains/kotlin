@@ -46,9 +46,7 @@
 /.space/ "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin Analysis API"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt "Kotlin Frontend"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt "Kotlin Frontend"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt "Kotlin Frontend"
+/analysis/analysis-api-fir/gen/ "Kotlin Frontend"
 
 # UNKNOWN: /annotations/
 

@@ -17,9 +17,7 @@
 /.space/ @JetBrains/kotlin-build-infrastructure
 
 /analysis/ @JetBrains/kotlin-analysis-api
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt @JetBrains/kotlin-frontend
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt @JetBrains/kotlin-frontend
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt @JetBrains/kotlin-frontend
+/analysis/analysis-api-fir/gen/ @JetBrains/kotlin-frontend
 
 
 /ant/ @JetBrains/kotlin-build-tools

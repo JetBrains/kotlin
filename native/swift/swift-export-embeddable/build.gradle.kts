@@ -99,8 +99,9 @@ sourceSets {
 
 val swiftExportEmbeddableJar = runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJar)
-sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
-javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+sourcesJar { exclude("**") } // empty Jar, no public sources
+javadocJar { exclude("**") } // empty Jar, no public javadocs
 
 /**
  * Run swift-export-standalone tests against swift-export-embeddable and its runtime classpath to reproduce the environment in SwiftExportAction
