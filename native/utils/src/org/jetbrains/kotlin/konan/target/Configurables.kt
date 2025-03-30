@@ -66,6 +66,7 @@ interface Configurables : TargetableExternalStorage, RelocationModeFlags {
 
     // TODO: Delegate to a map?
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
+    val linkerStaticSortingRegexFlags get() = targetList("linkerStaticSortingRegexFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
     val linkerNoDebugFlags get() = targetList("linkerNoDebugFlags")
     val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
@@ -83,6 +84,26 @@ interface Configurables : TargetableExternalStorage, RelocationModeFlags {
     val llvmInlineThreshold get() = targetString("llvmInlineThreshold")
 
     val runtimeDefinitions get() = targetList("runtimeDefinitions")
+
+    fun toSortingRegex(): List<Pair<Int, Regex>> {
+        return linkerStaticSortingRegexFlags
+            .flatMap { flag ->
+                flag.split('&') // split 0@aaa&1@bbb into [0@aaa, 1@bbb]
+            }.mapNotNull { rule ->
+                rule.split('@', limit = 2).takeIf { parts ->
+                    parts.size == 2 // must include delimiter
+                }?.let { (orderStr, regexStr) ->
+                    // convert to int and compile regular expressions
+                    orderStr.toIntOrNull()?.let { order ->
+                        try {
+                            order to Regex(regexStr)
+                        } catch (e: Exception) {
+                            null // 忽略无效正则
+                        }
+                    }
+                }
+            }
+    }
 }
 
 interface ConfigurablesWithEmulator : Configurables {
