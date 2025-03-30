@@ -30,6 +30,7 @@ fun Project.configureJsCacheRedirector() {
                 args.addAll(
                     listOf("config", "set", "registry", NPM_REGISTRY, "--location=project")
                 )
+                outputs.file(project.layout.projectDirectory.file(".npmrc"))
             }
             tasks.named("npmInstall").configure {
                 dependsOn(npmSetRegistry)
