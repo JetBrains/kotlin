@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
-import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsLinux
-
 plugins {
     kotlin("multiplatform")
 }

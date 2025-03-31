@@ -7,13 +7,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
-@DeprecatedTargetPresetApi
-class KotlinMetadataTargetPreset(
+internal class KotlinMetadataTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<Any>>(project) {
     override val name: String = PRESET_NAME

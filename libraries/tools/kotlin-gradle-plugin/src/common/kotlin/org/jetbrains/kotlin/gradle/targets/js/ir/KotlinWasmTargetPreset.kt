@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithWasmPresetFunctions.Companion.DEFAULT_WASM_JS_NAME
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithWasmPresetFunctions.Companion.DEFAULT_WASM_WASI_NAME
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -18,8 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget.Companion.buil
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-@DeprecatedTargetPresetApi
-class KotlinWasmTargetPreset(
+internal class KotlinWasmTargetPreset(
     project: Project,
     private val targetType: KotlinWasmTargetType,
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(project) {
@@ -48,8 +46,8 @@ class KotlinWasmTargetPreset(
 
     override val name: String = WASM_PRESET_NAME + targetType.name.toLowerCaseAsciiOnly().capitalizeAsciiOnly()
 
-    public override fun createCompilationFactory(
-        forTarget: KotlinJsIrTarget,
+    override fun createCompilationFactory(
+        forTarget: KotlinJsIrTarget
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(forTarget)
 

@@ -216,7 +216,7 @@ private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPubli
 abstract class KotlinJsProjectExtension(project: Project) :
     KotlinSingleTargetExtension<KotlinJsTargetDsl>(project),
     KotlinJsCompilerTypeHolder {
-    lateinit var irPreset: KotlinJsIrSingleTargetPreset
+    internal lateinit var irPreset: KotlinJsIrSingleTargetPreset
 
     @Deprecated("Use js() instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("js()"), level = DeprecationLevel.ERROR)
     override val target: KotlinJsTargetDsl

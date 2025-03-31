@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithJsPresetFunctions.Companion.DEFAULT_JS_NAME
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
@@ -17,8 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinJsIrTargetMetrics
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget.Companion.buildNpmProjectName
 
-@DeprecatedTargetPresetApi
-open class KotlinJsIrTargetPreset(
+internal open class KotlinJsIrTargetPreset(
     project: Project,
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project
@@ -45,7 +43,7 @@ open class KotlinJsIrTargetPreset(
     override val name: String = JS_PRESET_NAME
 
     //TODO[Ilya Goncharov] remove public morozov
-    public override fun createCompilationFactory(
+    override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget,
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(forTarget)
@@ -55,8 +53,7 @@ open class KotlinJsIrTargetPreset(
     }
 }
 
-@DeprecatedTargetPresetApi
-class KotlinJsIrSingleTargetPreset(
+internal class KotlinJsIrSingleTargetPreset(
     project: Project,
 ) : KotlinJsIrTargetPreset(
     project

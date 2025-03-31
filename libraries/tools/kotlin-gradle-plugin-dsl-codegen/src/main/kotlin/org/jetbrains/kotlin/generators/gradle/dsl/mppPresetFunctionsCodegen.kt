@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
+@file:OptIn(InternalKotlinGradlePluginApi::class)
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
@@ -11,7 +11,6 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer

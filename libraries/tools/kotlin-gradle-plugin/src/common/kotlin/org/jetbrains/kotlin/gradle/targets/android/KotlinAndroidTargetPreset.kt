@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidGradlePluginIsMissing
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -16,8 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTarget
 
 import javax.inject.Inject
 
-@DeprecatedTargetPresetApi
-abstract class KotlinAndroidTargetPreset @Inject constructor(
+internal abstract class KotlinAndroidTargetPreset @Inject constructor(
     private val project: Project
 ) : InternalKotlinTargetPreset<KotlinAndroidTarget> {
 

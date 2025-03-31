@@ -7,14 +7,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 
-@DeprecatedTargetPresetApi
-class KotlinJvmTargetPreset(
+internal class KotlinJvmTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinJvmTarget, KotlinJvmCompilation>(
     project
