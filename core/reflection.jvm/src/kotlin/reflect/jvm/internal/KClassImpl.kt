@@ -124,11 +124,17 @@ internal class KClassImpl<T : Any>(
         }
 
         val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
-            descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry)
-                .mapNotNull { nestedClass ->
-                    val jClass = (nestedClass as? ClassDescriptor)?.toJavaClass()
-                    jClass?.let { KClassImpl(it) }
+            val kmClass = kmClass
+            when {
+                kmClass != null -> {
+                    val classId = kmClass.name.toClassId()
+                    val classLoader = jClass.safeClassLoader
+                    kmClass.nestedClasses.mapNotNull { name ->
+                        classLoader.loadClass(classId.createNestedClassId(Name.identifier(name)))?.kotlin
+                    }
                 }
+                else -> jClass.declaredClasses.mapNotNull { it.kotlin }
+            }
         }
 
         @Suppress("UNCHECKED_CAST")
