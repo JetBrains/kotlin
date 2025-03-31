@@ -48,8 +48,7 @@ object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallCheck
                     expression.source,
                     FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION,
                     expression.argument.resolvedType,
-                    expression.argument.resolvedType,
-                    context,
+                    expression.argument.resolvedType
                 )
             }
             FirOperation.IS, FirOperation.NOT_IS -> reporter.reportOn(

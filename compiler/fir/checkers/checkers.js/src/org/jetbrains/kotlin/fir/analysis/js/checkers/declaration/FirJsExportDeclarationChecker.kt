@@ -51,7 +51,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             for (upperBound in typeParameter.symbol.resolvedBounds) {
                 if (!upperBound.coneType.isExportable(context.session)) {
                     val source = upperBound.source ?: typeParameter.source ?: declaration.source
-                    reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "upper bound", upperBound.coneType, context)
+                    reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "upper bound", upperBound.coneType)
                 }
             }
         }
@@ -60,7 +60,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             val type = valueParameter.returnTypeRef.coneType
             if (!type.isExportable(context.session)) {
                 val source = valueParameter.source ?: declaration.source
-                reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "parameter", type, context)
+                reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "parameter", type)
             }
         }
 
@@ -112,7 +112,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 val returnType = declaration.returnTypeRef.coneType
 
                 if (declaration !is FirConstructor && !returnType.isExportableReturn(context.session)) {
-                    reporter.reportOn(declaration.source, FirJsErrors.NON_EXPORTABLE_TYPE, "return", returnType, context)
+                    reporter.reportOn(declaration.source, FirJsErrors.NON_EXPORTABLE_TYPE, "return", returnType)
                 }
             }
 
@@ -135,7 +135,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 val enumEntriesProperty = containingClass?.let(declaration::isEnumEntries) ?: false
                 val returnType = declaration.returnTypeRef.coneType
                 if (!enumEntriesProperty && !returnType.isExportable(context.session)) {
-                    reporter.reportOn(declaration.source, FirJsErrors.NON_EXPORTABLE_TYPE, "property", returnType, context)
+                    reporter.reportOn(declaration.source, FirJsErrors.NON_EXPORTABLE_TYPE, "property", returnType)
                 }
             }
 

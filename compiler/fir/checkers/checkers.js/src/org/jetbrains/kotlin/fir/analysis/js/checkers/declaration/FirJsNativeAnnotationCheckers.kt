@@ -81,8 +81,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
                 declaration.source,
                 FirJsErrors.NATIVE_INDEXER_WRONG_PARAMETER_COUNT,
                 requiredParametersCount,
-                indexerKind,
-                context
+                indexerKind
             )
         }
 

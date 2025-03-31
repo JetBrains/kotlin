@@ -33,8 +33,7 @@ object FirAssignmentOperatorCallChecker : FirFunctionCallChecker(MppCheckerKind.
                 expression.source,
                 FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,
                 resolvedCalleeSymbol,
-                FirOperationNameConventions.ASSIGNMENT_NAMES[resolvedCalleeName]!!.operator,
-                context
+                FirOperationNameConventions.ASSIGNMENT_NAMES[resolvedCalleeName]!!.operator
             )
         }
     }

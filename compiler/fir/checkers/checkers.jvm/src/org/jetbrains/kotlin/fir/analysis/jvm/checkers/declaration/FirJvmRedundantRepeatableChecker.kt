@@ -31,8 +31,7 @@ object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker(MppCheckerK
                 kotlinRepeatable.source,
                 FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION,
                 kotlinRepeatable.unexpandedClassId?.asSingleFqName() ?: FqName.ROOT,
-                javaRepeatable.unexpandedClassId?.asSingleFqName() ?: FqName.ROOT,
-                context
+                javaRepeatable.unexpandedClassId?.asSingleFqName() ?: FqName.ROOT
             )
         }
     }

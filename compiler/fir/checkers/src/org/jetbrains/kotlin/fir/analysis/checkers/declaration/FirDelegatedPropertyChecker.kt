@@ -75,8 +75,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
                         expectedFunctionSignature,
-                        candidates,
-                        context
+                        candidates
                     )
                 }
 
@@ -99,9 +98,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                                 source,
                                 FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
                                 expectedFunctionSignature,
-                                diagnostic.candidates.map { it.symbol },
-                                context
-                            )
+                                diagnostic.candidates.map { it.symbol })
                         } else {
                             reportInapplicableDiagnostics(diagnostic.candidates.map { it.symbol })
                         }

@@ -181,8 +181,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         declaration.source,
                         FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS,
                         containingClassSymbol.name.asString(),
-                        reservedName,
-                        context
+                        reservedName
                     )
                 }
             }

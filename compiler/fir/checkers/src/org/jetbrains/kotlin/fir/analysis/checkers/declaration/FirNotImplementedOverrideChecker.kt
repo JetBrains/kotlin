@@ -144,8 +144,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                     source,
                     ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
                     containingDeclaration.symbol,
-                    fromInitializerOfEnumEntry,
-                    context,
+                    fromInitializerOfEnumEntry
                 )
             }
 
@@ -154,9 +153,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                     source,
                     ABSTRACT_MEMBER_NOT_IMPLEMENTED,
                     classSymbol,
-                    notFromInitializerOfEnumEntry.map { it.unwrapFakeOverrides() },
-                    context,
-                )
+                    notFromInitializerOfEnumEntry.map { it.unwrapFakeOverrides() })
             }
 
             if (notFromInterfaceOrEnum.isNotEmpty()) {
@@ -164,9 +161,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                     source,
                     ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
                     classSymbol,
-                    notFromInterfaceOrEnum.map { it.unwrapFakeOverrides() },
-                    context,
-                )
+                    notFromInterfaceOrEnum.map { it.unwrapFakeOverrides() })
             }
         }
         if (!canHaveAbstractDeclarations && invisibleSymbols.isNotEmpty()) {
@@ -174,7 +169,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         }
 
         manyImplementationsDelegationSymbols.forEach {
-            reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, it, context)
+            reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, it)
         }
 
         delegationOverrideOfFinal.forEach { (delegated, final) ->
@@ -182,8 +177,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 source,
                 OVERRIDING_FINAL_MEMBER_BY_DELEGATION,
                 delegated,
-                final,
-                context
+                final
             )
         }
 
@@ -192,8 +186,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 source,
                 DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE,
                 delegated,
-                open,
-                context
+                open
             )
         }
 
@@ -207,7 +200,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                         it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
                     }
                 ) {
-                    reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
+                    reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol)
                 } else {
                     if (canHaveAbstractDeclarations && abstractIntersections.any {
                             it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
@@ -215,7 +208,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                     ) {
                         return
                     }
-                    reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
+                    reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol)
                 }
             }
         }

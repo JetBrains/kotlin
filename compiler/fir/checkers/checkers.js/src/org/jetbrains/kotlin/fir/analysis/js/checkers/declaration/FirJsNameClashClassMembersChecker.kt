@@ -212,7 +212,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                     is FirCallableSymbol<*> -> symbol.unwrapFakeOverridesOrDelegated().source
                     else -> symbol.source
                 } ?: declaration.source
-                reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashedWith, context)
+                reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashedWith)
             }
 
             fakeOverrideStableNames.findFirstFakeOverrideClash(stableNameCollector)?.let { (fakeOverrideSymbol, clashedWith) ->

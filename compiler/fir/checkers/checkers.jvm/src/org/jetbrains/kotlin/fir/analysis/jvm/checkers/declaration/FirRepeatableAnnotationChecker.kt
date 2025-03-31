@@ -70,8 +70,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
                             annotation.source,
                             FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,
                             unexpandedClassId,
-                            explicitContainer,
-                            context
+                            explicitContainer
                         )
                     }
                 } else {

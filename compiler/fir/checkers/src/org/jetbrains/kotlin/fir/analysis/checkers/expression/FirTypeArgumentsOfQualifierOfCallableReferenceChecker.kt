@@ -35,8 +35,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                 lhs.source,
                 FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
                 correspondingDeclaration.typeParameterSymbols.size,
-                correspondingDeclaration,
-                context
+                correspondingDeclaration
             )
             return
         }

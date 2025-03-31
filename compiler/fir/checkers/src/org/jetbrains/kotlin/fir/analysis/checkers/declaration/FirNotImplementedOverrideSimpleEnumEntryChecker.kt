@@ -56,7 +56,7 @@ sealed class FirNotImplementedOverrideSimpleEnumEntryChecker(mppKind: MppChecker
         if (notImplemented.isEmpty()) return
 
         for (enumEntry in enumEntries) {
-            reporter.reportOn(enumEntry.source, ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY, enumEntry.symbol, notImplemented, context)
+            reporter.reportOn(enumEntry.source, ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY, enumEntry.symbol, notImplemented)
         }
     }
 }

@@ -152,7 +152,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             } else {
                 FirSerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE
             }
-            reporter.reportOn(source, error, serializableClassSymbol, serializableKType, this)
+            reporter.reportOn(source, error, serializableClassSymbol, serializableKType)
         }
 
     }
@@ -198,8 +198,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                         existingAnnotation.source,
                         FirSerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO,
                         existingAnnotation.annotationTypeRef.coneType,
-                        classSymbol.defaultType(),
-                        this
+                        classSymbol.defaultType()
                     )
                 }
             }
@@ -374,10 +373,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
             reporter.reportOn(
                 source = annotation?.source,
-                FirSerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
-                property.propertySymbol.name.asString(),
-                duplicateFieldsNames,
-                this
+                factory = FirSerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
+                a = property.propertySymbol.name.asString(),
+                b = duplicateFieldsNames
             )
 
         }
@@ -418,8 +416,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
                 RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString(),
-                this
+                session.versionReader.runtimeVersions?.implementationVersion.toString()
             )
             return false
         }
@@ -629,8 +626,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 typeRef.source ?: typeSource,
                 FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
                 RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString(),
-                this
+                session.versionReader.runtimeVersions?.implementationVersion.toString()
             )
         }
 
@@ -691,8 +687,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 source ?: containingClassSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.ABSTRACT_SERIALIZER_TYPE,
                 containingClassSymbol.defaultType(),
-                serializerType,
-                this
+                serializerType
             )
         }
     }
@@ -780,7 +775,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         // @Serializable annotation has proper signature so this error would be caught in type checker
         val serializerForType = serializerType.serializerForType(session) ?: return
         if (!classType.isMarkedNullable && serializerForType.isMarkedNullable) {
-            reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE, serializerType, classType, this)
+            reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE, serializerType, classType)
         }
     }
 }

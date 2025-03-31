@@ -27,7 +27,7 @@ object FirDeprecatedSmartCastChecker : FirSmartCastExpressionChecker(MppCheckerK
         val source = expression.source ?: return
         val symbol = expression.originalExpression.toReference(context.session)?.toResolvedSymbol<FirPropertySymbol>() ?: return
         if (symbol.isDelegated) {
-            reporter.reportOn(source, FirErrors.DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY, expression.resolvedType, symbol, context)
+            reporter.reportOn(source, FirErrors.DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY, expression.resolvedType, symbol)
         }
     }
 }

@@ -59,8 +59,7 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                 declaration.source,
                 FirErrors.ACTUAL_WITHOUT_EXPECT,
                 declaration.symbol,
-                matchingData,
-                context
+                matchingData
             )
         }
     }

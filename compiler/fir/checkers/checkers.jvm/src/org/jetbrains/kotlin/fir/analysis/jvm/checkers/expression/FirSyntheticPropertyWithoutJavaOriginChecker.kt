@@ -36,16 +36,14 @@ object FirSyntheticPropertyWithoutJavaOriginChecker : FirPropertyAccessExpressio
                     expression.source,
                     FirErrors.FUNCTION_CALL_EXPECTED,
                     originalFunction.name.asString(),
-                    false,
-                    context
+                    false
                 )
             } else {
                 reporter.reportOn(
                     expression.source,
                     FirJvmErrors.SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN,
                     originalFunction,
-                    originalFunction.name,
-                    context
+                    originalFunction.name
                 )
             }
         }

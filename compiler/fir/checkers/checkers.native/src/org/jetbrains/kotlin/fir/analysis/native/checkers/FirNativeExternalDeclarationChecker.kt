@@ -34,8 +34,7 @@ object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheck
             modifier.source,
             FirErrors.WRONG_MODIFIER_TARGET,
             modifier.token,
-            FirDiagnosticRenderers.SYMBOL_KIND.render(declaration.symbol),
-            context
+            FirDiagnosticRenderers.SYMBOL_KIND.render(declaration.symbol)
         )
     }
 }

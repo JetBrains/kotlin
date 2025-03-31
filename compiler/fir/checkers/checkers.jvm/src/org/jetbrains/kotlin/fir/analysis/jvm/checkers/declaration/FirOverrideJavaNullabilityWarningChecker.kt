@@ -69,8 +69,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                                 memberSymbol.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
                                 memberSymbol,
-                                substitutedBase,
-                                context
+                                substitutedBase
                             )
                         }
 
@@ -80,7 +79,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                 if (anyBaseEnhanced && !anyReported) {
                     memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
                         reporter.reportOn(
-                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it, context
+                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
                     }
                 }
@@ -97,8 +96,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                                 memberSymbol.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
                                 memberSymbol,
-                                substitutedBase,
-                                context
+                                substitutedBase
                             )
                         }
 
@@ -108,7 +106,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                 if (anyBaseEnhanced && !anyReported) {
                     memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
                         reporter.reportOn(
-                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it, context
+                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
                     }
                 }

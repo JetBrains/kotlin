@@ -66,8 +66,7 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                         returnedExpression.source,
                         FirJvmErrors.TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
                         returnedExpressionType,
-                        expectedReturnType,
-                        context,
+                        expectedReturnType
                     )
                 }
             }

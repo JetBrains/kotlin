@@ -82,7 +82,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             val expectedTypeArgumentSize = symbol?.ownTypeParameterSymbols?.size ?: 0
             if (expectedTypeArgumentSize != argument.typeArguments.size) {
                 if (symbol != null) {
-                    reporter.reportOn(argument.source, FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS, expectedTypeArgumentSize, symbol, context)
+                    reporter.reportOn(argument.source, FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS, expectedTypeArgumentSize, symbol)
                 }
                 return
             }

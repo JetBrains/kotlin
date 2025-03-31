@@ -52,7 +52,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
             val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
             // We don't want to report WRONG_ANNOTATION_TARGET on a block according to KT-52175
             if (!inRealBlock && KotlinTarget.EXPRESSION !in allowedAnnotationTargets) {
-                reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", allowedAnnotationTargets, context)
+                reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", allowedAnnotationTargets)
             } else if (useSiteTarget != null) {
                 reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION, context)
             }

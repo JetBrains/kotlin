@@ -29,7 +29,7 @@ object FirJavaClassInheritsKtPrivateClassDeclarationChecker : FirConstructorChec
         if (inheritedKtPrivateCls != null) {
             val javaClassId = resolvedDelegatedConstructor.containingClassLookupTag()!!.classId
             reporter.reportOn(
-                delegatedConstructorCall.source, JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS, javaClassId, inheritedKtPrivateCls, context
+                delegatedConstructorCall.source, JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS, javaClassId, inheritedKtPrivateCls
             )
         }
     }

@@ -65,7 +65,7 @@ open class KtDiagnosticReporterWithContext(
 
         fun <A : Any, B : Any> report(factory: KtDiagnosticFactory2<A, B>, a: A, b: B) {
             sourceElement?.let {
-                reportOn(it, factory, a, b, this)
+                reportOn(it, factory, a, b)
                 checkAndCommitReportsOn(it, this)
             }
         }

@@ -61,8 +61,7 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
                         declaration.source,
                         FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY,
                         parent,
-                        declaration.symbol,
-                        context
+                        declaration.symbol
                     )
                 }
             }

@@ -46,12 +46,12 @@ object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
             function.valueParameterSymbols.forEach {
                 val kotlinType = it.resolvedReturnTypeRef
                 if (!kotlinType.isObjCObjectType(session))
-                    reporter.reportOn(it.source, MUST_BE_OBJC_OBJECT_TYPE, "$action method parameter type", kotlinType.coneType, context)
+                    reporter.reportOn(it.source, MUST_BE_OBJC_OBJECT_TYPE, "$action method parameter type", kotlinType.coneType)
             }
 
             val returnType = function.resolvedReturnTypeRef
             if (!returnType.isUnit)
-                reporter.reportOn(function.source, MUST_BE_UNIT_TYPE, "$action method return type", returnType.coneType, context)
+                reporter.reportOn(function.source, MUST_BE_UNIT_TYPE, "$action method return type", returnType.coneType)
 
             checkCanGenerateFunctionImp(function)
         }

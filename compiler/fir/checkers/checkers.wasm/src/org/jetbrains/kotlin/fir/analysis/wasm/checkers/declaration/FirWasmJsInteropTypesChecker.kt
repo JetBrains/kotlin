@@ -100,8 +100,7 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
                     source ?: fallbackSource,
                     FirWasmErrors.WRONG_JS_INTEROP_TYPE,
                     type,
-                    position.description,
-                    context
+                    position.description
                 )
                 return
             }

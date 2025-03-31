@@ -29,7 +29,7 @@ object FirJavaClassInheritsKtPrivateClassExpressionChecker : FirQualifiedAccessE
         if (inheritedKtPrivateCls != null) {
             // Only Java methods & constructors can have inheritedKtPrivateCls, and they always have containing class
             val javaClassId = calleeSymbol.containingClassLookupTag()!!.classId
-            reporter.reportOn(expression.source, JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS, javaClassId, inheritedKtPrivateCls, context)
+            reporter.reportOn(expression.source, JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS, javaClassId, inheritedKtPrivateCls)
         }
     }
 }

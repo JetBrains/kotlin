@@ -38,8 +38,7 @@ object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
                     annotation.source,
                     FirErrors.WRONG_ANNOTATION_TARGET,
                     "type usage",
-                    annotationTargets,
-                    context
+                    annotationTargets
                 )
             }
             if (annotation.toAnnotationClassId(context.session) == StandardClassIds.Annotations.ExtensionFunctionType) {

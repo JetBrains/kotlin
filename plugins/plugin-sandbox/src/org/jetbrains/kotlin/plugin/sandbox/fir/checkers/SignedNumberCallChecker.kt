@@ -27,7 +27,7 @@ object SignedNumberCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             val actualSign = argument.resolvedType.attributes.numberSign
             if (expectedSign != actualSign) {
                 reporter.reportOn(
-                    argument.source, PluginErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString(), context
+                    argument.source, PluginErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString()
                 )
             }
         }

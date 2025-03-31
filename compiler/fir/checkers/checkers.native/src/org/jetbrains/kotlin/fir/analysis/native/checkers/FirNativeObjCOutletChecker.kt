@@ -47,8 +47,7 @@ object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
                     property.resolvedReturnTypeRef.source,
                     FirNativeErrors.MUST_BE_OBJC_OBJECT_TYPE,
                     "@${objCOutletClassId.asSingleFqName()} type",
-                    type.coneType,
-                    context
+                    type.coneType
                 )
 
             checkCanGenerateFunctionImp(property.setterSymbol!!)

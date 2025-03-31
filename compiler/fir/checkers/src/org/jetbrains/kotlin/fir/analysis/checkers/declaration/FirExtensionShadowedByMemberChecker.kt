@@ -105,8 +105,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         reporter.reportOn(
             declaration.source,
             FirErrors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE,
-            shadowingProperty, shadowingInvoke,
-            context,
+            shadowingProperty, shadowingInvoke
         )
     }
 

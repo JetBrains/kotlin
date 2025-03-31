@@ -41,6 +41,6 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
             arrayOf(containingClassSymbol.defaultType()), isMarkedNullable = actualType.isMarkedNullable
         )
 
-        reporter.reportOn(expression.source, FirJvmErrors.JAVA_CLASS_ON_COMPANION, actualType, expectedType, context)
+        reporter.reportOn(expression.source, FirJvmErrors.JAVA_CLASS_ON_COMPANION, actualType, expectedType)
     }
 }

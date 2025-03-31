@@ -60,8 +60,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                     context.session.typeContext.isTypeMismatchDueToNullability(
                         coneType,
                         session.builtinTypes.throwableType.coneType
-                    ),
-                    context
+                    )
                 )
             }
         }
