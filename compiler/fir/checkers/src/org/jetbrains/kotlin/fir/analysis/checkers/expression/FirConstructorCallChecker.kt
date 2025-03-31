@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
         val coneType = constructorSymbol.resolvedReturnTypeRef.coneType
 

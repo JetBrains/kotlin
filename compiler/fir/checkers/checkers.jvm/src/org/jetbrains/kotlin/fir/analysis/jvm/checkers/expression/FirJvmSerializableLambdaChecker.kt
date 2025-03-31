@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.name.FqName
 object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Common) {
     private val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSerializableLambda")
 
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotation) {
         if (expression.fqName(context.session) == JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME) {
             val declaration = context.containingDeclarations.last()
             if (declaration !is FirAnonymousFunction) {

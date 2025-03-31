@@ -26,11 +26,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(
-        expression: FirPropertyAccessExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirPropertyAccessExpression) {
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         if ((reference.symbol as? FirCallableSymbol)?.callableId != JvmStandardClassIds.Callables.JavaClass) return
 

@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 object RedundantInterpolationPrefixCheckerConcatenation : FirStringConcatenationCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStringConcatenationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStringConcatenationCall) {
         if (expression.interpolationPrefix == "$") {
             reporter.reportOn(expression.source, FirErrors.REDUNDANT_INTERPOLATION_PREFIX, context)
         }
@@ -26,7 +27,8 @@ object RedundantInterpolationPrefixCheckerConcatenation : FirStringConcatenation
 }
 
 object RedundantInterpolationPrefixCheckerLiteral : FirLiteralExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirLiteralExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirLiteralExpression) {
         val prefix = expression.prefix
         if (expression.kind == ConstantValueKind.String && !prefix.isNullOrEmpty()) {
             val value = expression.source.text?.drop(prefix.length) ?: return

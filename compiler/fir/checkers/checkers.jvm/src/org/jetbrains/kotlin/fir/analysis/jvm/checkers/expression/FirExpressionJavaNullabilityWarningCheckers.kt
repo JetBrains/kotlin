@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.types.*
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
 object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val symbol = expression.toResolvedCallableSymbol() ?: return
         val substitutor = expression.createConeSubstitutorFromTypeArguments(symbol, context.session)
 
@@ -80,7 +81,8 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
 }
 
 object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirThrowExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirThrowExpression) {
         expression.exception.checkExpressionForEnhancedTypeMismatch(
             expectedType = context.session.builtinTypes.throwableType.coneType,
             reporter,
@@ -91,7 +93,8 @@ object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker(MppChec
 }
 
 object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirVariableAssignment) {
         expression.rValue.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.lValue.resolvedType,
             reporter,
@@ -102,14 +105,16 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
 }
 
 object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirBooleanOperatorExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBooleanOperatorExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirBooleanOperatorExpression) {
         expression.leftOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
         expression.rightOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
     }
 }
 
 object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirLoop) {
         if (expression is FirErrorLoop) return
         val condition = expression.condition
         condition.checkConditionForEnhancedTypeMismatch(context, reporter)
@@ -117,7 +122,8 @@ object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker(
 }
 
 object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirWhenExpression) {
         for (branch in expression.branches) {
             val condition = branch.condition
             if (condition is FirElseIfTrueCondition) continue
@@ -127,7 +133,8 @@ object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(
 }
 
 object FirReturnJavaNullabilityWarningChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirReturnExpression) {
         expression.result.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.target.labeledElement.returnTypeRef.coneType,
             reporter,

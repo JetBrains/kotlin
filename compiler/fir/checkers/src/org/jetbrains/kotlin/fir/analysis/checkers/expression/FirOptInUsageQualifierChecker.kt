@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
         checkNotAcceptedExperimentalities(expression, context, reporter)
         checkMarkerUsedAsQualifier(expression, context, reporter)
     }

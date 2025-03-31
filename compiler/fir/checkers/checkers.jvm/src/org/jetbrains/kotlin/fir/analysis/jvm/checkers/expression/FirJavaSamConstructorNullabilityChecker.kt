@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val languageVersionSettings = context.session.languageVersionSettings
         if (languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) return
         val reportError = languageVersionSettings.supportsFeature(

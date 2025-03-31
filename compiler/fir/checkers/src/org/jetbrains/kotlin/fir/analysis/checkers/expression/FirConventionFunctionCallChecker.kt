@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val notFunctionAsOperatorIsReportedOnDispatch =
             checkNotFunctionAsOperator(expression, expression.dispatchReceiver, context, reporter)
         val notFunctionAsOperatorIsReportedOnExtension =

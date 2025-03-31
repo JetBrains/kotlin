@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
 
 object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments
         val callableSymbol = calleeReference.toResolvedCallableSymbol()

@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.types.typeContext
 
 object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirTryExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirTryExpression) {
         for (catchEntry in expression.catches) {
             val catchParameter = catchEntry.parameter
             val source = catchParameter.source ?: continue

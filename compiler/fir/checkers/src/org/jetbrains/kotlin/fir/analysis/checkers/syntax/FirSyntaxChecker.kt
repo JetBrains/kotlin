@@ -65,7 +65,8 @@ abstract class FirDeclarationSyntaxChecker<D : FirDeclaration, P : PsiElement> :
 abstract class FirExpressionSyntaxChecker<E : FirStatement, P : PsiElement> :
     FirExpressionChecker<E>(MppCheckerKind.Common),
     FirSyntaxChecker<E, P> {
-    final override fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    final override fun check(expression: E) {
         checkSyntax(expression, context, reporter)
     }
 }

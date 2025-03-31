@@ -39,7 +39,8 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
 }
 
 object FirUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker() {
-    override fun check(expression: FirSafeCallExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirSafeCallExpression) {
         val receiverType = expression.receiver.resolvedType.fullyExpandedType(context.session)
         if (expression.receiver.source?.elementType == KtNodeTypes.SUPER_EXPRESSION) {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)

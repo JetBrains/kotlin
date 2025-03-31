@@ -73,7 +73,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
     // See related discussions:
     // https://youtrack.jetbrains.com/issue/KT-6054
     // https://youtrack.jetbrains.com/issue/KT-11769
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         // If the feature for proper analysis is enabled, FirEnumEntryInitializationChecker will report all errors
         if (context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
         val source = expression.source ?: return

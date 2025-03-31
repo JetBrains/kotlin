@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
         }
 
         val expressionPackage = "$basePackage.checkers.expression"
-        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker", FirStatement::class, FirExpression::class, false) {
+        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker", FirStatement::class, FirExpression::class, true) {
             alias<FirStatement>("BasicExpressionChecker", false).let {
                 visitAlso<FirExpression>(it)
                 visitAlso<FirVarargArgumentsExpression>(it)

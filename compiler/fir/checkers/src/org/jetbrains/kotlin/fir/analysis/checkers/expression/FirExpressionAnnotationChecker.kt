@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         // Declarations are checked separately
         // See KT-58723 about annotations on non-expression statements
         if (expression is FirDeclaration || expression is FirErrorExpression) {

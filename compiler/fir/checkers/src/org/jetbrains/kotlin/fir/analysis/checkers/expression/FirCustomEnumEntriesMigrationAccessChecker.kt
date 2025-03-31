@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolutionResultOverridesOtherToPreserveCompatibility
 
 object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirPropertyAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirPropertyAccessExpression) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)) return
         val referencedSymbol = expression.calleeReference.toResolvedPropertySymbol() ?: return
         if (referencedSymbol.name != StandardNames.ENUM_ENTRIES) return

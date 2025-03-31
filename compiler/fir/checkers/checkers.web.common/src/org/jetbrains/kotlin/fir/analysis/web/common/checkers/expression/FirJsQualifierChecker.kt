@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.js.validateQualifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotationCall) {
         if (expression.toAnnotationClassId(context.session) != JsQualifier) {
             return
         }

@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 
 object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
         if (expression !is FirQualifiedAccessExpression && expression !is FirDelegatedConstructorCall) return
         val targetSymbol = expression.toResolvedCallableSymbol()

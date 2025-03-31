@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.util.getChildren
 
 object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStringConcatenationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStringConcatenationCall) {
         for (argumentExpression in expression.arguments) {
             if (argumentExpression.resolvedType.fullyExpandedClassId(context.session) == StandardClassIds.String &&
                 argumentExpression.stringParentChildrenCount() == 1 // there is no more children in original string template

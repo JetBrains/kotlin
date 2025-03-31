@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirTypeOperatorCall) {
         val arguments = expression.argumentList.arguments
         require(arguments.size == 1) { "Type operator call with non-1 arguments" }
 

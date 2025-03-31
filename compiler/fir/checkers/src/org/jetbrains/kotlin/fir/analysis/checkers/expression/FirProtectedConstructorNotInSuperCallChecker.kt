@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.util.PrivateForInline
 
 object FirProtectedConstructorNotInSuperCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val reference = expression.calleeReference.resolved ?: return
         val symbol = reference.toResolvedConstructorSymbol() ?: return
         val constructedClass = symbol.getConstructedClass(context.session)

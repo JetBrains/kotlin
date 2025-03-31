@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.types.isNullLiteral
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirUselessElvisChecker : FirElvisExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirElvisExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirElvisExpression) {
         // If the overall expression is not resolved/completed, the corresponding error will be reported separately.
         // See [FirControlFlowStatementsResolveTransformer#transformElvisExpression],
         // where an error type is recorded as the expression's return type.

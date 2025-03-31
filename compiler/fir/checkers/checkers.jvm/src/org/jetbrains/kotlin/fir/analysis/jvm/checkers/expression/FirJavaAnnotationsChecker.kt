@@ -35,7 +35,8 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
             JvmStandardClassIds.Annotations.Java.Documented to Annotations.MustBeDocumented,
         )
 
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotation) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
         val annotationType = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf
         val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol(context.session) ?: return

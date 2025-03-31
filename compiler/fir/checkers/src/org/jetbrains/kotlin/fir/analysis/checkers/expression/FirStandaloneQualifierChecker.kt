@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirResolvedQualifier) {
         if (!expression.isStandalone(context)) return
 
         // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn

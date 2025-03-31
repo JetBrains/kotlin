@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 object FirUnderscoreChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         when (expression) {
             is FirResolvable -> {
                 if (diagnosticsCheckNeeded(expression)) {
@@ -27,7 +28,7 @@ object FirUnderscoreChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
                 checkUnderscoreDiagnostics(expression.source, context, reporter, true)
             }
             is FirSmartCastExpression -> {
-                check(expression.originalExpression, context, reporter)
+                check(expression.originalExpression)
             }
         }
     }

@@ -36,7 +36,8 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirExpressionWithErrorTypeChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         // Pure statements have no type
         if (expression !is FirExpression) return
         // Filter non-error types from the beginning

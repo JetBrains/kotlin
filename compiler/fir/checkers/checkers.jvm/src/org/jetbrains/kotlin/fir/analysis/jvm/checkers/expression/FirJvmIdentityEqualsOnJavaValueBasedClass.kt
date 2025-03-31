@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 internal object FirJvmIdentityEqualsOnJavaValueBasedClass : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirEqualityOperatorCall) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.DisableWarningsForValueBasedJavaClasses)) return
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Expected arguments of size 2" }

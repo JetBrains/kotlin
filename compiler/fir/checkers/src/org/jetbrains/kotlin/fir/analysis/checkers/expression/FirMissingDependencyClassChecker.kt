@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.name.Name
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
  */
 object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference
         val missingTypes = mutableSetOf<ConeClassLikeType>()
         val missingTypesFromExpression = mutableSetOf<ConeClassLikeType>()

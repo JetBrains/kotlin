@@ -26,7 +26,8 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCall) {
         if (expression !is FirFunctionCall &&
             expression !is FirAnnotation &&
             expression !is FirDelegatedConstructorCall &&

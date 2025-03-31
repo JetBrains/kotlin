@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.types.*
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
  */
 object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirQualifiedAccessExpression) {
         val source = expression.source
 
         val symbol = expression.calleeReference.toResolvedCallableSymbol()

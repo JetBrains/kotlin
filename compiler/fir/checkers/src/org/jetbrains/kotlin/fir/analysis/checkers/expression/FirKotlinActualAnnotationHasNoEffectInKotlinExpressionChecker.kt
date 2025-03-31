@@ -26,11 +26,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : FirExpression> :
     FirExpressionChecker<T>(MppCheckerKind.Common) {
     object ResolvedQualifier : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirResolvedQualifier>() {
-        override fun check(
-            expression: FirResolvedQualifier,
-            context: CheckerContext,
-            reporter: DiagnosticReporter,
-        ) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(expression: FirResolvedQualifier) {
             if (expression.resolvedType.classId == StandardClassIds.Annotations.KotlinActual) {
                 reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
             }
@@ -38,11 +35,8 @@ sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : F
     }
 
     object CallableReference : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirCallableReferenceAccess>() {
-        override fun check(
-            expression: FirCallableReferenceAccess,
-            context: CheckerContext,
-            reporter: DiagnosticReporter,
-        ) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(expression: FirCallableReferenceAccess) {
             if (expression.calleeReference.toResolvedConstructorSymbol()
                     ?.containingClassLookupTag()?.classId == StandardClassIds.Annotations.KotlinActual
             ) {
@@ -52,11 +46,8 @@ sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : F
     }
 
     object FunctionCall : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirFunctionCall>() {
-        override fun check(
-            expression: FirFunctionCall,
-            context: CheckerContext,
-            reporter: DiagnosticReporter,
-        ) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(expression: FirFunctionCall) {
             if (expression.calleeReference.toResolvedConstructorSymbol()
                     ?.containingClassLookupTag()?.classId == StandardClassIds.Annotations.KotlinActual
             ) {

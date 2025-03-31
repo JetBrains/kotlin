@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirContractNotFirstStatementChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (StandardClassIds.Callables.contract != expression.toResolvedCallableSymbol()?.callableId) return
 
         val containingDeclaration = context.containingDeclarations.last()

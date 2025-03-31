@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.classId
 
 object PlatformClassMappedToKotlinConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val symbol = expression.toResolvedCallableSymbol() as? FirConstructorSymbol ?: return
         val kotlinClassId = context.session.platformClassMapper.getCorrespondingKotlinClass(symbol.resolvedReturnTypeRef.coneType.classId)
         if (kotlinClassId != null) {

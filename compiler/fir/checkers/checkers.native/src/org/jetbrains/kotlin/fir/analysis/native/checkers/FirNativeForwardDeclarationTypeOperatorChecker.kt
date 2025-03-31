@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallChecker(MppCheckerKind.Platform) {
-    override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirTypeOperatorCall) {
         val targetTypeRef = expression.conversionTypeRef
         val declarationToCheck = targetTypeRef.toRegularClassSymbol(context.session) ?: return
         val fwdKind = declarationToCheck.forwardDeclarationKindOrNull() ?: return

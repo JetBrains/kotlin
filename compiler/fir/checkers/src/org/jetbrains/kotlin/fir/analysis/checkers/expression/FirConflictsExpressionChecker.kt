@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isDestructuredParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 
 object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirBlock) {
         val elements =
             if (expression.statements.none { it.isDestructuredParameter() }) expression.statements // optimization
             else expression.statements.filterNot { it.isDestructuredParameter() }

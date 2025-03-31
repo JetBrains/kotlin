@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 class ComposableAnnotationChecker : FirAnnotationChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotation) {
         if (expression.resolvedType.classId != ComposeClassIds.Composable) {
             return
         }

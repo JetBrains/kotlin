@@ -26,7 +26,8 @@ object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker(MppCheckerKind
 
     private val jvmPackageNameClassId = ClassId.topLevel(FqName("kotlin.jvm.JvmPackageName"))
 
-    override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotation) {
         val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return
         if (lookupTag.classId != jvmPackageNameClassId) return
 

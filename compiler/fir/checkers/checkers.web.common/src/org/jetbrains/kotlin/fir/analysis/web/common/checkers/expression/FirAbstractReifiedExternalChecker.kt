@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 abstract class FirAbstractReifiedExternalChecker(
     private val webCheckerUtils: FirAbstractWebCheckerUtils
 ) : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         expression.forAllReifiedTypeParameters { type, typeArgument ->
             val typeSymbol = type.toSymbol(context.session)
             if (typeSymbol != null && webCheckerUtils.isNativeOrExternalInterface(typeSymbol, context.session)) {

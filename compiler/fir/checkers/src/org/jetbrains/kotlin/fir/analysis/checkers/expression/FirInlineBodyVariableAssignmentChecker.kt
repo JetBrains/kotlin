@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirInlineBodyVariableAssignmentChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirVariableAssignment) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
         val propertySymbol = expression.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
         val setterSymbol = propertySymbol.setterSymbol ?: return

@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_CLASS_ID
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
 
 object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirAnnotationCall) {
         val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return
         val classId = lookupTag.classId
         val isRequiresOptIn = classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID

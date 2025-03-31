@@ -34,7 +34,8 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         else -> false
     }
 
-    final override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    final override fun check(expression: FirStatement) {
         if (isWholeReflectionApiAvailable(context)) return
 
         // Do not report the diagnostic on kotlin-reflect sources.

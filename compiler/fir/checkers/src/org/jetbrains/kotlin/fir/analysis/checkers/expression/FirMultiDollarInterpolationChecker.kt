@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 abstract class FirMultiDollarInterpolationChecker<E : FirExpression> : FirExpressionChecker<E>(MppCheckerKind.Common) {
     abstract fun E.getInterpolationPrefix(): String?
 
-    override fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: E) {
         // no interpolation prefix => always OK
         if (expression.getInterpolationPrefix().isNullOrEmpty()) return
 

@@ -47,7 +47,8 @@ import kotlin.math.min
  */
 object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return
         if (!calleeFunction.originalOrSelf().isJavaOrEnhancement) {
             return

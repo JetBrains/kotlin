@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
  * For K1 implementation see: [org.jetbrains.kotlin.resolve.jvm.checkers.UnsupportedSyntheticCallableReferenceChecker]
  */
 object FirUnsupportedSyntheticCallableReferenceChecker : FirExpressionChecker<FirCallableReferenceAccess>(MppCheckerKind.Common) {
-    override fun check(expression: FirCallableReferenceAccess, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCallableReferenceAccess) {
         val parent = context.containingElements.let {
             check(it.last() === expression)
             it[it.lastIndex - 1]

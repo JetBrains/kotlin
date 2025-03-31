@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirVariableAssignment) {
         checkInvisibleSetter(expression, context, reporter)
         checkValReassignmentViaBackingField(expression, context, reporter)
         checkValReassignmentOnValueParameterOrEnumEntry(expression, context, reporter)

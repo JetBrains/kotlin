@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirAssignmentOperatorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val resolvedCalleeSymbol = expression.calleeReference.toResolvedNamedFunctionSymbol() ?: return
         val resolvedCalleeName = resolvedCalleeSymbol.name
         if (expression.origin != FirFunctionCallOrigin.Operator ||

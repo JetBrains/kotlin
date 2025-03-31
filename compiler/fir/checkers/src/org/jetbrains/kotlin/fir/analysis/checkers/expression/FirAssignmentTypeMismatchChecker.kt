@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirAssignmentTypeMismatchChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirVariableAssignment) {
         val source = expression.rValue.source ?: return
         val coneType = expression.lValue.resolvedType
         checkTypeMismatch(

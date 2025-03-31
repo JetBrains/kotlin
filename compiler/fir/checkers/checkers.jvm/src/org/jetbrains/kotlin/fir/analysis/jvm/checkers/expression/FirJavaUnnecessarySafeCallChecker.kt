@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 
 object FirJavaUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker() {
-    override fun check(expression: FirSafeCallExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirSafeCallExpression) {
         val receiverType = EnhancedForWarningConeSubstitutor(context.session.typeContext)
             .substituteOrNull(expression.receiver.resolvedType)
             ?.fullyExpandedType(context.session) ?: return

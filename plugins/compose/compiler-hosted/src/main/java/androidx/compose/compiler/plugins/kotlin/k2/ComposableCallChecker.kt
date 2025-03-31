@@ -41,11 +41,8 @@ import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
-    override fun check(
-        expression: FirPropertyAccessExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirPropertyAccessExpression) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
             ?: return
         if (calleeFunction.isComposable(context.session)) {
@@ -55,11 +52,8 @@ object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionCh
 }
 
 object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(
-        expression: FirFunctionCall,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
             ?: return
 

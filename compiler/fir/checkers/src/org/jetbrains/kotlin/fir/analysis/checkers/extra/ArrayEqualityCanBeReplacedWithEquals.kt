@@ -24,7 +24,8 @@ private val ARRAY_CLASS_IDS = listOf(StandardClassIds.Array)
     .plus(StandardClassIds.unsignedArrayTypeByElementType.values)
 
 object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         if (expression !is FirEqualityOperatorCall) return
         if (expression.operation != FirOperation.EQ && expression.operation != FirOperation.NOT_EQ) return
         val arguments = expression.arguments

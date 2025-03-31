@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 
 object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
         if (expression.source?.kind is KtFakeSourceElementKind) return
         val left = expression.rangeLeft ?: return
         val right = expression.rangeRight ?: return

@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 abstract class FirAbstractNativeRttiChecker(
     private val webCheckerUtils: FirAbstractWebCheckerUtils
 ) : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirStatement) {
         when (expression) {
             is FirGetClassCall -> checkGetClassCall(expression, context, reporter)
             is FirTypeOperatorCall -> checkTypeOperatorCall(expression, context, reporter)
