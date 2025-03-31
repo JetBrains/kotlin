@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 
 internal val KotlinMultiplatformTargetPresetAction = KotlinProjectSetupAction {
     @Suppress("DEPRECATION_ERROR")
-    with(project.multiplatformExtension.presets) {
+    with(project.multiplatformExtension.presetFunctions.presets) {
         add(KotlinJvmTargetPreset(project))
         add(KotlinJsIrTargetPreset(project))
         add(KotlinWasmTargetPreset(project, KotlinWasmTargetType.JS))

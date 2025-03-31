@@ -567,7 +567,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     kotlin.sourceSets.names,
                     kotlin.targets.names,
                     @Suppress("DEPRECATION_ERROR")
-                    kotlin.presets.names,
+                    kotlin.presetFunctions.presets.names,
                 ).flatten()
             }
 

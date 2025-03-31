@@ -1412,10 +1412,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargets
 	public abstract fun getTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainerWithPresets : org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainer {
-	public abstract fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsDsl : java/lang/annotation/Annotation {
 }
 

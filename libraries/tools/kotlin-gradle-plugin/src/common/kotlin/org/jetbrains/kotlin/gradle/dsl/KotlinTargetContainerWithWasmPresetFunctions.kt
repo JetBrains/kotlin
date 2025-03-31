@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 
 @KotlinGradlePluginPublicDsl
 interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWithPresetFunctions {
@@ -18,13 +17,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     fun wasmJs(
         name: String = DEFAULT_WASM_JS_NAME,
         configure: KotlinWasmJsTargetDsl.() -> Unit = { },
-    ): KotlinWasmJsTargetDsl =
-        configureOrCreate(
-            name,
-            @Suppress("DEPRECATION_ERROR")
-            presets.getByName("wasmJs") as KotlinWasmTargetPreset,
-            configure
-        )
+    ): KotlinWasmJsTargetDsl
 
     @ExperimentalWasmDsl
     fun wasmJs() = wasmJs { }
@@ -42,13 +35,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     fun wasmWasi(
         name: String = DEFAULT_WASM_WASI_NAME,
         configure: KotlinWasmWasiTargetDsl.() -> Unit = { },
-    ): KotlinWasmWasiTargetDsl =
-        configureOrCreate(
-            name,
-            @Suppress("DEPRECATION_ERROR")
-            presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
-            configure
-        )
+    ): KotlinWasmWasiTargetDsl
 
     @ExperimentalWasmDsl
     fun wasmWasi() = wasmWasi { }

@@ -10,9 +10,10 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl
 import org.jetbrains.kotlin.gradle.internal.syncCommonMultiplatformOptions
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -21,33 +22,93 @@ import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
+
+internal fun ExtensionContainer.KotlinMultiplatformExtension(
+    objectFactory: ObjectFactory
+): KotlinMultiplatformExtension {
+    val targetsContainer = objectFactory.newInstance<DefaultKotlinTargetsContainer>()
+    val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets)
+    return create(
+        KOTLIN_PROJECT_EXTENSION_NAME,
+        KotlinMultiplatformExtension::class.java,
+        targetsContainer,
+        presetsContainer,
+    )
+}
 
 @Suppress("DEPRECATION_ERROR")
 @KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
 @Inject
-@InternalKotlinGradlePluginApi
-constructor(
+internal constructor(
     project: Project,
-) :
+    private val targetsContainer: KotlinTargetsContainer,
+    internal val presetFunctions: DefaultKotlinTargetContainerWithPresetFunctions = project.objects
+        .DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets),
+) : KotlinTargetsContainer by targetsContainer,
     KotlinProjectExtension(project),
-    KotlinTargetContainerWithPresetFunctions,
+    KotlinTargetContainerWithPresetFunctions by presetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinHierarchyDsl,
     KotlinPublishingDsl,
     HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
-    @Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
-    final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
+    @InternalKotlinGradlePluginApi
+    constructor(
+        project: Project
+    ) : this(
+        project = project,
+        targetsContainer = project.objects.newInstance<KotlinTargetsContainer>(),
+    )
+
+    final override val targets: NamedDomainObjectCollection<KotlinTarget>
+        get() = targetsContainer.targets
+
+    override fun js(
+        name: String,
+        compiler: KotlinJsCompilerType,
+        configure: KotlinJsTargetDsl.() -> Unit
+    ): KotlinJsTargetDsl {
+        @Suppress("UNCHECKED_CAST")
+        return presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName(
+                "js"
+            ) as InternalKotlinTargetPreset<KotlinJsTargetDsl>,
+            configure
+        )
+    }
+
+    @ExperimentalWasmDsl
+    override fun wasmJs(
+        name: String,
+        configure: KotlinWasmJsTargetDsl.() -> Unit,
+    ): KotlinWasmJsTargetDsl =
+        presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName("wasmJs") as KotlinWasmTargetPreset,
+            configure
+        )
+
+    @ExperimentalWasmDsl
+    override fun wasmWasi(
+        name: String,
+        configure: KotlinWasmWasiTargetDsl.() -> Unit,
+    ): KotlinWasmWasiTargetDsl =
+        presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
+            configure
+        )
 
     @Deprecated(
         "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
@@ -223,10 +284,10 @@ internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
 private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
     internal._preset == kotlinTargetPreset
 
-internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCreate(
+internal fun <T : KotlinTarget> DefaultKotlinTargetContainerWithPresetFunctions.configureOrCreate(
     targetName: String,
     targetPreset: InternalKotlinTargetPreset<T>,
-    configure: T.() -> Unit,
+    configure: T.() -> Unit = {},
 ): T {
     val existingTarget = targets.findByName(targetName)
     when {
@@ -265,3 +326,10 @@ internal suspend fun KotlinMultiplatformExtension.awaitMetadataTarget(): KotlinM
 internal fun KotlinMultiplatformExtension.supportedAppleTargets() = targets
     .withType(KotlinNativeTarget::class.java)
     .matching { it.konanTarget.family.isAppleFamily }
+
+private abstract class DefaultKotlinTargetsContainer @Inject constructor(
+    objectFactory: ObjectFactory
+) : KotlinTargetsContainer {
+    override val targets: NamedDomainObjectCollection<KotlinTarget> =
+        objectFactory.domainObjectContainer(KotlinTarget::class.java)
+}

@@ -36,10 +36,13 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
-private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
+internal const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinBaseExtension>): KotlinBaseExtension {
-    return extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
+    return when (extensionClass) {
+        KotlinMultiplatformExtension::class -> extensions.KotlinMultiplatformExtension(objects)
+        else -> extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
+    }
 }
 
 internal val Project.topLevelExtension: KotlinBaseExtension

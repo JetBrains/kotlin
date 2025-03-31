@@ -24,7 +24,7 @@ class KotlinHierarchyBuilderTest {
         val kotlinTargetHierarchyBuilderInterface = KotlinHierarchyBuilder::class.java
 
         @Suppress("DEPRECATION_ERROR")
-        buildProjectWithMPP().multiplatformExtension.presets
+        buildProjectWithMPP().multiplatformExtension.presetFunctions.presets
 
             // JS targets are special and therefore are only handled manually using `withJs()`
             .filter { it !is KotlinJsIrTargetPreset }

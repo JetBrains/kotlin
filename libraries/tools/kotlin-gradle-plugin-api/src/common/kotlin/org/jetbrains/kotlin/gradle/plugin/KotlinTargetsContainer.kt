@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 /**
  * Represents a Kotlin DSL entity containing a collection of multiple [Kotlin targets][KotlinTarget] in this project.
@@ -21,19 +18,6 @@ interface KotlinTargetsContainer {
      * A [NamedDomainObjectContainer] containing all registered [Kotlin targets][KotlinTarget] in this project.
      */
     val targets: NamedDomainObjectCollection<KotlinTarget>
-}
-
-/**
- * @suppress
- */
-@OptIn(InternalKotlinGradlePluginApi::class)
-@DeprecatedTargetPresetApi
-interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
-    @Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
 }
 
 /**
