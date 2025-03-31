@@ -70,10 +70,9 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return emptyList()
 
         return librariesWithFragment.flatMap { resolvedLibrary ->
-
-            val moduleData = moduleData(resolvedLibrary) ?: return@flatMap emptyList()
-
-            resolvedLibrary.packageMetadataParts(packageStringName).map {
+            val moduleData by lazy(LazyThreadSafetyMode.NONE) { moduleData(resolvedLibrary) }
+            resolvedLibrary.packageMetadataParts(packageStringName).mapNotNull {
+                if (moduleData == null) return@mapNotNull null
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)
 
                 val packageProto = fragment.`package`
@@ -86,7 +85,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
                 PackagePartsCacheData(
                     packageProto,
                     FirDeserializationContext.createForPackage(
-                        packageFqName, packageProto, nameResolver, moduleData,
+                        packageFqName, packageProto, nameResolver, moduleData!!,
                         annotationDeserializer,
                         flexibleTypeFactory,
                         constDeserializer,
