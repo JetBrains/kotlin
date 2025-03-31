@@ -31,6 +31,11 @@ internal val KaType.isError
 
 internal const val errorClassName = "ERROR"
 
+/**
+ * See doc at [org.jetbrains.kotlin.objcexport.extras.isErrorParameter]
+ */
+internal const val errorParameterName = "error"
+
 internal val KtObjCExportSession.errorInterface
     get() = ObjCInterfaceImpl(
         name = errorClassName,

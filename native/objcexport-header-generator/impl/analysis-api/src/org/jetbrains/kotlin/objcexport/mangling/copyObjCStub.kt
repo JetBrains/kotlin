@@ -22,26 +22,34 @@ internal fun ObjCProperty.copy(
     )
 }
 
+/**
+ * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubKt.buildMethodName]
+ */
 internal fun ObjCMethod.copy(
-    selectors: List<String>,
-    parameters: List<String>,
+    mangledSelectors: List<String>,
+    mangledParameters: List<String>,
     swiftNameAttribute: String,
+    containingStubName: String,
 ): ObjCMethod {
-    require((selectors.size == this.parameters.size) || (selectors.size == 1 && parameters.isEmpty())) {
-        "selectors count doesn't match parameters count: " +
-            "selectors($selectors): ${selectors.size}, " +
-            "parameters($parameters): ${parameters.size}"
+    val selectorsSize = mangledSelectors.size
+    val parametersSize = this.parameters.size
+    val methodName = this.name
+    require((selectorsSize == parametersSize) || (selectorsSize == 1 && mangledParameters.isEmpty())) {
+        "'$containingStubName.$methodName': selectors of doesn't match parameters count: " +
+            "selectors($mangledSelectors): $selectorsSize, " +
+            "parameters(${this.parameters.joinToString { it.name }}): $parametersSize"
     }
     return ObjCMethod(
         comment = this.comment,
         origin = this.origin,
         isInstanceMethod = this.isInstanceMethod,
         returnType = this.returnType,
-        selectors = selectors,
+        selectors = mangledSelectors,
         parameters = this.parameters,
         attributes = this.attributes.map { attr ->
             if (attr.startsWith("swift_name")) swiftNameAttribute else attr
         },
         extras = this.extras
     )
+
 }

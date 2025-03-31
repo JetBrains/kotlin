@@ -48,16 +48,18 @@ internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
 
 
 internal fun buildMangledSwiftNameMethodAttribute(attribute: ObjCMemberDetails, containingStub: ObjCExportStub): String {
-    val parameters = attribute.parameters.mapIndexed { index, parameter ->
-      if (index == attribute.parameters.size - 1) parameter.mangleSelector(attribute.postfix)
-      else parameter
+    val parameters = attribute.parameters
+    val parametersWithoutError = if (attribute.hasErrorParameter) parameters.dropLast(1) else parameters
+    val mangledParameters = parametersWithoutError.mapIndexed { index, parameter ->
+        if (index == parametersWithoutError.size - 1) parameter.mangleSelector(attribute.postfix)
+        else parameter
     }
 
-  val name = if (containingStub.isExtensionFacade && attribute.parameters.isEmpty()) {
-    attribute.name + attribute.postfix
-  } else attribute.name
+    val name = if (containingStub.isExtensionFacade && parametersWithoutError.isEmpty()) {
+        attribute.name + attribute.postfix
+    } else attribute.name
 
-  return "swift_name(\"${name}(${parameters.joinToString(separator = "")})\")"
+    return "swift_name(\"${name}(${mangledParameters.joinToString(separator = "")})\")"
 }
 
 internal fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> {
@@ -80,7 +82,7 @@ internal fun ObjCMethod.isSwiftNameMethod(): Boolean {
 }
 
 internal fun ObjCMemberDetails.mangleAttribute(): ObjCMemberDetails {
-    return ObjCMemberDetails(name, parameters, isConstructor, postfix + "_")
+    return ObjCMemberDetails(name, parameters, isConstructor, postfix + "_", hasErrorParameter = hasErrorParameter)
 }
 
 /**
@@ -109,7 +111,7 @@ internal val ObjCMethod.isInstance: String
     }
 
 internal fun getMemberKey(method: ObjCMethod) =
-    method.isInstance + getSwiftNameAttribute(method)
+    method.isInstance + getSwiftNameAttribute(method) + method.parameters.joinToString { it.name }
 
 internal fun getSwiftNameAttribute(method: ObjCMethod) =
     method.attributes.first { attr -> attr.startsWith("swift_name") }

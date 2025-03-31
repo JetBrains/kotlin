@@ -19,10 +19,13 @@ internal class ObjCMethodMangler {
 
     private val mangledMethods = mutableMapOf<String, ObjCMemberDetails>()
 
+    /**
+     * Returns null when mangling failed by some reason
+     */
     fun mangle(member: ObjCExportStub, containingStub: ObjCExportStub): ObjCExportStub {
         if (!member.isSwiftNameMethod()) return member
         if (!contains(member)) {
-            cacheMember(member)
+            cacheMember(member as ObjCMethod)
             return member
         } else {
             val key = getMemberKey(member as ObjCMethod)
@@ -31,7 +34,8 @@ internal class ObjCMethodMangler {
             val cloned = member.copy(
                 buildMangledSelectors(mangledAttribute),
                 buildMangledParameters(mangledAttribute),
-                buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub)
+                buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
+                containingStub.name
             )
             mangledMethods[key] = mangledAttribute
             return cloned
@@ -43,9 +47,9 @@ internal class ObjCMethodMangler {
         return mangledMethods[getMemberKey(member as ObjCMethod)] != null
     }
 
-    private fun cacheMember(member: ObjCExportStub) {
-        val memberKey = getMemberKey(member as ObjCMethod)
+    private fun cacheMember(member: ObjCMethod) {
+        val memberKey = getMemberKey(member)
         val swiftNameAttr = getSwiftNameAttribute(member)
-        mangledMethods[memberKey] = parseSwiftMethodNameAttribute(swiftNameAttr, member.returnType == ObjCInstanceType)
+        mangledMethods[memberKey] = parseSwiftMethodNameAttribute(swiftNameAttr, member.returnType == ObjCInstanceType, member.parameters)
     }
 }
