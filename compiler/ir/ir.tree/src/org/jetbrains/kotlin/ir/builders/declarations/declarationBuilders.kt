@@ -158,7 +158,7 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
         origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         returnType = field.type
     }.apply {
-        dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(this)
+        parameters = listOf(parentClass.thisReceiver!!.copyTo(this))
         body = factory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                 IrReturnImpl(
@@ -188,8 +188,15 @@ fun IrProperty.addDefaultSetter(parentClass: IrClass, builtIns: IrBuiltIns) {
         visibility = this@addDefaultSetter.visibility
         returnType = builtIns.unitType
     }.also { setter ->
-        setter.dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(setter)
-        val irValueParameter = setter.addValueParameter("value", field.type)
+        val irValueParameter = buildValueParameter(setter) {
+            name = Name.identifier("value")
+            type = field.type
+            kind = IrParameterKind.Regular
+        }
+        setter.parameters = listOf(
+            parentClass.thisReceiver!!.copyTo(setter),
+            irValueParameter,
+        )
         setter.body = factory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                 IrSetFieldImpl(
@@ -300,7 +307,7 @@ fun IrClass.addFunction(
     }.apply {
         if (!isStatic) {
             val thisReceiver = parentAsClass.thisReceiver!!
-            dispatchReceiverParameter = thisReceiver.copyTo(this, type = thisReceiver.type)
+            parameters = listOf(thisReceiver.copyTo(this, type = thisReceiver.type))
         }
     }
 
