@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeAlias) {
         if (!context.isTopLevel) {
             if (declaration.isLocal) {
                 reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases are unsupported.", context)

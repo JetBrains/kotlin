@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.Variance
 
 object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         checkTypeParameters(
             declaration.typeParameters.filterIsInstance<FirTypeParameter>().map { it.symbol },
             Variance.OUT_VARIANCE, context, reporter

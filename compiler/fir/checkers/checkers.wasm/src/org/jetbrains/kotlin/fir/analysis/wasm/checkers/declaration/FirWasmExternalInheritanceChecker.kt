@@ -22,20 +22,23 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirWasmExternalInheritanceChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirWasmExternalInheritanceChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val session = context.session
         val isCurrentClassExternal = declaration.symbol.isEffectivelyExternal(session)
         for (superTypeRef in declaration.superTypeRefs) {

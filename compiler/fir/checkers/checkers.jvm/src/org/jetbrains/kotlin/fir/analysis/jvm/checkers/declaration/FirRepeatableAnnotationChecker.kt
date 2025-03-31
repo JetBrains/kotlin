@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private val REPEATABLE_ANNOTATION_CONTAINER_NAME = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val annotations = declaration.annotations
         if (annotations.isEmpty()) return
         val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()

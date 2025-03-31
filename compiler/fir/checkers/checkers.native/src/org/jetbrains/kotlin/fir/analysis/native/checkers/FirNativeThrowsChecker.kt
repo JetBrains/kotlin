@@ -38,16 +38,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarationChecker(mppKind) {
     object Regular : FirNativeThrowsChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirDeclaration) {
             if ((declaration as? FirMemberDeclaration)?.isExpect == true) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirNativeThrowsChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirDeclaration) {
             if ((declaration as? FirMemberDeclaration)?.isExpect != true) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
@@ -65,7 +67,8 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         )
     }
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId, context.session)
 
         if (!checkInheritance(declaration, throwsAnnotation, context, reporter)) return

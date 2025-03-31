@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
  * marked as HiddenFromObjC (aka "marked with annotation that is marked as HidesFromObjC").
  */
 object FirNativeHiddenFromObjCInheritanceChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         // Enum entries inherit from their enum class.
         if (declaration.classKind == ClassKind.ENUM_ENTRY) {
             return

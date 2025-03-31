@@ -28,20 +28,23 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
     object Regular : FirFunInterfaceDeclarationChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirRegularClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirFunInterfaceDeclarationChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirRegularClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (!declaration.isInterface || !declaration.isFun) return
 
         val scope = declaration.unsubstitutedScope(context)

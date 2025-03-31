@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (!declaration.isExtension) return
         val delegate = declaration.delegate ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }

@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     @OptIn(SuspiciousValueClassCheck::class)
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && !declaration.isValue) {
             // only report if value keyword does not exist, this includes the deprecated inline class syntax

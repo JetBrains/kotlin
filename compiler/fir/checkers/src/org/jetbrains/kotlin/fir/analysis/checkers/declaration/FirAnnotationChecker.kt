@@ -50,11 +50,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
 
-    override fun check(
-        declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirDanglingModifierList) {
             return
         }

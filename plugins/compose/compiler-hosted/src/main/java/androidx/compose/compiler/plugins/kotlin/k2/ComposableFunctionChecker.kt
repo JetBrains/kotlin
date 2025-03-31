@@ -34,11 +34,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    override fun check(
-        declaration: FirFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         val isComposable = declaration.hasComposableAnnotation(context.session)
 
         val overrides = declaration.getDirectOverriddenFunctions(context)

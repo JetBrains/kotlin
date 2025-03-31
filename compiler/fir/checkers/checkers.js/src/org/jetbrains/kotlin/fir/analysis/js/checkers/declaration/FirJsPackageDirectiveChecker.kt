@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.text
 
 object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
     // inspired by FirJsNameCharsChecker.check()
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         if (declaration.packageFqName.isRoot) return
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) return
 

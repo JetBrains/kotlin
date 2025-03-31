@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.types.*
 // See FE1.0 [KClassWithIncorrectTypeArgumentChecker]
 object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         // Only report on top level callable declarations
         if (context.containingDeclarations.size > 1) return
 

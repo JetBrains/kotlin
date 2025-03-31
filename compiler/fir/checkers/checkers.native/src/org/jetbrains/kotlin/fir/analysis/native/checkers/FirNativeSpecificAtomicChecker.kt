@@ -25,11 +25,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object FirNativeSpecificAtomicChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
-    override fun check(
-        declaration: FirCallableDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (!declaration.visibility.isPublicAPI || declaration is FirValueParameter || declaration is FirAnonymousFunction) return
         declaration.receiverParameter?.typeRef?.let {
             checkType(it, context, reporter)

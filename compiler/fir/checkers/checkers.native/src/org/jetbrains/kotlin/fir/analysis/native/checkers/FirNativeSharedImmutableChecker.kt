@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.name.FqName
 object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private val sharedImmutableClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable"))
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirVariable) {
             if (declaration !is FirValueParameter || context.containingDeclarations.lastOrNull() !is FirPrimaryConstructor) {
                 val hasBackingField = declaration is FirProperty && declaration.hasBackingField

@@ -26,7 +26,8 @@ val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by
 
 // See old FE's [DeclarationsChecker]
 object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration.containingClassLookupTag() != null || declaration is FirPropertyAccessor) {
             return
         }

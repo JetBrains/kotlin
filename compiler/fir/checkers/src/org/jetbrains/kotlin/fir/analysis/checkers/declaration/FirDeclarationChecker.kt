@@ -13,5 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 // We don't declare it as `in D` because we want to prevent accidentally adding more general checkers to sets of specific checkers.
 abstract class FirDeclarationChecker<D : FirDeclaration>(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
-    abstract fun check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    abstract fun check(declaration: D)
 }

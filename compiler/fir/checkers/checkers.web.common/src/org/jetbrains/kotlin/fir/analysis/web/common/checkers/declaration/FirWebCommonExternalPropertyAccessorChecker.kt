@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirPropertyAccessor, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirPropertyAccessor) {
         if (
             declaration !is FirDefaultPropertyAccessor &&
             declaration.isDirectlyExternal() &&

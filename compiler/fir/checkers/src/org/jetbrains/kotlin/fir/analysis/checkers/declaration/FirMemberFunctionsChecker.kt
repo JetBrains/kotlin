@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 // See old FE's [DeclarationsChecker]
 object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClass>() ?: return
         checkFunction(containingDeclaration, declaration, context, reporter)
     }

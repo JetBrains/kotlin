@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.resolve.checkers.OptInDescription
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
         if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) return

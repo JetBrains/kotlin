@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirFunction && declaration !is FirProperty) return
         // if source is not null then this type was declared in source
         // so it can not be inferred to anonymous type

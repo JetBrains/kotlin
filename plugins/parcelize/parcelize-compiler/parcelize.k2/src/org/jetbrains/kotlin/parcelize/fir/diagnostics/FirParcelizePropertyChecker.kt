@@ -42,7 +42,8 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
 class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId>) : FirPropertyChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val session = context.session
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(session) ?: return
 

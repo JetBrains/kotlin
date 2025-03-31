@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSealedSupertypeChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         // only the file declaration is present
         if (declaration.classId.isLocal) {
             checkLocalDeclaration(declaration, context, reporter)

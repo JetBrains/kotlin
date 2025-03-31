@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSelfCallsInNestedObjects))
             return
 

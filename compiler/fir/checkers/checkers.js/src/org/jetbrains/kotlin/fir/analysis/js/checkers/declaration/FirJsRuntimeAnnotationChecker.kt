@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.getExplicitAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 
 object FirJsRuntimeAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             val annotationClassSymbol = annotation.toAnnotationClassLikeSymbol(context.session) ?: continue
             if (annotationClassSymbol.getExplicitAnnotationRetention(context.session) != AnnotationRetention.RUNTIME) continue

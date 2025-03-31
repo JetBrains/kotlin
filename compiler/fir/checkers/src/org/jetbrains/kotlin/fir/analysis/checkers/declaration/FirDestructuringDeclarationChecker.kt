@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val source = declaration.source ?: return
         // val (...) = `destructuring_declaration`
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {

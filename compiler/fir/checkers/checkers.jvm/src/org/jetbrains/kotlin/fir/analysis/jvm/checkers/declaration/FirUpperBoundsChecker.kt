@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 
 object FirUpperBoundsChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeParameter) {
         if (declaration.symbol.resolvedBounds.any { it.coneType.fullyExpandedType(context.session).isArrayType }) {
             reporter.reportOn(declaration.source, FirJvmErrors.UPPER_BOUND_CANNOT_BE_ARRAY, context)
         }

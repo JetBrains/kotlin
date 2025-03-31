@@ -16,13 +16,15 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
 object ContractSyntaxV2FunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         checkFeatureIsEnabled(declaration, context, reporter)
     }
 }
 
 object ContractSyntaxV2PropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         declaration.getter?.let { checkFeatureIsEnabled(it, context, reporter) }
         declaration.setter?.let { checkFeatureIsEnabled(it, context, reporter) }
     }

@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
 
 object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (declaration.isLocal) return
 
         val boundsByName = declaration.typeParameters.associate { it.name to it.symbol.resolvedBounds }

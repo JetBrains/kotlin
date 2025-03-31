@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 
 object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
     @OptIn(UnexpandedTypeCheck::class)
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val session = context.session
 
         fun checkCanGenerateFunctionImp(function: FirNamedFunctionSymbol) {

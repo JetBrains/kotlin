@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 
 object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             val annotationClass = annotation.getAnnotationClassForOptInMarker(context.session) ?: continue
             val useSiteTarget = annotation.useSiteTarget

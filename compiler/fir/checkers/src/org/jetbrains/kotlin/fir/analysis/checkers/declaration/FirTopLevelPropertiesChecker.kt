@@ -41,7 +41,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 // See old FE's [DeclarationsChecker]
 object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         @OptIn(DirectDeclarationsAccess::class)
         val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
         checkFileLikeDeclaration(declaration, topLevelProperties.map { it.symbol }, context, reporter)
@@ -49,7 +50,8 @@ object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
 }
 
 object FirScriptPropertiesChecker : FirScriptChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirScript, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirScript) {
         val topLevelPropertySymbols = mutableListOf<FirPropertySymbol>()
         FirScriptDeclarationsScope(context.session, declaration).processAllCallables { callable ->
             if (callable is FirPropertySymbol) {

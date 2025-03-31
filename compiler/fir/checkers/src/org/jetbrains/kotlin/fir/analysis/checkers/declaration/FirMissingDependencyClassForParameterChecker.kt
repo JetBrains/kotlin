@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
 object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
-    override fun check(
-        declaration: FirValueParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirValueParameter) {
         val containingFunctionSymbol = declaration.containingDeclarationSymbol
         if (containingFunctionSymbol !is FirAnonymousFunctionSymbol) return
         if (declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) return

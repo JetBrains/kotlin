@@ -43,7 +43,8 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
     protected open fun createVisitor(context: CheckerContext, reporter: DiagnosticReporter): UsageVisitorBase =
         UsageVisitorBase(context, reporter)
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (!isEnabled(context)) return
         val visitor = createVisitor(context, reporter)
         when (declaration) {

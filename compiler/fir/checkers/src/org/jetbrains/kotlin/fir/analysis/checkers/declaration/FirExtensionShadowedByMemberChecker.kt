@@ -25,20 +25,23 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCallableDeclarationChecker(kind) {
     data object Regular : FirExtensionShadowedByMemberChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirCallableDeclaration) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     data object ForExpectDeclaration : FirExtensionShadowedByMemberChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirCallableDeclaration) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (
             declaration.hasAnnotation(StandardClassIds.Annotations.HidesMembers, context.session) ||
             declaration.receiverParameter.let { it == null || it.typeRef.coneType.canBeNull(context.session) } ||

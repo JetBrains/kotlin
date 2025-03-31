@@ -51,7 +51,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     private const val UNKNOWN = "unknown"
     private const val NA = "N/A"
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         with(context) {
             val classSymbol = declaration.symbol
             checkMetaSerializableApplicable(classSymbol, reporter)

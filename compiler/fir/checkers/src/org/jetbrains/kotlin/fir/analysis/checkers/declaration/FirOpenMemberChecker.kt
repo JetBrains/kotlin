@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (declaration.canHaveOpenMembers) return
         declaration.symbol.processAllDeclaredCallables(context.session) { memberDeclaration ->
             if (// Marking a constructor `open` is an error covered by diagnostic code WRONG_MODIFIER_TARGET

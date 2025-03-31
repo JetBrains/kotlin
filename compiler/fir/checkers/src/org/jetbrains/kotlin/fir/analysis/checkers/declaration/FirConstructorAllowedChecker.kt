@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirConstructor) {
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
         val source = declaration.source
         val elementType = source?.elementType

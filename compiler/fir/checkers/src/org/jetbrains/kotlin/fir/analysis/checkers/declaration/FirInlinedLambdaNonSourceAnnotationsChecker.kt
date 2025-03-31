@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.references.isError
 
 object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousFunction) {
         if (declaration.inlineStatus != InlineStatus.Inline && declaration.inlineStatus != InlineStatus.CrossInline) {
             return
         }

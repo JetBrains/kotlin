@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousFunction) {
         context.lambdaBodyContext?.checkUnusedParams(declaration, context, reporter)
     }
 

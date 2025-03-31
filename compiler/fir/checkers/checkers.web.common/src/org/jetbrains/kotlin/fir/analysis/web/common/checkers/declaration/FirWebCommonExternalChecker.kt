@@ -43,7 +43,8 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
 
     abstract fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (!isNativeOrEffectivelyExternal(declaration.symbol, context.session)) return
 
         if (!context.isTopLevel) {

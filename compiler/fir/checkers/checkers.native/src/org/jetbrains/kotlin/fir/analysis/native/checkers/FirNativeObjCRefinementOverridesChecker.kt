@@ -32,20 +32,23 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirNativeObjCRefinementOverridesChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirNativeObjCRefinementOverridesChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         // We just need to check intersection overrides, all other declarations are checked by FirNativeObjCRefinementChecker
         val baseScope = declaration.unsubstitutedScope(context)
         baseScope.processAllFunctions { symbol ->

@@ -26,7 +26,8 @@ object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppChec
     private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
     private val refinesInSwiftSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
 
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
         val (objCAnnotation, swiftAnnotation) = declaration.annotations.findMetaAnnotations(session)

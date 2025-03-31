@@ -23,7 +23,8 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         ':', '\\', '$', '&', '~', '*', '?', '#', '|', '§', '%', '@',
     )
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val source = declaration.source
         when (declaration) {
             is FirRegularClass -> checkNameAndReport(declaration.name, source, context, reporter)

@@ -43,7 +43,8 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (declaration.isExpect && !context.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation)) return
         val source = declaration.source ?: return
         val sourceKind = source.kind

@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId>) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session)
         if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)) return
         if (declaration.origin != FirDeclarationOrigin.Source) return

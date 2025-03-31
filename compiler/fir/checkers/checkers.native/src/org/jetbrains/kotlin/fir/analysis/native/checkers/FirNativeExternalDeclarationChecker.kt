@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
         // Functions are legal, typealias is checked by FirModifierChecker
         if (declaration is FirFunction || declaration is FirTypeAlias) return

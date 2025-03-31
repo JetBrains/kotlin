@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
 object FirWasmExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (!context.isTopLevel || declaration.symbol.isEffectivelyExternal(context.session)) {
             return
         }

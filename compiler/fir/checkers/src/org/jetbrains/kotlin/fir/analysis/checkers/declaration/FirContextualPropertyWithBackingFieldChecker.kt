@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 
 object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) &&
             !context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
         ) {

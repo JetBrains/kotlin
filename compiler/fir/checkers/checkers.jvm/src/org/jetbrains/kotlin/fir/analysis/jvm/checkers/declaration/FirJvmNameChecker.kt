@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val jvmName = declaration.findJvmNameAnnotation() ?: return
         val name = jvmName.findArgumentByName(StandardNames.NAME) ?: return
 

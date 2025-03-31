@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
 
 object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         with(context) {
             val classSymbol = declaration.symbol as? FirRegularClassSymbol ?: return
 

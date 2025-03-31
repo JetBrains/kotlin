@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (declaration.symbol.hasExplicitReturnType) {
             declaration.initializer?.checkExpressionForEnhancedTypeMismatch(
                 declaration.returnTypeRef.coneType,
@@ -35,7 +36,8 @@ object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerK
 }
 
 object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirValueParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirValueParameter) {
         declaration.defaultValue?.checkExpressionForEnhancedTypeMismatch(
             declaration.returnTypeRef.coneType,
             reporter,

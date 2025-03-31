@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
         val contextListSources = declaration.source?.findContextReceiverListSources().orEmpty().ifEmpty { return }

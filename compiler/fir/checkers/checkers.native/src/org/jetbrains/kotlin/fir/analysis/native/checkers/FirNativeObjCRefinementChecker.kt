@@ -23,7 +23,8 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppChecker
     val hidesFromObjCClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.HidesFromObjC"))
     val refinesInSwiftClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.RefinesInSwift"))
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
         val (objCAnnotations, swiftAnnotations) = declaration.findRefinedAnnotations(context.session)
         if (objCAnnotations.isNotEmpty() && swiftAnnotations.isNotEmpty()) {

@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.fir.types.*
 
 // TODO: check why coneTypeSafe is necessary at some points inside
 object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         when (declaration) {
             is FirAnonymousFunction -> return
             is FirTypeAlias -> checkTypeAlias(declaration, reporter, context)

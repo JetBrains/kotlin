@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 
 object RedundantSetterParameterTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         val setter = declaration.setter ?: return
         if (setter is FirDefaultPropertyAccessor) return
         val valueParameter = setter.valueParameters.firstOrNull() ?: return

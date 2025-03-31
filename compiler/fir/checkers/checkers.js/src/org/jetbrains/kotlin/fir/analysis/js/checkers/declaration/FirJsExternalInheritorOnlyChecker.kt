@@ -24,16 +24,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirJsExternalInheritorOnlyChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirJsExternalInheritorOnlyChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
@@ -50,7 +52,8 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (!declaration.symbol.isEffectivelyExternal(context)) {
             declaration.forEachParents(context) { parent ->
                 if (parent.hasAnnotation(JsExternalInheritorsOnly, context.session)) {

@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (!declaration.isOperator) return
         //we are not interested in implicit operators from override
         if (!declaration.hasModifier(KtTokens.OPERATOR_KEYWORD)) return

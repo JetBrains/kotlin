@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.utils.DFS
  * @see org.jetbrains.kotlin.resolve.FiniteBoundRestrictionChecker
  */
 object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.typeParameters.isEmpty()) return
 
         // TODO, KT-61103: Improve documentation on finite bounds validation, especially B-closure and constituent types definition.

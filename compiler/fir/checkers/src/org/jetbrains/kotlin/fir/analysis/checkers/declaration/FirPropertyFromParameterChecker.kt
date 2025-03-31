@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 
 object FirPropertyFromParameterChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (declaration.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) return
         if (declaration.isAbstract) {
             reporter.reportOn(

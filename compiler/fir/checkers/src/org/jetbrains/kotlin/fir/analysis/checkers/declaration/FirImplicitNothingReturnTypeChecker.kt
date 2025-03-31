@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.types.isNothing
 
 object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
         if (declaration is FirProperty && declaration.isLocal) return
         if (declaration.isOverride) return

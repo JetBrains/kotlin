@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 
 object FirOptInImportsChecker : FirFileChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         declaration.imports.forEach { import ->
             if (import !is FirResolvedImport) return@forEach
             val source = import.source ?: return@forEach

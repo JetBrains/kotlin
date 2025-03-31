@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 
 object FirAnonymousFunctionTypeParametersChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirAnonymousFunction) {
         val source = declaration.source ?: return
         if (declaration.typeParameters.isNotEmpty()) {
             reporter.reportOn(source, FirErrors.TYPE_PARAMETERS_NOT_ALLOWED, context)

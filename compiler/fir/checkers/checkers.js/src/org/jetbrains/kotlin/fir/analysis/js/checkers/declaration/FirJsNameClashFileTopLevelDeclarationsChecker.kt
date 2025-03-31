@@ -33,7 +33,8 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppChecker
         }
     }
 
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         val topLevelDeclarationsWithStableName = mutableMapOf<String, MutableList<FirJsStableName>>()
         @OptIn(DirectDeclarationsAccess::class)
         for (topLevelDeclaration in declaration.declarations) {

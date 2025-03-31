@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirFunctionNameChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         val source = declaration.source
         if (source == null || source.kind is KtFakeSourceElementKind) return
         val containingDeclaration = context.containingDeclarations.lastOrNull()

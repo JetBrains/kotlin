@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val hasExpectRefinementAnnotation =
             declaration.hasAnnotation(StandardClassIds.Annotations.ExpectRefinement, context.session)
         val isExpect = declaration is FirMemberDeclaration && declaration.isExpect

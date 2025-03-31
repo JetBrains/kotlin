@@ -159,7 +159,8 @@ private class Checker(
 private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
     val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         context.sessionContext {
             declaration.returnTypeRef.coneType.let { type ->
                 reportSchema(reporter, declaration.source, SCHEMA, type, context)
@@ -198,7 +199,8 @@ private data object PropertyAccessSchemaReporter : FirPropertyAccessExpressionCh
 private data object FunctionDeclarationSchemaReporter : FirSimpleFunctionChecker(mppKind = MppCheckerKind.Common) {
     val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         val type = declaration.returnTypeRef.coneType
         context.sessionContext {
             reportSchema(reporter, declaration.source, SCHEMA, type, context)

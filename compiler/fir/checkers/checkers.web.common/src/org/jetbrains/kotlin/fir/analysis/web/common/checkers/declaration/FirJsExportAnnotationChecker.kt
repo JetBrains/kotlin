@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirJsExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val jsExport = declaration.getAnnotationByClassId(WebCommonStandardClassIds.Annotations.JsExport, context.session) ?: return
 
         if (declaration !is FirFile && !context.isTopLevel) {

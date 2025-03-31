@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val enumClass = when (declaration.classKind) {
             ClassKind.ENUM_CLASS -> declaration as FirRegularClass
             ClassKind.ENUM_ENTRY -> context.containingDeclarations.lastIsInstanceOrNull()

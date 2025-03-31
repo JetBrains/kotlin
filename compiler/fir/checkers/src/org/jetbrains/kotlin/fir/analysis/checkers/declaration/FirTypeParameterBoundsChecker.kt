@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 
 sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypeParameterChecker(mppKind) {
     object Regular : FirTypeParameterBoundsChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirTypeParameter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
             if ((containingDeclaration as? FirMemberDeclaration)?.isExpect == true) return
             check(declaration, containingDeclaration, context, reporter)
@@ -31,7 +32,8 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
     }
 
     object ForExpectClass : FirTypeParameterBoundsChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirTypeParameter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
             if ((containingDeclaration as? FirMemberDeclaration)?.isExpect != true) return
             check(declaration, containingDeclaration, context, reporter)

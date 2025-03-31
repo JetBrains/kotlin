@@ -63,7 +63,8 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
 val FirSession.conflictDeclarationsDiagnosticDispatcher: PlatformConflictDeclarationsDiagnosticDispatcher? by FirSession.nullableSessionComponentAccessor()
 
 object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         when (declaration) {
             is FirFile -> {
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)

@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.JVM_SHO
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 
 object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
-    override fun check(
-        declaration: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         if (!declaration.isOverride) return
         val name = declaration.name
         val mayBeRenamedBuiltIn = name in namesPossibleForRenamedBuiltin

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 
 object FirExplicitBackingFieldsUnsupportedChecker : FirBackingFieldChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirBackingField, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirBackingField) {
         if (declaration !is FirDefaultPropertyBackingField) {
             declaration.requireFeatureSupport(LanguageFeature.ExplicitBackingFields, context, reporter)
         }

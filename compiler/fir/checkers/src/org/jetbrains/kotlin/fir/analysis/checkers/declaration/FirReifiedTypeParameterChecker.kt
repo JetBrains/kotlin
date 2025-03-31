@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
 object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeParameter) {
         if (!declaration.isReified) return
         val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
 

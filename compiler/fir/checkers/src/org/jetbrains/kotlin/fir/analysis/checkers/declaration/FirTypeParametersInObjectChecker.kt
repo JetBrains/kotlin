@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirTypeParametersInObjectChecker : FirClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         if (declaration.classKind == ClassKind.OBJECT && declaration is FirRegularClass) {
             if (declaration.typeParameters.isNotEmpty()) {
                 reporter.reportOn(declaration.source, FirErrors.TYPE_PARAMETERS_IN_OBJECT, context)

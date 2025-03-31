@@ -31,7 +31,8 @@ class FirParcelizeConstructorChecker(
     private val parcelizeAnnotations: List<ClassId>,
     private val experimentalCodeGeneration: Boolean
 ) : FirConstructorChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirConstructor) {
         if (!declaration.isPrimary) return
         val source = declaration.source ?: return
         if (source.kind == KtFakeSourceElementKind.ImplicitConstructor) return

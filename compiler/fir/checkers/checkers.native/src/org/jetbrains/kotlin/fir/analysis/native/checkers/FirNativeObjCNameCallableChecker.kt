@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
 sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCallableDeclarationChecker(mppKind) {
     object Regular : FirNativeObjCNameCallableChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirCallableDeclaration) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
             if (containingClass.isExpect) return
             check(declaration, containingClass, context, reporter)
@@ -26,7 +27,8 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
     }
 
     object ForExpectClass : FirNativeObjCNameCallableChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirCallableDeclaration) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
             if (!containingClass.isExpect) return
             check(declaration, containingClass, context, reporter)

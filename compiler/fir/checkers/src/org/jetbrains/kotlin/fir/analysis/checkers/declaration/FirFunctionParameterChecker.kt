@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         checkVarargParameters(declaration, context, reporter)
         checkParameterTypes(declaration, context, reporter)
         checkUninitializedParameter(declaration, context, reporter)

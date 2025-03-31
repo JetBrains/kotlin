@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 
 object FirLocalExtensionPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirProperty) {
         if (declaration.isLocal && declaration.isExtension) {
             reporter.reportOn(declaration.receiverParameter?.source, FirErrors.LOCAL_EXTENSION_PROPERTY, context)
         }

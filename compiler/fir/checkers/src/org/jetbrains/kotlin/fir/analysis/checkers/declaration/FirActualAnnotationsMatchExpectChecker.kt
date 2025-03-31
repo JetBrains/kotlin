@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatc
  * This checker runs only in IDE mode. In CLI IR checker runs instead of it.
  */
 internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return

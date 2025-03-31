@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (
             declaration is FirRegularClass ||
             declaration is FirProperty && declaration.isCatchParameter != true ||

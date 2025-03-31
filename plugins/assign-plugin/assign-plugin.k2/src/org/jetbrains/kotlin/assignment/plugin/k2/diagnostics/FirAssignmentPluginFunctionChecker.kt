@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
 object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         if (declaration.origin != FirDeclarationOrigin.Source) return
         if (!declaration.isAssignMethod()) return
 

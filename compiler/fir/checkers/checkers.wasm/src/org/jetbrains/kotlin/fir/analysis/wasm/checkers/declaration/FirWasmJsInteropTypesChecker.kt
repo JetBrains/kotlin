@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
 object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val session = context.session
 
         fun isExternalJsInteropDeclaration(): Boolean {

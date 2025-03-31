@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
 
 object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
         if (declaration is FirProperty && declaration.isVar) {

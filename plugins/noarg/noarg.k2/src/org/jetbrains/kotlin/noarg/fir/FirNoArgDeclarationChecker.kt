@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
 object FirNoArgDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         val source = declaration.source ?: return
         if (declaration.classKind != ClassKind.CLASS) return
         val matcher = context.session.noArgPredicateMatcher

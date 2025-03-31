@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATI
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID
 
 object FirJvmDefaultChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val jvmDefaultMode = context.session.jvmDefaultModeState
         val session = context.session
         val withoutCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID, session)

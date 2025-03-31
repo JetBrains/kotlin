@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         if (declaration is FirProperty) {
             val accessors = listOfNotNull(declaration.getter?.symbol, declaration.setter?.symbol)
             val namedAccessorCount = accessors.count { it.getJsName(context.session) != null }

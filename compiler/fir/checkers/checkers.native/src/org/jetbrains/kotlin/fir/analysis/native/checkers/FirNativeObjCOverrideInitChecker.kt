@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOverrideInitClassId
 
 object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val session = context.session
 
         fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymbol> {

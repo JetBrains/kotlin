@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations.JvmRepeatable
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Repeatable
 
 object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         val kotlinRepeatable = declaration.getAnnotationByClassId(Repeatable, context.session)
         val javaRepeatable = declaration.getAnnotationByClassId(JvmRepeatable, context.session)
             ?: declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, context.session)

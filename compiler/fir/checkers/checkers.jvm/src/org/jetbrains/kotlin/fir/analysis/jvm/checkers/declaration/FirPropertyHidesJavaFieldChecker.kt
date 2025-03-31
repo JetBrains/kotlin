@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val scope = declaration.unsubstitutedScope(context)
         scope.processAllProperties { propertySymbol ->
             if (propertySymbol !is FirPropertySymbol) return@processAllProperties

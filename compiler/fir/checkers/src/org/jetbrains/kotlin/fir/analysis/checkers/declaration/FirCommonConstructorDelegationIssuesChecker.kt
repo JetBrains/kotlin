@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>()
         if (declaration.isEffectivelyExternal(containingClass, context)) return
         val cyclicConstructors = mutableSetOf<FirConstructorSymbol>()

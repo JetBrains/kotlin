@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ActualTypealiasToSpecialAnnotation
 import org.jetbrains.kotlin.types.Variance
 
 object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeAlias) {
         if (!declaration.isActual) return
 
         declaration.checkDefaultArgumentsInExpectWithActualTypeAlias(context, reporter)

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 
 object FirEnumEntriesRedeclarationChecker : FirEnumEntryChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirEnumEntry, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirEnumEntry) {
         if (declaration.name == StandardNames.ENUM_ENTRIES) {
             reporter.reportOn(declaration.source, FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES, context)
         }

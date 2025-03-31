@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOutletClassId
 
 object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val session = context.session
 
         fun checkCanGenerateFunctionImp(setter: FirPropertyAccessorSymbol) {

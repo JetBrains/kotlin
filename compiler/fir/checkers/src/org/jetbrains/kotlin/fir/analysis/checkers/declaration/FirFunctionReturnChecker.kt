@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirFunctionReturnChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         checkHasReturnIfBlock(declaration, reporter, context)
     }
 

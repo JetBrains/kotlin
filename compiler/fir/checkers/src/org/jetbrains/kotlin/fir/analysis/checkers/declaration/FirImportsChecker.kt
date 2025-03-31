@@ -37,7 +37,8 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFile) {
         declaration.imports.forEach { import ->
             if (import.source?.kind?.shouldSkipErrorTypeReporting == true) return@forEach
             if (import.isAllUnder) {

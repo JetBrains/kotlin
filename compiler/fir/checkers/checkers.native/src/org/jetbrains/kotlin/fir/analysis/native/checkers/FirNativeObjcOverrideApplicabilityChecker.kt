@@ -60,11 +60,8 @@ object NativeConflictDeclarationsDiagnosticDispatcher : PlatformConflictDeclarat
 }
 
 object FirNativeObjcOverrideApplicabilityChecker : FirFunctionChecker(MppCheckerKind.Platform) {
-    override fun check(
-        declaration: FirFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration.hasAnnotation(objCSignatureOverrideClassId, context.session)) {
             if (!declaration.symbol.isInheritedFromObjc(context)) {
                 reporter.reportOn(declaration.getAnnotationByClassId(objCSignatureOverrideClassId, context.session)?.source, FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE, context)

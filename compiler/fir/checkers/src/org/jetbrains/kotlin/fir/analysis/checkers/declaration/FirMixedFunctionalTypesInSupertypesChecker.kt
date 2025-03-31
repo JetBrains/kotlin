@@ -19,20 +19,23 @@ import org.jetbrains.kotlin.fir.types.functionTypeKind
 
 sealed class FirMixedFunctionalTypesInSupertypesChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirMixedFunctionalTypesInSupertypesChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirMixedFunctionalTypesInSupertypesChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
         val superKinds = lookupSuperTypes(declaration.symbol, lookupInterfaces = true, deep = true, context.session)
             .mapNotNullTo(mutableSetOf()) { it.functionTypeKind(context.session)?.nonReflectKind() }
 

@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirDataObjectContentChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirSimpleFunction) {
         if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
         val source = declaration.source
         if (source == null || source.kind is KtFakeSourceElementKind) return

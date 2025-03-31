@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirEnumEntryInitializationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (!declaration.isEnumClass) return
         if (!context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
         val enumEntries = declaration.collectEnumEntries(context.session)

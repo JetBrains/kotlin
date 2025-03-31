@@ -20,20 +20,23 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
 sealed class FirJsInheritanceFunctionChecker(mppKind: MppCheckerKind) : FirFunctionChecker(mppKind) {
     object Regular : FirJsInheritanceFunctionChecker(MppCheckerKind.Platform) {
-        override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirFunction) {
             if ((context.containingDeclarations.last() as? FirClass)?.isExpect == true) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
     object ForExpectClass : FirJsInheritanceFunctionChecker(MppCheckerKind.Common) {
-        override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        override fun check(declaration: FirFunction) {
             if ((context.containingDeclarations.last() as? FirClass)?.isExpect != true) return
-            super.check(declaration, context, reporter)
+            super.check(declaration)
         }
     }
 
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration.isNotEffectivelyExternalFunctionButOverridesExternal(context)) {
             reporter.reportOn(declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, context)
         }

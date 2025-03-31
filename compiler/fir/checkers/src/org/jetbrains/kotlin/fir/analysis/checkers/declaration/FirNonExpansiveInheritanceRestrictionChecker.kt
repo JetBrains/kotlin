@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * @see org.jetbrains.kotlin.resolve.NonExpansiveInheritanceRestrictionChecker
  */
 object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         if (declaration.typeParameters.isEmpty()) return
 
         val graph = buildTypeGraph(declaration, context.session)

@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
 
 object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirDeclaration) {
         checkSuperClass(declaration, context, reporter)
 
         if (declaration is FirFile || !declaration.isEitherModuleOrNonModule(context.session)) return

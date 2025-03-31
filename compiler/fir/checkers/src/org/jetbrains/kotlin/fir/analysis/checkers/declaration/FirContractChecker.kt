@@ -40,7 +40,8 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private val DUPLICATE_CALLS_IN_PLACE_MESSAGE = "A value parameter may not be annotated with callsInPlace twice"
     private val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
 
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirFunction) {
         if (declaration !is FirContractDescriptionOwner) return
         val contractDescription = declaration.contractDescription ?: return
 

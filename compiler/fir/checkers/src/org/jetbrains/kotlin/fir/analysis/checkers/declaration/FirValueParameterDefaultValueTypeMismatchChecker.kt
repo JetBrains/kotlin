@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirValueParameterDefaultValueTypeMismatchChecker : FirValueParameterChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirValueParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirValueParameter) {
         val defaultValue = declaration.defaultValue?.takeIf { it !is FirErrorExpression } ?: return
         val source = requireNotNull(declaration.source)
         val parameterType = declaration.returnTypeRef.coneType
