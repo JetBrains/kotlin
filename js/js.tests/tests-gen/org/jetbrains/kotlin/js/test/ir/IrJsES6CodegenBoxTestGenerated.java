@@ -9839,6 +9839,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("suspendFunctionAsSupertypeWithInlinedFunInKlib.kt")
+    public void testSuspendFunctionAsSupertypeWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertypeWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("suspendFunctionMethodReference.kt")
     public void testSuspendFunctionMethodReference() {
       runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
