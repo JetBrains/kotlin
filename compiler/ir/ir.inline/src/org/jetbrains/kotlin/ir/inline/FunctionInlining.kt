@@ -710,10 +710,10 @@ private class CallInlining(
             } else {
                 // This variable is required to trigger argument evaluation outside the scope of the inline function
                 val tempVarOutsideInlineBlock = callSiteBuilder
-                    .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                    .at(variableInitializer)
                     .irTemporary(callSiteBuilder.computeInitializer())
                 inlinedBlockBuilder
-                    .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                    .at(parameter)
                     .irGet(tempVarOutsideInlineBlock)
             }
 
