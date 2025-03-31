@@ -144,7 +144,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
             modality = javaClass.modality
-            this.isTopLevel = classId.outerClassId == null
+            this.isTopLevel = !classId.isNestedClass
             isStatic = javaClass.isStatic
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
             this.javaTypeParameterStack = classJavaTypeParameterStack
