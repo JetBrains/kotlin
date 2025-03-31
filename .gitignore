@@ -60,3 +60,4 @@ kotlin-ide/
 .kotlin/
 .teamcity/
 .npmrc
+/.idea/AndroidProjectSystem.xml
