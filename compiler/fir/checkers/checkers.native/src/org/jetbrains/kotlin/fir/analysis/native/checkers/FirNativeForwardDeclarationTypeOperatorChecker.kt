@@ -55,8 +55,7 @@ object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallCheck
             FirOperation.IS, FirOperation.NOT_IS -> reporter.reportOn(
                 expression.source,
                 FirNativeErrors.CANNOT_CHECK_FOR_FORWARD_DECLARATION,
-                targetTypeRef.coneType,
-                context,
+                targetTypeRef.coneType
             )
             else -> {}
         }

@@ -34,8 +34,7 @@ object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) 
                     reporter.reportOn(
                         unwrappedArg.source,
                         FirJsErrors.JS_EXTERNAL_ARGUMENT,
-                        type,
-                        context
+                        type
                     )
                 }
             }

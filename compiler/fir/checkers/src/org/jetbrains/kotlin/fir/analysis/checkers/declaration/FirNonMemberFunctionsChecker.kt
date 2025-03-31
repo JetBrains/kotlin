@@ -40,7 +40,7 @@ object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) 
             !declaration.isExpect &&
             context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration, context) != false
         ) {
-            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol, context)
+            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol)
         }
     }
 }

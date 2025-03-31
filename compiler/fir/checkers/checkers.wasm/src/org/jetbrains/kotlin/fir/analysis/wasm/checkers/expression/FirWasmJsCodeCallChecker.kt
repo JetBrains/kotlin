@@ -53,17 +53,16 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                     reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 } else {
                     if (containingDeclaration.isSuspend) {
-                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "suspend function", context)
+                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "suspend function")
                     }
                     if (containingDeclaration.isInline) {
-                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "inline function", context)
+                        reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "inline function")
                     }
                     if (containingDeclaration.isExtension) {
                         reporter.reportOn(
                             source,
                             FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
-                            "function with extension receiver",
-                            context
+                            "function with extension receiver"
                         )
                     }
                     for (parameter in containingDeclaration.valueParameters) {

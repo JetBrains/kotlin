@@ -61,8 +61,8 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         val enclosingSuspendFunction = findEnclosingSuspendFunction(context)
         if (enclosingSuspendFunction == null) {
             when (symbol) {
-                is FirNamedFunctionSymbol -> reporter.reportOn(expression.source, FirErrors.ILLEGAL_SUSPEND_FUNCTION_CALL, symbol, context)
-                is FirPropertySymbol -> reporter.reportOn(expression.source, FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS, symbol, context)
+                is FirNamedFunctionSymbol -> reporter.reportOn(expression.source, FirErrors.ILLEGAL_SUSPEND_FUNCTION_CALL, symbol)
+                is FirPropertySymbol -> reporter.reportOn(expression.source, FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS, symbol)
                 else -> {
                 }
             }
@@ -74,8 +74,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
                 reporter.reportOn(
                     expression.source,
                     FirErrors.UNSUPPORTED,
-                    "Suspend function call in default parameter value is unsupported.",
-                    context
+                    "Suspend function call in default parameter value is unsupported."
                 )
             }
             if (!checkRestrictsSuspension(expression, enclosingSuspendFunction, symbol, context)) {

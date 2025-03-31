@@ -45,7 +45,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
         if (typeArgumentsWithWrongType.isEmpty()) return
         typeArgumentsWithWrongType.forEach {
             val typeParameterFromError = (it.typeArguments[0] as? ConeKotlinTypeProjection)?.type?.typeParameterFromError ?: return@forEach
-            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError, context)
+            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError)
         }
     }
 

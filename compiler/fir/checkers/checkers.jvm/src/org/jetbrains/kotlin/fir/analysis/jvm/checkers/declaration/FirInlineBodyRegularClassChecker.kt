@@ -19,7 +19,7 @@ object FirInlineBodyRegularClassChecker : FirRegularClassChecker(MppCheckerKind.
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
 
         if (!declaration.classKind.isSingleton && context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction) {
-            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local classes", context)
+            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local classes")
         }
     }
 }

@@ -27,8 +27,7 @@ abstract class FirAbstractReifiedExternalChecker(
                 reporter.reportOn(
                     typeArgument.source ?: expression.source,
                     FirWebCommonErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
-                    type,
-                    context
+                    type
                 )
             }
         }

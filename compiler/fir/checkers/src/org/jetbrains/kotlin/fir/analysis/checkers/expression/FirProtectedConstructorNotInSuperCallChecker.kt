@@ -39,7 +39,7 @@ object FirProtectedConstructorNotInSuperCallChecker : FirFunctionCallChecker(Mpp
             !reference.isError() &&
             context.containingDeclarations.none { it.symbol == constructedClass }
         ) {
-            reporter.reportOn(expression.calleeReference.source, FirErrors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, symbol, context)
+            reporter.reportOn(expression.calleeReference.source, FirErrors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, symbol)
         }
     }
 

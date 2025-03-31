@@ -36,8 +36,7 @@ object FirJsExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
             reporter.reportOn(
                 declaration.source,
                 FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-                targetAnnotations.resolvedType,
-                context
+                targetAnnotations.resolvedType
             )
         }
     }

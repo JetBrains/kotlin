@@ -36,8 +36,7 @@ object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionC
                 reporter.reportOn(
                     source,
                     FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT,
-                    typeArgument,
-                    context,
+                    typeArgument
                 )
             }
         }

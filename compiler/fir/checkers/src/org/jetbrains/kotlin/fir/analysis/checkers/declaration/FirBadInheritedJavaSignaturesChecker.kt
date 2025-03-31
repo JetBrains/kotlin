@@ -46,7 +46,7 @@ object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Pla
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION,
-                    symbol, context,
+                    symbol
                 )
             }
         }

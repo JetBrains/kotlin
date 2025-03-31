@@ -40,7 +40,7 @@ object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
             val action = "@${objCActionClassId.asFqNameString()}"
 
             function.receiverParameterSymbol?.let {
-                reporter.reportOn(it.source, MUST_NOT_HAVE_EXTENSION_RECEIVER, "$action method", context)
+                reporter.reportOn(it.source, MUST_NOT_HAVE_EXTENSION_RECEIVER, "$action method")
             }
 
             function.valueParameterSymbols.forEach {

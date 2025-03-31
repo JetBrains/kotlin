@@ -60,7 +60,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
             if (declaration != null) {
                 val (isSubclassOptInApplicable, message) = getSubclassOptInApplicabilityAndMessage(declaration)
                 if (!isSubclassOptInApplicable && message != null) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, message, context)
+                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, message)
                     return
                 }
             }

@@ -30,7 +30,7 @@ object FirJvmMissingBuiltInDeclarationChecker : FirBasicExpressionChecker(MppChe
 
         fun reportIfNeeded(classSymbol: FirClassLikeSymbol<*>?): Boolean {
             if (classSymbol?.origin == FirDeclarationOrigin.BuiltInsFallback) {
-                reporter.reportOn(expression.source, FirJvmErrors.MISSING_BUILT_IN_DECLARATION, classSymbol, context)
+                reporter.reportOn(expression.source, FirJvmErrors.MISSING_BUILT_IN_DECLARATION, classSymbol)
                 return true
             }
             return false

@@ -45,8 +45,7 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.CONFLICTING_OVERLOADS,
-                    listOf(declaration.symbol, override),
-                    context
+                    listOf(declaration.symbol, override)
                 )
             }
 

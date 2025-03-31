@@ -33,12 +33,12 @@ object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
 
         fun checkCanGenerateOutletSetterImp(property: FirPropertySymbol) {
             if (!property.isVar) {
-                reporter.reportOn(property.source, FirNativeErrors.PROPERTY_MUST_BE_VAR, objCOutletClassId.asSingleFqName(), context)
+                reporter.reportOn(property.source, FirNativeErrors.PROPERTY_MUST_BE_VAR, objCOutletClassId.asSingleFqName())
                 return
             }
 
             property.receiverParameterSymbol?.let {
-                reporter.reportOn(it.source, FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER, "@${objCOutletClassId.asFqNameString()}", context)
+                reporter.reportOn(it.source, FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER, "@${objCOutletClassId.asFqNameString()}")
             }
 
             val type = property.resolvedReturnTypeRef

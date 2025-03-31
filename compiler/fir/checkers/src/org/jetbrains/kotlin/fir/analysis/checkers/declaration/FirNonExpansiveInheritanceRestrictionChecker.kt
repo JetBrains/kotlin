@@ -50,7 +50,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
         val containers = problemNodes.map { it.container }
         if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return
-        reporter.reportOn(declaration.source, FirErrors.EXPANSIVE_INHERITANCE_IN_JAVA, containers, context)
+        reporter.reportOn(declaration.source, FirErrors.EXPANSIVE_INHERITANCE_IN_JAVA, containers)
     }
 
     private fun buildTypeGraph(

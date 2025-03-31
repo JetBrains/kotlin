@@ -86,8 +86,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             reporter.reportOn(
                 throwsAnnotation.source,
                 FirNativeErrors.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND,
-                cancellationExceptionFqName,
-                context
+                cancellationExceptionFqName
             )
         }
     }

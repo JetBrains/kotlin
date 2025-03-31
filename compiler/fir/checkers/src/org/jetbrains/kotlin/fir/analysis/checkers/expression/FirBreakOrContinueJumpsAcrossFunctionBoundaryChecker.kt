@@ -42,7 +42,7 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
             !inlineLambdasSupported -> {
                 reporter.reportOn(
                     expression.source, FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.BreakContinueInInlineLambdas to context.languageVersionSettings, context
+                    LanguageFeature.BreakContinueInInlineLambdas to context.languageVersionSettings
                 )
             }
         }

@@ -38,8 +38,7 @@ object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Co
             reporter.reportOn(
                 target?.source,
                 FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET,
-                wrongTargets.joinToString(transform = KotlinTarget::description),
-                context
+                wrongTargets.joinToString(transform = KotlinTarget::description)
             )
         }
     }

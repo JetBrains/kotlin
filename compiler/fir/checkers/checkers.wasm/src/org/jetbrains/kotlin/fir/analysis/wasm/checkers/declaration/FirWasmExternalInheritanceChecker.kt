@@ -50,8 +50,7 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
                 reporter.reportOn(
                     declaration.source,
                     FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
-                    superTypeRef.coneType,
-                    context
+                    superTypeRef.coneType
                 )
             } else if (isCurrentClassExternal && !isSuperClassExternal) {
                 // External enum and annotation classes are prohibited, but they add implicit non-external super types. Skip reporting errors for them.
@@ -61,8 +60,7 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
                 reporter.reportOn(
                     declaration.source,
                     FirWasmErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
-                    superTypeRef.coneType,
-                    context
+                    superTypeRef.coneType
                 )
             }
         }

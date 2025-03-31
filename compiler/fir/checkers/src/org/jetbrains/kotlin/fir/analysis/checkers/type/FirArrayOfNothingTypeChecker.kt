@@ -28,7 +28,7 @@ object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
         if (!isVararg) {
             val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
             if (arrayOfNothingKind != null) {
-                reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'${arrayOfNothingKind.representation}' is an invalid array type.", context)
+                reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'${arrayOfNothingKind.representation}' is an invalid array type.")
             }
         }
     }

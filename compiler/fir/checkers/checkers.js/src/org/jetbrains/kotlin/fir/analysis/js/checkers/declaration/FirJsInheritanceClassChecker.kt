@@ -66,7 +66,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
             if (fakeOverriddenMethod != null) {
                 reporter.reportOn(
                     declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE,
-                    fakeOverriddenMethod, context
+                    fakeOverriddenMethod
                 )
             }
         }

@@ -31,6 +31,6 @@ object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(
                 "Inaccessible receiver ${expression.render()} isn't found in receivers of a call/access ${this.render()}"
             }
         }
-        reporter.reportOn(containingCall.calleeReference.source, FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL, "<this>", context)
+        reporter.reportOn(containingCall.calleeReference.source, FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL, "<this>")
     }
 }

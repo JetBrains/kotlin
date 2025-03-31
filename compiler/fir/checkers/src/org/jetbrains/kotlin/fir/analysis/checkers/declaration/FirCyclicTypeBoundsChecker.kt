@@ -53,7 +53,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                     listOf(typeParameter.source)
                 }
                 targets.forEach {
-                    reporter.reportOn(it, FirErrors.CYCLIC_GENERIC_UPPER_BOUND, typeParameterCycle, context)
+                    reporter.reportOn(it, FirErrors.CYCLIC_GENERIC_UPPER_BOUND, typeParameterCycle)
                 }
             }
         }

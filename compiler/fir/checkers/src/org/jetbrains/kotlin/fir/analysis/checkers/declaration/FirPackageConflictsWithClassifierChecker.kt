@@ -38,7 +38,7 @@ internal object FirPackageConflictsWithClassifierChecker : FirFileChecker(MppChe
             ) {
                 continue
             }
-            reporter.reportOn(packageDirective.source, FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER, classId, context)
+            reporter.reportOn(packageDirective.source, FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER, classId)
         }
     }
 

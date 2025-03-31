@@ -17,7 +17,7 @@ object DummyNameChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirSimpleFunction) {
         val name = declaration.name.asString()
         if (name == "dummy") {
-            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_DUMMY_NAME, name, context)
+            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_DUMMY_NAME, name)
         }
     }
 }

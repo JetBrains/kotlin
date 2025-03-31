@@ -45,16 +45,16 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
 
         when {
             expression is FirCall && expression.isArrayAccessWithMultipleIndices(context.session) -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "indexed access with more than one index", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "indexed access with more than one index"
             )
             expression is FirFunctionCall && expression.isInOperator -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`in` operation", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`in` operation"
             )
             expression is FirFunctionCall && expression.isRangeOperator -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`${nameToOperator[symbol.name]}` operation", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`${nameToOperator[symbol.name]}` operation"
             )
             expression is FirComponentCall -> reporter.reportOn(
-                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`destructuring declaration", context
+                expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`destructuring declaration"
             )
             else -> checkIdentifier(callee, reporter, context)
         }

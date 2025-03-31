@@ -45,8 +45,7 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 annotationSource,
                 FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.JvmRecordSupport to languageVersionSettings,
-                context
+                LanguageFeature.JvmRecordSupport to languageVersionSettings
             )
             return
         }
@@ -105,7 +104,7 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
             if (typeRef.source?.kind != KtRealSourceElementKind) return@let
             if (typeRef.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS) {
-                reporter.reportOn(declaration.source, FirJvmErrors.JVM_RECORD_EXTENDS_CLASS, typeRef.coneType, context)
+                reporter.reportOn(declaration.source, FirJvmErrors.JVM_RECORD_EXTENDS_CLASS, typeRef.coneType)
             }
         }
     }

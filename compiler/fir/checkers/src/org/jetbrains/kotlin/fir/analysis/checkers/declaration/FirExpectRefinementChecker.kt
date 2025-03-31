@@ -50,8 +50,7 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.ExpectRefinement to context.languageVersionSettings,
-                    context
+                    LanguageFeature.ExpectRefinement to context.languageVersionSettings
                 )
             }
         }

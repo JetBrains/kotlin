@@ -36,7 +36,7 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
                 reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR)
             } else {
                 val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
-                reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message, context)
+                reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message)
             }
         }
         if (declaration is FirRegularClass && declaration.contextParameters.onlyLegacyContextReceivers()) {

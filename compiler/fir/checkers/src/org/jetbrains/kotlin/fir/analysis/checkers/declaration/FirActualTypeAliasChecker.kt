@@ -62,7 +62,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
             if (expandedTypeSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
                 val classId = expandedTypeSymbol.classId
                 if (isAnnotationProhibitedInActualTypeAlias(classId)) {
-                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId, context)
+                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, classId)
                 }
             }
         }

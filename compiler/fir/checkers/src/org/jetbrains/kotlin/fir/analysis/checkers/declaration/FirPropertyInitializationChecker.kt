@@ -43,7 +43,7 @@ object FirPropertyInitializationChecker : FirRegularClassChecker(MppCheckerKind.
                 variableAssignment.acceptChildren(this)
                 val propertySymbol = variableAssignment.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
                 if (propertySymbol !in declaredLater) return
-                reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol, context)
+                reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol)
             }
         }
 

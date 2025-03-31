@@ -48,8 +48,7 @@ object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker(MppCheckerKind.C
             reporter.reportOn(
                 expression.calleeReference.source,
                 FirErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS,
-                functionSymbol.name.asString(),
-                context
+                functionSymbol.name.asString()
             )
         }
     }

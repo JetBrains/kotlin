@@ -98,7 +98,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             }
         }
 
-        reporter.reportOn(annotation.source, factory, problem.errorMessage, context)
+        reporter.reportOn(annotation.source, factory, problem.errorMessage)
     }
 
     private fun FirTypeRef.isInlineClassThatRequiresMangling(session: FirSession): Boolean {

@@ -23,7 +23,7 @@ object FirPropertyAccessTypeArgumentsChecker : FirPropertyAccessExpressionChecke
         if (expression.calleeReference !is FirErrorNamedReference) {
             val hasExplicitTypeArgument = expression.typeArguments.any { it.isExplicit }
             if (hasExplicitTypeArgument) {
-                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Property", context)
+                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Property")
             }
         }
     }

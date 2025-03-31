@@ -55,7 +55,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
                 val type = expression.arguments.firstOrNull()?.resolvedType ?: return
                 if (type.isValueTypeAndWarningsEnabled(context.session)) {
                     reporter.reportOn(
-                        expression.argument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type, context
+                        expression.argument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
                 }
             }
@@ -65,7 +65,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
                 val type = typeArgument.typeRef.coneType.upperBoundIfFlexible()
                 if (type.isValueTypeAndWarningsEnabled(context.session)) {
                     reporter.reportOn(
-                        typeArgument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type, context
+                        typeArgument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
                 }
             }

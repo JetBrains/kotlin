@@ -88,7 +88,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
 
         if (!isSubtypeForTypeMismatch(typeContext, subtype = returnExpressionType, supertype = functionReturnType)) {
             if (resultExpression.isNullLiteral && !functionReturnType.isMarkedOrFlexiblyNullable) {
-                reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, functionReturnType, context)
+                reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, functionReturnType)
             } else {
                 val isDueToNullability =
                     context.session.typeContext.isTypeMismatchDueToNullability(returnExpressionType, functionReturnType)

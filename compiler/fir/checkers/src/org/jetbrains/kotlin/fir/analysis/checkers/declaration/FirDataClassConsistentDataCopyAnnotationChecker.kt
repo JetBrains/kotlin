@@ -53,8 +53,7 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     reporter.reportOn(
                         consistentCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
-                        StandardClassIds.Annotations.ConsistentCopyVisibility,
-                        context
+                        StandardClassIds.Annotations.ConsistentCopyVisibility
                     )
                 }
 
@@ -62,8 +61,7 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     reporter.reportOn(
                         exposedCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
-                        StandardClassIds.Annotations.ExposedCopyVisibility,
-                        context
+                        StandardClassIds.Annotations.ExposedCopyVisibility
                     )
                 }
             }

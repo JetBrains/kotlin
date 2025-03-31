@@ -35,7 +35,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             }
 
             source.valOrVarKeyword?.let {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER, it, context)
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER, it)
             }
 
             val coneType = catchParameter.returnTypeRef.coneType

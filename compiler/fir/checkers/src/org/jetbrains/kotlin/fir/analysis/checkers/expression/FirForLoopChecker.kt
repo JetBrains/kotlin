@@ -89,7 +89,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
 
         val loopParameterSource = loopParameter.source
         loopParameterSource.valOrVarKeyword?.let {
-            reporter.reportOn(loopParameterSource, FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER, it, context)
+            reporter.reportOn(loopParameterSource, FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER, it)
         }
     }
 

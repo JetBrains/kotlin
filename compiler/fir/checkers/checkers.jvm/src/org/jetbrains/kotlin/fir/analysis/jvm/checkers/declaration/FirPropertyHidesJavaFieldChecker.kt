@@ -53,7 +53,7 @@ object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platfor
                             return@processPropertiesByName
                         }
                     }
-                    reporter.reportOn(propertySymbol.source, FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD, fieldSymbol, context)
+                    reporter.reportOn(propertySymbol.source, FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD, fieldSymbol)
                     warningReported = true
                 }
             }

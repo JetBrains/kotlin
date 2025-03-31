@@ -57,15 +57,13 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
                     reporter.reportOn(
                         constructor.source,
                         FirNativeErrors.CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR,
-                        objCOverrideInitClassId.asSingleFqName(),
-                        context
+                        objCOverrideInitClassId.asSingleFqName()
                     )
                 else
                     reporter.reportOn(
                         constructor.source,
                         FirNativeErrors.CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS,
-                        objCOverrideInitClassId.asSingleFqName(),
-                        context
+                        objCOverrideInitClassId.asSingleFqName()
                     )
                 return
             }
@@ -81,8 +79,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
                     reporter.reportOn(
                         constructor.source,
                         FirNativeErrors.CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER,
-                        objCOverrideInitClassId.asSingleFqName(),
-                        context
+                        objCOverrideInitClassId.asSingleFqName()
                     )
                 }
             }

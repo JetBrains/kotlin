@@ -61,8 +61,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 reporter.reportOn(
                     argument.source,
                     FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
-                    argument.resolvedType,
-                    context
+                    argument.resolvedType
                 )
             }
             return
@@ -71,7 +70,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         argument.safeAsTypeParameterSymbol?.let {
             if (!it.isReified) {
                 // E.g., fun <T: Any> foo(): Any = T::class
-                reporter.reportOn(source, FirErrors.TYPE_PARAMETER_AS_REIFIED, it, context)
+                reporter.reportOn(source, FirErrors.TYPE_PARAMETER_AS_REIFIED, it)
             }
         }
 

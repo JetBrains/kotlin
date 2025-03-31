@@ -58,8 +58,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
             reporter.reportOn(
                 source,
                 FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY,
-                calleeVariableSymbol,
-                context
+                calleeVariableSymbol
             )
             return
         }

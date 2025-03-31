@@ -66,8 +66,7 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
             reporter.reportOn(
                 superReference.superTypeRef.source,
                 FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,
-                candidate,
-                context
+                candidate
             )
         }
     }

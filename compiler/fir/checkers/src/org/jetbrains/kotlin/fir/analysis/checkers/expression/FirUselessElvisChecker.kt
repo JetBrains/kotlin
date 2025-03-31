@@ -29,7 +29,7 @@ object FirUselessElvisChecker : FirElvisExpressionChecker(MppCheckerKind.Common)
         if (lhsType is ConeErrorType) return
         if (!lhsType.canBeNull(context.session)) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType, context)
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType)
             }
             return
         }

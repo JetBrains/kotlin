@@ -25,7 +25,7 @@ object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(
             declaration.isDirectlyExternal() &&
             declaration.source?.elementType == KtNodeTypes.PROPERTY_ACCESSOR
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor", context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor")
         }
     }
 

@@ -71,7 +71,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         }
 
         if (shadowingMember != null) {
-            reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember, context)
+            reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember)
             return
         }
 

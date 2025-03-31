@@ -29,9 +29,9 @@ object FirLocalEntityNotAllowedChecker : FirRegularClassChecker(MppCheckerKind.C
 
         when {
             declaration.classKind == ClassKind.OBJECT && !declaration.isCompanion ->
-                reporter.reportOn(declaration.source, FirErrors.LOCAL_OBJECT_NOT_ALLOWED, declaration.name, context)
+                reporter.reportOn(declaration.source, FirErrors.LOCAL_OBJECT_NOT_ALLOWED, declaration.name)
             declaration.classKind == ClassKind.INTERFACE && container !is FirClass ->
-                reporter.reportOn(declaration.source, FirErrors.LOCAL_INTERFACE_NOT_ALLOWED, declaration.name, context)
+                reporter.reportOn(declaration.source, FirErrors.LOCAL_INTERFACE_NOT_ALLOWED, declaration.name)
             else -> {
             }
         }

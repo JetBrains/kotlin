@@ -72,7 +72,7 @@ object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker(MppC
         // There is no need to report SUSPENSION_POINT_INSIDE_CRITICAL_SECTION if enclosing suspend function is not found
         // Because ILLEGAL_SUSPEND_FUNCTION_CALL is reported in this case
         if (isMutexLockFound && isSuspendFunctionFound) {
-            reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol, context)
+            reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol)
         }
     }
 }

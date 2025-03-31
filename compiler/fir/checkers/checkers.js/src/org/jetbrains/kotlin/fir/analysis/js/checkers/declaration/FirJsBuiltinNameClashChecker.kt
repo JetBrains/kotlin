@@ -34,10 +34,10 @@ object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.
         val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
 
         if (declaration is FirClassLikeDeclaration && stableName.name in PROHIBITED_STATIC_NAMES) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Function.$stableName", context)
+            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Function.$stableName")
         }
         if (declaration is FirCallableDeclaration && stableName.name in PROHIBITED_MEMBER_NAMES) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Object.prototype.$stableName", context)
+            reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Object.prototype.$stableName")
         }
     }
 }

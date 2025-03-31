@@ -28,7 +28,7 @@ internal object FirJvmIdentityEqualsOnJavaValueBasedClass : FirEqualityOperatorC
             val type = arg.resolvedType
             if (type.isJavaValueBasedClass(context.session)) {
                 reporter.reportOn(
-                    arg.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type, context
+                    arg.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                 )
             }
         }

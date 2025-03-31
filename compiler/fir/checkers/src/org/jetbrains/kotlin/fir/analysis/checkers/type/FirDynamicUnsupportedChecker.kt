@@ -21,7 +21,7 @@ object FirDynamicUnsupportedChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
         // It's assumed this checker is only called
         // by a platform that disallows dynamics
         if (typeRef.coneType is ConeDynamicType) {
-            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, MESSAGE, context)
+            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, MESSAGE)
         }
     }
 }

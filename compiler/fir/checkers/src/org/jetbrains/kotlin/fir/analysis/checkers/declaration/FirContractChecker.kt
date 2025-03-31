@@ -60,12 +60,12 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 checkUnresolvedEffects(contractDescription, declaration, context, reporter)
                 checkDuplicateCallsInPlace(contractDescription, context, reporter)
                 if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
-                    reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE, context)
+                    reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE)
                 }
                 checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
             }
             is FirErrorContractDescription -> {
-                reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, INVALID_CONTRACT_BLOCK, context)
+                reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, INVALID_CONTRACT_BLOCK)
                 checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
             }
             is FirRawContractDescription, is FirLegacyRawContractDescription ->

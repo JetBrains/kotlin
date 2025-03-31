@@ -64,8 +64,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             reporter.reportOn(
                 source,
                 FirErrors.UNSUPPORTED,
-                errorMessage,
-                context
+                errorMessage
             )
         }
 
@@ -76,8 +75,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             reporter.reportOn(
                 source,
                 FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.ContextParameters to context.languageVersionSettings,
-                context
+                LanguageFeature.ContextParameters to context.languageVersionSettings
             )
             return
         }
@@ -94,8 +92,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
                     reporter.reportOn(
                         parameter.source,
                         FirErrors.UNSUPPORTED_FEATURE,
-                        LanguageFeature.ContextParameters to context.languageVersionSettings,
-                        context
+                        LanguageFeature.ContextParameters to context.languageVersionSettings
                     )
                 }
             }

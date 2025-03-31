@@ -32,8 +32,7 @@ class ComposableAnnotationChecker : FirAnnotationChecker(MppCheckerKind.Common) 
             reporter.reportOn(
                 expression.source,
                 ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
-                containingType.coneType,
-                context
+                containingType.coneType
             )
         }
     }

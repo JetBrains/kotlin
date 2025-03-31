@@ -35,8 +35,7 @@ internal fun CheckerContext.checkCompanionOfSerializableClass(
     reporter.reportOn(
         companionObjectSymbol.serializableOrMetaAnnotationSource(session),
         FirSerializationErrors.COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS,
-        classSymbol,
-        this
+        classSymbol
     )
 }
 
@@ -67,8 +66,7 @@ internal fun CheckerContext.checkCompanionSerializerDependency(
                 reporter.reportOn(
                     classSymbol.serializableOrMetaAnnotationSource(session),
                     FirSerializationErrors.COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED,
-                    classSymbol,
-                    context
+                    classSymbol
                 )
             } else {
                 // @Serializable class Foo / @Serializer(Bar::class) companion object — prohibited as vague and confusing

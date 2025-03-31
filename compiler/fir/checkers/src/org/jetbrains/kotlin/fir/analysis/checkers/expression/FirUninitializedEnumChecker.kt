@@ -88,7 +88,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         // Local enum class are prohibited
         // So report error on access of local enum entry
         if (enumClassSymbol.visibility == Visibilities.Local && calleeSymbol is FirEnumEntrySymbol) {
-            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeSymbol, context)
+            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeSymbol)
         }
 
         // An accessed context within the enum class of interest. We should look up until either enum members or enum entries are found,
@@ -181,7 +181,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
                     }
                 }
                 if (precedingEntry == correspondingEnumEntry) {
-                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
+                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry)
                 }
             }
 
@@ -197,7 +197,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
                      *   }
                      * }
                      */
-                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
+                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry)
                 }
 
                 in enumEntries -> {

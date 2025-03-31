@@ -29,7 +29,7 @@ internal object FirNativeIdentityHashCodeCallOnValueTypeObjectChecker : FirFunct
         if (symbol.callableId != identityHashCodeCallableId) return
         val argumentType = expression.extensionReceiver?.resolvedType ?: return
         if (argumentType.isPrimitiveOrNullablePrimitive || argumentType.isValueClass(context.session)) {
-            reporter.reportOn(expression.source, FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE, argumentType, context)
+            reporter.reportOn(expression.source, FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE, argumentType)
         }
     }
 }

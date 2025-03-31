@@ -140,7 +140,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (descriptorOverridden && serializeOverridden && deserializeOverridden) {
             val source = classSymbol.getSerializerAnnotation(session)?.source ?: classSymbol.source
-            reporter.reportOn(source, EXTERNAL_SERIALIZER_USELESS, classSymbol, this)
+            reporter.reportOn(source, EXTERNAL_SERIALIZER_USELESS, classSymbol)
             return
         }
 
@@ -520,7 +520,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         for (property in properties.serializableProperties) {
             val name = property.name
             if (!namesSet.add(name)) {
-                reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.DUPLICATE_SERIAL_NAME, name, this)
+                reporter.reportOn(
+                    classSymbol.serializableOrMetaAnnotationSource(session),
+                    FirSerializationErrors.DUPLICATE_SERIAL_NAME,
+                    name
+                )
             }
         }
         return properties
@@ -648,7 +652,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         } else {
             if (type.classSymbolOrUpperBound(session)?.isEnumClass != true) {
                 // enums are always serializable
-                reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type, this)
+                reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
             }
         }
     }
@@ -762,8 +766,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 source ?: classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.LOCAL_SERIALIZER_USAGE,
-                serializerType,
-                this
+                serializerType
             )
         }
     }

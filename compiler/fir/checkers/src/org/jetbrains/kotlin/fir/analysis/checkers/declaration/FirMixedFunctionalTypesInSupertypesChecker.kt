@@ -45,7 +45,7 @@ sealed class FirMixedFunctionalTypesInSupertypesChecker(mppKind: MppCheckerKind)
                 reporter.reportOn(declaration.source, FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES)
             }
             else -> {
-                reporter.reportOn(declaration.source, FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES, superKinds, context)
+                reporter.reportOn(declaration.source, FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES, superKinds)
             }
         }
     }

@@ -30,7 +30,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
         if (!expression.resolvedType.isUnit) {
             if (expression.typeArguments.any { it.isExplicit }) {
-                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object", context)
+                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
             }
             return
         }

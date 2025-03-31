@@ -39,7 +39,7 @@ object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         // Since 1.3, enum entries can contain inner classes only.
         // Companion objects are reported with code WRONG_MODIFIER_CONTAINING_DECLARATION instead
         if (containingDeclaration.classKind == ClassKind.ENUM_ENTRY && !declaration.isInner && !isCompanion) {
-            reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
+            reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description)
             return
         }
 
@@ -50,7 +50,7 @@ object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             if (declaration.isLocal && isCompanion) {
                 reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, declaration.description, context)
             } else {
-                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
+                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description)
             }
         }
     }

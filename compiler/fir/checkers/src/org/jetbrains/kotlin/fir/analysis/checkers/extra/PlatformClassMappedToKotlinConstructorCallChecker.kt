@@ -23,7 +23,7 @@ object PlatformClassMappedToKotlinConstructorCallChecker : FirFunctionCallChecke
         val symbol = expression.toResolvedCallableSymbol() as? FirConstructorSymbol ?: return
         val kotlinClassId = context.session.platformClassMapper.getCorrespondingKotlinClass(symbol.resolvedReturnTypeRef.coneType.classId)
         if (kotlinClassId != null) {
-            reporter.reportOn(expression.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, kotlinClassId, context)
+            reporter.reportOn(expression.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, kotlinClassId)
         }
     }
 }

@@ -31,8 +31,7 @@ object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker(M
             reporter.reportOn(
                 expression.source,
                 FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL,
-                expression.argument.resolvedType,
-                context,
+                expression.argument.resolvedType
             )
         }
     }

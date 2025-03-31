@@ -42,8 +42,7 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN,
-                declaration.source.text.toString(),
-                context
+                declaration.source.text.toString()
             )
         } else {
             if ((declaration.visibility.isPublicAPI || declaration.isPublishedApi()) &&
@@ -51,8 +50,7 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
                 reporter.reportOn(
                     declaration.source,
                     AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN,
-                    declaration.source.text.toString(),
-                    context
+                    declaration.source.text.toString()
                 )
             }
         }
@@ -60,8 +58,7 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL,
-                declaration.source.text.toString(),
-                context
+                declaration.source.text.toString()
             )
         }
     }

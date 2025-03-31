@@ -33,8 +33,7 @@ object FirWasmExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             reporter.reportOn(
                 declaration.source,
                 FirWasmErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-                targetAnnotations.resolvedType,
-                context
+                targetAnnotations.resolvedType
             )
         }
     }

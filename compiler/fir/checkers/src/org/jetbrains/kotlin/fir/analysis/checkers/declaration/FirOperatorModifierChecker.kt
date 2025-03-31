@@ -29,13 +29,13 @@ object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
         when (val checkResult = OperatorFunctionChecks.isOperator(declaration, context.session, context.scopeSession)) {
             CheckResult.SuccessCheck -> {}
             CheckResult.IllegalFunctionName -> {
-                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "illegal function name", context)
+                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "illegal function name")
             }
             is CheckResult.IllegalSignature -> {
-                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, checkResult.error, context)
+                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, checkResult.error)
             }
             CheckResult.AnonymousOperatorFunction -> {
-                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "anonymous function", context)
+                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "anonymous function")
             }
         }
     }

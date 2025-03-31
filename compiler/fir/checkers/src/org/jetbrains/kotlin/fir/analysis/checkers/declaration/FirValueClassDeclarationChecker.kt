@@ -173,8 +173,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         reporter.reportOn(
                             functionSymbol.source,
                             FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS,
-                            reservedName,
-                            context
+                            reservedName
                         )
                     }
                 } else if (containingClassSymbol.classKind == ClassKind.INTERFACE) {
@@ -220,8 +219,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.UNSUPPORTED_FEATURE,
-                        LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings,
-                        context
+                        LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings
                     )
                 }
 
@@ -229,8 +227,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                        parameterTypeRef.coneType,
-                        context
+                        parameterTypeRef.coneType
                     )
                 }
 
@@ -283,8 +280,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 reporter.reportOn(
                     equalsFromAnyOverriding.source,
                     FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
-                    declaration.defaultType().replaceArgumentsWithStarProjections(),
-                    context
+                    declaration.defaultType().replaceArgumentsWithStarProjections()
                 )
             }
         }

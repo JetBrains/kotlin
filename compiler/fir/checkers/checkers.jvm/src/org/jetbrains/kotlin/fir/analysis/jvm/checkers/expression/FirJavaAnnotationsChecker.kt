@@ -44,7 +44,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
 
         val lookupTag = classSymbol.toLookupTag()
         javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->
-            reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName(), context)
+            reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName())
         }
 
         if (expression is FirAnnotationCall) {

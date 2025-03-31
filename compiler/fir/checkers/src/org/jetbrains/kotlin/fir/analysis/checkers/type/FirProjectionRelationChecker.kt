@@ -61,8 +61,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
                         if (type != fullyExpandedType) FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION else FirErrors.CONFLICTING_PROJECTION
                     else
                         FirErrors.REDUNDANT_PROJECTION,
-                    fullyExpandedType,
-                    context
+                    fullyExpandedType
                 )
             }
         }

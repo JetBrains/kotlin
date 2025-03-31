@@ -33,8 +33,7 @@ object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
                 reporter.reportOn(
                     it,
                     FirErrors.INVALID_CHARACTERS,
-                    "$name contains illegal characters",
-                    context,
+                    "$name contains illegal characters"
                 )
             }
         }

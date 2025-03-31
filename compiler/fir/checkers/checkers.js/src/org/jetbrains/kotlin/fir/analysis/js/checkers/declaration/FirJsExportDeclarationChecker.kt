@@ -67,7 +67,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         val hasJsName = declaration.hasAnnotation(JsStandardClassIds.Annotations.JsName, context.session)
 
         fun reportWrongExportedDeclaration(kind: String) {
-            reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind, context)
+            reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind)
         }
 
         if (declaration.isExpect) {

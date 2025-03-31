@@ -53,8 +53,8 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
         val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol(context.session) }
 
         val containers = problemSymbols.map { it.containingDeclarationSymbol }
-        if (containers.any { it.origin !is FirDeclarationOrigin.Java  }) return
-        reporter.reportOn(declaration.source, FirErrors.FINITE_BOUNDS_VIOLATION_IN_JAVA, containers, context)
+        if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return
+        reporter.reportOn(declaration.source, FirErrors.FINITE_BOUNDS_VIOLATION_IN_JAVA, containers)
     }
 
     private fun buildTypeEdges(declaration: FirRegularClass, session: FirSession): Map<ConeKotlinType, Set<ConeKotlinType>> {

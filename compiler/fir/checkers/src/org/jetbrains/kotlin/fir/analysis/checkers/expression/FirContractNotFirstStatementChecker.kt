@@ -35,7 +35,7 @@ object FirContractNotFirstStatementChecker : FirFunctionCallChecker(MppCheckerKi
                 "Contract should be the first statement."
             }
 
-            reporter.reportOn(expression.source, FirErrors.CONTRACT_NOT_ALLOWED, message, context)
+            reporter.reportOn(expression.source, FirErrors.CONTRACT_NOT_ALLOWED, message)
         }
     }
 

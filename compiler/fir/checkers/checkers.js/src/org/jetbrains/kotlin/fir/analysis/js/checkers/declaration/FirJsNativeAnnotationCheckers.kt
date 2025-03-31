@@ -39,8 +39,7 @@ internal abstract class FirJsAbstractNativeAnnotationChecker(private val require
             reporter.reportOn(
                 declaration.source,
                 FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
-                annotation.resolvedType,
-                context
+                annotation.resolvedType
             )
         }
     }
@@ -72,8 +71,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
                 reporter.reportOn(
                     firstParameterDeclaration.source,
                     FirJsErrors.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER,
-                    indexerKind,
-                    context
+                    indexerKind
                 )
             }
         }
@@ -93,8 +91,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
                 reporter.reportOn(
                     parameter.source,
                     FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS,
-                    indexerKind,
-                    context
+                    indexerKind
                 )
             }
         }

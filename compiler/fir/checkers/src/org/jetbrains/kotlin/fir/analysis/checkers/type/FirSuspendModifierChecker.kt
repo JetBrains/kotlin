@@ -57,8 +57,7 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.REPEATED_MODIFIER,
-                KtTokens.SUSPEND_KEYWORD,
-                context,
+                KtTokens.SUSPEND_KEYWORD
             )
         }
     }

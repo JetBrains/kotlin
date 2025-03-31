@@ -19,7 +19,7 @@ object FirInlineBodySimpleFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
 
         if (context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction) {
-            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local functions", context)
+            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local functions")
         }
     }
 }

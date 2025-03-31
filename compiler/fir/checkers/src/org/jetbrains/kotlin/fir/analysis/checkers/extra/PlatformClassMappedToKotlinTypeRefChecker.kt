@@ -20,7 +20,7 @@ object PlatformClassMappedToKotlinTypeRefChecker : FirResolvedTypeRefChecker(Mpp
     override fun check(typeRef: FirResolvedTypeRef) {
         val kotlinClass = context.session.platformClassMapper.getCorrespondingKotlinClass(typeRef.coneType.classId)
         if (kotlinClass != null) {
-            reporter.reportOn(typeRef.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, kotlinClass, context)
+            reporter.reportOn(typeRef.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, kotlinClass)
         }
     }
 }
