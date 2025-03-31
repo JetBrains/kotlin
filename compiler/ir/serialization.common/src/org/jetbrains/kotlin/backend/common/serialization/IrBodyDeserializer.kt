@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
-import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryCoordinates
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
+import org.jetbrains.kotlin.backend.common.serialization.encodings.RichFunctionReferenceFlags
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
@@ -18,20 +19,26 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrDelegatedSimpleType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IdSignature.CompositeSignature
+import org.jetbrains.kotlin.ir.util.IdSignature.FileSignature
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -57,11 +64,15 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject as ProtoGetObject
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue as ProtoGetValue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation as ProtoOperation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue as ProtoSetValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
@@ -79,8 +90,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWh
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 
 class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
@@ -180,10 +189,16 @@ class IrBodyDeserializer(
         end: Int,
         type: IrType,
     ): IrInlinedFunctionBlock {
-        val inlinedFunctionSymbol = runIf(proto.hasInlinedFunctionSymbol()) {
-            deserializeTypedSymbol<IrFunctionSymbol>(proto.inlinedFunctionSymbol, FUNCTION_SYMBOL)
-        }
         val inlinedFunctionFileEntry = deserializeFileEntry(libraryFile.fileEntry(proto))
+        val inlinedFunctionSymbol = runIf(proto.hasInlinedFunctionSymbol()) {
+            val idSignature = deserializeSymbolSignature(proto.inlinedFunctionSymbol)
+            val fileName = ((idSignature as? CompositeSignature)?.container as? FileSignature)?.fileName
+            val isSymbolAccessible = idSignature.visibleCrossFile ||
+                    fileName == inlinedFunctionFileEntry.name ||
+                    fileName == null
+
+            deserializeTypedSymbolWhen<IrFunctionSymbol>(isSymbolAccessible, FUNCTION_SYMBOL) { proto.inlinedFunctionSymbol }
+        }
         return withDeserializedBlock(proto.base) { origin, statements ->
             IrInlinedFunctionBlockImpl(
                 start, end,
@@ -196,6 +211,11 @@ class IrBodyDeserializer(
                 statements
             )
         }
+    }
+
+    private fun deserializeSymbolSignature(code: Long): IdSignature {
+        val symbolData = declarationDeserializer.symbolDeserializer.parseSymbolData(code)
+        return declarationDeserializer.symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
     }
 
     private inline fun <T> withDeserializedBlock(proto: ProtoBlock, block: (IrStatementOrigin?, List<IrStatement>) -> T): T {
