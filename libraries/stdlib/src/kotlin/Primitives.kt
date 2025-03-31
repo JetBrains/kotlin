@@ -8,7 +8,10 @@
 
 package kotlin
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
+
 /** Represents a 8-bit signed integer. */
+@ActualizeByJvmBuiltinProvider
 public expect class Byte : Number, Comparable<Byte> {
     @Suppress("EXPECTED_PROPERTY_INITIALIZER")
     public companion object {
@@ -379,6 +382,7 @@ public expect class Byte : Number, Comparable<Byte> {
 }
 
 /** Represents a 16-bit signed integer. */
+@ActualizeByJvmBuiltinProvider
 public expect class Short : Number, Comparable<Short> {
     @Suppress("EXPECTED_PROPERTY_INITIALIZER")
     public companion object {
@@ -747,6 +751,7 @@ public expect class Short : Number, Comparable<Short> {
 }
 
 /** Represents a 32-bit signed integer. */
+@ActualizeByJvmBuiltinProvider
 public expect class Int : Number, Comparable<Int> {
     @Suppress("EXPECTED_PROPERTY_INITIALIZER")
     public companion object {
@@ -1161,6 +1166,7 @@ public expect class Int : Number, Comparable<Int> {
 }
 
 /** Represents a 64-bit signed integer. */
+@ActualizeByJvmBuiltinProvider
 public expect class Long : Number, Comparable<Long> {
     @Suppress("EXPECTED_PROPERTY_INITIALIZER")
     public companion object {
@@ -1578,6 +1584,7 @@ public expect class Long : Number, Comparable<Long> {
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
+@ActualizeByJvmBuiltinProvider
 public expect class Float : Number, Comparable<Float> {
     @Suppress("EXPECTED_PROPERTY_INITIALIZER", "DIVISION_BY_ZERO")
     public companion object {
@@ -1911,6 +1918,7 @@ public expect class Float : Number, Comparable<Float> {
 }
 
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
+@ActualizeByJvmBuiltinProvider
 public expect class Double : Number, Comparable<Double> {
     @Suppress("EXPECTED_PROPERTY_INITIALIZER", "DIVISION_BY_ZERO")
     public companion object {

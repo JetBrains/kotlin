@@ -5,12 +5,14 @@
 
 package kotlin.collections
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
  * @param T the type of element being iterated over. The iterator is covariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface Iterable<out T> {
     /**
      * Returns an iterator over the elements of this object.
@@ -23,6 +25,7 @@ public expect interface Iterable<out T> {
  * be iterated over and that supports removing elements during iteration.
  * @param T the type of element being iterated over. The mutable iterator is invariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface MutableIterable<out T> : Iterable<T> {
     /**
      * Returns an iterator over the elements of this sequence that supports removing elements during iteration.
@@ -35,6 +38,7 @@ public expect interface MutableIterable<out T> : Iterable<T> {
  * read/write access is supported through the [MutableCollection] interface.
  * @param E the type of elements contained in the collection. The collection is covariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface Collection<out E> : Iterable<E> {
     // Query Operations
     /**
@@ -66,6 +70,7 @@ public expect interface Collection<out E> : Iterable<E> {
  *
  * @param E the type of elements contained in the collection. The mutable collection is invariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     // Query Operations
     override fun iterator(): MutableIterator<E>
@@ -120,6 +125,7 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  * read/write access is supported through the [MutableList] interface.
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface List<out E> : Collection<E> {
     // Query Operations
 
@@ -175,6 +181,7 @@ public expect interface List<out E> : Collection<E> {
  * A generic ordered collection of elements that supports adding and removing elements.
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     /**
@@ -242,6 +249,7 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
  * read/write access is supported through the [MutableSet] interface.
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface Set<out E> : Collection<E> {
     // Query Operations
 
@@ -259,6 +267,7 @@ public expect interface Set<out E> : Collection<E> {
  * adding and removing elements.
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
     override fun iterator(): MutableIterator<E>
@@ -291,6 +300,7 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *          can accept key as a parameter (of [containsKey] for example) and return it in [keys] set.
  * @param V the type of map values. The map is covariant in its value type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface Map<K, out V> {
     // Query Operations
     /**
@@ -359,6 +369,7 @@ public expect interface Map<K, out V> {
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
     /**

@@ -19,7 +19,7 @@ val ordinal: kotlin.Int
 
 override fun getDeclaringClass(): java.lang.Class<test.E!>!
 
-fun finalize()
+override fun finalize()
 
 companion object
 

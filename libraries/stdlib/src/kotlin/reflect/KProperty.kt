@@ -4,7 +4,6 @@
  */
 
 @file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
-@file:kotlin.internal.JvmBuiltin
 package kotlin.reflect
 
 /**

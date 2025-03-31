@@ -17,15 +17,8 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
         writer.print(generateFile().build())
     }
 
-    protected open val fileAnnotations: List<String> = emptyList()
-
     private fun generateFile(): FileBuilder {
-        return file(this::class) {
-            for (fileAnnotation in fileAnnotations) {
-                annotate(fileAnnotation)
-            }
-            generateClass()
-        }.apply { this.modifyGeneratedFile() }
+        return file(this::class) { generateClass() }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClass() {
@@ -171,8 +164,12 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
 }
 
 class CommonBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
+    override fun FileBuilder.modifyGeneratedFile() {
+        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
+    }
 
     override fun ClassBuilder.modifyGeneratedClass() {
+        annotations += "ActualizeByJvmBuiltinProvider"
         expectActual = ExpectActualModifier.Expect
     }
 
@@ -184,15 +181,8 @@ class CommonBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 class JvmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `boolean`.")
-        expectActual = ExpectActualModifier.Actual
+        expectActual = ExpectActualModifier.Unspecified
     }
-
-    override val fileAnnotations =
-        listOf(
-            "kotlin.internal.JvmBuiltin",
-            "kotlin.internal.SuppressBytecodeGeneration",
-            "Suppress(\"NON_ABSTRACT_FUNCTION_WITH_NO_BODY\")"
-        )
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
         noBody()

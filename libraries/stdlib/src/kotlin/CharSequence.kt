@@ -5,10 +5,12 @@
 
 package kotlin
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * Represents a readable sequence of [Char] values.
  */
+@ActualizeByJvmBuiltinProvider
 public expect interface CharSequence {
     /**
      * Returns the length of this character sequence.

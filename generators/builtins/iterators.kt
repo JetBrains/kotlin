@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
 import java.io.PrintWriter
 
-class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out, annotateAsBuiltinWithBytecode = true) {
+class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun getPackage() = "kotlin.collections"
     override fun generateBody() {
         for (kind in PrimitiveType.entries) {

@@ -3,9 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.internal.JvmBuiltin
-@file:kotlin.internal.SuppressBytecodeGeneration
-
 package kotlin
 
 /**
@@ -14,10 +11,10 @@ package kotlin
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-public actual open class Throwable actual constructor(public open actual val message: String?, public open actual val cause: Throwable?) {
-    public actual constructor(message: String?) : this(message, null)
+public open class Throwable(open val message: String?, open val cause: Throwable?) {
+    constructor(message: String?) : this(message, null)
 
-    public actual constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
-    public actual constructor() : this(null, null)
+    constructor() : this(null, null)
 }

@@ -3,10 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.internal.JvmBuiltin
-@file:kotlin.internal.SuppressBytecodeGeneration
-@file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-
 package kotlin
 
 /**
@@ -14,22 +10,22 @@ package kotlin
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/enum-classes.html) for more
  * information on enum classes.
  */
-public actual abstract class Enum<E : Enum<E>> actual constructor(name: String, ordinal: Int): Comparable<E> {
-    public actual companion object {}
+public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
+    companion object {}
 
     /**
      * Returns the name of this enum constant, exactly as declared in its enum declaration.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual final val name: String
+    public final val name: String
 
     /**
      * Returns the ordinal of this enumeration constant (its position in its enum declaration, where the initial constant
      * is assigned an ordinal of zero).
      */
-    public actual final val ordinal: Int
+    public final val ordinal: Int
 
-    public actual override final fun compareTo(other: E): Int
+    public override final fun compareTo(other: E): Int
 
     /**
      * Throws an exception since enum constants cannot be cloned.
@@ -37,11 +33,9 @@ public actual abstract class Enum<E : Enum<E>> actual constructor(name: String, 
      */
     protected final fun clone(): Any
 
-    public actual override final fun equals(other: Any?): Boolean
-
-    public actual override final fun hashCode(): Int
-
-    public actual override fun toString(): String
+    public override final fun equals(other: Any?): Boolean
+    public override final fun hashCode(): Int
+    public override fun toString(): String
 
     /**
      * Returns an array containing the constants of this enum type, in the order they're declared.
