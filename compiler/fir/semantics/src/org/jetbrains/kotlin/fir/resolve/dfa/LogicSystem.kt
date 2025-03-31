@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
@@ -74,6 +75,24 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addTypeStatements(flow: MutableFlow, statements: TypeStatements): List<TypeStatement> =
         statements.values.mapNotNull { addTypeStatement(flow, it) }
 
+    fun addValueStatement(flow: MutableFlow, statement: ValueStatement): ValueStatement? {
+        if (statement.exactNonValues.isEmpty()) return null
+        val variable = statement.variable
+        val oldStatement = flow.approvedValuesStatements[variable]
+        val oldExactNonValue = oldStatement?.exactNonValues
+        val newExactNonValue = oldExactNonValue?.addAll(statement.exactNonValues) ?: statement.exactNonValues.toPersistentSet()
+        if (newExactNonValue == oldExactNonValue) return null
+        return PersistentValueStatement(variable, newExactNonValue).also { flow.approvedValuesStatements[variable] = it }
+    }
+
+    fun addValueStatements(flow: MutableFlow, statements: ValueStatements): List<ValueStatement> =
+        statements.values.mapNotNull { addValueStatement(flow, it) }
+
+    fun addStatements(flow: MutableFlow, statements: Statements) {
+        addTypeStatements(flow, statements.typeStatements)
+        addValueStatements(flow, statements.valueStatements)
+    }
+
     fun addImplication(flow: MutableFlow, implication: Implication) {
         val effect = implication.effect
         val redundant = effect == implication.condition || when (effect) {
@@ -112,7 +131,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }.build()
     }
 
-    fun approveOperationStatement(flow: PersistentFlow, statement: OperationStatement): TypeStatements {
+    fun approveOperationStatement(flow: PersistentFlow, statement: OperationStatement): Statements {
         return approveOperationStatement(flow.implications.toMutableMap(), statement, removeApprovedOrImpossible = false)
     }
 
@@ -120,7 +139,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         flow: MutableFlow,
         statement: OperationStatement,
         removeApprovedOrImpossible: Boolean,
-    ): TypeStatements {
+    ): Statements {
         return approveOperationStatement(flow.implications, statement, removeApprovedOrImpossible)
     }
 
@@ -262,8 +281,9 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         logicStatements: Map<DataFlowVariable, PersistentList<Implication>>,
         approvedStatement: OperationStatement,
         removeApprovedOrImpossible: Boolean
-    ): TypeStatements {
-        val result = mutableMapOf<RealVariable, MutableTypeStatement>()
+    ): Statements {
+        val resultingTypeStatements = mutableMapOf<RealVariable, MutableTypeStatement>()
+        val resultingValueStatements = mutableMapOf<RealVariable, MutableValueStatement>()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
         val approved = mutableSetOf<OperationStatement>()
         while (queue.isNotEmpty()) {
@@ -275,7 +295,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val variable = next.variable
             if (variable.isReal()) {
                 val impliedType = if (operation == Operation.EqNull) nullableNothingType else anyType
-                result.getOrPut(variable) { MutableTypeStatement(variable) }.exactType.add(impliedType)
+                resultingTypeStatements.getOrPut(variable) { MutableTypeStatement(variable) }.exactType.add(impliedType)
             }
 
             val statements = logicStatements[variable] ?: continue
@@ -285,7 +305,9 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                     when (val effect = it.effect) {
                         is OperationStatement -> queue += effect
                         is TypeStatement ->
-                            result.getOrPut(effect.variable) { MutableTypeStatement(effect.variable) } += effect
+                            resultingTypeStatements.getOrPut(effect.variable) { MutableTypeStatement(effect.variable) } += effect
+                        is ValueStatement ->
+                            resultingValueStatements.getOrPut(effect.variable) { MutableValueStatement(effect.variable) } += effect
                     }
                 }
                 removeApprovedOrImpossible && knownValue != null
@@ -298,7 +320,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 }
             }
         }
-        return result
+        return Statements(resultingTypeStatements, resultingValueStatements)
     }
 
     // ------------------------------- Public TypeStatement util functions -------------------------------
@@ -322,6 +344,36 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             }
         }
     }
+
+    fun orForValueStatements(left: ValueStatements, right: ValueStatements): ValueStatements = when {
+        left.isEmpty() -> left
+        right.isEmpty() -> right
+        else -> buildMap {
+            for ((variable, leftStatement) in left) {
+                put(variable, or(listOf(leftStatement, right[variable] ?: continue)) ?: continue)
+            }
+        }
+    }
+
+    fun andForValueStatements(left: ValueStatements, right: ValueStatements): ValueStatements = when {
+        left.isEmpty() -> right
+        right.isEmpty() -> left
+        else -> left.toMutableMap().apply {
+            for ((variable, rightStatement) in right) {
+                this[variable] = and(this[variable], rightStatement)
+            }
+        }
+    }
+
+    fun andForStatements(left: Statements, right: Statements): Statements = Statements(
+        andForTypeStatements(left.typeStatements, right.typeStatements),
+        andForValueStatements(left.valueStatements, right.valueStatements)
+    )
+
+    fun orForStatements(left: Statements, right: Statements): Statements = Statements(
+        orForTypeStatements(left.typeStatements, right.typeStatements),
+        orForValueStatements(left.valueStatements, right.valueStatements)
+    )
 
     private operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
         exactType += other.exactType
@@ -377,6 +429,34 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             null
         }
     }
+
+    fun and(a: ValueStatement?, b: ValueStatement): ValueStatement {
+        return a?.toMutable()?.apply { this += b } ?: b
+    }
+
+    fun or(statements: Collection<ValueStatement>): ValueStatement? {
+        when (statements.size) {
+            0 -> return null
+            1 -> return statements.first()
+        }
+        val variable = statements.first().variable
+        assert(statements.all { it.variable == variable }) { "folding statements for different variables" }
+        if (statements.any { it.exactNonValues.isEmpty() }) return null
+        val valueToStatementCount = mutableMapOf<FirBasedSymbol<*>, Int>()
+        var totalStatementsCount = 0
+        for (statement in statements) {
+            totalStatementsCount++
+            for (value in statement.exactNonValues) {
+                valueToStatementCount[value] = valueToStatementCount.getOrDefault(value, 0) + 1
+            }
+        }
+        val commonNonValues = valueToStatementCount.filterValues { it == totalStatementsCount }.keys.toPersistentSet()
+        return PersistentValueStatement(variable, commonNonValues)
+    }
+
+    private operator fun MutableValueStatement.plusAssign(other: ValueStatement) {
+        exactNonValues += other.exactNonValues
+    }
 }
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
@@ -388,6 +468,11 @@ private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) 
 private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
     is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.builder())
     else -> MutableTypeStatement(variable, LinkedHashSet(exactType))
+}
+
+private fun ValueStatement.toMutable(): MutableValueStatement = when (this) {
+    is PersistentValueStatement -> MutableValueStatement(variable, exactNonValues.builder())
+    else -> MutableValueStatement(variable, LinkedHashSet(exactNonValues))
 }
 
 @JvmName("replaceVariableInStatements")
@@ -442,5 +527,7 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
         is MutableTypeStatement -> MutableTypeStatement(to, exactType)
+        is PersistentValueStatement -> copy(variable = to)
+        is MutableValueStatement -> MutableValueStatement(to, exactNonValues)
     }
 }

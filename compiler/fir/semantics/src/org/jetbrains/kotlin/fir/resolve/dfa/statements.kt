@@ -27,6 +27,26 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
     }
 }
 
+/**
+ * Essentially, an optimized set of [OperationStatement]s with [Operation.NotEqSymbol].
+ * Exists as a separate statement because:
+ *
+ * - A literal set of [OperationStatement]s with [Operation.NotEqSymbol] would contain redundant noise such as
+ *   `variable: DataFlowVariable` in every single statement or the extra reference that [Operation.NotEqSymbol]
+ *   itself is
+ * - When used as an [Implication] premise, we'd like to only deal with one-value inequality statements,
+ *   but when considering inequalities of a variable, we'd like to have the set of all the values.
+ * - We want our API to only allow storing inequalities to values, not arbitrary [OperationStatement]s
+ */
+sealed class ValueStatement : Statement() {
+    abstract override val variable: RealVariable
+    abstract val exactNonValues: Set<FirBasedSymbol<*>>
+
+    override fun toString(): String {
+        return "$variable !in [${exactNonValues.joinToString(" & ")}]"
+    }
+}
+
 sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>

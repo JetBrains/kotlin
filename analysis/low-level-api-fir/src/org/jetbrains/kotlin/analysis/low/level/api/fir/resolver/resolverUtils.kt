@@ -57,7 +57,7 @@ internal open class StubBodyResolveTransformerComponents(
             override fun implicitUpdated(info: TypeStatement) =
                 error("Should not be called")
 
-            override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastTypesWithStability, SmartcastTypesWithStability>? =
+            override fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartcastDataWithStability? =
                 null
         }
 }

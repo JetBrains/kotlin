@@ -189,6 +189,7 @@ private class ControlFlowGraphRenderer(
     private fun Statement.renderHtmlLike(): String = when (this) {
         is OperationStatement -> "${variable.renderHtmlLike()} ${operation.renderHtmlLike()}"
         is TypeStatement -> "${variable.renderHtmlLike()}: ${renderTypeHtmlLike()}"
+        is ValueStatement -> "${variable.renderHtmlLike()} !in [${exactNonValues.joinToString().renderHtmlLike()}]"
     }
 
     private fun TypeStatement.renderTypeHtmlLike(): String =

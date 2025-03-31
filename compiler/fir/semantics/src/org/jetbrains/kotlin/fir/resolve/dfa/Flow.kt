@@ -13,12 +13,14 @@ import kotlinx.collections.immutable.persistentHashMapOf
 abstract class Flow {
     abstract val knownVariables: Set<RealVariable>
     abstract fun unwrapVariable(variable: RealVariable): RealVariable
+    abstract fun getValueStatement(variable: RealVariable): ValueStatement?
     abstract fun getTypeStatement(variable: RealVariable): TypeStatement?
     abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>?
 }
 
 class PersistentFlow internal constructor(
     private val previousFlow: PersistentFlow?,
+    private val approvedValuesStatements: PersistentMap<RealVariable, PersistentValueStatement>,
     private val approvedTypeStatements: PersistentMap<RealVariable, PersistentTypeStatement>,
     internal val implications: PersistentMap<DataFlowVariable, PersistentList<Implication>>,
     // RealVariable describes a storage in memory; a pair of RealVariable with its assignment
@@ -41,6 +43,9 @@ class PersistentFlow internal constructor(
 
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
+
+    override fun getValueStatement(variable: RealVariable): ValueStatement? =
+        approvedValuesStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     override fun getTypeStatement(variable: RealVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
@@ -66,6 +71,7 @@ class PersistentFlow internal constructor(
 
     fun fork(): MutableFlow = MutableFlow(
         this,
+        approvedValuesStatements.builder(),
         approvedTypeStatements.builder(),
         implications.builder(),
         assignmentIndex.builder(),
@@ -76,6 +82,7 @@ class PersistentFlow internal constructor(
 
 class MutableFlow internal constructor(
     private val previousFlow: PersistentFlow?,
+    internal val approvedValuesStatements: PersistentMap.Builder<RealVariable, PersistentValueStatement>,
     internal val approvedTypeStatements: PersistentMap.Builder<RealVariable, PersistentTypeStatement>,
     internal val implications: PersistentMap.Builder<DataFlowVariable, PersistentList<Implication>>,
     internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
@@ -89,6 +96,7 @@ class MutableFlow internal constructor(
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
+        emptyPersistentHashMapBuilder(),
     )
 
     override val knownVariables: Set<RealVariable>
@@ -96,6 +104,9 @@ class MutableFlow internal constructor(
 
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
+
+    override fun getValueStatement(variable: RealVariable): ValueStatement? =
+        approvedValuesStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     override fun getTypeStatement(variable: RealVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
@@ -105,6 +116,7 @@ class MutableFlow internal constructor(
 
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,
+        approvedValuesStatements.build(),
         approvedTypeStatements.build(),
         implications.build(),
         assignmentIndex.build(),

@@ -526,8 +526,8 @@ private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
 fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
-    val (typesSmartcastInfo, nonTypesSmartcastInfo) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
-    val (stability, typesFromSmartCast) = typesSmartcastInfo
+    val smartcastDataWithStability = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    val (stability, typesFromSmartCast) = smartcastDataWithStability.typesData
 
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType(session)
@@ -541,10 +541,12 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         it == originalType && it !is ConeDynamicType
     }
 
-    val (nonTypesStability, nonTypesFromSmartCast) = nonTypesSmartcastInfo
+    val (nonTypesStability, nonTypesFromSmartCast) = smartcastDataWithStability.nonTypesData
+    val (nonValuesStability, nonValuesFromSmartCast) = smartcastDataWithStability.nonValuesData
 
     if (
         nonTypesFromSmartCast.isEmpty() &&
+        nonValuesFromSmartCast.isEmpty() &&
         (intersectedType == null || intersectedType == originalType)
     ) {
         return expression
@@ -584,6 +586,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         // Imagine a `sealed class S` with variants `A : S()`, `B : S()`, `C : S()`.
         // If `x: ¬(A | B)`, this doesn't yet mean that `x: ¬S`.
         this.nonTypesFromSmartCast = nonTypesFromSmartCast.takeIf { nonTypesStability == SmartcastStability.STABLE_VALUE }.orEmpty()
+        this.nonValuesFromSmartCast = nonValuesFromSmartCast.takeIf { nonValuesStability == SmartcastStability.STABLE_VALUE }.orEmpty()
     }
 }
 

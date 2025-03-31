@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.PersistentSet
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import kotlin.contracts.ExperimentalContracts
@@ -25,9 +26,28 @@ class MutableTypeStatement(
     override val exactNonType: MutableSet<ConeKotlinType> = linkedSetOf(),
 ) : TypeStatement()
 
+data class PersistentValueStatement(
+    override val variable: RealVariable,
+    override val exactNonValues: PersistentSet<FirBasedSymbol<*>>,
+) : ValueStatement()
+
+class MutableValueStatement(
+    override val variable: RealVariable,
+    override val exactNonValues: MutableSet<FirBasedSymbol<*>> = linkedSetOf(),
+) : ValueStatement()
+
 // --------------------------------------- Aliases ---------------------------------------
 
 typealias TypeStatements = Map<RealVariable, TypeStatement>
+typealias ValueStatements = Map<RealVariable, ValueStatement>
+
+data class Statements(
+    val typeStatements: TypeStatements = mapOf(),
+    val valueStatements: ValueStatements = mapOf(),
+) {
+    val isEmpty: Boolean get() = typeStatements.isEmpty() && valueStatements.isEmpty()
+    val isNotEmpty: Boolean get() = !isEmpty
+}
 
 // --------------------------------------- DSL ---------------------------------------
 
@@ -43,6 +63,9 @@ infix fun DataFlowVariable.notEq(constant: Nothing?): OperationStatement =
     OperationStatement(this, Operation.NotEqNull)
 
 infix fun OperationStatement.implies(effect: Statement): Implication = Implication(this, effect)
+
+infix fun RealVariable.valueNotEq(symbol: FirBasedSymbol<*>): ValueStatement =
+    MutableValueStatement(this, linkedSetOf(symbol))
 
 infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))

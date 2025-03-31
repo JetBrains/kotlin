@@ -28,14 +28,14 @@ fun LogicSystem.approveContractStatement(
     statement: ConeBooleanExpression,
     arguments: Array<out DataFlowVariable?>, // 0 = receiver (null if doesn't exist)
     substitutor: ConeSubstitutor?,
-    approveOperationStatement: (OperationStatement) -> TypeStatements
-): TypeStatements? {
-    fun DataFlowVariable.processEqNull(isEq: Boolean): TypeStatements =
+    approveOperationStatement: (OperationStatement) -> Statements
+): Statements? {
+    fun DataFlowVariable.processEqNull(isEq: Boolean): Statements =
         approveOperationStatement(OperationStatement(this, if (isEq) Operation.EqNull else Operation.NotEqNull))
 
-    fun ConeBooleanExpression.visit(inverted: Boolean): TypeStatements? = when (this) {
+    fun ConeBooleanExpression.visit(inverted: Boolean): Statements? = when (this) {
         is ConeBooleanConstantReference ->
-            if (inverted == (this == ConeContractConstantValues.TRUE)) null else mapOf()
+            if (inverted == (this == ConeContractConstantValues.TRUE)) null else Statements()
         is ConeLogicalNot -> arg.visit(inverted = !inverted)
         is ConeIsInstancePredicate ->
             arguments.getOrNull(arg.parameterIndex + 1)?.let {
@@ -49,19 +49,22 @@ fun LogicSystem.approveContractStatement(
                         val fromNullability = if ((isType && !type.canBeNull(session)) || (!isType && type.isMarkedNullable))
                             it.processEqNull(false)
                         else
-                            mapOf()
+                            Statements()
                         if (isType && it is RealVariable) {
-                            andForTypeStatements(fromNullability, mapOf(it to (it typeEq substitutedType)))
+                            Statements(
+                                typeStatements = andForTypeStatements(fromNullability.typeStatements, mapOf(it to (it typeEq substitutedType))),
+                                valueStatements = fromNullability.valueStatements,
+                            )
                         } else {
                             fromNullability
                         }
                     }
                 }
-            } ?: mapOf()
+            } ?: Statements()
         is ConeIsNullPredicate ->
-            arguments.getOrNull(arg.parameterIndex + 1)?.processEqNull(inverted == isNegated) ?: mapOf()
+            arguments.getOrNull(arg.parameterIndex + 1)?.processEqNull(inverted == isNegated) ?: Statements()
         is ConeBooleanValueParameterReference ->
-            arguments.getOrNull(parameterIndex + 1)?.let { approveOperationStatement(it eq !inverted) } ?: mapOf()
+            arguments.getOrNull(parameterIndex + 1)?.let { approveOperationStatement(it eq !inverted) } ?: Statements()
         is ConeBinaryLogicExpression -> {
             val a = left.visit(inverted)
             val b = right.visit(inverted)
@@ -69,11 +72,11 @@ fun LogicSystem.approveContractStatement(
             when {
                 a == null -> b.takeIf { !isAnd } // false || b == b; false && b = false
                 b == null -> a.takeIf { !isAnd } // a || false == a; a && false = false
-                isAnd -> andForTypeStatements(a, b)
-                else -> orForTypeStatements(a, b)
+                isAnd -> andForStatements(a, b)
+                else -> orForStatements(a, b)
             }
         }
-        else -> mapOf()
+        else -> Statements()
     }
 
     return statement.visit(inverted = false)

@@ -115,8 +115,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                 val resultVar = logicSystem.variableStorage.get(resultExpression, createReal = true, unwrapAlias = flow::unwrapVariable)
                 if (resultVar != null) {
                     val impliedByReturnValue = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
-                    if (impliedByReturnValue.isNotEmpty()) {
-                        flow = flow.fork().also { logicSystem.addTypeStatements(it, impliedByReturnValue) }.freeze()
+                    if (impliedByReturnValue.isNotEmpty) {
+                        flow = flow.fork().also { logicSystem.addStatements(it, impliedByReturnValue) }.freeze()
                     }
                 }
             }
@@ -126,7 +126,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             effectDeclaration.condition, argumentVariables, substitutor = null
         ) { logicSystem.approveOperationStatement(flow, it) } ?: return true
 
-        return !conditionStatements.values.all { requirement ->
+        return !conditionStatements.typeStatements.values.all { requirement ->
             val requiredType = requirement.smartCastedType(typeContext)
             val actualType = flow.getTypeStatement(requirement.variable)?.smartCastedType(typeContext) ?: requirement.variable.originalType
             actualType.isSubtypeOf(typeContext, requiredType)

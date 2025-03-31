@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -167,23 +168,41 @@ abstract class FirDataFlowAnalyzer(
      *
      * @param expression The variable access expression.
      */
-    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastTypesWithStability, SmartcastTypesWithStability>? {
+    open fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartcastDataWithStability? {
         val flow = currentSmartCastPosition ?: return null
         // Can have an unstable alias to a stable variable, so don't resolve aliases here.
         val variable = flow.getRealVariableWithoutUnwrappingAlias(expression) ?: return null
-        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty } ?: return null
-        val types = typeStatement.exactType
-        val nonTypes = typeStatement.exactNonType
-        if (types.isEmpty() && nonTypes.isEmpty()) return null
-        return SmartcastTypesWithStability(variable.getStability(flow, targetTypes = types), types) to
-                // If there are any assignments to local variables, we can no longer guarantee
-                // that the lower type bound is correct.
-                SmartcastTypesWithStability(variable.getStability(flow, targetTypes = null), nonTypes)
+        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty }
+        val typesWithStability = typeStatement?.exactType
+            ?.let { types -> SmartcastTypesWithStability(variable.getStability(flow, targetTypes = types), types) }
+            ?: SmartcastTypesWithStability(SmartcastStability.STABLE_VALUE, emptySet())
+        // If there are any assignments to local variables, we can no longer guarantee
+        // that the lower type bound is correct.
+        val nonTypesWithStability = typeStatement?.exactNonType
+            ?.let { nonTypes -> SmartcastTypesWithStability(variable.getStability(flow, targetTypes = null), nonTypes) }
+            ?: SmartcastTypesWithStability(SmartcastStability.STABLE_VALUE, emptySet())
+        val valueStatement = flow.getValueStatement(variable)?.takeIf { it.exactNonValues.isNotEmpty() }
+        val nonValuesWithStability = variable.getStability(flow, targetTypes = null) to valueStatement?.exactNonValues.orEmpty()
+        return if (
+            typesWithStability.types.isNotEmpty() ||
+            nonTypesWithStability.types.isNotEmpty() ||
+            nonValuesWithStability.second.isNotEmpty()
+        ) {
+            SmartcastDataWithStability(typesWithStability, nonTypesWithStability, nonValuesWithStability)
+        } else {
+            null
+        }
     }
 
     data class SmartcastTypesWithStability(
         val stability: SmartcastStability,
         val types: Set<ConeKotlinType>,
+    )
+
+    data class SmartcastDataWithStability(
+        val typesData: SmartcastTypesWithStability,
+        val nonTypesData: SmartcastTypesWithStability,
+        val nonValuesData: Pair<SmartcastStability, Set<FirBasedSymbol<*>>>,
     )
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo> =
@@ -1249,33 +1268,50 @@ abstract class FirDataFlowAnalyzer(
             }
 
             else -> {
-                val statementsFromRight = flow.getTypeStatementsNotInheritedFrom(flowFromRight)
+                val statementsFromRight = flow.getStatementsNotInheritedFrom(flowFromRight)
 
                 // The right argument is only evaluated if the left argument is not saturating, so the statements
                 // returned by this function always include those implied by `leftVariable eq !saturatingValue`.
                 fun getStatementsWhenRightArgumentIs(value: Boolean) =
-                    if (rightVariable != null) logicSystem.andForTypeStatements(
-                        statementsFromRight,
-                        logicSystem.approveOperationStatement(flowFromRight, rightVariable eq value),
-                    ) else statementsFromRight
+                    if (rightVariable != null) {
+                        val approvedStatements = logicSystem.approveOperationStatement(flowFromRight, rightVariable eq value)
+                        val typeStatements = logicSystem.andForTypeStatements(
+                            statementsFromRight.typeStatements,
+                            approvedStatements.typeStatements,
+                        )
+                        val valueStatements = logicSystem.andForValueStatements(
+                            statementsFromRight.valueStatements,
+                            approvedStatements.valueStatements,
+                        )
+                        Statements(typeStatements, valueStatements)
+                    } else statementsFromRight
 
                 // If the result is not saturating, then both sides executed and are not saturating.
                 val whenNotSaturating = getStatementsWhenRightArgumentIs(!saturatingValue)
                 // If the result is saturating, then either the left side is saturating and the right side did not execute,
                 // or both sides executed, the left side is not saturating, and the right side is saturating.
                 val whenSaturating = if (leftVariable != null && (rightVariable != null || inferMoreImplications)) {
-                    logicSystem.orForTypeStatements(
-                        logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq saturatingValue),
-                        if (inferMoreImplications) {
-                            getStatementsWhenRightArgumentIs(saturatingValue)
-                        } else {
-                            logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq saturatingValue)
-                        }
+                    val approvedFromRight = logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq saturatingValue)
+                    val approvedFromEitherSide = when {
+                        inferMoreImplications -> getStatementsWhenRightArgumentIs(saturatingValue)
+                        else -> logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq saturatingValue)
+                    }
+                    val typeStatements = logicSystem.orForTypeStatements(
+                        approvedFromRight.typeStatements,
+                        approvedFromEitherSide.typeStatements,
                     )
-                } else emptyMap()
+                    val valueStatements = logicSystem.orForValueStatements(
+                        approvedFromRight.valueStatements,
+                        approvedFromEitherSide.valueStatements,
+                    )
+                    Statements(typeStatements, valueStatements)
+                } else Statements()
                 if (inferMoreImplications) {
                     // The entire boolean expression has to be true or false, so the `or` of the two is always correct.
-                    flow.addAllStatements(logicSystem.orForTypeStatements(whenSaturating, whenNotSaturating))
+                    val typeStatements = logicSystem.orForTypeStatements(whenSaturating.typeStatements, whenNotSaturating.typeStatements)
+                    val valueStatements = logicSystem.orForValueStatements(whenSaturating.valueStatements, whenNotSaturating.valueStatements)
+                    flow.addAllStatements(typeStatements)
+                    flow.addAllStatements(valueStatements)
                 }
                 val operatorVariable = SyntheticVariable(fir)
                 flow.addAllConditionally(operatorVariable eq saturatingValue, whenSaturating)
@@ -1599,28 +1635,64 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
+    private fun MutableFlow.addValueStatement(info: ValueStatement) {
+        logicSystem.addValueStatement(this, info)
+    }
+
     private fun MutableFlow.addAllStatements(statements: TypeStatements) {
         statements.values.forEach { addTypeStatement(it) }
+    }
+
+    @JvmName("addAllValueStatements")
+    private fun MutableFlow.addAllStatements(statements: ValueStatements) {
+        statements.values.forEach { addValueStatement(it) }
+    }
+
+    private fun MutableFlow.addAllStatements(statements: Statements) {
+        addAllStatements(statements.typeStatements)
+        addAllStatements(statements.valueStatements)
     }
 
     private fun MutableFlow.addAllConditionally(condition: OperationStatement, statements: TypeStatements) {
         statements.values.forEach { addImplication(condition implies it) }
     }
 
+    @JvmName("addAllConditionallyValueStatements")
+    private fun MutableFlow.addAllConditionally(condition: OperationStatement, statements: ValueStatements) {
+        statements.values.forEach { addImplication(condition implies it) }
+    }
+
+    private fun MutableFlow.addAllConditionally(condition: OperationStatement, statements: Statements) {
+        addAllConditionally(condition, statements.typeStatements)
+        addAllConditionally(condition, statements.valueStatements)
+    }
+
     private fun MutableFlow.addAllConditionally(condition: OperationStatement, from: Flow) {
-        addAllConditionally(condition, getTypeStatementsNotInheritedFrom(from))
+        addAllConditionally(condition, getStatementsNotInheritedFrom(from))
     }
 
     // Merging flow from two nodes can discard type statements. `mergedFlow.getTypeStatementsNotInheritedFrom(parentFlow)`
     // will produce the statements that were discarded (and maybe some that weren't).
-    private fun MutableFlow.getTypeStatementsNotInheritedFrom(parent: Flow): TypeStatements =
-        buildMap {
-            parent.knownVariables.forEach {
-                if (unwrapVariable(it) != it) return@forEach // will add a statement for the aliased variable instead
-                val statement = parent.getTypeStatement(it)
-                if (statement != null && statement != getTypeStatement(it)) put(it, statement)
+    private fun MutableFlow.getStatementsNotInheritedFrom(parent: Flow): Statements {
+        val typeStatements: MutableMap<RealVariable, TypeStatement> = mutableMapOf()
+        val valueStatements: MutableMap<RealVariable, ValueStatement> = mutableMapOf()
+
+        parent.knownVariables.forEach {
+            if (unwrapVariable(it) != it) return@forEach // will add a statement for the aliased variable instead
+
+            val statement = parent.getTypeStatement(it)
+            if (statement != null && statement != getTypeStatement(it)){
+                typeStatements.put(it, statement)
+            }
+
+            val statement2 = parent.getValueStatement(it)
+            if (statement2 != null && statement2 != getValueStatement(it)){
+                valueStatements.put(it, statement2)
             }
         }
+
+        return Statements(typeStatements, valueStatements)
+    }
 
     private fun MutableFlow.commitOperationStatement(statement: OperationStatement) {
         addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
