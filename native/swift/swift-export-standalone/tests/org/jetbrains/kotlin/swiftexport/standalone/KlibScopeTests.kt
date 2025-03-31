@@ -10,17 +10,18 @@ package org.jetbrains.kotlin.swiftexport.standalone
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.native.analysis.api.getAllLibraryModules
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -115,21 +116,31 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
 
     private fun <T> withKlibScope(sources: Path, block: KlibScope.() -> T): T {
         val klib = compileToNativeKLib(sources)
-        lateinit var module: KaLibraryModule
-        val session = buildStandaloneAnalysisAPISession {
+
+        lateinit var libraryModule: KaLibraryModule
+        lateinit var mainModule: KaSourceModule
+
+        buildStandaloneAnalysisAPISession {
             val nativePlatform = NativePlatforms.unspecifiedNativePlatform
             buildKtModuleProvider {
                 platform = nativePlatform
-                module = addModule(buildKtLibraryModule {
+
+                libraryModule = addModule(buildKtLibraryModule {
                     addBinaryRoot(klib)
                     platform = nativePlatform
                     libraryName = "testLibrary"
                 })
+
+                mainModule = addModule(buildKtSourceModule {
+                    moduleName = "main"
+                    platform = nativePlatform
+                    addRegularDependency(libraryModule)
+                })
             }
         }
 
-        return analyze(session.getAllLibraryModules().single()) {
-            KlibScope(module, useSiteSession).block()
+        return analyze(mainModule) {
+            KlibScope(libraryModule, useSiteSession).block()
         }
     }
 }
