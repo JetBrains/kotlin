@@ -25,7 +25,7 @@ object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Pla
     override fun check(declaration: FirClass) {
         fun containsFunctionN(type: ConeKotlinType) = type.classId == FunctionN
 
-        declaration.unsubstitutedScope(context, withForcedTypeCalculator = true).processAllCallables { symbol ->
+        declaration.unsubstitutedScope(context).processAllCallables { symbol ->
             if (!symbol.isJavaOrEnhancement) {
                 return@processAllCallables
             }
