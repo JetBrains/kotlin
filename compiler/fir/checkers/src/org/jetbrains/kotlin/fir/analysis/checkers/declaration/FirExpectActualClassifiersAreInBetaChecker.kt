@@ -23,7 +23,7 @@ object FirExpectActualClassifiersAreInBetaChecker : FirClassLikeChecker(MppCheck
         if (context.languageVersionSettings.areExpectActualClassesStable) return
 
         if (declaration.isExpect || declaration.isActual) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING)
         }
     }
 }

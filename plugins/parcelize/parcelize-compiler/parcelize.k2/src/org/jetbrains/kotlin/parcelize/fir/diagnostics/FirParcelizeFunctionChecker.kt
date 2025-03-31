@@ -26,7 +26,7 @@ class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId
         if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)) return
         if (declaration.origin != FirDeclarationOrigin.Source) return
         if (declaration.isWriteToParcel() && declaration.isOverride) {
-            reporter.reportOn(declaration.source, KtErrorsParcelize.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED, context)
+            reporter.reportOn(declaration.source, KtErrorsParcelize.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED)
         }
     }
 

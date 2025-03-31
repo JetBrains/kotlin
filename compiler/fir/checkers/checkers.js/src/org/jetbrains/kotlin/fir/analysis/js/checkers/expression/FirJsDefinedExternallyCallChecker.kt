@@ -32,7 +32,7 @@ object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerK
         val container = context.closestNonLocal?.symbol ?: return
 
         if (!container.isNativeObject(context) && !container.isPredefinedObject(context)) {
-            reporter.reportOn(expression.source, FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(expression.source, FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION)
         }
     }
 }

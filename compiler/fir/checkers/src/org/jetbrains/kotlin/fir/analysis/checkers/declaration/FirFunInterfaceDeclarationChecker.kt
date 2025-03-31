@@ -61,7 +61,7 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
                     if (abstractFunctionSymbol == null) {
                         abstractFunctionSymbol = function
                     } else {
-                        reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, context)
+                        reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS)
                     }
                 }
             }
@@ -75,13 +75,13 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
                         else
                             firProperty.source
 
-                    reporter.reportOn(source, FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, context)
+                    reporter.reportOn(source, FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES)
                 }
             }
         }
 
         if (abstractFunctionSymbol == null) {
-            reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, context)
+            reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS)
             return
         }
 
@@ -91,16 +91,14 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
             abstractFunctionSymbol.typeParameterSymbols.isNotEmpty() ->
                 reporter.reportOn(
                     if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
-                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS,
-                    context
+                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
                 )
 
             abstractFunctionSymbol.isSuspend ->
                 if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionsInFunInterfaces)) {
                     reporter.reportOn(
                         if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
-                        FUN_INTERFACE_WITH_SUSPEND_FUNCTION,
-                        context
+                        FUN_INTERFACE_WITH_SUSPEND_FUNCTION
                     )
                 }
         }
@@ -109,8 +107,7 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
             if (it.hasDefaultValue) {
                 reporter.reportOn(
                     if (inFunInterface) it.source else declaration.source,
-                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE,
-                    context
+                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
                 )
             }
         }

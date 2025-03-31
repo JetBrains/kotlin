@@ -25,7 +25,7 @@ object RedundantSetterParameterTypeChecker : FirPropertyChecker(MppCheckerKind.C
         val setterParameterTypeSource = valueParameter.returnTypeRef.source ?: return
 
         if (setterParameterTypeSource.kind !is KtFakeSourceElementKind && setterParameterTypeSource != propertyTypeSource) {
-            reporter.reportOn(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE, context)
+            reporter.reportOn(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE)
         }
     }
 }

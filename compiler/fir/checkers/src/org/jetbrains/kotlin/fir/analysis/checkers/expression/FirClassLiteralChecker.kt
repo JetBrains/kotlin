@@ -35,7 +35,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         if (argument is FirResolvedQualifier) {
             val classId = argument.classId
             if (classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID || classId == OptInNames.OPT_IN_CLASS_ID) {
-                reporter.reportOn(argument.source, FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, context)
+                reporter.reportOn(argument.source, FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION)
             }
         }
 
@@ -56,7 +56,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 resolvedFullyExpandedType.isNullableTypeParameter(context.session.typeContext)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
-                reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
+                reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS)
             } else {
                 reporter.reportOn(
                     argument.source,
@@ -87,7 +87,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 }
                 return
             }
-            reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS, context)
+            reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS)
         }
     }
 

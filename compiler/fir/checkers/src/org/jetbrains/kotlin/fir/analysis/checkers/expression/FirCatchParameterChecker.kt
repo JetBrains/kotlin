@@ -31,7 +31,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             val source = catchParameter.source ?: continue
 
             if (catchParameter.source?.defaultValueForParameter != null) {
-                reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE, context)
+                reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE)
             }
 
             source.valOrVarKeyword?.let {
@@ -45,9 +45,9 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                 }
 
                 if (isReified) {
-                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE, context)
+                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE)
                 } else {
-                    reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE, context)
+                    reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE)
                 }
             }
 

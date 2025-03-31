@@ -48,7 +48,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         if (rValueResolvedSymbol.dispatchReceiverClassTypeOrNull()?.isPrimitive != true) return
 
         if (canBeReplaced(lValue, rValue, context)) {
-            reporter.reportOn(expression.source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT, context)
+            reporter.reportOn(expression.source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
         }
     }
 

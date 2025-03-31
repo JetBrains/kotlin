@@ -25,6 +25,6 @@ object FirPublishedApiChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
         if (declaration is FirValueParameter) return
         if (declaration.visibility == Visibilities.Internal) return
         val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.PublishedApi, context.session) ?: return
-        reporter.reportOn(annotation.source, FirErrors.NON_INTERNAL_PUBLISHED_API, context)
+        reporter.reportOn(annotation.source, FirErrors.NON_INTERNAL_PUBLISHED_API)
     }
 }

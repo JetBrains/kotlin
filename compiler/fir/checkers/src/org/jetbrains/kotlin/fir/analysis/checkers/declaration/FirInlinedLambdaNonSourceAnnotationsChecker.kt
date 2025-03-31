@@ -43,7 +43,7 @@ object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker
             val annotationSymbol = it.toAnnotationClassLikeSymbol(context.session) ?: continue
 
             if (annotationSymbol.getAnnotationRetention(context.session) != AnnotationRetention.SOURCE) {
-                reporter.reportOn(it.source, FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, context)
+                reporter.reportOn(it.source, FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION)
             }
         }
     }

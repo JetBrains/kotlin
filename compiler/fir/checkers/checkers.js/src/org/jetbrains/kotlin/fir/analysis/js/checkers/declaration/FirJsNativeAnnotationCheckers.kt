@@ -108,7 +108,7 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
         super.check(declaration)
 
         if (!declaration.returnTypeRef.coneType.isMarkedNullable) {
-            reporter.reportOn(declaration.source, FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE, context)
+            reporter.reportOn(declaration.source, FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE)
         }
     }
 }
@@ -133,6 +133,6 @@ internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsS
             return
         }
 
-        reporter.reportOn(declaration.source, FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE, context)
+        reporter.reportOn(declaration.source, FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE)
     }
 }

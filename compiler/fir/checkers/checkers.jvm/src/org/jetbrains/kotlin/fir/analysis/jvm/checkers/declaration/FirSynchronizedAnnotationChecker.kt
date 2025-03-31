@@ -32,7 +32,7 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
         val annotation = declaration.getAnnotationByClassId(SYNCHRONIZED_ANNOTATION_CLASS_ID, session) ?: return
 
         if (declaration.isInline) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_INLINE, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_INLINE)
             return
         }
         if (declaration.isSuspend ||
@@ -45,13 +45,13 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
         val containingClass = declaration.getContainingClassSymbol() ?: return
         when {
             containingClass.classKind == ClassKind.INTERFACE ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE)
             containingClass.classKind == ClassKind.ANNOTATION_CLASS ->
                 reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION, context)
             containingClass.isInlineOrValue ->
                 reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS, context)
             declaration.isAbstract ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT)
         }
     }
 }

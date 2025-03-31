@@ -34,7 +34,7 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(Mpp
         val qualifiedType = targetClassMap[functionName] ?: return
 
         if (expression.explicitReceiver?.isRedundant(qualifiedType, context.session) == true) {
-            reporter.reportOn(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD, context)
+            reporter.reportOn(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD)
         }
     }
 

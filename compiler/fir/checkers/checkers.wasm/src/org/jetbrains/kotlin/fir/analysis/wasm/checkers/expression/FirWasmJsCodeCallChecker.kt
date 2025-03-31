@@ -43,14 +43,14 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
         val source = expression.calleeReference.source
 
         if (!isContainingDeclarationTopLevel) {
-            reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+            reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
             return
         }
 
         when (containingDeclaration) {
             is FirSimpleFunction -> {
                 if (!containingDeclaration.hasValidJsCodeBody()) {
-                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 } else {
                     if (containingDeclaration.isSuspend) {
                         reporter.reportOn(source, FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND, "suspend function", context)
@@ -68,18 +68,18 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                     }
                     for (parameter in containingDeclaration.valueParameters) {
                         if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {
-                            reporter.reportOn(parameter.source, FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME, context)
+                            reporter.reportOn(parameter.source, FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME)
                         }
                     }
                 }
             }
             is FirProperty -> {
                 if (!containingDeclaration.hasValidJsCodeBody()) {
-                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+                    reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 }
             }
             else -> {
-                reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT, context)
+                reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
             }
         }
     }

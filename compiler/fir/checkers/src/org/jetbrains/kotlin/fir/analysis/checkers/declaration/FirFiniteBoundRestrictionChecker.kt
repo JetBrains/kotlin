@@ -45,7 +45,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
 
         for (ref in declaration.typeParameters) {
             if (problemNodes.remove(ref.toConeType())) {
-                reporter.reportOn(ref.source, FirErrors.FINITE_BOUNDS_VIOLATION, context)
+                reporter.reportOn(ref.source, FirErrors.FINITE_BOUNDS_VIOLATION)
                 return
             }
         }

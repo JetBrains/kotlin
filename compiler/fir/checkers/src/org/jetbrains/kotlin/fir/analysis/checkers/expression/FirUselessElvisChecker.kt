@@ -36,7 +36,7 @@ object FirUselessElvisChecker : FirElvisExpressionChecker(MppCheckerKind.Common)
 
         if (expression.rhs.isNullLiteral) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_RIGHT_IS_NULL, context)
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_RIGHT_IS_NULL)
             }
         }
     }

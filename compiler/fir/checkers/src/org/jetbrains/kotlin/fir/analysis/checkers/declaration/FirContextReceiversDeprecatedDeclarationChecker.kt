@@ -33,14 +33,14 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
             declaration.contextParameters.onlyLegacyContextReceivers()
         ) {
             if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
-                reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)
+                reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR)
             } else {
                 val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
                 reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message, context)
             }
         }
         if (declaration is FirRegularClass && declaration.contextParameters.onlyLegacyContextReceivers()) {
-            reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)
+            reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR)
         }
     }
 

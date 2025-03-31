@@ -19,6 +19,6 @@ object FirStrictfpApplicabilityChecker : FirClassChecker(MppCheckerKind.Common) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val annotation = declaration.getAnnotationByClassId(STRICTFP_ANNOTATION_CLASS_ID, context.session) ?: return
-        reporter.reportOn(annotation.source, FirJvmErrors.STRICTFP_ON_CLASS, context)
+        reporter.reportOn(annotation.source, FirJvmErrors.STRICTFP_ON_CLASS)
     }
 }

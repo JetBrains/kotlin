@@ -46,7 +46,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             if (!isNamedSpread(argument)) return
             if (!argument.isFakeSpread && argument.isNamed) {
                 if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirResolvedErrorReference) {
-                    reporter.reportOn(argument.expression.source, redundantSpreadWarningFactory, context)
+                    reporter.reportOn(argument.expression.source, redundantSpreadWarningFactory)
                 }
                 return
             }

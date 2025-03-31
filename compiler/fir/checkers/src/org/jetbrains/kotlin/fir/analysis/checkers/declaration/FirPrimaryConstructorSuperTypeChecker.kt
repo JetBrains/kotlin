@@ -34,7 +34,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
             with(SourceNavigator.forElement(declaration)) {
                 for (superTypeRef in declaration.superTypeRefs) {
                     if (superTypeRef.isInConstructorCallee()) {
-                        reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE, context)
+                        reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE)
                     }
                 }
             }

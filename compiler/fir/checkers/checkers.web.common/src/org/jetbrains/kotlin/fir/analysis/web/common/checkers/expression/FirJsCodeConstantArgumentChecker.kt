@@ -31,7 +31,7 @@ object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.
 
         val jsCodeExpression = expression.arguments.firstOrNull()
         if (jsCodeExpression == null || !jsCodeExpression.resolvedType.isString) {
-            reporter.reportOn(jsCodeExpression?.source ?: expression.source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
+            reporter.reportOn(jsCodeExpression?.source ?: expression.source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION)
             return
         }
 
@@ -45,7 +45,7 @@ object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.
                     if (!canBeEvaluatedAtCompileTime(element as? FirExpression, context.session, allowErrors = true, calledOnCheckerStage = true)) {
                         lastReportedElement = element
                         val source = element.source ?: jsCodeExpression.source
-                        reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
+                        reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION)
                     }
                 }
             }

@@ -32,7 +32,7 @@ object FirJvmFunctionDelegateMemberNameClashChecker : FirBasicDeclarationChecker
         if (declaration is FirSimpleFunction && declaration.name == getFunctionDelegateName ||
             declaration is FirProperty && declaration.name == functionDelegateName
         ) {
-            reporter.reportOn(declaration.source, FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH, context)
+            reporter.reportOn(declaration.source, FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH)
         }
     }
 }

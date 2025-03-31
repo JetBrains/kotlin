@@ -34,7 +34,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val source = contextListSources.first()
 
         if (contextListSources.size > 1) {
-            reporter.reportOn(source, FirErrors.MULTIPLE_CONTEXT_LISTS, context)
+            reporter.reportOn(source, FirErrors.MULTIPLE_CONTEXT_LISTS)
         }
 
         val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
@@ -86,8 +86,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             if (checkSubTypes(contextParameters.map { it.returnTypeRef.coneType }, context)) {
                 reporter.reportOn(
                     source,
-                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
-                    context
+                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
                 )
             }
             for (parameter in contextParameters) {
@@ -105,7 +104,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         if (contextParametersEnabled) {
             for (parameter in contextParameters) {
                 if (parameter.isLegacyContextReceiver()) {
-                    reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME, context)
+                    reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME)
                 }
 
                 parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->

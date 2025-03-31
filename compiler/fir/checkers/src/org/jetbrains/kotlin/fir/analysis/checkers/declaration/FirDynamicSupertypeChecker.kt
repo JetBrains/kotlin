@@ -19,7 +19,7 @@ object FirDynamicSupertypeChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass) {
         for (superType in declaration.superTypeRefs) {
             if (superType.coneType is ConeDynamicType) {
-                reporter.reportOn(superType.source, FirErrors.DYNAMIC_SUPERTYPE, context)
+                reporter.reportOn(superType.source, FirErrors.DYNAMIC_SUPERTYPE)
             }
         }
     }

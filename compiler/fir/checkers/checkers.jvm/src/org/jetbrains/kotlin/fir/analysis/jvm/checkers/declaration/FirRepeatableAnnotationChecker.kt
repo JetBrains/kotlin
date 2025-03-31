@@ -75,7 +75,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
                         )
                     }
                 } else {
-                    reporter.reportOn(annotation.source, FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION, context)
+                    reporter.reportOn(annotation.source, FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION)
                 }
             }
 

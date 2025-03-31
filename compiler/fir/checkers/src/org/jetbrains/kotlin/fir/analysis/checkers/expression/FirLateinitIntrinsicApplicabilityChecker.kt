@@ -41,14 +41,14 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
 
         val extensionReceiver = expression.extensionReceiver
         if (extensionReceiver !is FirCallableReferenceAccess) {
-            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, context)
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL)
             return
         }
 
         val calleeVariableSymbol = extensionReceiver.calleeReference.toResolvedVariableSymbol() ?: return
 
         if (!calleeVariableSymbol.isLateInit) {
-            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, context)
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT)
             return
         }
 
@@ -66,7 +66,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
 
         val closestOwnFunction = context.containingDeclarations.lastOrNull()
         if (closestOwnFunction is FirFunction && closestOwnFunction.isInline) {
-            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, context)
+            reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION)
         }
     }
 

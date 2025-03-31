@@ -19,7 +19,7 @@ object FirAnonymousInitializerInInterfaceChecker : FirAnonymousInitializerChecke
     override fun check(declaration: FirAnonymousInitializer) {
         val clazz = context.findClosestClassOrObject() ?: return
         if (clazz.isInterface) {
-            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE)
         }
     }
 }

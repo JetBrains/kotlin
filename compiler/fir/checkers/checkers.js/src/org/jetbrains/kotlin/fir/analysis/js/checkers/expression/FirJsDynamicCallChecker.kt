@@ -60,7 +60,7 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
         }
 
         forAllSpreadArgumentsOf(expression) {
-            reporter.reportOn(it.source, FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL, context)
+            reporter.reportOn(it.source, FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL)
         }
     }
 

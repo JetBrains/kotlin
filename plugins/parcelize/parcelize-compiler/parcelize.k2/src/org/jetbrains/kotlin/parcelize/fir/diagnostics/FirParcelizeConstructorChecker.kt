@@ -43,7 +43,7 @@ class FirParcelizeConstructorChecker(
             return
         }
         if (declaration.valueParameters.isEmpty()) {
-            reporter.reportOn(containingClass.source, KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY, context)
+            reporter.reportOn(containingClass.source, KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY)
             return
         }
         val notValOrVarParameters = mutableListOf<FirValueParameter>()
@@ -59,8 +59,7 @@ class FirParcelizeConstructorChecker(
                 if (illegalAnnotation != null) {
                     reporter.reportOn(
                         illegalAnnotation.source,
-                        KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
-                        context
+                        KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY
                     )
                 }
             }
@@ -84,8 +83,7 @@ class FirParcelizeConstructorChecker(
             for (valueParameter in notValOrVarParameters) {
                 reporter.reportOn(
                     valueParameter.source,
-                    KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR,
-                    context
+                    KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR
                 )
             }
         }

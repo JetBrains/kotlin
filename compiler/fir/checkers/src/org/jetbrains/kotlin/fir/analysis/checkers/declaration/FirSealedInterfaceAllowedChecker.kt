@@ -23,6 +23,6 @@ object FirSealedInterfaceAllowedChecker : FirClassChecker(MppCheckerKind.Common)
             return
         }
         val keyword = declaration.getModifier(KtTokens.SEALED_KEYWORD) ?: return
-        reporter.reportOn(keyword.source, FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE, context)
+        reporter.reportOn(keyword.source, FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE)
     }
 }

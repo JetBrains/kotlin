@@ -27,13 +27,13 @@ object FirNoArgDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common
         if (!matcher.isAnnotated(declaration.symbol)) return
 
         when {
-            declaration.isInner -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR, context)
-            declaration.isLocal -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR, context)
+            declaration.isInner -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR)
+            declaration.isLocal -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR)
         }
 
         val superClassSymbol = declaration.symbol.getSuperClassSymbolOrAny(context.session)
         if (superClassSymbol.constructors(context.session).none { it.isNoArgConstructor() } && !matcher.isAnnotated(superClassSymbol)) {
-            reporter.reportOn(source, KtErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS, context)
+            reporter.reportOn(source, KtErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS)
         }
 
     }

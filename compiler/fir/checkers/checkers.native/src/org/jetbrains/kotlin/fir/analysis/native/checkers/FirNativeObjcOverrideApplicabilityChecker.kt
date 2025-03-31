@@ -64,7 +64,10 @@ object FirNativeObjcOverrideApplicabilityChecker : FirFunctionChecker(MppChecker
     override fun check(declaration: FirFunction) {
         if (declaration.hasAnnotation(objCSignatureOverrideClassId, context.session)) {
             if (!declaration.symbol.isInheritedFromObjc(context)) {
-                reporter.reportOn(declaration.getAnnotationByClassId(objCSignatureOverrideClassId, context.session)?.source, FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE, context)
+                reporter.reportOn(
+                    declaration.getAnnotationByClassId(objCSignatureOverrideClassId, context.session)?.source,
+                    FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE
+                )
             }
         }
     }

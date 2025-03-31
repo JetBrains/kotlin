@@ -25,22 +25,20 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
 
         when {
             consistentCopy != null && (declaration !is FirRegularClass || !declaration.isData) -> {
-                reporter.reportOn(consistentCopy.source, FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET, context)
+                reporter.reportOn(consistentCopy.source, FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET)
             }
             exposedCopy != null && (declaration !is FirRegularClass || !declaration.isData) -> {
-                reporter.reportOn(exposedCopy.source, FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET, context)
+                reporter.reportOn(exposedCopy.source, FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET)
             }
             else -> {
                 if (consistentCopy != null && exposedCopy != null) {
                     reporter.reportOn(
                         exposedCopy.source,
-                        FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS,
-                        context
+                        FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS
                     )
                     reporter.reportOn(
                         consistentCopy.source,
-                        FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS,
-                        context
+                        FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS
                     )
                 }
 

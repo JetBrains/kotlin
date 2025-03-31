@@ -33,7 +33,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction) {
         if (!declaration.isTailRec) return
         if (!(declaration.isEffectivelyFinal() || declaration.visibility == Visibilities.Private)) {
-            reporter.reportOn(declaration.source, FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR, context)
+            reporter.reportOn(declaration.source, FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR)
         }
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
@@ -75,7 +75,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 if (resolvedSymbol != declaration.symbol) return
                 if (functionCall.arguments.size != resolvedSymbol.valueParameterSymbols.size && resolvedSymbol.isOverride) {
                     // Overridden functions using default arguments at tail call are not included: KT-4285
-                    reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
+                    reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL)
                     return
                 }
                 val dispatchReceiver = functionCall.dispatchReceiver
@@ -85,18 +85,18 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                         dispatchReceiverOwner?.classKind?.isSingleton == true
                 if (!sameReceiver) {
                     // A call on a different receiver might get dispatched to a different method, so it can't be optimized.
-                    reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
+                    reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL)
                 } else if (tryScopeCount > 0 || catchScopeCount > 0 || finallyScopeCount > 0) {
-                    reporter.reportOn(functionCall.source, FirErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, context)
+                    reporter.reportOn(functionCall.source, FirErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED)
                 } else if (node.hasMoreFollowingInstructions(declaration, context.session)) {
-                    reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL, context)
+                    reporter.reportOn(functionCall.source, FirErrors.NON_TAIL_RECURSIVE_CALL)
                 } else if (!node.isDead) {
                     tailrecCount++
                 }
             }
         })
         if (tailrecCount == 0) {
-            reporter.reportOn(declaration.source, FirErrors.NO_TAIL_CALLS_FOUND, context)
+            reporter.reportOn(declaration.source, FirErrors.NO_TAIL_CALLS_FOUND)
         }
     }
 

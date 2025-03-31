@@ -32,8 +32,7 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         if (hasExpectRefinementAnnotation && (!isExpect || !context.isTopLevel)) {
             reporter.reportOn(
                 declaration.source,
-                FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET,
-                context
+                FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET
             )
             return
         }
@@ -44,8 +43,7 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             if (!hasExpectRefinementAnnotation) {
                 reporter.reportOn(
                     declaration.source,
-                    FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING,
-                    context
+                    FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
                 )
             }
             if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ExpectRefinement)) {

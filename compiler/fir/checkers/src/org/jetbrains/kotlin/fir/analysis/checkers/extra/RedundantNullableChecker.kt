@@ -33,7 +33,7 @@ object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
             while (symbol is FirTypeAliasSymbol) {
                 val resolvedExpandedTypeRef = symbol.resolvedExpandedTypeRef
                 if (resolvedExpandedTypeRef.coneType.isMarkedNullable) {
-                    reporter.reportOn(typeRef.source, REDUNDANT_NULLABLE, context)
+                    reporter.reportOn(typeRef.source, REDUNDANT_NULLABLE)
                     break
                 } else {
                     symbol = resolvedExpandedTypeRef.toClassLikeSymbol(context.session)
@@ -42,7 +42,7 @@ object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
         } else {
             with(SourceNavigator.forElement(typeRef)) {
                 if (typeRef.isRedundantNullable()) {
-                    reporter.reportOn(typeRef.source, REDUNDANT_NULLABLE, context)
+                    reporter.reportOn(typeRef.source, REDUNDANT_NULLABLE)
                 }
             }
         }

@@ -29,7 +29,7 @@ object FirDelegationSuperCallInEnumConstructorChecker : FirRegularClassChecker(M
                 it.resolvedDelegatedConstructorCall?.isThis == false &&
                 it.resolvedDelegatedConstructorCall?.source?.kind !is KtFakeSourceElementKind
             ) {
-                reporter.reportOn(it.resolvedDelegatedConstructorCall?.source, FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, context)
+                reporter.reportOn(it.resolvedDelegatedConstructorCall?.source, FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR)
             }
         }
     }

@@ -43,7 +43,7 @@ object FirUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker() {
     override fun check(expression: FirSafeCallExpression) {
         val receiverType = expression.receiver.resolvedType.fullyExpandedType(context.session)
         if (expression.receiver.source?.elementType == KtNodeTypes.SUPER_EXPRESSION) {
-            reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)
+            reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL)
             return
         }
         checkSafeCallReceiverType(receiverType, expression.source, context, reporter)

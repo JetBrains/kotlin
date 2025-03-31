@@ -28,7 +28,7 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
     override fun check(declaration: FirClass) {
         val javaTarget = declaration.getAnnotationByClassId(Java.Target, context.session) ?: return
         when (val kotlinTarget = declaration.getTargetAnnotation(context.session)) {
-            null -> reporter.reportOn(javaTarget.source, FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA, context)
+            null -> reporter.reportOn(javaTarget.source, FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA)
             else -> reportIncompatibleTargets(kotlinTarget, javaTarget, context, reporter)
         }
     }

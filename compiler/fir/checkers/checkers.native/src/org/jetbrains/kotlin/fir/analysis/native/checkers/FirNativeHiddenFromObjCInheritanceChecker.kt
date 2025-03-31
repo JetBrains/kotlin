@@ -48,7 +48,7 @@ object FirNativeHiddenFromObjCInheritanceChecker : FirRegularClassChecker(MppChe
             .mapNotNull { it.toSymbol(session) }
 
         superTypes.firstOrNull { st -> checkIsHiddenFromObjC(st, session) }?.let {
-            reporter.reportOn(declaration.source, FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC, context)
+            reporter.reportOn(declaration.source, FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC)
         }
     }
 }

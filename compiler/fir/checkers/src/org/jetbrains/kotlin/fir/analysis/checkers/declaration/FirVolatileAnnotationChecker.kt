@@ -22,11 +22,11 @@ object FirVolatileAnnotationChecker : FirPropertyChecker(MppCheckerKind.Platform
             ?: return
 
         if (!declaration.isVar) {
-            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_VALUE, context)
+            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_VALUE)
         }
 
         if (declaration.delegateFieldSymbol != null) {
-            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_DELEGATE, context)
+            reporter.reportOn(fieldAnnotation.source, FirErrors.VOLATILE_ON_DELEGATE)
         }
     }
 }

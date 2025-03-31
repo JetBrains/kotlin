@@ -29,7 +29,7 @@ object FirRequiresOptInOnExpectChecker : FirBasicDeclarationChecker(MppCheckerKi
                 isIllegalRequiresOptInAnnotation(on = expectSymbol, expectSymbol, context.languageVersionSettings)
             }
         ) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION)
         }
     }
 }

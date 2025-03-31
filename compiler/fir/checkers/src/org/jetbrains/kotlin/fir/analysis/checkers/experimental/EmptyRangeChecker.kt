@@ -36,7 +36,7 @@ object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
         }
 
         if (needReport) {
-            reporter.reportOn(expression.source, FirErrors.EMPTY_RANGE, context)
+            reporter.reportOn(expression.source, FirErrors.EMPTY_RANGE)
         }
     }
 

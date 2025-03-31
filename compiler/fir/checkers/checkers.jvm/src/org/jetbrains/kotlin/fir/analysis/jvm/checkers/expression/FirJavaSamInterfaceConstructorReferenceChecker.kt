@@ -33,7 +33,7 @@ object FirJavaSamInterfaceConstructorReferenceChecker : FirQualifiedAccessExpres
         ) {
             val samClassSymbol = referredSymbol.resolvedReturnTypeRef.toRegularClassSymbol(context.session) ?: return
             if (samClassSymbol.isFun && samClassSymbol.isJavaOrEnhancement) {
-                reporter.reportOn(reference.source, FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE, context)
+                reporter.reportOn(reference.source, FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE)
             }
         }
     }

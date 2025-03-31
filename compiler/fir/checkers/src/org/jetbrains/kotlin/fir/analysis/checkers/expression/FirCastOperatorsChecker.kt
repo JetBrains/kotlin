@@ -29,7 +29,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             .toTypeInfo(context.session)
 
         if (expression.operation in FirOperation.TYPES && r.directType is ConeDynamicType) {
-            reporter.reportOn(expression.conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
+            reporter.reportOn(expression.conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED)
         }
 
         val checkApplicability = when (expression.operation) {

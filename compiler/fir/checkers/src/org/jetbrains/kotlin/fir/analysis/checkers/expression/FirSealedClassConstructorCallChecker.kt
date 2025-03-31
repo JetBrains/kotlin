@@ -29,7 +29,7 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecke
             ?: return
 
         if (typeSymbol.modality == Modality.SEALED) {
-            reporter.reportOn(expression.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL, context)
+            reporter.reportOn(expression.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL)
         }
     }
 }

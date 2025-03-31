@@ -30,7 +30,7 @@ object FirAbstractClassInstantiationChecker : FirQualifiedAccessExpressionChecke
                 else -> expression.source
             }
 
-            reporter.reportOn(source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, context)
+            reporter.reportOn(source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS)
         }
     }
 }

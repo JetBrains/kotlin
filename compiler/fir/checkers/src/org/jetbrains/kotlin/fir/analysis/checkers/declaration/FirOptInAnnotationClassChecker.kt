@@ -29,7 +29,7 @@ object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Co
         if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) return
         if (declaration.getRetention(session) == AnnotationRetention.SOURCE) {
             val target = declaration.getRetentionAnnotation(session)
-            reporter.reportOn(target?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION, context)
+            reporter.reportOn(target?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION)
 
         }
         val wrongTargets = declaration.getAllowedAnnotationTargets(session).intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)

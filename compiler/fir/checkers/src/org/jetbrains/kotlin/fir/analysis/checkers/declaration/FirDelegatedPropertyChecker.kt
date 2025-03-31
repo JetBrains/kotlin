@@ -38,7 +38,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             // Implicit recursion type is not reported since the type ref does not have a real source.
             if (source != null && delegateType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) {
                 // skip reporting other issues in this case
-                reporter.reportOn(source, FirErrors.RECURSION_IN_IMPLICIT_TYPES, context)
+                reporter.reportOn(source, FirErrors.RECURSION_IN_IMPLICIT_TYPES)
             }
             return
         }

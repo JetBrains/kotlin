@@ -45,16 +45,14 @@ object FirConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common)
         ) {
             if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InstantiationOfAnnotationClasses)) reporter.reportOn(
                 expression.source,
-                FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL,
-                context
+                FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL
             )
         }
 
         if (declarationClass.classKind == ClassKind.ENUM_CLASS) {
             reporter.reportOn(
                 expression.source,
-                FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL,
-                context
+                FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
             )
         }
     }

@@ -26,7 +26,7 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
 
         if (declaration.typeParameters.isNotEmpty()) {
             declaration.typeParameters.firstOrNull()?.source?.let {
-                reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
+                reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS)
             }
 
             val shouldReport = when (declaration) {
@@ -35,10 +35,10 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
             }
 
             if (shouldReport) {
-                reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
+                reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS)
             }
         } else if (declaration.hasGenericOuterDeclaration(context)) {
-            reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
+            reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS)
         }
     }
 

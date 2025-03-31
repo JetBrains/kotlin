@@ -21,7 +21,7 @@ object FirJvmSyntheticApplicabilityChecker : FirPropertyChecker(MppCheckerKind.C
     override fun check(declaration: FirProperty) {
         val annotation = declaration.backingField?.getAnnotationByClassId(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && annotation.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) {
-            reporter.reportOn(annotation.source, FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE)
         }
     }
 }

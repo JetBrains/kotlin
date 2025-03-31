@@ -35,9 +35,9 @@ object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
                 memberDeclaration.hasModifier(KtTokens.OPEN_KEYWORD) && source.shouldReportOpenFromSource
             ) {
                 if (declaration.classKind == ClassKind.OBJECT) {
-                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT, context)
+                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT)
                 } else {
-                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS, context)
+                    reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS)
                 }
             }
         }

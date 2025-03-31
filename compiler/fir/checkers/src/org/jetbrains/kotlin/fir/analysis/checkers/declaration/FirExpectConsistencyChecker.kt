@@ -31,7 +31,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         val lastClass = context.containingDeclarations.lastOrNull() as? FirClass
         if (declaration is FirAnonymousInitializer) {
             if (lastClass?.isExpect == true) {
-                reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
+                reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
             }
             return
         }
@@ -41,30 +41,30 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         }
 
         getConstructorDelegationCall(declaration)?.let { delegatedConstructor ->
-            reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
+            reporter.reportOn(delegatedConstructor.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL)
         }
         for (superTypeRef in getClassSuperTypeReferencesWithInitializers(declaration)) {
-            reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, context)
+            reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS)
         }
         for (propertyParameter in getConstructorProhibitedPropertyParameters(declaration, lastClass)) {
-            reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, context)
+            reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
         }
         if (isProhibitedEnumConstructor(declaration, lastClass)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR)
         }
         if (isProhibitedEnumEntryWithBody(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_ENTRY_WITH_BODY, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_ENTRY_WITH_BODY)
         }
         if (isProhibitedEnumEntryWithInitializer(declaration)) {
-            reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, context)
+            reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS)
         }
 
         if (isProhibitedPrivateDeclaration(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION)
         }
 
         if (isProhibitedDeclarationWithBody(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
+            reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
         }
     }
 

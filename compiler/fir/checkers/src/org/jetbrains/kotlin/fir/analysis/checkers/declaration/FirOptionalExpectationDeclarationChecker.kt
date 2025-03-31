@@ -21,7 +21,7 @@ object FirOptionalExpectationDeclarationChecker : FirBasicDeclarationChecker(Mpp
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration || !declaration.isExpect) {
             declaration.getAnnotationByClassId(StandardClassIds.Annotations.OptionalExpectation, context.session)?.let {
-                reporter.reportOn(it.source, FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, context)
+                reporter.reportOn(it.source, FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED)
             }
         }
     }

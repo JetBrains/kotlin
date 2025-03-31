@@ -36,7 +36,7 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker(MppCheck
         val rightClassId = ARRAY_CLASS_IDS.indexOf(right.resolvedType.fullyExpandedClassId(context.session))
 
         if (leftClassId != -1 && leftClassId == rightClassId) {
-            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, context)
+            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS)
         }
     }
 }

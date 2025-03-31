@@ -25,9 +25,9 @@ object FirOptionalExpectationExpressionChecker : FirFunctionCallChecker(MppCheck
         if (!declarationClass.isOptionalAnnotationClass(context.session)) return
 
         if (!context.session.moduleData.isCommon) {
-            reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, context)
+            reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE)
         }
 
-        reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, context)
+        reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY)
     }
 }

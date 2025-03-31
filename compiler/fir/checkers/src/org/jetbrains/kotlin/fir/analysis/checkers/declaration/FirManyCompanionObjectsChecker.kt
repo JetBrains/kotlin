@@ -23,7 +23,7 @@ object FirManyCompanionObjectsChecker : FirRegularClassChecker(MppCheckerKind.Co
         for (it in declaration.declarations) {
             if (it is FirRegularClass && it.isCompanion) {
                 if (hasCompanion) {
-                    reporter.reportOn(it.source, FirErrors.MANY_COMPANION_OBJECTS, context)
+                    reporter.reportOn(it.source, FirErrors.MANY_COMPANION_OBJECTS)
                 }
                 hasCompanion = true
             }

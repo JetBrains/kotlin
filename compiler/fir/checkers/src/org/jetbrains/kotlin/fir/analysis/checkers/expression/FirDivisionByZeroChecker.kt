@@ -27,7 +27,7 @@ object FirDivisionByZeroChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
         if (firstValue != null && (firstValue == 0L || firstValue == 0.0f || firstValue == 0.0)) {
             val callableId = (expression.calleeReference.toResolvedNamedFunctionSymbol())?.callableId
             if (callableId != null && callableId.packageName == defaultPackageName && callableId.callableName == defaultDivName) {
-                reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO, context)
+                reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO)
             }
         }
     }

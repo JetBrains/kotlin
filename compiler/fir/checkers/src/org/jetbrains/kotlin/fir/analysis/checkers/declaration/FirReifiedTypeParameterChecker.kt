@@ -24,7 +24,7 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.C
                 (containingDeclaration is FirProperty && !containingDeclaration.areAccessorsInline())
 
         if (forbidReified) {
-            reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE, context)
+            reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE)
         }
 
         if (containingDeclaration is FirTypeAlias) {

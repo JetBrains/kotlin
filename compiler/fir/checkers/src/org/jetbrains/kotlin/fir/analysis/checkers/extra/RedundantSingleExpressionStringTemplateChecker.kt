@@ -33,7 +33,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
             if (argumentExpression.resolvedType.fullyExpandedClassId(context.session) == StandardClassIds.String &&
                 argumentExpression.stringParentChildrenCount() == 1 // there is no more children in original string template
             ) {
-                reporter.reportOn(argumentExpression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, context)
+                reporter.reportOn(argumentExpression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
             }
         }
     }

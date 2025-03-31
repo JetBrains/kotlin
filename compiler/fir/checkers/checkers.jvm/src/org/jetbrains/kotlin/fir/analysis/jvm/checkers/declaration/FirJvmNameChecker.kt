@@ -40,11 +40,11 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val value = (name as? FirLiteralExpression)?.value as? String ?: return
 
         if (!Name.isValidIdentifier(value)) {
-            reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME, context)
+            reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME)
         }
 
         if (declaration is FirFunction && !context.isRenamableFunction(declaration)) {
-            reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME, context)
+            reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
         } else if (declaration is FirCallableDeclaration) {
             val containingClass = declaration.getContainingClass()
 
@@ -53,7 +53,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 containingClass != null && containingClass.modality != Modality.FINAL && declaration.isOverridable ||
                 containingClass?.isValueClassThatRequiresMangling() == true
             ) {
-                reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME, context)
+                reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
             }
         }
     }

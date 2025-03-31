@@ -52,7 +52,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         for (arg in argumentMapping.values) {
             val argExpression = (arg as? FirErrorExpression)?.expression ?: arg
             checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
-                ?.let { reporter.reportOn(argExpression.source, it, context) }
+                ?.let { reporter.reportOn(argExpression.source, it) }
         }
 
         checkAnnotationsWithVersion(fqName, expression, context, reporter)

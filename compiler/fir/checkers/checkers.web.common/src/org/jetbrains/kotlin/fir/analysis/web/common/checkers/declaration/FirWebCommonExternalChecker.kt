@@ -49,7 +49,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
 
         if (!context.isTopLevel) {
             if (declaration !is FirPropertyAccessor && declaration.isDirectlyExternal(context.session)) {
-                reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_EXTERNAL_DECLARATION, context)
+                reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_EXTERNAL_DECLARATION)
             }
         }
 
@@ -88,7 +88,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             !declaration.classKind.isInterface && (!allowCompanionInInterface || !declaration.status.isCompanion) &&
             container is FirClass && container.classKind.isInterface
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE)
         }
 
         if (
@@ -99,7 +99,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             container.isInterface &&
             declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE)
         }
 
 
@@ -117,7 +117,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             declaration.isNonAbstractMemberIfInterface(context.session) &&
             !declaration.isNullableProperty()
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE)
         }
 
         declaration.checkBody(context, reporter)

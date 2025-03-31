@@ -17,7 +17,7 @@ object FirAnonymousFunctionTypeParametersChecker : FirAnonymousFunctionChecker(M
     override fun check(declaration: FirAnonymousFunction) {
         val source = declaration.source ?: return
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportOn(source, FirErrors.TYPE_PARAMETERS_NOT_ALLOWED, context)
+            reporter.reportOn(source, FirErrors.TYPE_PARAMETERS_NOT_ALLOWED)
         }
     }
 }

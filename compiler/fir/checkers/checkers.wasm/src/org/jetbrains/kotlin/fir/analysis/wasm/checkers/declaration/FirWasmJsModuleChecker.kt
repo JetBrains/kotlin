@@ -26,15 +26,15 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
         if (declaration is FirProperty && declaration.isVar) {
-            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
         if (!declaration.symbol.isEffectivelyExternal(context.session)) {
-            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL)
         }
 
         if (context.isTopLevel && context.containingFile?.hasAnnotation(JsModule, context.session) == true) {
-            reporter.reportOn(declaration.source, FirWasmErrors.NESTED_JS_MODULE_PROHIBITED, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
 }

@@ -40,16 +40,14 @@ internal object FirSerializationPluginCallChecker : FirFunctionCallChecker(MppCh
         if (isDefaultFormat(expression)) {
             reporter.reportOn(
                 expression.source,
-                FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
-                context
+                FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT
             )
         } else {
             val parentCall = context.callsOrAssignments.getOrNull(context.callsOrAssignments.size - 2) as? FirFunctionCall ?: return
             if (parentCall.explicitReceiver !== expression) return
             reporter.reportOn(
                 expression.source,
-                FirSerializationErrors.JSON_FORMAT_REDUNDANT,
-                context
+                FirSerializationErrors.JSON_FORMAT_REDUNDANT
             )
         }
     }

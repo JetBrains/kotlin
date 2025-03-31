@@ -26,20 +26,20 @@ object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker(MppChecker
         val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
 
         if (primaryConstructor?.source == null) {
-            reporter.reportOn(declaration.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS, context)
+            reporter.reportOn(declaration.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS)
             return
         }
 
         val valueParameters = primaryConstructor.valueParameterSymbols
         if (valueParameters.isEmpty()) {
-            reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS, context)
+            reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_WITHOUT_PARAMETERS)
         }
         for (parameter in valueParameters) {
             if (parameter.isVararg) {
-                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_VARARG_PARAMETER, context)
+                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_VARARG_PARAMETER)
             }
             if (parameter.source?.hasValOrVar() != true) {
-                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER, context)
+                reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER)
             }
         }
     }

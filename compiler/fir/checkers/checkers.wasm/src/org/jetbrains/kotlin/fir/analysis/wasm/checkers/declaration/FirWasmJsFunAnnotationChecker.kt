@@ -25,7 +25,7 @@ object FirWasmJsFunAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind
             declaration.annotations.getAnnotationByClassId(WasmStandardClassIds.Annotations.JsFun, context.session) ?: return
 
         if (!context.isTopLevel || !declaration.symbol.isEffectivelyExternal(context.session)) {
-            reporter.reportOn(annotation.source, FirWasmErrors.WRONG_JS_FUN_TARGET, context)
+            reporter.reportOn(annotation.source, FirWasmErrors.WRONG_JS_FUN_TARGET)
         }
     }
 }

@@ -43,7 +43,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
         for (ref in declaration.typeParameters) {
             if (problemNodes.remove(TypeParameterNode(declaration.symbol, ref.symbol))) {
-                reporter.reportOn(ref.source ?: declaration.source, FirErrors.EXPANSIVE_INHERITANCE, context)
+                reporter.reportOn(ref.source ?: declaration.source, FirErrors.EXPANSIVE_INHERITANCE)
                 return
             }
         }

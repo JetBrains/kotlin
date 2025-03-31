@@ -42,7 +42,7 @@ sealed class FirMixedFunctionalTypesInSupertypesChecker(mppKind: MppCheckerKind)
         when {
             superKinds.size <= 1 -> {}
             superKinds == setOf(Function, SuspendFunction) -> {
-                reporter.reportOn(declaration.source, FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES, context)
+                reporter.reportOn(declaration.source, FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES)
             }
             else -> {
                 reporter.reportOn(declaration.source, FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES, superKinds, context)

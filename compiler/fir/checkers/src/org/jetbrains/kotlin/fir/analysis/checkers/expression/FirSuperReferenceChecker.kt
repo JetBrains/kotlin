@@ -31,7 +31,7 @@ object FirSuperReferenceChecker : FirQualifiedAccessExpressionChecker(MppChecker
             typeArgumentList.typeArguments.isNotEmpty() &&
             superType.typeArguments.all { it !is ConeErrorType }
         ) {
-            reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, context)
+            reporter.reportOn(typeArgumentList.source, FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER)
         }
     }
 }

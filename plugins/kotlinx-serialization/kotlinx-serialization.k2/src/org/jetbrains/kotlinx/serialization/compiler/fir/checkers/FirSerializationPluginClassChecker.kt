@@ -81,7 +81,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val anno = classSymbol.resolvedAnnotationsWithClassIds
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.metaSerializableAnnotationClassId }
             ?: return
-        reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE, this)
+        reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE)
     }
 
     private fun CheckerContext.checkInheritableSerialInfoNotRepeatable(
@@ -93,7 +93,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val anno = classSymbol.resolvedAnnotationsWithClassIds
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }
             ?: return
-        reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE, this)
+        reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE)
     }
 
     private fun CheckerContext.checkExternalSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
@@ -167,13 +167,13 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (classSymbol.hasSerializableOrMetaAnnotation(session)) {
             if (classSymbol.hasSerializableOrMetaAnnotationWithoutArgs(session)) {
-                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS, this)
+                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS)
             }
             if (classSymbol.isAbstract || classSymbol.isSealed || classSymbol.isInterface || classSymbol.hasPolymorphicAnnotation(session)) {
-                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC, this)
+                reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC)
             }
         } else {
-            reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS, this)
+            reporter.reportOn(element, FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS)
         }
     }
 
@@ -285,8 +285,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             if (incorrectTransient != null) {
                 reporter.reportOn(
                     source = incorrectTransient.source ?: property.propertySymbol.source,
-                    FirSerializationErrors.INCORRECT_TRANSIENT,
-                    this
+                    factory = FirSerializationErrors.INCORRECT_TRANSIENT
                 )
             }
         }
@@ -390,7 +389,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 classSymbol.source,
                 FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
-                this,
                 positioningStrategy = SourceElementPositioningStrategies.ENUM_MODIFIER
             )
             return false
@@ -403,12 +401,15 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         checkCompanionOfSerializableClass(classSymbol, reporter)
 
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
-            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED, this)
+            reporter.reportOn(
+                classSymbol.serializableOrMetaAnnotationSource(session),
+                FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED
+            )
             return false
         }
 
         if (classSymbol.isInner) {
-            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.INNER_CLASSES_NOT_SUPPORTED, this)
+            reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
             return false
         }
 
@@ -435,7 +436,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (classSymbol.serializableAnnotationIsUseless(session)) {
             classSymbol.serializableOrMetaAnnotationSource(session)?.let {
-                reporter.reportOn(it, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED, this)
+                reporter.reportOn(it, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
             }
             return false
         }
@@ -449,8 +450,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 if (noArgConstructorSymbol == null) {
                     reporter.reportOn(
                         classSymbol.serializableOrMetaAnnotationSource(session),
-                        FirSerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR,
-                        this
+                        FirSerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR
                     )
                     return false
                 }
@@ -511,8 +511,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         if (!properties.isExternallySerializable) {
             reporter.reportOn(
                 classSymbol.serializableOrMetaAnnotationSource(session),
-                FirSerializationErrors.PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY,
-                this
+                FirSerializationErrors.PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY
             )
         }
 
@@ -533,9 +532,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val transientAnnotation = propertySymbol.getSerialTransientAnnotation(session) ?: continue
             val hasBackingField = propertySymbol.hasBackingField
             if (!hasBackingField) {
-                reporter.reportOn(transientAnnotation.source ?: propertySymbol.source, FirSerializationErrors.TRANSIENT_IS_REDUNDANT, this)
+                reporter.reportOn(transientAnnotation.source ?: propertySymbol.source, FirSerializationErrors.TRANSIENT_IS_REDUNDANT)
             } else if (!isInitialized) {
-                reporter.reportOn(propertySymbol.source, FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER, this)
+                reporter.reportOn(propertySymbol.source, FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER)
             }
         }
     }
@@ -595,8 +594,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         if (propertyType.isNonPrimitiveArray && propertyType.typeArguments.first().type?.isTypeParameter == true) {
             reporter.reportOn(
                 source,
-                FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
-                this
+                FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED
             )
         }
     }

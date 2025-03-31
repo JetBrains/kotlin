@@ -37,10 +37,10 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker(MppChecke
         val calleeReference = expression.calleeReference
         if (calleeReference.isError()) {
             if (expression.isOverloadedAssignCallError(context.session, calleeReference.diagnostic)) {
-                reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD, context)
+                reporter.reportOn(expression.source, NO_APPLICABLE_ASSIGN_METHOD)
             }
         } else if (expression.isOverloadedAssignCall(context.session) && !expression.isReturnTypeUnit()) {
-            reporter.reportOn(expression.source, CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT, context)
+            reporter.reportOn(expression.source, CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT)
         }
     }
 

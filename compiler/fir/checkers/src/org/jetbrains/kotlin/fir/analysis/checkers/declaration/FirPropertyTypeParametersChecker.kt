@@ -40,7 +40,7 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
 
         val usedNames = usedTypes.filterIsInstance<ConeTypeParameterType>().map { it.lookupTag.name }
         declaration.typeParameters.filterNot { usedNames.contains(it.name) }.forEach { danglingParam ->
-            reporter.reportOn(danglingParam.source, FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, context)
+            reporter.reportOn(danglingParam.source, FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER)
         }
     }
 }

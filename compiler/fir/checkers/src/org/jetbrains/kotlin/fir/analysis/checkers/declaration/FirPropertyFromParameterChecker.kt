@@ -21,8 +21,7 @@ object FirPropertyFromParameterChecker : FirPropertyChecker(MppCheckerKind.Commo
         if (declaration.isAbstract) {
             reporter.reportOn(
                 declaration.source,
-                FirErrors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS,
-                context
+                FirErrors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS
             )
         }
     }

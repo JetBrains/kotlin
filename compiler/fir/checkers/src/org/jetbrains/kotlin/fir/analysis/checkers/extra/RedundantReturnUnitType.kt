@@ -28,7 +28,7 @@ object RedundantReturnUnitType : FirSimpleFunctionChecker(MppCheckerKind.Common)
         if (returnType.annotations.isNotEmpty()) return
 
         if (returnType.coneType.fullyExpandedType(context.session).isUnit) {
-            reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE, context)
+            reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE)
         }
     }
 

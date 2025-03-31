@@ -28,7 +28,7 @@ object FirInlinePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                     declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION, context
                 )
                 else -> reporter.reportOn(
-                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD, context
+                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD
                 )
             }
         }

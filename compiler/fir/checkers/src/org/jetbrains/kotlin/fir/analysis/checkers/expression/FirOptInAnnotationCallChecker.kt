@@ -46,7 +46,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
             if (isOptIn) {
                 val arguments = expression.arguments
                 if (arguments.isEmpty()) {
-                    reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS, context)
+                    reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS)
                 } else {
                     for ((index, classSymbol) in expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
                         ?.extractClassesFromArgument(context.session).orEmpty().withIndex()) {

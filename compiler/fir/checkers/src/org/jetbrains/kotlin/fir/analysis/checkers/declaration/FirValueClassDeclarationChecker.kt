@@ -67,26 +67,26 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         if (declaration.isInner || declaration.isLocal) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, context)
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
         }
 
         if (declaration.modality != Modality.FINAL) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL)
         }
 
         if (declaration.contextParameters.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, context)
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS)
         }
 
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
             if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface == true) continue
-            reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
+            reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES)
         }
 
         if (declaration.isSubtypeOfCloneable(context.session)) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE, context)
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE)
         }
 
         var primaryConstructor: FirConstructorSymbol? = null
@@ -107,7 +107,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     LanguageFeature.ValueClassesSecondaryConstructorWithBody
                 ) -> {
                     reporter.reportOn(
-                        innerDeclaration.bodySource!!, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context
+                        innerDeclaration.bodySource!!, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS
                     )
                 }
             }
@@ -116,7 +116,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             when (innerDeclaration) {
                 is FirRegularClassSymbol -> {
                     if (innerDeclaration.isInner) {
-                        reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
+                        reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS)
                     }
                 }
 
@@ -128,15 +128,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                             innerDeclaration.delegate != null ->
                                 reporter.reportOn(
                                     innerDeclaration.delegate!!.source,
-                                    FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS,
-                                    context
+                                    FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
                                 )
 
                             innerDeclaration.hasBackingField &&
                                     innerDeclaration.source?.kind !is KtFakeSourceElementKind -> {
                                 reporter.reportOn(
-                                    innerDeclaration.source, FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS,
-                                    context
+                                    innerDeclaration.source, FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS
                                 )
                             }
                         }
@@ -159,8 +157,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
             reporter.reportOn(
                 delegatedTypeRefSource,
-                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
-                context
+                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION
             )
         }
 
@@ -193,17 +190,17 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
-            reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, context)
+            reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS)
             return
         }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
             if (primaryConstructorParametersByName.isEmpty()) {
-                reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, context)
+                reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR)
                 return
             }
         } else if (primaryConstructorParametersByName.size != 1) {
-            reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, context)
+            reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE)
             return
         }
 
@@ -213,8 +210,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
                         primaryConstructorParameter.source,
-                        FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                        context
+                        FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
                     )
 
                 !context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
@@ -240,8 +236,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
                 parameterTypeRef.coneType.isRecursiveValueClassType(context.session) -> {
                     reporter.reportOn(
-                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
-                        context
+                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE
                     )
                 }
 
@@ -251,8 +246,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         // TODO, KT-50113: Fix when inline arguments are supported.
                         reporter.reportOn(
                             defaultValue.source,
-                            FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
-                            context
+                            FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
                         )
                     }
                 }
@@ -276,13 +270,12 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 if (typedEquals.typeParameterSymbols.isNotEmpty()) {
                     reporter.reportOn(
                         typedEquals.source,
-                        FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
-                        context
+                        FirErrors.TYPE_PARAMETERS_NOT_ALLOWED
                     )
                 }
                 val singleParameterReturnTypeRef = typedEquals.valueParameterSymbols.single().resolvedReturnTypeRef
                 if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
-                    reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, context)
+                    reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS)
                 }
             }
 

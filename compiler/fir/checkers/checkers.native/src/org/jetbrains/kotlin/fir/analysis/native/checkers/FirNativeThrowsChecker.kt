@@ -78,7 +78,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         val classIds = throwsAnnotation?.getClassIds(context.session) ?: return
 
         if (classIds.isEmpty()) {
-            reporter.reportOn(throwsAnnotation.source, FirNativeErrors.THROWS_LIST_EMPTY, context)
+            reporter.reportOn(throwsAnnotation.source, FirNativeErrors.THROWS_LIST_EMPTY)
             return
         }
 

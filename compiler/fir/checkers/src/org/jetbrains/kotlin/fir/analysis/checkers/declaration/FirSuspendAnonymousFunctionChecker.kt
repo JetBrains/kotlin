@@ -17,7 +17,7 @@ object FirSuspendAnonymousFunctionChecker : FirAnonymousFunctionChecker(MppCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirAnonymousFunction) {
         if (!declaration.isLambda && declaration.isSuspend) {
-            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_SUSPEND_FUNCTION, context)
+            reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_SUSPEND_FUNCTION)
         }
     }
 }

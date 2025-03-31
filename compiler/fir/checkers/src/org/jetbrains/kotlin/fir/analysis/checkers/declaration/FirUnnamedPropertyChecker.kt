@@ -28,11 +28,11 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         val isDesugaredComponentCall = declaration.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredComponentFunctionCall
 
         if (declaration.isVar && !isDesugaredComponentCall) {
-            reporter.reportOn(declaration.source, FirErrors.UNNAMED_VAR_PROPERTY, context)
+            reporter.reportOn(declaration.source, FirErrors.UNNAMED_VAR_PROPERTY)
         }
 
         if (declaration.delegate != null) {
-            reporter.reportOn(declaration.delegate?.source, FirErrors.UNNAMED_DELEGATED_PROPERTY, context)
+            reporter.reportOn(declaration.delegate?.source, FirErrors.UNNAMED_DELEGATED_PROPERTY)
         }
 
         if (!isDesugaredComponentCall && declaration.isCatchParameter != true) {

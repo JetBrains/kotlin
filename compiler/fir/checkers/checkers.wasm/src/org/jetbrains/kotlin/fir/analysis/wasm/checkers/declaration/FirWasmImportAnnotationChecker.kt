@@ -29,11 +29,11 @@ object FirWasmImportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             declaration.annotations.getAnnotationByClassId(WasmStandardClassIds.Annotations.WasmImport, context.session) ?: return
 
         if (!context.isTopLevel) {
-            reporter.reportOn(annotation.source, FirWasmErrors.NESTED_WASM_IMPORT, context)
+            reporter.reportOn(annotation.source, FirWasmErrors.NESTED_WASM_IMPORT)
         }
 
         if (!declaration.symbol.isEffectivelyExternal(context.session)) {
-            reporter.reportOn(annotation.source, FirWasmErrors.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(annotation.source, FirWasmErrors.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION)
         }
 
         if (declaration is FirFunction) {

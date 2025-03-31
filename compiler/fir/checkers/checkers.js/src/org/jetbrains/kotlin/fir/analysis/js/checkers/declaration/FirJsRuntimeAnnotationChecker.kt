@@ -25,9 +25,9 @@ object FirJsRuntimeAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind
             if (annotationClassSymbol.getExplicitAnnotationRetention(context.session) != AnnotationRetention.RUNTIME) continue
 
             if (declaration is FirMemberDeclaration && declaration.symbol.isEffectivelyExternal(context)) {
-                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, context)
+                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION)
             } else {
-                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED, context)
+                reporter.reportOn(annotation.source, FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED)
             }
         }
     }

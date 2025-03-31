@@ -18,10 +18,10 @@ object FirAnonymousFunctionParametersChecker : FirAnonymousFunctionChecker(MppCh
         for (valueParameter in declaration.valueParameters) {
             val source = valueParameter.source ?: continue
             if (valueParameter.defaultValue != null) {
-                reporter.reportOn(source, FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE, context)
+                reporter.reportOn(source, FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE)
             }
             if (valueParameter.isVararg) {
-                reporter.reportOn(source, FirErrors.USELESS_VARARG_ON_PARAMETER, context)
+                reporter.reportOn(source, FirErrors.USELESS_VARARG_ON_PARAMETER)
             }
         }
     }

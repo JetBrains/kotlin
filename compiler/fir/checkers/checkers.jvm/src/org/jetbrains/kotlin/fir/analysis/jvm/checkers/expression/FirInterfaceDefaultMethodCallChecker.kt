@@ -47,7 +47,7 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
             if (containingDeclaration.isInterface) {
                 val containingMember = context.findContainingMember()?.symbol
                 if (containingMember?.isCompiledToJvmDefault(session, jvmDefaultMode) == false) {
-                    reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, context)
+                    reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER)
                     return
                 }
             }

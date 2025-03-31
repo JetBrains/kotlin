@@ -25,12 +25,12 @@ object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerK
         if (!classSymbol.isOptionalAnnotationClass(context.session)) return
 
         if (!context.session.moduleData.isCommon) {
-            reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, context)
+            reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE)
         }
 
         val annotationContainer = context.annotationContainers.lastOrNull()
         if (annotationContainer?.annotations?.any { it.annotationTypeRef == typeRef } == true) return
 
-        reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, context)
+        reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY)
     }
 }

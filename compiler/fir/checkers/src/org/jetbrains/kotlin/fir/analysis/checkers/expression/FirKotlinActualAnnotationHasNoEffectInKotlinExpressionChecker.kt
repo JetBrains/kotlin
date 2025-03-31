@@ -29,7 +29,7 @@ sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : F
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(expression: FirResolvedQualifier) {
             if (expression.resolvedType.classId == StandardClassIds.Annotations.KotlinActual) {
-                reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
+                reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN)
             }
         }
     }
@@ -40,7 +40,7 @@ sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : F
             if (expression.calleeReference.toResolvedConstructorSymbol()
                     ?.containingClassLookupTag()?.classId == StandardClassIds.Annotations.KotlinActual
             ) {
-                reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
+                reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN)
             }
         }
     }
@@ -51,7 +51,7 @@ sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : F
             if (expression.calleeReference.toResolvedConstructorSymbol()
                     ?.containingClassLookupTag()?.classId == StandardClassIds.Annotations.KotlinActual
             ) {
-                reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
+                reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN)
             }
         }
     }

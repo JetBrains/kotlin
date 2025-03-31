@@ -28,7 +28,7 @@ object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common
             val isOptInMarker =
                 annotation.getAnnotationClassForOptInMarker(context.session) != null
             if (isDeprecationMarker || isOptInMarker)
-                reporter.reportOn(annotation.source, FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION, context)
+                reporter.reportOn(annotation.source, FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION)
         }
     }
 }

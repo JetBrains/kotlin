@@ -35,7 +35,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
         if (expression !is FirCallableReferenceAccess) return
 
         if (expression.hasQuestionMarkAtLHS && expression.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier) {
-            reporter.reportOn(expression.source, FirErrors.SAFE_CALLABLE_REFERENCE_CALL, context)
+            reporter.reportOn(expression.source, FirErrors.SAFE_CALLABLE_REFERENCE_CALL)
         }
 
         // UNRESOLVED_REFERENCE will be reported separately.

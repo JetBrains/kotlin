@@ -45,13 +45,13 @@ object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
             if (annotation.toAnnotationClassId(context.session) == StandardClassIds.Annotations.ExtensionFunctionType) {
                 if (!typeRef.coneType.isSomeFunctionType(context.session)) {
                     if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidExtensionFunctionTypeOnNonFunctionTypes)) {
-                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
+                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE)
                     } else {
-                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING, context)
+                        reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING)
                     }
 
                 } else if (typeRef.coneType.typeArguments.size <= 1) {
-                    reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
+                    reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE)
                 }
             }
         }

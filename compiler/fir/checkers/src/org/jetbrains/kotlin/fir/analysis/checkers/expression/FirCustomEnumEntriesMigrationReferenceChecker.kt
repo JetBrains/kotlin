@@ -22,7 +22,7 @@ object FirCustomEnumEntriesMigrationReferenceChecker : FirCallableReferenceAcces
         if (expression.calleeReference.name == StandardNames.ENUM_ENTRIES &&
             expression.nonFatalDiagnostics.any { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }
         ) {
-            reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE, context)
+            reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE)
         }
     }
 }

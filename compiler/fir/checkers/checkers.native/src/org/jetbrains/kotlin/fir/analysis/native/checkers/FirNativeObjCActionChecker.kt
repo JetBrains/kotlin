@@ -33,7 +33,7 @@ object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
 
         fun checkCanGenerateFunctionImp(function: FirNamedFunctionSymbol) {
             if (function.valueParameterSymbols.size > 2)
-                reporter.reportOn(function.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, context)
+                reporter.reportOn(function.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE)
         }
 
         fun checkCanGenerateActionImp(function: FirNamedFunctionSymbol) {

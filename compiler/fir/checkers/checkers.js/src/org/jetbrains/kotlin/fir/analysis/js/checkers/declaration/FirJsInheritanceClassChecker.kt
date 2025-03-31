@@ -56,7 +56,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
                 .mapNotNull { it.toSymbol(session)?.fullyExpandedClass(session) }
 
             if (superTypes.any { !it.isEffectivelyExternal(session) }) {
-                reporter.reportOn(declaration.source, FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, context)
+                reporter.reportOn(declaration.source, FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE)
             }
         }
 
@@ -77,7 +77,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
                 it.isBuiltinFunctionalTypeOrSubtype(session) && !it.isSuspendFunctionTypeOrSubtype(session)
             }
         ) {
-            reporter.reportOn(declaration.source, FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE)
         }
     }
 

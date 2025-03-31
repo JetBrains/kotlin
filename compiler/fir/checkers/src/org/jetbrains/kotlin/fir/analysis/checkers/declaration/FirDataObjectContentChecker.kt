@@ -30,7 +30,7 @@ object FirDataObjectContentChecker : FirSimpleFunctionChecker(MppCheckerKind.Com
         if (containingClass.classKind != ClassKind.OBJECT || !containingClass.hasModifier(KtTokens.DATA_KEYWORD)) return
 
         if (declaration.symbol.isMethodOfAny && declaration.name != OperatorNameConventions.TO_STRING) {
-            reporter.reportOn(source, FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE, context)
+            reporter.reportOn(source, FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE)
         }
     }
 }

@@ -30,7 +30,7 @@ object FirJsDynamicDeclarationChecker : FirClassChecker(MppCheckerKind.Common) {
             val initializer = delegate.fir.initializer ?: continue
 
             if (initializer.resolvedType is ConeDynamicType) {
-                reporter.reportOn(initializer.source, FirJsErrors.DELEGATION_BY_DYNAMIC, context)
+                reporter.reportOn(initializer.source, FirJsErrors.DELEGATION_BY_DYNAMIC)
             }
         }
     }

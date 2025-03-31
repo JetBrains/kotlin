@@ -26,10 +26,10 @@ object FirWasmWasiExternalDeclarationChecker : FirBasicDeclarationChecker(MppChe
 
         if (declaration is FirFunction) {
             if (!declaration.hasAnnotation(WasmStandardClassIds.Annotations.WasmImport, context.session)) {
-                reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, context)
+                reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT)
             }
         } else {
-            reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION)
         }
     }
 }

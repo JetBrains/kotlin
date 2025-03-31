@@ -27,11 +27,11 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(MppCheckerKind.Co
         val argument = expression.argumentList.arguments.singleOrNull() ?: return
         val argumentWithoutSmartcast = argument.unwrapSmartcastExpression()
         if (argumentWithoutSmartcast is FirAnonymousFunctionExpression && argumentWithoutSmartcast.anonymousFunction.isLambda) {
-            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, context)
+            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION)
             return
         }
         if (argumentWithoutSmartcast is FirCallableReferenceAccess) {
-            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, context)
+            reporter.reportOn(expression.source, FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE)
             return
         }
         // TODO: use of Unit is subject to change.

@@ -51,7 +51,7 @@ open class KtDiagnosticReporterWithContext(
 
         fun report(factory: KtDiagnosticFactory0) {
             sourceElement?.let {
-                reportOn(it, factory, this)
+                reportOn(it, factory)
                 checkAndCommitReportsOn(it, this)
             }
         }

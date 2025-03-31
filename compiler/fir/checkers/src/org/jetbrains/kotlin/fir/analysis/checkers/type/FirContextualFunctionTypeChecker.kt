@@ -44,15 +44,14 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             }
 
         source.forEachChildOfType(valueParameterElementSet, depth = 1) {
-            reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE, context)
+            reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
         }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session), context)) {
                 reporter.reportOn(
                     source,
-                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
-                    context
+                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
                 )
             }
             val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)

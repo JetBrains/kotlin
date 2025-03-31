@@ -33,7 +33,7 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker(MppCheckerKind.Com
         fun checkConeType(coneType: ConeKotlinType?) {
             if (coneType?.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes) == true) {
                 val source = expression.source
-                reporter.reportOn(source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, context)
+                reporter.reportOn(source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM)
             } else if (coneType is ConeClassLikeType) {
                 for (typeArgument in coneType.typeArguments) {
                     checkConeType(typeArgument.type)

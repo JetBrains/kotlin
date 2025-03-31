@@ -26,7 +26,7 @@ object FirTypeParameterVarianceChecker : FirTypeParameterChecker(MppCheckerKind.
                     containingDeclaration is FirTypeAlias ||
                     containingDeclaration is FirProperty)
         ) {
-            reporter.reportOn(declaration.source, FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, context)
+            reporter.reportOn(declaration.source, FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED)
         }
     }
 }

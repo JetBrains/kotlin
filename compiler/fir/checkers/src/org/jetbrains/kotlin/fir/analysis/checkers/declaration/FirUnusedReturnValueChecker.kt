@@ -44,8 +44,7 @@ object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerK
             if (annotation.isMustUseReturnValue(session) || annotation.isIgnorableValue(session)) {
                 reporter.reportOn(
                     annotation.source,
-                    FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
-                    context
+                    FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
                 )
             }
         }

@@ -37,7 +37,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
                     is FirProperty -> FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
                     else -> error("Should not be here")
                 }
-                reporter.reportOn(declaration.source, factory, context)
+                reporter.reportOn(declaration.source, factory)
             }
             return
         }
@@ -47,7 +47,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
                 is FirProperty -> FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
                 else -> error("Should not be here")
             }
-            reporter.reportOn(declaration.source, factory, context)
+            reporter.reportOn(declaration.source, factory)
         }
     }
 }

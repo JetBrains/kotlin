@@ -23,7 +23,7 @@ object FirJsExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.
         val jsExport = declaration.getAnnotationByClassId(WebCommonStandardClassIds.Annotations.JsExport, context.session) ?: return
 
         if (declaration !is FirFile && !context.isTopLevel) {
-            reporter.reportOn(jsExport.source, FirWebCommonErrors.NESTED_JS_EXPORT, context)
+            reporter.reportOn(jsExport.source, FirWebCommonErrors.NESTED_JS_EXPORT)
         }
     }
 }

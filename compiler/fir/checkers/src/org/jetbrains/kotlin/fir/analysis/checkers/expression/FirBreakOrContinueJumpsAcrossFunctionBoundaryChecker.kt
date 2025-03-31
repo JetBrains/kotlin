@@ -37,7 +37,7 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
         when {
             notTransparentDeclarationKinds.isEmpty() -> {}
             notTransparentDeclarationKinds.any { it == NotInalienableDeclaration } -> {
-                reporter.reportOn(expression.source, FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, context)
+                reporter.reportOn(expression.source, FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY)
             }
             !inlineLambdasSupported -> {
                 reporter.reportOn(

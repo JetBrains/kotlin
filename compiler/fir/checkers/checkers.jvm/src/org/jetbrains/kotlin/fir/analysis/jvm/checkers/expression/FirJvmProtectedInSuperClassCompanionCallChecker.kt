@@ -83,7 +83,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
                 it.symbol == dispatchClassSymbol || it.symbol == companionContainingClassSymbol
             } == null
         ) {
-            reporter.reportOn(calleeReference.source, FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, context)
+            reporter.reportOn(calleeReference.source, FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC)
         }
     }
 }

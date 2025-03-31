@@ -55,7 +55,7 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
         if (declaration is FirFunction && isJsExportedDeclaration(declaration, session)) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
                 if (declaration.contextParameters.isNotEmpty()) {
-                    reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
             }
         }

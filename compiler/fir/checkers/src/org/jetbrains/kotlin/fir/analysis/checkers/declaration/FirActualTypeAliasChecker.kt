@@ -42,7 +42,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         val expandedTypeSymbol = expandedType.toSymbol(context.session) ?: return
 
         if (expandedTypeSymbol is FirTypeAliasSymbol) {
-            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, context)
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS)
         }
 
         declaration.checkTypeAliasToClassWithDeclarationSiteVariance(expandedTypeSymbol, context, reporter)
@@ -52,11 +52,11 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
             // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
             if (expandedType.isNothing) {
-                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING, context)
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING)
             }
 
             if (expandedType.isMarkedNullable) {
-                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE, context)
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE)
             }
 
             if (expandedTypeSymbol.classKind == ClassKind.ANNOTATION_CLASS) {

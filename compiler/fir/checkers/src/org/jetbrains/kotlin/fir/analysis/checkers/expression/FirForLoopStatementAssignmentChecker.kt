@@ -42,6 +42,6 @@ object FirForLoopStatementAssignmentChecker : FirLoopExpressionChecker(MppChecke
         )
             return
 
-        reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED, context)
+        reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED)
     }
 }

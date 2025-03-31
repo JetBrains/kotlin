@@ -42,7 +42,7 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Plat
         if (objCNames.isEmpty()) return
         if (declaration is FirCallableDeclaration && declaration.isOverride) {
             for (objCName in objCNames) {
-                reporter.reportOn(objCName.annotation.source, INAPPLICABLE_OBJC_NAME, context)
+                reporter.reportOn(objCName.annotation.source, INAPPLICABLE_OBJC_NAME)
             }
         }
         objCNames.forEach { checkObjCName(it, declaration, context, reporter) }

@@ -18,7 +18,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineValueClasses) && declaration.isInline) {
-            reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_DEPRECATED, context)
+            reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_DEPRECATED)
         }
     }
 }

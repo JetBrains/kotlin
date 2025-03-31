@@ -24,11 +24,11 @@ object FirProjectionsOnNonClassTypeArgumentChecker : FirQualifiedAccessExpressio
     override fun check(expression: FirQualifiedAccessExpression) {
         for (it in expression.typeArguments) {
             when (it) {
-                is FirStarProjection -> reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
+                is FirStarProjection -> reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT)
                 is FirTypeProjectionWithVariance -> {
                     if (it.variance != Variance.INVARIANT) {
                         val modifierSource = it.source.getModifierList()?.modifiers?.firstOrNull()?.source
-                        reporter.reportOn(modifierSource ?: it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
+                        reporter.reportOn(modifierSource ?: it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT)
                     }
                 }
                 is FirPlaceholderProjection -> errorWithAttachment("Placeholder projection shouldn't exist during checker phase.") {

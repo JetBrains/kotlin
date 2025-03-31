@@ -30,20 +30,20 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             declaration.annotations.getAnnotationByClassId(WasmStandardClassIds.Annotations.WasmExport, context.session) ?: return
 
         if (!context.isTopLevel) {
-            reporter.reportOn(annotation.source, FirWasmErrors.NESTED_WASM_EXPORT, context)
+            reporter.reportOn(annotation.source, FirWasmErrors.NESTED_WASM_EXPORT)
         }
 
         if (declaration.annotations.hasAnnotation(WebCommonStandardClassIds.Annotations.JsExport, context.session)) {
-            reporter.reportOn(declaration.source, FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, context)
+            reporter.reportOn(declaration.source, FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION)
         }
 
         if (declaration is FirSimpleFunction) {
             if (declaration.symbol.isEffectivelyExternal(context.session) || declaration.hasValidJsCodeBody()) {
-                reporter.reportOn(annotation.source, FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION, context)
+                reporter.reportOn(annotation.source, FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION)
             }
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
                 if (declaration.contextParameters.isNotEmpty()) {
-                    reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
             }
             checkWasmInteropSignature(declaration, context, reporter)

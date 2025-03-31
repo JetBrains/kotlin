@@ -26,11 +26,11 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
         }
 
         if (declaration.propertySymbol.isAbstract) {
-            reporter.reportOn(declaration.source, getProperDiagnostic(context), context)
+            reporter.reportOn(declaration.source, getProperDiagnostic(context))
         }
 
         if (declaration.propertySymbol.isExtension) {
-            reporter.reportOn(declaration.source, FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION, context)
+            reporter.reportOn(declaration.source, FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION)
         }
     }
 

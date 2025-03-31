@@ -31,7 +31,7 @@ object FirSuspendLimitationsChecker : FirFunctionChecker(MppCheckerKind.Common) 
 
         if (declaration.annotations.any { it.isKotlinTestAnnotation(context.session) }) {
             declaration.getModifier(KtTokens.SUSPEND_KEYWORD)?.let {
-                reporter.reportOn(it.source, FirErrors.UNSUPPORTED_SUSPEND_TEST, context)
+                reporter.reportOn(it.source, FirErrors.UNSUPPORTED_SUSPEND_TEST)
             }
         }
     }

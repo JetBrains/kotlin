@@ -42,7 +42,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION,
-                    context,
                     positioningStrategy = SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
                 )
             }

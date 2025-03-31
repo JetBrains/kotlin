@@ -43,7 +43,7 @@ object FirJsNameCharsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common)
 
         val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
         if ((sanitizeName(stableName.name) != stableName.name)) {
-            reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS, context)
+            reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS)
         }
     }
 }

@@ -21,8 +21,7 @@ object FirQualifierWithTypeArgumentsChecker : FirResolvedQualifierChecker(MppChe
             if (expression.symbol?.isInner == true) return@forEach
             reporter.reportOn(
                 expression.source,
-                FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED,
-                context
+                FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED
             )
         }
     }

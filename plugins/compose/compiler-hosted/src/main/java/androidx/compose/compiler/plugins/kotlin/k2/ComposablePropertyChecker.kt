@@ -36,14 +36,13 @@ object ComposablePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         if (declaration.isVar) {
-            reporter.reportOn(declaration.source, ComposeErrors.COMPOSABLE_VAR, context)
+            reporter.reportOn(declaration.source, ComposeErrors.COMPOSABLE_VAR)
         }
 
         if (declaration.hasBackingField) {
             reporter.reportOn(
                 declaration.source,
-                ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD,
-                context
+                ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD
             )
         }
     }

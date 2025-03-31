@@ -39,7 +39,7 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(MppC
             }
 
             if (methodOfAny) {
-                reporter.reportOn(function.source, FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, context)
+                reporter.reportOn(function.source, FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE)
             }
         }
     }

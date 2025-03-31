@@ -28,7 +28,7 @@ object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
 
         fun checkCanGenerateFunctionImp(setter: FirPropertyAccessorSymbol) {
             if (setter.valueParameterSymbols.size > 2)
-                reporter.reportOn(setter.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, context)
+                reporter.reportOn(setter.source, FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE)
         }
 
         fun checkCanGenerateOutletSetterImp(property: FirPropertySymbol) {

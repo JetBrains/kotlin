@@ -32,7 +32,7 @@ object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessExpres
                 expression.toResolvedCallableSymbol()?.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
 
             if (containingClassSymbol.source != null && containingClassSymbol.classKind == ClassKind.CLASS && containingClassSymbol.classId != StandardClassIds.Any) {
-                reporter.reportOn(expression.explicitReceiver?.source, FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, context)
+                reporter.reportOn(expression.explicitReceiver?.source, FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE)
             }
         }
     }

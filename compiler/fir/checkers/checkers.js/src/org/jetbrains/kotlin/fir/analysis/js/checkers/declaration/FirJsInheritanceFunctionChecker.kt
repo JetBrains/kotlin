@@ -38,7 +38,7 @@ sealed class FirJsInheritanceFunctionChecker(mppKind: MppCheckerKind) : FirFunct
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         if (declaration.isNotEffectivelyExternalFunctionButOverridesExternal(context)) {
-            reporter.reportOn(declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, context)
+            reporter.reportOn(declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS)
         }
     }
 

@@ -25,7 +25,7 @@ object FirDynamicReceiverChecker : FirCallableDeclarationChecker(MppCheckerKind.
             !declaration.hasAnnotation(DynamicExtension, context.session) &&
             declaration !is FirAnonymousFunction
         ) {
-            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED, context)
+            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED)
         }
     }
 }

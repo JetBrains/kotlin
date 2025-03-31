@@ -68,7 +68,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             }
         } else {
             if (!checkNonLocalReturnUsage(enclosingSuspendFunction, context)) {
-                reporter.reportOn(expression.source, FirErrors.NON_LOCAL_SUSPENSION_POINT, context)
+                reporter.reportOn(expression.source, FirErrors.NON_LOCAL_SUSPENSION_POINT)
             }
             if (isInScopeForDefaultParameterValues(enclosingSuspendFunction, context)) {
                 reporter.reportOn(
@@ -79,7 +79,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
                 )
             }
             if (!checkRestrictsSuspension(expression, enclosingSuspendFunction, symbol, context)) {
-                reporter.reportOn(expression.source, FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, context)
+                reporter.reportOn(expression.source, FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL)
             }
         }
     }

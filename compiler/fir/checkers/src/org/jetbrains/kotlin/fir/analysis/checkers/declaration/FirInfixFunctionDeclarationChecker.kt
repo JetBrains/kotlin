@@ -22,7 +22,7 @@ object FirInfixFunctionDeclarationChecker : FirFunctionChecker(MppCheckerKind.Co
             !hasExtensionOrDispatchReceiver(declaration, context) ||
             declaration.valueParameters.single().isVararg
         ) {
-            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER, context)
+            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER)
         }
     }
 

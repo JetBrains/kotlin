@@ -82,7 +82,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) 
             else -> return
         }
 
-        reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_EXPLICIT_TYPE, context)
+        reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_EXPLICIT_TYPE)
     }
 
     private fun ConeKotlinType.isSame(other: ClassId?): Boolean {

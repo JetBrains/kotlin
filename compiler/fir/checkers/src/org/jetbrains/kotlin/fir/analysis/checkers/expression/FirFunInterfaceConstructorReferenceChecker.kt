@@ -34,7 +34,7 @@ object FirFunInterfaceConstructorReferenceChecker : FirQualifiedAccessExpression
         ) {
             val samClassSymbol = referredSymbol.resolvedReturnTypeRef.toRegularClassSymbol(context.session) ?: return
             if (samClassSymbol.isFun && !samClassSymbol.isJavaOrEnhancement) {
-                reporter.reportOn(reference.source, FUN_INTERFACE_CONSTRUCTOR_REFERENCE, context)
+                reporter.reportOn(reference.source, FUN_INTERFACE_CONSTRUCTOR_REFERENCE)
             }
         }
     }

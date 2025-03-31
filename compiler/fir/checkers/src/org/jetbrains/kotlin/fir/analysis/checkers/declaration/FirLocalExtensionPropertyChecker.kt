@@ -17,7 +17,7 @@ object FirLocalExtensionPropertyChecker : FirPropertyChecker(MppCheckerKind.Comm
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (declaration.isLocal && declaration.isExtension) {
-            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.LOCAL_EXTENSION_PROPERTY, context)
+            reporter.reportOn(declaration.receiverParameter?.source, FirErrors.LOCAL_EXTENSION_PROPERTY)
         }
     }
 }

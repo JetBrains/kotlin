@@ -24,6 +24,6 @@ object FirPackageOnLhsQualifierChecker : FirResolvedQualifierChecker(MppCheckerK
         val lastGetClass = context.getClassCalls.lastOrNull()
         if (lastCallableReferenceAccess?.explicitReceiver !== expression && lastGetClass?.argument !== expression) return
 
-        reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND, context)
+        reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND)
     }
 }

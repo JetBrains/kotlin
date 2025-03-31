@@ -28,8 +28,7 @@ object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppChec
         if (declaration.hasBackingField && !declaration.isLateInit && !declaration.isLocal) {
             reporter.reportOn(
                 declaration.initializer?.source ?: declaration.source,
-                FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD,
-                context
+                FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
             )
         }
     }

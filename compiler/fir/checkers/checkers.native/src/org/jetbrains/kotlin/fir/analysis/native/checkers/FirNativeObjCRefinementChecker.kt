@@ -29,7 +29,7 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppChecker
         val (objCAnnotations, swiftAnnotations) = declaration.findRefinedAnnotations(context.session)
         if (objCAnnotations.isNotEmpty() && swiftAnnotations.isNotEmpty()) {
             for (swiftAnnotation in swiftAnnotations) {
-                reporter.reportOn(swiftAnnotation.source, REDUNDANT_SWIFT_REFINEMENT, context)
+                reporter.reportOn(swiftAnnotation.source, REDUNDANT_SWIFT_REFINEMENT)
             }
         }
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClass
