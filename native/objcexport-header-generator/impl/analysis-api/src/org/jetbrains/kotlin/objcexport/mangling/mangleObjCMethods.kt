@@ -6,21 +6,21 @@ import org.jetbrains.kotlin.objcexport.ObjCExportContext
 
 
 internal fun ObjCExportContext.mangleObjCMethods(
-  stubs: List<ObjCExportStub>,
-  containingStub: ObjCExportStub,
+    stubs: List<ObjCExportStub>,
+    containingStub: ObjCExportStub,
 ): List<ObjCExportStub> {
     if (!stubs.hasMethodConflicts()) return stubs
-  val mangler = ObjCMethodMangler()
+    val mangler = ObjCMethodMangler()
     return stubs.map { member ->
-      if (member.isSwiftNameMethod()) mangler.mangle(member, containingStub)
-      else member
+        if (member.isSwiftNameMethod()) mangler.mangle(member, containingStub)
+        else member
     }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
 internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
     val with = if (attribute.isConstructor) "With" else ""
     return if (attribute.parameters.isEmpty())
-      listOf(attribute.name + attribute.postfix)
+        listOf(attribute.name + attribute.postfix)
     else if (attribute.parameters.size == 1) {
         listOf(
             (attribute.name + with + attribute.parameters.first()
@@ -48,16 +48,18 @@ internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
 
 
 internal fun buildMangledSwiftNameMethodAttribute(attribute: ObjCMemberDetails, containingStub: ObjCExportStub): String {
-    val parameters = attribute.parameters.mapIndexed { index, parameter ->
-      if (index == attribute.parameters.size - 1) parameter.mangleSelector(attribute.postfix)
-      else parameter
+    val parameters = attribute.parameters
+    val parametersWithoutError = if (attribute.hasErrorParameter) parameters.dropLast(1) else parameters
+    val mangledParameters = parametersWithoutError.mapIndexed { index, parameter ->
+        if (index == parametersWithoutError.size - 1) parameter.mangleSelector(attribute.postfix)
+        else parameter
     }
 
-  val name = if (containingStub.isExtensionFacade && attribute.parameters.isEmpty()) {
-    attribute.name + attribute.postfix
-  } else attribute.name
+    val name = if (containingStub.isExtensionFacade && parametersWithoutError.isEmpty()) {
+        attribute.name + attribute.postfix
+    } else attribute.name
 
-  return "swift_name(\"${name}(${parameters.joinToString(separator = "")})\")"
+    return "swift_name(\"${name}(${mangledParameters.joinToString(separator = "")})\")"
 }
 
 internal fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> {
@@ -72,7 +74,7 @@ internal fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> 
 }
 
 internal fun ObjCExportStub.isSwiftNameMethod(): Boolean {
-  return this is ObjCMethod && isSwiftNameMethod()
+    return this is ObjCMethod && isSwiftNameMethod()
 }
 
 internal fun ObjCMethod.isSwiftNameMethod(): Boolean {
@@ -80,7 +82,7 @@ internal fun ObjCMethod.isSwiftNameMethod(): Boolean {
 }
 
 internal fun ObjCMemberDetails.mangleAttribute(): ObjCMemberDetails {
-    return ObjCMemberDetails(name, parameters, isConstructor, postfix + "_")
+    return ObjCMemberDetails(name, parameters, isConstructor, postfix + "_", hasErrorParameter = hasErrorParameter)
 }
 
 /**

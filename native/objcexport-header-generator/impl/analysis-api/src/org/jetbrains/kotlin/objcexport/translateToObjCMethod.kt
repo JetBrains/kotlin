@@ -249,7 +249,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
                     else if (parameter.isReceiver) "" else parameter.name.toString()
                 }
             }
-            MethodBridgeValueParameter.ErrorOutParameter -> "error"
+            MethodBridgeValueParameter.ErrorOutParameter -> errorParameterName
             is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
         }
 

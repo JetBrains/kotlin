@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorParameterName
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.*
 
 internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbol, baseMethodBridge: MethodBridge): List<ObjCParameter> {
     fun unifyName(initialName: String, usedNames: Set<String>): String {
@@ -22,9 +24,7 @@ internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbo
     }
 
     val valueParametersAssociated = valueParametersAssociated(baseMethodBridge, symbol)
-
     val parameters = mutableListOf<ObjCParameter>()
-
     val usedNames = mutableSetOf<String>()
 
     valueParametersAssociated.forEach { (bridge: MethodBridgeValueParameter, parameter: KtObjCParameterData?) ->
@@ -42,7 +42,7 @@ internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbo
                     }
                 }
             }
-            MethodBridgeValueParameter.ErrorOutParameter -> "error"
+            MethodBridgeValueParameter.ErrorOutParameter -> errorParameterName
             is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
         }
 
@@ -84,14 +84,9 @@ internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbo
 
         val origin: ObjCExportStubOrigin? = null
         val todo: Nothing? = null
-        parameters += ObjCParameter(uniqueName, origin, type, todo)
+        parameters += ObjCParameter(uniqueName, origin, type, todo, objCTypeExtras {
+            isErrorParameter = bridge is MethodBridgeValueParameter.ErrorOutParameter
+        })
     }
     return parameters
-}
-
-/**
- * Not implemented
- */
-internal fun KaTypeParameterSymbol.getObjCName(): ObjCExportName {
-    TODO()
 }
