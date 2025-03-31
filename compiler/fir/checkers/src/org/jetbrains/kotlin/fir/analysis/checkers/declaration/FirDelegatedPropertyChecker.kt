@@ -86,8 +86,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
                         expectedFunctionSignature,
                         delegateType,
-                        delegateDescription,
-                        context
+                        delegateDescription
                     )
 
                     is ConeAmbiguityError -> {
@@ -109,8 +108,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
                         expectedFunctionSignature,
                         delegateType,
-                        delegateDescription,
-                        context
+                        delegateDescription
                     )
                     is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
                     is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
@@ -131,8 +129,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
                         "getValue",
                         propertyType,
-                        returnType,
-                        context
+                        returnType
                     )
                 }
             }

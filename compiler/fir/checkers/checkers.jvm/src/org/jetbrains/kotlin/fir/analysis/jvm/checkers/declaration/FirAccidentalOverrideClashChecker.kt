@@ -45,7 +45,7 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
                         else -> "a function with erased parameters"
                     }
                     reporter.reportOn(
-                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase, context
+                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase
                     )
                     reported = true
                 }

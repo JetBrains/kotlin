@@ -39,8 +39,7 @@ object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker(MppCheckerKi
                     FirErrors.TYPE_MISMATCH,
                     field.returnTypeRef.coneType,
                     initializer.resolvedType,
-                    false,
-                    context,
+                    false
                 )
             }
         }

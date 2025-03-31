@@ -113,8 +113,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                     EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR,
                     classSymbol,
                     serializableKType,
-                    parametersCount.toString(),
-                    this
+                    parametersCount.toString()
                 )
             }
         }
@@ -253,8 +252,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.PROVIDED_RUNTIME_TOO_LOW,
                 KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 currentVersions.implementationVersion?.toString() ?: UNKNOWN,
-                RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString(),
-                this
+                RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString()
             )
         }
         if (!currentVersions.currentCompilerMatchRequired()) {
@@ -263,8 +261,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
                 KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 currentVersions.implementationVersion?.toString() ?: UNKNOWN,
-                currentVersions.requireKotlinVersion?.toString() ?: NA,
-                this
+                currentVersions.requireKotlinVersion?.toString() ?: NA
             )
         }
     }
@@ -483,11 +480,10 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             if (firstEntry != null) {
                 reporter.reportOn(
                     source = serialNameAnnotation?.source ?: firstEntry.getSerialNameAnnotation(session)?.source ?: enumEntrySymbol.source,
-                    FirSerializationErrors.DUPLICATE_SERIAL_NAME_ENUM,
-                    classSymbol,
-                    serialName,
-                    enumEntrySymbol.name.asString(),
-                    this
+                    factory = FirSerializationErrors.DUPLICATE_SERIAL_NAME_ENUM,
+                    a = classSymbol,
+                    b = serialName,
+                    c = enumEntrySymbol.name.asString()
                 )
             } else {
                 entryBySerialName[serialName] = enumEntrySymbol
@@ -670,8 +666,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
                 declarationType,
                 serializerType,
-                serializerForType,
-                this
+                serializerForType
             )
         }
     }
@@ -730,8 +725,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 FirSerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT,
                 serializerType,
                 serializerForType,
-                message,
-                this
+                message
             )
         }
 
@@ -743,8 +737,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                     FirSerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE,
                     serializerType,
                     serializerForType,
-                    param.name.asString(),
-                    this
+                    param.name.asString()
                 )
             }
         }

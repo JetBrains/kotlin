@@ -31,7 +31,7 @@ object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
             if (useSiteTarget != null) {
                 reporter.reportOn(
                     annotation.source, FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
-                    "type usage", useSiteTarget.renderName, annotationTargets, context
+                    "type usage", useSiteTarget.renderName, annotationTargets
                 )
             } else if (KotlinTarget.TYPE !in annotationTargets) {
                 reporter.reportOn(
