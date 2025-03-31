@@ -1588,7 +1588,7 @@ open class IrFileSerializer(
 
         // TODO: keep order similar
         val sigIndex = protoIdSignatureMap[idSig] ?: error("Not found ID for $idSig (${topLevelDeclaration.render()})")
-        return SerializedDeclaration(sigIndex, idSig.render(), byteArray)
+        return SerializedDeclaration(sigIndex, byteArray)
     }
 
     private fun tryMatchPath(fileName: String): String? {

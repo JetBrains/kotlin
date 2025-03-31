@@ -31,7 +31,7 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
-class SerializedDeclaration(val id: Int, val declarationName: String, val bytes: ByteArray) {
+class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
     val size = bytes.size
 }
 
