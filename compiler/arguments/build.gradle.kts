@@ -20,8 +20,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     testApi(kotlinTest("junit5"))
-    testCompileOnly(libs.junit.jupiter.api)
+    testImplementation(project(":compiler:config.jvm"))
 
+    testCompileOnly(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
