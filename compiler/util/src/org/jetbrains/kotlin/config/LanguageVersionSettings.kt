@@ -440,7 +440,7 @@ enum class LanguageFeature(
     ContextParameters(sinceVersion = null), // KT-72222
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
-    PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-73255
+    PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, kind = OTHER), // KT-73255
     AnnotationAllUseSiteTarget(sinceVersion = null, kind = OTHER), // KT-73256
 
     // K1 support only. We keep it, as we may want to support it also in K2
