@@ -45,8 +45,7 @@ object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirCl
                             delegatedWrapperData.delegateField.returnTypeRef.source,
                             FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE,
                             wrappedGenericFunction.symbol,
-                            clashedSymbol,
-                            context
+                            clashedSymbol
                         )
                         reported = true
                         ProcessorAction.STOP
