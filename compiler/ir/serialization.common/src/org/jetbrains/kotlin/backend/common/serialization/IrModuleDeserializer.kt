@@ -269,7 +269,7 @@ open class CurrentModuleDeserializer(
     override val kind get() = IrModuleDeserializerKind.CURRENT
 }
 
-fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
+fun <T> sortDependencies(moduleDependencies: Map<T, Collection<T>>): List<T> {
     return DFS.topologicalOrder(moduleDependencies.keys) { m ->
         moduleDependencies.getValue(m)
     }.reversed()

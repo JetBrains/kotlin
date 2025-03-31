@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.ir.SortIrModules
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -202,6 +203,8 @@ class IrModuleToJsTransformer(
     }
 
     fun generateModule(modules: Iterable<IrModuleFragment>, modes: Set<TranslationMode>, relativeRequirePath: Boolean): CompilerResult {
+        val modules = SortIrModules.sort(modules)
+
         val exportData = associateIrAndExport(modules)
         doStaticMembersLowering(modules)
 

@@ -137,7 +137,10 @@ fun deserializeDependencies(
     filesToLoad: Set<String>?,
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): Map<IrModuleFragment, KotlinLibrary> {
-    return sortedDependencies.associateBy { klib ->
+    // fix: stdlib must go the first
+    val resortedDependencies = sortedDependencies.partition { it.isJsStdlib || it.isWasmStdlib }.let { it.first + it.second }
+
+    return resortedDependencies.associateBy { klib ->
         val descriptor = mapping(klib)
         when {
             mainModuleLib == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
