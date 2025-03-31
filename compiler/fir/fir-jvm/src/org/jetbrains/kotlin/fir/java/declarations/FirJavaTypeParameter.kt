@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -16,11 +18,14 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
+import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -43,9 +48,24 @@ class FirJavaTypeParameter(
     override val name: Name,
     override val symbol: FirTypeParameterSymbol,
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
-    private var initialBounds: List<FirTypeRef>?,
     private val annotationList: FirJavaAnnotationList,
 ) : FirTypeParameter() {
+    /**
+     * [JavaTypeParameter.upperBounds] requires resolution, so it should be called on demand.
+     */
+    private var initialBounds: Lazy<List<FirTypeRef>>? = lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val session = moduleData.session
+        val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        javaTypeParameter.upperBounds.map {
+            it.toFirJavaTypeRef(session, fakeSource)
+        }.ifEmpty {
+            val builtinTypes = session.builtinTypes
+            listOf(buildResolvedTypeRef {
+                coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType, isTrivial = true)
+            })
+        }
+    }
+
     override val annotations: List<FirAnnotation> get() = annotationList
 
     private enum class BoundsEnhancementState {
@@ -94,7 +114,7 @@ class FirJavaTypeParameter(
             // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
             // buildTypeParametersSubstitutorIfCompatible -> buildErasure
             // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
-            return initialBounds!!
+            return initialBounds!!.value
         }
 
     init {
@@ -115,7 +135,7 @@ class FirJavaTypeParameter(
             return null
         }
 
-        return initialBounds!!.mapTo(mutableListOf()) {
+        return initialBounds!!.value.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
             ) as FirResolvedTypeRef
@@ -156,7 +176,7 @@ class FirJavaTypeParameter(
             return null
         }
 
-        return initialBounds!!.mapTo(mutableListOf()) {
+        return initialBounds!!.value.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
             ) as FirResolvedTypeRef
@@ -211,7 +231,6 @@ class FirJavaTypeParameterBuilder {
     lateinit var name: Name
     lateinit var symbol: FirTypeParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
-    val bounds: MutableList<FirTypeRef> = mutableListOf()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     lateinit var javaTypeParameter: JavaTypeParameter
@@ -226,7 +245,6 @@ class FirJavaTypeParameterBuilder {
             name,
             symbol,
             containingDeclarationSymbol,
-            bounds.takeIf { it.isNotEmpty() } ?: emptyList(),
             annotationList,
         )
     }

@@ -29,8 +29,11 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
@@ -133,7 +136,6 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     ): FirJavaClass {
         val moduleData = getModuleDataForClass(javaClass)
         val session = moduleData.session
-        val fakeSource = javaClass.toSourceElement()?.fakeElement(KtFakeSourceElementKind.Enhancement)
         return buildJavaClass {
             this.javaClass = javaClass
             containingClassSymbol = parentClassSymbol
@@ -163,13 +165,12 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             } ?: EffectiveVisibility.Public
 
             val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-            val classTypeParameters = javaClass.typeParameters.map { javaTypeParameter ->
-                javaTypeParameter.toFirTypeParameter(classSymbol, moduleData, fakeSource).also { firTypeParameter ->
+            javaClass.typeParameters.mapTo(typeParameters) { javaTypeParameter ->
+                javaTypeParameter.toFirTypeParameter(classSymbol, moduleData).also { firTypeParameter ->
                     classJavaTypeParameterStack.addParameter(javaTypeParameter, firTypeParameter.symbol)
                 }
             }
 
-            typeParameters += classTypeParameters
             if (!isStatic && parentClassSymbol != null) {
                 typeParameters += (parentClassSymbol.fir as FirJavaClass).nonEnhancedTypeParameters.map {
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
@@ -376,35 +377,16 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
 private fun JavaTypeParameter.toFirTypeParameter(
     containingDeclarationSymbol: FirBasedSymbol<*>,
     moduleData: FirModuleData,
-    source: KtSourceElement?,
 ): FirTypeParameter = buildJavaTypeParameter {
     javaTypeParameter = this@toFirTypeParameter
-    val session = moduleData.session
     this.moduleData = moduleData
     origin = javaOrigin(isFromSource)
     name = this@toFirTypeParameter.name
     symbol = FirTypeParameterSymbol()
     this.source = this@toFirTypeParameter.toSourceElement()
     this.containingDeclarationSymbol = containingDeclarationSymbol
-    for (upperBound in this@toFirTypeParameter.upperBounds) {
-        bounds += upperBound.toFirJavaTypeRef(session, source)
-    }
-
-    if (bounds.isEmpty()) {
-        val builtinTypes = session.builtinTypes
-        bounds += buildResolvedTypeRef {
-            coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType, isTrivial = true)
-        }
-    }
-
     annotationList = FirLazyJavaAnnotationList(this@toFirTypeParameter, moduleData)
 }
-
-private fun List<JavaTypeParameter>.convertTypeParameters(
-    containingDeclarationSymbol: FirBasedSymbol<*>,
-    moduleData: FirModuleData,
-    source: KtSourceElement?,
-): List<FirTypeParameter> = map { it.toFirTypeParameter(containingDeclarationSymbol, moduleData, source) }
 
 private fun createDeclarationsForJavaRecord(
     javaClass: JavaClass,
@@ -580,7 +562,7 @@ private fun convertJavaMethodToFir(
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
         isStatic = javaMethod.isStatic
-        typeParameters += javaMethod.typeParameters.convertTypeParameters(methodSymbol, moduleData, fakeSource)
+        javaMethod.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(methodSymbol, moduleData) }
         for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
             valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)
         }
@@ -671,9 +653,8 @@ private fun convertJavaConstructorToFir(
 
         typeParameters += classTypeParameters.toRefs()
 
-        val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         if (javaConstructor != null) {
-            this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(constructorSymbol, moduleData, fakeSource)
+            javaConstructor.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(constructorSymbol, moduleData) }
 
             annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData)
             for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
