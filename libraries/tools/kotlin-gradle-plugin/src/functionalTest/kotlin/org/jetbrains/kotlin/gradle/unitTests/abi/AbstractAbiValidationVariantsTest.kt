@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.gradle.dsl.abi.VariantConfigurator
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import kotlin.test.*
 
-
+@Ignore
 internal abstract class AbstractAbiValidationVariantsTest {
-    protected open fun testNames() {
+    @Test
+    public open fun testNames() {
         val variants = buildVariants()
         // test variant configurator
         doTestNamesMain(variants)
@@ -27,7 +28,8 @@ internal abstract class AbstractAbiValidationVariantsTest {
         doTestNamesExtra(variants.matching { true })
     }
 
-    protected open fun testNamed() {
+    @Test
+    public open fun testNamed() {
         val variants = buildVariants()
         variants.register("extra")
         // test variant configurator
@@ -36,7 +38,8 @@ internal abstract class AbstractAbiValidationVariantsTest {
         assertNamed(variants.matching { true })
     }
 
-    protected open fun testConfigureEach() {
+    @Test
+    public open fun testConfigureEach() {
         val variants = buildVariants()
         variants.register("extra")
         // test variant configurator
@@ -45,7 +48,8 @@ internal abstract class AbstractAbiValidationVariantsTest {
         assertConfigureEach(variants.matching { true })
     }
 
-    protected open fun testMatching() {
+    @Test
+    public open fun testMatching() {
         val variants = buildVariants()
 
         variants.register("extra")
@@ -55,7 +59,8 @@ internal abstract class AbstractAbiValidationVariantsTest {
         assertMatching(variants.matching { true })
     }
 
-    protected open fun testWithType() {
+    @Test
+    public open fun testWithType() {
         val variants = buildVariants()
         variants.register("extra")
         // test variant configurator
