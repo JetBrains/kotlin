@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
@@ -15,19 +17,19 @@ import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
-import org.jetbrains.kotlin.js.testOld.*
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
+import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
@@ -154,15 +156,35 @@ fun getAllFilesForRunner(
         val result = mutableMapOf<TranslationMode, List<String>>()
 
         compilerResult.outputs.entries.forEach { (mode, outputs) ->
-            val paths = mutableListOf<String>()
-
             val outputFile = getModeOutputFilePath(testServices, module, mode)
             val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
             val additionalFiles = getAdditionalFilePaths(testServices, mode)
             val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
 
-            outputs.dependencies.forEach { (moduleId, _) ->
-                paths += outputFile.augmentWithModuleName(moduleId)
+            val paths = mutableListOf<String>()
+
+            if (mode.granularity == JsGenerationGranularity.PER_MODULE && outputs.dependencies.size > 1) {
+                // Need to sort modules in the reverse topological order to avoid problems in V8 with loading JS files
+                // before loading their dependency JS files.
+                val dependenciesMap: MutableMap</* module ID */ String, /* JS file path */ String> =
+                    outputs.dependencies.associateTo(LinkedHashMap()) { (moduleId, _) ->
+                        moduleId to outputFile.augmentWithModuleName(moduleId)
+                    }
+
+                // These are only paths represented by the existing `TestModule`s.
+                val pathsOfTestModules = topologicalOrder(testServices.moduleStructure.modules) { m: TestModule ->
+                    m.allDependencies.map(DependencyDescription::dependencyModule)
+                }!!.reversed().mapNotNull { m: TestModule ->
+                    val moduleId = m.name.safeModuleName
+                    dependenciesMap.remove(moduleId) // Returns the removed path or null, if no path was stored for the given module ID.
+                }
+
+                // These are the paths of auxiliary libraries (stdlib, kotlin test) that are not represented as `TestModule`s.
+                val pathsOfAuxiliaryLibraries = dependenciesMap.values
+
+                paths += pathsOfAuxiliaryLibraries + pathsOfTestModules
+            } else {
+                paths += outputs.dependencies.map { (moduleId, _) -> outputFile.augmentWithModuleName(moduleId) }
             }
 
             paths += outputFile
