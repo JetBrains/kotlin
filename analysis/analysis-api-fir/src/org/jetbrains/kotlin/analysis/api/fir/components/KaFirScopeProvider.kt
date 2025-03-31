@@ -408,7 +408,7 @@ internal class KaFirScopeProvider(
     private fun getFirTypeScope(type: KaFirType): FirTypeScope? = type.coneType.scope(
         firResolveSession.useSiteFirSession,
         getScopeSession(),
-        CallableCopyTypeCalculator.Forced,
+        CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution,
         requiredMembersPhase = FirResolvePhase.STATUS,
     )
 

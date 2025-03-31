@@ -230,7 +230,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol(session, scopeSession) ?: return null
 
     val callableCopyTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
-        CallableCopyTypeCalculator.Forced
+        CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
     } else {
         CallableCopyTypeCalculator.DoNothing
     }

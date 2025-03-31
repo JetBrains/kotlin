@@ -150,7 +150,7 @@ fun FirAnnotation.toAnnotationValue(mapping: Map<Name, ConstantValue<*>>, sessio
 
     val constructorSymbol = this@toAnnotationValue
         .resolvedType
-        .scope(session, scopeSession, CallableCopyTypeCalculator.Forced, requiredMembersPhase = FirResolvePhase.TYPES)
+        .scope(session, scopeSession, CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution, requiredMembersPhase = FirResolvePhase.TYPES)
         ?.getDeclaredConstructors()
         ?.firstOrNull()
     return AnnotationValue.create(classId, mapping.fillEmptyArray(constructorSymbol, session))
