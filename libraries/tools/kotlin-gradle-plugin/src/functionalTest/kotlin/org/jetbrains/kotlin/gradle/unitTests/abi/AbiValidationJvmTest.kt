@@ -11,34 +11,9 @@ import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
 import org.jetbrains.kotlin.gradle.dsl.abi.VariantConfigurator
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
-import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 internal class AbiValidationJvmTest : AbstractAbiValidationVariantsTest() {
-    @Test
-    public override fun testNames() {
-        super.testNames()
-    }
-
-    @Test
-    public override fun testNamed() {
-        super.testNamed()
-    }
-
-    @Test
-    public override fun testConfigureEach() {
-        super.testConfigureEach()
-    }
-
-    @Test
-    public override fun testMatching() {
-        super.testMatching()
-    }
-
-    @Test
-    public override fun testWithType() {
-        super.testWithType()
-    }
 
     override fun buildVariants(): VariantConfigurator<AbiValidationVariantSpec> {
         val project = buildProjectWithJvm()
