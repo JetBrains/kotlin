@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 internal class K2WasmCompilerImpl(
@@ -95,7 +96,8 @@ internal class K2WasmCompilerImpl(
             generateDwarf = arguments.generateDwarf
         )
 
-        performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
+        @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+        performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // TODO: KT-75227 (at least for K2)
 
         return OK
     }
