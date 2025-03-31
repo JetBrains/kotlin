@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -302,7 +303,15 @@ class FirSpecificTypeResolverTransformer(
 
     override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: TypeResolutionConfiguration): FirTypeRef {
         errorTypeRef.transformPartiallyResolvedTypeRef(this, data)
-        return errorTypeRef
+        if (errorTypeRef.annotations.isEmpty() || errorTypeRef.coneType.attributes.isNotEmpty()) {
+            return errorTypeRef
+        }
+        // Otherwise we "lose" annotation arguments here, and later cannot resolve them
+        return errorTypeRef.withReplacedConeType(
+            errorTypeRef.coneType.withAttributes(
+                errorTypeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = true)
+            )
+        )
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: TypeResolutionConfiguration): FirTypeRef {
