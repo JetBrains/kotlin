@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "gradle811"
+private const val PLUGIN_VARIANT_NAME = "gradle813"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
