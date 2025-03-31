@@ -490,7 +490,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                             .first { it.name == OperatorNameConventions.INVOKE && it.parameters.size == samFunction.parameters.size }
                         val functionClass = invokeFunction.getLastOverridden().parentAsClass
 
-                        val newInvoke = invokeFunction.deepCopyWithSymbols(samClass).apply { dispatchReceiverParameter = null }
+                        val newInvoke = invokeFunction.deepCopyWithSymbols(samClass)
+                        newInvoke.parameters = newInvoke.nonDispatchParameters
                         KFunctionState(newInvoke, functionClass, environment).apply {
                             this.funInterface = typeOperand
                             invokeFunction.dispatchReceiverParameter?.symbol?.let { upValues[it] = Variable(state) }
