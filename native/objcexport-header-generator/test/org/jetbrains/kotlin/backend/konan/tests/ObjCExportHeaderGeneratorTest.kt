@@ -599,6 +599,15 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("varWithPrivateSetterTranslatedAsImmutableProperty"))
     }
 
+    /**
+     * Disabled because of init constructors order KT-70626
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - mangle throws annotation`() {
+        doTest(headersTestDataDir.resolve("mangleThrowsAnnotation"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

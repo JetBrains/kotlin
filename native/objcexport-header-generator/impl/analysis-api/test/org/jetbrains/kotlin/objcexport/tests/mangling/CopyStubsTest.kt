@@ -43,9 +43,10 @@ class CopyStubsTest {
             attributes = listOf("swift_name")
         )
         val copy = objCMethod.copy(
-            selectors = listOf("foo_"),
-            parameters = listOf("p0:"),
-            swiftNameAttribute = "swift_name(foo_(p0))"
+            mangledSelectors = listOf("foo_"),
+            mangledParameters = listOf("p0:"),
+            swiftNameAttribute = "swift_name(foo_(p0))",
+            containingStubName = "ContainingStub",
         )
         assertTrue {
             copy.comment?.contentLines == listOf("comment") &&
