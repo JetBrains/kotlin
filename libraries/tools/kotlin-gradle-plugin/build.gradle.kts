@@ -86,7 +86,8 @@ binaryCompatibilityValidator {
     }
 }
 
-val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
+val unpublishedCompilerRuntimeDependencies = listOf(
+    // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`

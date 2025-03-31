@@ -13,16 +13,14 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.UrlRepoConfigurationMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
+import org.jetbrains.kotlin.gradle.utils.exclusiveFileLock
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
-import java.io.RandomAccessFile
 import java.net.URI
-import java.nio.channels.FileChannel
+import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+import kotlin.io.path.*
 
 @DisableCachingByDefault
 abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
@@ -182,7 +180,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             project.repositories.remove(repo)
         }
 
-        return result
+        return@runWithHashFileLock result
     }
 
     private fun extractWithUpToDate(
@@ -192,15 +190,15 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         val currentHash = computeCurrentHash()
 
         val storedHash =
-            if (hashFile.length() > 0) {
-                hashFile.readLine().trim()
+            if (hashFile.fileSize() > 0) {
+                hashFile.readText().trim()
             } else {
                 "<hashFile missing>"
             }
 
         if (currentHash == storedHash) {
             logger.info("[$path] Skipping download. dist:$dist and destination:$destination are up-to-date. ($currentHash == $storedHash).")
-            return
+            return@runWithHashFileLock
         }
 
         if (destination.isDirectory) {
@@ -213,7 +211,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
         val updatedHash = computeCurrentHash()
             ?: error("failed to compute hash. destination:$destination, dist:$dist.")
-        hashFile.writeUTF(updatedHash)
+        hashFile.writeText(updatedHash)
     }
 
     private fun computeCurrentHash(): String? {
@@ -251,30 +249,17 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
      *
      * Concurrent execution happens more often when running KGP integration tests locally,
      * since the tests are run in parallel with multiple Gradle versions.
-     *
-     * ### The solution
-     *
-     * This function executes [action] under two locks to prevent concurrent execution.
-     *
-     * - Within the same JVM process: use [synchronized].
-     * - Across JVM processes: use [java.nio.channels.FileLock], using [destinationHashFileProvider].
      */
-    @OptIn(ExperimentalContracts::class)
-    private inline fun <T> runWithHashFileLock(action: (hashFile: RandomAccessFile) -> T): T {
-        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
-
-        synchronized(Companion) {
-            val lockFile = destinationHashFileProvider.get().asFile.apply {
-                parentFile.mkdirs()
-                createNewFile()
+    private fun <T> runWithHashFileLock(action: (hashFile: Path) -> T): T {
+        val hashFile = destinationHashFileProvider.get().asFile.toPath().apply {
+            if (!exists()) {
+                parent.createDirectories()
+                createFile()
             }
+        }
 
-            RandomAccessFile(lockFile, "rw").use { file ->
-                val channel: FileChannel = file.channel
-                channel.lock().use { _ ->
-                    return action(file)
-                }
-            }
+        return exclusiveFileLock(hashFile) {
+            action(hashFile)
         }
     }
 
