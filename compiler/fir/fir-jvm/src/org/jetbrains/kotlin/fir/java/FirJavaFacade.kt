@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirJavaFacadeForSource(
     session: FirSession,
@@ -132,6 +135,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         val session = moduleData.session
         val fakeSource = javaClass.toSourceElement()?.fakeElement(KtFakeSourceElementKind.Enhancement)
         return buildJavaClass {
+            this.javaClass = javaClass
             containingClassSymbol = parentClassSymbol
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             annotationList = FirLazyJavaAnnotationList(javaClass, moduleData)
@@ -170,15 +174,6 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 typeParameters += (parentClassSymbol.fir as FirJavaClass).nonEnhancedTypeParameters.map {
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
                 }
-            }
-
-            javaClass.supertypes.mapTo(superTypeRefs) { it.toFirJavaTypeRef(session, fakeSource) }
-            if (superTypeRefs.isEmpty()) {
-                superTypeRefs.add(
-                    buildResolvedTypeRef {
-                        coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false)
-                    }
-                )
             }
 
             status = FirResolvedDeclarationStatusImpl(

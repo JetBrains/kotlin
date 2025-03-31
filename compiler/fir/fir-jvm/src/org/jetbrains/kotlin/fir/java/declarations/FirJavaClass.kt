@@ -1,14 +1,16 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -20,21 +22,27 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.*
+import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.properties.Delegates
 
 class FirJavaClass @FirImplementationDetail internal constructor(
+    private val javaClass: JavaClass?,
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val name: Name,
@@ -58,6 +66,14 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     internal val existingNestedClassifierNames: List<Name>,
     internal val containingClassSymbol: FirClassSymbol<*>?,
 ) : FirRegularClass() {
+    init {
+        if (javaClass != null) {
+            require(nonEnhancedSuperTypes.isEmpty()) {
+                "Non-empty super types. They are expected to be computed lazily on demand via `JavaClass`"
+            }
+        }
+    }
+
     /**
      * Unlike [classJavaTypeParameterStack] contains mapping not only for classes,
      * but also for all member functions.
@@ -95,6 +111,16 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     // TODO: the lazy superTypeRefs is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val superTypeRefs: List<FirTypeRef> by lazy {
+        val superTypesRefs = nonEnhancedSuperTypes.ifEmpty {
+            computeSuperTypeRefsByJavaClass()
+        }.ifEmpty {
+            listOf(
+                buildResolvedTypeRef {
+                    coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                }
+            )
+        }
+
         val enhancement = FirSignatureEnhancement(
             this,
             moduleData.session,
@@ -102,7 +128,14 @@ class FirJavaClass @FirImplementationDetail internal constructor(
             overridden = { emptyList() },
         )
 
-        enhancement.enhanceSuperTypes(nonEnhancedSuperTypes)
+        enhancement.enhanceSuperTypes(superTypesRefs)
+    }
+
+    private fun computeSuperTypeRefsByJavaClass(): List<FirTypeRef> {
+        val supertypes = javaClass?.supertypes ?: return emptyList()
+        val session = moduleData.session
+        val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        return supertypes.map { it.toFirJavaTypeRef(session, fakeSource) }
     }
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
@@ -222,13 +255,21 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> get() = shouldNotBeCalled()
 
+    /** Has to be omitted in the case of [javaClass] presence */
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     var containingClassSymbol: FirClassSymbol<*>? = null
     var declarationList: FirJavaDeclarationList = FirEmptyJavaDeclarationList
 
+    /**
+     * Allows computing some information (like [superTypeRefs]) lazily on demand
+     * instead of providing it right away
+     */
+    var javaClass: JavaClass? = null
+
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
         return FirJavaClass(
+            javaClass,
             source,
             moduleData,
             name,
