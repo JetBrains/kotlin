@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.checkers.FOREIGN_ANNOTATIONS_SOURCES_PATH
 import org.jetbrains.kotlin.checkers.JSR_305_SOURCES_PATH
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -28,7 +31,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -106,7 +108,6 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
             languageVersionSettings = LanguageVersionSettingsImpl(
                 LanguageVersion.LATEST_STABLE,
                 ApiVersion.LATEST_STABLE,
-                mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState.DEFAULT)
             )
         }
 
