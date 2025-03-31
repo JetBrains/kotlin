@@ -48,7 +48,7 @@ object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
 
         if (!declaration.isInner && (containingDeclaration.isInner || containerIsLocal || context.isInsideAnonymousObject)) {
             if (declaration.isLocal && isCompanion) {
-                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, declaration.description, context)
+                reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, declaration.description)
             } else {
                 reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description)
             }

@@ -65,8 +65,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
                 reporter.reportOn(
                     argument.expression.source,
                     FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION,
-                    expectedArrayType,
-                    context,
+                    expectedArrayType
                 )
             }
         }

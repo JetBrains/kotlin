@@ -31,7 +31,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         val usedTypeParameterSymbol = delegate.resolvedType.findUsedTypeParameterSymbol(parameters, delegate, context)
             ?: return
 
-        reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, usedTypeParameterSymbol, context)
+        reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, usedTypeParameterSymbol)
     }
 
     private fun ConeKotlinType.findUsedTypeParameterSymbol(
