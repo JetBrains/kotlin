@@ -57,7 +57,10 @@ class ArtifactsTest {
             DynamicTest.dynamicTest(expectedPomPath.fileName.toString()) {
                 if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
                     if ("${expectedPomPath.parent.fileName}" !in nativeBundles) {
-                        val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
+                        val regex = Regex(
+                            """(<groupId>org.jetbrains.kotlin\S*</groupId>\s*\S*\s*)<version>$kotlinVersion</version>"""
+                        )
+                        val actualString = actual.toFile().readText().replace(regex, "\$1<version>ArtifactsTest.version</version>")
                         assertEqualsToFile(expectedPomPath, actualString)
                     }
                 } else {
