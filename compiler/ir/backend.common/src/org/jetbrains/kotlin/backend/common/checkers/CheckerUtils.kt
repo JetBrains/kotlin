@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isNullableArray
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
@@ -78,12 +80,12 @@ internal val EXCLUDED_MODULE_NAMES: Set<Name> =
         KOTLINTEST_MODULE_NAME,
     ).mapTo(mutableSetOf()) { Name.special("<$it>") }
 
-private fun visibilityError(element: IrElement, visibility: Visibility, context: CheckerContext) {
+private fun visibilityError(element: IrElement, visibility: Visibility, context: CheckerContext, fqName: String) {
     val message = "The following element references " +
             if (visibility == Visibilities.Unknown) {
                 "a declaration with unknown visibility:"
             } else {
-                "'${visibility.name}' declaration that is invisible in the current scope:"
+                "'${visibility.name} $fqName' declaration that is invisible in the current scope:"
             }
     context.error(element, message)
 }
@@ -124,12 +126,25 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.wasm.internal.ClosureBoxFloat",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.ClosureBoxDouble",  // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.ClosureBoxAny",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.wasmTypeId",
-    "kotlin.coroutines.CoroutineImpl",
-    "kotlin.native.internal.KClassImpl",
-    "kotlin.native.internal.KTypeImpl",
-    "kotlin.native.internal.KTypeProjectionList",
-    "kotlin.native.internal.KTypeParameterImpl",
+    "kotlin.wasm.internal.wasmTypeId",        // FirWasmJsCodegenInteropTestGenerated.testAssociatedExternalObject
+    "kotlin.coroutines.CoroutineImpl",        // FirWasmJsCodegenBoxTestGenerated$Coroutines$IntrinsicSemantics.testStartCoroutineUninterceptedOrReturnInterception
+    "kotlin.native.internal.KClassImpl",      // NativeCodegenLocalTestGenerated$FileCheck.testConstants_merge
+    "kotlin.native.internal.KTypeImpl",       // NativeCodegenLocalTestGenerated$FileCheck.testConstants_merge
+    "kotlin.native.internal.KTypeProjectionList", // NativeCodegenLocalTestGenerated$FileCheck.testConstants_merge
+    "kotlin.native.internal.KTypeParameterImpl", // NativeCodegenBoxTestGenerated$Box$Reflection$TypeOf$NonReifiedTypeParameters.testEqualsOnFunctionParameters
+//    "kotlin.concurrent.atomicGet", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
+//    "kotlin.concurrent.atomicSet", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
+//    "kotlin.concurrent.compareAndExchange", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
+//    "kotlin.concurrent.getAndSet", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
+//    "kotlin.concurrent.getAndAdd", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
+//    "kotlin.concurrent.compareAndSet", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
+    "kotlin.UninitializedPropertyAccessException", // explicit use: NativeCodegenBoxTestGenerated$Box$Inline.testChangingCapturedLocal
+    "kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnFallback", // leaking: FrameworkTestBase.objCExportTest
+//    "kotlin.native.internal.KonanSet", // explicit use: FrameworkTestBase.objCExportTest
+//    "kotlin.test.setAdapter", // explicit use: FirPsiJsBoxTestGenerated$EsModules$Kotlin_test.testBeforeAfter + js/js.translator/testData/box/esModules/kotlin.test/_common.kt
+//    "kotlin.test.test", // explicit use: FirPsiJsBoxTestGenerated$EsModules$Kotlin_test.testBeforeAfter + js/js.translator/testData/box/esModules/kotlin.test/_common.kt
+//    "kotlin.test.suite", // explicit use: FirPsiJsBoxTestGenerated$EsModules$Kotlin_test.testBeforeAfter + js/js.translator/testData/box/esModules/kotlin.test/_common.kt
+//    "kotlin.js.imul", // explicit use: FirLightTreeJsBoxTestGenerated$Number.testMulInt32
 ).mapTo(hashSetOf(), ::FqName)
 
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
@@ -155,6 +170,9 @@ internal fun checkVisibility(
     val referencedDeclaration = referencedDeclarationSymbol.owner as? IrDeclarationWithVisibility ?: return
     val classOfReferenced = referencedDeclaration.parentClassOrNull
     val visibility = referencedDeclaration.visibility.delegate
+    val signature = referencedDeclarationSymbol.signature as? CommonSignature
+    val fqName = "${signature?.packageFqName()}.${signature?.declarationFqName}"
+    if (!fqName.startsWith("kotlin")) return
 
     val effectiveVisibility = visibility.toEffectiveVisibilityOrNull(
         container = classOfReferenced?.symbol,
@@ -183,7 +201,9 @@ internal fun checkVisibility(
     }
 
     if (!isVisible) {
-        visibilityError(reference, visibility, context)
+        if (context.parentChain.filterIsInstance<IrInlinedFunctionBlock>().isNotEmpty()) {
+            visibilityError(reference, visibility, context, fqName)
+        }
     }
 }
 

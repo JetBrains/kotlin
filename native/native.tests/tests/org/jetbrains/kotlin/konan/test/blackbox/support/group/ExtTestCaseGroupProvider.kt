@@ -45,8 +45,6 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -165,17 +163,21 @@ private class ExtTestDataFile(
     }
 
     val isRelevant: Boolean =
-        isCompatibleTarget(TargetBackend.NATIVE, testDataFile, /*separatedDirectiveValues=*/true) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
+        isCompatibleTarget(
+            TargetBackend.NATIVE,
+            testDataFile, /*separatedDirectiveValues=*/
+            true
+        ) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
                 && !settings.isDisabledNative(structure.directives)
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
                 && !(FILECHECK_STAGE.name in structure.directives
-                     && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
+                && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
                 && !(optimizationMode != OptimizationMode.OPT && structure.directives[FILECHECK_STAGE.name] == "OptimizeTLSDataLoads")
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
-                     && pipelineType == PipelineType.K2
-                     && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
+                && pipelineType == PipelineType.K2
+                && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
 
     private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
@@ -185,11 +187,9 @@ private class ExtTestDataFile(
         args += structure.directives[FREE_COMPILER_ARGS]
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
-        if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
-        ) {
-            args.add("-Xverify-ir-visibility")
-        }
+
+        args.add("-Xverify-ir-visibility")
+
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
@@ -369,7 +369,7 @@ private class ExtTestDataFile(
 
                 private fun transformDeclarationWithBody(
                     declarationWithBody: KtDeclarationWithBody,
-                    parentAccessibleDeclarationNames: Set<Name>
+                    parentAccessibleDeclarationNames: Set<Name>,
                 ) {
                     val (expressions, nonExpressions) = declarationWithBody.getChildrenOfType<KtElement>().partition { it is KtExpression }
 
@@ -398,7 +398,7 @@ private class ExtTestDataFile(
 
                 override fun visitDotQualifiedExpression(
                     dotQualifiedExpression: KtDotQualifiedExpression,
-                    accessibleDeclarationNames: Set<Name>
+                    accessibleDeclarationNames: Set<Name>,
                 ) {
                     val names = dotQualifiedExpression.collectNames()
 
@@ -435,7 +435,7 @@ private class ExtTestDataFile(
                 private fun <T : KtElement> visitPossiblyTypeReferenceWithFullyQualifiedName(
                     names: List<Name>,
                     accessibleDeclarationNames: Set<Name>,
-                    action: (newSubPackageName: FqName) -> T
+                    action: (newSubPackageName: FqName) -> T,
                 ): T? {
                     if (names.size < 2) return null
 
@@ -537,7 +537,7 @@ private class ExtTestDataFile(
     private fun doCreateTestCase(
         settings: Settings,
         isStandaloneTest: Boolean,
-        sharedModules: ThreadSafeCache<String, TestModule.Shared?>
+        sharedModules: ThreadSafeCache<String, TestModule.Shared?>,
     ): TestCase = with(structure) {
         val modules = generateModules(
             testCaseDir = testDataFileSettings.generatedSourcesDir,
@@ -726,7 +726,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             source: ExtTestModule,
             destination: T,
             baseDir: File,
-            process: (T, TestFile<T>) -> Unit
+            process: (T, TestFile<T>) -> Unit,
         ): T {
             val moduleDir = baseDir.resolve(destination.name)
             moduleDir.mkdirs()
@@ -777,7 +777,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     private class ExtTestFile(
         val name: String,
         val module: ExtTestModule,
-        var text: String
+        var text: String,
     ) {
         init {
             module.files += this

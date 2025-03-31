@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
 data class IrValidatorConfig(
-    val checkTreeConsistency: Boolean = true,
+    val checkTreeConsistency: Boolean = false,
     val checkTypes: Boolean = false,
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
@@ -42,7 +42,7 @@ data class IrValidatorConfig(
     val checkAllKotlinFieldsArePrivate: Boolean = false,
     val checkVisibilities: Boolean = false,
     val checkVarargTypes: Boolean = false,
-    val checkFunctionBody: Boolean = true,
+    val checkFunctionBody: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
 

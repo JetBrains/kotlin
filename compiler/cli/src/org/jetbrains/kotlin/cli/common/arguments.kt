@@ -25,7 +25,7 @@ import java.io.File
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
-    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
+    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null,
 ) {
     val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -39,24 +39,17 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
 
-    val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
+    var irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {
             if (it == null) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
             }
         }
-    } ?: IrVerificationMode.NONE
-    put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
+    } ?: IrVerificationMode.ERROR
 
-    if (arguments.verifyIrVisibility) {
-        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
-        if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
-                "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
-            )
-        }
-    }
+    put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
+    put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
+
 
     setupMetadataVersion(arguments, createMetadataVersion)
 

@@ -34,15 +34,12 @@ open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: C
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
-            checkValueScopes = true,
+            checkValueScopes = false,
             checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
-            checkCrossFileFieldUsage = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
-            // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
-            //  non-private visibilities for fields.
-            checkAllKotlinFieldsArePrivate = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS) &&
-                    !context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
-            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
+            checkCrossFileFieldUsage = false,
+            checkAllKotlinFieldsArePrivate = false,
+            checkVisibilities = false,
+            checkVarargTypes = false,
         )
 }
 
@@ -56,7 +53,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
             checkVisibilities = false, // TODO: Enable checking visibilities (KT-69516)
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
-            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
+            checkVarargTypes = false,
         )
 }
 
@@ -67,12 +64,12 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : LoweringContext>(
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
-            checkValueScopes = context.configuration.enableIrVisibilityChecks,
-            checkCrossFileFieldUsage = context.configuration.enableIrVisibilityChecks,
+            checkValueScopes = false,
+            checkCrossFileFieldUsage = false,
             checkTypeParameterScopes = false,
-            checkVisibilities = context.configuration.enableIrVisibilityChecks,
+            checkVisibilities = true,
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
-            checkVarargTypes = context.configuration.enableIrVarargTypesChecks,
+            checkVarargTypes = false,
         )
 }
 

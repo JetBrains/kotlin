@@ -357,7 +357,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
                     keyConfiguration.put(
                         CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, services),
+                        true,
                     )
                     keyConfiguration.put(
                         CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
