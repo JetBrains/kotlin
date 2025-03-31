@@ -101,8 +101,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                         functionReturnType,
                         resultExpression,
                         resultExpression.smartcastStability.description,
-                        isDueToNullability,
-                        context
+                        isDueToNullability
                     )
                 } else {
                     reporter.reportOn(
@@ -111,8 +110,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                         functionReturnType,
                         returnExpressionType,
                         targetElement,
-                        isDueToNullability,
-                        context
+                        isDueToNullability
                     )
                 }
             }
@@ -131,8 +129,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                 functionReturnType,
                 returnExpressionType,
                 targetElement,
-                false,
-                context
+                false
             )
         }
     }
