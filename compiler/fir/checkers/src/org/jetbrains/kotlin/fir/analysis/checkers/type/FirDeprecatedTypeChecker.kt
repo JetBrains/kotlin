@@ -22,7 +22,7 @@ object FirDeprecatedTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
         if (source.kind is KtFakeSourceElementKind) return
         val symbol = typeRef.coneType.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toSymbol(context.session) ?: return
 
-        FirDeprecationChecker.reportApiStatusIfNeeded(source, symbol, context, reporter)
+        FirDeprecationChecker.reportApiStatusIfNeeded(source, symbol)
     }
 }
 

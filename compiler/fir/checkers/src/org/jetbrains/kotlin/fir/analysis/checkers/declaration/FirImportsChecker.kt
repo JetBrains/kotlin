@@ -53,7 +53,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
                     checkOperatorRename(import, context, reporter)
                 }
             }
-            checkImportApiStatus(import, context, reporter)
+            checkImportApiStatus(import)
         }
         checkConflictingImports(declaration.imports, context, reporter)
     }
@@ -343,11 +343,12 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun checkImportApiStatus(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkImportApiStatus(import: FirImport) {
         val importedFqName = import.importedFqName ?: return
         if (importedFqName.isRoot || importedFqName.shortName().asString().isEmpty()) return
         val classId = (import as? FirResolvedImport)?.resolvedParentClassId ?: ClassId.topLevel(importedFqName)
         val symbol = classId.toSymbol(context.session) ?: return
-        FirDeprecationChecker.reportApiStatusIfNeeded(import.source, symbol, context, reporter)
+        FirDeprecationChecker.reportApiStatusIfNeeded(import.source, symbol)
     }
 }

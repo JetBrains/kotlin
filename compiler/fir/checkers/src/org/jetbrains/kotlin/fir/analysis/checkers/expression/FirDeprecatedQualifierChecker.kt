@@ -18,7 +18,7 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         expression.nonFatalDiagnostics.filterIsInstance<ConeDeprecated>().forEach { diagnostic ->
             FirDeprecationChecker.reportApiStatus(
                 diagnostic.source, diagnostic.symbol, isTypealiasExpansion = false,
-                diagnostic.deprecationInfo, reporter, context
+                diagnostic.deprecationInfo
             )
         }
         if (expression.resolvedToCompanionObject) {
@@ -29,7 +29,7 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
             val companionSymbol = expression.symbol?.fullyExpandedClass(context.session)?.resolvedCompanionObjectSymbol ?: return
-            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol, context, reporter)
+            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol)
         }
     }
 }
