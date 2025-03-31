@@ -675,6 +675,7 @@ fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
     isStable || this == KOTLIN_1_9 || this == KOTLIN_2_0
 
 fun LanguageVersion.toKotlinVersion() = KotlinVersion(major, minor)
+fun LanguageVersionSettings.toKotlinVersion() = languageVersion.toKotlinVersion()
 
 interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State

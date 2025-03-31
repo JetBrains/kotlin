@@ -158,14 +158,19 @@ fun makeLazyJavaPackageFragmentProvider(
     singleModuleClassResolver: ModuleClassResolver,
     packagePartProvider: PackagePartProvider = PackagePartProvider.Empty
 ): LazyJavaPackageFragmentProvider {
+    val javaTypeEnhancementState = JavaTypeEnhancementState.getDefault(
+        // Last K1 version
+        KotlinVersion(1, 9)
+    )
     val javaResolverComponents = JavaResolverComponents(
         storageManager, javaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver,
         SignaturePropagator.DO_NOTHING, errorReporter, JavaResolverCache.EMPTY,
         JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, emptyList()), javaSourceElementFactory,
         singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
-        ReflectionTypes(module, notFoundClasses), AnnotationTypeQualifierResolver(JavaTypeEnhancementState.DEFAULT),
+        ReflectionTypes(module, notFoundClasses), AnnotationTypeQualifierResolver(javaTypeEnhancementState),
         SignatureEnhancement(JavaTypeEnhancement(JavaResolverSettings.Default)),
-        JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default, JavaTypeEnhancementState.DEFAULT,
+        JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default,
+        javaTypeEnhancementState,
         object : JavaModuleAnnotationsProvider {
             override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null
         }

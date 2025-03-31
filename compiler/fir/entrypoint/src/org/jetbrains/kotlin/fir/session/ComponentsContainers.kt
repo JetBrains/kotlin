@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.jvmDefaultMode
+import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.FirDefaultOverridesBackwardCompatibilityHelper
@@ -141,7 +142,7 @@ fun FirSession.registerJavaComponents(
     register(FirJavaModuleResolverProvider::class, FirJavaModuleResolverProvider(javaModuleResolver))
     val jsr305State =
         languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
-            ?: JavaTypeEnhancementState.DEFAULT
+            ?: JavaTypeEnhancementState.getDefault(languageVersionSettings.toKotlinVersion())
     register(
         FirAnnotationTypeQualifierResolver::class,
         FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver)

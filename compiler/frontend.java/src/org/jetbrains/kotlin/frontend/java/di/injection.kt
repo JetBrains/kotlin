@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -134,7 +135,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
 
     useInstance(
         languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
-            ?: JavaTypeEnhancementState.DEFAULT
+            ?: JavaTypeEnhancementState.getDefault(languageVersionSettings.toKotlinVersion())
     )
 
     val builtIns = moduleContext.module.builtIns

@@ -75,7 +75,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         return mapOf(
             JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
                 Jsr305Settings(globalState, migrationState, userAnnotationsState),
-                getReportLevelForAnnotation = { getReportLevelForAnnotation(it, configuredReportLevels) }
+                getReportLevelForAnnotation = { getReportLevelForAnnotation(it, configuredReportLevels, languageVersion.toKotlinVersion()) }
             )
         )
     }

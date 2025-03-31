@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.classic.handlers
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.JspecifyMarkerCodeMetaInfo
+import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -30,7 +31,10 @@ private fun TestServices.generateJspecifyMetadataInfos(
     module: TestModule, files: Iterable<TestFile>, diagnosticKind: (CodeMetaInfo) -> Any?
 ) {
     val jspecifyMode = module.directives[ForeignAnnotationsDirectives.JSPECIFY_STATE].singleOrNull()
-        ?: getDefaultReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE)
+        ?: getDefaultReportLevelForAnnotation(
+            JSPECIFY_ANNOTATIONS_PACKAGE,
+            module.languageVersionSettings.languageVersion.toKotlinVersion()
+        )
     val diagnosticsToJspecifyMarksForMode = diagnosticsToJspecifyMarks[jspecifyMode] ?: return
 
     for (testFile in files) {
