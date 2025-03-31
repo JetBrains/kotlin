@@ -63,7 +63,7 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
             // We don't check the presence of @ExposedCopyVisibility annotations on purpose.
             // Even if the 'copy' is exposed, call-sites need to migrate.
             if (!isConstructorVisible) {
-                reporter.reportOn(expression.calleeReference.source, FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE, context)
+                reporter.reportOn(expression.calleeReference.source, FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE)
             }
         }
     }

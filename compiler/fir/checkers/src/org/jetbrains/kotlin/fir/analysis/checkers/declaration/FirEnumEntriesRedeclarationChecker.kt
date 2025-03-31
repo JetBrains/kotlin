@@ -17,7 +17,7 @@ object FirEnumEntriesRedeclarationChecker : FirEnumEntryChecker(MppCheckerKind.C
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirEnumEntry) {
         if (declaration.name == StandardNames.ENUM_ENTRIES) {
-            reporter.reportOn(declaration.source, FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES, context)
+            reporter.reportOn(declaration.source, FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES)
         }
     }
 }

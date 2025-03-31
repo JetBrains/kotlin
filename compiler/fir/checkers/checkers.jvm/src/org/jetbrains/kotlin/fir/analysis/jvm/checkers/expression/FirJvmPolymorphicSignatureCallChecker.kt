@@ -34,7 +34,7 @@ object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker(MppChecker
             if (valueArgument is FirVarargArgumentsExpression) {
                 for (argument in valueArgument.arguments) {
                     if (argument is FirSpreadArgumentExpression) {
-                        reporter.reportOn(argument.source, FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL, context)
+                        reporter.reportOn(argument.source, FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL)
                     }
                 }
             }

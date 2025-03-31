@@ -38,6 +38,6 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (isAlreadyAnnotated) {
             return
         }
-        reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED, context)
+        reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED)
     }
 }

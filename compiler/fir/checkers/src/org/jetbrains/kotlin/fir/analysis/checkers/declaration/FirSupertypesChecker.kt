@@ -62,7 +62,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                     reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE)
                 }
                 expandedSupertype.isMarkedNullable -> {
-                    reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS, context)
+                    reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS)
                 }
             }
             if (!extensionFunctionSupertypeReported && originalSupertype.isExtensionFunctionType &&

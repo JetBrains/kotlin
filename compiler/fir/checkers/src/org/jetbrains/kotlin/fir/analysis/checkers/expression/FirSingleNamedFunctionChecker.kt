@@ -21,8 +21,7 @@ object FirSingleNamedFunctionChecker : FirBlockChecker(MppCheckerKind.Common) {
         if (expression is FirSingleExpressionBlock && expression.statement is FirSimpleFunction) {
             reporter.reportOn(
                 expression.statement.source,
-                FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME,
-                context
+                FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME
             )
         }
     }

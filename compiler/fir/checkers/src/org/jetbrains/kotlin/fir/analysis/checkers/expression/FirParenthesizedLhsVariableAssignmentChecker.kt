@@ -27,7 +27,7 @@ object FirParenthesizedLhsVariableAssignmentChecker : FirVariableAssignmentCheck
         val isLhsParenthesized = expression.source.hasUnwrappableAsAssignmentLhs()
 
         if (isLhsParenthesized) {
-            reporter.reportOn(expression.source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT, context)
+            reporter.reportOn(expression.source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
         }
     }
 }

@@ -54,7 +54,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
             if (!inRealBlock && KotlinTarget.EXPRESSION !in allowedAnnotationTargets) {
                 reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", allowedAnnotationTargets)
             } else if (useSiteTarget != null) {
-                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION, context)
+                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION)
             }
 
             checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, annotation.source)

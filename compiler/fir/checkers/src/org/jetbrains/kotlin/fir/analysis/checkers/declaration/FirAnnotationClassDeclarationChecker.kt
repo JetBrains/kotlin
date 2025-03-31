@@ -57,7 +57,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
             KotlinTarget.EXPRESSION in declaration.getAllowedAnnotationTargets(session)
         ) {
             val target = declaration.getRetentionAnnotation(session) ?: declaration.getTargetAnnotation(session) ?: declaration
-            reporter.reportOn(target.source, FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, context)
+            reporter.reportOn(target.source, FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION)
         }
 
         checkCyclesInParameters(declaration.symbol, context, reporter)

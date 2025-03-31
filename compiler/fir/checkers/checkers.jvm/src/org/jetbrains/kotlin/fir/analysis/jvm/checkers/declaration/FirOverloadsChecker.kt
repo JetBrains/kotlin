@@ -43,7 +43,7 @@ object FirOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     context.containingDeclarations.any { it.isLocalClassOrAnonymousObject() } ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_LOCAL)
             declaration is FirConstructor && containingDeclaration?.classKind == ClassKind.ANNOTATION_CLASS ->
-                reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR)
             !declaration.visibility.isPublicAPI && declaration.visibility != Visibilities.Internal ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_PRIVATE)
             ownerOfParametersWithDefaultValues.valueParameterSymbols.none { it.hasDefaultValue } ->

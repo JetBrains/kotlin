@@ -37,7 +37,7 @@ object FirParenthesizedLhsSetOperatorChecker : FirFunctionCallChecker(MppChecker
             // For `(a[0])++` where `a` has `get`,`set` and `inc` operators
             source.hasUnwrappableAsAssignmentLhs() && callee.isIncrementOrDecrement
         ) {
-            reporter.reportOn(source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT, context)
+            reporter.reportOn(source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
         }
     }
 

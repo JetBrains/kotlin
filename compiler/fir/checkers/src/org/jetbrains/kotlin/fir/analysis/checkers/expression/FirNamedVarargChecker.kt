@@ -59,8 +59,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             if (isAnnotation) {
                 reporter.reportOn(
                     argument.expression.source,
-                    FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION,
-                    context
+                    FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION
                 )
             } else {
                 reporter.reportOn(

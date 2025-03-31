@@ -41,7 +41,7 @@ object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Com
                     Inline, CrossInline -> FirJvmErrors.JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS
                     NoInline, Unknown -> return
                 }
-                reporter.reportOn(expression.source, diagnostic, context)
+                reporter.reportOn(expression.source, diagnostic)
             }
         }
     }

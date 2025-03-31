@@ -27,7 +27,7 @@ object FirJvmThrowsChecker : FirFunctionChecker(MppCheckerKind.Platform) {
         val containingClass = declaration.getContainingClassSymbol() ?: return
         when {
             containingClass.classKind == ClassKind.ANNOTATION_CLASS ->
-                reporter.reportOn(annotation.source, FirJvmErrors.THROWS_IN_ANNOTATION, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.THROWS_IN_ANNOTATION)
         }
     }
 }

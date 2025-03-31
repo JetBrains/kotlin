@@ -28,7 +28,7 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.C
         }
 
         if (containingDeclaration is FirTypeAlias) {
-            reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS, context)
+            reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS)
         }
     }
 

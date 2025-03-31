@@ -25,7 +25,7 @@ object FirInlinePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         if (declaration.hasBackingField || declaration.delegate != null) {
             when (declaration.source?.kind) {
                 KtFakeSourceElementKind.PropertyFromParameter -> reporter.reportOn(
-                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION, context
+                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION
                 )
                 else -> reporter.reportOn(
                     declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD

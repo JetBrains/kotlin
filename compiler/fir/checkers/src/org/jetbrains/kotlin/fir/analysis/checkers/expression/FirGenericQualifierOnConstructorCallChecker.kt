@@ -26,8 +26,7 @@ object FirGenericQualifierOnConstructorCallChecker : FirFunctionCallChecker(MppC
 
         reporter.reportOn(
             resolvedQualifier.source,
-            FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL,
-            context
+            FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
         )
     }
 }

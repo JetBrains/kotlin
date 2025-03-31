@@ -38,7 +38,7 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
         if (declaration.isSuspend ||
             (declaration as? FirAnonymousFunction)?.typeRef?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
         ) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_SUSPEND, context)
+            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_SUSPEND)
             return
         }
 
@@ -47,9 +47,9 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
             containingClass.classKind == ClassKind.INTERFACE ->
                 reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE)
             containingClass.classKind == ClassKind.ANNOTATION_CLASS ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION)
             containingClass.isInlineOrValue ->
-                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS, context)
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS)
             declaration.isAbstract ->
                 reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT)
         }
