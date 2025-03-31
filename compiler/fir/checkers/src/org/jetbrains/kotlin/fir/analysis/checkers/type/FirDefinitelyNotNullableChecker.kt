@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.types.isLeftValidForDefinitelyNotNullable
 import org.jetbrains.kotlin.fir.types.isRightValidForDefinitelyNotNullable
 
 object FirDefinitelyNotNullableChecker : FirIntersectionTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirIntersectionTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirIntersectionTypeRef) {
         if (typeRef.isMarkedNullable) {
             reporter.reportOn(typeRef.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE, context)
         }

@@ -47,9 +47,8 @@ fun generateCheckersComponents(
     abstractCheckerName: String,
     checkMethodTypeParameterConstraint: KClass<out FirElement>,
     checkType: KClass<out FirElement>,
-    contextual: Boolean,
     init: CheckersConfigurator.() -> Unit,
 ) {
     val configuration = CheckersConfigurator().apply(init).build()
-    Generator(configuration, generationPath, packageName, abstractCheckerName, checkMethodTypeParameterConstraint, checkType, contextual).generate()
+    Generator(configuration, generationPath, packageName, abstractCheckerName, checkMethodTypeParameterConstraint, checkType).generate()
 }

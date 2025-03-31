@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
 object FirJvmModuleAccessibilityTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val classSymbol = typeRef.coneType.toRegularClassSymbol(context.session) ?: return
         FirJvmModuleAccessibilityQualifiedAccessChecker.checkClassAccess(context, classSymbol, typeRef, reporter)
     }

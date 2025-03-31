@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     private val suspendTokenElementSet = setOf(KtTokens.SUSPEND_KEYWORD)
 
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirTypeRef) {
         // We are only interested in source type refs (i.e., Fir(Dynamic|User|Function)TypeRef).
         if (typeRef !is FirUnresolvedTypeRef) return
 

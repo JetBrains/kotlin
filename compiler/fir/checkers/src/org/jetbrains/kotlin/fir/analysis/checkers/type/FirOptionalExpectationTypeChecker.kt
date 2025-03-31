@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val source = typeRef.source
         if (source?.kind is KtFakeSourceElementKind) return
         val classSymbol = typeRef.coneType.toRegularClassSymbol(context.session) ?: return

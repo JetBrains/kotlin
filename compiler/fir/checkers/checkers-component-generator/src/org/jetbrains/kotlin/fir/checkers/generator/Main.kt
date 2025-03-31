@@ -94,7 +94,7 @@ fun main(args: Array<String>) {
     if (args.isEmpty() || args[0] == "checkers") {
         val checkersPath = generationPath ?: File("compiler/fir/checkers/checkers/gen")
         val typePackage = "$basePackage.checkers.type"
-        generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker", FirTypeRef::class, FirTypeRef::class, false) {
+        generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker", FirTypeRef::class, FirTypeRef::class) {
             alias<FirTypeRef>("TypeRefChecker").let {
                 visitAlso<FirImplicitTypeRef>(it)
                 visitAlso<FirUnresolvedTypeRef>(it)
@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
         }
 
         val expressionPackage = "$basePackage.checkers.expression"
-        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker", FirStatement::class, FirExpression::class, true) {
+        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker", FirStatement::class, FirExpression::class) {
             alias<FirStatement>("BasicExpressionChecker", false).let {
                 visitAlso<FirExpression>(it)
                 visitAlso<FirVarargArgumentsExpression>(it)
@@ -184,7 +184,6 @@ fun main(args: Array<String>) {
             "FirDeclarationChecker",
             FirDeclaration::class,
             FirDeclaration::class,
-            true,
         ) {
             alias<FirDeclaration>("BasicDeclarationChecker").let {
                 visitAlso<FirDanglingModifierList>(it)

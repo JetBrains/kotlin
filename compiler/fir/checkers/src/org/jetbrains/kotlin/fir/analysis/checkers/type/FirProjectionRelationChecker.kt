@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 
 object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         val type = typeRef.coneType.abbreviatedTypeOrSelf
         val fullyExpandedType = type.fullyExpandedType(context.session)
 

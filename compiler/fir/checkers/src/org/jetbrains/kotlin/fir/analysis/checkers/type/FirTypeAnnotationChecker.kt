@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         for (annotation in typeRef.annotations) {
             if (annotation.source == null) continue
             val useSiteTarget = annotation.useSiteTarget

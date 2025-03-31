@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 
 object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         if (
             !typeRef.coneType.abbreviatedTypeOrSelf.isMarkedNullable ||
             typeRef.source?.kind == KtFakeSourceElementKind.ImplicitTypeArgument

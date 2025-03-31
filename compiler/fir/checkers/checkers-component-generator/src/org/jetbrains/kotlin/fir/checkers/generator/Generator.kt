@@ -45,7 +45,6 @@ class Generator(
     private val abstractCheckerName: String,
     private val checkMethodTypeParameterConstraint: KClass<out FirElement>,
     private val checkType: KClass<out FirElement>,
-    private val contextual: Boolean,
 ) {
     private val generationPath: File = getGenerationPath(generationPath, packageName)
 
@@ -304,22 +303,16 @@ class Generator(
             println("for (checker in this) {")
             withIndent {
                 println("try {")
-                if (contextual) {
+                withIndent {
+                    println("with(context) {")
                     withIndent {
-                        println("with(context) {")
+                        println("with(reporter) {")
                         withIndent {
-                            println("with(reporter) {")
-                            withIndent {
-                                println("checker.check(element)")
-                            }
-                            println("}")
+                            println("checker.check(element)")
                         }
                         println("}")
                     }
-                } else {
-                    withIndent {
-                        println("checker.check(element, context, reporter)")
-                    }
+                    println("}")
                 }
                 println("} catch (e: Exception) {")
                 withIndent {

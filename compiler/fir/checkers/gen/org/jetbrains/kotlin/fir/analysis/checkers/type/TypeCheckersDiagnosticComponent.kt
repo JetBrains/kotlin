@@ -85,7 +85,11 @@ class TypeCheckersDiagnosticComponent(
     ) {
         for (checker in this) {
             try {
-                checker.check(element, context, reporter)
+                with(context) {
+                    with(reporter) {
+                        checker.check(element)
+                    }
+                }
             } catch (e: Exception) {
                 rethrowExceptionWithDetails("Exception in type checkers", e) {
                     withFirEntry("element", element)

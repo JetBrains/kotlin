@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
-    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(typeRef: FirResolvedTypeRef) {
         if (typeRef.source?.kind is KtFakeSourceElementKind) return
         if (!typeRef.coneType.abbreviatedTypeOrSelf.hasContextParameters) return
 
