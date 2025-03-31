@@ -127,7 +127,6 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 classSymbol,
                 abstractVar,
                 implementationVal,
-                context,
             )
         }
         if (!canHaveAbstractDeclarations) {
