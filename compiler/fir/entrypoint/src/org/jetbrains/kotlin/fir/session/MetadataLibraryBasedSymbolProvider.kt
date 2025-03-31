@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
     session: FirSession,
@@ -70,14 +71,12 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return emptyList()
 
         return librariesWithFragment.flatMap { resolvedLibrary ->
-
-            val moduleData = moduleData(resolvedLibrary) ?: return@flatMap emptyList()
-
-            resolvedLibrary.packageMetadataParts(packageStringName).map {
+            val packageMetadataParts = resolvedLibrary.packageMetadataParts(packageStringName)
+            val moduleData = runIf(packageMetadataParts.isNotEmpty()) { moduleData(resolvedLibrary) }
+                ?: return@flatMap emptyList()
+            packageMetadataParts.map {
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)
-
                 val packageProto = fragment.`package`
-
                 val nameResolver = NameResolverImpl(
                     fragment.strings,
                     fragment.qualifiedNames,
