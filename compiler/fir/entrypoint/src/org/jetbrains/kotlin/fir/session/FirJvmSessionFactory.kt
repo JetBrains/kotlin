@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.FirJvmBuiltinsSymbolProvide
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
+import org.jetbrains.kotlin.fir.resolve.FirJvmActualizingBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -191,6 +192,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         languageVersionSettings: LanguageVersionSettings,
     ): FirKotlinScopeProvider {
         if (languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && moduleData.isCommon) return FirKotlinScopeProvider()
+        val filterOutJvmPlatformDeclarations = !(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+                && languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib))
         return FirKotlinScopeProvider { klass, declaredScope, useSiteSession, scopeSession, memberRequiredPhase ->
             wrapScopeWithJvmMapped(
                 klass,
@@ -198,7 +201,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
                 useSiteSession,
                 scopeSession,
                 memberRequiredPhase,
-                filterOutJvmPlatformDeclarations = !languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+                filterOutJvmPlatformDeclarations = filterOutJvmPlatformDeclarations
             )
         }
     }
@@ -237,17 +240,25 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         session: FirSession,
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): FirSymbolProvider? {
-        return runIf(
-            session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) &&
-                    !session.moduleData.isCommon
-                    && session.moduleData.dependsOnDependencies.isEmpty()
-        ) {
+        return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
             val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(projectEnvironment.getSearchScopeForProjectLibraries())
-            FirJvmClasspathBuiltinSymbolProvider(
-                session,
-                session.moduleData,
-                kotlinScopeProvider
-            ) { kotlinClassFinder.findBuiltInsData(it) }
+            val builtinsSymbolProvider = initializeBuiltinsProvider(session, session.moduleData, kotlinScopeProvider, kotlinClassFinder)
+            if (session.moduleData.dependsOnDependencies.isNotEmpty()) {
+                runIf(!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
+                    val refinedSourceSymbolProviders = session.moduleData.dependsOnDependencies
+                        .map { it.session }
+                        .flatMap { it.symbolProvider.flatten() }
+                        .filter { it.session.kind == FirSession.Kind.Source }
+                        .distinct()
+                    FirJvmActualizingBuiltinSymbolProvider(builtinsSymbolProvider, refinedSourceSymbolProviders)
+                }
+            } else {
+                FirJvmClasspathBuiltinSymbolProvider(
+                    session,
+                    session.moduleData,
+                    kotlinScopeProvider
+                ) { kotlinClassFinder.findBuiltInsData(it) }
+            }
         }
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -66,6 +67,7 @@ class JvmClassFileBasedSymbolProvider(
         }
 
     private fun computePackagePartInfo(packageFqName: FqName, partName: String): PackagePartsCacheData? {
+        if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib) && partName in KotlinBuiltins) return null
         val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
         val (kotlinClass, byteContent) =

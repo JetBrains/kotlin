@@ -55,7 +55,10 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
 
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> {
         return {
-            listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it))
+            listOfNotNull(
+                FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it),
+                FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)
+            )
         }
     }
 
