@@ -795,19 +795,23 @@ internal class KaFirCompilerFacility(
             val receiverClass = (owner.type as? IrSimpleType)?.classifier as? IrClassSymbol
             val receiverClassId = receiverClass?.owner?.classId
 
-            if (receiverClassId != null) {
-                if (owner.indexInOldValueParameters >= 0) {
-                    val labelName = receiverClassId.shortClassName
-                    return CodeFragmentCapturedValue.ContextReceiver(owner.indexInOldValueParameters, labelName, isCrossingInlineBounds = true)
-                }
-
-                val parent = owner.parent
-                if (parent is IrFunction) {
-                    if (parent.dispatchReceiverParameter == owner) {
+            val parent = owner.parent
+            if (receiverClassId != null && parent is IrFunction) {
+                when (owner.kind) {
+                    IrParameterKind.DispatchReceiver -> {
                         return CodeFragmentCapturedValue.ContainingClass(receiverClassId, isCrossingInlineBounds = true)
                     }
-
-                    return CodeFragmentCapturedValue.ExtensionReceiver(parent.name.asString(), isCrossingInlineBounds = true)
+                    IrParameterKind.Context -> {
+                        val contextParameterIndex = parent.parameters
+                            .subList(0, owner.indexInParameters)
+                            .count { it.kind == IrParameterKind.Context }
+                        val labelName = receiverClassId.shortClassName
+                        return CodeFragmentCapturedValue.ContextReceiver(contextParameterIndex, labelName, isCrossingInlineBounds = true)
+                    }
+                    IrParameterKind.ExtensionReceiver -> {
+                        return CodeFragmentCapturedValue.ExtensionReceiver(parent.name.asString(), isCrossingInlineBounds = true)
+                    }
+                    IrParameterKind.Regular -> {}
                 }
             }
         }
