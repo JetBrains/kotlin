@@ -23,7 +23,7 @@ class KotlinJvmTargetPreset(
         return project.objects.newInstance(KotlinJvmTarget::class.java, project)
     }
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createCompilationFactory(forTarget: KotlinJvmTarget): KotlinCompilationFactory<KotlinJvmCompilation> =
         KotlinJvmCompilationFactory(forTarget)

@@ -1039,38 +1039,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinNativ
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinNativeTargetPreset$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
-	public fun <init> (Lorg/gradle/api/Project;)V
-	public fun attributes (Lkotlin/jvm/functions/Function1;)V
-	public fun attributes (Lorg/gradle/api/Action;)V
-	protected fun createKotlinVariant (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Ljava/util/Set;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinVariant;
-	protected final fun createSourcesJarAndUsageContextIfPublishable (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/attributes/AttributeContainer;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext;
-	public static synthetic fun createSourcesJarAndUsageContextIfPublishable$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/attributes/AttributeContainer;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext;
-	public fun getApiElementsConfigurationName ()Ljava/lang/String;
-	public fun getArtifactsTaskName ()Ljava/lang/String;
-	public fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
-	public fun getComponents ()Ljava/util/Set;
-	public fun getDisambiguationClassifier ()Ljava/lang/String;
-	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-	public final fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
-	public fun getName ()Ljava/lang/String;
-	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
-	public final fun getProject ()Lorg/gradle/api/Project;
-	public fun getPublishable ()Z
-	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
-	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
-	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
-	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
-	public fun isSourcesPublishable ()Z
-	public fun jvmToolchain (I)V
-	public fun jvmToolchain (Lorg/gradle/api/Action;)V
-	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
-	public fun mavenPublication (Lorg/gradle/api/Action;)V
-	public fun setSourcesPublishable (Z)V
-	public fun toString ()Ljava/lang/String;
-	public fun withSourcesJar (Z)V
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings : org/jetbrains/kotlin/gradle/plugin/CInteropSettings {
 	public fun compilerOpts (Ljava/util/List;)V
 	public fun compilerOpts ([Ljava/lang/String;)V
@@ -2467,8 +2435,8 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinJsTarget : or
 	public fun getDisambiguationClassifier ()Ljava/lang/String;
 	public final fun getIrTarget ()Ljava/lang/Void;
 	public fun getName ()Ljava/lang/String;
+	public synthetic fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
-	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun jvmToolchain (I)V
 	public fun jvmToolchain (Lorg/gradle/api/Action;)V
 	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
@@ -2716,6 +2684,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetC
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun isBrowserConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;)Z
 	public static fun isNodejsConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;)Z
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
@@ -2755,6 +2724,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
@@ -2800,6 +2770,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTarget
 	public static fun d8 (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/gradle/api/Action;)V
@@ -2818,6 +2789,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTarge
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun isD8Configured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;)Z
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun whenD8Configured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
@@ -2839,6 +2811,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDs
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl;Lkotlin/jvm/functions/Function1;)V
 }
 
@@ -2852,6 +2825,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTarg
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lorg/gradle/api/Action;)V

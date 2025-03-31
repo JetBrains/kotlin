@@ -1332,7 +1332,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getDisambiguationClassifier ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public abstract fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
+	public abstract synthetic fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public abstract fun getPublishable ()Z
 	public abstract fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public abstract fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
@@ -1348,6 +1348,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls 
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;ZILjava/lang/Object;)V
 }
@@ -1384,7 +1385,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$Sour
 	public final fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset : org/gradle/api/Named {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinTargetExecution, org/jetbrains/kotlin/gradle/plugin/KotlinTestRun {
@@ -1405,6 +1406,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests$Defa
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Ljava/lang/String;
+	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lkotlin/jvm/functions/Function1;)V
 }
 

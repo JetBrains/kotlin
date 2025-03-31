@@ -23,7 +23,7 @@ class KotlinJvmWithJavaTargetPreset(
     private val project: Project
 ) : InternalKotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createTargetInternal(name: String): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> {
         project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic())
@@ -34,7 +34,7 @@ class KotlinJvmWithJavaTargetPreset(
         val target = project.objects.KotlinWithJavaTargetForJvm(project, name)
             .apply {
                 disambiguationClassifier = name
-                preset = this@KotlinJvmWithJavaTargetPreset
+                targetPreset = this@KotlinJvmWithJavaTargetPreset
             }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->

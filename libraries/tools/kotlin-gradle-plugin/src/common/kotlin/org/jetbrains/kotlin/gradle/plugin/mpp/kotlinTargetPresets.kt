@@ -26,7 +26,7 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
-            preset = this@KotlinOnlyTargetPreset
+            targetPreset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)

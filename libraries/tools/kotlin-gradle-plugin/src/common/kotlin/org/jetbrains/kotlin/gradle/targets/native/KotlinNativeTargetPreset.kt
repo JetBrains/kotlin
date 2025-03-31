@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 @DeprecatedTargetPresetApi
 abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
-    private val name: String,
+    override val name: String,
     val project: Project,
     val konanTarget: KonanTarget
 ) : InternalKotlinTargetPreset<T> {
@@ -30,8 +30,6 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         // This is required to obtain Kotlin/Native home in IDE plugin:
         setupNativeHomePrivateProperty()
     }
-
-    override fun getName(): String = name
 
     private fun setupNativeHomePrivateProperty() = with(project) {
         if (!extensions.extraProperties.has(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY))
@@ -54,7 +52,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = name
-            preset = this@AbstractKotlinNativeTargetPreset
+            targetPreset = this@AbstractKotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)

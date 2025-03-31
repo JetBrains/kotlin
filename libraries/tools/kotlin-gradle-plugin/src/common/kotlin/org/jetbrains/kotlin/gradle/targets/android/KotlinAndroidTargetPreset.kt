@@ -21,7 +21,7 @@ abstract class KotlinAndroidTargetPreset @Inject constructor(
     private val project: Project
 ) : InternalKotlinTargetPreset<KotlinAndroidTarget> {
 
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createTargetInternal(name: String): KotlinAndroidTarget {
 
@@ -36,7 +36,7 @@ abstract class KotlinAndroidTargetPreset @Inject constructor(
         project.findAppliedAndroidPluginIdOrNull() ?: project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
 
         return project.objects.KotlinAndroidTarget(project, name, true).apply {
-            preset = this@KotlinAndroidTargetPreset
+            targetPreset = this@KotlinAndroidTargetPreset
             project.dynamicallyApplyWhenAndroidPluginIsApplied({ this })
         }
     }

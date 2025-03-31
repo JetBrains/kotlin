@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.android.internal
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.konan.util.Named
 
-internal interface InternalKotlinTargetPreset<T : KotlinTarget> : KotlinTargetPreset<T> {
+@InternalKotlinGradlePluginApi
+interface InternalKotlinTargetPreset<out T : KotlinTarget> : Named {
     fun createTargetInternal(name: String): T
 }
-
-internal val <T : KotlinTarget> KotlinTargetPreset<T>.internal: InternalKotlinTargetPreset<T>
-    get() = this as InternalKotlinTargetPreset

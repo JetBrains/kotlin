@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 class KotlinMetadataTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<Any>>(project) {
-    override fun getName(): String = PRESET_NAME
+    override val name: String = PRESET_NAME
 
     override fun createCompilationFactory(
         forTarget: KotlinMetadataTarget

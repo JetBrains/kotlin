@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -53,7 +52,7 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
         .plus(typeName(ObjectFactory::class.java.canonicalName))
         .plus(typeName(Inject::class.java.canonicalName))
         .plus(typeName("org.jetbrains.kotlin.gradle.utils.newInstance"))
-        .plus(typeName(KotlinTargetPreset::class.java.canonicalName))
+        .plus(typeName("org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset"))
         .filter { it.packageName() != className.packageName() }
         .flatMap { it.collectFqNames() }
         .toSortedSet()
@@ -183,6 +182,6 @@ internal abstract class ${defaultImplementationClassname.renderShort()} @Inject 
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
 ) : ${className.renderShort()}, ${parentInterface.simpleName} {
     
-    val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> =
-        objectFactory.domainObjectContainer(KotlinTargetPreset::class.java)
+    val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
+        objectFactory.domainObjectContainer(InternalKotlinTargetPreset::class.java)
 """.trimIndent()

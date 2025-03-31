@@ -14,7 +14,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -52,11 +51,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    @Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
-    )
-    override val preset: Nothing? = null
+    override val targetPreset: Nothing? = null
 
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 

@@ -21,7 +21,7 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
         val duplicatedTargets = targets
             .filter { it !is KotlinMetadataTarget }
             .groupBy {
-                it.internal._preset?.name
+                it.internal.targetPreset?.name
             }
             .filterValues { it.size > 1 }
 
@@ -31,7 +31,7 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
                 // skip targets without known dsl function such as external targets
                 ?: continue
 
-            when (targetsGroup.first().internal._preset) {
+            when (targetsGroup.first().internal.targetPreset) {
                 // For JS targets fire WARNING for now
                 // FIXME: https://youtrack.jetbrains.com/issue/KT-59316/Deprecate-multiple-same-targets#focus=Comments-27-9992405.0-0
                 is KotlinJsIrTargetPreset -> collector.report(
@@ -55,10 +55,10 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
      */
     @Suppress("DEPRECATION_ERROR")
     private val KotlinTarget.targetDslFunctionName
-        get() = when (internal._preset) {
+        get() = when (internal.targetPreset) {
             is KotlinJsIrTargetPreset -> "js"
             is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset -> "js"
             is KotlinAndroidTargetPreset -> "androidTarget"
-            else -> internal._preset?.name
+            else -> internal.targetPreset?.name
         }
 }

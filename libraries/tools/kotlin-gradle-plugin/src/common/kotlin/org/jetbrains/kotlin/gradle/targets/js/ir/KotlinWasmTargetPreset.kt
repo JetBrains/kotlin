@@ -46,7 +46,7 @@ class KotlinWasmTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()
 
-    override fun getName(): String = WASM_PRESET_NAME + targetType.name.toLowerCaseAsciiOnly().capitalizeAsciiOnly()
+    override val name: String = WASM_PRESET_NAME + targetType.name.toLowerCaseAsciiOnly().capitalizeAsciiOnly()
 
     public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget,

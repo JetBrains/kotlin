@@ -5,7 +5,6 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTestsPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTestsPreset
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
@@ -415,8 +415,8 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
 ) : KotlinTargetContainerWithPresetFunctions, KotlinTargetsContainer {
     
-    val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> =
-        objectFactory.domainObjectContainer(KotlinTargetPreset::class.java)
+    val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
+        objectFactory.domainObjectContainer(InternalKotlinTargetPreset::class.java)
 
     override fun jvm(
         name: String,

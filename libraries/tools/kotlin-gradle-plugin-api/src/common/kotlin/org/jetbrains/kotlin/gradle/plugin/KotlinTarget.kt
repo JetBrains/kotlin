@@ -14,9 +14,6 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
@@ -151,15 +148,16 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
      */
     fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
 
+    // Workaround for https://youtrack.jetbrains.com/issue/CMP-7891/Compose-Gradle-plugin-is-using-deprecated-Presets-API
     /**
      * @suppress
      */
-    @OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
+    @Suppress("DEPRECATION_ERROR")
     @get:Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.ERROR,
+        "Not supported",
+        level = DeprecationLevel.HIDDEN
     )
-    val preset: KotlinTargetPreset<out KotlinTarget>?
+    val preset: KotlinTargetPreset<out KotlinTarget>? get() = null
 
     /**
      * @suppress
@@ -200,3 +198,10 @@ interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinT
         const val DEFAULT_TEST_RUN_NAME = "test"
     }
 }
+
+// Workaround for https://youtrack.jetbrains.com/issue/CMP-7891/Compose-Gradle-plugin-is-using-deprecated-Presets-API
+@Deprecated(
+    "Not supported",
+    level = DeprecationLevel.HIDDEN
+)
+interface KotlinTargetPreset<T : KotlinTarget>

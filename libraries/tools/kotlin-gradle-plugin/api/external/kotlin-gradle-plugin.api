@@ -1125,7 +1125,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun getKotlinComponents ()Ljava/util/Set;
 	public fun getName ()Ljava/lang/String;
 	public fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
+	public synthetic fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun getProject ()Lorg/gradle/api/Project;
 	public fun getPublishable ()Z
 	public fun getResourcesElementsConfigurationName ()Ljava/lang/String;
@@ -1137,7 +1137,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public final fun getSourcesElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getTargetName ()Ljava/lang/String;
-	public fun get_preset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
+	public fun getTargetPreset ()Lorg/jetbrains/kotlin/gradle/targets/android/internal/InternalKotlinTargetPreset;
 	public fun isSourcesPublishable ()Z
 	public fun jvmToolchain (I)V
 	public fun jvmToolchain (Lorg/gradle/api/Action;)V

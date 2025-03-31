@@ -281,8 +281,8 @@ internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
 ) : TargetsFromPresetExtension,
     NamedDomainObjectCollection<KotlinTarget> by targets
 
-private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
-    internal._preset == kotlinTargetPreset
+private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: InternalKotlinTargetPreset<*>): Boolean =
+    internal.targetPreset == kotlinTargetPreset
 
 internal fun <T : KotlinTarget> DefaultKotlinTargetContainerWithPresetFunctions.configureOrCreate(
     targetName: String,

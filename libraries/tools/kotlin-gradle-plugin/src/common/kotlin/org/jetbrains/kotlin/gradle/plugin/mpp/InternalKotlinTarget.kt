@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.extrasStoredFuture
 import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -42,9 +43,7 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
 
     val resourcesElementsConfigurationName: String
 
-    @Suppress("DEPRECATION_ERROR")
-    val _preset: KotlinTargetPreset<out KotlinTarget>?
-        get() = preset
+    val targetPreset: InternalKotlinTargetPreset<KotlinTarget>?
 }
 
 private const val TOOLCHAIN_DSL_WRONG_USAGE_ERROR =
