@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
@@ -138,7 +139,9 @@ fun FirSession.registerJavaComponents(
     predefinedComponents: FirSharableJavaComponents? = null,
 ) {
     register(FirJavaModuleResolverProvider::class, FirJavaModuleResolverProvider(javaModuleResolver))
-    val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
+    val jsr305State =
+        languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
+            ?: JavaTypeEnhancementState.DEFAULT
     register(
         FirAnnotationTypeQualifierResolver::class,
         FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver)

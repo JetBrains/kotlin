@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
-import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
-import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
@@ -135,7 +132,10 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         useImpl<JavaSourceElementFactoryImpl>()
     }
 
-    useInstance(languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState))
+    useInstance(
+        languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
+            ?: JavaTypeEnhancementState.DEFAULT
+    )
 
     val builtIns = moduleContext.module.builtIns
     if (useBuiltInsProvider && builtIns is JvmBuiltIns) {

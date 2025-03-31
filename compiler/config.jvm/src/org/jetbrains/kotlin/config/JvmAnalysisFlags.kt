@@ -13,7 +13,7 @@ object JvmAnalysisFlags {
     val strictMetadataVersionSemantics by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val javaTypeEnhancementState by Delegates.JavaTypeEnhancementStateWarnByDefault
+    val javaTypeEnhancementState by Delegates.JavaTypeEnhancementStateNullByDefault
 
     @JvmStatic
     val jvmDefaultMode by Delegates.JvmDefaultModeNullByDefault
@@ -37,9 +37,9 @@ object JvmAnalysisFlags {
     val expectBuiltinsAsPartOfStdlib by AnalysisFlag.Delegates.Boolean
 
     private object Delegates {
-        object JavaTypeEnhancementStateWarnByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JavaTypeEnhancementState> =
-                AnalysisFlag.Delegate(property.name, JavaTypeEnhancementState.DEFAULT)
+        object JavaTypeEnhancementStateNullByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JavaTypeEnhancementState?> =
+                AnalysisFlag.Delegate(property.name, null)
         }
 
         object JvmDefaultModeNullByDefault {
