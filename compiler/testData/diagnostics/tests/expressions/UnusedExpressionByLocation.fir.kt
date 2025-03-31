@@ -56,11 +56,11 @@ fun testWhen() {
     }
 
     when {
-        else -> <!UNUSED_EXPRESSION!>Unit<!>
+        else -> Unit
     }
 
     when (a) {
-        "" -> <!UNUSED_EXPRESSION!>Unit<!>
+        "" -> Unit
     }
 
     when {
