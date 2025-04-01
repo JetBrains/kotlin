@@ -27,7 +27,6 @@ import java.io.InputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.management.ManagementFactory
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
@@ -897,15 +896,14 @@ private fun TestProject.agreeToBuildScanService() {
     val settingsFile = if (settingsGradle.exists()) settingsGradle else settingsGradleKts
     settingsFile.append(
         """
-            
-        gradleEnterprise {
-            buildScan {
-                termsOfServiceUrl = "https://gradle.com/terms-of-service"
-                termsOfServiceAgree = "yes"
-            }
-        }
-
-        """.trimIndent()
+        |
+        |gradleEnterprise {
+        |    buildScan {
+        |        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        |        termsOfServiceAgree = "yes"
+        |    }
+        |}
+        |""".trimIndent()
     )
 }
 
