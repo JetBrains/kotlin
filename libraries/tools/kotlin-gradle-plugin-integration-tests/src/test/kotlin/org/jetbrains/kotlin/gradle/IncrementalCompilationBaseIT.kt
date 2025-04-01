@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.gradle.testbase.project
 
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
-    protected abstract val defaultProjectName: String
+    protected open val defaultProjectName: String = "incrementalMultiproject"
 
     open fun defaultProject(
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions = defaultBuildOptions,
-        test: TestProject.() -> Unit = {}
+        test: TestProject.() -> Unit = {},
     ): TestProject = project(
         defaultProjectName,
         gradleVersion,

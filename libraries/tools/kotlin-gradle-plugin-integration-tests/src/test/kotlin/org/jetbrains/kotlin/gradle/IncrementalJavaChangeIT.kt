@@ -358,8 +358,6 @@ class IncrementalK2JavaChangeDisablePreciseFirIT : IncrementalK2JavaChangeDisabl
 abstract class IncrementalCompilationJavaChangesBase(
     val usePreciseJavaTracking: Boolean?
 ) : IncrementalCompilationBaseIT() {
-    override val defaultProjectName: String
-        get() = "incrementalMultiproject"
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseJavaTracking = usePreciseJavaTracking)
 

@@ -7,3 +7,6 @@ plugins {
 //js         nodejs()
 //js     }
 //js }
+
+dependencies {
+}

@@ -14,7 +14,6 @@ import kotlin.io.path.*
 
 @JsGradlePluginTests
 abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
-    override val defaultProjectName: String = "incrementalMultiproject"
 
     override fun defaultProject(
         gradleVersion: GradleVersion,
@@ -24,8 +23,12 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         listOf("app", "lib").forEach { subProjectName ->
             val subProject = subProject(subProjectName)
             subProject.javaSourcesDir().deleteRecursively()
-            subProject.buildGradle.modify {
-                it
+            subProject.buildGradle.modify { content ->
+
+                require("""//js""" in content)
+                require("""id("org.jetbrains.kotlin.jvm")""" in content)
+
+                content
                     .replace("//js ", "")
                     .replace(
                         """    id("org.jetbrains.kotlin.jvm")""",
@@ -198,8 +201,6 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
     override val compileCacheFolderName: String
         get() = "caches-jvm"
 
-    override val defaultProjectName: String = "incrementalMultiproject"
-
     @DisplayName("'inspectClassesForKotlinIC' task is added to execution plan")
     open fun testInspectClassesForKotlinICTask(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -237,6 +238,8 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
     @GradleTest
     open fun testCompileLibWithGroovy(gradleVersion: GradleVersion) {
         testCompileLibWithGroovy_doTest(gradleVersion) { project, result ->
+            project.makeSnapshotTo("/Users/dev/projects/tmp/kgp-it")
+
             result.assertTasksExecuted(":lib:$compileKotlinTaskName")
             result.assertTasksUpToDate(":app:$compileKotlinTaskName") // App compilation has 'compile avoidance'
 
@@ -248,7 +251,7 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
     }
 
     //KT-55905
-    @DisplayName("Imncremental compilation with source set update")
+    @DisplayName("Incremental compilation with source set update")
     @GradleTest
     open fun testSourceSetAdjustment(gradleVersion: GradleVersion) {
         val setUpExternalSource = "sourceSets[\"main\"].kotlin.srcDir(\"../external/src\")"
@@ -270,18 +273,27 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
         assertResults: (TestProject, BuildResult) -> Unit,
     ) {
         defaultProject(gradleVersion) {
-            subProject("lib").buildGradle.modify {
-                """
-                plugins {
-                    id 'groovy'
-                    id 'org.jetbrains.kotlin.jvm'
-                    id 'org.jetbrains.kotlin.test.kotlin-compiler-args-properties'
-                }
-                
-                dependencies {
-                    implementation 'org.codehaus.groovy:groovy-all:2.4.8'
-                }
-                """.trimIndent()
+            subProject("lib").buildGradle.modify { content ->
+                content
+                    .checkedReplace(
+                        """
+                        plugins {
+                        """.trimIndent(),
+                        """
+                        plugins {
+                            id("groovy")
+                            //id("org.jetbrains.kotlin.test.kotlin-compiler-args-properties")
+                        """.trimIndent()
+                    )
+                    .checkedReplace(
+                        """
+                        dependencies {
+                        """.trimIndent(),
+                        """
+                        dependencies {
+                            implementation("org.codehaus.groovy:groovy-all:2.4.8")
+                        """.trimIndent()
+                    )
             }
 
             val libGroovySrcBar = subProject("lib")
