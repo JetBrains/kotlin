@@ -2345,57 +2345,6 @@ public class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootPlugin 
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion;
-	public fun <init> ()V
-	public final fun getD8SetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
-	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
-	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
-	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
-	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;
-	public fun <init> ()V
-	protected fun exec ()V
-	public abstract fun getD8Args ()Lorg/gradle/api/provider/ListProperty;
-	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion {
-	public final fun create (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
-	public static synthetic fun create$default (Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
-}
-
-public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec;)V
-	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
-	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
-	public final fun getEdition ()Lorg/gradle/api/provider/Property;
-	public final fun getProject ()Lorg/gradle/api/Project;
-	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
-	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Distribution {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/dsl/Distribution$Companion;
 	public static final field DIST Ljava/lang/String;
@@ -5516,16 +5465,26 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbr
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Companion;
+	public final fun getD8SetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
+	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Companion {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion;
+	protected fun exec ()V
+	public abstract fun getD8Args ()Lorg/gradle/api/provider/ListProperty;
+	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion {
@@ -5535,7 +5494,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion 
 	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin : org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin : org/gradle/api/Plugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin$Companion;
 	public static final field TASKS_GROUP_NAME Ljava/lang/String;
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -5545,15 +5504,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin : org
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
-public class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8RootExtension : org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8RootExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8RootExtension$Companion {
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8SetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {

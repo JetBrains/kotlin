@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
@@ -13,31 +14,16 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
+import org.jetbrains.kotlin.gradle.utils.userKotlinPersistentDir
 
 @ExperimentalWasmDsl
-abstract class D8Plugin internal constructor() :
-    @Suppress("DEPRECATION_ERROR")
-    org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin() {
+abstract class D8Plugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
 
         project.plugins.apply(BasePlugin::class.java)
 
-        val spec = project.extensions.createD8EnvSpec()
-
-        if (project == project.rootProject) {
-            project.extensions.create(
-                D8RootExtension.EXTENSION_NAME,
-                D8RootExtension::class.java,
-                project,
-                spec
-            )
-        }
-
-        val d8RootExtension = applyRootProject(project.rootProject)
-
-        spec.initializeD8EnvSpec(d8RootExtension)
+        val spec = project.extensions.createD8EnvSpec(project)
 
         project.registerTask<D8SetupTask>(
             WasmPlatformDisambiguator.extensionName(D8SetupTask.BASE_NAME),
@@ -70,35 +56,28 @@ abstract class D8Plugin internal constructor() :
         }
     }
 
-    private fun ExtensionContainer.createD8EnvSpec(): D8EnvSpec {
+    private fun ExtensionContainer.createD8EnvSpec(project: Project): D8EnvSpec {
         return create(
             D8EnvSpec.EXTENSION_NAME,
             D8EnvSpec::class.java
-        )
-    }
+        ).apply {
+            val kotlinUserDir = project.userKotlinPersistentDir
 
-    private fun D8EnvSpec.initializeD8EnvSpec(
-        d8: D8RootExtension,
-    ) {
-        download.convention(d8.downloadProperty)
-        // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
-        downloadBaseUrl.set(d8.downloadBaseUrlProperty)
-        allowInsecureProtocol.convention(false)
-        installationDirectory.convention(d8.installationDirectory)
-        version.convention(d8.versionProperty)
-        edition.convention(d8.edition)
-        command.convention(d8.commandProperty)
+            download.convention(true)
+            // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
+            downloadBaseUrl.set("https://storage.googleapis.com/chromium-v8/official/canary")
+            allowInsecureProtocol.convention(false)
+            installationDirectory.convention(
+                project.objects.directoryProperty().fileValue(kotlinUserDir.resolve("d8"))
+            )
+            version.convention("13.4.61")
+            edition.convention("rel")
+            command.convention("d8")
+        }
     }
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         const val TASKS_GROUP_NAME: String = "d8"
-
-        internal fun apply(project: Project): D8RootExtension {
-            project.plugins.apply(D8Plugin::class.java)
-            return project.extensions.getByName(
-                D8RootExtension.EXTENSION_NAME
-            ) as D8RootExtension
-        }
 
         internal fun applyWithEnvSpec(project: Project): D8EnvSpec {
             project.plugins.apply(D8Plugin::class.java)
@@ -106,17 +85,5 @@ abstract class D8Plugin internal constructor() :
                 D8EnvSpec.EXTENSION_NAME
             ) as D8EnvSpec
         }
-
-        private fun applyRootProject(project: Project): D8RootExtension {
-            project.rootProject.plugins.apply(D8Plugin::class.java)
-            return project.rootProject.extensions.getByName(
-                D8RootExtension.EXTENSION_NAME
-            ) as D8RootExtension
-        }
-
-        internal val Project.kotlinD8RootExtension: D8RootExtension
-            get() = extensions.getByName(
-                D8RootExtension.EXTENSION_NAME
-            ).castIsolatedKotlinPluginClassLoaderAware()
     }
 }
