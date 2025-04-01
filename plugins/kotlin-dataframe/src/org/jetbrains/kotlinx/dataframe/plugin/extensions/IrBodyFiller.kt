@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superTypes
@@ -116,14 +118,14 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val getter = declaration.getter ?: return declaration
 
         val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
-        val jvmName = constructors.single { it.owner.valueParameters.size == 1 }
-        val marker =
-            ((getter.extensionReceiverParameter!!.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
+        val jvmName = constructors.single { it.owner.parameters.size == 1 }
+        val getterExtensionReceiver = getter.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
+        val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
         val jvmNameArg = "${marker.nestedName()}_${declaration.name.identifier}"
         getter.annotations = listOf(
             IrConstructorCallImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
                 .also {
-                    it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg))
+                    it.arguments[0] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg)
                 }
         )
         val returnType = getter.returnType
@@ -135,23 +137,23 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
             context
                 .referenceFunctions(COLUMNS_SCOPE_ID)
                 .single {
-                    it.owner.valueParameters.size == 1 && it.owner.valueParameters[0].type == context.irBuiltIns.stringType
+                    it.owner.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, context.irBuiltIns.stringType))
                 }
         } else {
             context
                 .referenceFunctions(DATA_ROW_ID)
                 .single {
-                    it.owner.valueParameters.size == 1 && it.owner.valueParameters[0].type == context.irBuiltIns.stringType
+                    it.owner.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, context.irBuiltIns.stringType))
                 }
         }
 
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0).also {
-            val thisSymbol: IrValueSymbol = getter.extensionReceiverParameter?.symbol!!
-            it.dispatchReceiver = IrGetValueImpl(-1, -1, thisSymbol)
+            val thisSymbol: IrValueSymbol = getterExtensionReceiver.symbol
+            it.arguments[0] = IrGetValueImpl(-1, -1, thisSymbol)
             val annotation = declaration.annotations.findAnnotation(Names.COLUMN_NAME_ANNOTATION.asSingleFqName())
             val columnName = (annotation?.arguments?.get(0) as? IrConst)?.value as? String
             val columName = columnName ?: declaration.name.identifier
-            it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName))
+            it.arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName)
         }
 
         val typeOp = IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
