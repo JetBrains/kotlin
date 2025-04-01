@@ -118,9 +118,15 @@ class ComposerParamTransformer(
             if (inlineLambdaInfo.isInlineFunctionExpression(expression)) {
                 return super.visitBlock(expression)
             }
-
-            val functionRef = expression.statements.lastOrNull() as? IrFunctionReference
-                ?: error("Expected function reference in ${expression.dump()}")
+            val functionRef =
+                when (val last = expression.statements.lastOrNull()) {
+                    is IrFunctionReference -> last
+                    is IrTypeOperatorCall -> {
+                        last.argument as? IrFunctionReference
+                            ?: return super.visitBlock(expression)
+                    }
+                    else -> error("Unexpected adapted function reference shape: ${expression.dump()}")
+                }
             if (!functionRef.type.isKComposableFunction() && !functionRef.type.isSyntheticComposableFunction()) {
                 return super.visitBlock(expression)
             }

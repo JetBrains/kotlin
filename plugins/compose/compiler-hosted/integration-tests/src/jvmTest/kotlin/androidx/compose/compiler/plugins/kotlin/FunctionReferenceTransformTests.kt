@@ -756,4 +756,27 @@ class FunctionReferenceTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """,
     )
+
+    @Test
+    fun referenceSamConversion() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Fn(int: Int): Int = 0
+
+            fun interface IntToInt {
+                @Composable
+                fun invoke(int: Int): Int
+            }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Ref(content: IntToInt) {
+                Ref(::Fn)
+            }
+        """,
+    )
 }

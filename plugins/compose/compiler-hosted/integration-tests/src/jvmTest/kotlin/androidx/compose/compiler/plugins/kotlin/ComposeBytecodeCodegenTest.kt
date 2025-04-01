@@ -1042,4 +1042,21 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             """
         )
     }
+
+    @Test
+    fun samFunctionReference() = testCompile(
+        source = """
+            import androidx.compose.runtime.*
+    
+            fun Fn(int: Int): Int = 0
+    
+            fun interface Collector<T> {
+                suspend fun invoke(int: T): T
+            }
+
+            fun Ref(content: Collector<Int>) {
+                Ref(::Fn)
+            }
+        """
+    )
 }
