@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracke
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
 import org.jetbrains.kotlin.analysis.api.impl.base.restrictedAnalysis.KaBaseRestrictedAnalysisException
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
@@ -48,7 +50,25 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         KotlinLifetimeTokenFactory.getInstance(project)
     }
 
+    @KaCachedService
+    private val kotlinPlatformSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinPlatformSettings.getInstance(project)
+    }
+
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
+
+    protected fun checkUseSiteModule(useSiteModule: KaModule) {
+        if (useSiteModule is KaLibraryModule && !kotlinPlatformSettings.allowUseSiteLibraryModuleAnalysis) {
+            throw KaBaseUseSiteLibraryModuleAnalysisException(useSiteModule)
+        }
+
+        requireWithAttachment(
+            useSiteModule.isResolvable,
+            { "`${useSiteModule::class.simpleName}` is not resolvable and thus cannot be a use-site module." },
+        ) {
+            withKaModuleEntry("useSiteModule", useSiteModule)
+        }
+    }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
         // Catch issues with analysis on invalid PSI as early as possible.
@@ -109,15 +129,6 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     private fun afterLeavingAnalysis(session: KaSession) {
         writeActionStartedChecker.afterLeavingAnalysis()
         lifetimeTracker.afterLeavingAnalysis(session)
-    }
-
-    protected fun checkModuleResolvability(useSiteModule: KaModule) {
-        requireWithAttachment(
-            useSiteModule.isResolvable,
-            { "`${useSiteModule::class.simpleName}` is not resolvable and thus cannot be a use-site module." },
-        ) {
-            withKaModuleEntry("useSiteModule", useSiteModule)
-        }
     }
 }
 

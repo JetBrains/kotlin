@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtElement
 internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
     override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
         val useSiteModule = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
-        checkModuleResolvability(useSiteModule)
+        checkUseSiteModule(useSiteModule)
 
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideSourceModificationTracker())
@@ -28,7 +28,7 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
-        checkModuleResolvability(useSiteModule)
+        checkUseSiteModule(useSiteModule)
 
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideSourceModificationTracker())

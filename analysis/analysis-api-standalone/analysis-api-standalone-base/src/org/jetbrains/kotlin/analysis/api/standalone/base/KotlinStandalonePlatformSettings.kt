@@ -11,4 +11,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 class KotlinStandalonePlatformSettings : KotlinPlatformSettings {
     override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
         get() = KotlinDeserializedDeclarationsOrigin.BINARIES
+
+    override val allowUseSiteLibraryModuleAnalysis: Boolean
+        get() = false
 }

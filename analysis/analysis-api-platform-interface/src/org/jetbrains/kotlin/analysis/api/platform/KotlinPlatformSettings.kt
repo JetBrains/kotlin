@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 
 /**
  * [KotlinPlatformSettings] allow the Analysis API platform to control the behavior of the Analysis API engine.
@@ -16,6 +17,15 @@ public interface KotlinPlatformSettings : KotlinPlatformComponent {
      * @see KotlinDeserializedDeclarationsOrigin
      */
     public val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
+
+    /**
+     * Whether analysis of use-site [KaLibraryModule]s is allowed by the platform. When this is `false`, attempts to analyze a
+     * [KaLibraryModule] will result in an exception.
+     *
+     * See KT-76042 for more information.
+     */
+    public val allowUseSiteLibraryModuleAnalysis: Boolean
+        get() = true
 
     public companion object {
         public fun getInstance(project: Project): KotlinPlatformSettings = project.service()

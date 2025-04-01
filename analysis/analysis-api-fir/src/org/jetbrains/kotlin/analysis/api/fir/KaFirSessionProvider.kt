@@ -93,7 +93,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
-        checkModuleResolvability(useSiteModule)
+        checkUseSiteModule(useSiteModule)
 
         ProgressManager.checkCanceled()
 
