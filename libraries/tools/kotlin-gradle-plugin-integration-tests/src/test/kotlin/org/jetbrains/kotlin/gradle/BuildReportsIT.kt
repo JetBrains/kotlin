@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.util.readJsonReport
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE
+import org.junit.jupiter.api.parallel.ResourceLock
 import java.io.ObjectInputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -103,6 +105,7 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     @TestMetadata("kotlin-js-plugin-project")
+    @ResourceLock("kgp-js node installation", mode = READ_WRITE)
     fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
         testBuildReportInFile(
             "kotlin-js-plugin-project",
