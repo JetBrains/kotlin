@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.junit.jupiter.api.fail
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -227,7 +228,7 @@ fun findParameterInOutput(name: String, output: String): String? =
 fun BuildResult.assertCompilerArgument(
     taskPath: String,
     expectedArgument: String,
-    logLevel: LogLevel = LogLevel.DEBUG
+    logLevel: LogLevel = LogLevel.DEBUG,
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
@@ -279,7 +280,7 @@ fun BuildResult.assertCompilerArguments(
  */
 fun BuildResult.extractTaskCompilerArguments(
     taskPath: String,
-    logLevel: LogLevel = LogLevel.INFO
+    logLevel: LogLevel = LogLevel.INFO,
 ): String {
     val taskOutput = getOutputForTask(taskPath, logLevel)
     return taskOutput.lines().first {
@@ -288,7 +289,7 @@ fun BuildResult.extractTaskCompilerArguments(
 }
 
 fun BuildResult.extractNativeCompilerTaskArguments(
-    taskPath: String
+    taskPath: String,
 ): String {
     val taskOutput = getOutputForTask(taskPath, LogLevel.INFO)
     return taskOutput.substringAfter("Arguments = [\n").substringBefore("]\n")
@@ -367,10 +368,20 @@ fun CommandLineArguments.assertCommandLineArgumentsContain(
 fun CommandLineArguments.assertCommandLineArgumentsContainSequentially(
     vararg expectedArgs: String,
 ) {
-    expectedArgs.forEach {
-        assert(expectedArgs.isNotEmpty() && Collections.indexOfSubList(args, expectedArgs.toList()) != -1) {
+    require(expectedArgs.isNotEmpty()) { "expectedArgs must not be empty" }
+
+    val isExpectedInActualArgs = Collections.indexOfSubList(args, expectedArgs.toList()) != -1
+
+    if (!isExpectedInActualArgs) {
+        fail {
             this.buildResult.printBuildOutput()
-            "There is no sequential arguments $it in actual command line arguments are: $args"
+            """
+            |Expected args were not found sequential in the actual args.
+            |Expected args:
+            |${expectedArgs.joinToString("\n") { "\t$it" }}
+            |Actual args:
+            |${args.joinToString("\n") { "\t$it" }}
+            |""".trimMargin()
         }
     }
 }
