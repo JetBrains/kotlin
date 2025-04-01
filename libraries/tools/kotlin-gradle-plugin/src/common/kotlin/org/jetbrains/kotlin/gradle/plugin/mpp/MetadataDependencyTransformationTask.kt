@@ -22,6 +22,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -113,7 +114,20 @@ abstract class MetadataDependencyTransformationTask
         flatMap { resolution ->
             when (resolution) {
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolution.toTransformedLibrariesRecords()
-                is MetadataDependencyResolution.KeepOriginalDependency -> resolution.toTransformedLibrariesRecords()
+                is MetadataDependencyResolution.KeepOriginalDependency -> when (transformationParameters.kmpResolutionStrategy) {
+                    /**
+                     * We probably actually want:
+                     * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
+                     *
+                     * in both cases
+                     *
+                     * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
+                     *
+                     * This is especially problematic for lenient resolution
+                     */
+                    KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
+                    KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
+                }
                 is MetadataDependencyResolution.Exclude -> emptyList()
             }
         }
