@@ -6699,49 +6699,49 @@ public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun ByteArray.sortedDescending(): List<Byte> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun ShortArray.sortedDescending(): List<Short> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun IntArray.sortedDescending(): List<Int> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun LongArray.sortedDescending(): List<Long> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun FloatArray.sortedDescending(): List<Float> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun DoubleArray.sortedDescending(): List<Double> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun CharArray.sortedDescending(): List<Char> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
