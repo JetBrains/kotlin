@@ -24,6 +24,7 @@ private data class GlobalCompiledProjectsCacheKey(
     val snapshotConfig: SnapshotConfig,
     val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
     val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    val icSourceTracking: Boolean,
 )
 
 internal object GlobalCompiledProjectsCache {
@@ -44,7 +45,8 @@ internal object GlobalCompiledProjectsCache {
             module.scenarioDslCacheKey,
             snapshotConfig,
             compilationOptionsModifier,
-            incrementalCompilationOptionsModifier
+            incrementalCompilationOptionsModifier,
+            icSourceTracking,
         )] ?: return null
         cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
         return if (icSourceTracking) {
@@ -79,7 +81,8 @@ internal object GlobalCompiledProjectsCache {
             module.scenarioDslCacheKey,
             snapshotConfig,
             compilationOptionsModifier,
-            incrementalCompilationOptionsModifier
+            incrementalCompilationOptionsModifier,
+            icSourceTracking,
         )] = Pair(initialOutputs, moduleCacheDirectory)
         return if (icSourceTracking) {
             AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)

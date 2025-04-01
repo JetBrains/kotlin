@@ -4,5 +4,5 @@
  */
 
 class Bar {
-    fun bar(bar: Int) = foo()
+    fun bar(bar: Int = 10) = foo()
 }

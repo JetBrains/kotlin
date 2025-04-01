@@ -111,11 +111,6 @@ class JvmModule(
             options.setBuildDir(buildDirectory.toFile())
             options.setRootProjectDir(project.projectDirectory.toFile())
 
-            if (BaseTest.compilerVersion < KotlinToolingVersion(2, 0, 0, "Beta2")) {
-                // workaround for the incorrect default value
-                options.useOutputDirs(setOf(icCachesDir.toFile(), outputDirectory.toFile()))
-            }
-
             if (forceNonIncrementalCompilation) {
                 options.forceNonIncrementalMode()
             }
