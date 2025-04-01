@@ -14,19 +14,21 @@ import java.io.File
 
 internal fun Provider<Boolean>.nativeDaemonEntryPoint(kotlinNativeVersion: Provider<String>) =
     zip(kotlinNativeVersion) { useXcodeMessageStyle, version ->
-        if (useXcodeMessageStyle) {
+        val method = if (useXcodeMessageStyle) {
             "daemonMainWithXcodeRenderer"
-        } else if (KotlinToolingVersion(version).supportCompilerMetricsForNative()) {
-            "daemonMainWithPerformance"
         } else {
             "daemonMain"
         }
+
+        val withPerformanceSuffix = if (KotlinToolingVersion(version).supportCompilerMetricsForNative()) {
+            "WithPerformance"
+        } else ""
+
+        method + withPerformanceSuffix
     }
 
-internal fun Provider<Boolean>.nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion: Provider<String>) =
-    zip(kotlinNativeVersion) { useXcodeMessageStyle, version ->
-        !useXcodeMessageStyle && KotlinToolingVersion(version).supportCompilerMetricsForNative()
-    }
+internal fun nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion: Provider<String>) =
+    kotlinNativeVersion.map { KotlinToolingVersion(it).supportCompilerMetricsForNative() }
 
 private fun KotlinToolingVersion.supportCompilerMetricsForNative() = this >= KotlinToolingVersion("2.2.0-dev-13610")
 

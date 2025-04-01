@@ -227,23 +227,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     companion object {
         @JvmStatic fun main(args: Array<String>) {
             profile("Total compiler main()") {
-                val k2Native = K2Native()
                 doMain(K2Native(), args)
-                k2Native.defaultPerformanceManager
             }
         }
 
         @JvmStatic fun mainNoExit(args: Array<String>) {
             profile("Total compiler main()") {
                 if (doMainNoExit(K2Native(), args) != ExitCode.OK) {
-                    throw KonanCompilationException("Compilation finished with errors")
-                }
-            }
-        }
-
-        @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
-            profile("Total compiler main()") {
-                if (doMainNoExit(K2Native(), args, messageRenderer) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
                 }
             }
@@ -256,6 +246,26 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 throw KonanCompilationException("Compilation finished with errors")
             }
             k2Native.defaultPerformanceManager.dumpPerformanceReport(File(path))
+        }
+
+
+        @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
+            profile("Total compiler main()") {
+                if (doMainNoExit(K2Native(), args, messageRenderer) != ExitCode.OK) {
+                    throw KonanCompilationException("Compilation finished with errors")
+                }
+            }
+        }
+
+        @JvmStatic
+        fun mainNoExitWithRendererWithPerformance(args: Array<String>, path: String, messageRenderer: MessageRenderer) {
+            profile("Total compiler main()") {
+                val k2Native = K2Native()
+                if (doMainNoExit(k2Native, args, messageRenderer) != ExitCode.OK) {
+                    throw KonanCompilationException("Compilation finished with errors")
+                }
+                k2Native.defaultPerformanceManager.dumpPerformanceReport(File(path))
+            }
         }
     }
 }
@@ -271,4 +281,6 @@ fun parseBinaryOptions(
 fun main(args: Array<String>) = K2Native.main(args)
 fun mainWithPerformance(path: String, arg: Array<String>) = K2Native.mainWithPerformance(arg, path)
 fun mainNoExitWithGradleRenderer(args: Array<String>) = K2Native.mainNoExitWithRenderer(args, MessageRenderer.GRADLE_STYLE)
+fun mainNoExitWithGradleRendererWithPerformance(path: String, args: Array<String>) = K2Native.mainNoExitWithRendererWithPerformance(args, path, MessageRenderer.GRADLE_STYLE)
 fun mainNoExitWithXcodeRenderer(args: Array<String>) = K2Native.mainNoExitWithRenderer(args, MessageRenderer.XCODE_STYLE)
+fun mainNoExitWithXcodeRendererWithPerformance(path: String, args: Array<String>) = K2Native.mainNoExitWithRendererWithPerformance(args, path, MessageRenderer.XCODE_STYLE)

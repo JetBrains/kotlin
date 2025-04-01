@@ -68,5 +68,5 @@ private fun ObjectFactory.kotlinToolSpec(
         mapOf(MessageRenderer.PROPERTY_KEY to messageRenderer.name)
     }.get(),
     environmentBlacklist = konanPropertiesBuildService.get().environmentBlacklist,
-    collectNativeCompilerMetrics = useXcodeMessageStyle.nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
+    collectNativeCompilerMetrics = nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
 ).disableC2().enableAssertions().configureDefaultMaxHeapSize()

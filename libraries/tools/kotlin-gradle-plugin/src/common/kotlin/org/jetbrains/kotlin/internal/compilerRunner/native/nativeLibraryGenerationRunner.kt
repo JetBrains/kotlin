@@ -50,6 +50,6 @@ private fun ObjectFactory.kotlinToolSpec(
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),
     environment = nativeExecLLVMEnvironment,
     environmentBlacklist = environmentBlacklist.get(),
-    collectNativeCompilerMetrics = useXcodeMessageStyle.nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
+    collectNativeCompilerMetrics = nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
 ).enableAssertions()
     .configureDefaultMaxHeapSize()
