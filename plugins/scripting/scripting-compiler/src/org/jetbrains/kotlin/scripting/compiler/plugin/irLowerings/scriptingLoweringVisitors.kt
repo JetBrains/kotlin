@@ -217,10 +217,8 @@ internal abstract class ScriptLikeToClassTransformer(
 
                         else -> data
                     }
-                dispatchReceiverParameter = newDispatchReceiverParameter
-                extensionReceiverParameter = extensionReceiverParameter?.transform(dataForChildren)
+                parameters = listOfNotNull(newDispatchReceiverParameter) + nonDispatchParameters.transform(dataForChildren)
                 returnType = returnType.remapType()
-                valueParameters = valueParameters.transform(dataForChildren)
                 body = body?.transform(dataForChildren)
             }
         }
@@ -278,8 +276,9 @@ internal abstract class ScriptLikeToClassTransformer(
     override fun visitConstructor(declaration: IrConstructor, data: ScriptLikeToClassTransformerContext): IrConstructor =
         declaration.apply {
             if (declaration in capturingClassesConstructors) {
-                declaration.dispatchReceiverParameter =
+                declaration.parameters = listOf(
                     declaration.createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, targetClassReceiver.type)
+                ) + declaration.nonDispatchParameters
             }
             transformParent()
             transformFunctionChildren(data)
@@ -465,7 +464,7 @@ internal class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrTrans
                 val dataForChildren =
                     if (dispatchReceiverParameter?.type == irScriptClass.defaultType) {
                         val oldDispatchReceiver = dispatchReceiverParameter
-                        dispatchReceiverParameter = null
+                        parameters = nonDispatchParameters
                         data.copy(valueParameterToReplaceWithScript = oldDispatchReceiver)
                     } else data
                 super.visitSimpleFunction(this, dataForChildren)
@@ -514,8 +513,9 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
 
     fun IrFunction.addScriptDispatchReceiverIfNeeded() {
         if (dispatchReceiverParameter == null) {
-            dispatchReceiverParameter =
+            parameters = listOf(
                 createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiverType)
+            ) + parameters
         }
     }
 
