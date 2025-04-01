@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -642,7 +643,6 @@ internal object MapArguments : ResolutionStage() {
         sink: CheckerSink,
     ): List<ConeKotlinType>? {
         if (!callInfo.isImplicitInvoke) return null
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return null
 
         val dispatchReceiverType = dispatchReceiver?.expression?.resolvedType?.fullyExpandedType(callInfo.session)
         val contextExpectedTypes = dispatchReceiverType?.contextParameterTypes(context.session)
@@ -670,7 +670,9 @@ internal object MapArguments : ResolutionStage() {
             return null
         }
 
-        return contextExpectedTypes
+        return runIf(context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            contextExpectedTypes
+        }
     }
 }
 
