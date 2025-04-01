@@ -52001,6 +52001,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("deprecatedDefaultType.kt")
+      public void testDeprecatedDefaultType() {
+        runTest("compiler/testData/codegen/box/reflection/classes/deprecatedDefaultType.kt");
+      }
+
+      @Test
       @TestMetadata("javaVoid.kt")
       public void testJavaVoid() {
         runTest("compiler/testData/codegen/box/reflection/classes/javaVoid.kt");

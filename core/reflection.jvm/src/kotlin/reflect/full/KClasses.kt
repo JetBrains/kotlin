@@ -67,7 +67,9 @@ val KClass<*>.companionObjectInstance: Any?
 )
 @SinceKotlin("1.1")
 val KClass<*>.defaultType: KType
-    get() = KTypeImpl((this as KClassImpl<*>).descriptor.defaultType) { jClass }
+    get() = createType(typeParameters.map { typeParameter ->
+        KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
+    })
 
 
 /**
