@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -193,18 +193,20 @@ internal val KtDeclaration.visibilityByModifiers: Visibility?
 
 internal val KtDeclaration.location: KaSymbolLocation
     get() {
-        val parentDeclaration = parentOfType<KtDeclaration>()
+        // the declaration can be nested inside a dangling annotation, hence the KtModifierList
+        val parent = getParentOfTypes2<KtDeclaration, KtModifierList>()
+
         if (this is KtTypeParameter) {
-            return if (parentDeclaration is KtClassOrObject) KaSymbolLocation.CLASS else KaSymbolLocation.LOCAL
+            return if (parent is KtClassOrObject) KaSymbolLocation.CLASS else KaSymbolLocation.LOCAL
         }
 
-        return when (parentDeclaration) {
+        return when (parent) {
             null, is KtScript -> KaSymbolLocation.TOP_LEVEL
             is KtClassOrObject -> KaSymbolLocation.CLASS
             is KtProperty -> KaSymbolLocation.PROPERTY
-            is KtDeclarationWithBody, is KtDeclarationWithInitializer, is KtAnonymousInitializer -> KaSymbolLocation.LOCAL
-            else -> errorWithAttachment("Unexpected parent declaration: ${parentDeclaration::class.simpleName}") {
-                withPsiEntry("parentDeclaration", parentDeclaration)
+            is KtDeclarationWithBody, is KtDeclarationWithInitializer, is KtAnonymousInitializer, is KtModifierList -> KaSymbolLocation.LOCAL
+            else -> errorWithAttachment("Unexpected parent declaration: ${parent::class.simpleName}") {
+                withPsiEntry("parentDeclaration", parent)
                 withPsiEntry("psi", this@location)
             }
         }

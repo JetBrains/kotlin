@@ -18,7 +18,7 @@ KaNamedFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
-  location: TOP_LEVEL
+  location: LOCAL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -31,7 +31,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(danglingAnnotationOnTopLevelFunction.kt)
-  getContainingJvmClassName: DanglingAnnotationOnTopLevelFunctionKt
+  getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
