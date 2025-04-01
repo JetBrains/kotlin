@@ -293,7 +293,7 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted descending according to their natural sort order.
             """
         }
-        if (f != ArraysOfPrimitives) {
+        if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
         returns("List<T>")
