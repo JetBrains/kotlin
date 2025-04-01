@@ -68,7 +68,7 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
             hasExtensionReceiver = false,
             contextReceiverCount = declaration.contextParameterSymbols.size,
             hasVarargs = valueParameters.any { it.isVararg },
-            numDefaults = valueParameters.count { it.hasDefaultValue },
+            numDefaults = 0,
             isExpect = declaration.isExpect,
             isSyntheticMember = declaration.origin is FirDeclarationOrigin.Synthetic
         )
