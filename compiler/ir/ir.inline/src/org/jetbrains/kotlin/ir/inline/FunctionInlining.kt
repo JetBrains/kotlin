@@ -147,7 +147,6 @@ private class CallInlining(
         }
 
         val outerIrBuilder = context.createIrBuilder(copiedCallee.symbol, callSite.startOffset, callSite.endOffset)
-        val inlineFunctionToStore = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
         val functionStatements = (copiedCallee.body as? IrBlockBody)?.statements
@@ -158,11 +157,12 @@ private class CallInlining(
         return outerIrBuilder.irBlockOrSingleExpression(origin = IrStatementOrigin.INLINE_ARGS_CONTAINER) {
             +irReturnableBlock(returnType) {
                 val inlinedFunctionBlock = irInlinedFunctionBlock(
-                    inlinedFunctionStartOffset = inlineFunctionToStore.startOffset,
-                    inlinedFunctionEndOffset = inlineFunctionToStore.endOffset,
+                    inlinedFunctionStartOffset = callee.startOffset,
+                    inlinedFunctionEndOffset = callee.endOffset,
                     resultType = returnType,
-                    inlinedFunctionSymbol = inlineFunctionToStore.symbol.takeIf { originalInlinedElement is IrFunction },
-                    inlinedFunctionFileEntry = inlineFunctionToStore.fileEntry,
+                    // TODO Investigate if it is possible to get rid of `originalFunction` call here KT-76512
+                    inlinedFunctionSymbol = callee.originalFunction.symbol.takeIf { originalInlinedElement is IrFunction },
+                    inlinedFunctionFileEntry = callee.fileEntry,
                     origin = null,
                 ) {
                     evaluateArguments(
@@ -172,10 +172,10 @@ private class CallInlining(
                     )
                     +functionStatements
                     // Insert a return statement for the function that is supposed to return Unit
-                    if (inlineFunctionToStore.returnType.isUnit()) {
+                    if (callee.returnType.isUnit()) {
                         val potentialReturn = functionStatements.lastOrNull() as? IrReturn
                         if (potentialReturn == null) {
-                            at(inlineFunctionToStore.endOffset, inlineFunctionToStore.endOffset)
+                            at(callee.endOffset, callee.endOffset)
                             +irReturn(irGetObject(context.irBuiltIns.unitClass))
                         }
                     }
