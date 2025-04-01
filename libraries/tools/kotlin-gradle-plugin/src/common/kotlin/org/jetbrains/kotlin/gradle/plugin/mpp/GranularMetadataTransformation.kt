@@ -15,6 +15,10 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.metadataFragmentAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.resolveCompilationClasspathForConsumer
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -29,7 +33,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordi
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
-import java.io.File
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -73,7 +76,7 @@ internal sealed class MetadataDependencyResolution(
 
     class ChooseVisibleSourceSets internal constructor(
         dependency: ResolvedComponentResult,
-        val projectStructureMetadata: KotlinProjectStructureMetadata,
+        val projectStructureMetadata: KotlinProjectStructureMetadata?,
         val allVisibleSourceSetNames: Set<String>,
         val visibleSourceSetNamesExcludingDependsOn: Set<String>,
         val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
@@ -117,6 +120,7 @@ internal class GranularMetadataTransformation(
         val kotlinKmpProjectIsolationEnabled: Boolean,
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
         val transformProjectDependencies: Boolean,
+        val uklibFragmentAttributes: Set<String>,
         val computeTransformedLibraryChecksum: Boolean,
         val kmpResolutionStrategy: KmpResolutionStrategy,
     ) {
@@ -141,6 +145,7 @@ internal class GranularMetadataTransformation(
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             transformProjectDependencies = transformProjectDependencies,
+            uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.convertToStringForConsumption() }.toSet(),
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
         )
@@ -247,6 +252,87 @@ internal class GranularMetadataTransformation(
         val moduleId = module.id
 
         logger.debug("Process dependency: $moduleId")
+
+        val artifact = params
+            .resolvedMetadataConfiguration
+            .getArtifacts(dependency)
+            .singleOrNull() ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+        // expected only Composite Metadata Klib, but if dependency got resolved into platform variant
+        // when a source set is a leaf, then we might get multiple artifacts in such a case we must return KeepOriginal
+
+        // Make sure that resolved metadata artifact is actually Multiplatform one
+        if (artifact.variant.attributes.containsCompositeMetadataJarAttributes) {
+            return processPSMDependency(
+                artifact,
+                dependency,
+                module,
+                moduleId,
+                sourceSetsVisibleInParents
+            )
+        } else if (artifact.isFromUklib) {
+            return processUklibDependency(
+                artifact,
+                dependency,
+                sourceSetsVisibleInParents,
+                params.uklibFragmentAttributes,
+            )
+        } else {
+            return MetadataDependencyResolution.KeepOriginalDependency(module)
+        }
+    }
+
+    private fun processUklibDependency(
+        unpackedUklibDirectory: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        sourceSetsVisibleInParents: Set<String>,
+        uklibFragmentAttributes: Set<String>,
+    ): MetadataDependencyResolution {
+        if (uklibFragmentAttributes.size < 2) error(
+            "Source set ${params.sourceSetName} with attributes ${uklibFragmentAttributes} is expected to have at least two attributes for proper visibility inference"
+        )
+
+        val uklibDependency = deserializeUklibFromDirectory(unpackedUklibDirectory.file)
+
+        val allVisibleFragments = uklibDependency.module.resolveCompilationClasspathForConsumer(
+            attributes = uklibFragmentAttributes,
+        )
+        val fragmentsVisibleByThisSourceSet = allVisibleFragments.filterNot {
+            it.identifier in sourceSetsVisibleInParents
+        }
+
+        val moduleVersion = dependency.selected.moduleVersion
+        return MetadataDependencyResolution.ChooseVisibleSourceSets(
+            dependency = dependency.selected,
+            projectStructureMetadata = null,
+            allVisibleSourceSetNames = allVisibleFragments.map {
+                it.identifier
+            }.toSet(),
+            visibleSourceSetNamesExcludingDependsOn = fragmentsVisibleByThisSourceSet.map {
+                it.identifier
+            }.toSet(),
+            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toSet(),
+            metadataProvider = ArtifactMetadataProvider(
+                UklibCompositeMetadataArtifact(
+                    UklibCompositeMetadataArtifact.ModuleId(
+                        moduleVersion?.group ?: "unspecified",
+                        moduleVersion?.name ?: "unspecified",
+                        moduleVersion?.version ?: "unspecified",
+                    ),
+                    uklibDependency.module.fragments.toList(),
+                    params.computeTransformedLibraryChecksum,
+                )
+            )
+        )
+    }
+
+    private fun processPSMDependency(
+        compositeMetadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        module: ResolvedComponentResult,
+        moduleId: ComponentIdentifier,
+        sourceSetsVisibleInParents: Set<String>,
+    ): MetadataDependencyResolution {
+        logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
 
         /** Due to [KotlinUsages.KotlinMetadataCompatibility], non kotlin-metadata resolutions can happen */
         if (!dependency.resolvedVariant.attributes.containsCompositeMetadataJarAttributes) {
