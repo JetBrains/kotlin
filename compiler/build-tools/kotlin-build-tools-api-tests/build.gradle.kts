@@ -27,7 +27,8 @@ kotlin {
 
 val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-    BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 0, 21, null)),
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
@@ -111,7 +112,7 @@ testing {
                     isTransitive = false
                 }
                 implementation(project(":kotlin-tooling-core"))
-                compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 if (isRegular) {
                     runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
                 }
