@@ -1,1 +1,4 @@
-include ':a', ':a:b'
+rootProject.name = "allOpenFromNestedBuildscript"
+
+include(":a")
+include(":a:b")

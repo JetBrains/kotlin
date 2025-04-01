@@ -1,9 +1,6 @@
-apply plugin: "kotlin"
-apply plugin: "kotlin-allopen"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.plugin.allopen")
 }
 
 allOpen {

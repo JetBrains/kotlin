@@ -13,61 +13,62 @@ import kotlin.io.path.absolutePathString
 @Language("Groovy")
 internal val DEFAULT_GROOVY_SETTINGS_FILE =
     """
-    pluginManagement {
-        repositories {
-            mavenLocal()
-            mavenCentral()
-            google()
-            gradlePluginPortal()
-        }
-
-        plugins {
-            id "org.jetbrains.kotlin.jvm" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.kapt" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.android" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.js" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.native.cocoapods" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.allopen" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.spring" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.jpa" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.noarg" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.lombok" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.power-assert" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.sam.with.receiver" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.serialization" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.assignment" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}test_fixes_version"
-            id "org.jetbrains.kotlin.gradle-subplugin-example" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.atomicfu" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.plugin.compose" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.test.gradle-warnings-detector" version "${'$'}test_fixes_version"
-            id "org.jetbrains.kotlin.test.kotlin-compiler-args-properties" version "${'$'}test_fixes_version"
-        }
-        
-        resolutionStrategy {
-            eachPlugin {
-                switch (requested.id.id) {
-                    case "com.android.application":
-                    case "com.android.library":
-                    case "com.android.test":
-                    case "com.android.dynamic-feature":
-                    case "com.android.asset-pack":
-                    case "com.android.asset-pack-bundle":
-                    case "com.android.lint":
-                    case "com.android.instantapp":
-                    case "com.android.feature":
-                        useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
-                        break
-                }
-            }
-        }
-    }
-
-    plugins {
-        id("org.jetbrains.kotlin.test.gradle-warnings-detector")
-    }
-    """.trimIndent()
+    |
+    |pluginManagement {
+    |    repositories {
+    |        mavenLocal()
+    |        mavenCentral()
+    |        google()
+    |        gradlePluginPortal()
+    |    }
+    |
+    |    plugins {
+    |        id "org.jetbrains.kotlin.jvm" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.kapt" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.android" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.js" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.native.cocoapods" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.allopen" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.spring" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.jpa" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.noarg" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.lombok" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.power-assert" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.sam.with.receiver" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.serialization" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.assignment" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}test_fixes_version"
+    |        id "org.jetbrains.kotlin.gradle-subplugin-example" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.atomicfu" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.plugin.compose" version "${'$'}kotlin_version"
+    |        id "org.jetbrains.kotlin.test.gradle-warnings-detector" version "${'$'}test_fixes_version"
+    |        id "org.jetbrains.kotlin.test.kotlin-compiler-args-properties" version "${'$'}test_fixes_version"
+    |    }
+    |    
+    |    resolutionStrategy {
+    |        eachPlugin {
+    |            switch (requested.id.id) {
+    |                case "com.android.application":
+    |                case "com.android.library":
+    |                case "com.android.test":
+    |                case "com.android.dynamic-feature":
+    |                case "com.android.asset-pack":
+    |                case "com.android.asset-pack-bundle":
+    |                case "com.android.lint":
+    |                case "com.android.instantapp":
+    |                case "com.android.feature":
+    |                    useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
+    |                    break
+    |            }
+    |        }
+    |    }
+    |}
+    |
+    |plugins {
+    |    id("org.jetbrains.kotlin.test.gradle-warnings-detector")
+    |}
+    |""".trimMargin()
 
 
 internal fun getGroovyDependencyManagementBlock(
@@ -76,12 +77,13 @@ internal fun getGroovyDependencyManagementBlock(
     localRepo: Path? = null,
 ): String =
     //language=Groovy
-    """    
+    """
+    |
     |dependencyResolutionManagement {
     |    ${getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo)}
     |    repositoriesMode.set(${mapRepositoryModeToString(gradleRepositoriesMode)})
     |}
-    """.trimMargin()
+    |""".trimMargin()
 
 internal fun getGroovyRepositoryBlock(
     additionalDependencyRepositories: Set<String>,
@@ -166,69 +168,70 @@ internal fun getGroovyRepositoryBlock(
     |        ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
     |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
     |    }
-    """.trimMargin()
+    |""".trimMargin()
 
-@Language("kts")
+@Language("text")
 internal val DEFAULT_KOTLIN_SETTINGS_FILE =
     """
-    pluginManagement {
-        repositories {
-            mavenLocal()
-            mavenCentral()
-            google()
-            gradlePluginPortal()
-        }
-
-        val kotlin_version: String by settings
-        val android_tools_version: String by settings
-        val test_fixes_version: String by settings
-        plugins {
-            id("org.jetbrains.kotlin.jvm") version kotlin_version
-            id("org.jetbrains.kotlin.kapt") version kotlin_version
-            id("org.jetbrains.kotlin.android") version kotlin_version
-            id("org.jetbrains.kotlin.js") version kotlin_version
-            id("org.jetbrains.kotlin.native.cocoapods") version kotlin_version
-            id("org.jetbrains.kotlin.multiplatform") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.allopen") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.spring") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.jpa") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.noarg") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.lombok") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.power-assert") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.sam.with.receiver") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.serialization") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.assignment") version kotlin_version
-            id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
-            id("org.jetbrains.kotlin.gradle-subplugin-example") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.atomicfu") version kotlin_version
-            id("org.jetbrains.kotlin.plugin.compose") version kotlin_version
-            id("org.jetbrains.kotlin.test.gradle-warnings-detector") version test_fixes_version
-            id("org.jetbrains.kotlin.test.kotlin-compiler-args-properties") version test_fixes_version
-        }
-        
-        resolutionStrategy {
-            eachPlugin {
-                when (requested.id.id) {
-                    "com.android.application",
-                    "com.android.library",
-                    "com.android.test",
-                    "com.android.dynamic-feature",
-                    "com.android.asset-pack",
-                    "com.android.asset-pack-bundle",
-                    "com.android.lint",
-                    "com.android.instantapp",
-                    "com.android.feature",
-                    "com.android.kotlin.multiplatform.library"
-                       -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
-                }
-            }
-        }
-    }
-
-    plugins {
-        id("org.jetbrains.kotlin.test.gradle-warnings-detector")
-    }
-    """.trimIndent()
+    |
+    |pluginManagement {
+    |    repositories {
+    |        mavenLocal()
+    |        mavenCentral()
+    |        google()
+    |        gradlePluginPortal()
+    |    }
+    |
+    |    val kotlin_version: String by settings
+    |    val android_tools_version: String by settings
+    |    val test_fixes_version: String by settings
+    |    plugins {
+    |        id("org.jetbrains.kotlin.jvm") version kotlin_version
+    |        id("org.jetbrains.kotlin.kapt") version kotlin_version
+    |        id("org.jetbrains.kotlin.android") version kotlin_version
+    |        id("org.jetbrains.kotlin.js") version kotlin_version
+    |        id("org.jetbrains.kotlin.native.cocoapods") version kotlin_version
+    |        id("org.jetbrains.kotlin.multiplatform") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.allopen") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.spring") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.jpa") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.noarg") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.lombok") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.power-assert") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.sam.with.receiver") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.serialization") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.assignment") version kotlin_version
+    |        id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
+    |        id("org.jetbrains.kotlin.gradle-subplugin-example") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.atomicfu") version kotlin_version
+    |        id("org.jetbrains.kotlin.plugin.compose") version kotlin_version
+    |        id("org.jetbrains.kotlin.test.gradle-warnings-detector") version test_fixes_version
+    |        id("org.jetbrains.kotlin.test.kotlin-compiler-args-properties") version test_fixes_version
+    |    }
+    |    
+    |    resolutionStrategy {
+    |        eachPlugin {
+    |            when (requested.id.id) {
+    |                "com.android.application",
+    |                "com.android.library",
+    |                "com.android.test",
+    |                "com.android.dynamic-feature",
+    |                "com.android.asset-pack",
+    |                "com.android.asset-pack-bundle",
+    |                "com.android.lint",
+    |                "com.android.instantapp",
+    |                "com.android.feature",
+    |                "com.android.kotlin.multiplatform.library"
+    |                   -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
+    |            }
+    |        }
+    |    }
+    |}
+    |
+    |plugins {
+    |    id("org.jetbrains.kotlin.test.gradle-warnings-detector")
+    |}
+    |""".trimMargin()
 
 internal fun getKotlinDependencyManagementBlock(
     gradleRepositoriesMode: RepositoriesMode,
@@ -236,12 +239,13 @@ internal fun getKotlinDependencyManagementBlock(
     localRepo: Path? = null,
 ): String =
     //language=kotlin
-    """    
+    """
+    |
     |dependencyResolutionManagement {
     |    ${getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo)}
     |    repositoriesMode.set(${mapRepositoryModeToString(gradleRepositoriesMode)})
     |}
-    """.trimMargin()
+    |""".trimMargin()
 
 internal fun getKotlinRepositoryBlock(
     additionalDependencyRepositories: Set<String>,
@@ -326,7 +330,7 @@ internal fun getKotlinRepositoryBlock(
     |        ${additionalDependencyRepositories.joinToString("\n") { repo -> "maven{ url = uri(\"$repo\") }" }}
     |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = uri(\"${repo.replace("\\", "\\\\")}\") }" } ?: ""}
     |    }
-    """.trimMargin()
+    |""".trimMargin()
 
 private fun mapRepositoryModeToString(gradleRepositoriesMode: RepositoriesMode): String {
     return when (gradleRepositoriesMode) {

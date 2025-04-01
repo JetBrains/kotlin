@@ -172,7 +172,7 @@ class SubpuginsIT : KGPBaseTest() {
     fun testKotlinVersionDowngradeInSupbrojectKt39809(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         project(
             "kapt2/android-dagger",
@@ -183,12 +183,12 @@ class SubpuginsIT : KGPBaseTest() {
             subProject("app").buildGradle.modify {
                 """
                 buildscript {
-                	repositories {
-                		mavenCentral()
-                	}
-                	dependencies {
-                		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${TestVersions.Kotlin.STABLE_RELEASE}")
-                	}
+                    repositories {
+                        mavenCentral()
+                    }
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${TestVersions.Kotlin.STABLE_RELEASE}")
+                    }
                 }
 
                 $it
