@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.Abstrac
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.restrictedAnalysis.AbstractRestrictedAnalysisExceptionWrappingTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.restrictedAnalysis.AbstractRestrictedAnalysisRejectionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractUseSiteLibraryModuleAnalysisRejectionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
@@ -308,40 +309,43 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         }
     }
 
-    // We don't test Standalone API analysis session invalidation because it doesn't support modification (yet). The test infrastructure
-    // registers an "always accessible" lifetime token, which is at odds with checking the validity of an analysis session after
-    // invalidation.
-    group(
-        "sessions",
-        filter = frontendIs(FrontendKind.Fir)
-                and testModuleKindIs(TestModuleKind.Source)
-                and analysisSessionModeIs(AnalysisSessionMode.Normal)
-                and analysisApiModeIs(AnalysisApiMode.Ide)
-    ) {
-        test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
-            model("sessionInvalidation")
+    group("sessions", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractUseSiteLibraryModuleAnalysisRejectionTest>(filter = testModuleKindIs(TestModuleKind.LibraryBinary)) {
+            model(it, "allowUseSiteLibraryModuleAnalysis")
         }
 
-        test<AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
+        // We don't test Standalone API analysis session invalidation because it doesn't support modification (yet). The test infrastructure
+        // registers an "always accessible" lifetime token, which is at odds with checking the validity of an analysis session after
+        // invalidation.
+        group(
+            filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source) and analysisApiModeIs(AnalysisApiMode.Ide),
+        ) {
+            test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation")
+            }
 
-        test<AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
+            test<AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation")
+            }
 
-        test<AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
+            test<AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation")
+            }
 
-        test<AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest> {
-            model("sessionInvalidation")
-        }
+            test<AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation")
+            }
 
-        test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
-            model("sessionInvalidation")
+            test<AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation")
+            }
+
+            test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation")
+            }
         }
     }
+
     group("imports") {
         test<AbstractKaDefaultImportsProviderTest>(
             filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
