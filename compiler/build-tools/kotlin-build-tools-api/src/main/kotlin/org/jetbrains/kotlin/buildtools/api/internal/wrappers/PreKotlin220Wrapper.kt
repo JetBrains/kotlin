@@ -96,7 +96,14 @@ private class Pre220JvmCompilationConfigurationWrapper(
         approachParameters: P,
         options: IncrementalJvmCompilationConfiguration<P>
     ) {
-        base.useIncrementalCompilation(workingDirectory, sourcesChanges, approachParameters, options)
+        val unwrappedICConfig: IncrementalJvmCompilationConfiguration<P> =
+            if (options is Pre220ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration) {
+                @Suppress("UNCHECKED_CAST")
+                options.base as IncrementalJvmCompilationConfiguration<P>
+            } else {
+                options
+            }
+        base.useIncrementalCompilation(workingDirectory, sourcesChanges, approachParameters, unwrappedICConfig)
     }
 }
 
