@@ -59,7 +59,7 @@ public class IncrementalK2LightTreeJvmJpsTestGenerated extends AbstractIncrement
     }
 
     public void testAllFilesPresentInPureKotlinAbstractIncrementalK2LightTreeJvmJpsTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)"), TargetBackend.JVM_IR, false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"), TargetBackend.JVM_IR, false);
     }
 
     @TestMetadata("annotations")
@@ -697,16 +697,6 @@ public class IncrementalK2LightTreeJvmJpsTestGenerated extends AbstractIncrement
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
     }
 
-    @TestMetadata("typealiasNameClash2_SinceK2")
-    public void testTypealiasNameClash2_SinceK2() {
-      runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealiasNameClash2_SinceK2/");
-    }
-
-    @TestMetadata("typealiasNameClash_SinceK2")
-    public void testTypealiasNameClash_SinceK2() {
-      runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealiasNameClash_SinceK2/");
-    }
-
     @TestMetadata("valAddCustomAccessor")
     public void testValAddCustomAccessor() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/valAddCustomAccessor/");
@@ -727,7 +717,7 @@ public class IncrementalK2LightTreeJvmJpsTestGenerated extends AbstractIncrement
     }
 
     public void testAllFilesPresentInClassHierarchyAffectedAbstractIncrementalK2LightTreeJvmJpsTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)"), TargetBackend.JVM_IR, false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"), TargetBackend.JVM_IR, false);
     }
 
     @TestMetadata("annotationFlagRemoved")

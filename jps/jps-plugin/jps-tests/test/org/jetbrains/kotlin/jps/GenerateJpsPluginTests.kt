@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
         testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
                 val targetBackend = TargetBackend.JVM_IR
-                val excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
+                val excludePattern = "(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",
                     extension = null,
