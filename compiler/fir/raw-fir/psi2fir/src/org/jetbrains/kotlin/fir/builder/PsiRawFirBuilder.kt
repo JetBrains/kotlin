@@ -2692,10 +2692,11 @@ open class PsiRawFirBuilder(
             }
         }
 
-        override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry, data: FirElement?): FirElement {
+        override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry, data: FirElement?): FirElement = withForcedLocalContext {
             val annotationUseSiteTarget = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()
+
             if (annotationUseSiteTarget == ALL && annotationEntry.parent is KtAnnotation) {
-                return buildErrorAnnotationCall {
+                buildErrorAnnotationCall {
                     // Intentionally forbidden @all:[A1 A2] case
                     source = annotationEntry.toFirSourceElement()
                     useSiteTarget = annotationUseSiteTarget
@@ -2713,19 +2714,20 @@ open class PsiRawFirBuilder(
                         DiagnosticKind.MultipleAnnotationWithAllTarget
                     )
                 }
-            }
-            return buildAnnotationCall {
-                source = annotationEntry.toFirSourceElement()
-                useSiteTarget = annotationUseSiteTarget
-                annotationTypeRef = annotationEntry.typeReference.toFirOrErrorType()
-                annotationEntry.extractArgumentsTo(this)
-                val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name ?: Name.special("<no-annotation-name>")
-                calleeReference = buildSimpleNamedReference {
-                    source = (annotationEntry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
-                    this.name = name
+            } else {
+                buildAnnotationCall {
+                    source = annotationEntry.toFirSourceElement()
+                    useSiteTarget = annotationUseSiteTarget
+                    annotationTypeRef = annotationEntry.typeReference.toFirOrErrorType()
+                    annotationEntry.extractArgumentsTo(this)
+                    val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name ?: Name.special("<no-annotation-name>")
+                    calleeReference = buildSimpleNamedReference {
+                        source = (annotationEntry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
+                        this.name = name
+                    }
+                    typeArguments.appendTypeArguments(annotationEntry.typeArguments)
+                    containingDeclarationSymbol = context.containerSymbol
                 }
-                typeArguments.appendTypeArguments(annotationEntry.typeArguments)
-                containingDeclarationSymbol = context.containerSymbol
             }
         }
 

@@ -18,7 +18,7 @@ KaNamedFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
-  location: CLASS
+  location: LOCAL
   modality: FINAL
   name: foo
   origin: SOURCE

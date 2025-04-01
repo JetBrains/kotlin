@@ -402,7 +402,7 @@ class LightTreeRawFirDeclarationBuilder(
         unescapedAnnotation: LighterASTNode,
         defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null,
         diagnostic: ConeDiagnostic? = null,
-    ): FirAnnotationCall {
+    ): FirAnnotationCall = withForcedLocalContext {
         var annotationUseSiteTarget: AnnotationUseSiteTarget? = null
         lateinit var constructorCalleePair: Pair<FirTypeRef, List<FirExpression>>
         unescapedAnnotation.forEachChildren {
@@ -422,7 +422,8 @@ class LightTreeRawFirDeclarationBuilder(
                 ?.toFirSourceElement()
             this.name = name
         }
-        return if (diagnostic == null) {
+
+        if (diagnostic == null) {
             buildAnnotationCall {
                 source = unescapedAnnotation.toFirSourceElement()
                 useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
