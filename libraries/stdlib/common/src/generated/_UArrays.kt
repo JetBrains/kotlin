@@ -3149,8 +3149,6 @@ public fun UShortArray.sortedArrayDescending(): UShortArray {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3160,8 +3158,6 @@ public fun UIntArray.sortedDescending(): List<UInt> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3171,8 +3167,6 @@ public fun ULongArray.sortedDescending(): List<ULong> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3182,8 +3176,6 @@ public fun UByteArray.sortedDescending(): List<UByte> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
