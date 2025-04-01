@@ -541,8 +541,8 @@ private class ScriptAccessCallsGenerator(
                     builder.irGetField(scriptReceiver, earlierScriptsField!!)
                 }
             val getPrevScriptObjectExpression = builder.irCall(objArrayGet).apply {
-                dispatchReceiver = irGetEarlierScripts
-                putValueArgument(0, earlierScriptIndex.toIrConst(objArrayGet.owner.valueParameters.first().type))
+                arguments[0] = irGetEarlierScripts
+                arguments[1] = earlierScriptIndex.toIrConst(objArrayGet.owner.valueParameters.first().type)
             }
             val prevScriptClassType =
                 when {
@@ -582,7 +582,7 @@ private class ScriptToClassTransformer(
             val builder = context.irBuiltIns.createIrBuilder(expression.symbol)
             val newExpression =
                 if (data.isInScriptConstructor) {
-                    val correspondingCtorParam = irTargetClass.constructors.single().valueParameters.find {
+                    val correspondingCtorParam = irTargetClass.constructors.single().parameters.find {
                         it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
                     } ?: error("script explicit parameter ${correspondingVariable.name.asString()} not found")
                     builder.irGet(correspondingCtorParam.type, correspondingCtorParam.symbol)
