@@ -800,6 +800,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+    public void testDanglingAnnotationOnMemberFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/danglingAnnotationOnMemberFunction.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationOnMemberProperty.kt")
     public void testDanglingAnnotationOnMemberProperty() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/danglingAnnotationOnMemberProperty.kt");
@@ -809,6 +815,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     @TestMetadata("danglingAnnotationOnTopLevelClass.kt")
     public void testDanglingAnnotationOnTopLevelClass() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/danglingAnnotationOnTopLevelClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+    public void testDanglingAnnotationOnTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/danglingAnnotationOnTopLevelFunction.kt");
     }
 
     @Test
