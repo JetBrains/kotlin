@@ -36,9 +36,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    private val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
-    private val DUPLICATE_CALLS_IN_PLACE_MESSAGE = "A value parameter may not be annotated with callsInPlace twice"
-    private val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
+    private const val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
+    private const val DUPLICATE_CALLS_IN_PLACE_MESSAGE = "A value parameter may not be annotated with callsInPlace twice"
+    private const val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
+    private const val CALLS_IN_PLACE_ON_CONTEXT_PARAMETER =
+        "callsInPlace contract cannot be applied to context parameter because context arguments can never be lambdas."
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -59,6 +61,9 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             is FirResolvedContractDescription -> {
                 checkUnresolvedEffects(contractDescription, declaration, context, reporter)
                 checkDuplicateCallsInPlace(contractDescription, context, reporter)
+                if (declaration.contextParameters.isNotEmpty()) {
+                    checkCallsInPlaceOnContextParameter(contractDescription, declaration.valueParameters.size, context, reporter)
+                }
                 if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
                     reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE)
                 }
@@ -159,6 +164,21 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, DUPLICATE_CALLS_IN_PLACE_MESSAGE, context)
             } else {
                 seenParameterIndices.add(parameterIndex)
+            }
+        }
+    }
+
+    private fun checkCallsInPlaceOnContextParameter(
+        description: FirResolvedContractDescription,
+        valueParametersCount: Int,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        for (effectDeclaration in description.effects) {
+            val effect = effectDeclaration.effect
+            if (effect !is ConeCallsEffectDeclaration) continue
+            if (effect.valueParameterReference.parameterIndex >= valueParametersCount) {
+                reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, CALLS_IN_PLACE_ON_CONTEXT_PARAMETER, context)
             }
         }
     }
