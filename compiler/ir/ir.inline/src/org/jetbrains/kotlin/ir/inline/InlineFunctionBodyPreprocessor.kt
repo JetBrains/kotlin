@@ -32,7 +32,6 @@ private enum class NonReifiedTypeParameterRemappingMode {
 
 internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
-    val parent: IrDeclarationParent?,
     val strategy: CallInlinerStrategy,
 ) {
 
@@ -51,10 +50,9 @@ internal class InlineFunctionBodyPreprocessor(
             } else {
                 it
             }
-        }
+        } as IrFunction
 
-        result.patchDeclarationParents(parent)
-        return result as IrFunction
+        return result.patchDeclarationParents(irElement.parent)
     }
 
     private inner class InlinerTypeRemapper(
