@@ -1,3 +1,6 @@
+// IGNORE_STANDALONE
+// KT-76042
+
 // MODULE: dependency
 // MODULE_KIND: LibraryBinary
 // FILE: Declaration.kt
