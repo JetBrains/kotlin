@@ -221,6 +221,630 @@ class KmpResolutionIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    fun `smoke lenient kmp resolution - GMT and platform compilation - with direct uklib producer`(
+        version: GradleVersion,
+    ) {
+        val consumer = transitiveConsumptionCase(
+            version,
+            transitiveConfiguration = {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.linuxMain.get().addIdentifierClass()
+                    }
+                }
+            },
+            directConfiguration = {
+                buildScriptInjection {
+                    project.setUklibPublicationStrategy()
+                    project.applyMultiplatform {
+                        // Now it can't have linuxMain due to bamboos
+                        sourceSets.commonMain.get().addIdentifierClass()
+                    }
+                }
+            },
+            consumerConfiguration = {
+                buildScriptInjection {
+                    project.setUklibResolutionStrategy()
+                }
+            }
+        )
+
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf(
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "foo-transitive-1.0-commonMain-.klib",
+                ),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf(
+                    "linuxMain", "uklib-foo-direct-1.0-commonMain-",
+                ),
+                mutableListOf(
+                    "linuxMain", "foo-transitive-1.0-linuxMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "foo-transitive-1.0-commonMain-.klib",
+                ),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+
+        val jvmDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.jvm().compilationResolution()
+            }
+        }.buildAndReturn()
+        val iosDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.iosArm64().compilationResolution()
+            }
+        }.buildAndReturn()
+        val linuxDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.linuxArm64().compilationResolution()
+            }
+        }.buildAndReturn()
+
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        // Ignored because it doesn't have a jvm target
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "foo:transitive-jvm:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmApiElements-published",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "jvmApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmApiElements",
+                ),
+                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                        ),
+                    ),
+                    configuration = "compile",
+                ),
+            ).prettyPrinted, jvmDependencies.prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        // Ignored because it doesn't have an iOS target
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "foo:transitive-iosarm64:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.usage" to "kotlin-api",
+                            "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                            "org.jetbrains.kotlin.native.target" to "ios_arm64",
+                            "org.jetbrains.kotlin.platform.type" to "native",
+                        ),
+                    ),
+                    configuration = "iosArm64ApiElements-published",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "iosArm64ApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "nativeApiElements",
+                ),
+            ).prettyPrinted, iosDependencies.prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "linux_arm64",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "foo:transitive-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.usage" to "kotlin-api",
+                            "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                            "org.jetbrains.kotlin.native.target" to "linux_arm64",
+                            "org.jetbrains.kotlin.platform.type" to "native",
+                        ),
+                    ),
+                    configuration = "linuxArm64ApiElements-published",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "linuxArm64ApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "nativeApiElements",
+                ),
+            ).prettyPrinted, linuxDependencies.prettyPrinted
+        )
+    }
+
+    @GradleTest
+    fun `smoke lenient kmp resolution - GMT and platform compilation - with direct and transitive uklib producer`(
+        version: GradleVersion,
+    ) {
+        val consumer = transitiveConsumptionCase(
+            version,
+            transitiveConfiguration = {
+                // transitive is regular KMP producer
+                buildScriptInjection {
+                    project.setUklibPublicationStrategy()
+                    project.applyMultiplatform {
+                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.linuxMain.get().addIdentifierClass()
+                    }
+                }
+            },
+            directConfiguration = {
+                // direct is Uklib producer
+                buildScriptInjection {
+                    project.setUklibPublicationStrategy()
+                    project.setUklibResolutionStrategy()
+                    project.applyMultiplatform {
+                        sourceSets.commonMain.get().addIdentifierClass()
+                    }
+                }
+            },
+            consumerConfiguration = {
+                // consumer can resolve Uklibs
+                buildScriptInjection {
+                    project.setUklibResolutionStrategy()
+                }
+            }
+        )
+
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf(
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "uklib-foo-transitive-1.0-commonMain-",
+                ),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf(
+                    "linuxMain", "uklib-foo-direct-1.0-commonMain-",
+                ),
+                mutableListOf(
+                    "linuxMain", "uklib-foo-transitive-1.0-linuxMain-",
+                ),
+                mutableListOf(
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "uklib-foo-transitive-1.0-commonMain-",
+                ),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+
+        val jvmDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.jvm().compilationResolution()
+            }
+        }.buildAndReturn()
+        val iosDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.iosArm64().compilationResolution()
+            }
+        }.buildAndReturn()
+        val linuxDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.linuxArm64().compilationResolution()
+            }
+        }.buildAndReturn()
+
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "jvm",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-dom-api-compat:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "commonFakeApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmApiElements",
+                ),
+                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                        ),
+                    ),
+                    configuration = "compile",
+                ),
+            ).prettyPrinted, jvmDependencies.prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "ios_arm64",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-dom-api-compat:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "commonFakeApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "nativeApiElements",
+                ),
+            ).prettyPrinted, iosDependencies.prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "linux_arm64",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "linux_arm64",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-dom-api-compat:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "commonFakeApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "nativeApiElements",
+                ),
+            ).prettyPrinted, linuxDependencies.prettyPrinted
+        )
+    }
+
+    @GradleTest
+    fun `smoke lenient kmp resolution - GMT and platform compilation - with transitive uklib producer through direct kmp dependency`(
+        version: GradleVersion,
+    ) {
+        val consumer = transitiveConsumptionCase(
+            version,
+            transitiveConfiguration = {
+                buildScriptInjection {
+                    project.setUklibPublicationStrategy()
+                    project.applyMultiplatform {
+                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.linuxMain.get().addIdentifierClass()
+                    }
+                }
+            },
+            directConfiguration = {
+                buildScriptInjection {
+                    project.setUklibResolutionStrategy()
+                    project.applyMultiplatform {
+                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.linuxMain.get().addIdentifierClass()
+                    }
+                }
+            },
+            consumerConfiguration = {
+                buildScriptInjection {
+                    project.setUklibResolutionStrategy()
+                }
+            }
+        )
+
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf(
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "uklib-foo-transitive-1.0-commonMain-",
+                ),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf(
+                    "linuxMain", "foo-direct-1.0-linuxMain-.klib",
+                ),
+                mutableListOf(
+                    "linuxMain", "foo-direct-1.0-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "linuxMain", "uklib-foo-transitive-1.0-linuxMain-",
+                ),
+                mutableListOf(
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                ),
+                mutableListOf(
+                    "commonMain", "uklib-foo-transitive-1.0-commonMain-",
+                ),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+
+        val jvmDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.jvm().compilationResolution()
+            }
+        }.buildAndReturn()
+        val iosDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.iosArm64().compilationResolution()
+            }
+        }.buildAndReturn()
+        val linuxDependencies = consumer.buildScriptReturn {
+            project.ignoreAccessViolations {
+                kotlinMultiplatform.linuxArm64().compilationResolution()
+            }
+        }.buildAndReturn()
+
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "metadataApiElements",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "jvm",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-dom-api-compat:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "commonFakeApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmApiElements",
+                ),
+                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                        ),
+                    ),
+                    configuration = "compile",
+                ),
+            ).prettyPrinted, jvmDependencies.prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "metadataApiElements",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "ios_arm64",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-dom-api-compat:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "commonFakeApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "nativeApiElements",
+                ),
+            ).prettyPrinted, iosDependencies.prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.usage" to "kotlin-api",
+                            "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                            "org.jetbrains.kotlin.native.target" to "linux_arm64",
+                            "org.jetbrains.kotlin.platform.type" to "native",
+                        ),
+                    ),
+                    configuration = "linuxArm64ApiElements-published",
+                ),
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "linuxArm64ApiElements-published",
+                ),
+                "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "uklib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-api",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "linux_arm64",
+                        ),
+                    ),
+                    configuration = "uklibApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-dom-api-compat:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "commonFakeApiElements-published",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib:2.2.255-SNAPSHOT" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "nativeApiElements",
+                ),
+            ).prettyPrinted, linuxDependencies.prettyPrinted
+        )
+    }
 
     private fun transitiveConsumptionCase(
         gradleVersion: GradleVersion,
