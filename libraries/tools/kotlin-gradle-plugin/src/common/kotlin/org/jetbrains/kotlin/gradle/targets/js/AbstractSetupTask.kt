@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.gradle.utils.exclusiveFileLock
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
+import java.io.RandomAccessFile
 import java.net.URI
-import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.io.path.*
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
 
 @DisableCachingByDefault
 abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
@@ -190,8 +192,8 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         val currentHash = computeCurrentHash()
 
         val storedHash =
-            if (hashFile.fileSize() > 0) {
-                hashFile.readText().trim()
+            if (hashFile.length() > 0) {
+                hashFile.readLine().trim()
             } else {
                 "<hashFile missing>"
             }
@@ -211,7 +213,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
         val updatedHash = computeCurrentHash()
             ?: error("failed to compute hash. destination:$destination, dist:$dist.")
-        hashFile.writeText(updatedHash)
+        hashFile.writeUTF(updatedHash)
     }
 
     private fun computeCurrentHash(): String? {
@@ -250,7 +252,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
      * Concurrent execution happens more often when running KGP integration tests locally,
      * since the tests are run in parallel with multiple Gradle versions.
      */
-    private fun <T> runWithHashFileLock(action: (hashFile: Path) -> T): T {
+    private fun <T> runWithHashFileLock(action: (hashFile: RandomAccessFile) -> T): T {
         val hashFile = destinationHashFileProvider.get().asFile.toPath().apply {
             if (!exists()) {
                 parent.createDirectories()
@@ -258,8 +260,8 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             }
         }
 
-        return exclusiveFileLock(hashFile) {
-            action(hashFile)
+        return exclusiveFileLock(hashFile) { lockedFile ->
+            action(lockedFile)
         }
     }
 

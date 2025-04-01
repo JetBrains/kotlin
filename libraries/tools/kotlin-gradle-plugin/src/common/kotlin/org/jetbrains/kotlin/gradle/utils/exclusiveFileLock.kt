@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import java.io.RandomAccessFile
+import java.nio.channels.FileChannel
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Path
 import java.time.Instant
@@ -36,7 +37,7 @@ import kotlin.time.toJavaDuration
 internal fun <T> exclusiveFileLock(
     file: Path,
     lockTimeout: Duration = 5.seconds,
-    block: () -> T,
+    block: (file: RandomAccessFile) -> T,
 ): T {
     contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
 
@@ -54,18 +55,12 @@ internal fun <T> exclusiveFileLock(
         do {
             try {
                 RandomAccessFile(file.toFile(), "rw").use { lockFileAccess ->
-                    val fileLock = lockFileAccess.channel.tryLock(
-                        0,
-                        1,
-                        // set shared=false to trigger OverlappingFileLockException
-                        // if the lockfile is used by the same thread
-                        false,
-                    )
+                    val fileLock = lockFileAccess.channel.tryLock()
 
                     if (fileLock != null) {
                         fileLock.use {
                             // Successfully acquired exclusive lock
-                            return block()
+                            return block(lockFileAccess)
                         }
                     } else {
                         // Failed to acquire exclusive lock, already locked by another process
