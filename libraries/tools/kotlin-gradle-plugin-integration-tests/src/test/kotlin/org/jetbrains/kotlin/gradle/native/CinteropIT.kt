@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import kotlin.io.path.invariantSeparatorsPathString
 
 @NativeGradlePluginTests
 class CinteropIT : KGPBaseTest() {
@@ -63,12 +65,12 @@ class CinteropIT : KGPBaseTest() {
     fun cinteropWithDefFileFromTaskOutput(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-def-creation-task", gradleVersion = gradleVersion) {
 
-            val defFilePath = projectPath.resolve("def/cinterop.def").toFile().absoluteFile.absolutePath
+            val defFilePath = projectPath.resolve("def/cinterop.def")
 
             build(":assemble") {
                 assertTasksExecuted(":createDefFileTask")
                 extractNativeTasksCommandLineArgumentsFromOutput(":cinteropCinteropNative", toolName = NativeToolKind.C_INTEROP) {
-                    assertCommandLineArgumentsContainSequentially("-def", defFilePath)
+                    assertCommandLineArgumentsContainSequentially("-def", defFilePath.absolute().toRealPath().invariantSeparatorsPathString)
                 }
             }
 

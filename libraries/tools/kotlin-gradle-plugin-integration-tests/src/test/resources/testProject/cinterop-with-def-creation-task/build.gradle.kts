@@ -2,12 +2,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-val createDefFileTask = project.tasks.register("createDefFileTask", CreateDefFileTask::class) {
+val createDefFileTask by tasks.registering(CreateDefFileTask::class) {
     defFile.set(project.layout.buildDirectory.file(project.file("def/cinterop.def").absolutePath))
 }
 
