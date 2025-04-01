@@ -8142,6 +8142,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("clashingCompareTo.kt")
+      public void testClashingCompareTo() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/clashingCompareTo.kt");
+      }
+
+      @Test
       @TestMetadata("complexFlexibleInference.kt")
       public void testComplexFlexibleInference() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/complexFlexibleInference.kt");

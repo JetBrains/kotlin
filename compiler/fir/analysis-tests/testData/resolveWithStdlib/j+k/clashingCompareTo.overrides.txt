@@ -1,0 +1,6 @@
+B:
+  [Source]: public open override operator fun compareTo(other: R|B|): R|kotlin/Int| from Use site scope of /B [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override operator fun compareTo(other: R|B|): R|kotlin/Int| from Substitution scope for [Use site scope of kotlin/Comparable] for type B [id: 1]
+      [Library]: public abstract operator fun compareTo(other: R|T|): R|kotlin/Int| from Use site scope of kotlin/Comparable [id: 2]
+  [Source]: public open fun compareTo(other: R|kotlin/Any|): R|kotlin/Int| from Use site scope of /B [id: 0]
+    [Source]: public open fun compareTo(other: R|kotlin/Any|): R|kotlin/Int| from Use site scope of /A [id: 0]
