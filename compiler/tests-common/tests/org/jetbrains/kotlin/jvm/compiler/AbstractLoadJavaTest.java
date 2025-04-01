@@ -12,7 +12,7 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -204,9 +204,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
 
     public static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         Directives directives = KotlinTestUtils.parseDirectives(content);
-        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives, LanguageVersion.KOTLIN_1_9);
         if (languageVersionSettings == null) {
-            languageVersionSettings = CompilerTestLanguageVersionSettingsKt.defaultLanguageVersionSettings();
+            languageVersionSettings = new CompilerTestLanguageVersionSettings(
+                    Collections.emptyMap(), ApiVersion.KOTLIN_1_9, LanguageVersion.KOTLIN_1_9,
+                    Collections.emptyMap()
+            );
         }
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
@@ -326,7 +329,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
             FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
             Directives directives = KotlinTestUtils.parseDirectives(FileUtil.loadFile(originalJavaFile));
-            LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+            LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives, LanguageVersion.KOTLIN_1_9);
 
             Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                     tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
@@ -372,7 +375,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
                 });
 
         Directives directives = KotlinTestUtils.parseDirectives(fileContent);
-        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives, LanguageVersion.KOTLIN_1_9);
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL, languageVersionSettings

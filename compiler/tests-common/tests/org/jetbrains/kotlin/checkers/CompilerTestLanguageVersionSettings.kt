@@ -61,7 +61,8 @@ fun parseLanguageVersionSettingsOrDefault(directiveMap: Directives): CompilerTes
 @JvmOverloads
 fun parseLanguageVersionSettings(
     directives: Directives,
-    extraLanguageFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
+    defaultLanguageVersion: LanguageVersion = LanguageVersion.LATEST_STABLE,
+    extraLanguageFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
 ): CompilerTestLanguageVersionSettings? {
     val apiVersionString = directives[API_VERSION_DIRECTIVE]
     val languageFeaturesString = directives[LANGUAGE_DIRECTIVE]
@@ -87,7 +88,7 @@ fun parseLanguageVersionSettings(
         else -> ApiVersion.parse(apiVersionString) ?: error("Unknown API version: $apiVersionString")
     }
 
-    val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
+    val languageVersion = maxOf(defaultLanguageVersion, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
 
     val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty() + extraLanguageFeatures
 
