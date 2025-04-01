@@ -5,17 +5,73 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
+import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
  * Specification for executing Binaryen, an optimization tool for wasm files.
  */
 @Suppress("DEPRECATION_ERROR")
 @ExperimentalWasmDsl
-abstract class BinaryenEnvSpec : org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec() {
+abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
+    /**
+     * Specify Binaryen platform information, with name and architecture.
+     */
+    internal abstract val platform: Property<BinaryenPlatform>
 
-    companion object {
+    final override val env: Provider<BinaryenEnv> = produceEnv()
+
+    override val executable: Provider<String> = env.map { it.executable }
+
+    final override fun produceEnv(): Provider<BinaryenEnv> {
+        return version.map { versionValue ->
+            val requiredVersionName = "binaryen-version_$versionValue"
+            val targetPath = installationDirectory.getFile().resolve(requiredVersionName)
+            val platformValue = platform.get()
+            val isWindows = platformValue.isWindows()
+
+            val downloadValue = download.get()
+            fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
+                val finalCommand =
+                    if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
+                return if (downloadValue)
+                    targetPath
+                        .resolve("bin")
+                        .resolve(finalCommand)
+                        .absolutePath
+                else
+                    finalCommand
+            }
+
+            BinaryenEnv(
+                download = downloadValue,
+                downloadBaseUrl = downloadBaseUrl.orNull,
+                allowInsecureProtocol = allowInsecureProtocol.get(),
+                ivyDependency = "com.github.webassembly:binaryen:$versionValue:${platformValue.platform}@tar.gz",
+                executable = getExecutable("wasm-opt", command.get(), "exe"),
+                dir = targetPath,
+                isWindows = isWindows,
+            )
+        }
+    }
+
+    val Project.binaryenSetupTaskProvider: TaskProvider<out BinaryenSetupTask>
+        get() = project.tasks.withType(BinaryenSetupTask::class.java)
+            .named(
+                WasmPlatformDisambiguator.extensionName(
+                    BinaryenSetupTask.BASE_NAME,
+                )
+            )
+
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
-            get() = org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec.Companion.EXTENSION_NAME
+            get() = extensionName("binaryenSpec")
     }
 }

@@ -82,12 +82,14 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         ): TaskProvider<BinaryenExec> {
             val target = compilation.target
             val project = target.project
-            val binaryen = BinaryenPlugin.apply(project)
+            val binaryen = BinaryenPlugin.applyWithEnvSpec(project)
             return project.registerTask(
                 name,
             ) {
-                it.executable = binaryen.requireConfigured().executable
-                it.dependsOn(binaryen.setupTaskProvider)
+                it.executable = binaryen.executable.get()
+                with(binaryen) {
+                    it.dependsOn(project.binaryenSetupTaskProvider)
+                }
                 it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }
