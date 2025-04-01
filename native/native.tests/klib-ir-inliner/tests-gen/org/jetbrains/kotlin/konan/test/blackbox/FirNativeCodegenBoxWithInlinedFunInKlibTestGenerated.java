@@ -21487,6 +21487,8 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       public InlineClasses() {
         register("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        register("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParam.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        register("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParamFull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21840,6 +21842,20 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       public void testAnnotatedMemberExtensionPropertyGeneric() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
         runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("anonymousObjectAsDefaultParam.kt")
+      public void testAnonymousObjectAsDefaultParam() {
+        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+        runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParam.kt");
+      }
+
+      @Test
+      @TestMetadata("anonymousObjectAsDefaultParamFull.kt")
+      public void testAnonymousObjectAsDefaultParamFull() {
+        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+        runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParamFull.kt");
       }
 
       @Test
