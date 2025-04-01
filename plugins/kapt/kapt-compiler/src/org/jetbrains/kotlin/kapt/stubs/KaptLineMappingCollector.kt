@@ -99,9 +99,9 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
             } ?: continue
             val expectedAnnotationsMethodName =
                 JvmAbi.getSyntheticMethodNameForAnnotatedProperty(JvmAbi.getterName(property.name.asString()))
-            val extensionReceiver = (declaration as? IrSimpleFunction)?.extensionReceiverParameter
+            val extensionReceiver = (declaration as? IrSimpleFunction)?.parameters?.getOrNull(1)
             if (expectedAnnotationsMethodName == name.asString() &&
-                extensionReceiver?.type?.erasedUpperBound == valueParameters.firstOrNull()?.type?.erasedUpperBound
+                extensionReceiver?.type?.erasedUpperBound == parameters.getOrNull(1)?.type?.erasedUpperBound
             ) {
                 return declaration
             }
