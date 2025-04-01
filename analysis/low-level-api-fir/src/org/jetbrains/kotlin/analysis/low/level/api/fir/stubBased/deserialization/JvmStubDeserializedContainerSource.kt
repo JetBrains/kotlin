@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 //required for LLDependenciesSymbolProvider#jvmClassName, to resolve ambiguities
 //todo check if moving builtins to stubs would solve the issue
@@ -20,8 +20,8 @@ internal class JvmStubDeserializedContainerSource(classId: ClassId) : Deserializ
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
 
-    override val isPreReleaseInvisible: Boolean
-        get() = false
+    override val preReleaseInfo: PreReleaseInfo
+        get() = PreReleaseInfo(false, listOf())
 
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE

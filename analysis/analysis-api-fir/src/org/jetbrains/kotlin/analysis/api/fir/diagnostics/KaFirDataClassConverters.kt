@@ -5731,6 +5731,9 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     add(FirErrors.PRE_RELEASE_CLASS) { firDiagnostic ->
         PreReleaseClassImpl(
             firDiagnostic.a,
+            firDiagnostic.b.map { string ->
+                string
+            },
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

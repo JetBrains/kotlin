@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -288,7 +289,7 @@ class Fir2IrDeclarationStorage(
         override val facadeClassName: JvmClassName?
     ) : DeserializedContainerSource, FacadeClassSource {
         override val incompatibility get() = null
-        override val isPreReleaseInvisible get() = false
+        override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo(false, listOf())
         override val abiStability get() = DeserializedContainerAbiStability.STABLE
         override val presentableString get() = className.internalName
 

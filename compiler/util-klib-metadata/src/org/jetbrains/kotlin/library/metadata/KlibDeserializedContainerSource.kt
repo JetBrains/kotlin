@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Header
 import org.jetbrains.kotlin.name.FqName
@@ -13,9 +15,10 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 class KlibDeserializedContainerSource(
-    override val isPreReleaseInvisible: Boolean,
+    override val preReleaseInfo: PreReleaseInfo,
     override val presentableString: String,
     val klib: KotlinLibrary,
     override val incompatibility: IncompatibleVersionErrorData<*>?,
@@ -27,8 +30,10 @@ class KlibDeserializedContainerSource(
         packageFqName: FqName,
         incompatibility: IncompatibleVersionErrorData<*>?,
     ) : this(
-        isPreReleaseInvisible = configuration.reportErrorsOnPreReleaseDependencies &&
-                (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
+        preReleaseInfo = PreReleaseInfo(
+            configuration.reportErrorsOnPreReleaseDependencies && (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
+            klib.manifestProperties.propertyList(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES).map { it.trimStart('+') }
+        ),
         presentableString = "Package '$packageFqName'",
         klib = klib,
         incompatibility = incompatibility,

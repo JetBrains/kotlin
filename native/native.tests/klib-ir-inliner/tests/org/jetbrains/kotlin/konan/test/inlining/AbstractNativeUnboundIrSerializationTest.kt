@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -157,7 +158,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         for (functionUnderTest in functionsUnderTest) {
             // Make a copy of the original (fully linked) function but without the body to emulate Fir2IrLazy function.
             val deserializedContainerSource = KlibDeserializedContainerSource(
-                isPreReleaseInvisible = false,
+                preReleaseInfo = PreReleaseInfo(false, listOf()),
                 presentableString = "Emulation of lazy IR inline function ${functionUnderTest.fullyLinkedIrFunction.render()} from ${library.libraryFile.absolutePath}",
                 klib = library,
                 incompatibility = null,

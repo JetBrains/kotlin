@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.JsMetadataVersion
@@ -92,8 +93,8 @@ class KotlinJavascriptPackageFragment(
         override val incompatibility: IncompatibleVersionErrorData<*>?
             get() = null
 
-        override val isPreReleaseInvisible: Boolean =
-            configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0
+        override val preReleaseInfo: PreReleaseInfo =
+            PreReleaseInfo(configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0, listOf())
 
         override val abiStability: DeserializedContainerAbiStability
             get() = DeserializedContainerAbiStability.STABLE

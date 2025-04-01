@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 internal class JvmStubDeserializedFacadeContainerSource(
     override val className: JvmClassName,
@@ -19,8 +19,8 @@ internal class JvmStubDeserializedFacadeContainerSource(
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
 
-    override val isPreReleaseInvisible: Boolean
-        get() = false
+    override val preReleaseInfo: PreReleaseInfo
+        get() = PreReleaseInfo(false, listOf())
 
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE

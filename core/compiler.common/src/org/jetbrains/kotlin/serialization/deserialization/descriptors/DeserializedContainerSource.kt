@@ -12,8 +12,7 @@ interface DeserializedContainerSource : SourceElement {
     // Non-null if this container is loaded from a class with an incompatible binary version
     val incompatibility: IncompatibleVersionErrorData<*>?
 
-    // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
-    val isPreReleaseInvisible: Boolean
+    val preReleaseInfo: PreReleaseInfo
 
     // True iff this container was compiled by the new IR backend, this compiler is not using the IR backend right now,
     // and no additional flags to override this behavior were specified.
@@ -34,3 +33,8 @@ enum class DeserializedContainerAbiStability {
     // and this compiler is _not_ configured to ignore that.
     UNSTABLE,
 }
+
+// True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release.
+// List of manually enabled poisoning features.
+// TODO: Does this way of forwarding poisoningFeatures to errors make sense or should it be done somehow different?
+data class PreReleaseInfo(val isInvisible: Boolean, val poisoningFeatures: List<String>)

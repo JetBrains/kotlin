@@ -3100,8 +3100,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             PRE_RELEASE_CLASS,
-            "{0} was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.",
-            STRING
+            "{0} was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.{1}",
+            STRING,
+            Renderer { args: List<String> ->
+                if (args.isNotEmpty()) " Enabled pre-release features: ${args.joinToString()}" else ""
+
+            }
         )
         map.put(
             IR_WITH_UNSTABLE_ABI_COMPILED_CLASS,

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -194,7 +195,10 @@ class JvmClassFileBasedSymbolProvider(
             JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
             moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
             KotlinJvmBinarySourceElement(
-                kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.abiStability,
+                kotlinClass,
+                kotlinClass.incompatibility,
+                PreReleaseInfo(kotlinClass.isPreReleaseInvisible, listOf()),
+                kotlinClass.abiStability,
             ),
             JavaAwareFlexibleTypeFactory,
         )

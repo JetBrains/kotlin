@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
@@ -18,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Allocator
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertIs
@@ -40,6 +40,14 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testReleaseCompilerAgainstPreReleaseFeature() {
+        val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseFeature")
+
+        // TODO: Sanitize poisoning feature name for data consistency
+        doTestPoisoningKotlinFeature(rootDir, emptyList())
+    }
+
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
         // We intentionally use JS testdata, because the compilers should behave the same way in such a test.
         // To be refactored later, after
@@ -47,17 +55,28 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val rootDir =
             File("compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck")
 
-        doTestPreReleaseKotlinLibrary(rootDir, listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings"))
+        doTestPreReleaseKotlinLibrary(
+            rootDir,
+            listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
+        )
     }
 
     private fun doTestPreReleaseKotlinLibrary(rootDir: File, additionalOptions: List<String>) {
-        val someNonStableVersion = LanguageVersion.values().firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
-
-        val libraryOptions = listOf(
-            "-language-version", someNonStableVersion.versionString,
-            // Suppress the "language version X is experimental..." warning.
-            "-Xsuppress-version-warnings"
+        val someNonStableVersion = LanguageVersion.entries.firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
+        doTestPreReleaseKotlin(
+            rootDir,
+            listOf("-language-version", someNonStableVersion.versionString, "-Xsuppress-version-warnings"),
+            additionalOptions
         )
+    }
+
+    private fun doTestPoisoningKotlinFeature(rootDir: File, additionalOptions: List<String>) {
+        val somePoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+        doTestPreReleaseKotlin(rootDir, listOf("-XXLanguage:+$somePoisoningFeature"), additionalOptions)
+    }
+
+
+    private fun doTestPreReleaseKotlin(rootDir: File, libraryOptions: List<String>, additionalOptions: List<String>) {
         val library = compileLibrary(
             settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
             source = rootDir.resolve("library"),
