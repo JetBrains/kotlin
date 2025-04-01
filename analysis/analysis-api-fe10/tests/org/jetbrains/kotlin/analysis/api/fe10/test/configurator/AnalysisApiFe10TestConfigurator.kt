@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.configuration.Analy
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configurePlatformEnvironmentConfigurators
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -29,6 +30,7 @@ import kotlin.io.path.nameWithoutExtension
 
 object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
+    override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
     override val frontendKind: FrontendKind get() = FrontendKind.Fe10
     override val testPrefixes: List<String> get() = listOf("descriptors")
 

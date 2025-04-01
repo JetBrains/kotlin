@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSo
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.registerAllServices
@@ -387,7 +388,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         }
 
         if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest() ||
-            configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest()
+            configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest() ||
+            configurator.analysisApiMode == AnalysisApiMode.Standalone && isStandaloneDisabledForTheTest()
         ) {
             return
         }
@@ -446,6 +448,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     private fun isFirDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_FIR in testServices.moduleStructure.allDirectives
+
+    private fun isStandaloneDisabledForTheTest(): Boolean =
+        AnalysisApiTestDirectives.IGNORE_STANDALONE in testServices.moduleStructure.allDirectives
 
     protected fun <T : Directive> RegisteredDirectives.findSpecificDirective(
         commonDirective: T,

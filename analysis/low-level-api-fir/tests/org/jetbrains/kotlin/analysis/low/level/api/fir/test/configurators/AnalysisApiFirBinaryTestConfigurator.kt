@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleS
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -33,6 +34,7 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
     protected abstract val testModuleFactory: KtTestModuleFactory
 
     override val analyseInDependentSession: Boolean get() = false
+    override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {

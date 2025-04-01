@@ -25,6 +25,8 @@ abstract class AnalysisApiTestConfigurator {
      */
     open val testPrefixes: List<String> get() = emptyList()
 
+    abstract val analysisApiMode: AnalysisApiMode
+
     abstract val frontendKind: FrontendKind
 
     abstract val analyseInDependentSession: Boolean
