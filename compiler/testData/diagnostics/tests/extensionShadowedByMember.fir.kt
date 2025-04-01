@@ -21,3 +21,17 @@ inline fun <reified T> Cache.get() = 10
 fun <T> Cache.get2() = 10
 fun <T, R> Cache.get3() = 10
 fun <T : List<String>> Cache.<!EXTENSION_SHADOWED_BY_MEMBER!>get4<!>() = 10
+
+class C2 {
+    fun foo(s: String) {}
+    fun foo(s: String, i: Int) {}
+    fun foo(s: String, i: Int, b: Boolean = false) {}
+
+    fun bar(s: String, i: Int, b: Boolean = false) {}
+}
+
+fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String = "") {}
+fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String, i: Int = 0) {}
+fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String, i: Int = 0, b: Boolean = false) {}
+
+fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>(s: String, i: Int, b: Boolean) {}
