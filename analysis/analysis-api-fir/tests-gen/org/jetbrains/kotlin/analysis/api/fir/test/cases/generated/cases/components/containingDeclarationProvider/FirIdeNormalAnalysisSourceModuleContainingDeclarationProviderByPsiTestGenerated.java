@@ -70,9 +70,21 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByPsiT
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnMemberClass.kt")
+  public void testDanglingAnnotationOnMemberClass() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberClass.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationOnMemberFunction.kt")
   public void testDanglingAnnotationOnMemberFunction() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnMemberProperty.kt")
+  public void testDanglingAnnotationOnMemberProperty() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberProperty.kt");
   }
 
   @Test
@@ -82,9 +94,21 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByPsiT
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnTopLevelClass.kt")
+  public void testDanglingAnnotationOnTopLevelClass() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelClass.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
   public void testDanglingAnnotationOnTopLevelFunction() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelProperty.kt")
+  public void testDanglingAnnotationOnTopLevelProperty() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelProperty.kt");
   }
 
   @Test
