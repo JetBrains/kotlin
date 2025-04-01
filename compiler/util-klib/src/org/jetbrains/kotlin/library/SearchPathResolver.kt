@@ -288,6 +288,21 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     private val knownIrProviders: List<String>
 ) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, skipCurrentDir, logger), SearchPathResolver<L> {
 
+    @Deprecated(
+        "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' and 'localKotlinDir' value parameters",
+        ReplaceWith("KotlinLibraryProperResolverWithAttributes<L>(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)"),
+        DeprecationLevel.ERROR
+    )
+    constructor(
+        @Suppress("UNUSED_PARAMETER") repositories: List<String>,
+        directLibs: List<String>,
+        distributionKlib: String?,
+        @Suppress("UNUSED_PARAMETER") localKotlinDir: String?,
+        skipCurrentDir: Boolean,
+        logger: Logger,
+        knownIrProviders: List<String>
+    ) : this(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)
+
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
         val candidatePath = candidate.libraryFile.absolutePath
 
