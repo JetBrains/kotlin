@@ -188,7 +188,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
         (irScript.constructor?.patchDeclarationForClass() as? IrConstructor
             ?: createConstructor(irScriptClass, irScript, implicitReceiversFieldsWithParameters)).also { constructor ->
             val explicitParamsStartIndex = if (irScript.earlierScriptsParameter == null) 0 else 1
-            val explicitParameters = constructor.valueParameters.subList(
+            val explicitParameters = constructor.parameters.subList(
                 explicitParamsStartIndex,
                 irScript.explicitCallParameters.size + explicitParamsStartIndex
             )
@@ -279,7 +279,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
                 containerSource = containerSource,
             )
         }.also { irConstructor ->
-            irConstructor.valueParameters = buildList {
+            irConstructor.parameters = buildList {
                 irScript.earlierScriptsParameter?.let {
                     add(it)
                 }
@@ -289,6 +289,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
                             startOffset = it.startOffset,
                             endOffset = it.endOffset,
                             origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER,
+                            kind = IrParameterKind.Regular,
                             name = it.name,
                             type = it.type,
                             isAssignable = false,
@@ -355,16 +356,10 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
             mainFun.body = context.irBuiltIns.createIrBuilder(mainFun.symbol).run {
                 irExprBody(
                     irCall(scriptRunHelper).apply {
-                        putValueArgument(
-                            0,
-                            irGet(javaLangClass.starProjectedType, null, kClassJavaPropertyGetter.symbol).apply {
-                                extensionReceiver = scriptClassRef
-                            }
-                        )
-                        putValueArgument(
-                            1,
-                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, args.type, args.symbol)
-                        )
+                        arguments[0] = irGet(javaLangClass.starProjectedType, null, kClassJavaPropertyGetter.symbol).apply {
+                            arguments[0] = scriptClassRef
+                        }
+                        arguments[1] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, args.type, args.symbol)
                     }
                 )
             }
@@ -413,14 +408,11 @@ private fun IrBuilderWithScope.makeScriptClassConstructorBody(
                 // Since in K2 we're not distinguishing between base class ctor args and other script args, we need this check.
                 // The logic is fragile, but since we plan to deprecate baseClass support (see KT-60449), and this delegating
                 // call will go away, let's leave it as is for now
-                if (idx >= it.valueArgumentsCount) return@forEachIndexed
-                it.putValueArgument(
-                    idx,
-                    IrGetValueImpl(
-                        valueParameter.startOffset, valueParameter.endOffset,
-                        valueParameter.type,
-                        valueParameter.symbol
-                    )
+                if (idx >= it.arguments.size) return@forEachIndexed
+                it.arguments[idx] = IrGetValueImpl(
+                    valueParameter.startOffset, valueParameter.endOffset,
+                    valueParameter.type,
+                    valueParameter.symbol
                 )
             }
         }
@@ -474,7 +466,8 @@ private fun makeImplicitReceiversFieldsWithParameters(irScriptClass: IrClass, ty
             val type = importedScriptClass.defaultType
             val name = Name.identifier("\$\$importedScript_${type.classFqName?.shortName()?.asString()!!}")
             val param = irScriptClass.factory.createValueParameter(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, name, type, isAssignable = false,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, IrParameterKind.Regular, name, type, isAssignable = false,
                 IrValueParameterSymbolImpl(), varargElementType = null,
                 isCrossinline = false, isNoinline = false, isHidden = false,
             )
@@ -485,7 +478,7 @@ private fun makeImplicitReceiversFieldsWithParameters(irScriptClass: IrClass, ty
             val typeName = param.type.classFqName?.shortName()?.identifierOrNullIfSpecial
             add(
                 createField(
-                    Name.identifier("\$\$implicitReceiver_${typeName ?: param.indexInOldValueParameters.toString()}"),
+                    Name.identifier("\$\$implicitReceiver_${typeName ?: param.indexInParameters.toString()}"),
                     param.type
                 ) to param
             )
@@ -542,7 +535,7 @@ private class ScriptAccessCallsGenerator(
                 }
             val getPrevScriptObjectExpression = builder.irCall(objArrayGet).apply {
                 arguments[0] = irGetEarlierScripts
-                arguments[1] = earlierScriptIndex.toIrConst(objArrayGet.owner.valueParameters.first().type)
+                arguments[1] = earlierScriptIndex.toIrConst(objArrayGet.owner.parameters[1].type)
             }
             val prevScriptClassType =
                 when {
