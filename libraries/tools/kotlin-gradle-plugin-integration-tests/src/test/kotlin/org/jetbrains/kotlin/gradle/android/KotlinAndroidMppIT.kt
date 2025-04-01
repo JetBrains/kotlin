@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
