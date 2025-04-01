@@ -1,51 +1,51 @@
-/privateTypesInsideInternalInlineFunctionWarning.kt:33:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:33:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:33:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:33:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:34:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:34:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:35:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:35:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:36:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:36:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:37:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:37:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:40:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:40:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:41:23: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:41:23: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:42:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:42:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:43:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:43:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:44:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:44:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:45:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:45:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:51:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:51:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:51:21: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:51:21: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:52:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:52:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:53:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:53:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:54:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:54:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:56:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:56:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:58:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:58:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:60:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:60:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:61:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in Kotlin 2.2.
+/privateTypesInsideInternalInlineFunctionWarning.kt:61:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:120:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
