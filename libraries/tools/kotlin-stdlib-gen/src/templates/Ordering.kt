@@ -300,7 +300,7 @@ object Ordering : TemplateGroupBase() {
         }
         body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
-            return copyOf().apply { sort() }.reversed()
+            return sortedArrayDescending().asList()
             """
         }
 
