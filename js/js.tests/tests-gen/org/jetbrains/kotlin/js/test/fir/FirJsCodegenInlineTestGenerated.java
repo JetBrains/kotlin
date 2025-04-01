@@ -2915,6 +2915,12 @@ public class FirJsCodegenInlineTestGenerated extends AbstractFirJsCodegenInlineT
     }
 
     @Test
+    @TestMetadata("inheritedLambdaAsGeneric.kt")
+    public void testInheritedLambdaAsGeneric() {
+      runTest("compiler/testData/codegen/boxInline/noInline/inheritedLambdaAsGeneric.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAsGeneric.kt")
     public void testLambdaAsGeneric() {
       runTest("compiler/testData/codegen/boxInline/noInline/lambdaAsGeneric.kt");

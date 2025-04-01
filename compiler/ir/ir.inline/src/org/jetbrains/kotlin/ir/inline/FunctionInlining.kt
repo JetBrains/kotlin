@@ -480,32 +480,23 @@ private class CallInlining(
     ) {
         val argumentExpression: IrExpression = originalArgumentExpression.unwrapAdditionalImplicitCastsIfNeeded()
 
-        val isInlinableLambdaArgument: Boolean
+        val isInlinable: Boolean
             // must take "original" parameter because it can have generic type and so considered as no inline; see `lambdaAsGeneric.kt`
-            get() = parameter.getOriginalParameter().isInlineParameter() &&
+            get() = parameter.isInlineParameter() &&
                     (argumentExpression is IrFunctionReference
                             || argumentExpression is IrFunctionExpression
                             || argumentExpression is IrRichFunctionReference
+                            || argumentExpression is IrPropertyReference
+                            || argumentExpression is IrRichPropertyReference
                             || argumentExpression.isAdaptedFunctionReference()
                             || argumentExpression.isInlineLambdaBlock()
-                            || argumentExpression.isLambdaBlock())
-
-        val isInlinablePropertyReference: Boolean
-            // must take "original" parameter because it can have generic type and so considered as no inline; see `lambdaAsGeneric.kt`
-            get() = parameter.getOriginalParameter().isInlineParameter() && (
-                    argumentExpression is IrPropertyReference || argumentExpression is IrRichPropertyReference
-                    )
+                            || argumentExpression.isLambdaBlock()
+                            )
 
         val isImmutableVariableLoad: Boolean
             get() = argumentExpression.let { argument ->
                 argument is IrGetValue && !argument.symbol.owner.let { it is IrVariable && it.isVar }
             }
-
-        private fun IrValueParameter.getOriginalParameter(): IrValueParameter {
-            if (this.parent !is IrFunction) return this
-            val original = (this.parent as IrFunction).originalFunction
-            return original.allParameters.singleOrNull { it.name == this.name && it.startOffset == this.startOffset } ?: this
-        }
     }
 
 
@@ -588,9 +579,9 @@ private class CallInlining(
                 }
             }
         }
-        if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
+        if (callSite.dispatchReceiver != null)
             parameterToArgument += ParameterToArgument(
-                parameter = callee.dispatchReceiverParameter!!,
+                parameter = callee.parameters[0],
                 originalArgumentExpression = callSite.dispatchReceiver!!
             ).allOuterClasses()
 
@@ -651,7 +642,8 @@ private class CallInlining(
     private fun evaluateArguments(
         callSiteBuilder: IrStatementsBuilder<*>,
         inlinedBlockBuilder: IrStatementsBuilder<*>,
-        callSite: IrFunctionAccessExpression, callee: IrFunction,
+        callSite: IrFunctionAccessExpression,
+        callee: IrFunction,
         substituteMap: MutableMap<IrValueParameter, IrExpression>
     ) {
 
@@ -664,9 +656,7 @@ private class CallInlining(
              * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
              * not only for those referring to inlinable lambdas.
              */
-            if ((argument.isInlinableLambdaArgument || argument.isInlinablePropertyReference)
-                && inlineFunctionResolver.inlineMode != InlineMode.ALL_FUNCTIONS
-            ) {
+            if (argument.isInlinable && inlineFunctionResolver.inlineMode != InlineMode.ALL_FUNCTIONS) {
                 val evaluationBuilder = if (argument.isDefaultArg) inlinedBlockBuilder else callSiteBuilder
                 substituteMap[parameter] = variableInitializer
                 when (variableInitializer) {

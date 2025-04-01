@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
@@ -40,11 +41,12 @@ fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
 
+fun IrType.isInlinableParameterType() = !isNullable() && (isFunction() || isSuspendFunction())
+
 fun IrValueParameter.isInlineParameter() =
     kind == IrParameterKind.Regular
             && !isNoinline
-            && !type.isNullable()
-            && (type.isFunction() || type.isSuspendFunction())
+            && type.isInlinableParameterType()
             && parent.isInlineFunction()
 
 private fun IrDeclarationParent.isInlineFunction(): Boolean {
