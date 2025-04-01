@@ -31,4 +31,4 @@ KtNameReferenceExpression(100,103): 'foo'
         simpleAccess = Read
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'String' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>

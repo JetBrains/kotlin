@@ -206,10 +206,9 @@ object CheckDispatchReceiver : ResolutionStage() {
 
 object CheckContextArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val contextExpectedTypes = run {
-            candidate.expectedContextParameterTypesForInvoke
-                ?: candidate.obtainRegularExpectedContextTypesOrNull()
-        }?.map(candidate.substitutor::substituteOrSelf) ?: return
+        val contextSymbols = candidate.obtainInvokeContextParametersOrNull()
+            ?: candidate.obtainRegularContextParametersOrNull()
+            ?: return
 
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) &&
             !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
@@ -219,33 +218,39 @@ object CheckContextArguments : ResolutionStage() {
         }
 
         val resultingContextArguments = candidate.mapContextArgumentsOrNull(
-            contextExpectedTypes,
+            contextSymbols,
             context.bodyResolveContext.towerDataContext,
             sink
         )
 
-        when {
-            candidate.expectedContextParameterTypesForInvoke != null -> {
-                candidate.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues(
-                    contextExpectedTypes,
-                    resultingContextArguments,
-                )
+        when (val contextParameterCountForInvoke = candidate.expectedContextParameterCountForInvoke) {
+            null -> {
+                candidate.contextArguments = resultingContextArguments
             }
             else -> {
-                candidate.contextArguments = resultingContextArguments
+                candidate.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues(
+                    contextParameterCountForInvoke,
+                    resultingContextArguments,
+                )
             }
         }
     }
 
-    private fun Candidate.obtainRegularExpectedContextTypesOrNull(): List<ConeKotlinType>? =
-        (symbol as? FirCallableSymbol<*>)?.fir?.contextParameters?.map { it.returnTypeRef.coneType }
+    private fun Candidate.obtainInvokeContextParametersOrNull(): List<FirValueParameterSymbol>? {
+        val count = expectedContextParameterCountForInvoke ?: return null
+        return (symbol as? FirFunctionSymbol)?.valueParameterSymbols?.take(count)
+    }
+
+    private fun Candidate.obtainRegularContextParametersOrNull(): List<FirValueParameterSymbol>? {
+        return (symbol as? FirCallableSymbol<*>)?.contextParameterSymbols
             ?.takeUnless { it.isEmpty() }
+    }
 
     /**
      * If any diagnostics are reported to [sink], `null` is returned.
      */
     private fun Candidate.mapContextArgumentsOrNull(
-        contextReceiverExpectedTypes: List<ConeKotlinType>,
+        contextSymbols: List<FirValueParameterSymbol>,
         towerDataContext: FirTowerDataContext,
         sink: CheckerSink,
     ): List<ConeResolutionAtom>? {
@@ -271,11 +276,12 @@ object CheckContextArguments : ResolutionStage() {
 
         val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
 
-        for (expectedType in contextReceiverExpectedTypes) {
+        for (symbol in contextSymbols) {
+            val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
             val potentialContextArguments = findClosestMatchingContextArguments(expectedType, implicitsGroupedByScope)
             when (potentialContextArguments.size) {
                 0 -> {
-                    sink.reportDiagnostic(NoContextArgument(expectedType))
+                    sink.reportDiagnostic(NoContextArgument(symbol))
                     return null
                 }
                 1 -> {
@@ -310,11 +316,11 @@ object CheckContextArguments : ResolutionStage() {
     }
 
     private fun Candidate.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues(
-        contextExpectedTypes: List<ConeKotlinType>,
+        count: Int,
         resultingContextArguments: List<ConeResolutionAtom>?,
     ) {
         val newArgumentPrefix = mutableListOf<ConeResolutionAtom>()
-        for (index in contextExpectedTypes.indices) {
+        repeat(count) { index ->
             val newValue =
                 resultingContextArguments?.get(index) ?: ConeResolutionAtom.createRawAtom(
                     buildErrorExpression(
@@ -598,7 +604,7 @@ internal object MapArguments : ResolutionStage() {
                     @OptIn(UnsafeExpressionUtility::class) // It's a temporary atom anyway
                     ConeResolutionAtom.createRawAtomForPotentiallyUnresolvedExpression(buildExpressionStub())
                 }
-                candidate.expectedContextParameterTypesForInvoke = expectedContextTypes
+                candidate.expectedContextParameterCountForInvoke = expectedContextTypes.size
             }
             callInfo.arguments.mapTo(this) { ConeResolutionAtom.createRawAtom(it) }
         }

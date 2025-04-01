@@ -4836,7 +4836,7 @@ KtPrefixExpression(1307,1309): '+a'
           ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1307,1308): '+'
@@ -4867,7 +4867,7 @@ KtOperationReferenceExpression(1307,1308): '+'
           ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1308,1309): 'a'
@@ -4932,7 +4932,7 @@ KtBinaryExpression(1314,1319): 'a + 1'
           ]
           callableId = /plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1314,1315): 'a'
@@ -4997,7 +4997,7 @@ KtOperationReferenceExpression(1316,1317): '+'
           ]
           callableId = /plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtConstantExpression(1318,1319): '1'
@@ -5047,7 +5047,7 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
           ]
           callableId = /get
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1324,1325): 'a'
@@ -5132,7 +5132,7 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
           ]
           callableId = /set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
@@ -5193,7 +5193,7 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
           ]
           callableId = /set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1333,1334): 'a'
@@ -5278,7 +5278,7 @@ KtOperationReferenceExpression(1338,1339): '='
           ]
           callableId = /set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtCallExpression(1340,1343): 'A()'
@@ -5350,7 +5350,7 @@ KtCallExpression(1348,1351): 'a()'
           ]
           callableId = /invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1348,1349): 'a'
@@ -5418,7 +5418,7 @@ KtBinaryExpression(1356,1362): 'a += 1'
           ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1356,1357): 'a'
@@ -5483,7 +5483,7 @@ KtOperationReferenceExpression(1358,1360): '+='
           ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtConstantExpression(1361,1362): '1'
@@ -5633,7 +5633,7 @@ KtBinaryExpression(1376,1381): 'b + 1'
           ]
           callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -5745,7 +5745,7 @@ KtOperationReferenceExpression(1378,1379): '+'
           ]
           callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -5826,7 +5826,7 @@ KtPrefixExpression(1386,1388): '+b'
           ]
           callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -5888,7 +5888,7 @@ KtOperationReferenceExpression(1386,1387): '+'
           ]
           callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -5984,7 +5984,7 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
           ]
           callableId = /SimpleOperators.get
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -6116,7 +6116,7 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
           ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -6238,7 +6238,7 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
           ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -6384,7 +6384,7 @@ KtOperationReferenceExpression(1407,1408): '='
           ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -6517,7 +6517,7 @@ KtCallExpression(1417,1420): 'b()'
           ]
           callableId = /SimpleOperators.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -6616,7 +6616,7 @@ KtBinaryExpression(1425,1431): 'b += 1'
           ]
           callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -6728,7 +6728,7 @@ KtOperationReferenceExpression(1427,1429): '+='
           ]
           callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
-import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -30,7 +29,7 @@ internal object CheckArguments : ResolutionStage() {
         val argumentMapping = candidate.argumentMapping
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
-        val contextArgumentsOfInvoke = candidate.expectedContextParameterTypesForInvoke?.size ?: 0
+        val contextArgumentsOfInvoke = candidate.expectedContextParameterCountForInvoke ?: 0
         for ((index, argument) in candidate.arguments.withIndex()) {
             if (index < contextArgumentsOfInvoke) continue
             val parameter = argumentMapping[argument]

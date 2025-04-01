@@ -774,7 +774,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val CONTEXT_PARAMETERS_RESOLUTION by object : DiagnosticGroup("Context parameters resolution") {
         val NO_CONTEXT_ARGUMENT by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<ConeKotlinType>("contextReceiverRepresentation")
+            parameter<FirValueParameterSymbol>("symbol")
         }
         val AMBIGUOUS_CONTEXT_ARGUMENT by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("contextReceiverRepresentation")

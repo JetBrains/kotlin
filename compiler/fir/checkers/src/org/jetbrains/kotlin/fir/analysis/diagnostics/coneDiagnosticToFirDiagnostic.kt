@@ -405,10 +405,7 @@ private fun mapInapplicableCandidateError(
             is NoContextArgument ->
                 FirErrors.NO_CONTEXT_ARGUMENT.createOn(
                     qualifiedAccessSource ?: source,
-                    rootCause.expectedContextReceiverType.substituteTypeVariableTypes(
-                        diagnostic.candidate,
-                        typeContext,
-                    ),
+                    rootCause.symbol,
                     session
                 )
 

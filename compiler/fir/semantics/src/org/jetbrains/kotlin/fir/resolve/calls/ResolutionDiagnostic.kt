@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -170,7 +171,7 @@ class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagno
 object NoReceiverAllowed : ResolutionDiagnostic(INAPPLICABLE)
 
 class NoContextArgument(
-    val expectedContextReceiverType: ConeKotlinType
+    val symbol: FirValueParameterSymbol,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 object UnsupportedContextualDeclarationCall : ResolutionDiagnostic(INAPPLICABLE)

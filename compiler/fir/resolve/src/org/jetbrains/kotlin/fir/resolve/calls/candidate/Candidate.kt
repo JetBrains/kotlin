@@ -291,7 +291,7 @@ class Candidate(
      * In case `f: context(C..) (V) -> ..`, `f(e..)`, context values are still being introduced as a prefix of
      * regular arguments for `invoke` function.
      */
-    var expectedContextParameterTypesForInvoke: List<ConeKotlinType>? = null
+    var expectedContextParameterCountForInvoke: Int? = null
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression? {

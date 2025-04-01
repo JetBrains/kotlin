@@ -2051,7 +2051,7 @@ internal class AmbiguousFunctionTypeKindImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousFunctionTypeKind
 
 internal class NoContextArgumentImpl(
-    override val contextReceiverRepresentation: KaType,
+    override val symbol: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoContextArgument

@@ -1711,7 +1711,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NoContextArgument : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NoContextArgument::class
-        val contextReceiverRepresentation: KaType
+        val symbol: KaSymbol
     }
 
     interface AmbiguousContextArgument : KaFirDiagnostic<KtElement> {
