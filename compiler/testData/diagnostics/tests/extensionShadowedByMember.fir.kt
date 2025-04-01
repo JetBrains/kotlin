@@ -23,15 +23,34 @@ fun <T, R> Cache.get3() = 10
 fun <T : List<String>> Cache.<!EXTENSION_SHADOWED_BY_MEMBER!>get4<!>() = 10
 
 class C2 {
-    fun foo(s: String) {}
-    fun foo(s: String, i: Int) {}
-    fun foo(s: String, i: Int, b: Boolean = false) {}
+    fun foo1(s: String) {}
+    fun foo2(s: String, i: Int) {}
+    fun foo3(s: String, i: Int, b: Boolean = false) {}
 
     fun bar(s: String, i: Int, b: Boolean = false) {}
+    fun bar2(s: String, i: Int, b: Boolean = false) {}
+
+    fun baz() {}
+    fun baz(s: String) {}
+
+    fun qux(s: String) {}
+    fun qux(s: String, i: Int) {}
+    fun qux(s: String, i: Int, b: Boolean = false) {}
+
+    fun quux(s: String) {}
 }
 
-fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String = "") {}
-fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String, i: Int = 0) {}
-fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String, i: Int = 0, b: Boolean = false) {}
+fun C2.foo1(s: String = "") {}
+fun C2.foo2(s: String, i: Int = 0) {}
+fun C2.foo3(s: String, i: Int = 0, b: Boolean = false) {}
 
 fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>(s: String, i: Int, b: Boolean) {}
+fun C2.<!EXTENSION_SHADOWED_BY_MEMBER!>bar2<!>(s: String, i: Int, b: Boolean = true) {}
+
+fun C2.baz(s: String = "") {}
+
+fun C2.qux(s: String = "") {}
+fun C2.qux(s: String, i: Int = 0) {}
+fun C2.qux(s: String, i: Int = 0, b: Boolean = false) {}
+
+fun C2.quux(s: String, b: Boolean = false) {}
