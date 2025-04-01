@@ -782,6 +782,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+    public void testDanglingAnnotationOnMemberFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/danglingAnnotationOnMemberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+    public void testDanglingAnnotationOnTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/danglingAnnotationOnTopLevelFunction.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedPropertyWithAccessors.kt")
     public void testDelegatedPropertyWithAccessors() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/delegatedPropertyWithAccessors.kt");
