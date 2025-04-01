@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
@@ -134,8 +136,8 @@ class CacheUpdater(
     private inner class CacheUpdaterInternal {
         val signatureHashCalculator = IdSignatureHashCalculator(icHasher)
 
-        // libraries in topological order: [stdlib, ..., main]
-        val orderedLibraries = stopwatch.measure("Resolving and loading klib dependencies") {
+        // libraries in JS-specific order: [stdlib, <dependencies, no specific order>, main]
+        val orderedLibraries: List<KotlinLibrary> = stopwatch.measure("Resolving and loading klib dependencies") {
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
             val allResolvedDependencies = CommonKLibResolver.resolve(
                 allModules,
@@ -148,16 +150,27 @@ class CacheUpdater(
             )
 
             allResolvedDependencies.getFullList(TopologicalLibraryOrder).reversed().let { resolvedLibraries ->
-                val mainLibraryIndex = resolvedLibraries.indexOfLast {
-                    KotlinLibraryFile(it) == mainLibraryFile
-                }.takeIf { it >= 0 } ?: notFoundIcError("main library", mainLibraryFile)
+                var stdlibIndex: Int = -1
+                var mainLibraryIndex: Int = -1
 
-                when (mainLibraryIndex) {
-                    resolvedLibraries.lastIndex -> resolvedLibraries
-                    else -> resolvedLibraries.filterIndexedTo(ArrayList(resolvedLibraries.size)) { index, _ ->
-                        index != mainLibraryIndex
-                    }.apply { add(resolvedLibraries[mainLibraryIndex]) }
+                resolvedLibraries.forEachIndexed { index, library ->
+                    when {
+                        library.isJsStdlib || library.isWasmStdlib -> stdlibIndex = index
+                        KotlinLibraryFile(library) == mainLibraryFile -> mainLibraryIndex = index
+                    }
                 }
+
+                if (stdlibIndex < 0) notFoundIcError("stdlib library")
+                if (mainLibraryIndex < 0) notFoundIcError("main library", mainLibraryFile)
+
+                if (stdlibIndex == 0 && mainLibraryIndex == resolvedLibraries.lastIndex)
+                    resolvedLibraries
+                else
+                    buildList(resolvedLibraries.size) {
+                        this += resolvedLibraries[stdlibIndex]
+                        resolvedLibraries.filterIndexedTo(this) { index, _ -> index != stdlibIndex && index != mainLibraryIndex }
+                        this += resolvedLibraries[mainLibraryIndex]
+                    }
             }
         }
 
