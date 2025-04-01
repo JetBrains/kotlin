@@ -26874,6 +26874,24 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("anonymousObjectAsDefaultParam.kt")
+    public void testAnonymousObjectAsDefaultParam() {
+      runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParam.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
+    @TestMetadata("anonymousObjectAsDefaultParamFull.kt")
+    public void testAnonymousObjectAsDefaultParamFull() {
+      runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParamFull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
+    @TestMetadata("anonymousObjectAsDefaultParamSingleFile.kt")
+    public void testAnonymousObjectAsDefaultParamSingleFile() {
+      runTest("compiler/testData/codegen/box/inlineClasses/anonymousObjectAsDefaultParamSingleFile.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @Test
     @TestMetadata("anySuperCall.kt")
     public void testAnySuperCall() {
       runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
