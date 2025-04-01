@@ -1,20 +1,9 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.android.tools.build:gradle:$android_tools_version"
-    }
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-parcelize'
 
 android {
 
@@ -43,12 +32,6 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-}
-
-repositories {
-    mavenLocal()
-    google()
-    mavenCentral()
 }
 
 dependencies {
