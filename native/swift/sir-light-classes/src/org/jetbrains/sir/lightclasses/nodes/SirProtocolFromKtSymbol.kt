@@ -116,7 +116,7 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
     override val name: String get() = "_${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
-    override val superClass: SirType? get() = null
+    override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol> get() = target.protocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
 }
 

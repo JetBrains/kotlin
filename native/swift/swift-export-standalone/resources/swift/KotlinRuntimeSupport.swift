@@ -15,7 +15,7 @@ public class _KotlinExistential<Wrapped>: KotlinBase & _KotlinBridged {
 }
 
 
-@_cdecl("kotlin_wrap_into_existential")
+@_cdecl("Kotlin_SwiftExport_wrapIntoExistential")
 func _kotlinGetExistentialType(markerType: AnyObject.Type) -> KotlinBase.Type {
     func wrap<T>(_ cls: T.Type) -> KotlinBase.Type {
         _KotlinExistential<T>.self

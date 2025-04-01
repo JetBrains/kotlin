@@ -181,7 +181,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
     auto externalRCRef = static_cast<kotlin::mm::RawExternalRCRef *>(ref);
-    Class bestFittingClass = kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
+    Class bestFittingClass = kotlin::swiftExportRuntime::bestFittingClassFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
 
     RuntimeAssert(
             [bestFittingClass isSubclassOfClass:self], "Best-fitting class is %s which is not a subclass of self (%s)",

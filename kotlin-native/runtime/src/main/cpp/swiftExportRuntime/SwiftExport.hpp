@@ -13,7 +13,9 @@
 
 namespace kotlin::swiftExportRuntime {
 
-Class bestFittingObjCClassFor(const TypeInfo* typeInfo) noexcept;
+Class bestFittingClassFor(const TypeInfo* typeInfo) noexcept;
+
+Class existentialWrapperClassFor(const TypeInfo* typeInfo) noexcept;
 
 } // namespace kotlin::swiftExportRuntime
 

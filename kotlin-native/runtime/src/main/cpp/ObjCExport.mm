@@ -972,6 +972,9 @@ static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) 
 }
 
 static Class createClass(const TypeInfo* typeInfo, Class superClass) {
+  // NOTE: in swift export, the generated class isn't used for direct instantiation, but rather serves the purpose of marker type
+  // - for kotlin existentials (_KotlinExistential, KotlinRuntimeSupport.swift). This relies on generated class conformance to
+  // - objc protocol counterparsts bound trough kotlin interface TypeInfo's
   RuntimeAssert(typeInfo->superType_ != nullptr, "");
 
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
@@ -1035,6 +1038,7 @@ static void setClassEnsureInitialized(const TypeInfo* typeInfo, Class cls) {
   objCExport(typeInfo).objCClass = cls;
 }
 
+// TODO: KT-76128 – With swift export, this method should return the best fitting swift class, while class creation facilities should be moved elsewhere
 static Class getOrCreateClass(const TypeInfo* typeInfo) {
   Class result = objCExport(typeInfo).objCClass;
   if (result != nullptr) {

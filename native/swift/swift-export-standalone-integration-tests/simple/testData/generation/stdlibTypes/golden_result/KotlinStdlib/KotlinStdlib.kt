@@ -1,7 +1,9 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ByteArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9ByteArrayC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9CharArrayC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharSequence::class, "_CharSequence")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.StringBuilder::class, "22ExportedKotlinPackages6kotlinO4textO12KotlinStdlibE13StringBuilderC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.Appendable::class, "_Appendable")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
