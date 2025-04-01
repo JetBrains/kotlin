@@ -1,6 +1,14 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-54483, KT-75169
 // WITH_STDLIB
+// LANGUAGE: +ContextParameters
+
+class C3 {
+    fun foo() {}
+}
+
+context(_: String)
+fun C3.foo() {}
 
 abstract class Cache {
     fun get(): Int = 10
