@@ -52,8 +52,15 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         if (incompatibility != null) {
             reporter.reportOn(element.source, FirErrors.INCOMPATIBLE_CLASS, source.presentableString, incompatibility, context)
         }
-        if (source.isPreReleaseInvisible) {
-            reporter.reportOn(element.source, FirErrors.PRE_RELEASE_CLASS, source.presentableString, context)
+        if (source.preReleaseInfo.isInvisible) {
+            reporter.reportOn(
+                element.source,
+                FirErrors.PRE_RELEASE_CLASS,
+                source.presentableString,
+                source.preReleaseInfo.poisoningFeatures,
+                context
+            )
+
         }
         if (source.abiStability == DeserializedContainerAbiStability.UNSTABLE) {
             reporter.reportOn(element.source, FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, source.presentableString, context)

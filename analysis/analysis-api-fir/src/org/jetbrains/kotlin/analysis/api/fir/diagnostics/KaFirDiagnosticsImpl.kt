@@ -4770,6 +4770,7 @@ internal class IncompatibleClassImpl(
 
 internal class PreReleaseClassImpl(
     override val presentableString: String,
+    override val poisoningFeatures: List<String>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PreReleaseClass

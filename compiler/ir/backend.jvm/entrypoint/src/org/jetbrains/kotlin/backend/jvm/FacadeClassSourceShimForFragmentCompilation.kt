@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.psi.KtFile
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 // Used from CodeFragmentCompiler for IDE Debugger Plug-In
 @Suppress("unused")
@@ -25,8 +25,8 @@ class FacadeClassSourceShimForFragmentCompilation(private val containingFile: Ps
 
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
-    override val isPreReleaseInvisible: Boolean
-        get() = false
+    override val preReleaseInfo: PreReleaseInfo
+        get() = PreReleaseInfo.DEFAULT_VISIBLE
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE
     override val presentableString: String

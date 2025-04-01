@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
 class JvmPackagePartSource(
     override val className: JvmClassName,
@@ -25,7 +26,7 @@ class JvmPackagePartSource(
     packageProto: ProtoBuf.Package,
     nameResolver: NameResolver,
     override val incompatibility: IncompatibleVersionErrorData<MetadataVersion>? = null,
-    override val isPreReleaseInvisible: Boolean = false,
+    override val preReleaseInfo: PreReleaseInfo = PreReleaseInfo.DEFAULT_VISIBLE,
     override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
     val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
 ) : DeserializedContainerSource, FacadeClassSource {
@@ -44,7 +45,7 @@ class JvmPackagePartSource(
         packageProto,
         nameResolver,
         incompatibility,
-        isPreReleaseInvisible,
+        PreReleaseInfo(isPreReleaseInvisible),
         abiStability,
         kotlinClass
     )

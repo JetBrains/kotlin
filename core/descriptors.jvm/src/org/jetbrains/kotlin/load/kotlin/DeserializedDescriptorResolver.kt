@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
@@ -45,7 +46,10 @@ class DeserializedDescriptorResolver {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(
-            kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.abiStability
+            binaryClass = kotlinClass,
+            incompatibility = kotlinClass.incompatibility,
+            preReleaseInfo = PreReleaseInfo(isInvisible = kotlinClass.isPreReleaseInvisible),
+            abiStability = kotlinClass.abiStability
         )
         return ClassData(nameResolver, classProto, kotlinClass.classHeader.metadataVersion, source)
     }
