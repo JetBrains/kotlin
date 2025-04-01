@@ -894,7 +894,7 @@ internal fun Path.addDependencyManagementToSettings(
 }
 
 private fun TestProject.agreeToBuildScanService() {
-    val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
+    val settingsFile = if (settingsGradle.exists()) settingsGradle else settingsGradleKts
     settingsFile.append(
         """
             

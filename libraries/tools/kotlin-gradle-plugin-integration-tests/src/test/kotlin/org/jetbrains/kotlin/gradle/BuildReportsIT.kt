@@ -558,6 +558,8 @@ class BuildReportsIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
+            makeSnapshotTo("/Users/dev/projects/tmp/kgp-it")
+
             build(
                 "compileKotlin",
                 "-I", "init.gradle",
