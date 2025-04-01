@@ -48,6 +48,7 @@ nativeInteropPlugin {
                     "__ZN4llvm3omp23getLeafConstructsOrSelfENS0_9DirectiveE",
                     "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS2_8optionalINS_9StringRefEEE",
                     "__ZN4llvm3omp17getLeafConstructsENS0_9DirectiveE",
+                    "__ZN4llvm15OpenMPIRBuilder25getOpenMPDefaultSimdAlignERKNS_6TripleERKNS_9StringMapIbNS_15MallocAllocatorEEE"
             ).mapTo(this) { "-Wl,-U,$it" }
             addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
         }
@@ -69,9 +70,7 @@ nativeInteropPlugin {
                     "clangTooling", "clangFormat", "LLVMTarget", "LLVMMC", "LLVMLinker", "LLVMTransformUtils",
                     "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
                     "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle",
-                    "LLVMTargetParser", "LLVMBitReader",
-                    "LLVMFrontendOpenMP", "LLVMFrontendOffloading", "LLVMBitstreamReader", "LLVMTransformUtils", "LLVMScalarOpts", "LLVMCASUtil",
-                    "LLVMRemarks",
+                    "LLVMTargetParser", "LLVMFrontendOffloading", "LLVMBitstreamReader", "LLVMScalarOpts", "LLVMCASUtil", "LLVMRemarks",
             ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
         }
     })
