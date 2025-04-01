@@ -1,18 +1,5 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 // KT-45801
@@ -27,7 +14,7 @@ kotlin {
                 api(project(":exported"))
             }
         }
-        
+
         commonTest {
             dependencies {
                 api "org.jetbrains.kotlin:kotlin-test"
