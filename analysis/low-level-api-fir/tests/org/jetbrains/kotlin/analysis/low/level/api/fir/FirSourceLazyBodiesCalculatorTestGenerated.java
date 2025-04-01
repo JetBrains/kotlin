@@ -583,6 +583,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
       }
 
       @Test
+      @TestMetadata("annotationArgumentLocalDeclarations.kt")
+      public void testAnnotationArgumentLocalDeclarations() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotationArgumentLocalDeclarations.kt");
+      }
+
+      @Test
       @TestMetadata("destructuringInsideCallChain.kt")
       public void testDestructuringInsideCallChain() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringInsideCallChain.kt");
