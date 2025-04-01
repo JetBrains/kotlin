@@ -172,6 +172,42 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("danglingAnnotationOnMemberClass.kt")
+    public void testDanglingAnnotationOnMemberClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+    public void testDanglingAnnotationOnMemberFunction() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnMemberProperty.kt")
+    public void testDanglingAnnotationOnMemberProperty() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnTopLevelClass.kt")
+    public void testDanglingAnnotationOnTopLevelClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+    public void testDanglingAnnotationOnTopLevelFunction() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationOnTopLevelProperty.kt")
+    public void testDanglingAnnotationOnTopLevelProperty() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelProperty.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationsClassLevel.kt")
     public void testDanglingAnnotationsClassLevel() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsClassLevel.kt");
@@ -580,6 +616,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
       @Test
       public void testAllFilesPresentInInvalidCode() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("annotationArgumentLocalDeclarations.kt")
+      public void testAnnotationArgumentLocalDeclarations() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotationArgumentLocalDeclarations.kt");
       }
 
       @Test

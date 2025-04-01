@@ -1,0 +1,3 @@
+@Ann(ERROR_EXPR(Argument is absent))
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol C
