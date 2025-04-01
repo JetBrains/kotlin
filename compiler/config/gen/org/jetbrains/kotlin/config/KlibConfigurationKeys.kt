@@ -36,6 +36,9 @@ object KlibConfigurationKeys {
     @JvmField
     val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("Custom klib abi version")
 
+    @JvmField
+    val SUPPRESS_MISSING_KLIB_DEPENDENCY_WARNINGS = CompilerConfigurationKey.create<Boolean>("Suppress warnings about missing non-existent transitive klib dependencies")
+
 }
 
 var CompilerConfiguration.klibRelativePathBases: List<String>
@@ -65,4 +68,8 @@ var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStra
 var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
     get() = get(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION)
     set(value) { putIfNotNull(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION, value) }
+
+var CompilerConfiguration.suppressMissingKlibDependencyWarnings: Boolean
+    get() = getBoolean(KlibConfigurationKeys.SUPPRESS_MISSING_KLIB_DEPENDENCY_WARNINGS)
+    set(value) { put(KlibConfigurationKeys.SUPPRESS_MISSING_KLIB_DEPENDENCY_WARNINGS, value) }
 

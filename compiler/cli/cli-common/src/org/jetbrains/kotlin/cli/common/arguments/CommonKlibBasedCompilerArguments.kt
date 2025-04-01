@@ -85,4 +85,14 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             checkFrozen()
             field = value
         }
+
+    @Argument(
+        value = "-Xsuppress-missing-klib-dependency-warnings",
+        description = "Suppress warnings about missing non-existent transitive klib dependencies."
+    )
+    var suppressMissingKlibDependencyWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 }

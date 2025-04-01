@@ -258,6 +258,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             default = DuplicatedUniqueNameStrategy.DENY
         )
         configuration.customKlibAbiVersion = parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, configuration.messageCollector)
+        configuration.suppressMissingKlibDependencyWarnings = arguments.suppressMissingKlibDependencyWarnings
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
             configuration.messageCollector.report(ERROR, message, location = null)
