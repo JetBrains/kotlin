@@ -53,13 +53,19 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     useJvmFirRunner = options.isUsingFirRunner,
                 )
             }
-            else -> CompilationOptions(
+            // no IC configuration -> non-incremental compilation
+            null -> CompilationOptions(
                 compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM,
                 reportCategories = reportCategories,
                 reportSeverity = reportSeverity,
                 requestedCompilationResults = emptyArray(),
                 kotlinScriptExtensions = ktsExtensionsAsArray,
+            )
+            else -> error(
+                "Unexpected incremental compilation configuration: $options. " +
+                        "In this version, it must be an instance of ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration " +
+                        "for incremental compilation, or null for non-incremental compilation."
             )
         }
     }
