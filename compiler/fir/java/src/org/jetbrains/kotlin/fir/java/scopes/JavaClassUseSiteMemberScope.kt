@@ -1058,7 +1058,7 @@ class JavaClassUseSiteMemberScope(
                     if (containingFile == null) {
                         true
                     } else {
-                        !containingFile.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
+                        !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
                     }
                 }
             }

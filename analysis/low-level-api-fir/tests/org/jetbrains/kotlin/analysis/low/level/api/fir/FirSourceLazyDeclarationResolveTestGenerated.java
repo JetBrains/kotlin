@@ -469,6 +469,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   }
 
   @Test
+  @TestMetadata("jvmBuiltinsInHierarchy.kt")
+  public void testJvmBuiltinsInHierarchy() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/jvmBuiltinsInHierarchy.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaAsSAMInterface.kt")
   public void testLambdaAsSAMInterface() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterface.kt");
