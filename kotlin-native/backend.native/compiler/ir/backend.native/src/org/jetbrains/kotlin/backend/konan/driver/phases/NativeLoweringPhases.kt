@@ -454,7 +454,7 @@ private val eraseGenericCallsReturnTypesPhase = createFileLoweringPhase(
 private val autoboxPhase = createFileLoweringPhase(
         ::Autoboxing,
         name = "Autobox",
-        prerequisite = setOf(bridgesPhase, coroutinesPhase, eraseGenericCallsReturnTypesPhase)
+        prerequisite = setOf(defaultParameterExtentPhase, bridgesPhase, coroutinesPhase, eraseGenericCallsReturnTypesPhase)
 )
 
 private val constructorsLoweringPhase = createFileLoweringPhase(
