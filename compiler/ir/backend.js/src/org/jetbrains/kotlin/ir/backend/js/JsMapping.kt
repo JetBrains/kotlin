@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 class JsMapping : Mapping() {
 
     // Wasm mappings
-    val wasmNestedExternalToNewTopLevelFunction: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     val wasmExternalObjectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
