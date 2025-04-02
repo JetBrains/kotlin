@@ -100,7 +100,12 @@ abstract class AbstractNativeKlibDumpSignaturesTest : AbstractNativeSimpleTest()
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE,
             modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs("-Xklib-relative-path-base=${sourceFile.parent}"),
+            freeCompilerArgs = TestCompilerArgs(
+                "-Xklib-relative-path-base=${sourceFile.parent}",
+                // Test only non-IR-Inliner scenario until it becomes stable, to use only one golden testdata
+                // TODO KT-76547: Flip language feature to `+`
+                "-XXLanguage:-IrInlinerBeforeKlibSerialization",
+            ),
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
