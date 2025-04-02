@@ -113,7 +113,11 @@ data class ClassActualizationInfo(
         operator fun get(classId: ClassId?): IrClassSymbol? {
             val actualized = actualClasses[classId] ?: return null
             if (actualized.owner.isExpect) {
-                return get(actualized.owner.classIdOrFail)
+                val actualizedClassId = actualized.owner.classIdOrFail
+                if (actualizedClassId == classId) {
+                    error("Expect class registered as actual class: $actualized")
+                }
+                return get(actualizedClassId)
             }
             return actualized
         }
