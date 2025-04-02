@@ -12,7 +12,7 @@ public fun box(): String
 /* TARGET declaration */ private fun fileName(): String
 internal inline fun inlineFun1(): String
     /* ACCESSOR use-site */ access$fileName$tFile1Kt()
-/* ACCESSOR declaration */ public fun access$fileName$tFile1Kt(): String
+/* ACCESSOR declaration */ internal fun access$fileName$tFile1Kt(): String
     /* TARGET use-site */ fileName()
 
 
@@ -21,5 +21,5 @@ internal inline fun inlineFun1(): String
 /* TARGET declaration */ private fun fileName(): String
 internal inline fun inlineFun2(): String
     /* ACCESSOR use-site */ access$fileName$tFile2Kt()
-/* ACCESSOR declaration */ public fun access$fileName$tFile2Kt(): String
+/* ACCESSOR declaration */ internal fun access$fileName$tFile2Kt(): String
     /* TARGET use-site */ fileName()

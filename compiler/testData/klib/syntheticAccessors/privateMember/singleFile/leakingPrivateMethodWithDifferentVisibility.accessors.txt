@@ -45,7 +45,7 @@ public open class A
         /* ACCESSOR use-site */ access$allEffectivelyPublic($this = <this>)
     internal inline fun inlineAllEffectivelyPublic3(): String
         /* ACCESSOR use-site */ access$allEffectivelyPublic($this = <this>)
-    /* ACCESSOR declaration */ public /* static */ fun access$onlyInternal($this: A): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$onlyInternal($this: A): String
         /* TARGET use-site */ $this.onlyInternal()
     /* ACCESSOR declaration */ public /* static */ fun access$internalAndPublic($this: A): String
         /* TARGET use-site */ $this.internalAndPublic()

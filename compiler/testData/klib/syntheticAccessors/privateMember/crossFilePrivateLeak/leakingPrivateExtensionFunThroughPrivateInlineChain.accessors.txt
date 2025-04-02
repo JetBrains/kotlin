@@ -18,7 +18,7 @@ internal fun topLevelFun(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 internal inline fun topLevelInlineFun(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
-/* ACCESSOR declaration */ public fun access$privateExtension$tAKt($receiver: A): String
+/* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
 
 

@@ -9,5 +9,5 @@ public fun box(): String
     /* LOCAL declaration @0 */ local suspend fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
     /* INVOKE @0 */ local suspend fun <anonymous>(): String
-/* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt(): String
+/* ACCESSOR declaration */ internal suspend fun access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt(): String
     /* TARGET use-site */ privateSuspendMethod()

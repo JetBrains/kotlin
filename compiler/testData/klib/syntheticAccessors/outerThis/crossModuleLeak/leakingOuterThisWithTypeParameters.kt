@@ -1,6 +1,5 @@
 // KT-72862: java.lang.UnsupportedOperationException: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<O of <root>.Outer>
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
 // WITH_STDLIB
 
 // MODULE: lib

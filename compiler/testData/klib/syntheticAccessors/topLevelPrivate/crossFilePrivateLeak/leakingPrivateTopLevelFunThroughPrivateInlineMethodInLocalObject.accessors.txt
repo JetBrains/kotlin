@@ -11,7 +11,7 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
                 /* ACCESSOR use-site */ access$privateMethod$tAKt()
     /* LOCAL use-site @2 */ <anonymous object>.run()
 /* TARGET declaration */ private fun privateMethod(): String
-/* ACCESSOR declaration */ public fun access$privateMethod$tAKt(): String
+/* ACCESSOR declaration */ internal fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
 
 

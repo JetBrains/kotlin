@@ -20,9 +20,9 @@ internal var A.inlineVar: Int
         /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
     internal inline fun A.<set-inlineVar>(value: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>$tBKt($receiver = this, value = value)
-/* ACCESSOR declaration */ public fun access$<get-privateVar>$tBKt($receiver: A): Int
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tBKt($receiver: A): Int
     /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
-/* ACCESSOR declaration */ public fun access$<set-privateVar>$tBKt($receiver: A, value: Int)
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tBKt($receiver: A, value: Int)
     /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)
 
 

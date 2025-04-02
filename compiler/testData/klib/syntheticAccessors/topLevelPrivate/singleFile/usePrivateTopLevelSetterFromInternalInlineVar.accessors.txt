@@ -9,5 +9,5 @@ internal var inlineVar: Int
         /* ACCESSOR use-site */ access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?> = value)
 public fun box(): String
     /* ACCESSOR use-site */ access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?>: Int)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVar>$tUsePrivateTopLevelSetterFromInternalInlineVarKt(<set-?>: Int)
     /* TARGET use-site */ <set-privateSetterVar>(<set-?> = <set-?>)

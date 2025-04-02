@@ -36,13 +36,13 @@ internal inline fun initializeAndReadOK(): String
             /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
     /* LOCAL use-site @3 */ <anonymous object>.run()
     /* ACCESSOR use-site */ access$<get-o>$tOKKt()
-/* ACCESSOR declaration */ public fun access$<get-o>$tOKKt(): String
+/* ACCESSOR declaration */ internal fun access$<get-o>$tOKKt(): String
     /* TARGET use-site */ <get-o>()
-/* ACCESSOR declaration */ public fun access$<set-o>$tOKKt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-o>$tOKKt(<set-?>: String)
     /* TARGET use-site */ <set-o>(<set-?> = <set-?>)
-/* ACCESSOR declaration */ public fun access$<get-o>$p$tOKKt(): String?
+/* ACCESSOR declaration */ internal fun access$<get-o>$p$tOKKt(): String?
     /* TARGET use-site */ #o
-/* ACCESSOR declaration */ public fun access$<get-k>$p$tOKKt(): String?
+/* ACCESSOR declaration */ internal fun access$<get-k>$p$tOKKt(): String?
     /* TARGET use-site */ #k
 
 

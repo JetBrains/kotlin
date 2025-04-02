@@ -5,7 +5,7 @@
 /* TARGET declaration */ private fun privateFun(): String
 internal inline fun internalInlineFun(): String
     /* ACCESSOR use-site */ access$privateFun$tAKt()
-/* ACCESSOR declaration */ public fun access$privateFun$tAKt(): String
+/* ACCESSOR declaration */ internal fun access$privateFun$tAKt(): String
     /* TARGET use-site */ privateFun()
 
 

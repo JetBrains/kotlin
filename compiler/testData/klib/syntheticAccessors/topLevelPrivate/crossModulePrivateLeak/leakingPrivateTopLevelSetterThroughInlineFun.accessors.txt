@@ -10,9 +10,9 @@ internal inline fun customSetVarA(value: Int)
     /* ACCESSOR use-site */ access$<set-privateSetterVarA>$tAKt(<set-?> = value)
 internal inline fun customSetVarB(value: Int)
     /* ACCESSOR use-site */ access$<set-privateSetterVarB>$tAKt(value = value)
-/* ACCESSOR declaration */ public fun access$<set-privateSetterVarA>$tAKt(<set-?>: Int)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVarA>$tAKt(<set-?>: Int)
     /* TARGET use-site */ <set-privateSetterVarA>(<set-?> = <set-?>)
-/* ACCESSOR declaration */ public fun access$<set-privateSetterVarB>$tAKt(value: Int)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVarB>$tAKt(value: Int)
     /* TARGET use-site */ <set-privateSetterVarB>(value = value)
 
 

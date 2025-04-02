@@ -3,7 +3,6 @@
 // KT-72840: java.lang.AssertionError: AFTER mandatory stack transformations: incorrect bytecode
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
 
 // MODULE: lib
 // FILE: A.kt

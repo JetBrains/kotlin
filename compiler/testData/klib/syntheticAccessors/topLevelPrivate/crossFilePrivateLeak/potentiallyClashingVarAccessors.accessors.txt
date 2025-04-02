@@ -21,9 +21,9 @@ internal var fileNameInlineVar1: String
         /* ACCESSOR use-site */ access$<get-fileNameVar>$tFile1Kt()
     internal inline fun <set-fileNameInlineVar1>(value: String)
         /* ACCESSOR use-site */ access$<set-fileNameVar>$tFile1Kt(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<get-fileNameVar>$tFile1Kt(): String
+/* ACCESSOR declaration */ internal fun access$<get-fileNameVar>$tFile1Kt(): String
     /* TARGET use-site */ <get-fileNameVar>()
-/* ACCESSOR declaration */ public fun access$<set-fileNameVar>$tFile1Kt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-fileNameVar>$tFile1Kt(<set-?>: String)
     /* TARGET use-site */ <set-fileNameVar>(<set-?> = <set-?>)
 
 
@@ -37,7 +37,7 @@ internal var fileNameInlineVar2: String
         /* ACCESSOR use-site */ access$<get-fileNameVar>$tFile2Kt()
     internal inline fun <set-fileNameInlineVar2>(value: String)
         /* ACCESSOR use-site */ access$<set-fileNameVar>$tFile2Kt(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<get-fileNameVar>$tFile2Kt(): String
+/* ACCESSOR declaration */ internal fun access$<get-fileNameVar>$tFile2Kt(): String
     /* TARGET use-site */ <get-fileNameVar>()
-/* ACCESSOR declaration */ public fun access$<set-fileNameVar>$tFile2Kt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-fileNameVar>$tFile2Kt(<set-?>: String)
     /* TARGET use-site */ <set-fileNameVar>(<set-?> = <set-?>)

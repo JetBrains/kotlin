@@ -7,5 +7,5 @@ internal inline fun internalInlineFun(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelExtensionFunFromInternalInlineKt($receiver = "O")
 public fun box(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelExtensionFunFromInternalInlineKt($receiver = "O")
-/* ACCESSOR declaration */ public fun access$privateFun$tUsePrivateTopLevelExtensionFunFromInternalInlineKt($receiver: String): String
+/* ACCESSOR declaration */ internal fun access$privateFun$tUsePrivateTopLevelExtensionFunFromInternalInlineKt($receiver: String): String
     /* TARGET use-site */ privateFun(/* <this> = $receiver */)

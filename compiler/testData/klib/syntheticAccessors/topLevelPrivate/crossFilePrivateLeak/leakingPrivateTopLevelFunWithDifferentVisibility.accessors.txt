@@ -32,7 +32,7 @@ public inline fun inlineAllEffectivelyPublic1(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
 internal inline fun inlineAllEffectivelyPublic2(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
-/* ACCESSOR declaration */ public fun access$onlyInternal$tAKt(): String
+/* ACCESSOR declaration */ internal fun access$onlyInternal$tAKt(): String
     /* TARGET use-site */ onlyInternal()
 /* ACCESSOR declaration */ public fun access$internalAndPublic$tAKt(): String
     /* TARGET use-site */ internalAndPublic()

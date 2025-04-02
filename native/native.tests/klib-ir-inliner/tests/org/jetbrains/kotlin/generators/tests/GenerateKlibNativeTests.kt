@@ -278,16 +278,10 @@ fun main() {
 
         // KLIB synthetic accessor tests.
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
-            testClass<AbstractNativeKlibSyntheticAccessorInPhase1Test>(
+            testClass<AbstractFirNativeKlibSyntheticAccessorTest>(
                 annotations = listOf(
                     *klibSyntheticAccessors(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
-            testClass<AbstractNativeKlibSyntheticAccessorInPhase2Test>(
-                annotations = listOf(
-                    *klibSyntheticAccessors(),
+                    klibIrInliner(),
                 )
             ) {
                 model(targetBackend = TargetBackend.NATIVE)

@@ -5,7 +5,7 @@
 /* TARGET declaration */ private suspend fun privateSuspendMethod(): String
 internal suspend inline fun internalInline(): String
     /* ACCESSOR use-site */ access$privateSuspendMethod$tAKt()
-/* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod$tAKt(): String
+/* ACCESSOR declaration */ internal suspend fun access$privateSuspendMethod$tAKt(): String
     /* TARGET use-site */ privateSuspendMethod()
 
 

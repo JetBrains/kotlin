@@ -13,7 +13,7 @@ private inline fun A.privateInlineExtension4(): String
     /* TARGET use-site */ privateExtension(/* <this> = this */)
 internal inline fun A.internalInlineExtension(): String
     /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
-/* ACCESSOR declaration */ public fun access$privateExtension$tBKt($receiver: A): String
+/* ACCESSOR declaration */ internal fun access$privateExtension$tBKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
 
 

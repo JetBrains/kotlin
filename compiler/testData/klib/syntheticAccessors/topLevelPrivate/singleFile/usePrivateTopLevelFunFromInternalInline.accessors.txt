@@ -7,5 +7,5 @@ internal inline fun internalInlineFun(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt()
 public fun box(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt()
-/* ACCESSOR declaration */ public fun access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt(): String
+/* ACCESSOR declaration */ internal fun access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt(): String
     /* TARGET use-site */ privateFun()

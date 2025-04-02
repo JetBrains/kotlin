@@ -17,9 +17,9 @@ private inline fun A.privateInlineExtension2(): String
     /* TARGET use-site */ privateExtension(/* <this> = this */)
 private inline fun A.privateInlineExtension1(): String
     /* TARGET use-site */ privateExtension(/* <this> = <this> */)
-/* TARGET declaration */ private fun A.privateExtension(): String
-/* ACCESSOR declaration */ public fun access$privateExtension$tAKt($receiver: A): String
+/* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+/* TARGET declaration */ private fun A.privateExtension(): String
 
 
 /* MODULE name=<main> */

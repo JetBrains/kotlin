@@ -26,13 +26,7 @@ public inline fun inlineAllEffectivelyPublic1(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
 internal inline fun inlineAllEffectivelyPublic2(): String
     /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
-/* TARGET declaration */ private fun onlyInternal(): String
-/* TARGET declaration */ private fun internalAndPublic(): String
-/* TARGET declaration */ private fun internalAndInternalPA(): String
-/* TARGET declaration */ private fun onlyPublic(): String
-/* TARGET declaration */ private fun onlyInternalPA(): String
-/* TARGET declaration */ private fun allEffectivelyPublic(): String
-/* ACCESSOR declaration */ public fun access$onlyInternal$tAKt(): String
+/* ACCESSOR declaration */ internal fun access$onlyInternal$tAKt(): String
     /* TARGET use-site */ onlyInternal()
 /* ACCESSOR declaration */ public fun access$internalAndPublic$tAKt(): String
     /* TARGET use-site */ internalAndPublic()
@@ -44,6 +38,12 @@ internal inline fun inlineAllEffectivelyPublic2(): String
     /* TARGET use-site */ onlyInternalPA()
 /* ACCESSOR declaration */ public fun access$allEffectivelyPublic$tAKt(): String
     /* TARGET use-site */ allEffectivelyPublic()
+/* TARGET declaration */ private fun onlyInternal(): String
+/* TARGET declaration */ private fun internalAndPublic(): String
+/* TARGET declaration */ private fun internalAndInternalPA(): String
+/* TARGET declaration */ private fun onlyPublic(): String
+/* TARGET declaration */ private fun onlyInternalPA(): String
+/* TARGET declaration */ private fun allEffectivelyPublic(): String
 
 
 /* MODULE name=<main> */

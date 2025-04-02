@@ -19,11 +19,6 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
 
     val SYNTHETIC_ACCESSORS_DUMP_DIR by key<String>("Path to a directory to dump synthetic accessors and their use sites")
 
-    val SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by key<Boolean>(
-        "Narrow the visibility of generated synthetic accessors to _internal_" +
-                " if such accessors are only used in inline functions that are not a part of public ABI"
-    )
-
     val DUPLICATED_UNIQUE_NAME_STRATEGY by key<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
 
     val CUSTOM_KLIB_ABI_VERSION by key<KotlinAbiVersion>("Custom klib abi version", throwOnNull = false)

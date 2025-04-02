@@ -11,9 +11,9 @@ public class A
         /* ACCESSOR use-site */ access$<set-a>($this = <this>, <set-?> = 42)
     internal inline fun internalInlineSetB()
         /* ACCESSOR use-site */ access$<set-b>($this = <this>, value = 21)
-    /* ACCESSOR declaration */ public /* static */ fun access$<set-a>($this: A, <set-?>: Int)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-a>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-a>(<set-?> = <set-?>)
-    /* ACCESSOR declaration */ public /* static */ fun access$<set-b>($this: A, value: Int)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-b>($this: A, value: Int)
         /* TARGET use-site */ $this.<set-b>(value = value)
 
 

@@ -15,7 +15,7 @@ public fun box(): String
     val oo: String =
         /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
     /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
-/* ACCESSOR declaration */ public fun access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
+/* ACCESSOR declaration */ internal fun access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
     /* TARGET use-site */ o()
-/* ACCESSOR declaration */ public fun access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
+/* ACCESSOR declaration */ internal fun access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
     /* TARGET use-site */ k()

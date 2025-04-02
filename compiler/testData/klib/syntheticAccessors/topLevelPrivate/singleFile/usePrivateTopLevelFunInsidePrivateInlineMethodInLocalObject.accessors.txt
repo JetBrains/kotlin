@@ -19,5 +19,5 @@ public fun box(): String
             /* INLINED use-site @4 */ private inline fun impl(): String
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
     /* LOCAL use-site @5 */ <anonymous object>.run()
-/* ACCESSOR declaration */ public fun access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt(): String
+/* ACCESSOR declaration */ internal fun access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt(): String
     /* TARGET use-site */ privateMethod()

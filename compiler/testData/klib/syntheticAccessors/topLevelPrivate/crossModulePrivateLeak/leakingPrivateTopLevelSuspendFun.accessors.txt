@@ -4,9 +4,9 @@
 
 internal suspend inline fun internalInline(): String
     /* ACCESSOR use-site */ access$privateSuspendMethod$tAKt()
-/* TARGET declaration */ private suspend fun privateSuspendMethod(): String
-/* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod$tAKt(): String
+/* ACCESSOR declaration */ internal suspend fun access$privateSuspendMethod$tAKt(): String
     /* TARGET use-site */ privateSuspendMethod()
+/* TARGET declaration */ private suspend fun privateSuspendMethod(): String
 
 
 /* MODULE name=<main> */

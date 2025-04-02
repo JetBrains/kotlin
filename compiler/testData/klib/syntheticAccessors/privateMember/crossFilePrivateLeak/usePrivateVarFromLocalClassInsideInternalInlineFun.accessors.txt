@@ -16,9 +16,9 @@ public class A
             /* LOCAL declaration @3 */ public fun localSet(n: Int)
                 /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = n)
         /* LOCAL use-site @3 */ LocalSet().localSet(n = value)
-    /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateVar>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVar>()
-    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
 
 

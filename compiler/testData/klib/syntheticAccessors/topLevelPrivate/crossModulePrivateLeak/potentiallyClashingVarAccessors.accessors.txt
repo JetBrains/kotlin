@@ -10,9 +10,9 @@ internal var libNameInlineVar1: String
         /* ACCESSOR use-site */ access$<get-libName>$tFile1Kt()
     internal inline fun <set-libNameInlineVar1>(value: String)
         /* ACCESSOR use-site */ access$<set-libName>$tFile1Kt(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<get-libName>$tFile1Kt(): String
+/* ACCESSOR declaration */ internal fun access$<get-libName>$tFile1Kt(): String
     /* TARGET use-site */ <get-libName>()
-/* ACCESSOR declaration */ public fun access$<set-libName>$tFile1Kt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-libName>$tFile1Kt(<set-?>: String)
     /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
 
 
@@ -28,9 +28,9 @@ internal var libNameInlineVar2: String
         /* ACCESSOR use-site */ access$<get-libName>$tFile2Kt()
     internal inline fun <set-libNameInlineVar2>(value: String)
         /* ACCESSOR use-site */ access$<set-libName>$tFile2Kt(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<get-libName>$tFile2Kt(): String
+/* ACCESSOR declaration */ internal fun access$<get-libName>$tFile2Kt(): String
     /* TARGET use-site */ <get-libName>()
-/* ACCESSOR declaration */ public fun access$<set-libName>$tFile2Kt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-libName>$tFile2Kt(<set-?>: String)
     /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
 
 
