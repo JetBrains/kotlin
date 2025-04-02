@@ -56,11 +56,12 @@ interface Test {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      %this%.bar(param, %composer, 0b1110 and %changed shr 0b0110 or 0b01110000 and %changed shl 0b0011 or 0b001110000000 and %changed shl 0b0011)
+      val tmp1 = %this%.bar(param, %composer, 0b1110 and %changed shr 0b0110 or 0b01110000 and %changed shl 0b0011 or 0b001110000000 and %changed shl 0b0011)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
       sourceInformationMarkerEnd(%composer)
+      return tmp1
     }
   }
   @Composable

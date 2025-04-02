@@ -251,13 +251,16 @@ class ComposableDefaultParamLowering(
             context,
             wrapper.symbol
         ).irBlockBody {
-            +irCall(
-                source.symbol,
-                dispatchReceiver = dispatcherReceiver?.let(::irGet),
-                extensionReceiver = extensionReceiver?.let(::irGet),
-                args = Array(source.valueParameters.size) {
-                    irGet(wrapper.valueParameters[it])
-                }
+            +irReturn(
+                wrapper.symbol,
+                irCall(
+                    source.symbol,
+                    dispatchReceiver = dispatcherReceiver?.let(::irGet),
+                    extensionReceiver = extensionReceiver?.let(::irGet),
+                    args = Array(source.valueParameters.size) {
+                        irGet(wrapper.valueParameters[it])
+                    }
+                )
             )
         }
 
