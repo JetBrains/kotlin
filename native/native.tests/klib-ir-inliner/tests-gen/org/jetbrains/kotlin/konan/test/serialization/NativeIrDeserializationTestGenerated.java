@@ -15358,6 +15358,12 @@ public class NativeIrDeserializationTestGenerated extends AbstractNativeIrDeseri
       }
 
       @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/directInvokeOptimization/contextParameters.kt");
+      }
+
+      @Test
       @TestMetadata("contructorRef.kt")
       public void testContructorRef() {
         runTest("compiler/testData/codegen/box/directInvokeOptimization/contructorRef.kt");
