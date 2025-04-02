@@ -286,24 +286,31 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     /**
      * Checks whether the [actual] string matches the content of the test output file.
      *
-     * If a non-empty list of [testPrefixes] is specified, the function will firstly check whether test output file with any of the
+     * If a non-empty list of [testPrefixes] is specified, the function will firstly check whether test output files with any of the
      * specified prefixes exist. If so, it will check the [actual] content against that file (the first prefix has the highest priority).
-     * Also, if files with latter prefixes, or if the non-prefixed file contains the same output, an assertion error is raised.
+     * Also, if files with latter prefixes or the non-prefixed file contain the same output, an assertion error is raised.
      *
      * If no prefixes are specified, or if no prefixed files exist, the function compares [actual] against the non-prefixed (default)
      * test output file.
      *
      * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
      * an exception.
+     *
+     * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
+     * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same
+     * test data but have different test output. This is in contrast to [testPrefixes]: Each test prefix defines a specialized version of a
+     * test output file that is used when a specific test configuration (e.g. Standalone) deviates from the default (non-prefixed) test
+     * output.
      */
     protected fun AssertionsService.assertEqualsToTestDataFileSibling(
         actual: String,
         extension: String = ".txt",
+        subdirectoryName: String? = null,
         testPrefixes: List<String> = configurator.testPrefixes,
     ) {
         val expectedFiles = buildList {
-            testPrefixes.mapNotNullTo(this) { findPrefixedTestDataSibling(extension, it) }
-            add(getDefaultTestDataSibling(extension))
+            testPrefixes.mapNotNullTo(this) { findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix = it) }
+            add(getDefaultTestOutputFile(extension, subdirectoryName))
         }
 
         val mainExpectedFile = expectedFiles.first()
@@ -319,34 +326,49 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     /**
-     * Returns the test output file with any of [testPrefixes] if it exists, of the non-prefixed (default) test output file.
+     * Returns the test output file with any of the [testPrefixes] if it exists, of the non-prefixed (default) test output file.
+     *
+     * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
+     * test data.
+     *
+     * @see assertEqualsToTestDataFileSibling
      */
-    protected fun getTestDataSibling(extension: String = "txt", testPrefixes: List<String> = configurator.testPrefixes): Path {
-        for (prefix in testPrefixes) {
-            findPrefixedTestDataSibling(extension, prefix)?.let { return it }
+    protected fun getTestDataSibling(
+        extension: String = "txt",
+        subdirectoryName: String? = null,
+        testPrefixes: List<String> = configurator.testPrefixes,
+    ): Path {
+        for (testPrefix in testPrefixes) {
+            findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix)?.let { return it }
         }
-
-        return getDefaultTestDataSibling(extension)
+        return getDefaultTestOutputFile(extension, subdirectoryName)
     }
 
     /**
-     * Returns the test output file with a [testPrefix] if it exists, or `null` otherwise.
+     * Returns the default test output file without a test prefix. The file is resolved in the given [subdirectoryName] directory, or as a
+     * sibling of the test data file if no [subdirectoryName] is provided.
      */
-    private fun findPrefixedTestDataSibling(extension: String = "txt", testPrefix: String): Path? {
-        val extensionWithDot = "." + extension.removePrefix(".")
-        val baseName = testDataPath.nameWithoutExtension
-
-        val prefixedFile = testDataPath.resolveSibling("$baseName.$testPrefix$extensionWithDot")
-        return prefixedFile.takeIf { it.exists() }
-    }
+    private fun getDefaultTestOutputFile(extension: String, subdirectoryName: String?): Path =
+        buildTestOutputFilePath(extension, subdirectoryName, testPrefix = null)
 
     /**
-     * Returns the non-prefixed the test output file, even if it does not exist.
+     * Returns the test output file with the given [testPrefix] if it exists. The file is resolved in the given [subdirectoryName]
+     * directory, or as a sibling of the test data file if no [subdirectoryName] is provided.
      */
-    private fun getDefaultTestDataSibling(extension: String = "txt"): Path {
+    private fun findPrefixedTestOutputFile(extension: String, subdirectoryName: String?, testPrefix: String): Path? =
+        buildTestOutputFilePath(extension, subdirectoryName, testPrefix).takeIf { it.exists() }
+
+    private fun buildTestOutputFilePath(extension: String, subdirectoryName: String?, testPrefix: String?): Path {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
-        return testDataPath.resolveSibling(baseName + extensionWithDot)
+        val directoryPath = subdirectoryName?.let { testDataPath.resolveSibling(it) } ?: testDataPath.parent
+
+        val relativePath = if (testPrefix != null) {
+            "$baseName.$testPrefix$extensionWithDot"
+        } else {
+            baseName + extensionWithDot
+        }
+        return directoryPath.resolve(relativePath)
     }
 
     @OptIn(TestInfrastructureInternals::class)
