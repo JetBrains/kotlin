@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
@@ -72,7 +71,6 @@ val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun <D : IrElement> D.copyAttributes(other: IrElement?): D = apply {
     if (other != null) {
-        attributeOwnerId = other.attributeOwnerId
-        originalBeforeInline = other.originalBeforeInline
+        copyAttributes(other, includeAll = false)
     }
 }
