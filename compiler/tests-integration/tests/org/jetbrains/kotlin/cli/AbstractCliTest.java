@@ -199,8 +199,15 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         @NotNull PerformanceManager perfManager = compiler.getDefaultPerformanceManager();
         if (!perfManager.isExtendedStatsEnabled()) return;
 
-        File expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
-        @NotNull String actualPerfReport = perfManager.createPerformanceReport();
+        File expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.json"));
+        boolean isJson = false;
+        if (expectedPerfLogFile.exists()) {
+            isJson = true;
+        } else {
+            expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
+        }
+
+        @NotNull String actualPerfReport = perfManager.createPerformanceReport(isJson);
 
         NumberAgnosticSanitizer sanitizer = new NumberAgnosticSanitizer(actualPerfReport);
 

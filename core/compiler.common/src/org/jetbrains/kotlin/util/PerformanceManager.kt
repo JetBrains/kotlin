@@ -151,7 +151,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             jitTimeMillis = (jitTimeMillis ?: 0) + (otherUnitStats.jitTimeMillis ?: 0)
         }
 
-        extendedStats.addAll(otherUnitStats.extendedStats)
+        @OptIn(DeprecatedMeasurementForBackCompatibility::class)
+        otherUnitStats.extendedStats?.let { extendedStats.addAll(it) }
     }
 
     private fun TargetPlatform.getPlatformEnumValue(): PlatformType {
@@ -277,12 +278,16 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport().toByteArray())
+        destination.writeBytes(createPerformanceReport(destination.extension == "json").toByteArray())
     }
 
-    fun createPerformanceReport(): String = buildString {
-        append("$presentableName performance report\n")
-        unitStats.forEachStringMeasurement { appendLine(it) }
+    fun createPerformanceReport(isJson: Boolean): String = if (isJson) {
+        UnitStatsJsonDumper.dump(unitStats)
+    } else {
+        buildString {
+            append("$presentableName performance report\n")
+            unitStats.forEachStringMeasurement { appendLine(it) }
+        }
     }
 
     private fun ensureNotFinalizedAndSameThread() {
@@ -330,3 +335,6 @@ inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, blo
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING, message = "All phase performance measurements should be finished explicitly")
 annotation class PotentiallyIncorrectPhaseTimeMeasurement
+
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING, message = "Don't use in K2")
+annotation class DeprecatedMeasurementForBackCompatibility

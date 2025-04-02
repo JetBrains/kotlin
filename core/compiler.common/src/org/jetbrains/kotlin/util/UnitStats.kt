@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  *
  * Properties that are initialized with default values can be skipped during serialization.
  */
-class UnitStats(
+data class UnitStats(
     /** Typically it's a name of a module, but if multiple `PerformanceManager` are used within the single module it's a unit name.
     In the last case, it should have a suffix like `(Child)`.
      */
@@ -45,8 +45,8 @@ class UnitStats(
     val gcStats: List<GarbageCollectionStats> = listOf(),
     val jitTimeMillis: Long? = null,
 
-    // Deprecated stats (from performance counter)
-    val extendedStats: List<String> = emptyList(),
+    @property:DeprecatedMeasurementForBackCompatibility
+    val extendedStats: List<String>? = null,
 )
 
 enum class CompilerType {
@@ -175,7 +175,8 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
         action("JIT time is $it ms")
     }
 
-    extendedStats.forEach { action(it) }
+    @OptIn(DeprecatedMeasurementForBackCompatibility::class)
+    extendedStats?.forEach { action(it) }
 }
 
 private val nanosInSecond = TimeUnit.SECONDS.toNanos(1)

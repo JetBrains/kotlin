@@ -1743,6 +1743,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/reportPerf.args");
     }
 
+    @TestMetadata("reportPerfJson.args")
+    public void testReportPerfJson() {
+      runTest("compiler/testData/cli/jvm/reportPerfJson.args");
+    }
+
     @TestMetadata("reportPerfPsi.args")
     public void testReportPerfPsi() {
       runTest("compiler/testData/cli/jvm/reportPerfPsi.args");

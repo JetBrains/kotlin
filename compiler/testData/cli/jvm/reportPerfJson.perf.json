@@ -1,0 +1,62 @@
+{
+  "name": "main-java-production",
+  "platform": "JVM",
+  "compilerType": "K2",
+  "hasErrors": false,
+  "filesCount": 1,
+  "linesCount": 3,
+  "initStats": {
+    "nanos": $INT$,
+    "userNanos": $INT$,
+    "cpuNanos": $INT$
+  },
+  "analysisStats": {
+    "nanos": $INT$,
+    "userNanos": $INT$,
+    "cpuNanos": $INT$
+  },
+  "translationToIrStats": {
+    "nanos": $INT$,
+    "userNanos": $INT$,
+    "cpuNanos": $INT$
+  },
+  "irLoweringStats": {
+    "nanos": $INT$,
+    "userNanos": $INT$,
+    "cpuNanos": $INT$
+  },
+  "backendStats": {
+    "nanos": $INT$,
+    "userNanos": $INT$,
+    "cpuNanos": $INT$
+  },
+  "findJavaClassStats": {
+    "count": 1,
+    "time": {
+      "nanos": $INT$,
+      "userNanos": $INT$,
+      "cpuNanos": $INT$
+    }
+  },
+  "findKotlinClassStats": {
+    "count": 211,
+    "time": {
+      "nanos": $INT$,
+      "userNanos": $INT$,
+      "cpuNanos": $INT$
+    }
+  },
+  "gcStats": [
+    {
+      "kind": "PS MarkSweep",
+      "count": $INT$,
+      "millis": $INT$
+    },
+    {
+      "kind": "PS Scavenge",
+      "count": $INT$,
+      "millis": $INT$
+    }
+  ],
+  "jitTimeMillis": $INT$
+}
