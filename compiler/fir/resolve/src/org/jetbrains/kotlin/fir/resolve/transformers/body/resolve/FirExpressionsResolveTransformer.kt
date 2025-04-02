@@ -768,6 +768,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (data is ResolutionMode.WithExpectedType && data.expectedType.isUnitOrFlexibleUnit) {
             // Unit-coercion
             block.resultType = data.expectedType
+            block.replaceIsUnitCoerced(true)
         } else {
             // Bottom-up propagation: from the return type of the last expression in the block to the block type
             block.writeResultType(session)

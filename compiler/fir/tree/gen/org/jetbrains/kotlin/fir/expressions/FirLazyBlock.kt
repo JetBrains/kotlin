@@ -23,6 +23,7 @@ abstract class FirLazyBlock : FirBlock() {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val statements: List<FirStatement>
+    abstract override val isUnitCoerced: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitLazyBlock(this, data)
@@ -34,6 +35,8 @@ abstract class FirLazyBlock : FirBlock() {
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceIsUnitCoerced(newIsUnitCoerced: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLazyBlock
 

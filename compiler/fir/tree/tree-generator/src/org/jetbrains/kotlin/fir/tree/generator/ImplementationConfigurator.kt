@@ -208,7 +208,12 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        impl(block)
+        impl(block) {
+            isMutable("isUnitCoerced")
+            default("isUnitCoerced") {
+                value = "false"
+            }
+        }
 
         val emptyExpressionBlock = impl(block, "FirEmptyExpressionBlock") {
             noSource()
@@ -216,6 +221,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultEmptyList("annotations", withGetter = true)
             publicImplementation()
             defaultNull("coneTypeOrNull")
+            default("isUnitCoerced") {
+                value = "false"
+                withGetter = true
+            }
         }
 
         impl(lazyBlock) {
@@ -233,6 +242,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("coneTypeOrNull") {
+                value = error
+                withGetter = true
+            }
+            default("isUnitCoerced") {
                 value = error
                 withGetter = true
             }

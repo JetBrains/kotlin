@@ -170,6 +170,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +listField(statement, withTransform = true)
+        +field("isUnitCoerced", boolean, withReplace = true)
     }
 
     val lazyBlock: Element by element(Expression) {
