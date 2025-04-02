@@ -27,9 +27,9 @@ class KotlinAndroidIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        fun BuildResult.assertKotlinGradleBuildServicesAreInitialized() {
-            assertOutputContainsExactlyTimes("Initialized KotlinGradleBuildServices", expectedCount = 1)
-            assertOutputContainsExactlyTimes("Disposed KotlinGradleBuildServices", expectedCount = 1)
+        fun BuildResult.assertKotlinGradleBuildServicesAreInitialized(times: Int = 1) {
+            assertOutputContainsExactlyTimes("Initialized KotlinGradleBuildServices", expectedCount = times)
+            assertOutputContainsExactlyTimes("Disposed KotlinGradleBuildServices", expectedCount = times)
         }
 
         project(
@@ -55,12 +55,18 @@ class KotlinAndroidIT : KGPBaseTest() {
                 val pattern = ":Android:compile[\\w\\d]+Kotlin".toRegex()
                 assertTasksExecuted(expectedTasks + tasks.map { it.path }.filter { it.matches(pattern) })
                 assertOutputContains("InternalDummyTest PASSED")
-                assertKotlinGradleBuildServicesAreInitialized()
+                // In Gradle 8, `KotlinGradleBuildServices` is instantiated twice on the first run:
+                // once during the configuration phase, and again during the execution phase
+                // when the stored configuration cache entry is deserialized
+                // In contrast, Gradle 7 only instantiates it once and does not reuse the configuration cache entry for this process
+                val times = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) 1 else 2
+                assertKotlinGradleBuildServicesAreInitialized(times)
             }
 
             // Run the a build second time, assert everything is up-to-date
             build("assembleDebug") {
                 assertTasksUpToDate(expectedTasks)
+                // Since the configuration cache is already stored, `KotlinGradleBuildServices` will be instantiated only once
                 assertKotlinGradleBuildServicesAreInitialized()
             }
         }
