@@ -4900,6 +4900,20 @@ internal class AccidentalOverrideClashByJvmSignatureImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.AccidentalOverrideClashByJvmSignature
 
+internal class AccidentalOverloadClashByJvmErasureErrorImpl(
+    override val overridden: KaFunctionSymbol,
+    override val overload: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.AccidentalOverloadClashByJvmErasureError
+
+internal class AccidentalOverloadClashByJvmErasureWarningImpl(
+    override val overridden: KaFunctionSymbol,
+    override val overload: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.AccidentalOverloadClashByJvmErasureWarning
+
 internal class ImplementationByDelegationWithDifferentGenericSignatureErrorImpl(
     override val base: KaFunctionSymbol,
     override val override: KaFunctionSymbol,

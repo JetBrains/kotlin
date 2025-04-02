@@ -57915,6 +57915,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("clashingCompareToDisabled.kt")
+      public void testClashingCompareToDisabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/clashingCompareToDisabled.kt");
+      }
+
+      @Test
       @TestMetadata("complexFlexibleInference.kt")
       public void testComplexFlexibleInference() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/complexFlexibleInference.kt");

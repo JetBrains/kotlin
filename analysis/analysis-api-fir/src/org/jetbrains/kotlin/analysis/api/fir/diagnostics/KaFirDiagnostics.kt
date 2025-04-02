@@ -4065,6 +4065,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val regular: KaFunctionSymbol
     }
 
+    interface AccidentalOverloadClashByJvmErasureError : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = AccidentalOverloadClashByJvmErasureError::class
+        val overridden: KaFunctionSymbol
+        val overload: KaFunctionSymbol
+    }
+
+    interface AccidentalOverloadClashByJvmErasureWarning : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = AccidentalOverloadClashByJvmErasureWarning::class
+        val overridden: KaFunctionSymbol
+        val overload: KaFunctionSymbol
+    }
+
     interface ImplementationByDelegationWithDifferentGenericSignatureError : KaFirDiagnostic<KtTypeReference> {
         override val diagnosticClass get() = ImplementationByDelegationWithDifferentGenericSignatureError::class
         val base: KaFunctionSymbol

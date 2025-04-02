@@ -52,6 +52,12 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("overrideDescription")
             parameter<FirNamedFunctionSymbol>("regular")
         }
+        val ACCIDENTAL_OVERLOAD_CLASH_BY_JVM_ERASURE by deprecationError<KtNamedFunction>(
+            ForbidOverloadClashesByErasure, PositioningStrategy.DECLARATION_NAME
+        ) {
+            parameter<FirNamedFunctionSymbol>("overridden")
+            parameter<FirNamedFunctionSymbol>("overload")
+        }
 
         val IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE by deprecationError<KtTypeReference>(
             ForbidImplementationByDelegationWithDifferentGenericSignature

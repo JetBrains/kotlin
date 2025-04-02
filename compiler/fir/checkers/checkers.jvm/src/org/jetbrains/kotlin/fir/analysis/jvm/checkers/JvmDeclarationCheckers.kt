@@ -71,6 +71,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirInlineBodySimpleFunctionChecker,
             FirAccidentalOverrideClashChecker,
+            FirOverrideSignatureClashChecker,
         )
 
     override val valueParameterCheckers: Set<FirValueParameterChecker>

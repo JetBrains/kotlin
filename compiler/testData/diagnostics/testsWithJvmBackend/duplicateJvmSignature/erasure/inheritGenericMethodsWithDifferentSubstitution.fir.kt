@@ -24,6 +24,6 @@ class GenericDerivedClass<T> : GenericBaseClass<T>(), GenericBaseInterface<T> {
 class MixedDerivedClass<T> : GenericBaseClass<Int>(), GenericBaseInterface<T> {
     override fun foo(x: Int): Int = super.foo(x)
     override fun bar(x: T): T = super.bar(x)
-    override fun ambiguous(x: Int): Int = foo(x)
+    override fun <!ACCIDENTAL_OVERLOAD_CLASH_BY_JVM_ERASURE_WARNING!>ambiguous<!>(x: Int): Int = foo(x)
     <!ACCIDENTAL_OVERRIDE!>override fun ambiguous(x: T): T = bar(x)<!>
 }

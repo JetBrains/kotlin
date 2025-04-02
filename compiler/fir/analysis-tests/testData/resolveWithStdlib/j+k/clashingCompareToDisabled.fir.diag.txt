@@ -1,0 +1,2 @@
+/clashingCompareToDisabled.kt:(241,250): warning: This function overrides generic function 'fun compareTo(other: T): Int' defined in 'kotlin/Comparable' whose erasure is the same as another function 'fun compareTo(other: Any): Int' defined in '/A', yet neither overrides the other.
+This situation provokes a JVM clash. To fix it, delete either this or one of the mentioned functions. This will become an error in language version 2.3.
