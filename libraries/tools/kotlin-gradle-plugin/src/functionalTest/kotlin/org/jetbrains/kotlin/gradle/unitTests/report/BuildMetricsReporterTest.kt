@@ -15,7 +15,7 @@ import kotlin.test.assertContains
 
 class BuildMetricsReporterTest {
     @Test
-    fun parseNativePerformanceLog() {
+    fun parseCompilerPerformanceLog() {
         val file = File("src/functionalTest/resources/nativePerformance.log")
         println(file.absolutePath)
         val metricsReporter = BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>()

@@ -83,7 +83,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to reportArguments + listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportArguments
+                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportArguments
             }
 
             try {
@@ -297,19 +297,21 @@ private fun PhaseType.toLpsGradleMetrics() = when (this) {
 }
 
 private val pattern = "\\s*([A-z_\\s]*)\\s*(\\d*) ms(.*)".toRegex()
-private val locPerSecondPattern = "\\s*(\\d*) loc/s".toRegex()
+private val locPerSecondPattern = "\\s*([0-9.]*) loc/s".toRegex()
 private val phases = PhaseType.values().associateBy { it.phaseDescription() }
 
 internal fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(file: File) {
     if (!file.isFile()) return
+
     fun addLinePerSecondIfPresent(line: String, metricName: PhaseType?) {
         if (line.isNotEmpty()) {
             val locPerSecondMatchResult = locPerSecondPattern.matchEntire(line)
             if (locPerSecondMatchResult != null) {
-                val locPerSecondValue = locPerSecondMatchResult.groupValues.getOrNull(1)?.toLongOrNull()
+                val locPerSecondValue = locPerSecondMatchResult.groupValues.getOrNull(1)?.toDoubleOrNull()
                 val lpsMetricName = metricName?.toLpsGradleMetrics()
                 if (lpsMetricName != null && locPerSecondValue != null) {
-                    addMetric(lpsMetricName, locPerSecondValue)
+                    //TODO Nataliya.Valtman, only Long performance metrics are supported right now
+                    addMetric(lpsMetricName, locPerSecondValue.toLong())
                 }
             }
         }

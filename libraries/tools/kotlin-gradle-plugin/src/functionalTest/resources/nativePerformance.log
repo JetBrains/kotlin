@@ -7,6 +7,6 @@ Kotlin to Native Compiler performance report
          IR LOWERING        amcnsmdbj ms    Infinity loc/s
          IR LOWERING        jiah387jshfs ms    Infinity loc/s
          IR LOWERING        ms ms    Infinity loc/s
-         IR LOWERING        245 ms            2435 loc/s
+         IR LOWERING        245 ms            2435.501 loc/s
    TRANSLATION to IR        245 ms            2 loc/s
    TRANSLATION to IR        1234 ms             loc/s

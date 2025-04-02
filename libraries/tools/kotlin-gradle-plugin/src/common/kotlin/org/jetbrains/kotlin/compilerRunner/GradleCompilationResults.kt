@@ -34,7 +34,7 @@ internal class GradleCompilationResults(
                     val sourceFiles = compileIterationResult.sourceFiles
                     if (sourceFiles.any()) {
                         log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
-                        buildMetrics.buildPerformanceMetrics.add(GradleBuildPerformanceMetric.COMPILE_ITERATION)
+                        buildMetrics.buildPerformanceMetrics.addLong(GradleBuildPerformanceMetric.COMPILE_ITERATION)
                     }
                     val exitCode = compileIterationResult.exitCode
                     log.kotlinDebug { "compiler exit code: $exitCode" }
