@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -233,6 +234,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                 null
             }
         }
+        @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_2_0, replaceWith = "arguments[0] = value")
         set(value) {
             ensureTargetShapeInitialized()
             if (targetHasDispatchReceiver) {
