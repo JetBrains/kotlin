@@ -11,6 +11,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
 @OptIn(KaImplementationDetail::class)
@@ -35,6 +37,10 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
         with(PsiElementFinder.EP.getPoint(project)) {
             registerExtension(JavaElementFinder(project), disposable)
             registerExtension(PsiElementFinderImpl(project), disposable)
+        }
+
+        with(project.extensionArea.getExtensionPoint(KotlinContentScopeRefiner.EP_NAME)) {
+            registerExtension(KaResolveExtensionToContentScopeRefinerBridge(), disposable)
         }
     }
 }
