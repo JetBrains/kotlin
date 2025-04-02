@@ -14128,10 +14128,172 @@ open annotation class kotlin/EagerInitialization : kotlin/Annotation { // kotlin
 }
 
 // Targets: [wasmJs, wasmWasi]
+abstract class <#A: kotlin/Any?, #B: kotlin/Any?, #C: out kotlin/Any?> kotlin.wasm.internal/KProperty2ImplBase : kotlin.reflect/KProperty2<#A, #B, #C>, kotlin.wasm.internal/KPropertyImplBase { // kotlin.wasm.internal/KProperty2ImplBase|null[0]
+    constructor <init>(kotlin/String?) // kotlin.wasm.internal/KProperty2ImplBase.<init>|<init>(kotlin.String?){}[0]
+
+    abstract val getter // kotlin.wasm.internal/KProperty2ImplBase.getter|{}getter[0]
+        abstract fun <get-getter>(): kotlin.reflect/KFunction2<#A, #B, #C> // kotlin.wasm.internal/KProperty2ImplBase.getter.<get-getter>|<get-getter>(){}[0]
+
+    open fun get(#A, #B): #C // kotlin.wasm.internal/KProperty2ImplBase.get|get(1:0;1:1){}[0]
+    open fun invoke(#A, #B): #C // kotlin.wasm.internal/KProperty2ImplBase.invoke|invoke(1:0;1:1){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+abstract class <#A: kotlin/Any?, #B: out kotlin/Any?> kotlin.wasm.internal/KProperty1ImplBase : kotlin.reflect/KProperty1<#A, #B>, kotlin.wasm.internal/KPropertyImplBase { // kotlin.wasm.internal/KProperty1ImplBase|null[0]
+    constructor <init>(kotlin/String?) // kotlin.wasm.internal/KProperty1ImplBase.<init>|<init>(kotlin.String?){}[0]
+
+    abstract val getter // kotlin.wasm.internal/KProperty1ImplBase.getter|{}getter[0]
+        abstract fun <get-getter>(): kotlin.reflect/KFunction1<#A, #B> // kotlin.wasm.internal/KProperty1ImplBase.getter.<get-getter>|<get-getter>(){}[0]
+
+    open fun get(#A): #B // kotlin.wasm.internal/KProperty1ImplBase.get|get(1:0){}[0]
+    open fun invoke(#A): #B // kotlin.wasm.internal/KProperty1ImplBase.invoke|invoke(1:0){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+abstract class <#A: out kotlin/Any?> kotlin.wasm.internal/KLocalDelegatedPropertyImplBase : kotlin.reflect/KProperty0<#A> { // kotlin.wasm.internal/KLocalDelegatedPropertyImplBase|null[0]
+    constructor <init>() // kotlin.wasm.internal/KLocalDelegatedPropertyImplBase.<init>|<init>(){}[0]
+
+    open fun get(): #A // kotlin.wasm.internal/KLocalDelegatedPropertyImplBase.get|get(){}[0]
+    open fun invoke(): #A // kotlin.wasm.internal/KLocalDelegatedPropertyImplBase.invoke|invoke(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+abstract class <#A: out kotlin/Any?> kotlin.wasm.internal/KProperty0ImplBase : kotlin.reflect/KProperty0<#A>, kotlin.wasm.internal/KPropertyImplBase { // kotlin.wasm.internal/KProperty0ImplBase|null[0]
+    constructor <init>(kotlin/String?) // kotlin.wasm.internal/KProperty0ImplBase.<init>|<init>(kotlin.String?){}[0]
+
+    abstract val getter // kotlin.wasm.internal/KProperty0ImplBase.getter|{}getter[0]
+        abstract fun <get-getter>(): kotlin.reflect/KFunction0<#A> // kotlin.wasm.internal/KProperty0ImplBase.getter.<get-getter>|<get-getter>(){}[0]
+
+    open fun get(): #A // kotlin.wasm.internal/KProperty0ImplBase.get|get(){}[0]
+    open fun invoke(): #A // kotlin.wasm.internal/KProperty0ImplBase.invoke|invoke(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+abstract class kotlin.wasm.internal/KPropertyImplBase { // kotlin.wasm.internal/KPropertyImplBase|null[0]
+    constructor <init>(kotlin/String?) // kotlin.wasm.internal/KPropertyImplBase.<init>|<init>(kotlin.String?){}[0]
+
+    final fun maybeThrowPLError(): kotlin/Nothing? // kotlin.wasm.internal/KPropertyImplBase.maybeThrowPLError|maybeThrowPLError(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
 abstract class kotlin.wasm.unsafe/MemoryAllocator { // kotlin.wasm.unsafe/MemoryAllocator|null[0]
     constructor <init>() // kotlin.wasm.unsafe/MemoryAllocator.<init>|<init>(){}[0]
 
     abstract fun allocate(kotlin/Int): kotlin.wasm.unsafe/Pointer // kotlin.wasm.unsafe/MemoryAllocator.allocate|allocate(kotlin.Int){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> kotlin.wasm.internal/KMutableProperty2Impl : kotlin.reflect/KMutableProperty2<#A, #B, #C>, kotlin.wasm.internal/KProperty2ImplBase<#A, #B, #C> { // kotlin.wasm.internal/KMutableProperty2Impl|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin.reflect/KFunction2<#A, #B, #C>, kotlin/Function3<#A, #B, #C, kotlin/Unit>) // kotlin.wasm.internal/KMutableProperty2Impl.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.reflect.KFunction2<1:0,1:1,1:2>;kotlin.Function3<1:0,1:1,1:2,kotlin.Unit>){}[0]
+
+    final val getter // kotlin.wasm.internal/KMutableProperty2Impl.getter|{}getter[0]
+        final fun <get-getter>(): kotlin.reflect/KFunction2<#A, #B, #C> // kotlin.wasm.internal/KMutableProperty2Impl.getter.<get-getter>|<get-getter>(){}[0]
+    final val name // kotlin.wasm.internal/KMutableProperty2Impl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KMutableProperty2Impl.name.<get-name>|<get-name>(){}[0]
+    final val setter // kotlin.wasm.internal/KMutableProperty2Impl.setter|{}setter[0]
+        final fun <get-setter>(): kotlin/Function3<#A, #B, #C, kotlin/Unit> // kotlin.wasm.internal/KMutableProperty2Impl.setter.<get-setter>|<get-setter>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.wasm.internal/KMutableProperty2Impl.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.wasm.internal/KMutableProperty2Impl.hashCode|hashCode(){}[0]
+    final fun set(#A, #B, #C) // kotlin.wasm.internal/KMutableProperty2Impl.set|set(1:0;1:1;1:2){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KMutableProperty2Impl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: kotlin/Any?, #B: kotlin/Any?, #C: out kotlin/Any?> kotlin.wasm.internal/KProperty2Impl : kotlin.wasm.internal/KProperty2ImplBase<#A, #B, #C> { // kotlin.wasm.internal/KProperty2Impl|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin.reflect/KFunction2<#A, #B, #C>) // kotlin.wasm.internal/KProperty2Impl.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.reflect.KFunction2<1:0,1:1,1:2>){}[0]
+
+    final val getter // kotlin.wasm.internal/KProperty2Impl.getter|{}getter[0]
+        final fun <get-getter>(): kotlin.reflect/KFunction2<#A, #B, #C> // kotlin.wasm.internal/KProperty2Impl.getter.<get-getter>|<get-getter>(){}[0]
+    final val name // kotlin.wasm.internal/KProperty2Impl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KProperty2Impl.name.<get-name>|<get-name>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.wasm.internal/KProperty2Impl.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.wasm.internal/KProperty2Impl.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KProperty2Impl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.wasm.internal/KMutableProperty1Impl : kotlin.reflect/KMutableProperty1<#A, #B>, kotlin.wasm.internal/KProperty1ImplBase<#A, #B> { // kotlin.wasm.internal/KMutableProperty1Impl|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin.reflect/KFunction1<#A, #B>, kotlin/Function2<#A, #B, kotlin/Unit>) // kotlin.wasm.internal/KMutableProperty1Impl.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.reflect.KFunction1<1:0,1:1>;kotlin.Function2<1:0,1:1,kotlin.Unit>){}[0]
+
+    final val getter // kotlin.wasm.internal/KMutableProperty1Impl.getter|{}getter[0]
+        final fun <get-getter>(): kotlin.reflect/KFunction1<#A, #B> // kotlin.wasm.internal/KMutableProperty1Impl.getter.<get-getter>|<get-getter>(){}[0]
+    final val name // kotlin.wasm.internal/KMutableProperty1Impl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KMutableProperty1Impl.name.<get-name>|<get-name>(){}[0]
+    final val setter // kotlin.wasm.internal/KMutableProperty1Impl.setter|{}setter[0]
+        final fun <get-setter>(): kotlin/Function2<#A, #B, kotlin/Unit> // kotlin.wasm.internal/KMutableProperty1Impl.setter.<get-setter>|<get-setter>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.wasm.internal/KMutableProperty1Impl.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.wasm.internal/KMutableProperty1Impl.hashCode|hashCode(){}[0]
+    final fun set(#A, #B) // kotlin.wasm.internal/KMutableProperty1Impl.set|set(1:0;1:1){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KMutableProperty1Impl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: kotlin/Any?, #B: out kotlin/Any?> kotlin.wasm.internal/KProperty1Impl : kotlin.wasm.internal/KProperty1ImplBase<#A, #B> { // kotlin.wasm.internal/KProperty1Impl|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin.reflect/KFunction1<#A, #B>) // kotlin.wasm.internal/KProperty1Impl.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.reflect.KFunction1<1:0,1:1>){}[0]
+
+    final val getter // kotlin.wasm.internal/KProperty1Impl.getter|{}getter[0]
+        final fun <get-getter>(): kotlin.reflect/KFunction1<#A, #B> // kotlin.wasm.internal/KProperty1Impl.getter.<get-getter>|<get-getter>(){}[0]
+    final val name // kotlin.wasm.internal/KProperty1Impl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KProperty1Impl.name.<get-name>|<get-name>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.wasm.internal/KProperty1Impl.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.wasm.internal/KProperty1Impl.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KProperty1Impl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: kotlin/Any?> kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl : kotlin.reflect/KMutableProperty0<#A>, kotlin.wasm.internal/KLocalDelegatedPropertyImplBase<#A> { // kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl|null[0]
+    constructor <init>(kotlin/String) // kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl.<init>|<init>(kotlin.String){}[0]
+
+    final val name // kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl.name.<get-name>|<get-name>(){}[0]
+
+    final fun set(#A) // kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl.set|set(1:0){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KLocalDelegatedMutablePropertyImpl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: kotlin/Any?> kotlin.wasm.internal/KMutableProperty0Impl : kotlin.reflect/KMutableProperty0<#A>, kotlin.wasm.internal/KProperty0ImplBase<#A> { // kotlin.wasm.internal/KMutableProperty0Impl|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin.reflect/KFunction0<#A>, kotlin/Function1<#A, kotlin/Unit>) // kotlin.wasm.internal/KMutableProperty0Impl.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.reflect.KFunction0<1:0>;kotlin.Function1<1:0,kotlin.Unit>){}[0]
+
+    final val getter // kotlin.wasm.internal/KMutableProperty0Impl.getter|{}getter[0]
+        final fun <get-getter>(): kotlin.reflect/KFunction0<#A> // kotlin.wasm.internal/KMutableProperty0Impl.getter.<get-getter>|<get-getter>(){}[0]
+    final val name // kotlin.wasm.internal/KMutableProperty0Impl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KMutableProperty0Impl.name.<get-name>|<get-name>(){}[0]
+    final val setter // kotlin.wasm.internal/KMutableProperty0Impl.setter|{}setter[0]
+        final fun <get-setter>(): kotlin/Function1<#A, kotlin/Unit> // kotlin.wasm.internal/KMutableProperty0Impl.setter.<get-setter>|<get-setter>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.wasm.internal/KMutableProperty0Impl.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.wasm.internal/KMutableProperty0Impl.hashCode|hashCode(){}[0]
+    final fun set(#A) // kotlin.wasm.internal/KMutableProperty0Impl.set|set(1:0){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KMutableProperty0Impl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: out kotlin/Any?> kotlin.wasm.internal/KLocalDelegatedPropertyImpl : kotlin.wasm.internal/KLocalDelegatedPropertyImplBase<#A> { // kotlin.wasm.internal/KLocalDelegatedPropertyImpl|null[0]
+    constructor <init>(kotlin/String) // kotlin.wasm.internal/KLocalDelegatedPropertyImpl.<init>|<init>(kotlin.String){}[0]
+
+    final val name // kotlin.wasm.internal/KLocalDelegatedPropertyImpl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KLocalDelegatedPropertyImpl.name.<get-name>|<get-name>(){}[0]
+
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KLocalDelegatedPropertyImpl.toString|toString(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+final class <#A: out kotlin/Any?> kotlin.wasm.internal/KProperty0Impl : kotlin.wasm.internal/KProperty0ImplBase<#A> { // kotlin.wasm.internal/KProperty0Impl|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?, kotlin.reflect/KFunction0<#A>) // kotlin.wasm.internal/KProperty0Impl.<init>|<init>(kotlin.String?;kotlin.String?;kotlin.reflect.KFunction0<1:0>){}[0]
+
+    final val getter // kotlin.wasm.internal/KProperty0Impl.getter|{}getter[0]
+        final fun <get-getter>(): kotlin.reflect/KFunction0<#A> // kotlin.wasm.internal/KProperty0Impl.getter.<get-getter>|<get-getter>(){}[0]
+    final val name // kotlin.wasm.internal/KProperty0Impl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.wasm.internal/KProperty0Impl.name.<get-name>|<get-name>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.wasm.internal/KProperty0Impl.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.wasm.internal/KProperty0Impl.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // kotlin.wasm.internal/KProperty0Impl.toString|toString(){}[0]
 }
 
 // Targets: [wasmJs, wasmWasi]
