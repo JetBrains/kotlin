@@ -377,7 +377,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 if (delegateField.type.isSubtypeOfClass(baseType.classOrFail)) return@let it
                 it.implicitCastTo(baseType)
             }
-            dispatchReceiver = getField
+            arguments[0] = getField
             extensionReceiver = delegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
                 IrGetValueImpl(offset, offset, extensionReceiver.type, extensionReceiver.symbol)
             }

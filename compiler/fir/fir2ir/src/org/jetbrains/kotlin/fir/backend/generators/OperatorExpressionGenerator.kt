@@ -331,13 +331,13 @@ internal class OperatorExpressionGenerator(
             conversionFunctionSymbol as IrSimpleFunctionSymbol,
             typeArgumentsCount = 0
         ).also {
-            it.dispatchReceiver = irExpression
+            it.arguments[0] = irExpression
         }
         return if (operandType.isMarkedNullable) {
             val (receiverVariable, receiverVariableSymbol) =
                 conversionScope.createTemporaryVariableForSafeCallConstruction(irExpression)
 
-            unsafeIrCall.dispatchReceiver = IrGetValueImpl(irExpression.startOffset, irExpression.endOffset, receiverVariableSymbol)
+            unsafeIrCall.arguments[0] = IrGetValueImpl(irExpression.startOffset, irExpression.endOffset, receiverVariableSymbol)
 
             c.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall)
         } else {

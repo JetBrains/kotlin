@@ -64,7 +64,7 @@ internal class CEnumByValueFunctionGenerator(
                     val inductionVariable = irTemporary(irInt(0), isMutable = true)
                     val arrayClass = values.type.classOrNull!!
                     val valuesSize = irCall(symbols.arraySize.getValue(arrayClass), irBuiltIns.intType).also { irCall ->
-                        irCall.dispatchReceiver = irGet(values)
+                        irCall.arguments[0] = irGet(values)
                     }
                     val getElementFn = symbols.arrayGet.getValue(arrayClass)
                     val plusFun = symbols.getBinaryOperator(OperatorNameConventions.PLUS, irBuiltIns.intType, irBuiltIns.intType)

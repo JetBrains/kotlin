@@ -513,7 +513,7 @@ abstract class AbstractAtomicfuTransformer(
             val transformedAtomicExtension = parent.getOrBuildTransformedAtomicExtension(originalAtomicExtension, atomicHandler.type)
             val atomicHandlerReceiverValueParam = getAtomicHandlerValueParameterReceiver(atomicHandler, dispatchReceiver, parentFunction)
             return irCall(transformedAtomicExtension.symbol).apply {
-                this.dispatchReceiver = callDispatchReceiver
+                arguments[0] = callDispatchReceiver
                 this.extensionReceiver = null
                 var shift = 0
                 putValueArgument(shift++, atomicHandlerReceiverValueParam)

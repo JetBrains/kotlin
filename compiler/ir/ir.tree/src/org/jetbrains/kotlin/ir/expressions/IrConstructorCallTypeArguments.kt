@@ -68,5 +68,5 @@ fun IrConstructorCall.getClassTypeArguments() =
 var IrConstructorCall.outerClassReceiver: IrExpression?
     get() = dispatchReceiver
     set(value) {
-        dispatchReceiver = value
+        arguments[0] = value
     }

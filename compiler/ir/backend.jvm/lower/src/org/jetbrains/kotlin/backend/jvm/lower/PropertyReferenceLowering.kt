@@ -323,7 +323,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 PropertyInstance(createReflectedKProperty(expression), data.kProperties.size)
             }
             irCall(arrayItemGetter).apply {
-                dispatchReceiver = irGetField(null, data.kPropertiesField)
+                arguments[0] = irGetField(null, data.kPropertiesField)
                 putValueArgument(0, irInt(index))
             }
         }
@@ -428,9 +428,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 } else {
                     call.copyTypeArgumentsFrom(expression)
                 }
-                call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    receiverFromField ?: irImplicitCast(irGet(parameters[1]), expression.receiverType)
-                }
+                call.arguments[0] = call.symbol.owner.dispatchReceiverParameter?.let {
+                        receiverFromField ?: irImplicitCast(irGet(parameters[1]), expression.receiverType)
+                    }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
                     if (call.symbol.owner.dispatchReceiverParameter == null)
                         receiverFromField ?: irImplicitCast(irGet(parameters[1]), it.type)

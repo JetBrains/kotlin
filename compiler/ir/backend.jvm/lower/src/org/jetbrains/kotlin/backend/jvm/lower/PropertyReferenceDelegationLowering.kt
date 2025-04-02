@@ -79,7 +79,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                     // The frontend must also ensure the receiver of the delegated property (extension if present, dispatch
                     // otherwise) is a subtype of the unbound receiver (if there is one; and there can *only* be one).
                     if (accessor.owner.dispatchReceiverParameter != null) {
-                        dispatchReceiver = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
+                        arguments[0] = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
                     }
                     if (accessor.owner.extensionReceiverParameter != null) {
                         extensionReceiver = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
@@ -164,7 +164,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                     delegate.deepCopyWithSymbols().apply {
                         origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
                         when {
-                            delegate.dispatchReceiver != null -> dispatchReceiver = boundReceiver
+                            delegate.dispatchReceiver != null -> arguments[0] = boundReceiver
                             delegate.extensionReceiver != null -> extensionReceiver = boundReceiver
                         }
                     }

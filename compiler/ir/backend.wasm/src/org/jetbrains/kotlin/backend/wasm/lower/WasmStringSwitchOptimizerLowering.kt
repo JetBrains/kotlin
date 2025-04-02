@@ -106,7 +106,7 @@ class WasmStringSwitchOptimizerLowering(
         )
 
         val getHashCode = irCall(stringHashCode, intType).also {
-            it.dispatchReceiver = irGet(whenSubject)
+            it.arguments[0] = irGet(whenSubject)
         }
 
         val hashCode: IrExpression = if (subjectType.isNullable()) {

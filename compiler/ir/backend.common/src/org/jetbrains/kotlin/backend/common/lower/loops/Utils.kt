@@ -43,7 +43,7 @@ internal fun IrExpression.negate(): IrExpression {
                 unaryMinusFun.symbol,
                 typeArgumentsCount = 0
             ).apply {
-                dispatchReceiver = this@negate
+                arguments[0] = this@negate
             }.implicitCastIfNeededTo(type)
         }
     }
@@ -65,7 +65,7 @@ internal fun IrExpression.decrement(): IrExpression {
                 decFun.symbol,
                 typeArgumentsCount = 0
             ).apply {
-                dispatchReceiver = this@decrement
+                arguments[0] = this@decrement
             }
         }
     }
@@ -203,7 +203,9 @@ private fun IrExpression.makeIrCallConversionToTargetClass(
         startOffset, endOffset,
         castFun.returnType, castFun.symbol,
         typeArgumentsCount = 0
-    ).also { it.dispatchReceiver = this }
+    ).also {
+        it.arguments[0] = this
+    }
 }
 
 // Gets type of the deepest EXPRESSION from possible recursive snippet `IrGetValue(IrVariable(initializer=EXPRESSION))`.

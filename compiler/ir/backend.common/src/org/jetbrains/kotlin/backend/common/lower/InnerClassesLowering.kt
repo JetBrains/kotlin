@@ -89,7 +89,9 @@ open class InnerClassesLowering(val context: CommonBackendContext) : Declaration
                     val delegatingConstructorCall =
                         statements.find { it is IrDelegatingConstructorCall } as IrDelegatingConstructorCall?
                             ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
-                    delegatingConstructorCall.apply { dispatchReceiver = IrGetValueImpl(startOffset, endOffset, outerThisParameter.symbol) }
+                    delegatingConstructorCall.apply {
+                        arguments[0] = IrGetValueImpl(startOffset, endOffset, outerThisParameter.symbol)
+                    }
                 }
                 patchDeclarationParents(loweredConstructor)
 

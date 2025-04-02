@@ -52,7 +52,7 @@ abstract class IndexedGetIterationHandler(
             )
 
             val last = irCall(expression.type.sizePropertyGetter).apply {
-                dispatchReceiver = irGet(objectVariable)
+                arguments[0] = irGet(objectVariable)
             }
 
             IndexedGetHeaderInfo(

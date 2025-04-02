@@ -98,7 +98,7 @@ class JavaLikeCounterLoopBuilder(private val context: CommonBackendContext) {
         val conditionEndOffset = newLoopCondition.endOffset
         val negatedCondition =
             IrCallImpl.fromSymbolOwner(conditionStartOffset, conditionEndOffset, booleanNot.symbol).apply {
-                dispatchReceiver = newLoopCondition
+                arguments[0] = newLoopCondition
             }
 
         return IrWhenImpl(

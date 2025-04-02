@@ -240,7 +240,7 @@ class ReceiverBasedMfvcNodeInstance(
             unboxMethod != null -> irCall(unboxMethod).apply {
                 val dispatchReceiverParameter = unboxMethod.dispatchReceiverParameter
                 if (dispatchReceiverParameter != null) {
-                    dispatchReceiver = makeReceiverCopy() ?: run {
+                    arguments[0] = makeReceiverCopy() ?: run {
                         val erasedUpperBound = dispatchReceiverParameter.type.erasedUpperBound
                         require(erasedUpperBound.isCompanion) { "Expected a dispatch receiver for:\n${unboxMethod.dump()}" }
                         irGetObject(erasedUpperBound.symbol)

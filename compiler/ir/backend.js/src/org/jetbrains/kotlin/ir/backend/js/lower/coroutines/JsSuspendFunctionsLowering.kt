@@ -78,7 +78,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
             "suspendResult",
             true,
             initializer = JsIrBuilder.buildCall(coroutineImplResultSymbolGetter.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(stateMachineFunction.dispatchReceiverParameter!!.symbol)
+                arguments[0] = JsIrBuilder.buildGetValue(stateMachineFunction.dispatchReceiverParameter!!.symbol)
             }
         )
 
@@ -107,7 +107,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
         val suspendableNodes = collectSuspendableNodes(body)
         val thisReceiver = (stateMachineFunction.dispatchReceiverParameter as IrValueParameter).symbol
         stateVar.initializer = JsIrBuilder.buildCall(coroutineImplLabelPropertyGetter.symbol).apply {
-            dispatchReceiver = JsIrBuilder.buildGetValue(thisReceiver)
+            arguments[0] = JsIrBuilder.buildGetValue(thisReceiver)
         }
 
         val stateMachineBuilder = StateMachineBuilder(

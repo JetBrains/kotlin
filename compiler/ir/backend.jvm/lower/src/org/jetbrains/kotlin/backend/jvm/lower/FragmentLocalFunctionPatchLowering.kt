@@ -63,7 +63,7 @@ internal class FragmentLocalFunctionPatchLowering(
                 return irBuilder.irCall(remappedTarget.transformedDeclaration).apply {
                     this.copyTypeArgumentsFrom(expression)
                     extensionReceiver = expression.extensionReceiver
-                    dispatchReceiver = expression.dispatchReceiver
+                    arguments[0] = expression.dispatchReceiver
 
                     remappedTarget.transformedDeclaration.valueParameters.map { newValueParameterDeclaration ->
                         val oldParameter = localsData.newParameterToOld[newValueParameterDeclaration]

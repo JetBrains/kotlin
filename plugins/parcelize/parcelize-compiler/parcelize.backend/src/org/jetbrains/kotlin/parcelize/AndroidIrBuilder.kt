@@ -22,7 +22,7 @@ class AndroidIrBuilder internal constructor(
 ) : IrBuilderWithScope(IrGeneratorContextBase(androidSymbols.irBuiltIns), Scope(symbol), startOffset, endOffset) {
     fun parcelReadInt(receiver: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelReadInt).apply {
-            dispatchReceiver = receiver
+            arguments[0] = receiver
         }
     }
 

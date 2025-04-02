@@ -79,7 +79,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             typeArgumentsCount = 0,
             origin = originalGet.origin
         ).also {
-            it.dispatchReceiver = IrGetValueImpl(
+            it.arguments[0] = IrGetValueImpl(
                 startOffset = originalGet.startOffset,
                 endOffset = originalGet.endOffset,
                 type = boxClass.defaultType,
@@ -113,7 +113,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             typeArgumentsCount = 0,
             origin = originalSet.origin
         ).also {
-            it.dispatchReceiver = IrGetValueImpl(
+            it.arguments[0] = IrGetValueImpl(
                 startOffset = originalSet.startOffset,
                 endOffset = originalSet.endOffset,
                 type = boxClass.defaultType,

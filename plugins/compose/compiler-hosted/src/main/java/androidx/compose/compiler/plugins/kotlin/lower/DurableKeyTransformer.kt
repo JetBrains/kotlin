@@ -123,7 +123,7 @@ open class DurableKeyTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {
@@ -147,7 +147,7 @@ open class DurableKeyTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {
@@ -176,7 +176,7 @@ open class DurableKeyTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {
@@ -200,7 +200,7 @@ open class DurableKeyTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {

@@ -234,7 +234,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                         getSuspendFunctionWithoutContinuation(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).symbol,
                         originalSuperMethod.returnType
                     ).apply {
-                        dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
+                        arguments[0] = irGetField(irGet(dispatchReceiverParameter!!), field)
                         nonDispatchParameters.forEachIndexed { index, parameter ->
                             arguments[parameter.indexInParameters] = irGet(parameter)
                         }
@@ -326,7 +326,7 @@ class SamEqualsHashCodeMethodsGenerator(
                                         it.arguments[0] = irGet(parameters[0])
                                     },
                                     irCall(getFunctionDelegate).also {
-                                        it.dispatchReceiver = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
+                                        it.arguments[0] = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
                                     }
                                 ),
                                 irFalse()
@@ -346,8 +346,8 @@ class SamEqualsHashCodeMethodsGenerator(
                 irBlockBody {
                     +irReturn(
                         irCall(hashCode).also {
-                            it.dispatchReceiver = irCall(getFunctionDelegate).also {
-                                it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                            it.arguments[0] = irCall(getFunctionDelegate).also {
+                                it.arguments[0] = irGet(dispatchReceiverParameter!!)
                             }
                         }
                     )

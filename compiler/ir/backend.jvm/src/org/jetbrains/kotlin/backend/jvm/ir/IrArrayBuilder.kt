@@ -107,7 +107,9 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             // TODO consider using System.arraycopy if the requested array type is non-generic.
             +irCall(arrayCopyOf).apply {
                 arguments[0] = coerce(irGet(spreadVar), unwrappedArrayType)
-                arguments[1] = irCall(size).apply { dispatchReceiver = irGet(spreadVar) }
+                arguments[1] = irCall(size).apply {
+                    arguments[0] = irGet(spreadVar)
+                }
             }
         }
     }

@@ -52,7 +52,7 @@ internal class ReplaceKFunctionInvokeWithFunctionInvoke(@Suppress("UNUSED_PARAME
 
         // The single overridden function of KFunction{n}.invoke must be Function{n}.invoke.
         expression.symbol = callee.overriddenSymbols.single()
-        expression.dispatchReceiver = expression.dispatchReceiver?.let {
+        expression.arguments[0] = expression.dispatchReceiver?.let {
             val newType = expression.symbol.owner.parentAsClass.defaultType
             IrTypeOperatorCallImpl(expression.startOffset, expression.endOffset, newType, IrTypeOperator.IMPLICIT_CAST, newType, it)
         }
@@ -64,7 +64,7 @@ internal class ReplaceKFunctionInvokeWithFunctionInvoke(@Suppress("UNUSED_PARAME
         if (receiver != null && (receiver.type.isKFunction() || receiver.type.isKSuspendFunction())) {
             val newType = parentClass.defaultType
 
-            expression.dispatchReceiver = IrTypeOperatorCallImpl(
+            expression.arguments[0] = IrTypeOperatorCallImpl(
                 expression.startOffset, expression.endOffset, newType, IrTypeOperator.IMPLICIT_CAST, newType, receiver
             )
         }

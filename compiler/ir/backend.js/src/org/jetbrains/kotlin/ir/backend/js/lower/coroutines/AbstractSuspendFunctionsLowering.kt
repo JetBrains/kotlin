@@ -371,7 +371,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 generateCoroutineStart(stateMachineFunction, irCall(createFunction).apply {
-                    dispatchReceiver = irGet(thisReceiver)
+                    arguments[0] = irGet(thisReceiver)
                     var index = 0
                     for (parameter in function.valueParameters) {
                         putValueArgument(index++, irGet(parameter))

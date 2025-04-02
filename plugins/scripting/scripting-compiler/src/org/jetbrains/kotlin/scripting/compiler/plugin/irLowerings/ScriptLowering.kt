@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.topologicalSort
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 @PhaseDescription(name = "ScriptsToClasses")
 internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbolsForScripting: JvmSymbolsForScripting) : ModuleLoweringPass {
@@ -541,7 +540,7 @@ private class ScriptAccessCallsGenerator(
                     builder.irGetField(scriptReceiver, earlierScriptsField!!)
                 }
             val getPrevScriptObjectExpression = builder.irCall(objArrayGet).apply {
-                dispatchReceiver = irGetEarlierScripts
+                arguments[0] = irGetEarlierScripts
                 putValueArgument(0, earlierScriptIndex.toIrConst(objArrayGet.owner.valueParameters.first().type))
             }
             val prevScriptClassType =

@@ -294,7 +294,7 @@ class JvmAtomicSymbols(
         typeArgumentsCount = getterSymbol.owner.typeParameters.size,
         origin = IrStatementOrigin.GET_PROPERTY
     ).apply {
-        dispatchReceiver = receiver
+        arguments[0] = receiver
     }
 
     override fun createBuilder(symbol: IrSymbol): JvmAtomicfuIrBuilder =

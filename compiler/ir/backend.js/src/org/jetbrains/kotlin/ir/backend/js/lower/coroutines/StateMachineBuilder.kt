@@ -246,7 +246,9 @@ class StateMachineBuilder(
         l.condition.acceptVoid(this)
 
         transformLastExpression {
-            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply { dispatchReceiver = it }
+            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply {
+                arguments[0] = it
+            }
             val irBreak = buildDispatchBlock(exit)
             JsIrBuilder.buildIfElse(unit, exitCond, irBreak)
         }
@@ -745,8 +747,12 @@ class StateMachineBuilder(
         )
     }
 
-    private fun exceptionState() = JsIrBuilder.buildCall(exStateSymbolGetter.symbol).also { it.dispatchReceiver = thisReceiver }
-    private fun pendingException() = JsIrBuilder.buildCall(exceptionSymbolGetter.symbol).also { it.dispatchReceiver = thisReceiver }
+    private fun exceptionState() = JsIrBuilder.buildCall(exStateSymbolGetter.symbol).also {
+        it.arguments[0] = thisReceiver
+    }
+    private fun pendingException() = JsIrBuilder.buildCall(exceptionSymbolGetter.symbol).also {
+        it.arguments[0] = thisReceiver
+    }
 
     private fun buildTryState() = TryState(currentState, SuspendState(unit))
 

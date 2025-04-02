@@ -175,14 +175,14 @@ class TestGenerator(val context: JsCommonBackendContext) {
 
         body.statements += beforeFuns.map {
             JsIrBuilder.buildCall(it.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+                arguments[0] = JsIrBuilder.buildGetValue(classVal.symbol)
             }
         }
 
         val returnStatement = JsIrBuilder.buildReturn(
             fn.symbol,
             JsIrBuilder.buildCall(testFun.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+                arguments[0] = JsIrBuilder.buildGetValue(classVal.symbol)
             },
             context.irBuiltIns.unitType
         )
@@ -219,7 +219,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                     UNDEFINED_OFFSET,
                     afterFuns.memoryOptimizedMap {
                         JsIrBuilder.buildCall(it.symbol).apply {
-                            dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+                            arguments[0] = JsIrBuilder.buildGetValue(classVal.symbol)
                         }
                     }
                 )
@@ -251,7 +251,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             finallyExpression = JsIrBuilder.buildComposite(context.irBuiltIns.unitType).apply {
                 statements += afterFuns.map {
                     JsIrBuilder.buildCall(it.symbol).apply {
-                        dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+                        arguments[0] = JsIrBuilder.buildGetValue(classVal.symbol)
                     }
                 }
             }
@@ -266,7 +266,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 .let { constructor ->
                     IrConstructorCallImpl.fromSymbolOwner(defaultType, constructor.symbol).also {
                         if (isInner) {
-                            it.dispatchReceiver = (parent as IrClass).instance()
+                            it.arguments[0] = (parent as IrClass).instance()
                         }
                     }
                 }

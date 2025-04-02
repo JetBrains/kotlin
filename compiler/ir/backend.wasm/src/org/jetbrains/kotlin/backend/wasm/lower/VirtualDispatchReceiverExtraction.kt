@@ -57,7 +57,7 @@ class VirtualDispatchReceiverExtraction(val context: CommonBackendContext) : Fil
                 return with(context.createIrBuilder(irFunction.symbol)) {
                     irBlock(expression) {
                         val tmp = createTmpVariable(receiver)
-                        expression.dispatchReceiver = irGet(tmp)
+                        expression.arguments[0] = irGet(tmp)
                         +expression
                     }
                 }

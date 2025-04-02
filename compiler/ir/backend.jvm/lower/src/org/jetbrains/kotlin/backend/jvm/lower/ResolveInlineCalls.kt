@@ -46,7 +46,7 @@ internal class ResolveInlineCalls(val context: JvmBackendContext) : IrVisitorVoi
         expression.symbol = resolved.symbol
         expression.dispatchReceiver?.let { receiver ->
             val receiverType = resolved.parentAsClass.defaultType
-            expression.dispatchReceiver = IrTypeOperatorCallImpl(
+            expression.arguments[0] = IrTypeOperatorCallImpl(
                 receiver.startOffset,
                 receiver.endOffset,
                 receiverType,

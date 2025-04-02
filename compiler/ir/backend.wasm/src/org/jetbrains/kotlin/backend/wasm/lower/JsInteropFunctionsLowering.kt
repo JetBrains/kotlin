@@ -503,9 +503,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         result.body = builder.irBlockBody {
             val invokeFun = info.functionType.classOrNull!!.owner.functions.single { it.name == Name.identifier("invoke") }
             val callInvoke = irCall(invokeFun.symbol, info.originalResultType).also { call ->
-                call.dispatchReceiver =
-                    ReceivingKotlinObjectFromJsAdapter(invokeFun.dispatchReceiverParameter!!.type)
-                        .adapt(irGet(result.parameters[0]), builder)
+                call.arguments[0] = ReceivingKotlinObjectFromJsAdapter(invokeFun.dispatchReceiverParameter!!.type)
+                    .adapt(irGet(result.parameters[0]), builder)
 
                 for (i in info.adaptedParameterTypes.indices) {
                     call.arguments[i + 1] = info.parametersAdapters[i].adaptIfNeeded(irGet(result.parameters[i + 1]), builder)
@@ -899,7 +898,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 //  }
                 val newJsArrayVar = irTemporary(irCall(jsRelatedSymbols.newJsArray))
                 val indexVar = irTemporary(irInt(0), isMutable = true)
-                val arraySizeVar = irTemporary(irCall(sizeMethod).apply { dispatchReceiver = irGet(originalArrayVar) })
+                val arraySizeVar = irTemporary(irCall(sizeMethod).apply {
+                    arguments[0] = irGet(originalArrayVar)
+                })
 
                 +irWhile().apply {
                     condition = irNotEquals(irGet(indexVar), irGet(arraySizeVar))
@@ -907,7 +908,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                         val adaptedValue = elementAdapter.adaptIfNeeded(
                             irImplicitCast(
                                 irCall(getMethod).apply {
-                                    dispatchReceiver = irGet(originalArrayVar)
+                                    arguments[0] = irGet(originalArrayVar)
                                     arguments[1] = irGet(indexVar)
                                 },
                                 fromElementType

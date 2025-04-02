@@ -32,7 +32,7 @@ class NativeAtomicfuIrBuilder(
     ): IrCall = irCall(symbol).apply {
         val isAtomicArrayHandler = dispatchReceiver != null && atomicfuSymbols.isAtomicArrayHandlerType(dispatchReceiver.type)
         val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
+            arguments[0] = dispatchReceiver
             this.extensionReceiver = extensionReceiver
             if (symbol.owner.typeParameters.isNotEmpty()) {
                 require(symbol.owner.typeParameters.size == 1) { "Only K/N atomic intrinsics are parameterized with a type of the updated volatile field. A function with more type parameters is being invoked: ${symbol.owner.render()}" }
@@ -158,7 +158,7 @@ class NativeAtomicfuIrBuilder(
             else -> error("Return type of the function ${this.symbol.owner.dump()} is expected to be Int or Long, but found $returnType")
         }
         return irCall(plusOperatorSymbol).apply {
-            dispatchReceiver = this@plus
+            arguments[0] = this@plus
             putValueArgument(0, other)
         }
     }

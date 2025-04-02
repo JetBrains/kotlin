@@ -192,7 +192,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         origin = IrStatementOrigin.LAMBDA,
                         valueArguments = listOf(index, valueParameter.capture())
                     ).apply {
-                        this.dispatchReceiver = arrayGetter
+                        arguments[0] = arrayGetter
                     }
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
@@ -204,7 +204,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         origin = IrStatementOrigin.LAMBDA,
                         valueArguments = listOf(index)
                     ).apply {
-                        dispatchReceiver = getField
+                        arguments[0] = getField
                     }
                 }
             )

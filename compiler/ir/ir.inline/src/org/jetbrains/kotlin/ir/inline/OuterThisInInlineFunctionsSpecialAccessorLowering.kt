@@ -154,12 +154,12 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
             generatedOuterThisAccessors.memoize(accessor)
 
             return IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, accessor.symbol).apply {
-                dispatchReceiver = IrGetValueImpl(
-                    startOffset,
-                    endOffset,
-                    data.innermostDispatchReceiverParameter.symbol,
-                    origin
-                )
+                arguments[0] = IrGetValueImpl(
+                        startOffset,
+                        endOffset,
+                        data.innermostDispatchReceiverParameter.symbol,
+                        origin
+                    )
             }
         }
     }

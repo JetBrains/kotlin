@@ -59,7 +59,7 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
             irFunction.body = irBlockBody {
                 +irReturn(
                     irCall(cloneFun, origin = null, superQualifierSymbol = cloneFun.parentAsClass.symbol).apply {
-                        dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+                        arguments[0] = irGet(irFunction.dispatchReceiverParameter!!)
                     }
                 )
             }

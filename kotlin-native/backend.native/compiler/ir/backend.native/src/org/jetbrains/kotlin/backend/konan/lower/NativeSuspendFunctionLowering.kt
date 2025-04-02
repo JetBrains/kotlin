@@ -382,7 +382,7 @@ internal class NativeSuspendFunctionsLowering(
         val resultClass = symbols.kotlinResult.owner
         val exceptionOrNull = resultClass.simpleFunctions().single { it.name.asString() == "exceptionOrNull" }
         return irCall(exceptionOrNull).apply {
-            dispatchReceiver = result
+            arguments[0] = result
         }
     }
 

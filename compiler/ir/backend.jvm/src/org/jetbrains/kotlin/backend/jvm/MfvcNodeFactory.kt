@@ -142,7 +142,7 @@ private fun makeUnboxMethod(
                             (defaultMethodsImplementationSourceNode.node as? NameableMfvcNode)?.unboxMethod
                         )
                     }
-                    val expression = unboxMethodsToCall.fold(receiverExpression) { arg, f -> irCall(f).apply { dispatchReceiver = arg } }
+                    val expression = unboxMethodsToCall.fold(receiverExpression) { arg, f -> irCall(f).apply { arguments[0] = arg } }
                     irExprBody(expression!!)
                 }
             }

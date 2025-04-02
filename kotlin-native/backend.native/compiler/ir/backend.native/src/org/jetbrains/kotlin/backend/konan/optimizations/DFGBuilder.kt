@@ -272,21 +272,21 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
                     val index = if (expression.dispatchReceiver == null) 1 else 2
                     expressions += IrSetFieldImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.symbol.owner.volatileField!!.symbol,
-                            expression.dispatchReceiver,
-                            expression.arguments[index]!!,
-                            context.irBuiltIns.unitType
+                        expression.startOffset, expression.endOffset,
+                        expression.symbol.owner.volatileField!!.symbol,
+                        expression.dispatchReceiver,
+                        expression.arguments[index]!!,
+                        context.irBuiltIns.unitType
                     ) to currentLoop
                 }
                 if (intrinsicType == IntrinsicType.GET_AND_SET) {
                     val index = if (expression.dispatchReceiver == null) 0 else 1
                     expressions += IrSetFieldImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.symbol.owner.volatileField!!.symbol,
-                            expression.dispatchReceiver,
-                            expression.arguments[index]!!,
-                            context.irBuiltIns.unitType
+                        expression.startOffset, expression.endOffset,
+                        expression.symbol.owner.volatileField!!.symbol,
+                        expression.dispatchReceiver,
+                        expression.arguments[index]!!,
+                        context.irBuiltIns.unitType
                     ) to currentLoop
                 }
             }

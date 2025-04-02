@@ -179,7 +179,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                             context.irBuiltIns.unitType, initializeMethodSymbol,
                                             initializeMethodSymbol.owner.typeParameters.size
                                     ).apply {
-                                        dispatchReceiver = IrGetValueImpl(
+                                        arguments[0] = IrGetValueImpl(
                                                 startOffset, endOffset,
                                                 irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
                                         )

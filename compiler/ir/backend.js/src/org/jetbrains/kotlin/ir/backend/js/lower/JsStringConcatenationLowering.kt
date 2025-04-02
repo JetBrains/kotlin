@@ -70,7 +70,7 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
             } ?: anyToStringMethodSymbol
 
             JsIrBuilder.buildCall(toStringMethodSymbol).apply {
-                dispatchReceiver = this@explicitlyConvertedToString
+                arguments[0] = this@explicitlyConvertedToString
             }
         }
     }

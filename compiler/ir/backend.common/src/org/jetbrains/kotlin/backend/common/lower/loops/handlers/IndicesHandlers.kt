@@ -41,7 +41,9 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
                 isLastInclusive = false
             } else {
                 last = irCall(expression.symbol.owner.parameters[0].type.sizePropertyGetter)
-                    .apply { dispatchReceiver = expression.arguments[0] }
+                    .apply {
+                        arguments[0] = expression.arguments[0]
+                    }
                     .decrement()
                 lastInclusive = null
                 isLastInclusive = true

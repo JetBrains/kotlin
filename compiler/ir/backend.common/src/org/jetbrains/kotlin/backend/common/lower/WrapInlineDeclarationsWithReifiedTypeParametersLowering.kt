@@ -99,7 +99,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Lower
                                         expression.extensionReceiver to valueParameters
                                     }
                                     call.extensionReceiver = extensionReceiver
-                                    call.dispatchReceiver = expression.dispatchReceiver
+                                    call.arguments[0] = expression.dispatchReceiver
 
                                     forwardedParams.forEachIndexed { index, valueParameter ->
                                         call.putValueArgument(index, irBuilder.irGet(valueParameter))

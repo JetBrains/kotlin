@@ -170,7 +170,7 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
                 val call = irCall(delegateTo.symbol)
                 val dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
 
-                call.dispatchReceiver = if (shouldCastDispatchReceiver)
+                call.arguments[0] = if (shouldCastDispatchReceiver)
                     irCastIfNeeded(dispatchReceiver, delegateTo.dispatchReceiverParameter!!.type)
                 else
                     dispatchReceiver

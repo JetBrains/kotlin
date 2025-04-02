@@ -276,7 +276,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             }
 
             private fun generateIsObjectCheck(argument: IrExpression) = JsIrBuilder.buildCall(booleanNot).apply {
-                dispatchReceiver = nullCheck(argument)
+                arguments[0] = nullCheck(argument)
             }
 
             private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {

@@ -1751,7 +1751,7 @@ class ComposableFunctionBodyTransformer(
                         defaultParam?.putAsValueArgumentIn(this, defaultIndex)
 
                         extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
-                        dispatchReceiver = outerReceiver?.let { irGet(it) }
+                        arguments[0] = outerReceiver?.let { irGet(it) }
                         function.typeParameters.fastForEachIndexed { index, parameter ->
                             typeArguments[index] = parameter.defaultType
                         }
@@ -2246,7 +2246,7 @@ class ComposableFunctionBodyTransformer(
                     condition = irEqual(irGet(tmpVal), irNull()),
                     thenPart = irNull(),
                     elsePart = irCall(symbol).apply {
-                        dispatchReceiver = irGet(tmpVal)
+                        arguments[0] = irGet(tmpVal)
                         args.fastForEachIndexed { i, arg ->
                             putValueArgument(i, arg)
                         }

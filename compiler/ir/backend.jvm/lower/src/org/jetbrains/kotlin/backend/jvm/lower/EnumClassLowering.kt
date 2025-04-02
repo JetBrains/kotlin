@@ -229,7 +229,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                         when (body.kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> {
                                 irCall(this@EnumClassLowering.context.symbols.objectCloneFunction, declaration.returnType).apply {
-                                    dispatchReceiver = irGetField(null, valuesField)
+                                    arguments[0] = irGetField(null, valuesField)
                                 }
                             }
 

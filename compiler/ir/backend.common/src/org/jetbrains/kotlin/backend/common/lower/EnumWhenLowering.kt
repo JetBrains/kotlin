@@ -32,7 +32,9 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
         }
 
     protected open fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
-        builder.irCall(subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!).apply { dispatchReceiver = subject }
+        builder.irCall(subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!).apply {
+            arguments[0] = subject
+        }
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile)

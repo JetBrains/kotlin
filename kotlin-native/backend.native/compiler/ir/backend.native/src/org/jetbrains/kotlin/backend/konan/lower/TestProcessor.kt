@@ -122,7 +122,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
             if (it.kind == TestProcessorFunctionKind.TEST) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
                 +irCall(registerTestCase).apply {
-                    dispatchReceiver = irGet(receiver)
+                    arguments[0] = irGet(receiver)
                     arguments[1] = irString(it.functionName)
                     arguments[2] = it.function.toReference(parent)
                     arguments[3] = irBoolean(it.ignored)
@@ -130,13 +130,14 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
             } else {
                 // Call registerFunction(kind: TestFunctionKind, () -> Unit) method.
                 +irCall(registerFunction).apply {
-                    dispatchReceiver = irGet(receiver)
+                    arguments[0] = irGet(receiver)
                     val testKindEntry = it.kind.runtimeKind
                     arguments[1] = IrGetEnumValueImpl(
-                            it.function.startOffset,
-                            it.function.endOffset,
-                            symbols.testFunctionKind.typeWithArguments(emptyList()),
-                            testKindEntry)
+                        it.function.startOffset,
+                        it.function.endOffset,
+                        symbols.testFunctionKind.typeWithArguments(emptyList()),
+                        testKindEntry
+                    )
                     arguments[2] = it.function.toReference(parent)
                 }
             }

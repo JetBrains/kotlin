@@ -936,7 +936,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         val property = callee.property
         if (property != null && callee.isGetter && replacements.getMfvcPropertyNode(property) != null) {
             require(callee.valueParameters.isEmpty()) { "Unexpected getter:\n${callee.dump()}" }
-            expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, null)
+            expression.arguments[0] = expression.dispatchReceiver?.transform(this, null)
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
                 with(valueDeclarationsRemapper) {
                     addReplacement(expression) ?: return expression
@@ -961,7 +961,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                         leftClass.functions.single { it.isEquals() }
                     }
                     +irCall(newEquals).apply {
-                        dispatchReceiver = leftArgument
+                        arguments[0] = leftArgument
                         putValueArgument(0, rightArgument)
                     }.transform(this@JvmMultiFieldValueClassLowering, null)
                 } else if (rightNode != null) {
@@ -1039,7 +1039,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     val toString = argument.type.erasedUpperBound.functions.single { it.isToString() }
                     require(toString.typeParameters.isEmpty()) { "Bad toString: ${toString.render()}" }
                     irCall(toString).apply {
-                        dispatchReceiver = argument
+                        arguments[0] = argument
                     }
                 }
             }

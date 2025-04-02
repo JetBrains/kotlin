@@ -1014,7 +1014,7 @@ private class InteropTransformerPart2(
                     }
 
                     builder.irCall(conversionSymbol).apply {
-                        dispatchReceiver = receiver
+                        arguments[0] = receiver
                     }
                 }
                 IntrinsicType.INTEROP_CONVERT -> {

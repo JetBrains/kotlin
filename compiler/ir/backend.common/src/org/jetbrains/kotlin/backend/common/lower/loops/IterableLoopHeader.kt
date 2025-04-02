@@ -61,7 +61,7 @@ internal class IterableLoopHeader(
         val hasNext =
             irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.HAS_NEXT && it.hasShape(dispatchReceiver = true) })
                 .apply {
-                    dispatchReceiver = irGet(headerInfo.iteratorVariable)
+                    arguments[0] = irGet(headerInfo.iteratorVariable)
                 }
         val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
             label = oldLoop.label

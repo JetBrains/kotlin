@@ -45,10 +45,10 @@ private class InlineClassAccessorsTransformer(private val context: Context) : Ir
             if (it is IrClass && it.isSingleFieldValueClass && property.backingField != null) {
                 expression.dispatchReceiver?.let { receiver ->
                     return builder.at(expression)
-                            .irCall(symbols.reinterpret, expression.type, listOf(receiver.type, expression.type))
-                            .apply {
-                                arguments[0] = receiver
-                            }
+                        .irCall(symbols.reinterpret, expression.type, listOf(receiver.type, expression.type))
+                        .apply {
+                            arguments[0] = receiver
+                        }
                 }
             }
         }

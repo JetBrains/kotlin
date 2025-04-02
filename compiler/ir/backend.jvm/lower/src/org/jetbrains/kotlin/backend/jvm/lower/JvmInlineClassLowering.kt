@@ -521,7 +521,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                     fun irBox(expr: IrExpression) = irCall(boxFunction).apply { putValueArgument(0, expr) }
 
                     irCall(untypedEquals).apply {
-                        dispatchReceiver = irBox(coerceInlineClasses(irGet(left), left.type, underlyingType))
+                        arguments[0] = irBox(coerceInlineClasses(irGet(left), left.type, underlyingType))
                         putValueArgument(0, irBox(coerceInlineClasses(irGet(right), right.type, underlyingType)))
                     }
                 } else {

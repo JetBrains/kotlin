@@ -112,7 +112,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         val irFun = irFunRef.symbol.owner
         var invokeArgIndex = 0
         if (irFun.dispatchReceiverParameter != null) {
-            dispatchReceiver = irFunRef.dispatchReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
+            arguments[0] = irFunRef.dispatchReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
         }
         if (irFun.extensionReceiverParameter != null) {
             extensionReceiver = irFunRef.extensionReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)

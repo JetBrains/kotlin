@@ -133,7 +133,7 @@ fun AndroidIrBuilder.getParcelableCreator(irClass: IrClass): IrExpression {
     // will be present as a `JvmField` on the companion object.
     irClass.creatorGetter?.let { getter ->
         return irCall(getter).apply {
-            dispatchReceiver = irGetObject(irClass.companionObject()!!.symbol)
+            arguments[0] = irGetObject(irClass.companionObject()!!.symbol)
         }
     }
 
@@ -193,7 +193,7 @@ inline fun IrBlockBuilder.forUntil(upperBound: IrExpression, loopBody: IrBlockBu
             loopBody(indexTemporary)
             val inc = context.irBuiltIns.intClass.getSimpleFunction("inc")!!
             +irSet(indexTemporary.symbol, irCall(inc).apply {
-                dispatchReceiver = irGet(indexTemporary)
+                arguments[0] = irGet(indexTemporary)
             })
         }
     }

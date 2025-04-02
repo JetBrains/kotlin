@@ -43,10 +43,10 @@ internal class DefaultProgressionHandler(
             )
             val progressionClass = unwrappedType.getClass()!!
             val first = irCall(progressionClass.symbol.getPropertyGetter("first")!!).apply {
-                dispatchReceiver = progressionExpression.shallowCopy()
+                arguments[0] = progressionExpression.shallowCopy()
             }
             val last = irCall(progressionClass.symbol.getPropertyGetter("last")!!).apply {
-                dispatchReceiver = progressionExpression.shallowCopy()
+                arguments[0] = progressionExpression.shallowCopy()
             }
 
             // *Ranges (e.g., IntRange) have step == 1 and is always increasing.
@@ -55,7 +55,7 @@ internal class DefaultProgressionHandler(
                 irInt(1)
             } else {
                 irCall(progressionClass.symbol.getPropertyGetter("step")!!).apply {
-                    dispatchReceiver = progressionExpression.shallowCopy()
+                    arguments[0] = progressionExpression.shallowCopy()
                 }
             }
             val direction = if (isRange) ProgressionDirection.INCREASING else ProgressionDirection.UNKNOWN

@@ -30,7 +30,7 @@ internal class DefaultIterableHandler(private val context: CommonBackendContext)
             val iteratorFun =
                 iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
-                scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
+                scope.createTmpVariable(irCall(iteratorFun).apply { arguments[0] = expression }, nameHint = "iterator")
             )
         }
 }

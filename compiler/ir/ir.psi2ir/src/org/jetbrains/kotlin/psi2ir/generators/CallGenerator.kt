@@ -164,7 +164,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = descriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
-                this.dispatchReceiver = dispatchReceiver?.load()
+                arguments[0] = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
             }
             val contextReceivers = contextReceivers.map { it.load() }
@@ -255,7 +255,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                             )
 
                             putTypeArguments(call.typeArguments) { it.toIrType() }
-                            dispatchReceiver = dispatchReceiverValue?.load()
+                            arguments[0] = dispatchReceiverValue?.load()
                             extensionReceiver = extensionReceiverValue?.load()
                             val contextReceivers = contextReceiverValues.map { it.load() }
                             updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
@@ -305,7 +305,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             ).run {
                 context.callToSubstitutedDescriptorMap[this] = constructorDescriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
-                dispatchReceiver = dispatchReceiverValue?.load()
+                arguments[0] = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
                 val contextReceivers = contextReceiverValues.map { it.load() }
                 updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
@@ -334,7 +334,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 ).run {
                     context.callToSubstitutedDescriptorMap[this] = functionDescriptor
                     putTypeArguments(call.typeArguments) { it.toIrType() }
-                    dispatchReceiver = dispatchReceiverValue?.load()
+                    arguments[0] = dispatchReceiverValue?.load()
                     extensionReceiver = extensionReceiverValue?.load()
                     val contextReceivers = contextReceiverValues.map { it.load() }
                     updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
@@ -467,7 +467,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             else
                 scope.createTemporaryVariableInBlock(context, this, irBlock, nameHint).load()
 
-        irCall.dispatchReceiver = irCall.dispatchReceiver?.freeze("\$this")
+        irCall.arguments[0] = irCall.dispatchReceiver?.freeze("\$this")
         irCall.extensionReceiver = irCall.extensionReceiver?.freeze("\$receiver")
 
         val resolvedCall = call.original

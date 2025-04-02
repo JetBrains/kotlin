@@ -302,7 +302,7 @@ internal object AssertIntrinsic : IntrinsicBase() {
         val lambdaParameter = irFunction.parameters[1]
         val lambdaState = environment.callStack.loadState(lambdaParameter.symbol) as KFunctionState
         val call = (lambdaState.invokeSymbol.owner as IrSimpleFunction).createCall()
-        call.dispatchReceiver = lambdaParameter.createGetValue()
+        call.arguments[0] = lambdaParameter.createGetValue()
 
         return super.unwind(irFunction, environment) + CompoundInstruction(call)
     }

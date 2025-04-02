@@ -227,7 +227,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                         type = expression.type,
                         valueArguments = expression.getValueArguments() + accessors
                     ).apply {
-                        dispatchReceiver = expression.dispatchReceiver
+                        arguments[0] = expression.dispatchReceiver
                     }
                     return super.visitCall(irCall, data)
                 }

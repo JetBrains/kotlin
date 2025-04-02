@@ -154,7 +154,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
                         else irCall(this@ConstructorsLowering.context.getLoweredConstructorFunction(callee),
                                 origin = LOWERED_DELEGATING_CONSTRUCTOR_CALL
                         ).apply {
-                            dispatchReceiver = irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
+                            arguments[0] = irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
                             fillArgumentsFrom(expression)
                         }
                     }
@@ -196,7 +196,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             else -> irBuilder.irBlock {
                 val instance = irTemporary(irCall(createUninitializedInstance, constructedType, listOf(constructedType)), "inst")
                 +irCall(loweredConstructorFunction).apply {
-                    dispatchReceiver = irGet(instance)
+                    arguments[0] = irGet(instance)
                     fillArgumentsFrom(expression)
                 }
                 +irGet(instance)
@@ -214,7 +214,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
         val loweredConstructorFunction = context.getLoweredConstructorFunction(constructorCall.symbol.owner)
         val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
         return irBuilder.irCall(loweredConstructorFunction).apply {
-            dispatchReceiver = instance
+            arguments[0] = instance
             fillArgumentsFrom(constructorCall)
 
             transformChildren(this@ConstructorsLowering, data)

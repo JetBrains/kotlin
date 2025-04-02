@@ -244,7 +244,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     else -> intrinsicMap[intrinsicType]!!(backingField)
                 }
                 return builder.irCall(function).apply {
-                    dispatchReceiver = reference.boundValues.singleOrNull()
+                    arguments[0] = reference.boundValues.singleOrNull()
                     val replacementParams = function.parameters.filter { it.kind == IrParameterKind.Regular }
                     val originalParams = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
                     for ((from, to) in originalParams.zip(replacementParams)) {

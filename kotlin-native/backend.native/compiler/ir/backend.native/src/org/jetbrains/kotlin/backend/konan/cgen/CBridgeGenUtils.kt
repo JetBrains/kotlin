@@ -196,7 +196,7 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
         val clearImpl = symbols.interopMemScope.owner.simpleFunctions().single { it.name.asString() == "clearImpl" }
         cleanup += {
             irCall(clearImpl).apply {
-                dispatchReceiver = irGet(memScope!!)
+                arguments[0] = irGet(memScope!!)
             }
         }
 

@@ -25,7 +25,9 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
 
     private fun buildUnaryOperator(name: Name, v: IrExpression): IrExpression {
         val symbol = context.getOperatorByName(name, v.type as IrSimpleType, null)!!
-        return JsIrBuilder.buildCall(symbol).apply { dispatchReceiver = v }
+        return JsIrBuilder.buildCall(symbol).apply {
+            arguments[0] = v
+        }
     }
 
     fun add(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.ADD, l, r)

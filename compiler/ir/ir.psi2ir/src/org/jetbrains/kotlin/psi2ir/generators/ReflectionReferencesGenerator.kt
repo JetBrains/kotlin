@@ -123,7 +123,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         callBuilder.descriptor,
                         callBuilder.typeArguments
                     ).also { irCallableReference ->
-                        irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
+                        irCallableReference.arguments[0] = dispatchReceiverValue?.loadIfExists()
                         irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
                     }
                 }
@@ -350,8 +350,9 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 startOffset, endOffset, irAdapterFun.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
             when {
-                hasBoundDispatchReceiver || isImportedFromObject ->
-                    irCall.dispatchReceiver = receiverValue
+                hasBoundDispatchReceiver || isImportedFromObject -> {
+                    irCall.arguments[0] = receiverValue
+                }
                 hasBoundExtensionReceiver ->
                     irCall.extensionReceiver = receiverValue
             }
@@ -378,7 +379,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         if (resolvedCall.dispatchReceiver is TransientReceiver) {
             // Unbound callable reference 'A::foo', receiver is passed as a first parameter
             val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
-            irAdapteeCall.dispatchReceiver =
+            irAdapteeCall.arguments[0] =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
         } else if (resolvedCall.extensionReceiver is TransientReceiver) {
             val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]

@@ -109,7 +109,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             else -> false
         }
         return BoundsCheckAnalysisResult(boundsAreSafe,
-                (functionCall.dispatchReceiver as? IrCall)?.dispatchReceiver?.takeIf{ boundsAreSafe }?.let {
+                                         (functionCall.dispatchReceiver as? IrCall)?.dispatchReceiver?.takeIf { boundsAreSafe }?.let {
                     findExpressionValueDescription(it)
                 }
         )

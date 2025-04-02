@@ -191,7 +191,7 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
     private fun JvmIrBuilder.lowerConcatenationPlain(arguments: MutableList<IrExpression>): IrExpression =
         if (arguments.size < MAX_STRING_CONCAT_DEPTH) {
             irCall(toStringFunction).apply {
-                dispatchReceiver = appendWindow(arguments, irCall(constructor))
+                arguments[0] = appendWindow(arguments, irCall(constructor))
             }
         } else {
             // arguments.size >= MAX_STRING_CONCAT_DEPTH. Prevent SOE in ExpressionCodegen.
@@ -213,7 +213,9 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
                 for (argsWindow in argsWindowed) {
                     +appendWindow(argsWindow, irGet(tmpStringBuilder))
                 }
-                +irCall(toStringFunction).apply { dispatchReceiver = irGet(tmpStringBuilder) }
+                +irCall(toStringFunction).apply {
+                    arguments[0] = irGet(tmpStringBuilder)
+                }
             }
         }
 

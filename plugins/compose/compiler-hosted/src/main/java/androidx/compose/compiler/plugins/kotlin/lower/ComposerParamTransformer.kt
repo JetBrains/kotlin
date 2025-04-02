@@ -393,7 +393,7 @@ class ComposerParamTransformer(
         ).also {
             it.copyAttributes(this)
             it.copyTypeArgumentsFrom(this)
-            it.dispatchReceiver = dispatchReceiver
+            it.arguments[0] = dispatchReceiver
             it.extensionReceiver = extensionReceiver
             val argumentsMissing = mutableListOf<Boolean>()
             for (i in 0 until valueArgumentsCount) {
@@ -781,7 +781,7 @@ class ComposerParamTransformer(
                     irReturn(
                         copy.symbol,
                         irCall(source).apply {
-                            dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
+                            arguments[0] = copy.dispatchReceiverParameter?.let { irGet(it) }
                             extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
                             copy.typeParameters.fastForEachIndexed { index, param ->
                                 typeArguments[index] = param.defaultType

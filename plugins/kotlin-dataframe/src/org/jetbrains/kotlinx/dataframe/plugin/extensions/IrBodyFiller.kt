@@ -147,7 +147,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0).also {
             val thisSymbol: IrValueSymbol = getter.extensionReceiverParameter?.symbol!!
-            it.dispatchReceiver = IrGetValueImpl(-1, -1, thisSymbol)
+            it.arguments[0] = IrGetValueImpl(-1, -1, thisSymbol)
             val annotation = declaration.annotations.findAnnotation(Names.COLUMN_NAME_ANNOTATION.asSingleFqName())
             val columnName = (annotation?.arguments?.get(0) as? IrConst)?.value as? String
             val columName = columnName ?: declaration.name.identifier

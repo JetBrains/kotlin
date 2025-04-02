@@ -91,7 +91,7 @@ internal abstract class AbstractValueUsageTransformer(
         expression.transformChildrenVoid(this)
 
         with(expression) {
-            dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(expression)
+            arguments[0] = dispatchReceiver?.useAsDispatchReceiver(expression)
             for (parameter in symbol.owner.nonDispatchParameters) {
                 val argument = arguments[parameter] ?: continue
                 arguments[parameter] = argument.useAsNonDispatchArgument(expression, parameter)

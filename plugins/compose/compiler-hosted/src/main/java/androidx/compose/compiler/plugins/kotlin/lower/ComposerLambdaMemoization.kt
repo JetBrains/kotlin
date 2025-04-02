@@ -553,7 +553,7 @@ class ComposerLambdaMemoization(
                     }
 
                     // Patch reference receiver in place
-                    reference.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
+                    reference.arguments[0] = tempDispatchReceiver?.let { irGet(it) }
                     reference.extensionReceiver = tempExtensionReceiver?.let { irGet(it) }
 
                     +rememberExpression(

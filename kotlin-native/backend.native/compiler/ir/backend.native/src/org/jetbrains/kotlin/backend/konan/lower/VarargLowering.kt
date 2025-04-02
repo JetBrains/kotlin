@@ -206,7 +206,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
     private fun IrBuilderWithScope.irArraySize(arrayHandle: ArrayHandle, expression: IrExpression): IrExpression {
         val arraySize = irCall(arrayHandle.sizeGetterSymbol.owner).apply {
-            dispatchReceiver = expression
+            arguments[0] = expression
         }
         return arraySize
     }

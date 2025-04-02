@@ -204,7 +204,7 @@ interface IrBuilderWithPluginContext {
         assert(callee.isBound) { "Symbol $callee expected to be bound" }
         val returnType = typeHint ?: callee.owner.returnType
         val call = irCall(callee, type = returnType)
-        call.dispatchReceiver = dispatchReceiver
+        call.arguments[0] = dispatchReceiver
         args.forEachIndexed(call::putValueArgument)
         return call
     }

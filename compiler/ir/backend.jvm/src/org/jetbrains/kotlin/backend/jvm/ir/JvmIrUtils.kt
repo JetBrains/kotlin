@@ -313,7 +313,7 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
         field.initializer = backendContext.createJvmIrBuilder(this.symbol).run {
             at(field)
             irExprBody(irNot(irCall(irSymbols.desiredAssertionStatus).apply {
-                dispatchReceiver = javaClassReference(topLevelClass.defaultType)
+                arguments[0] = javaClassReference(topLevelClass.defaultType)
             }))
         }
     }

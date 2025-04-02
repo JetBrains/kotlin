@@ -171,7 +171,7 @@ private fun InteropCallContext.convertEnumToIntegral(enumValue: IrExpression, ta
     val enumClass = targetEnumType.getClass()!!
     val valueProperty = enumClass.properties.single { it.name.asString() == "value" }
     return builder.irCall(valueProperty.getter!!).also {
-        it.dispatchReceiver = enumValue
+        it.arguments[0] = enumValue
     }
 }
 
@@ -243,7 +243,7 @@ private fun InteropCallContext.writeObjCReferenceToMemory(
 
 private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, offset: Long): IrExpression {
     val base = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
-        it.dispatchReceiver = receiver
+        it.arguments[0] = receiver
     }
     val nativePtrPlusLong = symbols.nativePtrType.getClass()!!
             .functions.single { it.name.identifier == "plus" }
@@ -409,7 +409,7 @@ private fun InteropCallContext.generateBitFieldAccess(callSite: IrCall): IrExpre
     val offset = (bitField.arguments[0] as IrConst).value as Long
     val size = (bitField.arguments[1] as IrConst).value as Int
     val base = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
-        it.dispatchReceiver = callSite.dispatchReceiver!!
+        it.arguments[0] = callSite.dispatchReceiver!!
     }
     return when {
         accessor.isSetter -> {

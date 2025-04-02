@@ -119,7 +119,7 @@ internal class WasmVarargExpressionLowering(
 
                 for ((element, index) in exprs.asSequence().zip(indexes)) {
                     +irCall(destArrDescr.setMethod).apply {
-                        dispatchReceiver = irGet(destArr)
+                        arguments[0] = irGet(destArr)
                         arguments[1] = index
                         arguments[2] = irGet(element)
                     }
@@ -134,7 +134,7 @@ internal class WasmVarargExpressionLowering(
 
             override fun IrBlockBuilder.irSize(): IrExpression =
                 irCall(srcArrDescr.sizeMethod).apply {
-                    dispatchReceiver = irGet(exprVar)
+                    arguments[0] = irGet(exprVar)
                 }
 
             override fun IrBlockBuilder.irCopyInto(destArr: IrVariable, indexVar: IrVariable?) {
@@ -308,7 +308,7 @@ private fun IrBlockBuilder.irIntPlus(rhs: IrExpression, lhs: IrExpression, wasmC
     ).owner
 
     return irCall(plusOp).apply {
-        dispatchReceiver = rhs
+        arguments[0] = rhs
         arguments[1] = lhs
     }
 }

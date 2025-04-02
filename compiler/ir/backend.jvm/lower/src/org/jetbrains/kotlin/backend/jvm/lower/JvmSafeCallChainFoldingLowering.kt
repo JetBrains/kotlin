@@ -93,7 +93,7 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
 
     private fun IrExpression.irNot() =
         IrCallImpl.fromSymbolOwner(startOffset, endOffset, booleanNot).apply {
-            dispatchReceiver = this@irNot
+            arguments[0] = this@irNot
         }
 
     private fun irAndAnd(left: IrExpression, right: IrExpression): IrExpression =

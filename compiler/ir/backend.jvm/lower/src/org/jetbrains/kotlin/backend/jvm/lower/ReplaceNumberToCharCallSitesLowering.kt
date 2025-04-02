@@ -48,12 +48,12 @@ internal class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendConte
         if (!declaringClassType.isNumber()) return
 
         val dispatchReceiver = expression.dispatchReceiver ?: return
-        expression.dispatchReceiver = IrCallImpl(
+        expression.arguments[0] = IrCallImpl(
             dispatchReceiver.startOffset, dispatchReceiver.endOffset,
             context.irBuiltIns.intType, context.irBuiltIns.numberClass.functionByName("toInt"),
             typeArgumentsCount = 0,
         ).also { toInt ->
-            toInt.dispatchReceiver = dispatchReceiver
+            toInt.arguments[0] = dispatchReceiver
         }
 
         expression.symbol = context.irBuiltIns.intClass.functionByName("toChar")

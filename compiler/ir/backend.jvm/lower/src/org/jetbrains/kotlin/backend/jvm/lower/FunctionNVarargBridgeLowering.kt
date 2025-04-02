@@ -121,7 +121,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                 +irIfThen(
                     irNotEquals(
                         irCall(arraySizePropertyGetter).apply {
-                            dispatchReceiver = irGet(nonDispatchParameters.single())
+                            arguments[0] = irGet(nonDispatchParameters.single())
                         },
                         irInt(argumentCount)
                     ),
@@ -131,7 +131,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                 )
 
                 +irReturn(irCall(invoke).apply {
-                    dispatchReceiver = irGet(parameters[0])
+                    arguments[0] = irGet(parameters[0])
 
                     for (parameter in invoke.nonDispatchParameters) {
                         val argArray = irGet(nonDispatchParameters.single())

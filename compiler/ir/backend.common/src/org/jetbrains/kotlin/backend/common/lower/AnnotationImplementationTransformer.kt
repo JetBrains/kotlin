@@ -308,7 +308,7 @@ class AnnotationImplementationMemberGenerator(
             fun irOther() = irGet(parameters[1])
             fun irThis() = irGet(parameters[0])
             fun IrProperty.get(receiver: IrExpression) = irCall(getter!!).apply {
-                dispatchReceiver = receiver
+                arguments[0] = receiver
             }
 
             +irIfThenReturnFalse(irNotIs(irOther(), irType))

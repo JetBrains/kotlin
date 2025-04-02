@@ -41,7 +41,7 @@ class JvmAtomicfuIrBuilder(
         valueType: IrType
     ): IrCall {
         val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
+            arguments[0] = dispatchReceiver
             this.extensionReceiver = extensionReceiver
             valueArguments.forEachIndexed { i, arg ->
                 putValueArgument(i, arg?.let {
@@ -136,7 +136,7 @@ class JvmAtomicfuIrBuilder(
         dispatchReceiver: IrExpression?
     ) : IrFunctionAccessExpression = irCall(atomicBoxType.constructors.first()).apply {
         putValueArgument(0, initValue)
-        this.dispatchReceiver = dispatchReceiver
+        arguments[0] = dispatchReceiver
     }
 
     // val a$FU = j.u.c.a.AtomicIntegerFieldUpdater.newUpdater(A::class, "a")

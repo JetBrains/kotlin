@@ -349,7 +349,7 @@ abstract class AbstractComposeLowering(
             symbol.owner.typeParameters.size,
             origin
         ).also {
-            if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
+            if (dispatchReceiver != null) it.arguments[0] = dispatchReceiver
             if (extensionReceiver != null) it.extensionReceiver = extensionReceiver
             args.forEachIndexed { index, arg ->
                 it.putValueArgument(index, arg)
@@ -590,7 +590,7 @@ abstract class AbstractComposeLowering(
             getIteratorFunction.symbol.owner.typeParameters.size,
             IrStatementOrigin.FOR_LOOP_ITERATOR
         ).also {
-            it.dispatchReceiver = subject
+            it.arguments[0] = subject
         }
 
         val iteratorVar = irTemporary(
@@ -620,7 +620,7 @@ abstract class AbstractComposeLowering(
                             typeArgumentsCount = nextSymbol.symbol.owner.typeParameters.size,
                             type = elementType
                         ).also {
-                            it.dispatchReceiver = irGet(iteratorVar)
+                            it.arguments[0] = irGet(iteratorVar)
                         },
                         origin = IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                         isVar = false,
@@ -1462,7 +1462,7 @@ abstract class AbstractComposeLowering(
         endOffset: Int = UNDEFINED_OFFSET,
     ): IrCall {
         return irCall(function, startOffset, endOffset).apply {
-            dispatchReceiver = target
+            arguments[0] = target
         }
     }
 

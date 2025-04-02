@@ -169,7 +169,9 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                 val sourceArray = createTmpVariable(kClassArray, "src", isMutable = false)
                 val index = createTmpVariable(irInt(0), "i", isMutable = true)
                 val size = createTmpVariable(
-                    irCall(arraySizeSymbol).apply { dispatchReceiver = irGet(sourceArray) },
+                    irCall(arraySizeSymbol).apply {
+                        arguments[0] = irGet(sourceArray)
+                    },
                     "size", isMutable = false
                 )
                 val result = createTmpVariable(irCall(arrayOfNulls, jlcArray).apply {

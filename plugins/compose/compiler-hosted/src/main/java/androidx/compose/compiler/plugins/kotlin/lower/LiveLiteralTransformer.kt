@@ -323,7 +323,7 @@ open class LiveLiteralTransformer(
                     stateGetValue.owner.typeParameters.size,
                     IrStatementOrigin.FOR_LOOP_ITERATOR
                 ).apply {
-                    dispatchReceiver = b
+                    arguments[0] = b
                 }
 
                 +irReturn(call)
@@ -393,7 +393,7 @@ open class LiveLiteralTransformer(
             getter.symbol,
             getter.symbol.owner.typeParameters.size
         ).apply {
-            dispatchReceiver = irGetLiveLiteralsClass(originalStartOffset, originalEndOffset)
+            arguments[0] = irGetLiveLiteralsClass(originalStartOffset, originalEndOffset)
         }
     }
 
@@ -537,7 +537,7 @@ open class LiveLiteralTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {
@@ -561,7 +561,7 @@ open class LiveLiteralTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {
@@ -590,7 +590,7 @@ open class LiveLiteralTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {
@@ -614,7 +614,7 @@ open class LiveLiteralTransformer(
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
+            expression.arguments[0] = enter("\$this") {
                 expression.dispatchReceiver?.transform(this, null)
             }
             expression.extensionReceiver = enter("\$\$this") {

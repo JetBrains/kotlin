@@ -268,7 +268,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             context.createIrBuilder(valueGetter.symbol).run {
                 valueGetter.body = irBlockBody(valueGetter) {
                     +irReturn(irCall(arrayGet, irClass.defaultType).apply {
-                        dispatchReceiver = irGetField(null, valuesField)
+                        arguments[0] = irGetField(null, valuesField)
                         arguments[1] = irGet(valueGetter.parameters[0])
                     })
                 }
@@ -330,7 +330,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                 .sortedBy { it.ordinal }
                                 .map {
                                     irCall(arrayGet, irClass.defaultType).apply {
-                                        dispatchReceiver = irGet(irValuesArray)
+                                        arguments[0] = irGet(irValuesArray)
                                         arguments[1] = irInt(it.getterId)
                                     }
                                 }
@@ -344,7 +344,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
         private fun IrBlockBuilder.callEnumEntriesConstructors(instances: IrVariable, enumEntries: List<IrEnumEntry>) {
             enumEntries.forEach {
                 val instance = irCall(arrayGet).apply {
-                    dispatchReceiver = irGet(instances)
+                    arguments[0] = irGet(instances)
                     arguments[1] = irInt(enumEntriesMap[it.name]!!.getterId)
                 }
                 val initializer = it.initializerExpression!!.expression

@@ -168,7 +168,9 @@ class PowerAssertCallTransformer(
                     val invoke = messageParameter.type.classOrNull!!.functions
                         .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
                         .single()
-                    irCall(invoke).apply { dispatchReceiver = messageArgument }
+                    irCall(invoke).apply {
+                        arguments[0] = messageArgument
+                    }
                 }
             }
             // Kotlin Lambda or SAMs conversion lambda
@@ -176,7 +178,9 @@ class PowerAssertCallTransformer(
                 val invoke = messageParameter.type.classOrNull!!.functions
                     .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
                     .single()
-                irCall(invoke).apply { dispatchReceiver = messageArgument }
+                irCall(invoke).apply {
+                    arguments[0] = messageArgument
+                }
             }
             else -> null
         }

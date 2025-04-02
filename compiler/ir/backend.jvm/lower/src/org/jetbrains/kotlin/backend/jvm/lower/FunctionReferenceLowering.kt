@@ -306,7 +306,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         null
                 }
 
-            targetCall.dispatchReceiver = getTargetCallArgument(reference.dispatchReceiver, targetFun.dispatchReceiverParameter)
+            targetCall.arguments[0] = getTargetCallArgument(reference.dispatchReceiver, targetFun.dispatchReceiverParameter)
             targetCall.extensionReceiver = getTargetCallArgument(reference.extensionReceiver, targetFun.extensionReceiverParameter)
             for ((valueParameterIndex, valueParameter) in targetFun.valueParameters.withIndex()) {
                 targetCall.putValueArgument(

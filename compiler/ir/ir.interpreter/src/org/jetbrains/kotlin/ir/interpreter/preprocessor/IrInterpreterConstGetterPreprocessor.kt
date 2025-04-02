@@ -50,7 +50,7 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor() {
         val fieldParent = field.parentAsClass
         val getObject = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fieldParent.defaultType, fieldParent.symbol)
         when (this) {
-            is IrCall -> this.dispatchReceiver = getObject
+            is IrCall -> this.arguments[0] = getObject
             is IrGetField -> this.receiver = getObject
         }
 

@@ -72,7 +72,7 @@ class KotlinScriptExpressionExplainTransformer(
                     resVar: IrVariable,
                     resExpression: IrExpression,
                 ): IrFunctionAccessExpression = irCall(mapPut).apply {
-                    dispatchReceiver = irGet(explanationsProp)
+                    arguments[0] = irGet(explanationsProp)
                     putValueArgument(0, irString("${statement.name.asString()}(${resExpression.startOffset}, ${resExpression.endOffset})"))
                     putValueArgument(1, irGet(resVar))
                 }

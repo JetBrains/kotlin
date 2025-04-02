@@ -78,7 +78,7 @@ class IrWrappedIntParcelSerializer(private val parcelType: IrType) : IrParcelSer
                 function.owner.name.asString() == "to${parcelType.getClass()!!.name}"
             }
             irCall(conversion).apply {
-                dispatchReceiver = parcelReadInt(irGet(parcel))
+                arguments[0] = parcelReadInt(irGet(parcel))
             }
         }
     }
@@ -92,7 +92,9 @@ class IrWrappedIntParcelSerializer(private val parcelType: IrType) : IrParcelSer
                 val conversion = parcelType.classOrNull!!.functions.first { function ->
                     function.owner.name.asString() == "toInt"
                 }
-                irCall(conversion).apply { dispatchReceiver = value }
+                irCall(conversion).apply {
+                    arguments[0] = value
+                }
             }
         )
 }
@@ -242,7 +244,9 @@ class IrDataClassParcelSerializer(
             val temporary = irTemporary(value)
             properties.forEach { (member, serializer) ->
                 val receiverValue = irGet(temporary)
-                val propertyValue = member.owner.getter?.let { irCall(it).apply { dispatchReceiver = receiverValue } }
+                val propertyValue = member.owner.getter?.let { irCall(it).apply {
+                    arguments[0] = receiverValue
+                } }
                     ?: member.owner.backingField?.let { irGetField(receiverValue, it) }
                     ?: error("$member is a data class property with no backing field?")
                 +writeParcelWith(serializer, parcel, flags, propertyValue)
@@ -326,7 +330,7 @@ class IrArrayParcelSerializer(
             val arrayTemporary = irTemporary(value)
             val arraySizeSymbol = arrayType.classOrNull!!.getPropertyGetter("size")!!
             val arraySize = irTemporary(irCall(arraySizeSymbol).apply {
-                dispatchReceiver = irGet(arrayTemporary)
+                arguments[0] = irGet(arrayTemporary)
             })
 
             +parcelWriteInt(irGet(parcel), irGet(arraySize))
@@ -446,7 +450,9 @@ class IrListParcelSerializer(
                 arguments[0] = irGet(list)
             })
             +irWhile().apply {
-                condition = irCall(iteratorHasNext).apply { dispatchReceiver = irGet(iterator) }
+                condition = irCall(iteratorHasNext).apply {
+                    arguments[0] = irGet(iterator)
+                }
                 body = writeParcelWith(elementSerializer, parcel, flags, irCall(iteratorNext.symbol, elementType).apply {
                     arguments[0] = irGet(iterator)
                 })
@@ -544,24 +550,26 @@ class IrMapParcelSerializer(
         return irBlock {
             val list = irTemporary(value)
             +parcelWriteInt(irGet(parcel), irCall(sizeFunction).apply {
-                dispatchReceiver = irGet(list)
+                arguments[0] = irGet(list)
             })
             val iterator = irTemporary(irCall(iteratorFunction).apply {
-                dispatchReceiver = irCall(entriesFunction).apply {
-                    dispatchReceiver = irGet(list)
+                arguments[0] = irCall(entriesFunction).apply {
+                        arguments[0] = irGet(list)
                 }
             })
             +irWhile().apply {
-                condition = irCall(iteratorHasNext).apply { dispatchReceiver = irGet(iterator) }
+                condition = irCall(iteratorHasNext).apply {
+                    arguments[0] = irGet(iterator)
+                }
                 body = irBlock {
                     val element = irTemporary(irCall(iteratorNext).apply {
-                        dispatchReceiver = irGet(iterator)
+                        arguments[0] = irGet(iterator)
                     })
                     +writeParcelWith(keySerializer, parcel, flags, irCall(elementKey, keyType).apply {
-                        dispatchReceiver = irGet(element)
+                        arguments[0] = irGet(element)
                     })
                     +writeParcelWith(valueSerializer, parcel, flags, irCall(elementValue, valueType).apply {
-                        dispatchReceiver = irGet(element)
+                        arguments[0] = irGet(element)
                     })
                 }
             }
@@ -641,10 +649,10 @@ class IrRangeParcelSerializer(
         return irBlock {
             val range = irTemporary(value)
             +writeParcelWith(underlyingTypeSerializer, parcel, flags, irCall(firstGetter).apply {
-                dispatchReceiver = irGet(range)
+                arguments[0] = irGet(range)
             })
             +writeParcelWith(underlyingTypeSerializer, parcel, flags, irCall(endGetter).apply {
-                dispatchReceiver = irGet(range)
+                arguments[0] = irGet(range)
             })
         }
     }

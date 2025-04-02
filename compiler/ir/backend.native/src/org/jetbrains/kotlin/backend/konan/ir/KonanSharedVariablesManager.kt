@@ -56,18 +56,22 @@ class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: K
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
 
         val sharedVariableInitialization =
-                IrCallImpl(initializer.startOffset, initializer.endOffset,
-                        irBuiltIns.unitType, elementProperty.setter!!.symbol,
-                        elementProperty.setter!!.typeParameters.size)
-        sharedVariableInitialization.dispatchReceiver =
-                IrGetValueImpl(initializer.startOffset, initializer.endOffset,
-                        sharedVariableDeclaration.type, sharedVariableDeclaration.symbol)
+            IrCallImpl(
+                initializer.startOffset, initializer.endOffset,
+                irBuiltIns.unitType, elementProperty.setter!!.symbol,
+                elementProperty.setter!!.typeParameters.size
+            )
+        sharedVariableInitialization.arguments[0] =
+            IrGetValueImpl(
+                initializer.startOffset, initializer.endOffset,
+                sharedVariableDeclaration.type, sharedVariableDeclaration.symbol
+            )
 
         sharedVariableInitialization.putValueArgument(0, initializer)
 
         return IrCompositeImpl(
-                originalDeclaration.startOffset, originalDeclaration.endOffset, irBuiltIns.unitType, null,
-                listOf(sharedVariableDeclaration, sharedVariableInitialization)
+            originalDeclaration.startOffset, originalDeclaration.endOffset, irBuiltIns.unitType, null,
+            listOf(sharedVariableDeclaration, sharedVariableInitialization)
         )
     }
 
@@ -75,7 +79,7 @@ class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: K
             IrCallImpl(originalGet.startOffset, originalGet.endOffset,
                     originalGet.type, elementProperty.getter!!.symbol,
                     elementProperty.getter!!.typeParameters.size).apply {
-                dispatchReceiver = IrGetValueImpl(
+                arguments[0] = IrGetValueImpl(
                         originalGet.startOffset, originalGet.endOffset,
                         sharedVariableSymbol.owner.type, sharedVariableSymbol
                 )
@@ -85,7 +89,7 @@ class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: K
             IrCallImpl(originalSet.startOffset, originalSet.endOffset, irBuiltIns.unitType,
                     elementProperty.setter!!.symbol, elementProperty.setter!!.typeParameters.size
             ).apply {
-                dispatchReceiver = IrGetValueImpl(
+                arguments[0] = IrGetValueImpl(
                         originalSet.startOffset, originalSet.endOffset,
                         sharedVariableSymbol.owner.type, sharedVariableSymbol
                 )
