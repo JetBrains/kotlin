@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
@@ -63,3 +64,5 @@ internal var IrClass.objectInstanceField: IrField? by irAttribute(copyByDefault 
 internal var IrCall.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
 var IrClass.syntheticPrimaryConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+
+var IrEnumEntry.getInstanceFun: IrSimpleFunction? by irAttribute(copyByDefault = false)
