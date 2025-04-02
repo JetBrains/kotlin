@@ -16,15 +16,18 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.outerThisFieldSymbol: IrField? by irAttribute(copyByDefault = false)
 
 class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory) : InnerClassesSupport {
-    private val outerThisFieldSymbols = mapping.outerThisFieldSymbols
     private val innerClassConstructors = mapping.innerClassConstructors
     private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
 
@@ -34,7 +37,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
             innerClass
         )
         else {
-            outerThisFieldSymbols.getOrPut(innerClass) {
+            innerClass::outerThisFieldSymbol.getOrSetIfNull {
                 val outerClass = innerClass.parent as? IrClass
                     ?: compilationException(
                         "No containing class for inner class",
