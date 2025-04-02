@@ -1,1 +1,1 @@
-rootProject.name = "pluginsDsl-allopenPluginsDsl"
+rootProject.name = "allopenPluginsDsl"
