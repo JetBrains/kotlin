@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -44,8 +45,6 @@ val ENUM_ENTRIES_INITIALIZER_ORIGIN by IrDeclarationOriginImpl
  * Replaces enum access with invocation of corresponding function.
  */
 class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
-    private var IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
@@ -460,7 +459,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
     private fun createGetEntryInstanceFun(
         irClass: IrClass, enumEntry: IrEnumEntry,
     ): IrSimpleFunction =
-        context.mapping.enumEntryToGetInstanceFun.getOrPut(enumEntry) {
+        enumEntry::getInstanceFun.getOrSetIfNull {
             context.irFactory.buildFun {
                 name = Name.identifier(createEntryAccessorName(irClass.name.identifier, enumEntry))
                 returnType = enumEntry.getType(irClass)
@@ -486,7 +485,6 @@ private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 class EnumSyntheticFunctionsAndPropertiesLowering(
     val context: JsCommonBackendContext,
 ) : DeclarationTransformer {
-    private val IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
     private val IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
