@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.newEnumConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.builders.*
@@ -75,7 +76,6 @@ private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irCla
  */
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
-    private var IrConstructor.newConstructor by context.mapping.enumConstructorToNewConstructor
     private var IrClass.correspondingEntry by context.mapping.enumClassToCorrespondingEnumEntry
     private var IrValueDeclaration.valueParameter by context.mapping.enumConstructorOldToNewValueParameters
 
@@ -115,7 +115,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             copyValueAndTypeParametersFrom(enumConstructor)
 
             val newConstructor = this
-            enumConstructor.newConstructor = this
+            enumConstructor.newEnumConstructor = this
 
             enumConstructor.body?.let { oldBody ->
                 body = context.irFactory.createBlockBody(oldBody.startOffset, oldBody.endOffset) {
@@ -173,7 +173,6 @@ private fun JsCommonBackendContext.fixReferencesToConstructorParameters(irClass:
 
 class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) : BodyLoweringPass {
 
-    private var IrConstructor.newConstructor by context.mapping.enumConstructorToNewConstructor
     private var IrClass.correspondingEntry by context.mapping.enumClassToCorrespondingEnumEntry
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -226,7 +225,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
             }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-            val delegatingConstructor = expression.symbol.owner.let { it.newConstructor ?: it }
+            val delegatingConstructor = expression.symbol.owner.let { it.newEnumConstructor ?: it }
 
             return builder.irDelegatingConstructorCall(delegatingConstructor).apply {
                 var valueArgIdx = 0
@@ -274,11 +273,11 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
             var constructor = expression.symbol.owner
-            val constructorWasTransformed = constructor.newConstructor != null
+            val constructorWasTransformed = constructor.newEnumConstructor != null
 
             // Enum entry class constructors are not transformed
             if (constructorWasTransformed)
-                constructor = constructor.newConstructor!!
+                constructor = constructor.newEnumConstructor!!
 
             return buildConstructorCall(constructor, expression).apply {
                 var valueArgIdx = 0
