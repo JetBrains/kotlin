@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
-    val fieldToEnumEntry: DeclarationMapping<IrField, IrEnumEntry> by AttributeBasedMappingDelegate()
     val enumClassToInitEntryInstancesFun: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     val suspendArityStore: DeclarationMapping<IrClass, Collection<IrSimpleFunction>> by AttributeBasedMappingDelegate()
