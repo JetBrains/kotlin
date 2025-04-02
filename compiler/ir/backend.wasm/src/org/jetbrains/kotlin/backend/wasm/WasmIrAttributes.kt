@@ -15,3 +15,5 @@ var IrFunction.topLevelFunctionForNestedExternal: IrSimpleFunction? by irAttribu
 var IrClass.getInstanceFunctionForExternalObject: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 var IrClass.instanceCheckForExternalClass: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+var IrClass.getJsClassForExternalClass: IrSimpleFunction? by irAttribute(copyByDefault = false)

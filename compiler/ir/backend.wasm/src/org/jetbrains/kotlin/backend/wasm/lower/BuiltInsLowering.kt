@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -239,7 +240,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun getExternalKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
         val klass = type.classOrNull?.owner ?: error("Invalid type")
         check(klass.kind != ClassKind.INTERFACE) { "External interface must not be a class literal" }
-        return builder.irCall(context.mapping.wasmGetJsClass[klass]!!)
+        return builder.irCall(klass.getJsClassForExternalClass!!)
     }
 
     override fun lower(irFile: IrFile) {

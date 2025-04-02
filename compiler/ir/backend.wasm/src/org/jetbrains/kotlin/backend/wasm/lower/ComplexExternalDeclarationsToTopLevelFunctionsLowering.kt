@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
 import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
+import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -412,7 +413,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun generateGetClassForExternalClass(klass: IrClass) {
-        context.mapping.wasmGetJsClass[klass] = createExternalJsFunction(
+        klass.getJsClassForExternalClass = createExternalJsFunction(
             klass.name,
             "_\$external_class_get",
             resultType = context.wasmSymbols.jsRelatedSymbols.jsAnyType.makeNullable(),
