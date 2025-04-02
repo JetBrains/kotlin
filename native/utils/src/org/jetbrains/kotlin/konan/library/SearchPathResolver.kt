@@ -17,13 +17,15 @@ fun defaultResolver(
     target: KonanTarget,
     distribution: Distribution,
     logger: Logger = DummyLogger,
-    skipCurrentDir: Boolean = false
+    skipCurrentDir: Boolean = false,
+    suppressMissingKlibDependencyWarnings: Boolean = false,
 ): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
     directLibs = directLibs,
     target = target,
     distributionKlib = distribution.klib,
     skipCurrentDir = skipCurrentDir,
-    logger = logger
+    logger = logger,
+    suppressMissingKlibDependencyWarnings = suppressMissingKlibDependencyWarnings,
 )
 
 class KonanLibraryProperResolver(
@@ -31,13 +33,15 @@ class KonanLibraryProperResolver(
     override val target: KonanTarget,
     distributionKlib: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger
+    override val logger: Logger,
+    suppressMissingKlibDependencyWarnings: Boolean = false,
 ) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
     directLibs = directLibs,
     distributionKlib = distributionKlib,
     skipCurrentDir = skipCurrentDir,
     logger = logger,
-    knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
+    knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER),
+    suppressMissingKlibDependencyWarnings = suppressMissingKlibDependencyWarnings,
 ), SearchPathResolverWithTarget<KonanLibrary> {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKonanLibraryComponents(file, target, isDefault)
 

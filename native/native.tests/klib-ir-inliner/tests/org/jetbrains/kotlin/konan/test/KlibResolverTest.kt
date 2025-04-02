@@ -195,6 +195,32 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @DisplayName("-Xsuppress-missing-klib-dependency-warnings cmdline param suppresses warning when resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testSuppress() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        modules.compileModules(
+            produceUnpackedKlibs = false,
+            useLibraryNamesInCliArguments = true,
+            extraCmdLineParams = listOf("-Xsuppress-missing-klib-dependency-warnings")
+        ) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+                    assertFalse(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
+                }
+            }
+        }
+    }
+
+    @Test
     @DisplayName("-nowarn cmdline param suppresses warning when resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
     fun testResolvingTransitiveDependenciesRecordedInManifestWithNowarn() {
         val moduleA = Module("a")

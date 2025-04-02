@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.suppressMissingKlibDependencyWarnings
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -119,7 +120,8 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
         val libraries = getAllJsDependenciesPaths(module, testServices)
         val resolvedLibraries = CommonKLibResolver.resolve(
             libraries,
-            configuration.getLogger(treatWarningsAsErrors = true)
+            configuration.getLogger(treatWarningsAsErrors = true),
+            suppressMissingKlibDependencyWarnings = configuration.suppressMissingKlibDependencyWarnings
         ).getFullResolvedList()
 
         return prepareJsSessions(

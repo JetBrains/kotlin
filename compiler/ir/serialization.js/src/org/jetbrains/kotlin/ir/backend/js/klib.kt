@@ -413,8 +413,9 @@ class ModulesStructure(
         compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR),
         duplicatedUniqueNameStrategy = compilerConfiguration.get(
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
-            DuplicatedUniqueNameStrategy.DENY
+            DuplicatedUniqueNameStrategy.DENY,
         ),
+        suppressMissingKlibDependencyWarnings = compilerConfiguration.suppressMissingKlibDependencyWarnings
     )
 
     val allDependencies: List<KotlinLibrary>

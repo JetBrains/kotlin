@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys.JVM_TARGET
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.suppressMissingKlibDependencyWarnings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -271,6 +272,7 @@ class ClassicFrontendFacade(
             names,
             configuration.getLogger(treatWarningsAsErrors = true),
             knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
+            suppressMissingKlibDependencyWarnings = configuration.suppressMissingKlibDependencyWarnings
         ).getFullResolvedList()
 
         var builtInsModule: KotlinBuiltIns? = null

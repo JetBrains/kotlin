@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
 
+// this
 fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false) =
     KotlinLibraryResolverImpl<L>(this, resolveManifestDependenciesLenient)
 

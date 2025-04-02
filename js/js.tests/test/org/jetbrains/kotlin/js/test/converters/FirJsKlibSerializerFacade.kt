@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.suppressMissingKlibDependencyWarnings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -81,7 +82,8 @@ class FirJsKlibSerializerFacade(
         // TODO: consider avoiding repeated libraries resolution
         val lib = CommonKLibResolver.resolve(
             getAllJsDependenciesPaths(module, testServices) + listOf(outputFile.path),
-            configuration.getLogger(treatWarningsAsErrors = true)
+            configuration.getLogger(treatWarningsAsErrors = true),
+            suppressMissingKlibDependencyWarnings = configuration.suppressMissingKlibDependencyWarnings
         ).getFullResolvedList().last().library
 
         val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(

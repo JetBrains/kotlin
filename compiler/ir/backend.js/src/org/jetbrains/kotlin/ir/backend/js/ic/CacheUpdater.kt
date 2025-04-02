@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
+import org.jetbrains.kotlin.config.suppressMissingKlibDependencyWarnings
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -145,6 +146,7 @@ class CacheUpdater(
                     KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
                     DuplicatedUniqueNameStrategy.DENY
                 ),
+                suppressMissingKlibDependencyWarnings = compilerConfiguration.suppressMissingKlibDependencyWarnings
             )
 
             allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->

@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 open class JsKlibResolverTest {
@@ -183,6 +184,35 @@ open class JsKlibResolverTest {
         assertTrue(resultJS.output.contains("No function found for symbol 'a/a|a(kotlin.Int){}[0]'"))
     }
 
+    @Test
+    fun testSuppress() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        createModules(moduleA, moduleB, moduleC)
+
+        val aKlib = tmpdir.resolve("a.klib").also { it.mkdirs() }
+        val resultA = compileKlib(moduleA.sourceFile, dependencies = emptyArray(), outputFile = aKlib)
+        assertEquals(ExitCode.OK, resultA.exitCode)
+
+        val bKlib = tmpdir.resolve("b.klib").also { it.mkdirs() }
+        val resultB = compileKlib(moduleB.sourceFile, dependencies = arrayOf(aKlib), outputFile = bKlib)
+        assertEquals(ExitCode.OK, resultB.exitCode)
+
+        // remove transitive dependency `a`, to check that subsequent compilation of `c` would not fail,
+        // since resolve on 1-st stage is performed without dependencies
+        aKlib.deleteRecursively()
+        val cKlib = tmpdir.resolve("c.klib").also { it.mkdirs() }
+        val resultC = compileKlib(moduleC.sourceFile, dependencies = arrayOf(bKlib), outputFile = cKlib)
+        assertEquals(ExitCode.OK, resultC.exitCode)
+
+        val resultJS =
+            compileToJs(cKlib, dependency = bKlib, outputFile = cKlib, extraArgs = arrayOf("-Xsuppress-missing-klib-dependency-warnings"))
+        assertEquals(ExitCode.OK, resultJS.exitCode)
+        assertFalse(resultJS.output.contains("warning: KLIB resolver: Could not find \"a\" in "))
+        assertTrue(resultJS.output.contains("No function found for symbol 'a/a|a(kotlin.Int){}[0]'"))
+    }
+
     private data class Module(val name: String, val dependencyNames: List<String>) {
         constructor(name: String, vararg dependencyNames: String) : this(name, dependencyNames.asList())
 
@@ -304,7 +334,12 @@ open class JsKlibResolverTest {
         return CompilationResult(exitCode, compilerXmlOutput.toString())
     }
 
-    open fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
+    open fun compileToJs(
+        entryModuleKlib: File,
+        dependency: File?,
+        outputFile: File,
+        extraArgs: Array<String> = emptyArray(),
+    ): CompilationResult {
         val libraries = listOfNotNull(
             StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
             dependency
@@ -317,6 +352,7 @@ open class JsKlibResolverTest {
             K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
             K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             K2JSCompilerArguments::target.cliArgument, "es2015",
+            *extraArgs
         )
 
         val compilerXmlOutput = ByteArrayOutputStream()

@@ -114,7 +114,8 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     directLibs: List<String>,
     val distributionKlib: String?,
     private val skipCurrentDir: Boolean,
-    override val logger: Logger
+    override val logger: Logger,
+    private val suppressMissingKlibDependencyWarnings: Boolean = false,
 ) : SearchPathResolver<L> {
 
     private val distHead: File? get() = distributionKlib?.File()?.child("common")
@@ -211,8 +212,10 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L? {
         return resolveOrNull(unresolved, isDefaultLink)
-            ?: run {
-                logger.warning("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+            ?: run { // runIf?
+                if (!suppressMissingKlibDependencyWarnings) {
+                    logger.warning("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+                }
                 null
             }
     }
@@ -288,8 +291,10 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     distributionKlib: String?,
     skipCurrentDir: Boolean,
     logger: Logger,
-    private val knownIrProviders: List<String>
-) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, skipCurrentDir, logger), SearchPathResolver<L> {
+    private val knownIrProviders: List<String>,
+    suppressMissingKlibDependencyWarnings: Boolean = false,
+) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, skipCurrentDir, logger, suppressMissingKlibDependencyWarnings),
+    SearchPathResolver<L> {
 
     @Deprecated(
         "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' and 'localKotlinDir' value parameters",

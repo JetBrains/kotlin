@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.suppressMissingKlibDependencyWarnings
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -20,7 +21,11 @@ fun resolveLibraries(
     paths: List<String>,
     knownIrProviders: List<String> = emptyList(),
 ): List<KotlinResolvedLibrary> {
-    return CommonKLibResolver.resolve(paths, configuration.getLogger(treatWarningsAsErrors = true), knownIrProviders = knownIrProviders)
+    return CommonKLibResolver.resolve(
+        paths,
+        configuration.getLogger(treatWarningsAsErrors = true),
+        knownIrProviders = knownIrProviders,
+        suppressMissingKlibDependencyWarnings = configuration.suppressMissingKlibDependencyWarnings)
         .getFullResolvedList()
 }
 

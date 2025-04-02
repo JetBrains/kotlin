@@ -52,7 +52,7 @@ class WasmJsKlibResolverTest : JsKlibResolverTest() {
         return CompilationResult(exitCode, compilerXmlOutput.toString())
     }
 
-    override fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
+    override fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File, extraArgs: Array<String>): CompilationResult {
         val libraries = listOfNotNull(
             fullWasmJsStdlib(),
             dependency
@@ -67,6 +67,7 @@ class WasmJsKlibResolverTest : JsKlibResolverTest() {
             K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
             K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             K2JSCompilerArguments::target.cliArgument, "es2015",
+            *extraArgs
         )
 
         val compilerXmlOutput = ByteArrayOutputStream()
