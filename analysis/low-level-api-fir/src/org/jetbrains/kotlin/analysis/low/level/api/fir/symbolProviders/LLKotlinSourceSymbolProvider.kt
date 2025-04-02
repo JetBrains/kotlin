@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 
 /**
@@ -120,7 +121,21 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     ): FirClassLikeSymbol<*>? {
         if (classId.isLocal) return null
         if (!allowKotlinPackage && classId.isKotlinPackage()) return null
-        return classifierCache.getNotNullValueForNotNullContext(classId, classLikeDeclaration)
+        return classifierCache.getNotNullValueForNotNullContext(classId, classLikeDeclaration) { classId, context ->
+            // To find out more about KT-62339, we're adding information about whether the declaration for the given class ID can *now* be
+            // found by the declaration provider (or is still `null`), and whether the given context element is actually in the scope of the
+            // symbol provider.
+            val declaration = declarationProvider.getClassLikeDeclarationByClassId(classId)
+            withPsiEntry("declarationFromDeclarationProvider", declaration)
+
+            val virtualFile = context?.containingFile?.virtualFile
+            withVirtualFileEntry("contextVirtualFile", virtualFile)
+
+            if (virtualFile != null) {
+                val isInContentScope = moduleComponents.module.contentScope.contains(virtualFile)
+                withEntry("isContextInScope", isInContentScope.toString())
+            }
+        }
     }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {

@@ -33,8 +33,9 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
     override fun fixInconsistentValue(
         key: K,
         context: CONTEXT & Any,
-        inconsistencyMessage: String,
         mapping: (oldValue: V, newValue: V & Any) -> V & Any,
+        inconsistencyMessage: String,
+        buildAdditionalAttachments: (ExceptionAttachmentBuilder.(K, CONTEXT) -> Unit)?,
     ): V & Any {
         val newValue = createValue(key, context)
         checkWithAttachment(
@@ -46,6 +47,9 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
 
         LOG.logErrorWithAttachment(inconsistencyMessage) {
             buildAttachments(key, context, newValue)
+            if (buildAdditionalAttachments != null) {
+                buildAdditionalAttachments(key, context)
+            }
         }
 
         val result = map.merge(key, newValue) { old, _ ->
