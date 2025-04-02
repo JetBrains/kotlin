@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
+import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -392,7 +393,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun generateInstanceCheckForExternalClass(klass: IrClass) {
-        context.mapping.wasmExternalClassToInstanceCheck[klass] = createExternalJsFunction(
+        klass.instanceCheckForExternalClass = createExternalJsFunction(
             klass.name,
             "_\$external_class_instanceof",
             resultType = context.irBuiltIns.booleanType,
