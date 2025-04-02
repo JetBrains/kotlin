@@ -81,7 +81,7 @@ internal fun getGroovyDependencyManagementBlock(
     """
     |
     |dependencyResolutionManagement {
-    |    ${getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo)}
+    |    ${getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo).prependIndent()}
     |    repositoriesMode.set(${mapRepositoryModeToString(gradleRepositoriesMode)})
     |}
     |""".trimMargin()
@@ -93,82 +93,82 @@ internal fun getGroovyRepositoryBlock(
     //language=Groovy
     """
     |
-    |    repositories {
-    |        mavenLocal()
-    |        mavenCentral()
-    |        google()
-    |        ivy {
-    |            url = "https://download.jetbrains.com/kotlin/native/builds/releases"
-    |            patternLayout {
-    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
-    |            }
-    |            metadataSources {
-    |                artifact()
-    |            }
+    |repositories {
+    |    mavenLocal()
+    |    mavenCentral()
+    |    google()
+    |    ivy {
+    |        url = "https://download.jetbrains.com/kotlin/native/builds/releases"
+    |        patternLayout {
+    |            artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
     |        }
-    |        ivy {
-    |            url = "https://download.jetbrains.com/kotlin/native/builds/dev"
-    |            patternLayout {
-    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
-    |            }
-    |            metadataSources {
-    |                artifact()
-    |            }
+    |        metadataSources {
+    |            artifact()
     |        }
-    |        ivy {
-    |            url = "https://github.com/yarnpkg/yarn/releases/download"
-    |            patternLayout {
-    |                artifact("v[revision]/[artifact](-v[revision]).[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("com.yarnpkg", "yarn") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = "https://nodejs.org/dist"
-    |            patternLayout {
-    |                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("org.nodejs", "node") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = uri("https://github.com/WebAssembly/binaryen/releases/download")
-    |            patternLayout {
-    |                artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("com.github.webassembly", "binaryen") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
-    |            patternLayout {
-    |                artifact("[artifact]-[revision].[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("google.d8", "v8") 
-    |            }
-    |        }
-    |        maven {
-    |            url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
-    |        }
-    |        ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
-    |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
     |    }
+    |    ivy {
+    |        url = "https://download.jetbrains.com/kotlin/native/builds/dev"
+    |        patternLayout {
+    |            artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |        }
+    |        metadataSources {
+    |            artifact()
+    |        }
+    |    }
+    |    ivy {
+    |        url = "https://github.com/yarnpkg/yarn/releases/download"
+    |        patternLayout {
+    |            artifact("v[revision]/[artifact](-v[revision]).[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("com.yarnpkg", "yarn") 
+    |        }
+    |    }
+    |    ivy {
+    |        url = "https://nodejs.org/dist"
+    |        patternLayout {
+    |            artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("org.nodejs", "node") 
+    |        }
+    |    }
+    |    ivy {
+    |        url = uri("https://github.com/WebAssembly/binaryen/releases/download")
+    |        patternLayout {
+    |            artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("com.github.webassembly", "binaryen") 
+    |        }
+    |    }
+    |    ivy {
+    |        url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
+    |        patternLayout {
+    |            artifact("[artifact]-[revision].[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("google.d8", "v8") 
+    |        }
+    |    }
+    |    maven {
+    |        url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
+    |    }
+    |    ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
+    |    ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
+    |}
     |""".trimMargin()
 
 @Language("text")
@@ -244,7 +244,7 @@ internal fun getKotlinDependencyManagementBlock(
     """
     |
     |dependencyResolutionManagement {
-    |    ${getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo)}
+    |    ${getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo).prependIndent()}
     |    repositoriesMode.set(${mapRepositoryModeToString(gradleRepositoriesMode)})
     |}
     |""".trimMargin()
@@ -256,82 +256,82 @@ internal fun getKotlinRepositoryBlock(
     //language=kotlin
     """
     |
-    |    repositories {
-    |        mavenLocal()
-    |        mavenCentral()
-    |        google()
-    |        ivy {
-    |            url = uri("https://download.jetbrains.com/kotlin/native/builds/releases")
-    |            patternLayout {
-    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
-    |            }
-    |            metadataSources {
-    |                artifact()
-    |            }
+    |repositories {
+    |    mavenLocal()
+    |    mavenCentral()
+    |    google()
+    |    ivy {
+    |        url = uri("https://download.jetbrains.com/kotlin/native/builds/releases")
+    |        patternLayout {
+    |            artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
     |        }
-    |        ivy {
-    |            url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
-    |            patternLayout {
-    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
-    |            }
-    |            metadataSources {
-    |                artifact()
-    |            }
+    |        metadataSources {
+    |            artifact()
     |        }
-    |        ivy {
-    |            url = uri("https://github.com/yarnpkg/yarn/releases/download")
-    |            patternLayout {
-    |                artifact("v[revision]/[artifact](-v[revision]).[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("com.yarnpkg", "yarn") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = uri("https://nodejs.org/dist")
-    |            patternLayout {
-    |                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("org.nodejs", "node") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = uri("https://github.com/WebAssembly/binaryen/releases/download")
-    |            patternLayout {
-    |                artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("com.github.webassembly", "binaryen") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
-    |            patternLayout {
-    |                artifact("[artifact]-[revision].[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("google.d8", "v8") 
-    |            }
-    |        }
-    |        maven {
-    |            url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
-    |        }
-    |        ${additionalDependencyRepositories.joinToString("\n") { repo -> "maven{ url = uri(\"$repo\") }" }}
-    |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = uri(\"${repo.replace("\\", "\\\\")}\") }" } ?: ""}
     |    }
+    |    ivy {
+    |        url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
+    |        patternLayout {
+    |            artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |        }
+    |        metadataSources {
+    |            artifact()
+    |        }
+    |    }
+    |    ivy {
+    |        url = uri("https://github.com/yarnpkg/yarn/releases/download")
+    |        patternLayout {
+    |            artifact("v[revision]/[artifact](-v[revision]).[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("com.yarnpkg", "yarn") 
+    |        }
+    |    }
+    |    ivy {
+    |        url = uri("https://nodejs.org/dist")
+    |        patternLayout {
+    |            artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("org.nodejs", "node") 
+    |        }
+    |    }
+    |    ivy {
+    |        url = uri("https://github.com/WebAssembly/binaryen/releases/download")
+    |        patternLayout {
+    |            artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("com.github.webassembly", "binaryen") 
+    |        }
+    |    }
+    |    ivy {
+    |        url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
+    |        patternLayout {
+    |            artifact("[artifact]-[revision].[ext]")
+    |        }
+    |        metadataSources { 
+    |            artifact() 
+    |        }
+    |        content { 
+    |            includeModule("google.d8", "v8") 
+    |        }
+    |    }
+    |    maven {
+    |        url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
+    |    }
+    |    ${additionalDependencyRepositories.joinToString("\n") { repo -> "maven{ url = uri(\"$repo\") }" }}
+    |    ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = uri(\"${repo.replace("\\", "\\\\")}\") }" } ?: ""}
+    |}
     |""".trimMargin()
 
 private fun mapRepositoryModeToString(gradleRepositoriesMode: RepositoriesMode): String {
