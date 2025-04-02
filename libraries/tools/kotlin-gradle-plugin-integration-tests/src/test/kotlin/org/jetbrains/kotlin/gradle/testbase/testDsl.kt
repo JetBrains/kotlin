@@ -532,7 +532,6 @@ class TestProject(
 
         val newSubmoduleDir = projectPath.resolve(newSubmoduleName)
         otherProjectPath.copyRecursively(newSubmoduleDir)
-        newSubmoduleDir.addDefaultSettingsToSettingsGradle(gradleVersion)
 
         val gradleSettingToUpdate = if (isKts) settingsGradleKts else settingsGradle
 
@@ -555,18 +554,11 @@ class TestProject(
     ) {
         val newIncludedBuildDir = projectPath.resolve(newProjectName)
 
-        val sourceDir = "$pathPrefix/$otherProjectName".testProjectPath
-
         setupProjectFromTestResources(
             projectName = "$pathPrefix/$otherProjectName",
             destinationDir = newIncludedBuildDir,
+            gradleVersion = gradleVersion,
         )
-
-        when {
-            settingsGradleKts.exists() -> settingsGradleKts
-            settingsGradle.exists() -> settingsGradle
-            else -> settingsGradleKts.crea
-        }
 
         val gradleSettingToUpdate = if (settingsGradleKts.exists()) settingsGradleKts else settingsGradle
         gradleSettingToUpdate.append(
@@ -732,46 +724,28 @@ private fun setupProjectFromTestResources(
             .resolve(randomHash())
             .resolve(projectName)
             .resolve(optionalSubDir),
+        gradleVersion = gradleVersion,
     )
 }
 
 private fun setupProjectFromTestResources(
     projectName: String,
     destinationDir: Path,
+    gradleVersion: GradleVersion,
 ): Path {
     val testProjectPath = projectName.testProjectPath
     assertTrue("Test project doesn't exists") { testProjectPath.exists() }
     assertTrue("Test project path isn't a directory") { testProjectPath.exists() }
-    assertTrue("Test project must have a settings.gradle or settings.gradle.kts file. One will be created automatically - please commit it.") {
-        val hasSettingsFile = testProjectPath.resolve("settings.gradle").exists() ||
-                testProjectPath.resolve("settings.gradle.kts").exists()
 
-        if (!hasSettingsFile) {
-            val safeProjectName = projectName
-                .map {
-                    // replace invalid project name chars,
-                    // see https://github.com/gradle/gradle/blob/v8.13.0/subprojects/core/src/main/java/org/gradle/util/NameValidator.java#L40
-                    if (it in setOf('/', '\\', ':', '<', '>', '"', '?', '*', '|')) {
-                        '-'
-                    } else {
-                        it
-                    }
-                }
-                .joinToString("")
-
-            testProjectPath.resolve("settings.gradle.kts")
-                .writeText(
-                    """
-                    |rootProject.name = "$safeProjectName"
-                    |
-                    """.trimMargin()
-                )
-        }
-
-        hasSettingsFile
-    }
+    createSettingsGradleIfNotExists(
+        projectDir = testProjectPath,
+        projectName = projectName,
+    )
 
     testProjectPath.copyRecursively(destinationDir)
+
+    destinationDir.addDefaultSettingsToSettingsGradle(gradleVersion)
+
     return destinationDir
 }
 
@@ -1185,3 +1159,42 @@ private fun Throwable.backtrace(): String = StringWriter().use {
     }
     it
 }.toString()
+
+
+/**
+ * Creates a new `settings.gradle.kts` in [projectDir] if a settings file does not already exist.
+ *
+ * Returns `true` if a settings file was created.
+ * Otherwise, returns `false`.
+ */
+private fun createSettingsGradleIfNotExists(
+    projectDir: Path,
+    projectName: String,
+) {
+    val hasSettingsFile = projectDir.resolve("settings.gradle").exists() ||
+            projectDir.resolve("settings.gradle.kts").exists()
+
+    if (!hasSettingsFile) {
+        // Replace chars that are not valid Gradle project names.
+        // See https://github.com/gradle/gradle/blob/v8.13.0/subprojects/core/src/main/java/org/gradle/util/NameValidator.java#L40
+        val safeProjectName =
+            projectName
+                .map {
+                    if (it in setOf('/', '\\', ':', '<', '>', '"', '?', '*', '|')) {
+                        '-'
+                    } else {
+                        it
+                    }
+                }
+                .joinToString("")
+
+        projectDir.resolve("settings.gradle.kts")
+            .writeText(
+                """
+                |rootProject.name = "$safeProjectName"
+                |""".trimMargin()
+            )
+
+        System.err.println("Test project ${projectDir.relativeTo(Path(".").absolute())} does not have a settings.gradle or settings.gradle.kts file. One has been created automatically - please commit it.")
+    }
+}
