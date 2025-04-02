@@ -394,6 +394,12 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
             if (!equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) return
             val argument = equalityOperatorCall.arguments[1]
 
+            val knownNonValues = (equalityOperatorCall.arguments.firstOrNull() as? FirSmartCastExpression)
+                ?.nonValuesFromSmartCast
+                ?.map { it.fir }
+                .orEmpty()
+            data.removeAll(knownNonValues)
+
             @OptIn(UnsafeExpressionUtility::class)
             val symbol = argument.toResolvedCallableReferenceUnsafe()?.resolvedSymbol as? FirVariableSymbol<*> ?: return
             val checkedEnumEntry = symbol.fir as? FirEnumEntry ?: return

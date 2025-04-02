@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
@@ -604,21 +605,29 @@ abstract class FirDataFlowAnalyzer(
         if (leftOperandVariable !is RealVariable && rightOperandVariable !is RealVariable) return
 
         if (operation == FirOperation.EQ || operation == FirOperation.NOT_EQ) {
-            if (hasOverriddenEquals(leftOperandType)) return
+            if (hasUntrustworthyOverriddenEquals(leftOperandType)) return
         }
 
         if (leftOperandVariable is RealVariable) {
             flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperandType))
+
+            (rightOperand as? FirResolvable)?.calleeReference?.toResolvedBaseSymbol()?.let { symbol ->
+                flow.addImplication((expressionVariable eq !isEq) implies (leftOperandVariable valueNotEq symbol))
+            }
         }
         if (rightOperandVariable is RealVariable) {
             flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperandType))
+
+            (leftOperand as? FirResolvable)?.calleeReference?.toResolvedBaseSymbol()?.let { symbol ->
+                flow.addImplication((expressionVariable eq !isEq) implies (rightOperandVariable valueNotEq symbol))
+            }
         }
     }
 
-    private fun hasOverriddenEquals(type: ConeKotlinType): Boolean {
+    private fun hasUntrustworthyOverriddenEquals(type: ConeKotlinType): Boolean {
         val session = components.session
         val symbolsForType = collectSymbolsForType(type, session)
-        if (symbolsForType.any { it.hasEqualsOverride(session, checkModality = true) }) return true
+        if (symbolsForType.any { it.hasUntrustworthyEqualsOverride(session, checkModality = true) }) return true
 
         val superTypes = lookupSuperTypes(
             symbolsForType,
@@ -631,10 +640,10 @@ abstract class FirDataFlowAnalyzer(
             it.fullyExpandedType(session).toRegularClassSymbol(session)
         }
 
-        return superClassSymbols.any { it.hasEqualsOverride(session, checkModality = false) }
+        return superClassSymbols.any { it.hasUntrustworthyEqualsOverride(session, checkModality = false) }
     }
 
-    private fun FirClassSymbol<*>.hasEqualsOverride(session: FirSession, checkModality: Boolean): Boolean {
+    private fun FirClassSymbol<*>.hasUntrustworthyEqualsOverride(session: FirSession, checkModality: Boolean): Boolean {
         val status = resolvedStatus
         if (checkModality && status.modality != Modality.FINAL) return true
         if (status.isExpect) return true
@@ -643,6 +652,8 @@ abstract class FirDataFlowAnalyzer(
             StandardClassIds.Any -> return false
             // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
             StandardClassIds.Float, StandardClassIds.Double -> return true
+            // kotlin.Enum has `equals()`, but we know it's reasonable
+            StandardClassIds.Enum -> return false
         }
 
         // When the class belongs to a different module, "equals" contract might be changed without re-compilation
