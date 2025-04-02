@@ -3,6 +3,7 @@
 // WITH_STDLIB
 // LANGUAGE: +ContextParameters
 
+// FILE: test.kt
 class C3 {
     fun foo() {}
 }
@@ -54,3 +55,16 @@ fun C2.qux(s: String, i: Int = 0) {}
 fun C2.qux(s: String, i: Int = 0, b: Boolean = false) {}
 
 fun C2.quux(s: String, b: Boolean = false) {}
+
+class C4 {
+    fun foo(s: String) {}
+}
+
+fun C4.foo(x: String) {}
+
+fun J.foo(s: String) {}
+
+// FILE: J.java
+public class J {
+    public void foo(String s) {}
+}
