@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
@@ -27,8 +26,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrClass.outerThisFieldSymbol: IrField? by irAttribute(copyByDefault = false)
 
+private var IrConstructor.innerClassConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+
 class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory) : InnerClassesSupport {
-    private val innerClassConstructors = mapping.innerClassConstructors
     private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
@@ -62,7 +62,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         val innerClass = innerClassConstructor.parent as IrClass
         assert(innerClass.isInner) { "Class is not inner: $innerClass" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
+        return innerClassConstructor::innerClassConstructor.getOrSetIfNull {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }.also {
             if (innerClassConstructor.isPrimary) {
