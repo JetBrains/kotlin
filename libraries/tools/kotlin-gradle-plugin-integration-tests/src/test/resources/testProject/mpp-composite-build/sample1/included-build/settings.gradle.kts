@@ -1,3 +1,3 @@
-rootProject.name = "included-build"
+rootProject.name = "included"
 
 include("included")

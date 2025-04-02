@@ -105,7 +105,11 @@ class DifferentClassloadersIT : KGPBaseTest() {
         // Also include another project via a composite build:
         includeOtherProjectAsIncludedBuild("allopenPluginsDsl", "pluginsDsl")
         buildGradle.appendText(
-            "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"allopenPluginsDsl\").task(\":assemble\"))"
+            """
+            |tasks.create("publish") {
+            |    dependsOn(gradle.includedBuild("allopenPluginsDsl").task(":assemble"))
+            |}
+            |""".trimMargin()
         )
     }
 }

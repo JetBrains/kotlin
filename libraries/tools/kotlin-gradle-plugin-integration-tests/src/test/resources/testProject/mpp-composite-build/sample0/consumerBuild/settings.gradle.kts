@@ -1,4 +1,4 @@
-rootProject.name = "consumerA"
+rootProject.name = "consumer"
 
 include(":consumerA")
 

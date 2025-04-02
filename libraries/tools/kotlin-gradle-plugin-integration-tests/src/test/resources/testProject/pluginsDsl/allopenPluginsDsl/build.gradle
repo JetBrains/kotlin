@@ -3,11 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.allopen'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 allOpen {
     annotation("lib.AllOpen")
 }

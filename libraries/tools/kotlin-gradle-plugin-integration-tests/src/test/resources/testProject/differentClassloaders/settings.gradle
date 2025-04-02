@@ -1,1 +1,3 @@
+rootProject.name = "differentClassloaders"
+
 include(":mpp-lib", ":jvm-app", ":js-app")

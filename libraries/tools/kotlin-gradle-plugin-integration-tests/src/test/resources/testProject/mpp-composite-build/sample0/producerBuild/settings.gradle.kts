@@ -1,3 +1,3 @@
-rootProject.name = "producerBuild"
+rootProject.name = "producer"
 
 include(":producerA")

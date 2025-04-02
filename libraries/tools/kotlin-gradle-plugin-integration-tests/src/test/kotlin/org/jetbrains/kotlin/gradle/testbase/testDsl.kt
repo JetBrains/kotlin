@@ -553,15 +553,22 @@ class TestProject(
         pathPrefix: String,
         newProjectName: String = otherProjectName,
     ) {
-        val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
-
         val newIncludedBuildDir = projectPath.resolve(newProjectName)
 
-        otherProjectPath.copyRecursively(newIncludedBuildDir)
-        newIncludedBuildDir.addDefaultSettingsToSettingsGradle(gradleVersion)
+        val sourceDir = "$pathPrefix/$otherProjectName".testProjectPath
+
+        setupProjectFromTestResources(
+            projectName = "$pathPrefix/$otherProjectName",
+            destinationDir = newIncludedBuildDir,
+        )
+
+        when {
+            settingsGradleKts.exists() -> settingsGradleKts
+            settingsGradle.exists() -> settingsGradle
+            else -> settingsGradleKts.crea
+        }
 
         val gradleSettingToUpdate = if (settingsGradleKts.exists()) settingsGradleKts else settingsGradle
-
         gradleSettingToUpdate.append(
             """
             |
@@ -718,6 +725,20 @@ private fun setupProjectFromTestResources(
     tempDir: Path,
     optionalSubDir: String,
 ): Path {
+    return setupProjectFromTestResources(
+        projectName = projectName,
+        destinationDir = tempDir
+            .resolve(gradleVersion.version)
+            .resolve(randomHash())
+            .resolve(projectName)
+            .resolve(optionalSubDir),
+    )
+}
+
+private fun setupProjectFromTestResources(
+    projectName: String,
+    destinationDir: Path,
+): Path {
     val testProjectPath = projectName.testProjectPath
     assertTrue("Test project doesn't exists") { testProjectPath.exists() }
     assertTrue("Test project path isn't a directory") { testProjectPath.exists() }
@@ -750,14 +771,8 @@ private fun setupProjectFromTestResources(
         hasSettingsFile
     }
 
-    return tempDir
-        .resolve(gradleVersion.version)
-        .resolve(randomHash())
-        .resolve(projectName)
-        .resolve(optionalSubDir)
-        .also {
-            testProjectPath.copyRecursively(it)
-        }
+    testProjectPath.copyRecursively(destinationDir)
+    return destinationDir
 }
 
 private val String.testProjectPath: Path get() = Path("src/test/resources/testProject", this)

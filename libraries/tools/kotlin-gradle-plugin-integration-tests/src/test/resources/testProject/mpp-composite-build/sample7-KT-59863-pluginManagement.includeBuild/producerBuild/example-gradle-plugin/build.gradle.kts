@@ -5,11 +5,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 gradlePlugin {
     plugins {
         create("exampleGradlePlugin") {
