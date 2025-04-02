@@ -478,3 +478,4 @@ gradlew.bat "Kotlin Build Infrastructure"
 /gradle.properties "Kotlin Build Infrastructure"
 
 /.space/CODEOWNERS "Kotlin Build Infrastructure"
+/.github/CODEOWNERS "Kotlin Build Infrastructure"

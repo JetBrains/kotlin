@@ -1,0 +1,109 @@
+# This CODEOWNERS file contains a partial migration from .space/CODEOWNERS for evaluation purposes
+
+/.idea/ @JetBrains/kotlin-build-infrastructure
+/.fleet/ @JetBrains/kotlin-build-infrastructure
+/.space/ @JetBrains/kotlin-build-infrastructure
+
+/benchmarks/ @JetBrains/kotlin-frontend
+
+/compiler/cli/ @JetBrains/kotlin-frontend
+/compiler/compiler.version/ @JetBrains/kotlin-frontend
+/compiler/compiler-runner/ @JetBrains/kotlin-frontend
+/compiler/config/ @JetBrains/kotlin-frontend
+/compiler/container/ @JetBrains/kotlin-frontend
+/compiler/fir/ @JetBrains/kotlin-frontend
+/compiler/frontend/ @JetBrains/kotlin-frontend
+/compiler/frontend.common/ @JetBrains/kotlin-frontend
+/compiler/frontend.common.jvm/ @JetBrains/kotlin-frontend
+/compiler/frontend.common-psi/ @JetBrains/kotlin-frontend
+/compiler/frontend.java/ @JetBrains/kotlin-frontend
+/compiler/serialization/ @JetBrains/kotlin-frontend
+/compiler/test-infrastructure/ @JetBrains/kotlin-frontend
+/compiler/test-infrastructure-utils/ @JetBrains/kotlin-frontend
+
+/compiler/testData/asJava/findClasses/ @JetBrains/kotlin-frontend
+/compiler/testData/capturedTypeApproximation/ @JetBrains/kotlin-frontend
+/compiler/testData/cfg/ @JetBrains/kotlin-frontend
+/compiler/testData/cfg-variables/ @JetBrains/kotlin-frontend
+/compiler/testData/cfgVariablesWithStdLib/ @JetBrains/kotlin-frontend
+/compiler/testData/cfgWithStdLib/ @JetBrains/kotlin-frontend
+/compiler/testData/cli/ @JetBrains/kotlin-frontend
+/compiler/testData/cli/metadata/ @JetBrains/kotlin-frontend
+/compiler/testData/compileJavaAgainstKotlin/ @JetBrains/kotlin-frontend
+/compiler/testData/compileKotlinAgainstCustomBinaries/ @JetBrains/kotlin-frontend
+/compiler/testData/compileKotlinAgainstJava/ @JetBrains/kotlin-frontend
+/compiler/testData/compiler/smoke/ @JetBrains/kotlin-frontend
+/compiler/testData/debug/ @JetBrains/kotlin-frontend
+/compiler/testData/diagnostics/ @JetBrains/kotlin-frontend
+/compiler/testData/friendPaths/ @JetBrains/kotlin-frontend
+/compiler/testData/ir/irText/ @JetBrains/kotlin-frontend
+/compiler/testData/ir/sourceRanges/ @JetBrains/kotlin-frontend
+/compiler/testData/kotlinClassFinder/ @JetBrains/kotlin-frontend
+/compiler/testData/lexer/ @JetBrains/kotlin-frontend
+/compiler/testData/loadJava/ @JetBrains/kotlin-frontend
+/compiler/testData/loadJava8/ @JetBrains/kotlin-frontend
+/compiler/testData/loadJava17/ @JetBrains/kotlin-frontend
+/compiler/testData/loadJavaPackageAnnotations/ @JetBrains/kotlin-frontend
+/compiler/testData/parseCodeFragment/ @JetBrains/kotlin-frontend
+/compiler/testData/psi/ @JetBrains/kotlin-frontend
+/compiler/testData/psiUtil/ @JetBrains/kotlin-frontend
+/compiler/testData/recursiveProcessor/ @JetBrains/kotlin-frontend
+/compiler/testData/resolve/ @JetBrains/kotlin-frontend
+/compiler/testData/resolveAnnotations/ @JetBrains/kotlin-frontend
+/compiler/testData/resolveConstructorDelegationCalls/ @JetBrains/kotlin-frontend
+/compiler/testData/resolvedCalls/ @JetBrains/kotlin-frontend
+/compiler/testData/serialization/builtinsSerializer/ @JetBrains/kotlin-frontend
+/compiler/testData/type/ @JetBrains/kotlin-frontend
+/compiler/testData/typeQualifierNickname/ @JetBrains/kotlin-frontend
+/compiler/testData/type-checker-test.kt @JetBrains/kotlin-frontend
+/compiler/testData/type-substitutor.kt @JetBrains/kotlin-frontend
+
+/compiler/tests-common-new/ @JetBrains/kotlin-frontend
+
+/core/compiler.common/ @JetBrains/kotlin-frontend
+/core/compiler.common.jvm/ @JetBrains/kotlin-frontend
+/core/compiler.common.js/ @JetBrains/kotlin-frontend
+/core/compiler.common.native/ @JetBrains/kotlin-frontend
+/core/compiler.common.wasm/ @JetBrains/kotlin-frontend
+/core/compiler.common.web/ @JetBrains/kotlin-frontend
+/core/descriptors/ @JetBrains/kotlin-frontend
+/core/deserialization/ @JetBrains/kotlin-frontend
+/core/deserialization.common/ @JetBrains/kotlin-frontend
+
+/dependencies/ @JetBrains/kotlin-build-infrastructure
+
+/generators/evaluate/ @JetBrains/kotlin-frontend
+/generators/protobuf/ @JetBrains/kotlin-build-infrastructure
+
+/gradle/ @JetBrains/kotlin-build-infrastructure
+
+/plugins/allopen/ @JetBrains/kotlin-frontend
+/plugins/android-extensions/ @JetBrains/kotlin-frontend
+/plugins/assign-plugin/ @JetBrains/kotlin-frontend
+/plugins/plugin-sandbox/ @JetBrains/kotlin-frontend
+/plugins/imports-dumper/ @JetBrains/kotlin-frontend
+/plugins/lombok/ @JetBrains/kotlin-frontend
+/plugins/noarg/ @JetBrains/kotlin-frontend
+/plugins/scripting/ @JetBrains/kotlin-frontend
+/plugins/plugins-interactions-testing/ @JetBrains/kotlin-frontend
+
+/prepare/ @JetBrains/kotlin-build-infrastructure
+/repo/ @JetBrains/kotlin-build-infrastructure
+/resources/ @JetBrains/kotlin-build-infrastructure
+/scripts/ @JetBrains/kotlin-build-infrastructure
+/test-instrumenter/ @JetBrains/kotlin-build-infrastructure
+/tests/ @JetBrains/kotlin-build-infrastructure
+
+# Singular files
+/.gitattributes @JetBrains/kotlin-build-infrastructure
+/.intellij.yaml @JetBrains/kotlin-build-infrastructure
+/ReadMe.md @JetBrains/kotlin-build-infrastructure
+/SECURITY.md @JetBrains/kotlin-build-infrastructure
+
+# Build files
+**.gradle.kts @JetBrains/kotlin-build-infrastructure
+**.gradle @JetBrains/kotlin-build-infrastructure
+/gradle.properties @JetBrains/kotlin-build-infrastructure
+
+/.space/CODEOWNERS @JetBrains/kotlin-build-infrastructure
+/.github/CODEOWNERS @JetBrains/kotlin-build-infrastructure
