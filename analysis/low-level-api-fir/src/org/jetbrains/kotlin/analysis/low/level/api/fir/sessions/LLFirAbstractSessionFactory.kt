@@ -153,7 +153,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
             }
 
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, provider.searchScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, module.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(
@@ -334,7 +334,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
 
             val context = SourceSessionCreationContext(
-                firProvider.searchScope, firProvider, dependencyProvider, syntheticFunctionInterfaceProvider,
+                module.contentScope,
+                firProvider,
+                dependencyProvider,
+                syntheticFunctionInterfaceProvider,
                 switchableExtensionDeclarationsSymbolProvider,
             )
 
@@ -396,7 +399,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val contentScope = (binaryModule as? KaLibraryModule)?.contentScope ?: firProvider.searchScope
+            val contentScope = binaryModule.contentScope
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
             val annotationsResolver = project.createAnnotationResolver(contentScope)

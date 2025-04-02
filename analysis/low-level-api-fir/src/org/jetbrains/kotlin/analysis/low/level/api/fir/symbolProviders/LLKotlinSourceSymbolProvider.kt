@@ -64,28 +64,26 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     session: LLFirSession,
     private val moduleComponents: LLFirModuleResolveComponents,
     extensionTool: LLFirResolveExtensionTool?,
-    searchScope: GlobalSearchScope,
     canContainKotlinPackage: Boolean,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
 ) : LLKotlinSymbolProvider(session) {
     constructor(
         session: LLFirSession,
         moduleComponents: LLFirModuleResolveComponents,
-        searchScope: GlobalSearchScope,
         canContainKotlinPackage: Boolean,
         declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
-    ) : this(session, moduleComponents, session.llResolveExtensionTool, searchScope, canContainKotlinPackage, declarationProviderFactory)
+    ) : this(session, moduleComponents, session.llResolveExtensionTool, canContainKotlinPackage, declarationProviderFactory)
 
     override val declarationProvider = KotlinCompositeDeclarationProvider.create(
         listOfNotNull(
-            declarationProviderFactory(searchScope),
+            declarationProviderFactory(moduleComponents.module.contentScope),
             extensionTool?.declarationProvider,
         )
     )
 
     override val packageProvider = KotlinCompositePackageProvider.create(
         listOfNotNull(
-            session.project.createPackageProvider(searchScope),
+            session.project.createPackageProvider(moduleComponents.module.contentScope),
             extensionTool?.packageProvider,
         )
     )

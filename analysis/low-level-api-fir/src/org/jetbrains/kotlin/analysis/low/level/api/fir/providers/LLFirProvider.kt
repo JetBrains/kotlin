@@ -9,7 +9,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptyKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
@@ -35,22 +34,9 @@ internal class LLFirProvider(
     disregardSelfDeclarations: Boolean = false,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
 ) : FirProvider() {
-    // TODO (KT-73290): Once the content scope refactoring is implemented, we can get rid of this property altogether and simply use the
-    //                  `KaModule`'s content scope. We'll also be able to get rid of `declarationProviderFactory`, as the declaration
-    //                  provider can then be built directly over the content scope.
-    val searchScope: GlobalSearchScope =
-        session.ktModule.contentScope.run {
-            val notShadowedScope = session.llResolveExtensionTool?.shadowedSearchScope?.let { GlobalSearchScope.notScope(it) }
-            if (notShadowedScope != null) {
-                this.intersectWith(notShadowedScope)
-            } else {
-                this
-            }
-        }
-
     override val symbolProvider: LLKotlinSymbolProvider =
         if (!disregardSelfDeclarations) {
-            LLKotlinSourceSymbolProvider(session, moduleComponents, searchScope, canContainKotlinPackage, declarationProviderFactory)
+            LLKotlinSourceSymbolProvider(session, moduleComponents, canContainKotlinPackage, declarationProviderFactory)
         } else {
             LLEmptyKotlinSymbolProvider(session)
         }
