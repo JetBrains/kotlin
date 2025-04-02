@@ -61,3 +61,5 @@ internal var IrClass.objectInstanceField: IrField? by irAttribute(copyByDefault 
  * in constructors that could be translated into simple ES6 class constructors.
  */
 internal var IrCall.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+
+var IrClass.syntheticPrimaryConstructor: IrConstructor? by irAttribute(copyByDefault = false)
