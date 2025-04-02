@@ -13899,6 +13899,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         }
 
         @Test
+        @TestMetadata("anonymousObjectAsDefaultParam.kt")
+        public void testAnonymousObjectAsDefaultParam() {
+          runTest("compiler/testData/codegen/box/defaultArguments/constructor/anonymousObjectAsDefaultParam.kt");
+        }
+
+        @Test
         @TestMetadata("defArgs1.kt")
         public void testDefArgs1() {
           runTest("compiler/testData/codegen/box/defaultArguments/constructor/defArgs1.kt");
