@@ -74,3 +74,8 @@ var IrClass.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = 
 var IrValueDeclaration.valueParameterForOldEnumConstructor: IrValueParameter? by irAttribute(copyByDefault = false)
 var IrEnumEntry.correspondingField: IrField? by irAttribute(copyByDefault = false)
 var IrField.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = false)
+
+/**
+ * If the object being lowered is nested inside an enum class, we want to also initialize the enum entries when initializing the object.
+ */
+var IrClass.initEntryInstancesFun: IrSimpleFunction? by irAttribute(copyByDefault = false)
