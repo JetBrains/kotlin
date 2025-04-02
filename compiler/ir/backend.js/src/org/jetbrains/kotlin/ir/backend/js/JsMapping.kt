@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
-    val originalInnerClassPrimaryConstructorByClass: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
     val classToSyntheticPrimaryConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
 
     val enumEntryToGetInstanceFun: DeclarationMapping<IrEnumEntry, IrSimpleFunction> by AttributeBasedMappingDelegate()

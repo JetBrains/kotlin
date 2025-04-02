@@ -28,9 +28,9 @@ private var IrClass.outerThisFieldSymbol: IrField? by irAttribute(copyByDefault 
 
 private var IrConstructor.innerClassConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
-class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory) : InnerClassesSupport {
-    private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
+private var IrClass.originalInnerClassPrimaryConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
+class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory) : InnerClassesSupport {
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) compilationException(
             "Class is not inner",
@@ -66,7 +66,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }.also {
             if (innerClassConstructor.isPrimary) {
-                originalInnerClassPrimaryConstructorByClass[innerClass] = innerClassConstructor
+                innerClass.originalInnerClassPrimaryConstructor = innerClassConstructor
             }
         }
     }
@@ -74,7 +74,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
     override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor? {
         assert(innerClass.isInner) { "Class is not inner: $innerClass" }
 
-        return originalInnerClassPrimaryConstructorByClass[innerClass]
+        return innerClass.originalInnerClassPrimaryConstructor
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
