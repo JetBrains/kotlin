@@ -49,9 +49,9 @@ class ProjectIsolationIT : KGPBaseTest() {
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_83)
     @AndroidGradlePluginTests
     fun testProjectIsolationAndroid(
-       gradleVersion: GradleVersion,
-       agpVersion: String,
-       jdkVersion: JdkVersions.ProvidedJdk
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "AndroidIncrementalMultiModule",
@@ -68,7 +68,7 @@ class ProjectIsolationIT : KGPBaseTest() {
     @TestMetadata("kapt2/javacIsLoadedOnce")
     @GradleTest
     fun testProjectIsolationKapt(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project("kapt2/javacIsLoadedOnce", gradleVersion) {
             build("assemble")
@@ -83,7 +83,7 @@ class ProjectIsolationIT : KGPBaseTest() {
     fun testProjectIsolationAndroidWithKapt(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             projectName = "kapt2/android-databinding",
