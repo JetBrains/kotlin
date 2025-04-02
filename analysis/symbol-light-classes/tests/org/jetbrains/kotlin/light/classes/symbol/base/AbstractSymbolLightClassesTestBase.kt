@@ -200,8 +200,8 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    private fun javaPath() = getTestDataSibling(EXTENSIONS.JAVA)
-    private fun currentResultPath() = getTestDataSibling(currentExtension)
+    private fun javaPath() = getTestOutputFile(EXTENSIONS.JAVA)
+    private fun currentResultPath() = getTestOutputFile(currentExtension)
 
     protected abstract val currentExtension: String
     protected abstract val isTestAgainstCompiledCode: Boolean

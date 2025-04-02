@@ -57,7 +57,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApi
                 result.isFailure
             }
 
-            val expectedFile = getTestDataSibling(".astBasedAnnotations.txt").toFile()
+            val expectedFile = getTestOutputFile(".astBasedAnnotations.txt").toFile()
             if (failedAnnotations.isEmpty()) {
                 testServices.assertions.assertFileDoesntExist(expectedFile) {
                     "No failed annotations, but ${expectedFile.name} exists"

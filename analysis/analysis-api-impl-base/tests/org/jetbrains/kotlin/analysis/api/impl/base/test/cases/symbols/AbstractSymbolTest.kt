@@ -248,8 +248,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         if (!disablePsiBasedLogic) {
             assertions.assertEqualsToTestDataFileSibling(actual = actual, extension = extension)
         } else {
-            val expectedFile = getTestDataSibling(extension).toFile()
-            val nonPsiExpectedFile = getTestDataSibling("nonPsi.$extension").toFile()
+            val expectedFile = getTestOutputFile(extension).toFile()
+            val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()
             when {
                 assertions.doesEqualToFile(expectedFile, actual) -> {
                     if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
@@ -309,7 +309,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             }
 
             val actual = restored.renderAsDeclarations()
-            val expectedFile = getTestDataSibling().toFile()
+            val expectedFile = getTestOutputFile().toFile()
             if (!testServices.assertions.doesEqualToFile(expectedFile, actual)) {
                 error("Restored content is not the same. Actual:\n$actual")
             }

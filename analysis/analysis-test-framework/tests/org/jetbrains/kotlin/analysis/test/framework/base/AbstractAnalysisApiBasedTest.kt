@@ -333,7 +333,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      *
      * @see assertEqualsToTestDataFileSibling
      */
-    protected fun getTestDataSibling(
+    protected fun getTestOutputFile(
         extension: String = "txt",
         subdirectoryName: String? = null,
         testPrefixes: List<String> = configurator.testPrefixes,
