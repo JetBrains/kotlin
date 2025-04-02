@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
  * with cyclic dependencies.
  */
 abstract class AbstractLLFirSessionInvalidationTest : AbstractSessionInvalidationTest<LLFirSession>() {
-    override val resultFileSuffix: String? get() = null
+    override val testOutputSubdirectoryName: String get() = "firSession"
 
     override fun getSessions(ktTestModule: KtTestModule): List<TestSession<LLFirSession>> {
         val kaModule = ktTestModule.ktModule

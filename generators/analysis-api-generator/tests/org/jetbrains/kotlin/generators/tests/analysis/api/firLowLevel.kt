@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.AbstractResolveToFirSymbolTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
@@ -509,27 +510,27 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     testGroup(testsRoot = "analysis/low-level-api-fir/tests", testDataRoot = "analysis/analysis-api/testData") {
         // Session invalidation test data is shared with analysis session invalidation tests.
         testClass<AbstractModuleStateModificationLLFirSessionInvalidationTest> {
-            model("sessions/sessionInvalidation")
+            model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
         }
 
         testClass<AbstractModuleOutOfBlockModificationLLFirSessionInvalidationTest> {
-            model("sessions/sessionInvalidation")
+            model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
         }
 
         testClass<AbstractGlobalModuleStateModificationLLFirSessionInvalidationTest> {
-            model("sessions/sessionInvalidation")
+            model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
         }
 
         testClass<AbstractGlobalSourceModuleStateModificationLLFirSessionInvalidationTest> {
-            model("sessions/sessionInvalidation")
+            model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
         }
 
         testClass<AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidationTest> {
-            model("sessions/sessionInvalidation")
+            model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
         }
 
         testClass<AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest> {
-            model("sessions/sessionInvalidation")
+            model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
         }
     }
 }

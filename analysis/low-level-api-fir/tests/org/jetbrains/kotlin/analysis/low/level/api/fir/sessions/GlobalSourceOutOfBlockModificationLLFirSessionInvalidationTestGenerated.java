@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,210 +21,550 @@ import java.util.regex.Pattern;
 public class GlobalSourceOutOfBlockModificationLLFirSessionInvalidationTestGenerated extends AbstractGlobalSourceOutOfBlockModificationLLFirSessionInvalidationTest {
   @Test
   public void testAllFilesPresentInSessionInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
   }
 
-  @Test
-  @TestMetadata("binaryTreeAdditionalEdge.kt")
-  public void testBinaryTreeAdditionalEdge() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeAdditionalEdge.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeAdditionalEdge")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeAdditionalEdge {
+    @Test
+    public void testAllFilesPresentInBinaryTreeAdditionalEdge() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeAdditionalEdge"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeAdditionalEdge.kt")
+    public void testBinaryTreeAdditionalEdge() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeAdditionalEdge/binaryTreeAdditionalEdge.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateA.kt")
-  public void testBinaryTreeInvalidateA() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateA.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateA")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateA {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateA() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateA"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateA.kt")
+    public void testBinaryTreeInvalidateA() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateA/binaryTreeInvalidateA.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateCD.kt")
-  public void testBinaryTreeInvalidateCD() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateCD.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateCD")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateCD {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateCD() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateCD"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateCD.kt")
+    public void testBinaryTreeInvalidateCD() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateCD/binaryTreeInvalidateCD.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateF.kt")
-  public void testBinaryTreeInvalidateF() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateF.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateF")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateF {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateF() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateF"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateF.kt")
+    public void testBinaryTreeInvalidateF() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateF/binaryTreeInvalidateF.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateL1.kt")
-  public void testBinaryTreeInvalidateL1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateL1 {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateL1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateL1.kt")
+    public void testBinaryTreeInvalidateL1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL1/binaryTreeInvalidateL1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateL2.kt")
-  public void testBinaryTreeInvalidateL2() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL2.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL2")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateL2 {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateL2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL2"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateL2.kt")
+    public void testBinaryTreeInvalidateL2() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateL2/binaryTreeInvalidateL2.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateLibrarySourceL1.kt")
-  public void testBinaryTreeInvalidateLibrarySourceL1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateLibrarySourceL1 {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateLibrarySourceL1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateLibrarySourceL1.kt")
+    public void testBinaryTreeInvalidateLibrarySourceL1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL1/binaryTreeInvalidateLibrarySourceL1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateLibrarySourceL2.kt")
-  public void testBinaryTreeInvalidateLibrarySourceL2() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL2.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL2")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateLibrarySourceL2 {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateLibrarySourceL2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL2"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateLibrarySourceL2.kt")
+    public void testBinaryTreeInvalidateLibrarySourceL2() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateLibrarySourceL2/binaryTreeInvalidateLibrarySourceL2.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("binaryTreeInvalidateNone.kt")
-  public void testBinaryTreeInvalidateNone() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateNone.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateNone")
+  @TestDataPath("$PROJECT_ROOT")
+  public class BinaryTreeInvalidateNone {
+    @Test
+    public void testAllFilesPresentInBinaryTreeInvalidateNone() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateNone"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("binaryTreeInvalidateNone.kt")
+    public void testBinaryTreeInvalidateNone() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/binaryTreeInvalidateNone/binaryTreeInvalidateNone.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentInvalidateFragment1.kt")
-  public void testCodeFragmentInvalidateFragment1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentInvalidateFragment1 {
+    @Test
+    public void testAllFilesPresentInCodeFragmentInvalidateFragment1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentInvalidateFragment1.kt")
+    public void testCodeFragmentInvalidateFragment1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment1/codeFragmentInvalidateFragment1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentInvalidateFragment2.kt")
-  public void testCodeFragmentInvalidateFragment2() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment2.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment2")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentInvalidateFragment2 {
+    @Test
+    public void testAllFilesPresentInCodeFragmentInvalidateFragment2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment2"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentInvalidateFragment2.kt")
+    public void testCodeFragmentInvalidateFragment2() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateFragment2/codeFragmentInvalidateFragment2.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentInvalidateLibrary.kt")
-  public void testCodeFragmentInvalidateLibrary() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateLibrary.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateLibrary")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentInvalidateLibrary {
+    @Test
+    public void testAllFilesPresentInCodeFragmentInvalidateLibrary() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentInvalidateLibrary.kt")
+    public void testCodeFragmentInvalidateLibrary() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateLibrary/codeFragmentInvalidateLibrary.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentInvalidateNone.kt")
-  public void testCodeFragmentInvalidateNone() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateNone.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateNone")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentInvalidateNone {
+    @Test
+    public void testAllFilesPresentInCodeFragmentInvalidateNone() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateNone"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentInvalidateNone.kt")
+    public void testCodeFragmentInvalidateNone() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateNone/codeFragmentInvalidateNone.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentInvalidateSourceModule.kt")
-  public void testCodeFragmentInvalidateSourceModule() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateSourceModule.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateSourceModule")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentInvalidateSourceModule {
+    @Test
+    public void testAllFilesPresentInCodeFragmentInvalidateSourceModule() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateSourceModule"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentInvalidateSourceModule.kt")
+    public void testCodeFragmentInvalidateSourceModule() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentInvalidateSourceModule/codeFragmentInvalidateSourceModule.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentWithContextModuleDependent.kt")
-  public void testCodeFragmentWithContextModuleDependent() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithContextModuleDependent.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithContextModuleDependent")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentWithContextModuleDependent {
+    @Test
+    public void testAllFilesPresentInCodeFragmentWithContextModuleDependent() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithContextModuleDependent"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentWithContextModuleDependent.kt")
+    public void testCodeFragmentWithContextModuleDependent() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithContextModuleDependent/codeFragmentWithContextModuleDependent.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentWithUnrelatedModule.kt")
-  public void testCodeFragmentWithUnrelatedModule() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModule.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModule")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentWithUnrelatedModule {
+    @Test
+    public void testAllFilesPresentInCodeFragmentWithUnrelatedModule() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModule"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentWithUnrelatedModule.kt")
+    public void testCodeFragmentWithUnrelatedModule() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModule/codeFragmentWithUnrelatedModule.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("codeFragmentWithUnrelatedModuleAndLibrary.kt")
-  public void testCodeFragmentWithUnrelatedModuleAndLibrary() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModuleAndLibrary.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModuleAndLibrary")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragmentWithUnrelatedModuleAndLibrary {
+    @Test
+    public void testAllFilesPresentInCodeFragmentWithUnrelatedModuleAndLibrary() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModuleAndLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("codeFragmentWithUnrelatedModuleAndLibrary.kt")
+    public void testCodeFragmentWithUnrelatedModuleAndLibrary() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/codeFragmentWithUnrelatedModuleAndLibrary/codeFragmentWithUnrelatedModuleAndLibrary.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("fallbackDependenciesInvalidateLibrary1.kt")
-  public void testFallbackDependenciesInvalidateLibrary1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FallbackDependenciesInvalidateLibrary1 {
+    @Test
+    public void testAllFilesPresentInFallbackDependenciesInvalidateLibrary1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("fallbackDependenciesInvalidateLibrary1.kt")
+    public void testFallbackDependenciesInvalidateLibrary1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1/fallbackDependenciesInvalidateLibrary1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("fallbackDependenciesInvalidateLibrary1FallbackDependencies.kt")
-  public void testFallbackDependenciesInvalidateLibrary1FallbackDependencies() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1FallbackDependencies.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1FallbackDependencies")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FallbackDependenciesInvalidateLibrary1FallbackDependencies {
+    @Test
+    public void testAllFilesPresentInFallbackDependenciesInvalidateLibrary1FallbackDependencies() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1FallbackDependencies"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("fallbackDependenciesInvalidateLibrary1FallbackDependencies.kt")
+    public void testFallbackDependenciesInvalidateLibrary1FallbackDependencies() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrary1FallbackDependencies/fallbackDependenciesInvalidateLibrary1FallbackDependencies.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("fallbackDependenciesInvalidateLibrarySource.kt")
-  public void testFallbackDependenciesInvalidateLibrarySource() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrarySource.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrarySource")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FallbackDependenciesInvalidateLibrarySource {
+    @Test
+    public void testAllFilesPresentInFallbackDependenciesInvalidateLibrarySource() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrarySource"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("fallbackDependenciesInvalidateLibrarySource.kt")
+    public void testFallbackDependenciesInvalidateLibrarySource() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateLibrarySource/fallbackDependenciesInvalidateLibrarySource.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("fallbackDependenciesInvalidateSourceModule.kt")
-  public void testFallbackDependenciesInvalidateSourceModule() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateSourceModule.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateSourceModule")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FallbackDependenciesInvalidateSourceModule {
+    @Test
+    public void testAllFilesPresentInFallbackDependenciesInvalidateSourceModule() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateSourceModule"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("fallbackDependenciesInvalidateSourceModule.kt")
+    public void testFallbackDependenciesInvalidateSourceModule() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateSourceModule/fallbackDependenciesInvalidateSourceModule.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("fallbackDependenciesInvalidateUnrelatedLibrary.kt")
-  public void testFallbackDependenciesInvalidateUnrelatedLibrary() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateUnrelatedLibrary.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateUnrelatedLibrary")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FallbackDependenciesInvalidateUnrelatedLibrary {
+    @Test
+    public void testAllFilesPresentInFallbackDependenciesInvalidateUnrelatedLibrary() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateUnrelatedLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("fallbackDependenciesInvalidateUnrelatedLibrary.kt")
+    public void testFallbackDependenciesInvalidateUnrelatedLibrary() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/fallbackDependenciesInvalidateUnrelatedLibrary/fallbackDependenciesInvalidateUnrelatedLibrary.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("linearInvalidateC.kt")
-  public void testLinearInvalidateC() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateC.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateC")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LinearInvalidateC {
+    @Test
+    public void testAllFilesPresentInLinearInvalidateC() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateC"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("linearInvalidateC.kt")
+    public void testLinearInvalidateC() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateC/linearInvalidateC.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("linearInvalidateL1.kt")
-  public void testLinearInvalidateL1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateL1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateL1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LinearInvalidateL1 {
+    @Test
+    public void testAllFilesPresentInLinearInvalidateL1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateL1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("linearInvalidateL1.kt")
+    public void testLinearInvalidateL1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateL1/linearInvalidateL1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("linearInvalidateLibrarySourceL1.kt")
-  public void testLinearInvalidateLibrarySourceL1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateLibrarySourceL1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateLibrarySourceL1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LinearInvalidateLibrarySourceL1 {
+    @Test
+    public void testAllFilesPresentInLinearInvalidateLibrarySourceL1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateLibrarySourceL1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("linearInvalidateLibrarySourceL1.kt")
+    public void testLinearInvalidateLibrarySourceL1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/linearInvalidateLibrarySourceL1/linearInvalidateLibrarySourceL1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateBC.kt")
-  public void testRhombusInvalidateBC() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateBC.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateBC")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateBC {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateBC() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateBC"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateBC.kt")
+    public void testRhombusInvalidateBC() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateBC/rhombusInvalidateBC.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateCD.kt")
-  public void testRhombusInvalidateCD() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateCD.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateCD")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateCD {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateCD() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateCD"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateCD.kt")
+    public void testRhombusInvalidateCD() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateCD/rhombusInvalidateCD.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateD.kt")
-  public void testRhombusInvalidateD() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateD.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateD")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateD {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateD() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateD"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateD.kt")
+    public void testRhombusInvalidateD() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateD/rhombusInvalidateD.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateL1.kt")
-  public void testRhombusInvalidateL1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateL1 {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateL1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateL1.kt")
+    public void testRhombusInvalidateL1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL1/rhombusInvalidateL1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateL2.kt")
-  public void testRhombusInvalidateL2() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL2.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL2")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateL2 {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateL2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL2"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateL2.kt")
+    public void testRhombusInvalidateL2() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateL2/rhombusInvalidateL2.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateLibrarySourceL1.kt")
-  public void testRhombusInvalidateLibrarySourceL1() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL1.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateLibrarySourceL1 {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateLibrarySourceL1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL1"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateLibrarySourceL1.kt")
+    public void testRhombusInvalidateLibrarySourceL1() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL1/rhombusInvalidateLibrarySourceL1.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("rhombusInvalidateLibrarySourceL2.kt")
-  public void testRhombusInvalidateLibrarySourceL2() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL2.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL2")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RhombusInvalidateLibrarySourceL2 {
+    @Test
+    public void testAllFilesPresentInRhombusInvalidateLibrarySourceL2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL2"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("rhombusInvalidateLibrarySourceL2.kt")
+    public void testRhombusInvalidateLibrarySourceL2() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/rhombusInvalidateLibrarySourceL2/rhombusInvalidateLibrarySourceL2.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("transitiveCodeFragment.kt")
-  public void testTransitiveCodeFragment() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/transitiveCodeFragment.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/transitiveCodeFragment")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TransitiveCodeFragment {
+    @Test
+    public void testAllFilesPresentInTransitiveCodeFragment() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/transitiveCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("transitiveCodeFragment.kt")
+    public void testTransitiveCodeFragment() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/transitiveCodeFragment/transitiveCodeFragment.kt");
+    }
   }
 
-  @Test
-  @TestMetadata("unrelatedCodeFragment.kt")
-  public void testUnrelatedCodeFragment() {
-    runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/unrelatedCodeFragment.kt");
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/sessions/sessionInvalidation/unrelatedCodeFragment")
+  @TestDataPath("$PROJECT_ROOT")
+  public class UnrelatedCodeFragment {
+    @Test
+    public void testAllFilesPresentInUnrelatedCodeFragment() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/sessionInvalidation/unrelatedCodeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true, "firSession", "analysisSession");
+    }
+
+    @Test
+    @TestMetadata("unrelatedCodeFragment.kt")
+    public void testUnrelatedCodeFragment() {
+      runTest("analysis/analysis-api/testData/sessions/sessionInvalidation/unrelatedCodeFragment/unrelatedCodeFragment.kt");
+    }
   }
 }

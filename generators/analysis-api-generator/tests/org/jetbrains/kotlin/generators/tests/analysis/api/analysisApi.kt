@@ -321,27 +321,27 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source) and analysisApiModeIs(AnalysisApiMode.Ide),
         ) {
             test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
-                model("sessionInvalidation")
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
 
             test<AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest> {
-                model("sessionInvalidation")
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
 
             test<AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest> {
-                model("sessionInvalidation")
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
 
             test<AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest> {
-                model("sessionInvalidation")
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
 
             test<AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest> {
-                model("sessionInvalidation")
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
 
             test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
-                model("sessionInvalidation")
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
         }
     }

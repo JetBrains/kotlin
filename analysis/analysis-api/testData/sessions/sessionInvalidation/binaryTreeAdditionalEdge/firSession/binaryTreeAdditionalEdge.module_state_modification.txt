@@ -1,0 +1,6 @@
+Invalidated sessions:
+A
+B
+C
+E
+F

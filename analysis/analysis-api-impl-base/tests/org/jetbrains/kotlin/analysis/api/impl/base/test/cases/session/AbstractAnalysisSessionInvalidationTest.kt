@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KaSession>() {
-    override val resultFileSuffix: String get() = "analysis_session"
+    override val testOutputSubdirectoryName: String get() = "analysisSession"
 
     override fun getSessions(ktTestModule: KtTestModule): List<TestSession<KaSession>> {
         val sessionProvider = KaSessionProvider.getInstance(ktTestModule.ktModule.project)
