@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -41,7 +40,7 @@ internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
  * In case of compiler caches, this means that it is not accessible as Lazy IR
  * and we have to explicitly add an external declaration.
  */
-internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFactory) {
+internal class CachesAbiSupport(private val irFactory: IrFactory) {
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
         return irClass::outerThisAccessor.getOrSetIfNull {

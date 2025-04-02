@@ -44,9 +44,6 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector
 
-    // TODO(KT-73155): Pull this down to CommonBackendContext
-    val mapping: Mapping
-
     fun remapMultiFieldValueClassStructure(
         oldFunction: IrFunction,
         newFunction: IrFunction,

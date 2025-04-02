@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.PropertyLazyInitialization
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
@@ -64,8 +63,6 @@ class WasmBackendContext(
         )
     }
 
-    override val mapping = JsMapping()
-
     class CrossFileContext {
         var mainFunctionWrapper: IrSimpleFunction? = null
         val closureCallExports = mutableMapOf<String, IrSimpleFunction>()
@@ -87,7 +84,7 @@ class WasmBackendContext(
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (configuration.wasmTarget == WasmTarget.JS) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
-    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(irFactory)
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
