@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
 
-    val suspendArityStore: DeclarationMapping<IrClass, Collection<IrSimpleFunction>> by AttributeBasedMappingDelegate()
-
     val objectsWithPureInitialization: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
 
     // Wasm mappings

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AbstractSuspendFunctionsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -505,7 +506,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateSuspendArity(): JsArrayLiteral? {
-        val invokeFunctions = backendContext.mapping.suspendArityStore[irClass] ?: return null
+        val invokeFunctions = irClass.suspendArityStore ?: return null
         val arity = invokeFunctions
             .map { it.nonDispatchParameters.size }
             .distinct()
