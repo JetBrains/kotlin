@@ -522,6 +522,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
+        if (sanitizer != null)
+            append("-sanitizer${sanitizer.name}")
+        if (checkStateAtExternalCalls) {
+            append("-check_state_at_external_calls")
+        }
     }
 
     private val systemCacheFlavorString = buildString {
@@ -571,9 +576,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
-        sanitizer != null -> "with sanitizers enabled"
         runtimeLogsEnabled -> "with runtime logs"
-        checkStateAtExternalCalls -> "with external calls state checker"
         else -> null
     }
 
