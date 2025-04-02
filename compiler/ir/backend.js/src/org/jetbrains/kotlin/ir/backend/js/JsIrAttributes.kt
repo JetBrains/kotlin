@@ -66,3 +66,4 @@ internal var IrCall.originalConstructor: IrConstructor? by irAttribute(copyByDef
 var IrClass.syntheticPrimaryConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
 var IrEnumEntry.getInstanceFun: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrEnumEntry.instanceField: IrField? by irAttribute(copyByDefault = false)
