@@ -155,11 +155,15 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         if (extension.isInfix && !isInfix) return false
         if (extension.typeParameterSymbols.size != typeParameterSymbols.size) return false
 
+        val extensionHasStableNames = extension.resolvedStatus.hasStableParameterNames
+        val memberHasStableNames = resolvedStatus.hasStableParameterNames
+
         for (i in extension.valueParameterSymbols.indices) {
             val extensionParam = extension.valueParameterSymbols[i]
             val memberParam = valueParameterSymbols[i]
 
             if (extensionParam.hasDefaultValue && !memberParam.hasDefaultValue) return false
+            if (extensionHasStableNames && (!memberHasStableNames || extensionParam.name != memberParam.name)) return false
         }
 
         val helper = context.session.declarationOverloadabilityHelper

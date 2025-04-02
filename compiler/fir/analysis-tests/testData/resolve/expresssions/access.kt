@@ -17,7 +17,7 @@ class Bar {
     fun bar(): Bar = this
 
     // NB: unused
-    operator fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>plus<!>(bar: Bar): String {
+    operator fun String.plus(bar: Bar): String {
         return ""
     }
 
