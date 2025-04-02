@@ -24,7 +24,7 @@ package a
 
 actual annotation class A(actual val x: Int)
 
-// MODULE: common2
+// MODULE: common2(common)
 // FILE: common2.kt
 
 package usage

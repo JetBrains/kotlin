@@ -2,6 +2,7 @@
 // ISSUE: KT-57250
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalMultiplatform
+// IGNORE_HMPP: JVM_IR
 
 // MODULE: common
 // FILE: common.kt
@@ -27,7 +28,7 @@ actual annotation class WithActual(actual val x: Int)
 
 actual fun k() = "K"
 
-// MODULE: common2
+// MODULE: common2(common)
 // FILE: common2.kt
 
 @WithoutActual("OK")

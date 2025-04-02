@@ -1,6 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// DONT_WARN_ON_ERROR_SUPPRESSION
 
 // MODULE: lib1
 // FILE: Jnno.java
@@ -73,6 +74,7 @@ expect annotation class Anno(
     // val e: E = E.E1,
     // TODO: val a: A = A("1"),
     val stra: Array<String> = ["bu", "zz"],
+    @Suppress("CLASS_LITERAL_LHS_NOT_A_CLASS") // error appears only during metadata klib compilation
     val ka: Array<KClass<*>> = [Double::class, String::class, LongArray::class, Array<Array<Array<Int>>>::class, Unit::class]
     // val ea: Array<E> = [E.E2, E.E3],
     // TODO: val aa: Array<A> = [A("2"), A("3")]

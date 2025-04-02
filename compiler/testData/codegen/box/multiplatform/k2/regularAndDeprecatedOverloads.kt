@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_HMPP: JVM_IR
 // ISSUE: KT-69201
 // Notes: Ignore JVM backend because of "Platform declaration clash".
 

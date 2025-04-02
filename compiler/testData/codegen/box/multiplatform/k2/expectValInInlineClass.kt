@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_HMPP: JVM_IR
 // IGNORE_LIGHT_TREE
 
 // MODULE: common

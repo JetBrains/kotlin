@@ -5,8 +5,8 @@
 // MODULE: common
 // FILE: common.kt
 
-@file:JvmMultifileClass
-@file:JvmName("Test")
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("Test")
 package test
 
 expect class Foo {
