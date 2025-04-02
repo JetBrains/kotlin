@@ -149,7 +149,7 @@ internal constructor(
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = project.archivesName.orNull,
-        libraryTarget = KotlinWebpackOutput.Target.UMD,
+        libraryTarget = "umd",
         clean = true,
     )
 
