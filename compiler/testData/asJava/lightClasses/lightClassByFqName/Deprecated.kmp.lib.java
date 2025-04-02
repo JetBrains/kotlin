@@ -1,5 +1,11 @@
 @kotlin.Deprecated()
 public final class DeprecatedClass /* foo.DeprecatedClass*/ {
+  @org.jetbrains.annotations.NotNull()
+  private @org.jetbrains.annotations.NotNull() java.lang.String deprecatedAccessors;
+
+  @org.jetbrains.annotations.NotNull()
+  private @org.jetbrains.annotations.NotNull() java.lang.String deprecatedErrorAccessors;
+
   private boolean deprecatedVariable;
 
   private int deprecatedErrorVariable;

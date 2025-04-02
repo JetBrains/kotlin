@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: direct
 // FILE: Direct.kt
@@ -39,7 +39,7 @@ fun isCast(s: Same, d: Direct) {
     }
 
     if (d.annotatedConstructorProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>d.annotatedConstructorProperty<!>.length
+        d.annotatedConstructorProperty.length
     }
 
     if (s.finalClassProperty is String) {
@@ -55,7 +55,7 @@ fun isCast(s: Same, d: Direct) {
     }
 
     if (d.annotatedClassProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
+        d.annotatedClassProperty.length
     }
 }
 
@@ -70,7 +70,7 @@ fun asCast(s: Same, d: Direct) {
     s.annotatedConstructorProperty.length
 
     d.annotatedConstructorProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>d.annotatedConstructorProperty<!>.length
+    d.annotatedConstructorProperty.length
 
     s.finalClassProperty as String
     s.finalClassProperty.length
@@ -82,5 +82,5 @@ fun asCast(s: Same, d: Direct) {
     s.annotatedClassProperty.length
 
     d.annotatedClassProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
+    d.annotatedClassProperty.length
 }

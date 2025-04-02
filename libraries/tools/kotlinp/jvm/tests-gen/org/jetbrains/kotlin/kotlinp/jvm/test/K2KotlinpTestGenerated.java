@@ -157,6 +157,12 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
   }
 
   @Test
+  @TestMetadata("PropertiesK2.kt")
+  public void testPropertiesK2() {
+    runTest("libraries/tools/kotlinp/jvm/testData/PropertiesK2.kt");
+  }
+
+  @Test
   @TestMetadata("scriptSimple.kts")
   public void testScriptSimple() {
     runTest("libraries/tools/kotlinp/jvm/testData/scriptSimple.kts");

@@ -1,9 +1,9 @@
 MODULE main
-	CLASS test/Anno.class
-		CLASS METADATA
-			PROPERTY uglyJvmName()Ljava/lang/String;
+	CLASS test/BoxKt.class
+		PACKAGE METADATA
+			PROPERTY getO()Ljava/lang/String;
 				Property: class.metadata.property.getterModifiers
 					K1
-						public final
-					K2
 						public final /* non-default */
+					K2
+						public final

@@ -1330,12 +1330,11 @@ class FirElementSerializer private constructor(
 
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val hasAnnotations = accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor) ||
-                accessor.valueParameters.any { setterParameter ->
-                    setterParameter.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(setterParameter)
-                }
+        val hasSetterParameterAnnotations = accessor.valueParameters.any { setterParameter ->
+            setterParameter.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(setterParameter)
+        }
         return accessor is FirDefaultPropertyAccessor &&
-                !hasAnnotations &&
+                !hasSetterParameterAnnotations &&
                 accessor.visibility == property.visibility &&
                 !accessor.isExternal &&
                 !accessor.isInline

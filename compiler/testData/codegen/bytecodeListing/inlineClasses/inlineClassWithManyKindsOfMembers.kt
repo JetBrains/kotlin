@@ -1,5 +1,4 @@
 // LANGUAGE: +InlineClasses +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// JVM_ABI_K1_K2_DIFF: KT-63843
 
 interface IFoo {
     fun overridingFun()

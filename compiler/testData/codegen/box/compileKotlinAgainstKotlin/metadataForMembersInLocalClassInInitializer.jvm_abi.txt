@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS A$k$1.class
+		CLASS METADATA
+			PROPERTY jvmGetK()Ljava/lang/String;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final

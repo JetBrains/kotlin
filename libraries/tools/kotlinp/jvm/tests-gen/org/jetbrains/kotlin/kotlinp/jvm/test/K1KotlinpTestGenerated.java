@@ -157,6 +157,12 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   }
 
   @Test
+  @TestMetadata("PropertiesK2.kt")
+  public void testPropertiesK2() {
+    runTest("libraries/tools/kotlinp/jvm/testData/PropertiesK2.kt");
+  }
+
+  @Test
   @TestMetadata("SimpleClass.kt")
   public void testSimpleClass() {
     runTest("libraries/tools/kotlinp/jvm/testData/SimpleClass.kt");

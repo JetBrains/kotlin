@@ -52,14 +52,13 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
-            VALUE_PARAMETER_LIST
         PROPERTY[fqName=Foo.withDefaultSetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=withDefaultSetter]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -67,20 +66,13 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
-            VALUE_PARAMETER_LIST
-              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=Foo.both, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=both]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -88,25 +80,17 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
-            VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
-            VALUE_PARAMETER_LIST
-              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=String]

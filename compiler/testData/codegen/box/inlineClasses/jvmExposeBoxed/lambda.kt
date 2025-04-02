@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
 // TARGET_BACKEND: JVM_IR
+// JVM_ABI_K1_K2_DIFF: KT-69075
 //todo: check with lightweightlambdas and without it
 
 // FILE: IC.kt

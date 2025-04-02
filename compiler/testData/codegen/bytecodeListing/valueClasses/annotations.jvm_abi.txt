@@ -1,45 +1,7 @@
 MODULE main
-	CLASS A.class
-		CLASS METADATA
-			PROPERTY getX()I
-				Property: class.metadata.property.getterModifiers
-					K1
-						public final
-					K2
-						public final /* non-default */
-			PROPERTY getY()I
-				Property: class.metadata.property.getterModifiers
-					K1
-						public final
-					K2
-						public final /* non-default */
-	CLASS B.class
-		CLASS METADATA
-			PROPERTY getY()LA;
-				Property: class.metadata.property.getterModifiers
-					K1
-						public final
-					K2
-						public final /* non-default */
 	CLASS C.class
 		CLASS METADATA
-			PROPERTY getX()LA;
-				Property: class.metadata.property.setterModifiers
-					K1
-						public final
-					K2
-						public final /* non-default */
-				Property: class.metadata.property.setterValueParameter
-					K1
-						---
-					K2
-						value: A
 			PROPERTY getY()LA;
-				Property: class.metadata.property.getterModifiers
-					K1
-						public final
-					K2
-						public final /* non-default */
 				Property: class.metadata.property.setterModifiers
 					K1
 						public final

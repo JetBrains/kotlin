@@ -19,7 +19,7 @@ package {
   @field:Anno
   public final var y: kotlin/Int
     @Anno
-    public final /* non-default */ get
+    public final get
     public final /* non-default */ set(@Anno value: kotlin/Int)
 
   // module name: test-module

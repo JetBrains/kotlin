@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Foo$Companion.class
+		CLASS METADATA
+			PROPERTY getFooProp()Ljava/lang/String;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final

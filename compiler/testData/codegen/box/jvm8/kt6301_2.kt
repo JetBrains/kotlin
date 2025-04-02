@@ -1,6 +1,7 @@
 // LANGUAGE: +JvmStaticInInterface
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-69075
 // JVM_TARGET: 1.8
 // FILE: test.kt
 fun box(): String {

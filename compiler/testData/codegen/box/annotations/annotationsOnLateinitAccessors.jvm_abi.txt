@@ -1,15 +1,15 @@
 MODULE main
-	CLASS Anno.class
+	CLASS LateinitProperties.class
 		CLASS METADATA
-			PROPERTY k()Ljava/lang/String;
+			PROPERTY getX0()Ljava/lang/String;
 				Property: class.metadata.property.getterModifiers
 					K1
-						public final
-					K2
 						public final /* non-default */
-			PROPERTY o()Ljava/lang/String;
+					K2
+						public final
+			PROPERTY x1
 				Property: class.metadata.property.getterModifiers
 					K1
-						public final
+						private final /* non-default */
 					K2
-						public final /* non-default */
+						private final

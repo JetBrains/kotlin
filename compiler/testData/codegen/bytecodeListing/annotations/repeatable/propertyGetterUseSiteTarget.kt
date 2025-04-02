@@ -1,5 +1,6 @@
 // LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
+// JVM_ABI_K1_K2_DIFF: KT-69075
 // WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8

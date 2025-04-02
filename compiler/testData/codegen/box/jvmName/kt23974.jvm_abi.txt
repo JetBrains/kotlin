@@ -1,9 +1,9 @@
 MODULE main
-	CLASS Z.class
-		CLASS METADATA
-			PROPERTY getX()I
+	CLASS Kt23974Kt.class
+		PACKAGE METADATA
+			PROPERTY bar()Ljava/lang/String;
 				Property: class.metadata.property.getterModifiers
 					K1
-						public final
-					K2
 						public final /* non-default */
+					K2
+						public final

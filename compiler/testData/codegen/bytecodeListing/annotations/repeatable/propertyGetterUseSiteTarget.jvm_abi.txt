@@ -1,0 +1,9 @@
+MODULE main
+	CLASS PropertyGetterUseSiteTargetKt.class
+		PACKAGE METADATA
+			PROPERTY getAb()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
