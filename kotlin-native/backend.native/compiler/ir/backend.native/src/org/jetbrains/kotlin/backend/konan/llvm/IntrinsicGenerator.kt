@@ -559,7 +559,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 ""
         )
 
-        val preservedBitsMask = LLVMConstNot(discardBitsMask)!!
+        val preservedBitsMask = LLVMBuildNot(builder, discardBitsMask, "")!!
 
         val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(llvm.int8Type, ptr, llvm.int64(offset / 8)))
 
