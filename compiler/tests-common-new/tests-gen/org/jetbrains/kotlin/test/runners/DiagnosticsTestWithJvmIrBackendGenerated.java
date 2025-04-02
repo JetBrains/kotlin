@@ -710,6 +710,12 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
       }
 
       @Test
+      @TestMetadata("sequenceCollectionIntersectionOverrideKJJ.kt")
+      public void testSequenceCollectionIntersectionOverrideKJJ() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/sequenceCollectionIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
       @TestMetadata("supertypeDifferentParameterNullability.kt")
       public void testSupertypeDifferentParameterNullability() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/supertypeDifferentParameterNullability.kt");
