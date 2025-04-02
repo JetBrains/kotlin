@@ -62,10 +62,7 @@ internal class FragmentLocalFunctionPatchLowering(
                 val irBuilder = context.createJvmIrBuilder(declaration.symbol)
                 return irBuilder.irCall(remappedTarget.transformedDeclaration).apply {
                     this.copyTypeArgumentsFrom(expression)
-                    extensionReceiver = expression.extensionReceiver
-                    dispatchReceiver = expression.dispatchReceiver
-
-                    remappedTarget.transformedDeclaration.valueParameters.map { newValueParameterDeclaration ->
+                    remappedTarget.transformedDeclaration.parameters.map { newValueParameterDeclaration ->
                         val oldParameter = localsData.newParameterToOld[newValueParameterDeclaration]
 
                         val getValue = if (oldParameter != null) {
@@ -75,7 +72,7 @@ internal class FragmentLocalFunctionPatchLowering(
                             // the corresponding argument from the existing
                             // call and place at the appropriate slot in the
                             // call to the lowered function
-                            expression.getValueArgument(oldParameter.indexInOldValueParameters)!!
+                            expression.arguments[oldParameter]!!
                         } else {
                             // The parameter is introduced by the lowering to
                             // private static function, so corresponds to a _capture_ by the local function
@@ -102,7 +99,7 @@ internal class FragmentLocalFunctionPatchLowering(
                             irBuilder.irGet(newParameter)
                         }
 
-                        putValueArgument(newValueParameterDeclaration.indexInOldValueParameters, getValue)
+                        arguments[newValueParameterDeclaration] = getValue
                     }
                 }
             }
