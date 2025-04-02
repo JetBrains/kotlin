@@ -353,25 +353,16 @@ private fun Path.deleteRecursivelyImpl(): List<Exception> {
     val collector = ExceptionsCollector()
     var useInsecure = true
 
-    val parent = this.parent
-    val resolvedParent = when {
-        // This path is not an orphan!
-        parent != null -> parent
-        // This is a special path, like a `/` on a Unix-like system, or `C:` on Windows,
-        // so there is indeed no parent path for it.
-        nameCount == 0 -> null
-        // This path seems to be a regular relative path, so let's use a current working directory,
-        // which correspond to an empty path (see java.nio.file.Path javadoc).
-        else -> fileSystem.getPath("")
-    }
-
-    resolvedParent?.let { parent ->
+    // Will be `null` if this is a root, like a `/` on a Unix-like system, or `C:` on Windows
+    fileName?.let { fileName ->
+        val parent = this.parent // is `null` for single-component relative paths
+            ?: fileSystem.getPath("") // in that case, use the current working directory
         val directoryStream = try { Files.newDirectoryStream(parent) } catch (_: Throwable) { null }
         directoryStream?.use { stream ->
             if (stream is SecureDirectoryStream<Path>) {
                 useInsecure = false
                 collector.path = parent
-                stream.handleEntry(this.fileName, null, collector)
+                stream.handleEntry(fileName, null, collector)
             }
         }
     }
