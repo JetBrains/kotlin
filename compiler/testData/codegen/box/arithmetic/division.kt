@@ -1,8 +1,7 @@
 // WITH_STDLIB
 // KT-66080
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// KT-66081
-// IGNORE_BACKEND: WASM
+
 import kotlin.test.*
 
 fun box(): String {
