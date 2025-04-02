@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import javax.inject.Inject
 
+/**
+ * Compile executable JS or Wasm files from KLibs.
+ */
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     project: Project,

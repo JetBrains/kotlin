@@ -48,6 +48,9 @@ import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Compile Kotlin/JS or Kotlin/Wasm targets into a KLib.
+ */
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
     final override val compilerOptions: KotlinJsCompilerOptions,
