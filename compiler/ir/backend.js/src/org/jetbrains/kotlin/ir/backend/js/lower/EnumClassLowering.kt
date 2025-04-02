@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.newEnumConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
+import org.jetbrains.kotlin.ir.backend.js.valueParameterForOldEnumConstructor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -76,9 +77,6 @@ private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irCla
  * Transforms `enum class` into regular `class`.
  */
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
-
-    private var IrValueDeclaration.valueParameter by context.mapping.enumConstructorOldToNewValueParameters
-
     private val additionalParameters = listOf(
         "name" to context.irBuiltIns.stringType,
         "ordinal" to context.irBuiltIns.intType
@@ -132,7 +130,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             // TODO except for `fixReferencesToConstructorParameters` this code seems to be obsolete
             for (old in enumConstructor.parameters) {
                 val new = parameters[additionalParameters.size + old.indexInParameters]
-                old.valueParameter = new
+                old.valueParameterForOldEnumConstructor = new
 
                 old.defaultValue?.let { default ->
                     new.defaultValue = context.irFactory.createExpressionBody(
@@ -155,7 +153,7 @@ private fun JsCommonBackendContext.fixReferencesToConstructorParameters(irClass:
         private val builder = createIrBuilder(irClass.symbol)
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
-            mapping.enumConstructorOldToNewValueParameters[expression.symbol.owner]?.let {
+            expression.symbol.owner.valueParameterForOldEnumConstructor?.let {
                 return builder.irGet(it)
             }
 
@@ -164,7 +162,7 @@ private fun JsCommonBackendContext.fixReferencesToConstructorParameters(irClass:
 
         override fun visitSetValue(expression: IrSetValue): IrExpression {
             expression.transformChildrenVoid()
-            return mapping.enumConstructorOldToNewValueParameters[expression.symbol.owner]?.let {
+            return expression.symbol.owner.valueParameterForOldEnumConstructor?.let {
                 builder.irSet(it.symbol, expression.value)
             } ?: expression
         }
