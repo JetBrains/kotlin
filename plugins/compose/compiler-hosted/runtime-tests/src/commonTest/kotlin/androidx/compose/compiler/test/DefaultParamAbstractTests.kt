@@ -54,6 +54,20 @@ class DefaultParamAbstractTests {
             Text("provided")
         }
     }
+
+    @Test
+    fun defaultParamReturn() = compositionTest {
+        val instance = DefaultParamReturnImpl()
+        compose {
+            Text("${instance.value()}")
+            Text("${instance.value(1)}")
+        }
+
+        validate {
+            Text("0")
+            Text("1")
+        }
+    }
 }
 
 private interface DefaultParamAbstractInterface {
@@ -91,5 +105,17 @@ private class DefaultParamAbstractImpl : DefaultParamAbstract() {
     @Composable
     override fun Content(content: @Composable () -> Unit) {
         content()
+    }
+}
+
+private abstract class DefaultParamReturn {
+    @Composable
+    abstract fun value(param: Int = 0): Int
+}
+
+private class DefaultParamReturnImpl : DefaultParamReturn() {
+    @Composable
+    override fun value(param: Int): Int {
+        return param
     }
 }

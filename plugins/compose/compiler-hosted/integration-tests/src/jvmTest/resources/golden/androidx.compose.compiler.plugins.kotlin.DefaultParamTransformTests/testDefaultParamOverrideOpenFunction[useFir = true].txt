@@ -140,11 +140,12 @@ open class Test {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      %this%.bar(param, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+      val tmp1 = %this%.bar(param, %composer, 0b1110 and %changed or 0b01110000 and %changed)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
       sourceInformationMarkerEnd(%composer)
+      return tmp1
     }
   }
   @Composable
