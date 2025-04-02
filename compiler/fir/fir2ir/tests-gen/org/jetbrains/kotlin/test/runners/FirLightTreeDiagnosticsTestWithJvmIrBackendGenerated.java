@@ -685,6 +685,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("immutableName.kt")
+      public void testImmutableName() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/immutableName.kt");
+      }
+
+      @Test
       @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
       public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");
@@ -706,6 +712,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       @TestMetadata("supertypeDifferentParameterNullability.kt")
       public void testSupertypeDifferentParameterNullability() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/supertypeDifferentParameterNullability.kt");
+      }
+
+      @Test
+      @TestMetadata("triangleWithFlexibleTypeAndSubstitution4.kt")
+      public void testTriangleWithFlexibleTypeAndSubstitution4() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/triangleWithFlexibleTypeAndSubstitution4.kt");
       }
     }
 
