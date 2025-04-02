@@ -1438,11 +1438,16 @@ class Fir2IrVisitor(
 
     private fun generateWhenSubjectVariable(whenExpression: FirWhenExpression): IrVariable? {
         val subjectVariable = whenExpression.subjectVariable
-        val subjectExpression = whenExpression.subjectVariable?.initializer
+        val subjectExpression = subjectVariable?.initializer
         return when {
             subjectVariable != null && !subjectVariable.isImplicitWhenSubjectVariable -> subjectVariable.accept(this, null) as IrVariable
             subjectExpression != null ->
-                conversionScope.scope().createTemporaryVariable(convertToIrExpression(subjectExpression), "subject")
+                conversionScope.scope().createTemporaryVariable(
+                    irExpression = with(implicitCastInserter) {
+                        convertToIrExpression(subjectExpression).insertCastForSmartcastWithIntersection(subjectExpression.resolvedType, subjectVariable.returnTypeRef.coneType)
+                    },
+                    nameHint = "subject",
+                )
             else -> null
         }
     }
