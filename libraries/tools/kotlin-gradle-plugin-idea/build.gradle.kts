@@ -16,9 +16,10 @@ kotlin.sourceSets.configureEach {
 }
 
 dependencies {
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
-    compileOnly(kotlinStdlib())
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))

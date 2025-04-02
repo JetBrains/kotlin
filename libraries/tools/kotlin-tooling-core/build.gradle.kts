@@ -10,7 +10,8 @@ javadocJar()
 configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     testImplementation(kotlinTest("junit"))
 }
 

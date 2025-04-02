@@ -9,7 +9,8 @@ plugins {
 configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
-    compileOnly(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     embedded(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     testApi(platform(libs.junit.bom))

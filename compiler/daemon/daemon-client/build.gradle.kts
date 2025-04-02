@@ -6,9 +6,10 @@ plugins {
 }
 
 dependencies {
-    api(kotlinStdlib())
-    compileOnly(project(":daemon-common"))
-    compileOnly(project(":js:js.config"))
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    api("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    compileOnly(project(":daemon-common")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
+    compileOnly(project(":js:js.config")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
 
     embedded(project(":daemon-common")) { isTransitive = false }
     testCompileOnly(project(":daemon-common"))
