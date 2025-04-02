@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
@@ -74,8 +73,6 @@ class JvmBackendContext(
     val cachedDeclarations = JvmCachedDeclarations(
         this, generatorExtensions.cachedFields
     )
-
-    override val mapping: Mapping = Mapping()
 
     val allConstructorsWithCapturedConstructorCreated = mutableSetOf<IrConstructor>()
 

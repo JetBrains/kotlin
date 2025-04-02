@@ -68,7 +68,6 @@ class JsIrBackendContext(
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    override val mapping: JsMapping = JsMapping(),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
     val incrementalCacheEnabled: Boolean = false,
 ) : JsCommonBackendContext {
@@ -117,7 +116,7 @@ class JsIrBackendContext(
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
-    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(irFactory)
 
     private val internalPackage = module.getPackage(JsStandardClassIds.BASE_JS_PACKAGE)
 

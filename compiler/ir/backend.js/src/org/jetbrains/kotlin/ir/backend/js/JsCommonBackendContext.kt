@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.utils.atMostOne
@@ -15,10 +14,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
@@ -31,8 +27,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 interface JsCommonBackendContext : CommonBackendContext {
     val internalPackageFqn: FqName
-
-    override val mapping: JsMapping
 
     val reflectionSymbols: ReflectionSymbols
     val propertyLazyInitialization: PropertyLazyInitialization
