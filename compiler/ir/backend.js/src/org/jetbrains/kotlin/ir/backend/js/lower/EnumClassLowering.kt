@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.correspondingField
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
+import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.newEnumConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
@@ -356,9 +357,6 @@ class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : Body
 }
 
 class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
-
-    private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.isInstantiableEnum) {
             // Create boolean flag that indicates if entry instances were initialized.
@@ -421,9 +419,6 @@ class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : 
 }
 
 class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
-
-    private val IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrEnumEntry) {
             val irClass = declaration.parentAsClass
@@ -471,8 +466,6 @@ private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 class EnumSyntheticFunctionsAndPropertiesLowering(
     val context: JsCommonBackendContext,
 ) : DeclarationTransformer {
-    private val IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrConstructor && declaration.isPrimary && declaration.parentEnumClassOrNull != null &&
             declaration.parentClassOrNull?.isCompanion == true

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
+import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
@@ -676,7 +677,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         val parentClass = function.parent as? IrClass
 
-        if (parentClass != null && context.mapping.enumClassToInitEntryInstancesFun[parentClass] == function) {
+        if (parentClass != null && parentClass.initEntryInstancesFun == function) {
             return Exportability.NotNeeded
         }
 
