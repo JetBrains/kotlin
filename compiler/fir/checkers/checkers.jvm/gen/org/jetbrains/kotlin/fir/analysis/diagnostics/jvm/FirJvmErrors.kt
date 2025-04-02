@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplementationByDelegationWithDifferentGenericSignature
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidOverloadClashesByErasure
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConcurrentHashMapContains
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall
@@ -66,6 +67,7 @@ object FirJvmErrors {
     val JVM_INLINE_WITHOUT_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_INLINE_WITHOUT_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE", WARNING, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, PsiElement::class)
     val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE: KtDiagnosticFactory3<FirNamedFunctionSymbol, String, FirNamedFunctionSymbol> = KtDiagnosticFactory3("ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedFunction::class)
+    val ACCIDENTAL_OVERLOAD_CLASH_BY_JVM_ERASURE: KtDiagnosticFactoryForDeprecation2<FirNamedFunctionSymbol, FirNamedFunctionSymbol> = KtDiagnosticFactoryForDeprecation2("ACCIDENTAL_OVERLOAD_CLASH_BY_JVM_ERASURE", ForbidOverloadClashesByErasure, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedFunction::class)
     val IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE: KtDiagnosticFactoryForDeprecation2<FirNamedFunctionSymbol, FirNamedFunctionSymbol> = KtDiagnosticFactoryForDeprecation2("IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE", ForbidImplementationByDelegationWithDifferentGenericSignature, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class)
     val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION", ERROR, SourceElementPositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT, KtDeclaration::class)
     val PROPERTY_HIDES_JAVA_FIELD: KtDiagnosticFactory1<FirFieldSymbol> = KtDiagnosticFactory1("PROPERTY_HIDES_JAVA_FIELD", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class)
