@@ -31,7 +31,7 @@ abstract class AbstractSymbolLightClassesStructureByFqNameTest(
             psiClass?.let { handleClass(it) } ?: append(LightClassTestCommon.NOT_GENERATED_DIRECTIVE)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(result, testPrefixes = listOf(testPrefix))
+        testServices.assertions.assertEqualsToTestOutputFile(result, testPrefixes = listOf(testPrefix))
 
         doTestInheritors(ktFiles, testServices)
     }

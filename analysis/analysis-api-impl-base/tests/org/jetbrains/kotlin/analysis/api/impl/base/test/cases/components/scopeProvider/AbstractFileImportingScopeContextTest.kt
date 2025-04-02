@@ -27,8 +27,8 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
             val scopeContextStringRepresentation = render(ktScopeContext, renderDefaultImportingScope)
             val scopeContextStringRepresentationPretty = render(ktScopeContext, renderDefaultImportingScope, printPretty = true)
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(scopeContextStringRepresentation)
-            testServices.assertions.assertEqualsToTestDataFileSibling(scopeContextStringRepresentationPretty, extension = ".pretty.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(scopeContextStringRepresentation)
+            testServices.assertions.assertEqualsToTestOutputFile(scopeContextStringRepresentationPretty, extension = ".pretty.txt")
         }
     }
 

@@ -60,7 +60,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
     private fun KaSession.findClassJavaAware(classId: ClassId): KaClassSymbol? {

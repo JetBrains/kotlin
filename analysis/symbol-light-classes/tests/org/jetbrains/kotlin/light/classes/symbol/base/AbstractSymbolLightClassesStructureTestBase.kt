@@ -61,7 +61,7 @@ open class AbstractSymbolLightClassesStructureTestBase(
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             actual = result,
             extension = INHERITORS_EXTENSION,
             testPrefixes = listOf(testPrefix),

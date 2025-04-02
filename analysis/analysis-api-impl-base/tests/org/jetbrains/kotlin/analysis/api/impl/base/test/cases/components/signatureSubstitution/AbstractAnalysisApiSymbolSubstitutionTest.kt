@@ -40,6 +40,6 @@ abstract class AbstractAnalysisApiSymbolSubstitutionTest : AbstractAnalysisApiBa
                 appendLine(stringRepresentation(signature))
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

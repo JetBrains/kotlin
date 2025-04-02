@@ -61,7 +61,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
         val session = LLFirSessionCache.getInstance(mainModule.ktModule.project).getSession(ktModule, preferBinary = true)
         val fir = FirDeclarationForCompiledElementSearcher(session).findNonLocalDeclaration(declaration)
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration, testServices.firRenderingOptions))
+        testServices.assertions.assertEqualsToTestOutputFile(renderActualFir(fir, declaration, testServices.firRenderingOptions))
     }
 
     private fun getElementToSearch(ktFile: KtFile, moduleStructure: TestModuleStructure): KtDeclaration? {

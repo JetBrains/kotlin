@@ -45,7 +45,7 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
             firClassSymbol.fir.render()
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(rendered)
+        testServices.assertions.assertEqualsToTestOutputFile(rendered)
     }
 
     private fun PsiClass.withAllNestedClasses(): List<PsiClass> = buildList {

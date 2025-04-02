@@ -25,6 +25,6 @@ abstract class AbstractReadWriteAccessTest : AbstractAnalysisApiBasedTest() {
             appendLine("access type: $readWriteAccess")
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

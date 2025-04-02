@@ -35,7 +35,7 @@ abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTe
                 }
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
     private fun KaSession.getSamConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaSamConstructorSymbol? {

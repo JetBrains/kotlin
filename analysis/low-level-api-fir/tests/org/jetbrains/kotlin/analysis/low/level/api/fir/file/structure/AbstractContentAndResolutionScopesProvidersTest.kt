@@ -284,7 +284,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
             stringBuilder.appendLine(moduleData.expectedContentScope.joinToString(separator = "\n") { "    ${it.name}" })
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             actual = "Resulting Content Scopes:\n$stringBuilder",
             extension = ".content.scope"
         )
@@ -320,7 +320,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
             stringBuilder.appendLine(mockResolutionScope.joinToString(separator = "\n") { "    ${it.name}" })
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             actual = "Resulting Resolution Scope:\n$stringBuilder",
             extension = ".resolution.scope"
         )

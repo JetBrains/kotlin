@@ -31,6 +31,6 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(renderedString)
+        testServices.assertions.assertEqualsToTestOutputFile(renderedString)
     }
 }

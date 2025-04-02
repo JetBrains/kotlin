@@ -37,6 +37,6 @@ abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBased
             sortedUnresolvedNames.forEach(::appendLine)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(importAnalysisRendered, extension = ".importsAnalysis")
+        testServices.assertions.assertEqualsToTestOutputFile(importAnalysisRendered, extension = ".importsAnalysis")
     }
 }

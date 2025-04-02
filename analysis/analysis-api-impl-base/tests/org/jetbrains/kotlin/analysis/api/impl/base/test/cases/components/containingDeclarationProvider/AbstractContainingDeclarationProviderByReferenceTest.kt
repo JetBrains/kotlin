@@ -30,7 +30,7 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
                 .filterIsInstance<KaDeclarationSymbol>()
                 .joinToString("\n") { render(it) }
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualString)
+            testServices.assertions.assertEqualsToTestOutputFile(actualString)
         }
     }
 

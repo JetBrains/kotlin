@@ -31,6 +31,6 @@ abstract class AbstractExpectedExpressionTypeTest : AbstractAnalysisApiBasedTest
             appendLine("expected type: $actualExpectedTypeText")
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

@@ -30,7 +30,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
                 "${inheritor.classId!!}\n${inheritor.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}"
             }
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+            testServices.assertions.assertEqualsToTestOutputFile(actualText)
         }
     }
 }

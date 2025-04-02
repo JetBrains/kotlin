@@ -34,6 +34,6 @@ abstract class AbstractExpectForActualTest : AbstractAnalysisApiBasedTest() {
             appendLine(expectedSymbolText)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

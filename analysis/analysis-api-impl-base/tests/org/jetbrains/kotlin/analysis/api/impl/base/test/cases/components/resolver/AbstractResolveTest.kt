@@ -64,7 +64,7 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = "$resolveKind.txt")
 
         val lastTestModule = modules.last().testModule
         val directives = ComposedRegisteredDirectives(

@@ -51,7 +51,7 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".stubs.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".stubs.txt")
 
         for ((_, stub) in filesAndStubs) {
             checkPsiElementTypeConsistency(testServices.assertions, stub ?: continue)

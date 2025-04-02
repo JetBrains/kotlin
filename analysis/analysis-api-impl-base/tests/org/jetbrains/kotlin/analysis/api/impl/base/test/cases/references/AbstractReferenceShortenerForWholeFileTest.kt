@@ -42,6 +42,6 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
                 renderShorteningResults(shortening)
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

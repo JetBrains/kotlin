@@ -59,7 +59,7 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
             """.trimIndent()
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+        testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 
     private fun findFirstUseSiteElement(ktFile: KtFile): KtNamedDeclaration? =

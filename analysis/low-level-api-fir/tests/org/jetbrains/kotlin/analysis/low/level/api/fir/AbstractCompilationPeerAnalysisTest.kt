@@ -38,6 +38,6 @@ abstract class AbstractCompilationPeerAnalysisTest : AbstractAnalysisApiBasedTes
         val actualItems = filesToCompile + inlineClassesToCompile
         val actualText = actualItems.joinToString(separator = "\n")
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual = actualText)
+        testServices.assertions.assertEqualsToTestOutputFile(actual = actualText)
     }
 }

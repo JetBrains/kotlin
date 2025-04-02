@@ -35,6 +35,6 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
 
         val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(mainModule.ktModule)
         val fir = declaration.resolveToFirSymbol(resolveSession).fir
-        testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration, testServices.firRenderingOptions))
+        testServices.assertions.assertEqualsToTestOutputFile(renderActualFir(fir, declaration, testServices.firRenderingOptions))
     }
 }

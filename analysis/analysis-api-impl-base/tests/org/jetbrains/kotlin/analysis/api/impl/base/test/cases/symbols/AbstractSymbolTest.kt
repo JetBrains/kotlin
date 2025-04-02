@@ -246,7 +246,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     private fun compareResults(actual: String, testServices: TestServices, disablePsiBasedLogic: Boolean, extension: String) {
         val assertions = testServices.assertions
         if (!disablePsiBasedLogic) {
-            assertions.assertEqualsToTestDataFileSibling(actual = actual, extension = extension)
+            assertions.assertEqualsToTestOutputFile(actual = actual, extension = extension)
         } else {
             val expectedFile = getTestOutputFile(extension).toFile()
             val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()

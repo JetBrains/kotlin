@@ -33,6 +33,6 @@ abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

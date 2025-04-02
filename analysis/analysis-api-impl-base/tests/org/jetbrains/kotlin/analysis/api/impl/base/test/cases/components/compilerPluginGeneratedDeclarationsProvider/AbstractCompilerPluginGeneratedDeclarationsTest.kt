@@ -21,8 +21,8 @@ abstract class AbstractCompilerPluginGeneratedDeclarationsTest : AbstractAnalysi
             val actual = prettyPrint { renderForTests(resolveExtensionScope, this, printPretty = false) }
             val actualPretty = prettyPrint { renderForTests(resolveExtensionScope, this, printPretty = true) }
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualPretty, extension = ".pretty.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(actual)
+            testServices.assertions.assertEqualsToTestOutputFile(actualPretty, extension = ".pretty.txt")
         }
     }
 }

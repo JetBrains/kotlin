@@ -73,7 +73,7 @@ abstract class AbstractCodeFragmentCapturingTest : AbstractAnalysisApiBasedTest(
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             actual = actualText,
             extension = ".capturing.txt"
         )

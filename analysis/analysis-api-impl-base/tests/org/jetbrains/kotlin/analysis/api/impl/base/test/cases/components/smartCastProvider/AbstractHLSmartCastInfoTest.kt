@@ -34,6 +34,6 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

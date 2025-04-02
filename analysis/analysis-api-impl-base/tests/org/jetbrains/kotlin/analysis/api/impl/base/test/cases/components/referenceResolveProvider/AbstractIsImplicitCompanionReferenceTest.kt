@@ -30,6 +30,6 @@ abstract class AbstractIsImplicitCompanionReferenceTest : AbstractAnalysisApiBas
             append("isImplicitCompanionReference: $isImplicitCompanionReference")
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

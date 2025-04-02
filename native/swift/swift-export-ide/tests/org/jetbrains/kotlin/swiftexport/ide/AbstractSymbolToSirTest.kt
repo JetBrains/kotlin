@@ -28,7 +28,7 @@ abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
                 .map { it.print(into = kaDeclaration.containingModule.sirModule()) }
                 .joinToString(separator = "\n")
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }
 

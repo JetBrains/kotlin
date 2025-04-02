@@ -39,13 +39,13 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
     private fun checkImportsFromKaDefaultImportProvider(sourceModule: KaSourceModule, testServices: TestServices) {
         val imports = sourceModule.targetPlatform.getDefaultImports(sourceModule.project).defaultImports
         val actual = renderDefaultImports(imports)
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".default.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".default.txt")
     }
 
     private fun checkImportsFromResolve(sourceModule: KaSourceModule, mainFile: KtFile, testServices: TestServices) {
         val importsUsedInResolve = getDefaultImportsUsedInResolve(sourceModule, mainFile)
         val actual = renderDefaultImports(importsUsedInResolve)
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".default.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".default.txt")
     }
 
     private fun checkExcludedImports(sourceModule: KaSourceModule, testServices: TestServices) {
@@ -58,7 +58,7 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
                 append(it.fqName.asString())
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".excluded.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".excluded.txt")
     }
 
 

@@ -28,7 +28,7 @@ abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
             stringRepresentation(snapshot)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+        testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 
     private fun findStatements(mainFile: KtFile, textRange: TextRange): List<KtExpression> {

@@ -41,13 +41,13 @@ abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractAnalysisAp
             val classSymbol = classOrObject.resolveToFirSymbolOfType<FirClassSymbol<*>>(session)
             val symbols = collectAllCallableDeclarations(classSymbol, session)
             val dumpBefore = dumpSymbols(symbols)
-            testServices.assertions.assertEqualsToTestDataFileSibling(dumpBefore, extension = "before.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(dumpBefore, extension = "before.txt")
             for (callableSymbol in symbols) {
                 callableSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             }
 
             val dumpAfter = dumpSymbols(symbols)
-            testServices.assertions.assertEqualsToTestDataFileSibling(dumpAfter, extension = "after.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(dumpAfter, extension = "after.txt")
         }
     }
 }

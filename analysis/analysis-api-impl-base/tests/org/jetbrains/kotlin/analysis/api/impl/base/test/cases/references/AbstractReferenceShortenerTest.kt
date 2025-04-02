@@ -53,6 +53,6 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedTest() {
                 renderShorteningResults(shortening)
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

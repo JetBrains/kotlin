@@ -37,6 +37,6 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBas
             appendLine("constantValueKind: ${constantValue?.let { renderFrontendIndependentKClassNameOf(it) } ?: "NOT_EVALUATED"}")
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

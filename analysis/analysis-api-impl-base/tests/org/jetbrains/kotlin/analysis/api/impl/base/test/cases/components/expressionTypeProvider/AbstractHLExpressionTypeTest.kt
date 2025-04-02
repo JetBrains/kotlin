@@ -47,7 +47,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
             appendLine("expression: ${expression.text}")
             appendLine("type: $type")
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
     override val additionalDirectives: List<DirectivesContainer>

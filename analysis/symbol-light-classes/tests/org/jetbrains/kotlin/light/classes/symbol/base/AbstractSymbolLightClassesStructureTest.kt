@@ -32,7 +32,7 @@ abstract class AbstractSymbolLightClassesStructureTest(
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(result, testPrefixes = listOf(testPrefix))
+        testServices.assertions.assertEqualsToTestOutputFile(result, testPrefixes = listOf(testPrefix))
         doTestInheritors(ktFiles, testServices)
     }
 }

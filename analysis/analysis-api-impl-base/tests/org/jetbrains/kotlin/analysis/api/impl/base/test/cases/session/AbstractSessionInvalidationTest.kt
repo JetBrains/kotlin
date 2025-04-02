@@ -109,7 +109,7 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
             invalidatedSessionDescriptions.forEach { appendLine(it) }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             actualText,
             extension = ".${modificationEventKind.name.lowercase()}.txt",
 

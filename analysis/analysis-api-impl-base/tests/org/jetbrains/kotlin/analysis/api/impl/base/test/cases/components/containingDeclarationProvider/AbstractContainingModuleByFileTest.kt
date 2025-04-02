@@ -27,7 +27,7 @@ abstract class AbstractContainingModuleByFileTest : AbstractAnalysisApiBasedTest
                 append("Module: ").append(module.moduleDescription).append(" (").append(module.javaClass.simpleName).append(")")
             }
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualString)
+            testServices.assertions.assertEqualsToTestOutputFile(actualString)
         }
     }
 }

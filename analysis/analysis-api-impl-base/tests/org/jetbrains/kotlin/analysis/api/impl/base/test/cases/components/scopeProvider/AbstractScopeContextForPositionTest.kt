@@ -28,8 +28,8 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
             val scopeContextStringRepresentation = renderForTests(elementToAnalyze, scopeContext)
             val scopeContextStringRepresentationPretty = renderForTests(elementToAnalyze, scopeContext, printPretty = true)
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(scopeContextStringRepresentation)
-            testServices.assertions.assertEqualsToTestDataFileSibling(scopeContextStringRepresentationPretty, extension = ".pretty.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(scopeContextStringRepresentation)
+            testServices.assertions.assertEqualsToTestOutputFile(scopeContextStringRepresentationPretty, extension = ".pretty.txt")
         }
     }
 

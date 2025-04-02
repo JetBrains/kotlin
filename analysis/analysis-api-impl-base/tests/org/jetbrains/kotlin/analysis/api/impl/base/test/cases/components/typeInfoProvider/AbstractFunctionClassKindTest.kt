@@ -30,6 +30,6 @@ abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
             appendLine("expected type: $type")
             appendLine("functionClassKind: $functionClassKind")
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

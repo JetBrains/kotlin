@@ -49,6 +49,6 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".rendered")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".rendered")
     }
 }

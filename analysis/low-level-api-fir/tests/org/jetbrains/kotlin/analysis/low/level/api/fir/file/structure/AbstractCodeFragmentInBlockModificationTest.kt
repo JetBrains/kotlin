@@ -26,6 +26,6 @@ abstract class AbstractCodeFragmentInBlockModificationTest : AbstractAnalysisApi
 
         val actualText = testInBlockModification(mainFile, mainFile, testServices, dumpFirFile = false)
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+        testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 }

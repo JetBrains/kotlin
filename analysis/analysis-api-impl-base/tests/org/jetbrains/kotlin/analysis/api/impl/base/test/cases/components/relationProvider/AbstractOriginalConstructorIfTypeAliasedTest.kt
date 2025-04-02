@@ -42,7 +42,7 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
     private fun KaSession.getReferencedConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaConstructorSymbol? {

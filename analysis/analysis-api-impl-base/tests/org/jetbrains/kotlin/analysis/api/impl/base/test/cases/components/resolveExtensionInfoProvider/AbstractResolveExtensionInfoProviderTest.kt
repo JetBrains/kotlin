@@ -33,8 +33,8 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
             val actual = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = false)
             val actualPretty = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = true)
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualPretty, extension = ".pretty.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(actual)
+            testServices.assertions.assertEqualsToTestOutputFile(actualPretty, extension = ".pretty.txt")
         }
     }
 

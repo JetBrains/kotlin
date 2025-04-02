@@ -72,12 +72,12 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
             dumpFir(typesWithContext, declaration, firFiles, builderAfterAnnotationResolve)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             builderBeforeAnnotationResolve.toString(),
             extension = "before.txt",
         )
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             builderAfterAnnotationResolve.toString(),
             extension = "after.txt",
         )

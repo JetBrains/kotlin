@@ -46,7 +46,7 @@ abstract class AbstractClassIdTest : AbstractAnalysisApiBasedTest() {
             })
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(text, mainFile.name.substringAfterLast('.'))
+        testServices.assertions.assertEqualsToTestOutputFile(text, mainFile.name.substringAfterLast('.'))
     }
 }
 

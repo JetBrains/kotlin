@@ -302,7 +302,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * test output file that is used when a specific test configuration (e.g. Standalone) deviates from the default (non-prefixed) test
      * output.
      */
-    protected fun AssertionsService.assertEqualsToTestDataFileSibling(
+    protected fun AssertionsService.assertEqualsToTestOutputFile(
         actual: String,
         extension: String = ".txt",
         subdirectoryName: String? = null,
@@ -331,7 +331,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data.
      *
-     * @see assertEqualsToTestDataFileSibling
+     * @see assertEqualsToTestOutputFile
      */
     protected fun getTestOutputFile(
         extension: String = "txt",

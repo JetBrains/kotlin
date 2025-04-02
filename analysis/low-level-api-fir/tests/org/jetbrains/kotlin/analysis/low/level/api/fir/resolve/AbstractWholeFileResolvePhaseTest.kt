@@ -23,7 +23,7 @@ abstract class AbstractWholeFileResolvePhaseTest : AbstractAnalysisApiBasedTest(
         withResolveSession(mainFile) { firResolveSession ->
             val firFile = mainFile.getOrBuildFirOfType<FirFile>(firResolveSession)
             val actual = FirRenderer.withResolvePhase().renderElementAsString(firFile)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".lazy.resolve.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".lazy.resolve.txt")
         }
     }
 }

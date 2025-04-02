@@ -149,7 +149,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
         )
 
         val firDump = FirRenderer(idRenderer = ConeIdFullRenderer()).renderElementAsString(firElement)
-        JUnit5Assertions.assertEqualsToTestDataFileSibling(firDump)
+        JUnit5Assertions.assertEqualsToTestOutputFile(firDump)
     }
 
     companion object {

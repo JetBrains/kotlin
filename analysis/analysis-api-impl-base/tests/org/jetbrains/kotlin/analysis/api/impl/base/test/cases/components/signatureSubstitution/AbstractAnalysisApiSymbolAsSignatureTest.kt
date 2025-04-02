@@ -37,6 +37,6 @@ abstract class AbstractAnalysisApiSymbolAsSignatureTest : AbstractAnalysisApiBas
                 appendLine(renderedSignature)
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

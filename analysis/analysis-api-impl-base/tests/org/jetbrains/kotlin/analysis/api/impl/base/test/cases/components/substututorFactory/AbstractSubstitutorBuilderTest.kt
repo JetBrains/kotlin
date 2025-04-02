@@ -55,6 +55,6 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiBasedTest() {
                 appendLine(stringRepresentation(signatureAfterSubstitution))
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

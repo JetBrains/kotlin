@@ -36,6 +36,6 @@ abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBase
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

@@ -61,7 +61,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                     diagnostic.print(4)
                 }
             }
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+            testServices.assertions.assertEqualsToTestOutputFile(actual)
 
             assertEquals(
                 diagnosticsInFile,

@@ -26,10 +26,10 @@ abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
 
             val defaultType = (symbol as KaClassifierSymbol).defaultType
             val actual = DebugSymbolRenderer().renderType(this@analyseForTest, defaultType)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+            testServices.assertions.assertEqualsToTestOutputFile(actual)
 
             val prettyType = defaultType.render(position = Variance.INVARIANT)
-            testServices.assertions.assertEqualsToTestDataFileSibling(prettyType, extension = "pretty.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(prettyType, extension = "pretty.txt")
         }
     }
 }

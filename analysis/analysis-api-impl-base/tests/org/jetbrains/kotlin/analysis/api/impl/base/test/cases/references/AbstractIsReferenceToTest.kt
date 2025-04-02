@@ -24,7 +24,7 @@ abstract class AbstractIsReferenceToTest : AbstractAnalysisApiBasedTest() {
         carets.flatMap { findReferencesAtCaret(mainFile, it.value) }.forEach { reference ->
             val resolved = reference.resolve() ?: testServices.assertions.fail { "Could not resolve reference at caret" }
             testServices.assertions.assertTrue(reference.isReferenceTo(resolved))
-            testServices.assertions.assertEqualsToTestDataFileSibling(resolved.renderResolvedPsi(testServices))
+            testServices.assertions.assertEqualsToTestOutputFile(resolved.renderResolvedPsi(testServices))
         }
     }
 }

@@ -53,7 +53,7 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
             appendLine("Restored in ${restoreAtModule.moduleDescription}:")
             appendLine(debugRenderedRestored ?: NOT_RESTORED)
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualDebug)
+        testServices.assertions.assertEqualsToTestOutputFile(actualDebug)
 
         val actualPretty = prettyPrint {
             appendLine("Inital from ${declarationModule.moduleDescription}:")
@@ -62,7 +62,7 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
             appendLine("Restored in ${restoreAtModule.moduleDescription}:")
             appendLine(prettyRenderedRestored ?: NOT_RESTORED)
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualPretty, extension = ".pretty.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actualPretty, extension = ".pretty.txt")
     }
 
     companion object {

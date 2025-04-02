@@ -76,7 +76,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
                         testServices.assertions.assertFirDump(firElement, phase = "intermediate")
                     }
 
-                    testServices.assertions.assertEqualsToTestDataFileSibling(output, extension = ".out.txt")
+                    testServices.assertions.assertEqualsToTestOutputFile(output, extension = ".out.txt")
                 }
 
                 // Dump FIR after output render as it also may trigger additional resolution
@@ -101,7 +101,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
         )
 
         val firDumpAfter = renderer.renderElementAsString(element)
-        assertEqualsToTestDataFileSibling(firDumpAfter, extension = "fir.$phase.txt")
+        assertEqualsToTestOutputFile(firDumpAfter, extension = "fir.$phase.txt")
     }
 
     private object Directives : SimpleDirectivesContainer() {

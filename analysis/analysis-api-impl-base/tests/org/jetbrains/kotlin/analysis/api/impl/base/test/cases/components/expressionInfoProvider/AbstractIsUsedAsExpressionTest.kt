@@ -29,6 +29,6 @@ abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiBasedTest() {
             actual.appendLine("isUsedAsExpression: ${expression.isUsedAsExpression}")
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual.toString())
+        testServices.assertions.assertEqualsToTestOutputFile(actual.toString())
     }
 }

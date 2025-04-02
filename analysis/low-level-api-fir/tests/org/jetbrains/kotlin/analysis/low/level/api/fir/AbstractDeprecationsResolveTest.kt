@@ -90,15 +90,15 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
         val rootSymbolFir = getFirSymbol(rootSymbol)
         val beforeRendered = renderFirElement(rootSymbolFir.fir)
         val targetSymbol = symbolSupplier(rootSymbol) ?: return
-        testServices.assertions.assertEqualsToTestDataFileSibling(beforeRendered, extension = ".${name}.before.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(beforeRendered, extension = ".${name}.before.txt")
         val deprecationStatus = buildString {
             appendLine("Declaration deprecation: " + targetSymbol.deprecationStatus)
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             renderFirElement(rootSymbolFir.fir),
             extension = ".${name}.after.txt"
         )
-        testServices.assertions.assertEqualsToTestDataFileSibling(deprecationStatus.toString(), extension = ".${name}.out.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(deprecationStatus.toString(), extension = ".${name}.out.txt")
     }
 
     private fun getFirSymbol(kaSymbol: KaSymbol): FirBasedSymbol<*> {

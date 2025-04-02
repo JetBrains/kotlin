@@ -21,7 +21,7 @@ import java.nio.file.Path
 
 abstract class AnalysisApiTestConfigurator {
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.assertEqualsToTestDataFileSibling
+     * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.assertEqualsToTestOutputFile
      */
     open val testPrefixes: List<String> get() = emptyList()
 

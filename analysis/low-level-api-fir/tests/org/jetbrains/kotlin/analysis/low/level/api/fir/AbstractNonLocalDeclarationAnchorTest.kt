@@ -52,7 +52,7 @@ abstract class AbstractNonLocalDeclarationAnchorTest : AbstractAnalysisApiBasedT
             })
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(text)
+        testServices.assertions.assertEqualsToTestOutputFile(text)
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

@@ -18,7 +18,7 @@ abstract class AbstractAnalysisApiAnnotationsOnFilesTest : AbstractAnalysisApiBa
             TestAnnotationRenderer.renderAnnotations(useSiteSession, fileSymbol.annotations)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }
 

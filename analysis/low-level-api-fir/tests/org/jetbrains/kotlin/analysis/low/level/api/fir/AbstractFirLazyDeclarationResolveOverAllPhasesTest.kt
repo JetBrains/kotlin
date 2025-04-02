@@ -124,7 +124,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             renderer.renderElementAsString(firFile)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
+        testServices.assertions.assertEqualsToTestOutputFile(
             resultBuilder.toString(),
             extension = outputExtension,
         )

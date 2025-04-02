@@ -29,6 +29,6 @@ abstract class AbstractDoubleColonReceiverTypeTest : AbstractAnalysisApiBasedTes
             appendLine("expression: ${expressionAtCaret.text}")
             appendLine("receiver:: type: $type")
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

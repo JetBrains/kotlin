@@ -93,7 +93,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             val binaryMainModuleAsFile =
                 binaryMainModule.binaryRoots.singleOrNull()?.toFile() ?: error("The binary main module must have a single Jar file")
             val actualText = dumpClassesFromJar(binaryMainModuleAsFile)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+            testServices.assertions.assertEqualsToTestOutputFile(actualText)
             return
         }
         super.doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
@@ -129,7 +129,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 compile(mainFile, compilerConfiguration, target, allowedErrorFilter)
             } catch (e: Throwable) {
                 if (exceptionExpected && e is KaCodeCompilationException) {
-                    e.cause?.message?.let { testServices.assertions.assertEqualsToTestDataFileSibling("CODE_COMPILATION_EXCEPTION:\n$it") }
+                    e.cause?.message?.let { testServices.assertions.assertEqualsToTestOutputFile("CODE_COMPILATION_EXCEPTION:\n$it") }
                         ?: throw e
                     return
                 }
@@ -141,14 +141,14 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 is KaCompilationResult.Success -> dumpClassFiles(result.output)
             }
 
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+            testServices.assertions.assertEqualsToTestOutputFile(actualText)
 
             if (result is KaCompilationResult.Success) {
-                testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
+                testServices.assertions.assertEqualsToTestOutputFile(irCollector.result, extension = ".ir.txt")
             }
 
             if (annotationToCheckCalls != null) {
-                testServices.assertions.assertEqualsToTestDataFileSibling(
+                testServices.assertions.assertEqualsToTestOutputFile(
                     irCollector.functionsWithAnnotationToCheckCalls.joinToString("\n"), extension = ".check_calls.txt"
                 )
             }

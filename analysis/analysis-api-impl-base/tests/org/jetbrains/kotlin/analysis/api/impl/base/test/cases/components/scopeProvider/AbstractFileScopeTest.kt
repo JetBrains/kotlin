@@ -22,7 +22,7 @@ abstract class AbstractFileScopeTest : AbstractScopeTestBase() {
         analyseForTest(mainFile) {
             val fileSymbol = mainFile.symbol
             val renderedFileSymbol = DebugSymbolRenderer(renderExtra = true).render(useSiteSession, fileSymbol)
-            testServices.assertions.assertEqualsToTestDataFileSibling(renderedFileSymbol, extension = ".file_symbol.txt")
+            testServices.assertions.assertEqualsToTestOutputFile(renderedFileSymbol, extension = ".file_symbol.txt")
         }
     }
 }

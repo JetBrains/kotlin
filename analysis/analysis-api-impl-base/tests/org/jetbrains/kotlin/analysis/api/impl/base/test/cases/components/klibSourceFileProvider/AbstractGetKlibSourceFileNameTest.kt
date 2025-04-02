@@ -82,6 +82,6 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual.toString())
+        testServices.assertions.assertEqualsToTestOutputFile(actual.toString())
     }
 }

@@ -46,6 +46,6 @@ abstract class AbstractAnalysisApiSignatureSubstitutionTest : AbstractAnalysisAp
                 appendLine(stringRepresentation(signatureAfterSubstitution))
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }

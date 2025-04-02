@@ -23,6 +23,6 @@ abstract class AbstractContainingDeclarationProviderByDelegatedMemberScopeTest :
             renderScopeWithParentDeclarations(symbol.delegatedMemberScope)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(memberToContainingClass)
+        testServices.assertions.assertEqualsToTestOutputFile(memberToContainingClass)
     }
 }

@@ -60,6 +60,6 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+        testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 }

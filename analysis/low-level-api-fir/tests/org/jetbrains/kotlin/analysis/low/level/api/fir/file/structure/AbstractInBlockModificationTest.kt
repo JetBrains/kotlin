@@ -60,7 +60,7 @@ abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() 
             dumpFirFile = Directives.DUMP_FILE in testServices.moduleStructure.allDirectives,
         )
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
     private object Directives : SimpleDirectivesContainer() {

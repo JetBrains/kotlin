@@ -39,7 +39,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
     private object Directives : SimpleDirectivesContainer() {

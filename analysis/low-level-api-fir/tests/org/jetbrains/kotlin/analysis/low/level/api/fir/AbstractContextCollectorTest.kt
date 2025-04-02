@@ -82,7 +82,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
             append(firRenderer.renderElementAsString(firFile, trim = true))
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText, testPrefixes = testPrefixes)
+        testServices.assertions.assertEqualsToTestOutputFile(actualText, testPrefixes = testPrefixes)
     }
 }
 

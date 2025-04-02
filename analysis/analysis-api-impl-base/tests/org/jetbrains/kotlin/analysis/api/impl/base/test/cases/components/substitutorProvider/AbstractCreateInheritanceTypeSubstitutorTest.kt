@@ -61,7 +61,7 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
                 }
             }
         }
-        testServices.assertions.assertEqualsToTestDataFileSibling(substitutorRendered, extension = ".result.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(substitutorRendered, extension = ".result.txt")
     }
 
     companion object {
