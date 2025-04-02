@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
@@ -14,12 +15,18 @@ import java.io.File
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
+import kotlin.script.experimental.dependencies.FileSystemDependenciesResolver
+import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class ReplReceiver1 {
     val ok = "OK"
@@ -28,6 +35,7 @@ class ReplReceiver1 {
 @Suppress("unused") // Used in snippets
 class TestReplReceiver1() { fun checkReceiver(block: ReplReceiver1.() -> Any) = block(ReplReceiver1()) }
 
+private val dependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
 class CustomK2ReplTest {
 
@@ -112,6 +120,38 @@ class CustomK2ReplTest {
                                 defaultImports("kotlin.random.Random")
                             }
                         }.asSuccess()
+                    }
+                }
+            }
+        )
+    }
+
+    @Test
+    fun testWithUpdatingDependeciesAndImportKotlinDeclarations() {
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                "println(\"firstLine\")",
+                "import org.jetbrains.kotlinx.dataframe.jupyter.KotlinNotebookPluginUtils",
+                "KotlinNotebookPluginUtils.getKotlinNotebookIDEBuildNumber().toString()",
+                "import org.jetbrains.kotlinx.dataframe.jupyter.importDataSchema",
+                "importDataSchema(\"ftp://xx\").url.toString()",
+            ),
+            sequenceOf(null, null, "null", null, "ftp://xx"),
+            baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling { (script, config, _) ->
+                        if (!script.text.contains("firstLine")) {
+                            val resolveResults = runBlocking {
+                                dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:0.15.0")
+                            }
+                            if (resolveResults is ResultWithDiagnostics.Failure)
+                                resolveResults
+                            else
+                                config.with {
+                                    updateClasspath(resolveResults.valueOrThrow())
+                                    defaultImports("kotlin.random.Random")
+                                }.asSuccess()
+                        } else config.asSuccess()
                     }
                 }
             }

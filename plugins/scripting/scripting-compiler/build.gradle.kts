@@ -44,6 +44,8 @@ dependencies {
     testApi(libs.junit.platform.launcher)
     testApi(kotlinTest("junit5"))
 
+    testApi(project(":kotlin-scripting-dependencies-maven"))
+
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

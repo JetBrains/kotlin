@@ -31,6 +31,18 @@ class JvmPackagePartProvider(
 
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
 
+    private var allPackageNamesCache: Set<String>? = null
+
+    override val allPackageNames: Set<String>
+        get() {
+            // assuming that the modifications of loadedModules happen in predictable moments now, so nos syncronization is used
+            if (allPackageNamesCache == null) {
+                allPackageNamesCache = loadedModules.flatMapTo(mutableSetOf<String>()) { it.mapping.packageFqName2Parts.keys }
+            }
+            return allPackageNamesCache!!
+        }
+
+    // TODO: redesign to avoid cache-unfriendly usages, see KT-76516
     fun addRoots(roots: List<JavaRoot>, messageCollector: MessageCollector) {
         for ((root, type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
@@ -45,6 +57,7 @@ class JvmPackagePartProvider(
                     deserializationConfiguration, messageCollector
                 )?.let {
                     loadedModules.add(ModuleMappingInfo(root, it, moduleFile.nameWithoutExtension))
+                    allPackageNamesCache = null
                 }
             }
         }
