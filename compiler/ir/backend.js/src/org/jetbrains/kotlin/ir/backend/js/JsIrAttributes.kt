@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
@@ -69,3 +71,4 @@ var IrEnumEntry.getInstanceFun: IrSimpleFunction? by irAttribute(copyByDefault =
 var IrEnumEntry.instanceField: IrField? by irAttribute(copyByDefault = false)
 var IrConstructor.newEnumConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 var IrClass.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = false)
+var IrValueDeclaration.valueParameterForOldEnumConstructor: IrValueParameter? by irAttribute(copyByDefault = false)
