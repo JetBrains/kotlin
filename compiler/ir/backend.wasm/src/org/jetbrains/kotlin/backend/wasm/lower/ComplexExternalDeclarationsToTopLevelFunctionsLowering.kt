@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
+import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -379,7 +380,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun generateExternalObjectInstanceGetter(obj: IrClass) {
-        context.mapping.wasmExternalObjectToGetInstanceFunction[obj] = createExternalJsFunction(
+        obj.getInstanceFunctionForExternalObject = createExternalJsFunction(
             obj.name,
             "_\$external_object_getInstance",
             resultType = obj.defaultType,
@@ -477,8 +478,6 @@ fun createExternalJsFunction(
  * Redirect usages of complex declarations to top-level functions
  */
 class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) : FileLoweringPass {
-    private val objectToGetInstanceFunctions = context.mapping.wasmExternalObjectToGetInstanceFunction
-
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(declarationTransformer)
     }
@@ -526,7 +525,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
         }
 
         override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-            val externalGetInstance = objectToGetInstanceFunctions[expression.symbol.owner] ?: return expression
+            val externalGetInstance = expression.symbol.owner.getInstanceFunctionForExternalObject ?: return expression
             return IrCallImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
