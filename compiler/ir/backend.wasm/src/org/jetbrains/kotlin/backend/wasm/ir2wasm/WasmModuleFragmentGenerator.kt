@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
@@ -109,7 +110,7 @@ private fun compileIrFile(
         val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
             obj.objectGetInstanceFunction?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, false)
-            } ?: backendContext.mapping.wasmExternalObjectToGetInstanceFunction[obj]?.let {
+            } ?: obj.getInstanceFunctionForExternalObject?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, true)
             } ?: error("Could not find instance getter for $obj")
         }

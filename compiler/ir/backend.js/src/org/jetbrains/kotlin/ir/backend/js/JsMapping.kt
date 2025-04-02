@@ -12,8 +12,6 @@ class JsMapping : Mapping() {
 
     // Wasm mappings
 
-    val wasmExternalObjectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
-
     val wasmExternalClassToInstanceCheck: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     val wasmGetJsClass: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
