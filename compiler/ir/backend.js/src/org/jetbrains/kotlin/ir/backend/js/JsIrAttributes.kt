@@ -68,3 +68,4 @@ var IrClass.syntheticPrimaryConstructor: IrConstructor? by irAttribute(copyByDef
 var IrEnumEntry.getInstanceFun: IrSimpleFunction? by irAttribute(copyByDefault = false)
 var IrEnumEntry.instanceField: IrField? by irAttribute(copyByDefault = false)
 var IrConstructor.newEnumConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+var IrClass.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = false)
