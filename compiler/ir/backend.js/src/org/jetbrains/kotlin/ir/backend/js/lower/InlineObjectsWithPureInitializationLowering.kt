@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.hasPureInitialization
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceGetter
@@ -24,8 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Optimization: inlines object instance fields getters whenever it's possible.
  */
 class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
-    private val IrClass.hasPureInitialization by context.mapping.objectsWithPureInitialization
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {

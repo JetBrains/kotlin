@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
 
-    val objectsWithPureInitialization: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
-
     // Wasm mappings
     val wasmNestedExternalToNewTopLevelFunction: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
