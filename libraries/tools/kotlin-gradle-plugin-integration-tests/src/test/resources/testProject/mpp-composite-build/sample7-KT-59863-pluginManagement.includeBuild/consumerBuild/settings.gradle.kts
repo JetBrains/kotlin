@@ -1,3 +1,5 @@
+rootProject.name = "consumerBuild"
+
 pluginManagement {
     includeBuild("<producer_path>")
 }

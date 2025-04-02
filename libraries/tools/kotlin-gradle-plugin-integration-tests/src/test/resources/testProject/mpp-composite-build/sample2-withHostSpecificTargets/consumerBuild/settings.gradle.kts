@@ -1,9 +1,4 @@
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+rootProject.name = "consumer"
 
 include(":consumerA")
 

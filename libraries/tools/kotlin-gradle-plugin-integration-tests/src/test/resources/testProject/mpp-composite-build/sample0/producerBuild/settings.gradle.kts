@@ -1,8 +1,3 @@
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+rootProject.name = "producerBuild"
 
 include(":producerA")

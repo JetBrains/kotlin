@@ -1,9 +1,4 @@
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
+rootProject.name = "app"
 
 includeBuild("<lib_path>")
 include(":app")

@@ -2,11 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     jvm()
     js(IR) {
@@ -26,4 +21,3 @@ kotlin {
         }
     }
 }
-

@@ -1,10 +1,3 @@
-@file:Suppress("UnstableApiUsage")
+rootProject.name = "included-build"
 
 include("included")
-
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}

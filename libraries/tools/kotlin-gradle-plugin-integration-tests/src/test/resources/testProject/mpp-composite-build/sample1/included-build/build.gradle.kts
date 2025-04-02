@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<kgp_version>").apply(false)
+    id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
 group = "included-build"

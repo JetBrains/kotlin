@@ -6,11 +6,6 @@ plugins {
 
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 android {
     compileSdk = 33
     namespace = "com.example.producer"

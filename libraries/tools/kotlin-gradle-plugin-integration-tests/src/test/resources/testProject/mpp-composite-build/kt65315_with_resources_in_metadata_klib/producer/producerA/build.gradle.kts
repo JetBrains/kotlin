@@ -3,7 +3,6 @@ plugins {
     `maven-publish`
 }
 
-
 group = "org.jetbrains.sample"
 version = "1.0.0-SNAPSHOT"
 
