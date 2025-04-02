@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
-
 
 abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isEnabled(context: CheckerContext): Boolean
@@ -125,9 +122,7 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
             val lastIndex = statements.lastIndex
             for (i in statements.indices) {
                 val statement = statements[i]
-                val isImplicitReturn = i == lastIndex &&
-                        statement is FirExpression &&
-                        statement.resolvedType.isSubtypeOf(block.resolvedType, context.session)
+                val isImplicitReturn = i == lastIndex && !block.isUnitCoerced
                 statement.accept(this, if (isImplicitReturn) data else UsageState.Unused)
             }
         }

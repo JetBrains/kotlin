@@ -89,13 +89,13 @@ fun testIfElse(
 
     val b =
         if (x == null) 0L
-        else <!UNUSED_EXPRESSION!>0<!>
+        else 0
 
     val c: Long =
         if (x == null) 0
         else 0
 
-    consumeLong(if(x == null) <!UNUSED_EXPRESSION!>0<!> else <!UNUSED_EXPRESSION!>1<!>)
+    consumeLong(if(x == null) 0 else 1)
 }
 
 fun testWhile(
@@ -138,7 +138,7 @@ fun testLambda() {
 
     run {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit
+        <!UNUSED_EXPRESSION!>Unit<!>
     }
 
     consume {
@@ -157,6 +157,6 @@ fun testLambda() {
 
     consume<Unit> {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit
+        <!UNUSED_EXPRESSION!>Unit<!>
     }
 }
