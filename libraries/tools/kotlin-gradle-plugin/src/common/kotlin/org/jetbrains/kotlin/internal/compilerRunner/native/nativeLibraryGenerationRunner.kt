@@ -43,7 +43,7 @@ private fun ObjectFactory.kotlinToolSpec(
     displayName = property("generatePlatformLibraries"),
     optionalToolName = property("generatePlatformLibraries"),
     mainClass = nativeMainClass,
-    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(kotlinNativeVersion),
+    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
     classpath = classpath,
     jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),

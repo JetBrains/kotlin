@@ -58,7 +58,7 @@ private fun ObjectFactory.kotlinToolSpec(
     displayName = property("konanc"),
     optionalToolName = property("konanc"),
     mainClass = nativeMainClass,
-    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(kotlinNativeVersion),
+    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
     classpath = nativeCompilerClasspath(actualNativeHomeDirectory, isUseEmbeddableCompilerJar),
     jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = shouldDisableKonanDaemon,

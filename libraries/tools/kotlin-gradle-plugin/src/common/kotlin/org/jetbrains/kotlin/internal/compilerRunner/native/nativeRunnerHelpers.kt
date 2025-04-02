@@ -12,19 +12,13 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 
-internal fun Provider<Boolean>.nativeDaemonEntryPoint(kotlinNativeVersion: Provider<String>) =
-    zip(kotlinNativeVersion) { useXcodeMessageStyle, version ->
-        val method = if (useXcodeMessageStyle) {
+internal fun Provider<Boolean>.nativeDaemonEntryPoint() =
+    map { useXcodeMessageStyle ->
+        if (useXcodeMessageStyle) {
             "daemonMainWithXcodeRenderer"
         } else {
             "daemonMain"
         }
-
-        val withPerformanceSuffix = if (KotlinToolingVersion(version).supportCompilerMetricsForNative()) {
-            "WithPerformance"
-        } else ""
-
-        method + withPerformanceSuffix
     }
 
 internal fun nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion: Provider<String>) =

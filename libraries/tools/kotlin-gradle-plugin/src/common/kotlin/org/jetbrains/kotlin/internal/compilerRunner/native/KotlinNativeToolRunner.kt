@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.phaseDescription
 import java.io.File
 import java.io.IOException
+import java.io.PrintWriter
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import javax.inject.Inject
-import kotlin.io.path.absolutePathString
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
@@ -73,17 +73,17 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
             val reportFile = File.createTempFile("native_compiler_report", "txt")
             val reportArguments = if (toolSpec.collectNativeCompilerMetrics.get()) {
-                listOf("--report-file", reportFile.absolutePath)
+                listOf("-Xdump-perf=${reportFile.absolutePath}")
             } else emptyList()
 
             val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
-                val argFile = args.toArgFile(/*reportFile*/)
+                val argFile = args.toArgFile(reportArguments)
                 argFile to listOfNotNull(
                     toolSpec.optionalToolName.orNull,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to reportArguments + listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments
+                null to reportArguments + listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportArguments
             }
 
             try {
@@ -161,7 +161,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
                     if (toolSpec.collectNativeCompilerMetrics.get()) {
                         val reportFile = Files.createTempFile("compiler-native-report", ".txt")
-                        entryPoint.invoke(null, toolArgs.toTypedArray(), reportFile.absolutePathString())
+                        val toolArgsWithPerformance = toolArgs.toMutableList()
+                        toolArgsWithPerformance.add("-Xdump-perf=${reportFile.toAbsolutePath()}")
+                        entryPoint.invoke(null, toolArgsWithPerformance.toTypedArray())
                         metricsReporter.parseCompilerMetricsFromFile(reportFile.toFile())
                     } else {
                         entryPoint.invoke(null, toolArgs.toTypedArray())
@@ -203,7 +205,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             else -> this
         }
 
-    private fun ToolArguments.toArgFile(/*reportFile: Path? = null*/): Path {
+    private fun ToolArguments.toArgFile(additionalArguments: List<String> = emptyList()): Path {
         val argFile = Files.createTempFile(
             "kotlinc-native-args",
             ".lst"
@@ -211,14 +213,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
         argFile.toFile().printWriter().use { w ->
             arguments.forEach { arg ->
-                val escapedArg = arg
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                w.println("\"$escapedArg\"")
+                writeArgumentIntoWriter(arg, w)
             }
+            additionalArguments.forEach { arg -> writeArgumentIntoWriter(arg, w)}
         }
 
         return argFile
+    }
+
+    private fun writeArgumentIntoWriter(arg: String, w: PrintWriter) {
+        val escapedArg = arg
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+        w.println("\"$escapedArg\"")
     }
 
     class ToolSpec(

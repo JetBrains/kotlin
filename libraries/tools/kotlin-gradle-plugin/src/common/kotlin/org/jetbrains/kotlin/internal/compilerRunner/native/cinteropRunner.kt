@@ -45,7 +45,7 @@ private fun ObjectFactory.kotlinToolSpec(
     displayName = property("cinterop"),
     optionalToolName = property("cinterop"),
     mainClass = nativeMainClass,
-    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(kotlinNativeVersion),
+    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
     classpath = nativeCompilerClasspath(actualNativeHomeDirectory, isUseEmbeddableCompilerJar),
     jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),

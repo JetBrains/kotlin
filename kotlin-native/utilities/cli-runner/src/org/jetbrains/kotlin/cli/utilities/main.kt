@@ -6,12 +6,9 @@ package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.native.interop.gen.defFileDependencies
 import org.jetbrains.kotlin.cli.bc.main as konancMain
-import org.jetbrains.kotlin.cli.bc.mainWithPerformance as konancMainWithPerformance
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRenderer as konancMainWithGradleRenderer
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithXcodeRenderer as konancMainWithXcodeRenderer
-import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRendererWithPerformance as konancMainWithGradleRendererWithPerformance
-import org.jetbrains.kotlin.cli.bc.mainNoExitWithXcodeRendererWithPerformance as konancMainWithXcodeRendererWithPerformance
 import org.jetbrains.kotlin.backend.konan.env.setEnv
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 
@@ -43,23 +40,15 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
     }
 }
 
-fun main(args: Array<String>) = if (args[0] == "--report-file") {
-    val reportFile = args[1]
-    mainImpl(args.drop(2).toTypedArray(), false) { konancMainWithPerformance(reportFile, it) }
-} else {
-    mainImpl(args, false, ::konancMain)
-}
+fun main(args: Array<String>) = mainImpl(args, false, ::konancMain)
+
 
 private fun setupClangEnv() {
     setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
 }
 
 fun daemonMain(args: Array<String>) = inProcessMain(args, ::konancMainWithGradleRenderer)
-fun daemonMainWithPerformance(args: Array<String>, reportFilePath: String) =
-        inProcessMain(args) { args -> konancMainWithGradleRendererWithPerformance(reportFilePath, args) }
-
 fun daemonMainWithXcodeRenderer(args: Array<String>) = inProcessMain(args, ::konancMainWithXcodeRenderer)
-fun daemonMainWithXcodeRendererWithPerformance(args: Array<String>, reportFilePath: String) = inProcessMain(args) { konancMainWithXcodeRendererWithPerformance(reportFilePath, it) }
 
 private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Unit) {
     usingNativeMemoryAllocator {
