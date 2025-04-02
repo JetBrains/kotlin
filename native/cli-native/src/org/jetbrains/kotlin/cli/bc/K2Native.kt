@@ -239,16 +239,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             }
         }
 
-        @JvmStatic
-        fun mainWithPerformance(args: Array<String>, path: String) = profile("Total compiler main()") {
-            val k2Native = K2Native()
-            if (doMainNoExit(k2Native, args) != ExitCode.OK) {
-                throw KonanCompilationException("Compilation finished with errors")
-            }
-            k2Native.defaultPerformanceManager.dumpPerformanceReport(File(path))
-        }
-
-
         @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
             profile("Total compiler main()") {
                 if (doMainNoExit(K2Native(), args, messageRenderer) != ExitCode.OK) {

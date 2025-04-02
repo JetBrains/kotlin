@@ -753,13 +753,13 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Verify that the metric for native incremental compilation")
+    @DisplayName("Verify that the metric for native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_2],
     )
-    fun testMetricForNativeProject(gradleVersion: GradleVersion) {
+    fun testMetricForNativeProjectInProcess(gradleVersion: GradleVersion) {
         nativeProject(
             "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
