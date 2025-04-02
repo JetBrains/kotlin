@@ -3440,12 +3440,6 @@ public class LightTreeJsIrTextTestGenerated extends AbstractLightTreeJsIrTextTes
       }
 
       @Test
-      @TestMetadata("sequenceCollectionIntersectionOverrideKJJ.kt")
-      public void testSequenceCollectionIntersectionOverrideKJJ() {
-        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionIntersectionOverrideKJJ.kt");
-      }
-
-      @Test
       @TestMetadata("sequenceCollectionIntersectionOverrideKJK.kt")
       public void testSequenceCollectionIntersectionOverrideKJK() {
         runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionIntersectionOverrideKJK.kt");
