@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// FIR_IDENTICAL
 // FILE: Base.java
 import org.jetbrains.annotations.NotNull;
 
@@ -29,22 +29,13 @@ abstract class DerivedImpl : Derived, Impl() {
     abstract override fun foo(name: String?): Derived
 }
 
-fun box(): String {
-    val x1: ImplDerived = object : ImplDerived() {
+fun test() {
+    val implDerived: ImplDerived = <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>object : ImplDerived() {
         override fun foo(name: String?): Derived = this
-    }
-    x1.foo("")
-    (x1 as Base).foo("")
-    (x1 as Derived).foo("")
-    (x1 as Impl).foo("")
-
-    val x2: DerivedImpl = object : DerivedImpl() {
+    }<!>
+    val derivedImpl: DerivedImpl = <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>object : DerivedImpl() {
         override fun foo(name: String?): Derived = this
-    }
-    x2.foo("")
-    (x2 as Base).foo("")
-    (x2 as Derived).foo("")
-    (x2 as Impl).foo("")
-
-    return "OK"
+    }<!>
+    implDerived.foo("")
+    derivedImpl.foo("")
 }

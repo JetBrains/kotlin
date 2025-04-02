@@ -37880,12 +37880,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
-      @TestMetadata("immutableName.kt")
-      public void testImmutableName() {
-        runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
-      }
-
-      @Test
       @TestMetadata("inheritanceWithWildcard.kt")
       public void testInheritanceWithWildcard() {
         runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -38069,12 +38063,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("syntheticPropOverriddenGetter.kt")
       public void testSyntheticPropOverriddenGetter() {
         runTest("compiler/testData/codegen/box/javaInterop/syntheticPropOverriddenGetter.kt");
-      }
-
-      @Test
-      @TestMetadata("triangleWithFlexibleTypeAndSubstitution4.kt")
-      public void testTriangleWithFlexibleTypeAndSubstitution4() {
-        runTest("compiler/testData/codegen/box/javaInterop/triangleWithFlexibleTypeAndSubstitution4.kt");
       }
 
       @Test
