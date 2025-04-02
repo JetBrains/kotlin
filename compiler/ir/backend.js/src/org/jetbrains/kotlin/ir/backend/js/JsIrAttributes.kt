@@ -73,3 +73,4 @@ var IrConstructor.newEnumConstructor: IrConstructor? by irAttribute(copyByDefaul
 var IrClass.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = false)
 var IrValueDeclaration.valueParameterForOldEnumConstructor: IrValueParameter? by irAttribute(copyByDefault = false)
 var IrEnumEntry.correspondingField: IrField? by irAttribute(copyByDefault = false)
+var IrField.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = false)

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
@@ -167,7 +168,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportEnumEntry(field: IrField, enumEntries: Map<IrEnumEntry, Int>): ExportedProperty {
-        val irEnumEntry = context.mapping.fieldToEnumEntry[field]
+        val irEnumEntry = field.correspondingEnumEntry
             ?: irError("Unable to find enum entry") {
                 withIrEntry("field", field)
             }
@@ -286,7 +287,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val enumEntries = klass
             .declarations
             .filterIsInstance<IrField>()
-            .mapNotNull { context.mapping.fieldToEnumEntry[it] }
+            .mapNotNull { it.correspondingEnumEntry }
 
         val enumEntriesToOrdinal: Map<IrEnumEntry, Int> =
             enumEntries

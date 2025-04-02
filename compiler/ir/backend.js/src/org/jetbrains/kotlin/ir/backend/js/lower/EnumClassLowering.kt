@@ -300,9 +300,6 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
  * Creates instance variable for each enum entry initialized with `null`.
  */
 class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
-
-    private var IrField.fieldToEnumEntry by context.mapping.fieldToEnumEntry
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrEnumEntry) {
             val irClass = declaration.parentAsClass
@@ -328,7 +325,7 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
         }
 
         enumEntry.correspondingField = result
-        result.fieldToEnumEntry = enumEntry
+        result.correspondingEnumEntry = enumEntry
 
         return result
     }
