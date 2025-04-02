@@ -90,23 +90,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
      */
     abstract fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession
 
-    private fun createLibraryProvidersForScope(
-        session: LLFirSession,
-        scope: GlobalSearchScope,
-        builtinSymbolProvider: FirSymbolProvider,
-    ): LLModuleWithDependenciesSymbolProvider {
-        return LLModuleWithDependenciesSymbolProvider(
-            session,
-            providers = createProjectLibraryProvidersForScope(session, scope),
-            LLDependenciesSymbolProvider(session) {
-                buildList {
-                    addAll(collectDependencySymbolProviders(session.ktModule))
-                    add(builtinSymbolProvider)
-                }
-            },
-        )
-    }
-
     abstract fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
@@ -473,10 +456,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val symbolProvider = createLibraryProvidersForScope(
+            val symbolProvider = LLModuleWithDependenciesSymbolProvider(
                 this,
-                module.contentScope,
-                builtinsSession.symbolProvider
+                providers = createProjectLibraryProvidersForScope(this, module.contentScope),
+                LLDependenciesSymbolProvider(this) {
+                    // A binary library session should not have any dependencies (apart from fallback builtins), as library module
+                    // dependencies only apply to *resolvable* sessions, including fallback dependencies.
+                    listOf(builtinsSession.symbolProvider)
+                },
             )
 
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
