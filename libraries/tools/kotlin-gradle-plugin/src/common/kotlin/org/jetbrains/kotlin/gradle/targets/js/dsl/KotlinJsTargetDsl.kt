@@ -50,14 +50,31 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     }
 }
 
+
+/**
+ * Base configuration options for the compilation of Kotlin JS and WasmJS targets.
+ *
+ * ```
+ * kotlin {
+ *     js { // Creates js target
+ *         // Configure js target specifics here
+ *     }
+ *     wasmJs { // Creates WasmJS target
+ *         // Configure WasmJS target specifics here
+ *     }
+ * }
+ * ```
+ *
+ * To learn more see:
+ * - [Set up a Kotlin/JS project](https://kotl.in/kotlin-js-setup).
+ * - [Get started with Kotlin/Wasm and Compose Multiplatform](https://kotl.in/kotlin-wasm-js-setup).
+ */
+// NOTE: Consider splitting this so JS and WasmJS are configured separately KT-76473
 interface KotlinJsTargetDsl :
     KotlinTarget,
     KotlinTargetWithNodeJsDsl,
     HasBinaries<KotlinJsBinaryContainer>,
     HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
-
-    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    var moduleName: String?
 
     /**
      * Represents the name of the output module for a Kotlin/JS and Kotlin/Wasm target.
@@ -73,7 +90,34 @@ interface KotlinJsTargetDsl :
         }
     }
 
+    /**
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * Use **CommonJS** as the JS module system used by the compiled JS code.
+     *
+     * This is a convenience method, to simplify configuring the Kotlin JS compiler options directly.
+     *
+     * Only one module system should be configured.
+     * If no module system is configured it will default to
+     * UMD (Universal Module Definition).
+     * Do not configure two modules (e.g. [useEsModules]) in the same target, because the behaviour is undefined.
+     */
     fun useCommonJs()
+
+    /**
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * Use **ES modules** as the JS module system used by the compiled JS code.
+     *
+     * This is a convenience method, to simplify configuring the Kotlin JS compiler options directly.
+     *
+     * Only one module system should be configured.
+     * If no module system is configured it will default to
+     * UMD (Universal Module Definition).
+     * Do not configure two modules (e.g. [useCommonJs]) in the same target, because the behaviour is undefined.
+     */
     fun useEsModules()
 
     /**
@@ -84,6 +128,17 @@ interface KotlinJsTargetDsl :
 
     fun generateTypeScriptDefinitions()
 
+    val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
+
+    // Need to compatibility when users use KotlinJsCompilation specific in build script
+    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
+
+    override val binaries: KotlinJsBinaryContainer
+
+    //region Deprecated Properties
+    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
+    var moduleName: String?
+
     @Deprecated(
         message = "produceExecutable() was changed on binaries.executable()",
         replaceWith = ReplaceWith("binaries.executable()"),
@@ -92,13 +147,7 @@ interface KotlinJsTargetDsl :
     fun produceExecutable() {
         throw GradleException("Please change produceExecutable() on binaries.executable()")
     }
-
-    val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
-
-    // Need to compatibility when users use KotlinJsCompilation specific in build script
-    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
-
-    override val binaries: KotlinJsBinaryContainer
+    //endregion
 }
 
 interface KotlinTargetWithNodeJsDsl {
