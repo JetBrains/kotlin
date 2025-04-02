@@ -4,6 +4,7 @@
 
 fun run(block: () -> Unit) {}
 fun <T> consume(block: () -> T) {}
+fun consumeLong(l: Long) {}
 
 class TestClass() {
     val testLambda1 = run {
@@ -85,6 +86,24 @@ fun testIfElse(
     val a =
         if (x == null) transformer
         else { str -> str.length }
+
+    val b =
+        if (x == null) 0L
+        else <!UNUSED_EXPRESSION!>0<!>
+
+    val c: Long =
+        if (x == null) 0
+        else 0
+
+    consumeLong(if(x == null) <!UNUSED_EXPRESSION!>0<!> else <!UNUSED_EXPRESSION!>1<!>)
+}
+
+fun testWhile(
+    x: Boolean,
+) {
+    while (x) {
+        <!UNUSED_EXPRESSION!>Unit<!>
+    }
 }
 
 fun testTry() {
