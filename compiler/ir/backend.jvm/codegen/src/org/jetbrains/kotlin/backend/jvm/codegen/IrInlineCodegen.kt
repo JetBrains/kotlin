@@ -12,18 +12,10 @@ import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.codegen.IrExpressionLambda
-import org.jetbrains.kotlin.codegen.JvmKotlinType
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.inline.CapturedParamInfo
-import org.jetbrains.kotlin.codegen.inline.SMAPAndMethodNode
-import org.jetbrains.kotlin.codegen.inline.nodeText
-import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -44,12 +36,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
-import org.jetbrains.org.objectweb.asm.tree.LookupSwitchInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.TableSwitchInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
 class IrInlineCodegen(
@@ -132,7 +119,7 @@ class IrInlineCodegen(
                 parameterType,
                 true,
                 null,
-                irValueParameter.indexInOldValueParameters
+                irValueParameter.indexInParameters
             ).functionalArgument = lambdaInfo
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
@@ -175,7 +162,7 @@ class IrInlineCodegen(
                     // Here we replicate the old backend: reusing the locals for everything except extension receivers.
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
-                    val argValue = if (irValueParameter.indexInOldValueParameters >= 0) {
+                    val argValue = if (irValueParameter.kind != IrParameterKind.ExtensionReceiver) {
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
@@ -194,7 +181,6 @@ class IrInlineCodegen(
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-            val parameterIndex = irValueParameter.indexInOldValueParameters
 
             if (kind === ValueKind.DEFAULT_MASK || kind === ValueKind.METHOD_HANDLE_IN_DEFAULT) {
                 assert(onStack is StackValue.Constant) { "Additional default method argument should be constant, but $onStack" }
@@ -214,9 +200,13 @@ class IrInlineCodegen(
                 return
             }
 
-            val info = when (parameterIndex) {
-                -1 -> invocationParamBuilder.addNextParameter(expectedType.type, false)
-                else -> invocationParamBuilder.addNextValueParameter(expectedType.type, false, null, parameterIndex)
+            val info = when (irValueParameter.kind) {
+                IrParameterKind.ExtensionReceiver, IrParameterKind.DispatchReceiver -> invocationParamBuilder.addNextParameter(
+                    expectedType.type, false
+                )
+                IrParameterKind.Regular, IrParameterKind.Context -> invocationParamBuilder.addNextValueParameter(
+                    expectedType.type, false, null, irValueParameter.indexInParameters
+                )
             }
 
             info.functionalArgument = when (kind) {
@@ -253,19 +243,9 @@ class IrInlineCodegen(
     }
 
     private fun canInlineArgumentsInPlace(): Boolean {
-        if (!function.isInlineOnly())
-            return false
-
-        var actualParametersCount = function.valueParameters.size
-        if (function.dispatchReceiverParameter != null)
-            ++actualParametersCount
-        if (function.extensionReceiverParameter != null)
-            ++actualParametersCount
-        if (actualParametersCount == 0)
-            return false
-
-        if (function.valueParameters.any { it.isInlineParameter() })
-            return false
+        if (!function.isInlineOnly()) return false
+        if (function.parameters.isEmpty()) return false
+        if (function.parameters.any { it.isInlineParameter() }) return false
 
         return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
     }

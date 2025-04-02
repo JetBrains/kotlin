@@ -12,8 +12,6 @@ class ParametersBuilder private constructor() {
 
     private val params = arrayListOf<ParameterInfo>()
 
-    private var valueParamFirstIndex = 0
-
     var nextParameterOffset = 0
         private set
 
@@ -29,7 +27,7 @@ class ParametersBuilder private constructor() {
 
     fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
         return addParameter(
-            ParameterInfo(type, skipped, nextParameterOffset, remapValue, parameterIndex + valueParamFirstIndex),
+            ParameterInfo(type, skipped, nextParameterOffset, remapValue, parameterIndex),
             true
         )
     }
@@ -72,9 +70,6 @@ class ParametersBuilder private constructor() {
         nextParameterOffset += info.type.size
         if (info !is CapturedParamInfo) {
             nextValueParameterIndex++
-            if (!isValueParameter) {
-                valueParamFirstIndex++
-            }
         }
         return info
     }
