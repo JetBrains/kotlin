@@ -10,7 +10,4 @@ import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
 
-    // Wasm mappings
-
-    val wasmGetJsClass: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 }
