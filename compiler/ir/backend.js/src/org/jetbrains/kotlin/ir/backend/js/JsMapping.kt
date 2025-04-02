@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : Mapping() {
-    val enumEntryToInstanceField: DeclarationMapping<IrEnumEntry, IrField> by AttributeBasedMappingDelegate()
     val enumConstructorToNewConstructor: DeclarationMapping<IrConstructor, IrConstructor> by AttributeBasedMappingDelegate()
     val enumClassToCorrespondingEnumEntry: DeclarationMapping<IrClass, IrEnumEntry> by AttributeBasedMappingDelegate()
     val enumConstructorOldToNewValueParameters: DeclarationMapping<IrValueDeclaration, IrValueParameter> by AttributeBasedMappingDelegate()

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.instanceField
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /**
  * Replaces external enum entry accesses with field accesses.
@@ -36,7 +37,7 @@ class ExternalEnumUsagesLowering(val context: JsIrBackendContext) : BodyLowering
     }
 
     private fun lowerExternalEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
-        context.mapping.enumEntryToInstanceField.getOrPut(enumEntry) { createFieldForEntry(enumEntry, klass) }.let {
+        enumEntry::instanceField.getOrSetIfNull { createFieldForEntry(enumEntry, klass) }.let {
             JsIrBuilder.buildGetField(it.symbol, classAsReceiver(klass), null, klass.defaultType)
         }
 
