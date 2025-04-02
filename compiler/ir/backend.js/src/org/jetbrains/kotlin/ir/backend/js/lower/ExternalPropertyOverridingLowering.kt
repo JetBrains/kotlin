@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.syntheticPrimaryConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -139,7 +140,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
         val superAccessMap = mutableMapOf<IrProperty, ExternalPropertySuperAccess>()
 
         val parentClassPrimaryConstructor = irClass.primaryConstructor
-            ?: context.mapping.classToSyntheticPrimaryConstructor[irClass]
+            ?: irClass.syntheticPrimaryConstructor
             ?: compilationException("Unexpected primary constructor for processing irClass", irClass)
 
         val primaryConstructorBody = parentClassPrimaryConstructor.body as? IrBlockBody
