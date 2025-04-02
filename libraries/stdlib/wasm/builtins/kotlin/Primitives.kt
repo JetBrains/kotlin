@@ -1063,7 +1063,11 @@ public actual class Int private constructor(private val value: Int) : Number(), 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun div(other: Int): Int =
-        if (this == Int.MIN_VALUE && other == -1) Int.MIN_VALUE else wasm_i32_div_s(this, other)
+        when (other) {
+            -1 -> if (this == Int.MIN_VALUE) Int.MIN_VALUE else wasm_i32_div_s(this, other)
+            0 -> throw ArithmeticException("Division by zero")
+            else -> wasm_i32_div_s(this, other)
+        }
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1107,9 +1111,11 @@ public actual class Int private constructor(private val value: Int) : Number(), 
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    @WasmOp(WasmOp.I32_REM_S)
     public actual operator fun rem(other: Int): Int =
-        implementedAsIntrinsic
+        when (other) {
+            0 -> throw ArithmeticException("Division by zero")
+            else -> wasm_i32_rem_s(this, other)
+    }
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1578,7 +1584,11 @@ public actual class Long private constructor(private val value: Long) : Number()
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun div(other: Long): Long =
-        if (this == Long.MIN_VALUE && other == -1L) Long.MIN_VALUE else wasm_i64_div_s(this, other)
+        when (other) {
+            -1L -> if (this == Long.MIN_VALUE) Long.MIN_VALUE else wasm_i64_div_s(this, other)
+            0L -> throw ArithmeticException("Division by zero")
+            else -> wasm_i64_div_s(this, other)
+        }
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1627,9 +1637,11 @@ public actual class Long private constructor(private val value: Long) : Number()
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    @WasmOp(WasmOp.I64_REM_S)
     public actual operator fun rem(other: Long): Long =
-        implementedAsIntrinsic
+        when (other) {
+            0L -> throw ArithmeticException("Division by zero")
+            else -> wasm_i64_rem_s(this, other)
+    }
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).

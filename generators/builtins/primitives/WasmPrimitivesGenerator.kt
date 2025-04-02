@@ -88,18 +88,32 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         val sign = operatorSign(methodName)
         if (thisKind != PrimitiveType.BYTE && thisKind != PrimitiveType.SHORT && thisKind == otherKind) {
             val type = thisKind.capitalized
-
             when (methodName) {
                 "div" -> {
                     val oneConst = if (thisKind == PrimitiveType.LONG) "-1L" else "-1"
+                    val zeroConst = if (thisKind == PrimitiveType.LONG) "0L" else "0"
                     when (thisKind) {
-                        PrimitiveType.INT, PrimitiveType.LONG -> "if (this == $type.MIN_VALUE && $parameterName == $oneConst) $type.MIN_VALUE " +
-                                "else wasm_${thisKind.prefixLowercase}_div_s(this, $parameterName)"
+                        PrimitiveType.INT, PrimitiveType.LONG -> {
+
+                            "when ($parameterName) {\n" +
+                                    "        $oneConst -> if (this == $type.MIN_VALUE) $type.MIN_VALUE else wasm_${thisKind.prefixLowercase}_div_s(this, $parameterName)\n" +
+                                    "        $zeroConst -> throw ArithmeticException(\"Division by zero\")\n" +
+                                    "        else -> wasm_${thisKind.prefixLowercase}_div_s(this, $parameterName)\n" +
+                                    "    }"
+                        }
                         else -> return implementAsIntrinsic(thisKind, methodName)
                     }
                 }
                 "rem" -> when (thisKind) {
-                    in PrimitiveType.floatingPoint -> "wasm_${thisKind.prefixLowercase}_copysign(this - (wasm_${thisKind.prefixLowercase}_truncate(this / $parameterName) * $parameterName), this)"
+                    in PrimitiveType.floatingPoint ->
+                        "wasm_${thisKind.prefixLowercase}_copysign(this - (wasm_${thisKind.prefixLowercase}_truncate(this / $parameterName) * $parameterName), this)"
+                    PrimitiveType.INT, PrimitiveType.LONG -> {
+                        val zeroConst = if (thisKind == PrimitiveType.LONG) "0L" else "0"
+                        "when (other) {\n" +
+                                "        $zeroConst -> throw ArithmeticException(\"Division by zero\")\n" +
+                                "        else -> wasm_${thisKind.prefixLowercase}_rem_s(this, $parameterName)\n" +
+                                "}"
+                    }
                     else -> return implementAsIntrinsic(thisKind, methodName)
                 }
                 else -> return implementAsIntrinsic(thisKind, methodName)
