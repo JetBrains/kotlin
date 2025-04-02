@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.newEnumConstructor
@@ -76,7 +77,6 @@ private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irCla
  */
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
-    private var IrClass.correspondingEntry by context.mapping.enumClassToCorrespondingEnumEntry
     private var IrValueDeclaration.valueParameter by context.mapping.enumConstructorOldToNewValueParameters
 
     private val additionalParameters = listOf(
@@ -95,7 +95,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
 
             if (declaration is IrEnumEntry) {
                 declaration.correspondingClass?.let { klass ->
-                    klass.correspondingEntry = declaration
+                    klass.correspondingEnumEntry = declaration
                 }
             }
         }
@@ -172,9 +172,6 @@ private fun JsCommonBackendContext.fixReferencesToConstructorParameters(irClass:
 }
 
 class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) : BodyLoweringPass {
-
-    private var IrClass.correspondingEntry by context.mapping.enumClassToCorrespondingEnumEntry
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
 
         (container.parent as? IrClass)?.let { irClass ->
@@ -189,7 +186,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                     lowerEnumConstructorsBody(container)
                 }
 
-                irClass.correspondingEntry?.let { enumEntry ->
+                irClass.correspondingEnumEntry?.let { enumEntry ->
                     // Lower `IrEnumConstructorCall`s inside of enum entry class constructors to corresponding `IrDelegatingConstructorCall`s.
                     // Add `name` and `ordinal` parameters.
                     lowerEnumEntryClassConstructors(enumEntry.parentAsClass, enumEntry, container)
