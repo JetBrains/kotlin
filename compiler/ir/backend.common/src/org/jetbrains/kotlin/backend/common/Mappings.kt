@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.set
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KProperty
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
@@ -32,74 +27,3 @@ var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDef
 var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = false)
 
 var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
-
-open class Mapping {
-    abstract class DeclarationMapping<K : IrDeclaration, V> {
-        abstract operator fun get(declaration: K): V?
-        abstract operator fun set(declaration: K, value: V?)
-
-        operator fun getValue(thisRef: K, desc: KProperty<*>): V? = get(thisRef)
-
-        operator fun setValue(thisRef: K, desc: KProperty<*>, value: V?) {
-            set(thisRef, value)
-        }
-    }
-
-    /**
-     * Mapping from K to V backed by a regular MutableMap.
-     * Its only use is when the access to [keys] is necessary,
-     * otherwise it should be avoided.
-     */
-    class MapBasedMapping<K : IrDeclaration, V> : DeclarationMapping<K, V>() {
-        private val map: MutableMap<K, V> = ConcurrentHashMap()
-
-        override operator fun get(declaration: K): V? {
-            return map[declaration]
-        }
-
-        override operator fun set(declaration: K, value: V?) {
-            if (value == null) {
-                map.remove(declaration)
-            } else {
-                map[declaration] = value
-            }
-        }
-
-        val keys: Set<K>
-            get() = map.keys
-    }
-
-    /**
-     * Mapping from K to V backed by [IrAttribute].
-     * Usages are to be refactored to use [IrAttribute]s directly - KT-69082.
-     */
-    protected class AttributeBasedMapping<K : IrDeclaration, V : Any>(
-        private val attribute: IrAttribute<K, V>
-    ) : DeclarationMapping<K, V>() {
-        override fun get(declaration: K): V? {
-            return declaration[attribute]
-        }
-
-        override fun set(declaration: K, value: V?) {
-            declaration[attribute] = value
-        }
-    }
-
-    protected class AttributeBasedMappingDelegate<K : IrDeclaration, V : Any> () {
-        private lateinit var mapping: AttributeBasedMapping<K, V>
-
-        operator fun provideDelegate(thisRef: Any?, desc: KProperty<*>): AttributeBasedMappingDelegate<K, V> {
-            val attribute = irAttribute<K, V>(copyByDefault = false).provideDelegate(thisRef, desc)
-            this.mapping = AttributeBasedMapping(attribute)
-            return this
-        }
-
-        operator fun getValue(thisRef: Any?, desc: KProperty<*>): AttributeBasedMapping<K, V> {
-            return mapping
-        }
-    }
-}
-
-fun <K : IrDeclaration, V> Mapping.DeclarationMapping<K, V>.getOrPut(key: K, fn: () -> V) = this[key] ?: fn().also {
-    this[key] = it
-}

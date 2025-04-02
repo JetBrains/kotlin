@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSharedVariablesManager
@@ -26,8 +25,6 @@ internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseCon
         // TODO: investigate this.
         KonanSharedVariablesManager(irBuiltIns, symbols)
     }
-
-    override val mapping: Mapping = Mapping()
 
     override val irFactory: IrFactory = IrFactoryImpl
 

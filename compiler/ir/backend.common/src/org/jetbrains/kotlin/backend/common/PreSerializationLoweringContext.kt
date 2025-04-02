@@ -20,7 +20,6 @@ abstract class PreSerializationLoweringContext(
     override val configuration: CompilerConfiguration,
     val diagnosticReporter: DiagnosticReporter,
 ) : LoweringContext {
-    override val mapping: Mapping = Mapping()
 
     override val irFactory: IrFactory
         get() = IrFactoryImpl

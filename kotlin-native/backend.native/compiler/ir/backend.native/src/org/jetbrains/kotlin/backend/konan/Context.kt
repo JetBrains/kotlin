@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -54,7 +53,7 @@ internal class Context(
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
-    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
+    val cachesAbiSupport by lazy { CachesAbiSupport(irFactory) }
 
     val moduleDeserializerProvider by lazy {
         ModuleDeserializerProvider(config.libraryToCache, config.cachedLibraries, irLinker)
