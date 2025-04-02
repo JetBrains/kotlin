@@ -903,7 +903,7 @@ private fun TestProject.agreeToBuildScanService() {
         |        termsOfServiceAgree = "yes"
         |    }
         |}
-        |""".trimIndent()
+        |""".trimMargin()
     )
 }
 
