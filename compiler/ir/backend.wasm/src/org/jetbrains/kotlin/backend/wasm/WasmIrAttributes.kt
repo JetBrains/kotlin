@@ -13,3 +13,5 @@ import org.jetbrains.kotlin.ir.irAttribute
 var IrFunction.topLevelFunctionForNestedExternal: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 var IrClass.getInstanceFunctionForExternalObject: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+var IrClass.instanceCheckForExternalClass: IrSimpleFunction? by irAttribute(copyByDefault = false)
