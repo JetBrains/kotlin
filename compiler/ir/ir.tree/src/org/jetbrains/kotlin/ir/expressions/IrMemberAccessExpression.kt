@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.getShapeOfParameters
@@ -70,29 +72,20 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         contextParameterCount: Int,
         regularParameterCount: Int,
     ) {
-        if (targetParametersShapeInitialized) {
-            require(hasDispatchReceiver == targetHasDispatchReceiver)
-            { "New symbol has different shape w.r.t. dispatch receiver" }
-            require(hasExtensionReceiver == targetHasExtensionReceiver)
-            { "New symbol has different shape w.r.t. extension receiver" }
-            require(regularParameterCount + contextParameterCount == targetRegularParameterCount + targetContextParameterCount)
-            { "New symbol has different shape w.r.t. value parameter count" }
-        } else {
-            val newAllParametersCount =
-                (if (hasDispatchReceiver) 1 else 0) +
-                        contextParameterCount +
-                        (if (hasExtensionReceiver) 1 else 0) +
-                        regularParameterCount
-            repeat((newAllParametersCount - arguments.size).coerceAtLeast(0)) {
-                arguments.add(null)
-            }
-
-            targetHasDispatchReceiver = hasDispatchReceiver
-            targetHasExtensionReceiver = hasExtensionReceiver
-            targetContextParameterCount = contextParameterCount
-            targetRegularParameterCount = regularParameterCount
-            targetParametersShapeInitialized = true
+        val newAllParametersCount =
+            (if (hasDispatchReceiver) 1 else 0) +
+                    contextParameterCount +
+                    (if (hasExtensionReceiver) 1 else 0) +
+                    regularParameterCount
+        repeat((newAllParametersCount - arguments.size).coerceAtLeast(0)) {
+            arguments.add(null)
         }
+
+        targetHasDispatchReceiver = hasDispatchReceiver
+        targetHasExtensionReceiver = hasExtensionReceiver
+        targetContextParameterCount = contextParameterCount
+        targetRegularParameterCount = regularParameterCount
+        targetParametersShapeInitialized = true
     }
 
     fun initializeTargetShapeFromSymbol() {
@@ -225,18 +218,13 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *
      * See docs/backend/IR_parameter_api_migration.md
      */
+    @UnsafeDuringIrConstructionAPI
     var dispatchReceiver: IrExpression?
         get() {
-            ensureTargetShapeInitialized()
-            return if (targetHasDispatchReceiver) {
-                arguments[0]
-            } else {
-                null
-            }
+            return if (hasDispatchReceiver()) arguments[0] else null
         }
         set(value) {
-            ensureTargetShapeInitialized()
-            if (targetHasDispatchReceiver) {
+            if (hasDispatchReceiver()) {
                 arguments[0] = value
             } else {
                 require(value == null) {
@@ -246,6 +234,28 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                 }
             }
         }
+
+    private fun hasDispatchReceiver(): Boolean {
+        val target = (symbol as IrBindableSymbol<*, *>).getRealOwner()
+        return when (target) {
+            is IrFunction -> target.dispatchReceiverParameter != null
+            is IrProperty -> {
+                this as IrPropertyReference
+                val accessor = (getter ?: setter)?.getRealOwner()
+                if (accessor != null) {
+                    accessor.dispatchReceiverParameter != null
+                } else {
+                    val realProperty = target.resolveFakeOverrideMaybeAbstractOrFail()
+                    !realProperty.backingField!!.isStatic
+                }
+            }
+            is IrLocalDelegatedProperty -> {
+                this as IrLocalDelegatedPropertyReference
+                getter.owner.dispatchReceiverParameter != null
+            }
+            else -> error("Unexpected IrMemberAccessExpression symbol: $target")
+        }
+    }
 
     /**
      * Unlike [dispatchReceiver], which checks whether the callee has a dispatch receiver on each access, this
@@ -316,7 +326,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
 
     /**
-     * Methods below should be used to add/remove a receiver argument in correspondence to target function/property,
+     * ## The four methods below are only useful if your code was not migrated to new parameter API (docs/backend/IR_parameter_api_migration.md)
+     * yet.
+     *
+     * They should be used to add/remove a receiver argument in correspondence to target function/property,
      * whose parameters changed _after_ this [IrMemberAccessExpression] was created.
      *
      * It can happen, e.g., in a lowering phase that modifies an existing function in-place by adding a `dispatchReceiverParameter`,

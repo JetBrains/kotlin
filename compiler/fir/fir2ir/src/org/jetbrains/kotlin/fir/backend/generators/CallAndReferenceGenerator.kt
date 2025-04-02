@@ -1382,7 +1382,7 @@ class CallAndReferenceGenerator(
                     }
                     val notFromAny = !declarationSiteSymbol.isFunctionFromAny()
                     val notAnInterface = firDispatchReceiver?.resolvedType?.toRegularClassSymbol(session)?.isInterface != true
-                    dispatchReceiver =
+                    arguments[0] =
                         if (notFromAny || notAnInterface) {
                             baseDispatchReceiver
                         } else {
@@ -1422,7 +1422,7 @@ class CallAndReferenceGenerator(
 
             is IrMemberAccessExpression<*> if statement is FirDelegatedConstructorCall -> {
                 statement.dispatchReceiver?.let {
-                    dispatchReceiver = visitor.convertToIrExpression(it)
+                    arguments[0] = visitor.convertToIrExpression(it)
                     hasDispatchReceiver = true
                 }
             }
