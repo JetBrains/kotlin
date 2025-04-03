@@ -86,6 +86,7 @@ uint32_t concurrentMarkMaxIterations() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
 AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
+bool coreSymbolicationUseOnlyKotlinImage() noexcept;
 bool mimallocUseDefaultOptions() noexcept;
 bool mimallocUseCompaction() noexcept;
 bool objcDisposeOnMain() noexcept;

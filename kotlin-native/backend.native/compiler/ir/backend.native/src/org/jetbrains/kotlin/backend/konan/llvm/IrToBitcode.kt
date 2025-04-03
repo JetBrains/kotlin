@@ -2670,6 +2670,8 @@ internal class CodeGeneratorVisitor(
                             functionType(llvm.int32Type, false, llvm.int8PtrType, llvm.int8PtrType, llvm.int32Type))
             overrideRuntimeGlobal("Kotlin_getSourceInfo_Function", constValue(getSourceInfoFunction!!))
         }
+        overrideRuntimeGlobal("Kotlin_CoreSymbolication_useOnlyKotlinImage",
+                llvm.constInt32(if (context.config.coreSymbolicationUseOnlyKotlinImage) 1 else 0))
         if (context.config.target.family == Family.ANDROID && context.config.produce == CompilerOutputKind.PROGRAM) {
             val configuration = context.config.configuration
             val programType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default

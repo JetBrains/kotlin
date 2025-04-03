@@ -23,6 +23,7 @@ RUNTIME_WEAK uint32_t Kotlin_auxGCThreads = 0;
 RUNTIME_WEAK uint32_t Kotlin_concurrentMarkMaxIterations = 100;
 RUNTIME_WEAK int32_t Kotlin_suspendFunctionsFromAnyThreadFromObjC = 0;
 RUNTIME_WEAK Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function = nullptr;
+RUNTIME_WEAK int32_t Kotlin_CoreSymbolication_useOnlyKotlinImage = 0;
 #ifdef KONAN_ANDROID
 RUNTIME_WEAK int32_t Kotlin_printToAndroidLogcat = 1;
 #endif
@@ -68,6 +69,10 @@ ALWAYS_INLINE int compiler::getSourceInfo(void* addr, SourceInfo *result, int re
     } else {
         return Kotlin_getSourceInfo_Function(addr, result, result_size);
     }
+}
+
+ALWAYS_INLINE bool compiler::coreSymbolicationUseOnlyKotlinImage() noexcept {
+    return Kotlin_CoreSymbolication_useOnlyKotlinImage != 0;
 }
 
 ALWAYS_INLINE bool compiler::mimallocUseDefaultOptions() noexcept {

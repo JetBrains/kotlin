@@ -24,6 +24,7 @@ object BinaryOptions : BinaryOptionRegistry() {
     val stripDebugInfoFromNativeLibs by booleanOption()
 
     val sourceInfoType by option<SourceInfoType>()
+    val coreSymbolicationImageListType by option<CoreSymbolicationImageListType>()
 
     val androidProgramType by option<AndroidProgramType>()
 
