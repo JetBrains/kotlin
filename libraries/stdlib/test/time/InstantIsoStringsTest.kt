@@ -27,7 +27,9 @@ class InstantIsoStringsTest {
             val validString = "${localDateToString(year, month, lastDayOfMonth)}T23:59:59Z"
             val invalidString = "${localDateToString(year, month, lastDayOfMonth + 1)}T23:59:59Z"
             Instant.parse(validString) // shouldn't throw
+            assertNotNull(Instant.parseOrNull(validString))
             assertInvalidFormat(invalidString) { Instant.parse(invalidString) }
+            assertNull(Instant.parseOrNull(invalidString))
         }
 
         val nonLeapYears = listOf(
@@ -204,6 +206,7 @@ class InstantIsoStringsTest {
                 Instant.fromEpochSeconds(seconds, nanos), instant,
                 "Parsed $instant from $str, with Unix time = `$seconds + 10^-9 * $nanos`"
             )
+            assertEquals(instant, Instant.parseOrNull(str), "results of Instant.parse and parseOrNull should be the same for $str")
             assertEquals(str, instant.toString())
         }
         // non-canonical strings are parsed as well, but formatted differently
@@ -219,6 +222,7 @@ class InstantIsoStringsTest {
                 seconds.toLong() * 1000 + nanos / 1000000, instant.toEpochMilliseconds(),
                 "Parsed $instant from $str, with Unix time = `$seconds + 10^-9 * $nanos`"
             )
+            assertEquals(instant, Instant.parseOrNull(str), "results of Instant.parse and parseOrNull should be the same for $str")
         }
     }
 
@@ -346,9 +350,13 @@ class InstantIsoStringsTest {
             "1970-02-03T04:05:06.123456789+01:12:6",
         )) {
             assertInvalidFormat(nonIsoString) { Instant.parse(nonIsoString) }
+            assertNull(Instant.parseOrNull(nonIsoString), nonIsoString)
         }
         // this string represents an Instant that is currently larger than Instant.MAX any of the implementations:
-        assertInvalidFormat { Instant.parse("+1000000001-12-31T23:59:59.000000000Z") }
+        "+1000000001-12-31T23:59:59.000000000Z".let {
+            assertInvalidFormat { Instant.parse(it) }
+            assertNull(Instant.parseOrNull(it))
+        }
     }
 
     @Test
@@ -363,14 +371,21 @@ class InstantIsoStringsTest {
         strings.forEach { (str, strInZ) ->
             val instant = Instant.parse(str)
             assertEquals(Instant.parse(strInZ), instant, str)
+            assertEquals(instant, Instant.parseOrNull(str), str)
             assertEquals(strInZ, instant.toString(), str)
         }
-        assertInvalidFormat { Instant.parse("2020-01-01T00:01:01+18:01") }
-        assertInvalidFormat { Instant.parse("2020-01-01T00:01:01+1801") }
-        assertInvalidFormat { Instant.parse("2020-01-01T00:01:01+0") }
-        assertInvalidFormat { Instant.parse("2020-01-01T00:01:01+") }
-        assertInvalidFormat { Instant.parse("2020-01-01T00:01:01") }
-        assertInvalidFormat { Instant.parse("2020-01-01T00:01:01+000000") }
+        val invalidStringsWithOffsets = listOf(
+            "2020-01-01T00:01:01+18:01",
+            "2020-01-01T00:01:01+1801",
+            "2020-01-01T00:01:01+0",
+            "2020-01-01T00:01:01+",
+            "2020-01-01T00:01:01",
+            "2020-01-01T00:01:01+000000",
+        )
+        invalidStringsWithOffsets.forEach {
+            assertInvalidFormat { Instant.parse(it) }
+            assertNull(Instant.parseOrNull(it))
+        }
 
         val instants = listOf(
             Instant.DISTANT_FUTURE,
@@ -396,8 +411,10 @@ class InstantIsoStringsTest {
                 if (instant == Instant.MAX && offsetSeconds < 0 ||
                     instant == Instant.MIN && offsetSeconds > 0
                 ) continue
-                val newInstant = Instant.parse("${instant.toString().dropLast(1)}$offsetString")
+                val stringToParse = "${instant.toString().dropLast(1)}$offsetString"
+                val newInstant = Instant.parse(stringToParse)
                 assertEquals(newInstant, instant.minus(offsetSeconds.seconds))
+                assertEquals(newInstant, Instant.parseOrNull(stringToParse))
             }
         }
     }

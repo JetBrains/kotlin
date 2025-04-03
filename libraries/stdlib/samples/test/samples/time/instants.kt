@@ -153,6 +153,22 @@ class Instants {
     }
 
     @Sample
+    fun parseOrNull() {
+        // Parsing a string that represents the Unix epoch.
+        val unixEpochInstant = Instant.parseOrNull("1970-01-01T00:00:00Z")
+        assertPrints(unixEpochInstant?.epochSeconds, "0")
+
+        // Parsing an ISO 8601 string with a time zone offset.
+        val instant = Instant.parseOrNull("2020-08-30T18:40:00+03:00")
+        // Instants are presented in the UTC time zone when converted to string.
+        assertPrints(instant.toString(), "2020-08-30T15:40:00Z")
+
+        // Failing to parse an invalid string returns null.
+        val notAnInstant = Instant.parseOrNull("Ten o'clock today")
+        assertPrints(notAnInstant, "null")
+    }
+
+    @Sample
     fun isDistantPast() {
         // Checking if an instant is so far in the past that it's probably irrelevant.
         val tenThousandYearsBC = Instant.parse("-10000-01-01T00:00:00Z")
