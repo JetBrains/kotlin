@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// FILE: J.java
+// FILE: test/J.java
+package test;
+
 public class J {
     public static final J INSTANCE = new J();
 }
