@@ -76,11 +76,9 @@ internal class XCFrameworkTaskHolder(
 @KotlinGradlePluginPublicDsl
 class XCFrameworkConfig {
     private val taskHolders: List<XCFrameworkTaskHolder>
-    private val resourcesExtension: KotlinTargetResourcesPublication?
 
     constructor(project: Project, xcFrameworkName: String, buildTypes: Set<NativeBuildType>) {
         val parentTask = project.parentAssembleXCFrameworkTask(xcFrameworkName)
-        resourcesExtension = project.multiplatformExtension.resourcesPublicationExtension
         taskHolders = buildTypes.map { buildType ->
             XCFrameworkTaskHolder.create(project, xcFrameworkName, buildType).also {
                 parentTask.dependsOn(it.task)
@@ -96,24 +94,16 @@ class XCFrameworkConfig {
      * Adds the specified frameworks in this XCFramework.
      */
     fun add(framework: Framework) {
-        val resources = if (resourcesExtension?.canResolveResources(framework.target) == true) {
-            resourcesExtension.resolveResources(framework.target)
-        } else {
-            null
-        }
-
         taskHolders.forEach { holder ->
             if (framework.buildType == holder.buildType) {
                 holder.task.configure { task ->
-                    task.from(framework, resources)
+                    task.from(framework)
                 }
 
                 AppleTarget.values()
                     .firstOrNull { it.targets.contains(framework.konanTarget) }
                     ?.also { appleTarget ->
-                        val fTask = holder.fatTasks[appleTarget] ?: return
-
-                        fTask.configure { fatTask ->
+                        holder.fatTasks[appleTarget]?.configure { fatTask ->
                             fatTask.baseName = framework.baseName //all frameworks should have same names
                             fatTask.from(framework)
                         }
@@ -122,6 +112,11 @@ class XCFrameworkConfig {
         }
     }
 }
+
+internal data class FrameworkSlice(
+    val descriptor: FrameworkDescriptor,
+    val resources: File?,
+) : Serializable
 
 @KotlinGradlePluginPublicDsl
 @Suppress("FunctionName")
@@ -206,6 +201,7 @@ internal constructor(
     var buildType: NativeBuildType = NativeBuildType.RELEASE
 
     private val groupedFrameworkFiles: MutableMap<AppleTarget, MutableList<FrameworkDescriptor>> = mutableMapOf()
+    private val groupedResourcesFiles: MutableMap<AppleTarget, MutableList<File>> = mutableMapOf()
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
@@ -243,19 +239,6 @@ internal constructor(
         fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
     }
 
-    fun from(framework: Framework, resources: Provider<File>? = null) {
-        processFramework(framework)
-
-        val descriptor = if (resources != null) {
-            inputs.files(resources)
-            FrameworkDescriptor(framework, resources.get())
-        } else {
-            FrameworkDescriptor(framework)
-        }
-
-        fromFrameworkDescriptors(descriptor)
-    }
-
     fun fromFrameworkDescriptors(vararg frameworks: FrameworkDescriptor) = fromFrameworkDescriptors(frameworks.toList())
 
     fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
@@ -273,6 +256,12 @@ internal constructor(
         }
     }
 
+    fun copyResources(resources: Provider<File>, target: KonanTarget) {
+        inputs.files(resources)
+        val group = AppleTarget.values().first { it.targets.contains(target) }
+        groupedResourcesFiles.getOrPut(group) { mutableListOf() }.add(resources.get())
+    }
+
     @TaskAction
     fun assemble() {
         val xcfName = xcFrameworkName.get()
@@ -281,7 +270,10 @@ internal constructor(
             frameworkName = singleFrameworkName(xcfName)
         )
 
-        createXCFramework(frameworksForXCFramework, outputXCFrameworkFile)
+        createXCFramework(
+            frameworksForXCFramework,
+            outputXCFrameworkFile
+        )
     }
 
     internal fun singleFrameworkName(xcfName: String): String {
@@ -307,16 +299,27 @@ internal constructor(
     }
 
     internal fun xcframeworkSlices(frameworkName: String) = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
+        val resources = xcframeworkResources(group)
         when {
-            files.size == 1 -> files.first()
-            files.size > 1 -> FrameworkDescriptor(
-                fatTargetDir(group).resolve("${frameworkName}.framework"),
-                combineFrameworksResources(
-                    files.mapNotNull { it.resources },
-                    fatTargetDir(group).resolve(lowerCamelCaseName(frameworkName, "resources"))
+            files.size == 1 -> FrameworkSlice(files.first(), resources)
+            files.size > 1 -> FrameworkSlice(
+                FrameworkDescriptor(
+                    fatTargetDir(group).resolve("${frameworkName}.framework"),
+                    files.all { it.isStatic },
+                    group.targets.first() //will be not used
                 ),
-                files.all { it.isStatic },
-                group.targets.first() //will be not used
+                resources
+            )
+            else -> null
+        }
+    }
+
+    internal fun xcframeworkResources(group: AppleTarget) = groupedResourcesFiles[group]?.let { files ->
+        when {
+            files.size == 1 -> files.firstOrNull()
+            files.size > 1 -> combineFrameworksResources(
+                files,
+                fatTargetDir(group).resolve(lowerCamelCaseName(group.targetName, "resources"))
             )
             else -> null
         }
@@ -341,17 +344,17 @@ internal constructor(
     }
 
     internal fun xcodebuildArguments(
-        frameworkFiles: List<FrameworkDescriptor>,
+        frameworkFiles: List<FrameworkSlice>,
         output: File,
-        mergeWithResources: (FrameworkDescriptor) -> File = { it.file },
+        mergeWithResources: (FrameworkSlice) -> File = { it.descriptor.file },
         fileExists: (File) -> Boolean = { it.exists() },
     ): List<String> {
         val cmdArgs = mutableListOf("xcodebuild", "-create-xcframework")
         frameworkFiles.forEach { frameworkFile ->
             cmdArgs.add("-framework")
             cmdArgs.add(mergeWithResources(frameworkFile).path)
-            if (!frameworkFile.isStatic) {
-                val dsymFile = File(frameworkFile.file.path + ".dSYM")
+            if (!frameworkFile.descriptor.isStatic) {
+                val dsymFile = File(frameworkFile.descriptor.file.path + ".dSYM")
                 if (fileExists(dsymFile)) {
                     cmdArgs.add("-debug-symbols")
                     cmdArgs.add(dsymFile.path)
@@ -371,17 +374,15 @@ internal constructor(
         inputs.files(framework.linkTaskProvider.map { it.outputFile.get() })
     }
 
-    private fun createXCFramework(frameworkFiles: List<FrameworkDescriptor>, output: File) {
+    private fun createXCFramework(frameworkFiles: List<FrameworkSlice>, output: File) {
         if (output.exists()) output.deleteRecursively()
 
-        val cmdArgs = xcodebuildArguments(frameworkFiles, output, mergeWithResources = { descriptor ->
-            if (descriptor.resources == null || !hasFiles(descriptor.resources)) {
-                descriptor.file
-            } else {
+        val cmdArgs = xcodebuildArguments(frameworkFiles, output, mergeWithResources = { slice ->
+            if (hasFiles(slice.resources)) {
                 val frameworkTempDir = temporaryDir
                     .resolve(buildType.getName())
-                    .resolve(descriptor.target.name)
-                    .resolve(descriptor.file.name)
+                    .resolve(slice.descriptor.target.name)
+                    .resolve(slice.descriptor.file.name)
 
                 if (frameworkTempDir.exists()) {
                     fileOperations.delete {
@@ -391,11 +392,13 @@ internal constructor(
 
                 frameworkTempDir.also { dir ->
                     fileOperations.copy {
-                        it.from(descriptor.file)
-                        it.from(descriptor.resources)
+                        it.from(slice.descriptor.file)
+                        it.from(slice.resources)
                         it.into(dir)
                     }
                 }
+            } else {
+                slice.descriptor.file
             }
         })
         execOperations.exec { it.commandLine(cmdArgs) }

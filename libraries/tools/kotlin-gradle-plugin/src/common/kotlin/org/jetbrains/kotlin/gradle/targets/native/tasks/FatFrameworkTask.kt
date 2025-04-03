@@ -54,7 +54,7 @@ class FrameworkDsymLayout(val rootDir: File) {
 
 class FrameworkLayout(
     val rootDir: File,
-    val isMacosFramework: Boolean,
+    val isMacosFramework: Boolean
 ) {
     init {
         require(rootDir.extension == "framework")
@@ -100,20 +100,11 @@ class FrameworkLayout(
 
 class FrameworkDescriptor(
     val file: File,
-    val resources: File?,
     val isStatic: Boolean,
-    val target: KonanTarget,
+    val target: KonanTarget
 ) : Serializable {
-    constructor(file: File, isStatic: Boolean, target: KonanTarget) : this(
-        file,
-        null,
-        isStatic,
-        target
-    )
-
-    constructor(framework: Framework, resources: File? = null) : this(
+    constructor(framework: Framework) : this(
         framework.outputFile,
-        resources,
         framework.isStatic,
         framework.konanTarget
     )
