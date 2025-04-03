@@ -301,7 +301,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("UTD with podspec deployment target")
     @GradleTest
     fun testUTDPodspecDeploymentTarget(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
 
             buildWithCocoapodsWrapper(podspecTaskName)
 
@@ -513,7 +516,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenConfigurationFailed(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             buildGradleKts.appendText(
                 """
                 kotlin {
@@ -539,7 +545,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Xcode style errors when sync framework compilation failed")
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenCompilationFailed(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
@@ -578,7 +587,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Other tasks use Xcode style errors when compilation failed and `useXcodeMessageStyle` option enabled")
     @GradleTest
     fun testOtherTasksUseXcodeStyleErrorsWhenCompilationFailedAndOptionEnabled(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
@@ -1079,7 +1091,10 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addKotlinBlock("iosArm64()")
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
 
-            build(":embedAndSignPodAppleFrameworkForXcode", "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true") {
+            build(
+                ":embedAndSignPodAppleFrameworkForXcode",
+                "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true"
+            ) {
                 assertNoDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
             }
         }

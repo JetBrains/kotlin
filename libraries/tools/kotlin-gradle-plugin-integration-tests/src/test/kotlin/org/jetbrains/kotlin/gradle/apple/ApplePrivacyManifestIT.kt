@@ -32,6 +32,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     ) {
         testEmbedAndSignIntegration(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             target = { macosArm64() },
             temp = temp,
             appName = "My.app",
@@ -53,6 +54,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     ) {
         testEmbedAndSignIntegration(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             target = { iosArm64() },
             temp = temp,
             appName = "My.app",
@@ -74,6 +76,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     ) {
         testEmbedAndSignIntegration(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             target = { iosArm64() },
             temp = temp,
             appName = "My.app",
@@ -138,6 +141,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
     private fun testEmbedAndSignIntegration(
         gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
         target: KotlinMultiplatformExtension.() -> (KotlinNativeTarget),
         appName: String,
         frameworks: String,
@@ -174,6 +178,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
         val embedAndSignOutputs = temp.resolve("embedAndSignOutputs").resolve(appName).resolve(frameworks)
         buildAndTestProject(
             gradleVersion = gradleVersion,
+            buildOptions = buildOptions,
             prePluginConfiguration = prePluginConfiguration,
             buildScript = {
                 project.applyMultiplatform {
@@ -214,6 +219,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     fun `xcframework creation`(gradleVersion: GradleVersion) {
         buildAndTestProject(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             buildScript = {
                 project.applyMultiplatform {
                     val xcf = project.XCFramework()
@@ -275,6 +281,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     fun `xcframework creation with CocoaPods`(gradleVersion: GradleVersion) {
         buildAndTestProject(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             buildScript = {
                 project.plugins.apply("org.jetbrains.kotlin.native.cocoapods")
                 project.applyMultiplatform {
@@ -333,6 +340,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     fun `CocoaPods syncFramework integration`(gradleVersion: GradleVersion) {
         buildAndTestProject(
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             buildScript = {
                 project.plugins.apply("org.jetbrains.kotlin.native.cocoapods")
                 project.applyMultiplatform {
@@ -383,6 +391,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
     private fun buildAndTestProject(
         gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
         prePluginConfiguration: GradleProjectBuildScriptInjectionContext.() -> Unit = {},
         buildScript: GradleProjectBuildScriptInjectionContext.() -> Unit,
         gradleArguments: Array<String>,
@@ -391,7 +400,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
         beforeMutatingPrivacyManifest: (File) -> (Unit),
         afterMutatingPrivacyManifest: (File) -> (Unit),
     ) {
-        val project = project("empty", gradleVersion) {
+        val project = project("empty", gradleVersion, buildOptions) {
             val applePrivacyManifestClasspath = System.getProperty("applePrivacyManifestPluginClasspath").split(":").map {
                 File(it)
             }

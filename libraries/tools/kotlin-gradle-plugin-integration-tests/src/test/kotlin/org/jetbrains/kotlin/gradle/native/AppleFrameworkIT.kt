@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -408,6 +406,9 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
+            buildOptions = defaultBuildOptions
+                // on Gradle 7 with CC enabled field `libraries` of task `:shared:compileKotlinIosArm64` can't be cached
+                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
@@ -443,6 +444,8 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
+            buildOptions = defaultBuildOptions
+                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
@@ -501,6 +504,8 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
+            buildOptions = defaultBuildOptions
+                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
