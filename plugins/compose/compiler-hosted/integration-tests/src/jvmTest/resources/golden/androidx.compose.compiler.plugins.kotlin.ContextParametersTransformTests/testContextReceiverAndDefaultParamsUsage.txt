@@ -53,7 +53,8 @@ fun Parent(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-fun Test(%context_receiver_0: Foo, a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
+context(%context_receiver_0: Foo)
+fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test):Test.kt")
   val %dirty = %changed

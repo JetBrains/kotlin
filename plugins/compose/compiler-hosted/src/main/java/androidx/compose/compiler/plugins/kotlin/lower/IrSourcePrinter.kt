@@ -86,7 +86,7 @@ class IrSourcePrinterVisitor(
         val previousScope = currentScope
         currentScope = Scope(
             this,
-            HashSet(valueParameters)
+            HashSet(parameters)
         )
 
         block(this)
@@ -147,6 +147,11 @@ class IrSourcePrinterVisitor(
         if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         declaration.scoped {
             declaration.printAnnotations(onePerLine = true)
+            if (declaration.parameters.any { it.kind == IrParameterKind.Context }) {
+                print("context(")
+                declaration.parameters.filter { it.kind == IrParameterKind.Context }.printJoin(", ")
+                println(")")
+            }
             if (declaration.overriddenSymbols.isNotEmpty()) {
                 print("override ")
             } else {
@@ -171,13 +176,13 @@ class IrSourcePrinterVisitor(
                 declaration.typeParameters.printJoin(", ")
                 print("> ")
             }
-            declaration.extensionReceiverParameter?.let {
+            declaration.firstParameterOfKind(IrParameterKind.ExtensionReceiver)?.let {
                 print(it.type.renderSrc())
                 print(".")
             }
             print(declaration.name)
             print("(")
-            declaration.valueParameters.printJoin(", ")
+            declaration.parameters.filter { it.kind == IrParameterKind.Regular }.printJoin(", ")
             print(")")
             if (!declaration.returnType.isUnit()) {
                 print(": ")
@@ -212,7 +217,7 @@ class IrSourcePrinterVisitor(
     override fun visitConstructor(declaration: IrConstructor) {
         declaration.printAnnotations(onePerLine = true)
         print("constructor")
-        val parameters = declaration.valueParameters
+        val parameters = declaration.parameters
         if (parameters.isNotEmpty()) {
             print("(")
             parameters.printJoin(", ")
@@ -222,6 +227,20 @@ class IrSourcePrinterVisitor(
     }
 
     private var isInNotCall = false
+
+    private fun IrFunctionAccessExpression.printReceiver() {
+        arguments[symbol.owner.parameters.first { it.isReceiver }.indexInParameters]?.print()
+    }
+
+    private fun IrFunctionAccessExpression.printFirstParameter() {
+        arguments[symbol.owner.firstParameterOfKind(IrParameterKind.Regular)!!.indexInParameters]?.print()
+    }
+
+    private fun IrFunctionAccessExpression.argumentForKind(
+        kind: IrParameterKind,
+    ): IrExpression? {
+        return symbol.owner.firstParameterOfKind(kind)?.indexInParameters?.let { arguments[it] }
+    }
 
     override fun visitCall(expression: IrCall) {
         val function = expression.symbol.owner
@@ -242,8 +261,7 @@ class IrSourcePrinterVisitor(
                         when (fn.name.asString()) {
                             "equals",
                             "EQEQ",
-                            "EQEQEQ",
-                            -> {
+                            "EQEQEQ" -> {
                                 val prevIsInNotCall = isInNotCall
                                 isInNotCall = true
                                 arg.print()
@@ -296,13 +314,13 @@ class IrSourcePrinterVisitor(
             val printBinary = when (name) {
                 "equals",
                 "EQEQ",
-                "EQEQEQ",
-                -> when {
-                    expression.dispatchReceiver?.type?.isInt() == true -> true
-                    expression.extensionReceiver?.type?.isInt() == true -> true
-                    expression.valueArgumentsCount > 0 &&
-                            expression.getValueArgument(0)?.type?.isInt() == true -> true
-                    else -> false
+                "EQEQEQ" -> {
+                    expression.argumentForKind(IrParameterKind.DispatchReceiver)?.type?.isInt() == true ||
+                            expression.argumentForKind(IrParameterKind.ExtensionReceiver)?.type?.isInt() == true ||
+                            function.namedParameters.let {
+                                it.isNotEmpty() &&
+                                        expression.arguments[it.first().indexInParameters]?.type?.isInt() == true
+                            }
                 }
                 else -> false
             }
@@ -312,55 +330,58 @@ class IrSourcePrinterVisitor(
                 // unary prefx
                 "unaryPlus", "unaryMinus", "not" -> {
                     print(opSymbol)
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    expression.printReceiver()
                 }
                 // unary postfix
                 "inc", "dec" -> {
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    expression.printReceiver()
                     print(opSymbol)
                 }
                 "CHECK_NOT_NULL" -> {
-                    expression.getValueArgument(0)?.print()
+                    expression.arguments[0]?.print()
                     print(opSymbol)
                 }
                 "getValue", "setValue" -> {
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    expression.printReceiver()
                     print(".")
                     print(opSymbol)
                     expression.printArgumentList()
                 }
                 "invoke" -> {
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    expression.printReceiver()
                     expression.printArgumentList()
                 }
                 // get indexer
                 "get" -> {
-                    expression.dispatchReceiver?.print()
+                    expression.printReceiver()
                     print("[")
-                    for (i in 0 until expression.valueArgumentsCount) {
-                        val arg = expression.getValueArgument(i)
-                        arg?.print()
+                    for (i in 0 until expression.arguments.size) {
+                        if (function.parameters[i].kind == IrParameterKind.Regular) {
+                            val arg = expression.arguments[i]
+                            arg?.print()
+                        }
+
                     }
                     print("]")
                 }
                 // set indexer
                 "set" -> {
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    expression.printReceiver()
                     print("[")
-                    expression.getValueArgument(0)?.print()
+                    expression.arguments[function.parameters.first { it.kind == IrParameterKind.Regular }.indexInParameters]?.print()
                     print("] = ")
-                    expression.getValueArgument(1)?.print()
+                    expression.arguments[function.parameters.last { it.kind == IrParameterKind.Regular }.indexInParameters]?.print()
                 }
                 // builtin static operators
                 "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ",
                 "ieee754equals" -> {
-                    expression.getValueArgument(0)?.print()
+                    expression.arguments[0]?.print()
                     print(" $opSymbol ")
-                    expression.getValueArgument(1)?.print()
+                    expression.arguments[1]?.print()
                 }
                 "iterator", "hasNext", "next",
                 "noWhenBranchMatchedException" -> {
-                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    expression.printReceiver()
                     print(".")
                     print(opSymbol)
                     print("()")
@@ -370,15 +391,15 @@ class IrSourcePrinterVisitor(
                 }
                 else -> {
                     if (name.startsWith("component")) {
-                        (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                        expression.printReceiver()
                         print(".")
                         print(opSymbol)
                         print("()")
                     } else {
                         // else binary
-                        (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                        expression.printReceiver()
                         print(" $opSymbol ")
-                        expression.getValueArgument(0)?.print()
+                        expression.printFirstParameter()
                     }
                 }
             }
@@ -391,10 +412,9 @@ class IrSourcePrinterVisitor(
             if (name == "xor" || name == "and" || name == "or") {
                 printIntsAsBinary = true
             }
-            expression.dispatchReceiver?.print()
-                ?: expression.extensionReceiver?.print()
+            expression.printReceiver()
             print(" $name ")
-            expression.getValueArgument(0)?.print()
+            expression.printFirstParameter()
             printIntsAsBinary = prev
             return
         }
@@ -408,7 +428,7 @@ class IrSourcePrinterVisitor(
             print(propName)
             if (function == prop.setter) {
                 print(" = ")
-                expression.getValueArgument(0)?.print()
+                expression.printFirstParameter()
             }
         } else {
             print(name)
@@ -428,23 +448,41 @@ class IrSourcePrinterVisitor(
         suffix: String? = null,
         superQualifierSymbol: IrClassSymbol? = null,
     ) {
-        val dispatchReceiver = dispatchReceiver
-        val extensionReceiver = extensionReceiver
-        val dispatchIsSpecial = dispatchReceiver.let {
+        val dispatchReceiverArg: IrExpression?
+        val extensionReceiverArg: IrExpression?
+
+        when (this) {
+            is IrFunctionAccessExpression, is IrFunctionReference -> {
+                val owner = symbol.owner
+                val dispatchReceiver = owner.firstParameterOfKind(IrParameterKind.DispatchReceiver)
+                val extensionReceiver = owner.firstParameterOfKind(IrParameterKind.ExtensionReceiver)
+                dispatchReceiverArg = dispatchReceiver?.let { arguments[it.indexInParameters] }
+                extensionReceiverArg = extensionReceiver?.let { arguments[it.indexInParameters] }
+            }
+            is IrPropertyReference -> {
+                dispatchReceiverArg = arguments.firstOrNull()
+                extensionReceiverArg = null
+            }
+            else -> {
+                error("Unknown expression type: ${dump()}")
+            }
+        }
+
+        val dispatchIsSpecial = dispatchReceiverArg.let {
             it is IrGetValue && it.symbol.owner.name.isSpecial
         }
-        val extensionIsSpecial = extensionReceiver.let {
+        val extensionIsSpecial = extensionReceiverArg.let {
             it is IrGetValue && it.symbol.owner.name.isSpecial
         }
 
         if (superQualifierSymbol != null) {
             print("super<${superQualifierSymbol.owner.name}>")
             suffix?.let(::print)
-        } else if (dispatchReceiver != null && !dispatchIsSpecial) {
-            dispatchReceiver.print()
+        } else if (dispatchReceiverArg != null && !dispatchIsSpecial) {
+            dispatchReceiverArg.print()
             suffix?.let(::print)
-        } else if (extensionReceiver != null && !extensionIsSpecial) {
-            extensionReceiver.print()
+        } else if (extensionReceiverArg != null && !extensionIsSpecial) {
+            extensionReceiverArg.print()
             suffix?.let(::print)
         }
     }
@@ -457,10 +495,12 @@ class IrSourcePrinterVisitor(
         val paramNames = mutableListOf<String>()
         var trailingLambda: IrExpression? = null
         var useParameterNames = forceParameterNames
-        for (i in 0 until valueArgumentsCount) {
-            val arg = getValueArgument(i)
+        for (i in this.arguments.indices) {
+            val p = symbol.owner.parameters[i]
+            val arg = this.arguments[i]
+            if (p.isReceiver) continue
+
             if (arg != null) {
-                val param = symbol.owner.valueParameters[i]
                 val isLambda = arg is IrFunctionExpression ||
                         (arg is IrBlock &&
                                 (arg.origin == IrStatementOrigin.LAMBDA))
@@ -469,12 +509,12 @@ class IrSourcePrinterVisitor(
                         returnTargetToCall[it] = this
                     }
                 }
-                val isTrailingLambda = i == symbol.owner.valueParameters.size - 1 && isLambda
+                val isTrailingLambda = i == symbol.owner.parameters.lastIndex && isLambda
                 if (isTrailingLambda) {
                     trailingLambda = arg
                 } else {
                     arguments.add(arg)
-                    paramNames.add(param.normalizedName)
+                    paramNames.add(p.normalizedName)
                 }
             } else {
                 useParameterNames = true
@@ -488,10 +528,8 @@ class IrSourcePrinterVisitor(
                 println()
                 indented {
                     arguments.zip(paramNames).forEachIndexed { i, (arg, name) ->
-                        if (useParameterNames) {
-                            print(name)
-                            print(" = ")
-                        }
+                        print(name)
+                        print(" = ")
                         arg.print()
                         if (i < arguments.size - 1) println(", ")
                     }
@@ -544,7 +582,7 @@ class IrSourcePrinterVisitor(
     fun IrFunction.printAsLambda() {
         scoped {
             print("{")
-            val parameters = valueParameters
+            val parameters = namedParameters
             if (parameters.isNotEmpty()) {
                 print(" ")
                 parameters.printJoin(", ")
@@ -614,16 +652,10 @@ class IrSourcePrinterVisitor(
         }
         print(name)
 
-        val printArgumentList = if (!isAnnotation) true else {
-            var hasArguments = false
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    hasArguments = true
-                    break
-                }
-            }
-            hasArguments
+        val printArgumentList = if (isAnnotation) {
+            expression.arguments.any { it != null }
+        } else {
+            true
         }
         if (printArgumentList) {
             expression.printArgumentList(
@@ -1114,16 +1146,17 @@ class IrSourcePrinterVisitor(
         }
         val ctorProperties = mutableSetOf<IrProperty>()
         if (primaryConstructor != null) {
-            if (primaryConstructor.valueParameters.isNotEmpty()) {
+            val namedParameters = primaryConstructor.namedParameters
+            if (namedParameters.isNotEmpty()) {
                 print("(")
-                primaryConstructor.valueParameters.forEachIndexed { index, param ->
+                namedParameters.forEachIndexed { index, param ->
                     val property = declaration.correspondingProperty(param)
                     if (property != null) {
                         ctorProperties.add(property)
                         print(if (property.isVar) "var " else "val ")
                     }
                     param.print()
-                    if (index < primaryConstructor.valueParameters.size - 1) print(", ")
+                    if (index < namedParameters.size - 1) print(", ")
                 }
                 print(")")
             }
@@ -1248,10 +1281,8 @@ class IrSourcePrinterVisitor(
     override fun visitFunctionReference(expression: IrFunctionReference) {
         val function = expression.symbol.owner
 
-        expression.printExplicitReceiver("::")
-        if (expression.dispatchReceiver == null && expression.extensionReceiver == null) {
-            print("::")
-        }
+        expression.printExplicitReceiver()
+        print("::")
 
         val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
 
@@ -1294,7 +1325,7 @@ class IrSourcePrinterVisitor(
             println()
             print(if (isSetter) "set" else "get")
             print("(")
-            valueParameters.printJoin(", ")
+            namedParameters.printJoin(", ")
             print(") ")
             bracedBlock {
                 body?.acceptVoid(this@IrSourcePrinterVisitor)
@@ -1444,12 +1475,12 @@ class IrSourcePrinterVisitor(
         }
         append(annotationClassName)
 
-        if (irAnnotation.valueArgumentsCount == 0) return
+        if (irAnnotation.arguments.isEmpty()) return
 
         val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
         var first = true
         append("(")
-        for (i in 0 until irAnnotation.valueArgumentsCount) {
+        for (i in 0 until irAnnotation.arguments.size) {
             if (first) {
                 first = false
             } else {
@@ -1457,7 +1488,7 @@ class IrSourcePrinterVisitor(
             }
             append(valueParameterNames[i])
             append(" = ")
-            renderAsAnnotationArgument(irAnnotation.getValueArgument(i))
+            renderAsAnnotationArgument(irAnnotation.arguments[i])
         }
         append(")")
     }
@@ -1493,13 +1524,13 @@ class IrSourcePrinterVisitor(
     }
 
     private fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<String> {
-        val expectedCount = valueArgumentsCount
+        val expectedCount = arguments.size
         return if (symbol.isBound) {
             val owner = symbol.owner
             if (owner is IrFunction) {
                 (0 until expectedCount).map {
-                    if (it < owner.valueParameters.size)
-                        owner.valueParameters[it].normalizedName
+                    if (it < owner.parameters.size)
+                        owner.parameters[it].normalizedName
                     else
                         "${it + 1}"
                 }
