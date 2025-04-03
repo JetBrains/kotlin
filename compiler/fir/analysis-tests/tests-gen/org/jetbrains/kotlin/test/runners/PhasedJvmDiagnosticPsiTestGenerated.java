@@ -52599,6 +52599,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("varPropertyOverride.kt")
+        public void testVarPropertyOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/varPropertyOverride.kt");
+        }
+
+        @Test
         @TestMetadata("withContextInType.kt")
         public void testWithContextInType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/withContextInType.kt");
