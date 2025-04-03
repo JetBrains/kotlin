@@ -1523,6 +1523,15 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object KotlinNativeArtifactsDeprecation : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke() = build {
+            title("kotlinArtifacts DSL is deprecated")
+                .description("kotlinArtifacts DSL is deprecated and will be removed in the future")
+                .solution("Please migrate to another way to create Kotlin/Native binaries")
+                .documentationLink(URI("https://kotl.in/kotlin-native-artifacts-gradle-dsl"))
+        }
+    }
+
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
         operator fun invoke(targetName: String): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")

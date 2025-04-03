@@ -411,6 +411,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun registerPodspecTask(
         project: Project,
         artifact: KotlinNativeArtifact,
@@ -448,6 +449,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun injectPodspecExtensionToArtifacts(
         project: Project,
         artifactsExtension: KotlinArtifactsExtension,
@@ -878,6 +880,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
  *
  * Only needed in *.kts build files. In Groovy you can use the same syntax but without explicit extension import
  */
+@Suppress("DEPRECATION")
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
 fun KotlinNativeArtifactConfig.withPodspec(configure: KotlinArtifactsPodspecExtension.() -> Unit) {
     val extension = cast<ExtensionAware>().kotlinArtifactsPodspecExtension
 

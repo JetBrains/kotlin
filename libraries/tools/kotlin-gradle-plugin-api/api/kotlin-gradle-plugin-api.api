@@ -204,9 +204,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactCo
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension$Companion;
+	public static final field KOTLIN_NATIVE_ARTIFACTS_DEPRECATION Ljava/lang/String;
 	public abstract fun getArtifactConfigs ()Lorg/gradle/api/DomainObjectSet;
 	public abstract fun getArtifacts ()Lorg/gradle/api/NamedDomainObjectSet;
 	public abstract fun getNative ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension$Companion {
+	public static final field KOTLIN_NATIVE_ARTIFACTS_DEPRECATION Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
@@ -563,9 +569,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArti
 	public abstract fun Library (Lorg/gradle/api/Action;)V
 	public abstract fun XCFramework (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun XCFramework (Lorg/gradle/api/Action;)V
-}
-
-public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL$ExperimentalArtifactDsl : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
