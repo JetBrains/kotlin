@@ -36,6 +36,7 @@ internal class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalD
     compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
     forceFieldsForInlineCaptures = true,
     remapTypesInExtractedLocalDeclarations = false,
+    allConstructorsWithCapturedConstructorCreated = context.allConstructorsWithCapturedConstructorCreated,
 ) {
     override fun postLocalDeclarationLoweringCallback(
         localFunctions: Map<IrFunction, LocalFunctionContext>,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.capturedConstructor
 import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
@@ -125,6 +126,7 @@ open class LocalDeclarationsLowering(
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
     val remapTypesInExtractedLocalDeclarations: Boolean = true,
+    val allConstructorsWithCapturedConstructorCreated: MutableSet<IrConstructor>? = null,
 ) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -155,12 +157,11 @@ open class LocalDeclarationsLowering(
     }
 
     fun lowerWithoutActualChange(irBody: IrBody, container: IrDeclaration) {
-        val oldCapturedConstructors = context.mapping.capturedConstructors.keys
-            .mapNotNull { context.mapping.capturedConstructors[it] }
+        val oldCapturedConstructors = allConstructorsWithCapturedConstructorCreated?.mapNotNull { it.capturedConstructor }
         LocalDeclarationsTransformer(irBody, container).cacheLocalConstructors()
-        oldCapturedConstructors
-            .filter { context.mapping.capturedConstructors[it] != null }
-            .forEach { context.mapping.capturedConstructors[it] = null }
+        oldCapturedConstructors?.forEach {
+            it.capturedConstructor = null
+        }
     }
 
     protected open fun postLocalDeclarationLoweringCallback(
@@ -987,7 +988,7 @@ open class LocalDeclarationsLowering(
             val capturedValues = localClassContext.closure.capturedValues
 
             // Restore context if constructor was cached
-            context.mapping.capturedConstructors[oldDeclaration]?.let { newDeclaration ->
+            oldDeclaration.capturedConstructor?.let { newDeclaration ->
                 transformedDeclarations[oldDeclaration] = newDeclaration
                 constructorContext.transformedDeclaration = newDeclaration
                 newDeclaration.parameters.zip(capturedValues).forEach { (it, capturedValue) ->
@@ -1025,7 +1026,8 @@ open class LocalDeclarationsLowering(
             newDeclaration.metadata = oldDeclaration.metadata
 
             transformedDeclarations[oldDeclaration] = newDeclaration
-            context.mapping.capturedConstructors[oldDeclaration] = newDeclaration
+            oldDeclaration.capturedConstructor = newDeclaration
+            allConstructorsWithCapturedConstructorCreated?.add(oldDeclaration)
         }
 
         private fun createFieldsForCapturedValues(localClassContext: LocalClassContext): List<IrField> {

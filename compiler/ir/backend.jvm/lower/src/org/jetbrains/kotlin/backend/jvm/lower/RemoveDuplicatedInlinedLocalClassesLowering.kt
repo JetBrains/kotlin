@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.capturedConstructor
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -53,7 +54,6 @@ private data class Data(
 
 private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBackendContext) : IrTransformer<Data>() {
     private val visited = mutableSetOf<IrElement>()
-    private val capturedConstructors = context.mapping.capturedConstructors
 
     private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
         irClass.parents.first { it !is IrFunction || it.origin != IrDeclarationOrigin.INLINE_LAMBDA }
@@ -97,21 +97,25 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
         container?.let {
             LocalDeclarationsLowering(
                 context, NameUtils::sanitizeAsJavaIdentifier, JvmVisibilityPolicy,
-                compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true, forceFieldsForInlineCaptures = true
+                compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true, forceFieldsForInlineCaptures = true,
+                allConstructorsWithCapturedConstructorCreated = context.allConstructorsWithCapturedConstructorCreated,
             ).lowerWithoutActualChange(it.body!!, it)
         }
 
-        // We must remove all constructors from `capturedConstructors` that belong to the classes that will be removed
-        capturedConstructors.keys.forEach {
-            RemoveDuplicatedInlinedLocalClassesTransformer(context)
-                .removeUselessDeclarationsFromCapturedConstructors(it.parentAsClass, data)
+        // We must remove all captured constructors for constructors that belong to the classes that will be removed
+        context.allConstructorsWithCapturedConstructorCreated.forEach {
+            if (it.capturedConstructor != null) {
+                RemoveDuplicatedInlinedLocalClassesTransformer(context)
+                    .removeUselessDeclarationsFromCapturedConstructors(it.parentAsClass, data)
+            }
         }
 
-        val originalConstructor = capturedConstructors.keys.single {
-            it.parentAsClass.attributeOwnerId == constructorParent.attributeOwnerId && it.parentAsClass != constructorParent
+        val originalConstructor = context.allConstructorsWithCapturedConstructorCreated.single {
+            it.capturedConstructor != null &&
+                    it.parentAsClass.attributeOwnerId == constructorParent.attributeOwnerId && it.parentAsClass != constructorParent
         }
 
-        val loweredConstructor = capturedConstructors[originalConstructor]!!
+        val loweredConstructor = originalConstructor.capturedConstructor!!
         val newConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
             constructorCall.startOffset, constructorCall.endOffset,
             loweredConstructor.parentAsClass.defaultType, loweredConstructor.symbol, constructorCall.origin
@@ -134,12 +138,10 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
         }
 
         val constructor = declaration.primaryConstructor!!
-        capturedConstructors[constructor] = null // this action will do actual `remove`
-        capturedConstructors.keys.map { key -> // for each value in map
-            capturedConstructors[key]?.let {
-                if (it == constructor) {
-                    capturedConstructors[key] = null
-                }
+        constructor.capturedConstructor = null
+        context.allConstructorsWithCapturedConstructorCreated.forEach {
+            if (it.capturedConstructor == constructor) {
+                it.capturedConstructor = null
             }
         }
 
