@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -29,7 +30,7 @@ fun extractLambdaInfoFromFunctionType(
     sourceForFunctionExpression: KtSourceElement?,
 ): ConeResolvedLambdaAtom? {
     val session = components.session
-    val expectedClassLikeType = expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
+    val expectedClassLikeType = expectedType?.fullyExpandedType(session)?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
     val expectedFunctionKind = expectedClassLikeType.functionTypeKind(session) ?: return null
 
     val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(lambda.symbol)

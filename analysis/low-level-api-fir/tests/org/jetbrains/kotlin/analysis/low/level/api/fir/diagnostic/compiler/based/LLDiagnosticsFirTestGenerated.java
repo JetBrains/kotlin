@@ -2027,6 +2027,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("typealiasToContextFunctionType.kt")
+        public void testTypealiasToContextFunctionType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/typealiasToContextFunctionType.kt");
+        }
+
+        @Test
         @TestMetadata("usageOfTypeWithContext.kt")
         public void testUsageOfTypeWithContext() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/usageOfTypeWithContext.kt");
