@@ -66,6 +66,9 @@ interface ObjCExportNamer {
 
         val nameCollisionMode: ObjCExportNameCollisionMode
             get() = ObjCExportNameCollisionMode.NONE
+
+        val explicitMethodFamily: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -91,6 +94,7 @@ interface ObjCExportNamer {
 
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
+    fun needsExplicitMethodFamily(name: String): Boolean
 
     companion object {
         @InternalKotlinNativeApi
@@ -285,6 +289,16 @@ private class ObjCExportNamingHelper(
         "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
         "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar"
     )
+
+    fun isSpecialFamily(name: String): Boolean {
+        val trimmed = name.dropWhile { it == '_' }
+        return specialFamilyPrefixes.any { startsWithWords(trimmed, it) }
+    }
+
+    fun startsWithWords(sentence: String, words: String) = sentence.startsWith(words) &&
+        (sentence.length == words.length || !sentence[words.length].isLowerCase())
+
+    private val specialFamilyPrefixes = listOf("alloc", "copy", "mutableCopy", "new", "init")
 }
 
 @InternalKotlinNativeApi
@@ -306,6 +320,7 @@ class ObjCExportNamerImpl(
         disableSwiftMemberNameMangling: Boolean = false,
         ignoreInterfaceMethodCollisions: Boolean = false,
         nameCollisionMode: ObjCExportNameCollisionMode = ObjCExportNameCollisionMode.NONE,
+        explicitMethodFamily: Boolean = false,
     ) : this(
         object : ObjCExportNamer.Configuration {
             override val topLevelNamePrefix: String
@@ -325,6 +340,9 @@ class ObjCExportNamerImpl(
 
             override val nameCollisionMode: ObjCExportNameCollisionMode
                 get() = nameCollisionMode
+
+            override val explicitMethodFamily: Boolean
+                get() = explicitMethodFamily
         },
         builtIns,
         mapper,
@@ -704,6 +722,10 @@ class ObjCExportNamerImpl(
         return ObjCExportNamer.companionObjectPropertyName
     }
 
+    override fun needsExplicitMethodFamily(name: String): Boolean {
+        return configuration.explicitMethodFamily && helper.isSpecialFamily(name)
+    }
+
     init {
         if (!local) {
             forceAssignPredefined(builtIns)
@@ -774,23 +796,17 @@ class ObjCExportNamerImpl(
         return candidate.mangleIfSpecialFamily("do")
     }
 
-    private fun String.mangleIfSpecialFamily(prefix: String): String {
-        val trimmed = this.dropWhile { it == '_' }
-        for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
-            if (trimmed.startsWithWords(family)) {
-                // Then method can be detected as having special family by Objective-C compiler.
-                // mangle the name:
-                return prefix + this.replaceFirstChar(Char::uppercaseChar)
-            }
+    private fun String.mangleIfSpecialFamily(prefix: String): String =
+        if (!configuration.explicitMethodFamily && helper.isSpecialFamily(this) ||
+            this == "init" || this.startsWith("initWith")
+        ) {
+            // Method can be detected as having special family by Objective-C compiler, or might clash with a generated constructor.
+            // Mangle the name:
+            prefix + this.replaceFirstChar(Char::uppercaseChar)
+        } else {
+            // TODO: handle clashes with NSObject methods etc.
+            this
         }
-
-        // TODO: handle clashes with NSObject methods etc.
-
-        return this
-    }
-
-    private fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
 
     private inner class GenericTypeParameterNameMapping {
         private val elementToName = mutableMapOf<TypeParameterDescriptor, String>()

@@ -308,6 +308,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
+    fun `test - special function names with explicit method family`() {
+        doTest(headersTestDataDir.resolve("specialFunctionNamesExplicitMethodFamily"), Configuration(explicitMethodFamily = true))
+    }
+
+    @Test
     fun `test - vararg`() {
         doTest(headersTestDataDir.resolve("vararg"))
     }

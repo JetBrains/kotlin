@@ -260,11 +260,15 @@ class ObjCExportTranslatorImpl(
             // TODO: consider adding exception-throwing impls for these.
             when (descriptor.kind) {
                 ClassKind.OBJECT -> {
+                    val selector = namer.getObjectInstanceSelector(descriptor)
                     add {
                         ObjCMethod(
                             null, false, ObjCInstanceType,
-                            listOf(namer.getObjectInstanceSelector(descriptor)), emptyList(),
-                            listOf(swiftNameAttribute("init()"))
+                            listOf(selector), emptyList(),
+                            listOfNotNull(
+                                swiftNameAttribute("init()"),
+                                if (namer.needsExplicitMethodFamily(selector)) OBJC_METHOD_FAMILY_NONE else null
+                            )
                         )
                     }
                     add {
@@ -287,6 +291,19 @@ class ObjCExportTranslatorImpl(
                                 entryName, it, type, listOf("class", "readonly"),
                                 declarationAttributes = listOf(swiftNameAttribute(swiftName))
                             )
+                        }
+                        if (namer.needsExplicitMethodFamily(entryName)) {
+                            add {
+                                ObjCMethod(
+                                    null,
+                                    null,
+                                    false,
+                                    type,
+                                    listOf(entryName),
+                                    emptyList<ObjCParameter>(),
+                                    listOf(OBJC_METHOD_FAMILY_NONE),
+                                )
+                            }
                         }
                     }
 
@@ -450,7 +467,20 @@ class ObjCExportTranslatorImpl(
                 .makePropertiesOrderStable()
                 .asSequence()
                 .distinctBy { namer.getPropertyName(it) }
-                .forEach { base -> add { buildProperty(property, base, objCExportScope) } }
+                .forEach { base -> translateProperty(property, base, objCExportScope) }
+        }
+    }
+
+    private fun StubBuilder<ObjCExportStub>.translateProperty(
+        property: PropertyDescriptor,
+        baseProperty: PropertyDescriptor,
+        objCExportScope: ObjCExportScope,
+    ) {
+        add { buildProperty(property, baseProperty, objCExportScope) }
+        if (namer.needsExplicitMethodFamily(getSelector(baseProperty.getter!!))) {
+            add {
+                buildMethod(property.getter!!, baseProperty.getter!!, objCExportScope)
+            }
         }
     }
 
@@ -498,7 +528,7 @@ class ObjCExportTranslatorImpl(
         objCExportScope: ObjCExportScope,
     ) {
         methods.makeMethodsOrderStable().forEach { add { buildMethod(it, it, objCExportScope) } }
-        properties.makePropertiesOrderStable().forEach { add { buildProperty(it, it, objCExportScope) } }
+        properties.makePropertiesOrderStable().forEach { translateProperty(it, it, objCExportScope) }
     }
     // TODO: consider checking that signatures for bases with same selector/name are equal.
 
@@ -645,6 +675,10 @@ class ObjCExportTranslatorImpl(
             attributes += "unavailable"
         } else {
             attributes.addIfNotNull(getDeprecationAttribute(method))
+        }
+
+        if (namer.needsExplicitMethodFamily(namer.getSelector(baseMethod)) && baseMethod !is ConstructorDescriptor) {
+            attributes += OBJC_METHOD_FAMILY_NONE
         }
 
         val comment = buildComment(method, baseMethodBridge, parameters)
@@ -1077,6 +1111,7 @@ private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? =
     descriptor.typeConstructor.supertypes.firstOrNull { !it.isInterface() }
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
+internal const val OBJC_METHOD_FAMILY_NONE = "objc_method_family(none)"
 
 @InternalKotlinNativeApi
 fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer, mapper: ObjCExportMapper): Boolean {

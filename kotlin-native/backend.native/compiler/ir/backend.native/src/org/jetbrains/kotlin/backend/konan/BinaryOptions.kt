@@ -42,6 +42,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportEntryPointsPath by stringOption()
 
+    val objcExportExplicitMethodFamily by booleanOption()
+
     val dumpObjcSelectorToSignatureMapping by stringOption()
 
     val gc by option<GC>(shortcut = { it.shortcut })

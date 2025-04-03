@@ -33,6 +33,8 @@ interface HeaderGenerator {
          * will result in the entire public API surface of the said library to be translated in the header
          */
         val exportedDependencies: Set<Path> = emptySet(),
+
+        val explicitMethodFamily: Boolean = false,
     )
 
 

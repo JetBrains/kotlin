@@ -108,6 +108,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
             topLevelNamePrefix = configuration.frameworkName,
             local = false,
             objcGenerics = true,
+            explicitMethodFamily = configuration.explicitMethodFamily,
         )
 
         return ObjCExportHeaderGeneratorImpl(
