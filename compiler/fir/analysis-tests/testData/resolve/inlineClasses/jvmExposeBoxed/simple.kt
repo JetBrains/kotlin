@@ -125,7 +125,7 @@ abstract class Abstract {
     abstract fun abstractIC(ic: IC)
 }
 
-<!JVM_EXPOSE_BOXED_ON_INTERFACE!>@JvmExposeBoxed<!>
+<!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
 interface Interface {
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
     fun foo(ic: IC) {}
