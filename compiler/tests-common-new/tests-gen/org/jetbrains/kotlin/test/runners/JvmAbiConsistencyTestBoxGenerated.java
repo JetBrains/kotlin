@@ -54207,6 +54207,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("nullablilitySubstitution.kt")
+      public void testNullablilitySubstitution() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/nullablilitySubstitution.kt");
+      }
+
+      @Test
       @TestMetadata("primitives.kt")
       public void testPrimitives() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/primitives.kt");
