@@ -123,6 +123,7 @@ fun defaultsBitIndex(index: Int): Int = index.rem(BITS_PER_INT)
 val IrFunction.thisParamCount
     get() = parameters.count {
         it.kind == IrParameterKind.DispatchReceiver ||
+                it.kind == IrParameterKind.Context ||
                 it.kind == IrParameterKind.ExtensionReceiver
     }
 
@@ -1455,7 +1456,7 @@ class ComposableFunctionBodyTransformer(
                         irIsUncertain(changedParam, slotIndex)
                     else
                         irIsUncertainAndStable(changedParam, slotIndex)
-                    val stmt = if (defaultParam != null && defaultValueIsStatic) {
+                    val stmt = if (defaultParam != null && defaultValue != null && defaultValueIsStatic) {
                         // if the default expression is "static", then we know that if we are using the
                         // default expression, the parameter can be considered "static".
                         irWhen(
@@ -4058,11 +4059,9 @@ class ComposableFunctionBodyTransformer(
                 for (param in function.parameters) {
                     when (param.kind) {
                         IrParameterKind.DispatchReceiver,
-                        IrParameterKind.ExtensionReceiver -> {
-                            slotCount++
-                        }
+                        IrParameterKind.ExtensionReceiver,
                         IrParameterKind.Context -> {
-                            realValueParamCount++
+                            slotCount++
                         }
                         IrParameterKind.Regular -> {
                             val paramName = param.name.asString()
@@ -4108,14 +4107,9 @@ class ComposableFunctionBodyTransformer(
 
             val allTrackedParams = buildList {
                 var parameterCount = realValueParamCount
+                // reorder to match $changed: [context, extension, value, dispatch]
                 function.parameters.fastForEach {
-                    if (it.kind == IrParameterKind.Context) {
-                        parameterCount--
-                        add(it)
-                    }
-                }
-                function.parameters.fastForEach {
-                    if (it.kind == IrParameterKind.ExtensionReceiver) {
+                    if (it.kind == IrParameterKind.Context || it.kind == IrParameterKind.ExtensionReceiver) {
                         add(it)
                     }
                 }
@@ -4132,9 +4126,9 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
-            private val hasExtensionReceiver = function.parameters.any { it.kind == IrParameterKind.ExtensionReceiver }
+            val valueArgsStart = allTrackedParams.indexOfFirst { it.kind == IrParameterKind.Regular }
             fun defaultIndexForSlotIndex(index: Int): Int {
-                return if (hasExtensionReceiver) index - 1 else index
+                return index - valueArgsStart
             }
 
             val usedParams = BooleanArray(slotCount) { false }

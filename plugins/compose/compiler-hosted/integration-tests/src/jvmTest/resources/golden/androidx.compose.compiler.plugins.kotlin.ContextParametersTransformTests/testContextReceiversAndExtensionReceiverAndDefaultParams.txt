@@ -19,10 +19,10 @@ fun String.B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %d
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)P(4,2,5):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
-    if (%default and 0b00010000 != 0) {
+    if (%default and 0b0010 != 0) {
       b = ""
     }
-    if (%default and 0b00100000 != 0) {
+    if (%default and 0b0100 != 0) {
       c = 1
     }
     if (isTraceInProgress()) {
