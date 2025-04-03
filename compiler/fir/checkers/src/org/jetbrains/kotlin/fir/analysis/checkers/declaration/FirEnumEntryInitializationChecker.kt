@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -90,13 +89,12 @@ private object EnumEntryInitializationCheckProcessor : VariableInitializationChe
 
     override fun reportUninitializedVariable(
         reporter: DiagnosticReporter,
-        node: QualifiedAccessNode,
+        expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
         context: CheckerContext,
     ) {
         require(symbol is FirEnumEntrySymbol)
-        val source = node.fir.source
-        reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, symbol, context)
+        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_ENUM_ENTRY, symbol, context)
     }
 
     override fun reportNonInlineMemberValInitialization(

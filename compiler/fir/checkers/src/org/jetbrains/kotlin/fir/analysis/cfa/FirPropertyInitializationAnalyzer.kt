@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -109,12 +108,12 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
 
     override fun reportUninitializedVariable(
         reporter: DiagnosticReporter,
-        node: QualifiedAccessNode,
+        expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
         context: CheckerContext,
     ) {
         require(symbol is FirPropertySymbol)
-        reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
     }
 
     override fun reportNonInlineMemberValInitialization(
