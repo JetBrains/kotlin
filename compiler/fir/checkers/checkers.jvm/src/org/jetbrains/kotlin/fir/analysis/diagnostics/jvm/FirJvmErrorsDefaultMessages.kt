@@ -312,11 +312,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME,
-            "The name in '@JvmExposeBoxed' must not coincide with that of the declaration."
+            "The name in '@JvmExposeBoxed' cannot coincide with that of the declaration."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME,
-            "The name in '@JvmExposeBoxed' must not coincide with the one in '@JvmName'."
+            "The name in '@JvmExposeBoxed' cannot coincide with the one in '@JvmName'."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT,
