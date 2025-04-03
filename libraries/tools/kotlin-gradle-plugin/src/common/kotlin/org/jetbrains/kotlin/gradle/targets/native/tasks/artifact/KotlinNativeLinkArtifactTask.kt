@@ -2,6 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -52,6 +53,7 @@ import javax.inject.Inject
 
 @DisableCachingByDefault
 @Suppress("LeakingThis")
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
 abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val konanTarget: KonanTarget,
     @get:Input val outputKind: CompilerOutputKind,

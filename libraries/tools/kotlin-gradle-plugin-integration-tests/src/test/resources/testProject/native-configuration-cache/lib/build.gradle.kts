@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {

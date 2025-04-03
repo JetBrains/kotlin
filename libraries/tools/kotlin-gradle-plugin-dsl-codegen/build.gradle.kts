@@ -35,14 +35,6 @@ val generateAbstractBinaryContainer by generator(
     setKGPSourceRootPaths()
 }
 
-val generateAbstractKotlinArtifactsExtensionImplementation by generator(
-    "org.jetbrains.kotlin.generators.gradle.dsl.KotlinArtifactsDSLCodegenKt",
-    sourceSets["main"]
-) {
-    group = generateGroupName
-    setKGPSourceRootPaths()
-}
-
 val generateMppSourceSetConventions by generator(
     "org.jetbrains.kotlin.generators.gradle.dsl.MppSourceSetConventionsCodegenKt",
     sourceSets["main"]
