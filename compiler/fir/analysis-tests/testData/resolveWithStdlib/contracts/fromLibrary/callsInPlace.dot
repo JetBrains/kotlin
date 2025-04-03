@@ -330,14 +330,14 @@ digraph callsInPlace_kt {
                 109 [label="Function call arguments enter"];
                 110 [label="Function call arguments exit"];
             }
-            111 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            111 [label="Function call enter: R|<local>/block1|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             112 [label="Function call exit: R|<local>/block1|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_32 {
                 color=blue
                 113 [label="Function call arguments enter"];
                 114 [label="Function call arguments exit"];
             }
-            115 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            115 [label="Function call enter: R|<local>/block2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             116 [label="Function call exit: R|<local>/block2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             117 [label="Exit block"];
         }
@@ -510,7 +510,7 @@ digraph callsInPlace_kt {
                 167 [label="Function call arguments enter"];
                 168 [label="Function call arguments exit"];
             }
-            169 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            169 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             170 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             171 [label="Exit block"];
         }

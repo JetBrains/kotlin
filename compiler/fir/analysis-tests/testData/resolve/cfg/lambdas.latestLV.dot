@@ -21,7 +21,7 @@ digraph lambdas_kt {
                 4 [label="Function call arguments enter"];
                 5 [label="Function call arguments exit"];
             }
-            6 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            6 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             7 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             8 [label="Exit block"];
         }
@@ -232,7 +232,7 @@ digraph lambdas_kt {
                 76 [label="Function call arguments enter"];
                 77 [label="Function call arguments exit"];
             }
-            78 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            78 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             79 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             80 [label="Const: Int(1)"];
             81 [label="Jump: ^getInt Int(1)"];

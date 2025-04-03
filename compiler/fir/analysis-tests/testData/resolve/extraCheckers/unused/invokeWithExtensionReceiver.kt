@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
     val ext: String.(Int) -> Unit
 
@@ -6,5 +6,5 @@ fun foo() {
 
     val <!UNUSED_VARIABLE!>unusedReceiver<!> = "bar"
 
-    usedReceiver.ext(10)
+    usedReceiver.<!UNINITIALIZED_VARIABLE!>ext<!>(10)
 }

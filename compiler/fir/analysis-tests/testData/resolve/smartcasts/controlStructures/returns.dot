@@ -511,7 +511,7 @@ digraph returns_kt {
                 179 [label="Function call arguments enter"];
                 180 [label="Function call arguments exit"];
             }
-            181 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            181 [label="Function call enter: R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             182 [label="Function call exit: R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
             183 [label="Jump: ^runHigherOrder R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             184 [label="Stub" style="filled" fillcolor=gray];

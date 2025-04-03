@@ -574,7 +574,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
 
             if (!choosingOptionForAugmentedAssignment) {
-                dataFlowAnalyzer.enterFunctionCall(functionCall)
+                dataFlowAnalyzer.enterFunctionCall(resultExpression)
             }
             val completeInference = callCompleter.completeCall(
                 resultExpression, data,
