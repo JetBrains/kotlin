@@ -35,9 +35,7 @@ private interface DefaultParamInterface {
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
@@ -74,9 +72,7 @@ private interface DefaultParamInterface {
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
