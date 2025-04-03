@@ -128,15 +128,19 @@ class ComposableDefaultParamLowering(
             expression.startOffset,
             expression.endOffset
         ).also { newCall ->
-            var argCount = expression.valueArgumentsCount
-            for (i in 0 until argCount) {
-                newCall.putValueArgument(i, expression.getValueArgument(i))
+            // Order parameters as regular, dispatch, context, extension
+            val valueArgStart = expression.symbol.owner.parameters.indexOfFirst {
+                it.kind == IrParameterKind.Regular
             }
-            if (expression.dispatchReceiver != null) {
-                newCall.putValueArgument(argCount++, expression.dispatchReceiver)
+            var argCount = 0
+            // Add regular parameters first
+            for (i in valueArgStart until expression.arguments.size) {
+                newCall.arguments[argCount++] = expression.arguments[i]
             }
-            if (expression.extensionReceiver != null) {
-                newCall.putValueArgument(argCount, expression.extensionReceiver)
+
+            // Add receivers after regular parameters
+            for (i in 0 until valueArgStart) {
+                newCall.arguments[argCount++] = expression.arguments[i]
             }
         }
 
@@ -230,21 +234,8 @@ class ComposableDefaultParamLowering(
         wrapper.copyAnnotationsFrom(source)
         wrapper.copyParametersFrom(source)
 
-        wrapper.valueParameters.forEach {
+        wrapper.parameters.forEach {
             it.defaultValue?.transformChildrenVoid()
-        }
-
-        // move receiver parameters to value parameters
-        val dispatcherReceiver = wrapper.dispatchReceiverParameter
-        if (dispatcherReceiver != null) {
-            wrapper.dispatchReceiverParameter = null
-            wrapper.valueParameters += dispatcherReceiver
-        }
-
-        val extensionReceiver = wrapper.extensionReceiverParameter
-        if (extensionReceiver != null) {
-            wrapper.extensionReceiverParameter = null
-            wrapper.valueParameters += extensionReceiver
         }
 
         wrapper.body = DeclarationIrBuilder(
@@ -252,30 +243,38 @@ class ComposableDefaultParamLowering(
             wrapper.symbol
         ).irBlockBody {
             +irReturn(
-                wrapper.symbol,
-                irCall(
-                    source.symbol,
-                    dispatchReceiver = dispatcherReceiver?.let(::irGet),
-                    extensionReceiver = extensionReceiver?.let(::irGet),
-                    args = Array(source.valueParameters.size) {
-                        irGet(wrapper.valueParameters[it])
+                target = wrapper.symbol,
+                value = irCall(source.symbol).also {
+                    wrapper.parameters.fastForEach { p ->
+                        it.arguments[p.indexInParameters] = irGet(p)
                     }
-                )
+                }
             )
         }
+
+        // Reorder parameters to move receivers to the end
+        val valueArgsStart = wrapper.parameters.indexOfFirst {
+            it.kind == IrParameterKind.Regular
+        }
+        val receivers = wrapper.parameters.take(valueArgsStart)
+        receivers.forEach {
+            it.kind = IrParameterKind.Regular
+        }
+        val valueArgs = wrapper.parameters.drop(valueArgsStart)
+        wrapper.parameters = valueArgs + receivers
 
         return wrapper
     }
 
     private fun getOrCreateDefaultImpls(parent: IrClass): IrClass {
         val cls = parent.declarations.find {
-            it is IrClass && it.name == ComposeNames.DEFAULT_IMPLS
+            it is IrClass && it.name == ComposeNames.DefaultImpls
         } as? IrClass
 
         return cls ?: context.irFactory.buildClass {
             startOffset = parent.startOffset
             endOffset = parent.endOffset
-            name = ComposeNames.DEFAULT_IMPLS
+            name = ComposeNames.DefaultImpls
         }.apply {
             parent.addChild(this)
             createThisReceiverParameter()
@@ -311,13 +310,19 @@ class ComposableDefaultParamLowering(
                         irCall(wrapper).apply {
                             var index = 0
                             copy.parameters.fastForEach { p ->
-                                if (p.kind == IrParameterKind.Regular || p.kind == IrParameterKind.Context) {
+                                if (p.kind == IrParameterKind.Regular) {
                                     arguments[index++] = irGet(p)
                                 }
                             }
 
                             copy.parameters.fastForEach { p ->
                                 if (p.kind == IrParameterKind.DispatchReceiver) {
+                                    arguments[index++] = irGet(p)
+                                }
+                            }
+
+                            copy.parameters.fastForEach { p ->
+                                if (p.kind == IrParameterKind.Context) {
                                     arguments[index++] = irGet(p)
                                 }
                             }

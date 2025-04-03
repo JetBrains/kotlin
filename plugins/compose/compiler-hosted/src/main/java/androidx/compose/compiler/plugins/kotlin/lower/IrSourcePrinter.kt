@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
-import kotlin.collections.set
 
 fun IrElement.dumpSrc(useFir: Boolean = false): String {
     val sb = StringBuilder()
@@ -505,8 +504,8 @@ class IrSourcePrinterVisitor(
                         print(" = ")
                     }
                     when {
-                        name.startsWith(ComposeNames.DEFAULT_PARAMETER.identifier) ||
-                                name.startsWith(ComposeNames.CHANGED_PARAMETER.identifier) -> {
+                        name.startsWith(ComposeNames.DefaultParameter.identifier) ||
+                                name.startsWith(ComposeNames.ChangedParameter.identifier) -> {
                             withIntsAsBinaryLiterals {
                                 arg.print()
                             }

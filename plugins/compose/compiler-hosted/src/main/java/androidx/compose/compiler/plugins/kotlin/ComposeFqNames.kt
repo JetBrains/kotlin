@@ -76,22 +76,22 @@ object ComposeCallableIds {
     val isLiveLiteralsEnabled =
         internalTopLevelCallableId("isLiveLiteralsEnabled")
     val isTraceInProgress =
-        topLevelCallableId(ComposeNames.IS_TRACE_IN_PROGRESS)
+        topLevelCallableId(ComposeNames.IsTraceInProgress)
     val liveLiteral = internalTopLevelCallableId("liveLiteral")
     val remember = topLevelCallableId("remember")
     val sourceInformation =
-        topLevelCallableId(ComposeNames.SOURCEINFORMATION)
+        topLevelCallableId(ComposeNames.SourceInformation)
     val sourceInformationMarkerEnd =
-        topLevelCallableId(ComposeNames.SOURCEINFORMATIONMARKEREND)
+        topLevelCallableId(ComposeNames.SourceInformationMarkerEnd)
     val sourceInformationMarkerStart =
-        topLevelCallableId(ComposeNames.SOURCEINFORMATIONMARKERSTART)
-    val traceEventEnd = topLevelCallableId(ComposeNames.TRACE_EVENT_END)
-    val traceEventStart = topLevelCallableId(ComposeNames.TRACE_EVENT_START)
-    val updateChangedFlags = topLevelCallableId(ComposeNames.UPDATE_CHANGED_FLAGS)
+        topLevelCallableId(ComposeNames.SourceInformationMarkerStart)
+    val traceEventEnd = topLevelCallableId(ComposeNames.TraceEventEnd)
+    val traceEventStart = topLevelCallableId(ComposeNames.TraceEventStart)
+    val updateChangedFlags = topLevelCallableId(ComposeNames.UpdateChangedFlags)
     val rememberComposableLambda =
-        internalTopLevelCallableId(ComposeNames.REMEMBER_COMPOSABLE_LAMBDA)
+        internalTopLevelCallableId(ComposeNames.RememberComposableLambda)
     val rememberComposableLambdaN =
-        internalTopLevelCallableId(ComposeNames.REMEMBER_COMPOSABLE_LAMBDAN)
+        internalTopLevelCallableId(ComposeNames.RememberComposableLambdaN)
 }
 
 object ComposeFqNames {

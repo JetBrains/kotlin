@@ -97,6 +97,8 @@ enum class ParamState(val bits: Int) {
      * program.
      */
     Static(0b011),
+
+    @Suppress("unused")
     Unknown(0b100),
     Mask(0b111);
 
@@ -121,8 +123,7 @@ fun defaultsBitIndex(index: Int): Int = index.rem(BITS_PER_INT)
 val IrFunction.thisParamCount
     get() = parameters.count {
         it.kind == IrParameterKind.DispatchReceiver ||
-                it.kind == IrParameterKind.ExtensionReceiver ||
-                it.kind == IrParameterKind.Context
+                it.kind == IrParameterKind.ExtensionReceiver
     }
 
 /**
@@ -162,7 +163,7 @@ fun changedParamCountFromTotal(totalParamsIncludingThisParams: Int): Int {
 /**
  * Calculates the number of 'defaults' params needed based on the function's parameters.
  *
- * @param valueParams The numbers of params, usually the size of [IrFunction.valueParameters].
+ * @param valueParams The numbers of params, usually the size of [IrFunction.parameters] with [IrParameterKind.Regular].
  * Which includes context receivers params, but not extension param nor synthetic params.
  */
 fun defaultParamCount(valueParams: Int): Int {
@@ -403,43 +404,44 @@ class ComposableFunctionBodyTransformer(
     private val skipToGroupEndFunction by guardedLazy {
         composerIrClass.functions
             .first {
-                it.name.identifier == "skipToGroupEnd" && it.valueParameters.size == 0
+                it.name.identifier == "skipToGroupEnd" && it.parameters.size == 1
             }
     }
 
+    // todo is this correct to be unused?
     private val skipCurrentGroupFunction by guardedLazy {
         composerIrClass
             .functions
             .first {
-                it.name.identifier == "skipCurrentGroup" && it.valueParameters.size == 0
+                it.name.identifier == "skipCurrentGroup" && it.parameters.size == 1
             }
     }
 
     private val startDefaultsFunction by guardedLazy {
         composerIrClass.functions
             .first {
-                it.name.identifier == "startDefaults" && it.valueParameters.size == 0
+                it.name.identifier == "startDefaults" && it.parameters.size == 1
             }
     }
 
     private val endDefaultsFunction by guardedLazy {
         composerIrClass.functions
             .first {
-                it.name.identifier == "endDefaults" && it.valueParameters.size == 0
+                it.name.identifier == "endDefaults" && it.parameters.size == 1
             }
     }
 
     private val startMovableFunction by guardedLazy {
         composerIrClass.functions
             .first {
-                it.name.identifier == "startMovableGroup" && it.valueParameters.size == 2
+                it.name.identifier == "startMovableGroup" && it.parameters.size == 3
             }
     }
 
     private val endMovableFunction by guardedLazy {
         composerIrClass.functions
             .first {
-                it.name.identifier == "endMovableGroup" && it.valueParameters.size == 0
+                it.name.identifier == "endMovableGroup" && it.parameters.size == 1
             }
     }
 
@@ -447,14 +449,14 @@ class ComposableFunctionBodyTransformer(
         composerIrClass
             .functions
             .first {
-                it.name == ComposeNames.STARTRESTARTGROUP && it.valueParameters.size == 1
+                it.name == ComposeNames.StartRestartGroup && it.parameters.size == 2
             }
     }
 
     private val currentMarkerProperty: IrProperty? by guardedLazy {
         composerIrClass.properties
             .firstOrNull {
-                it.name == ComposeNames.CURRENTMARKER
+                it.name == ComposeNames.CurrentMarker
             }
     }
 
@@ -462,7 +464,7 @@ class ComposableFunctionBodyTransformer(
         composerIrClass
             .functions
             .firstOrNull {
-                it.name == ComposeNames.ENDTOMARKER && it.valueParameters.size == 1
+                it.name == ComposeNames.EndToMarker && it.parameters.size == 2
             }
     }
 
@@ -474,7 +476,7 @@ class ComposableFunctionBodyTransformer(
         composerIrClass
             .functions
             .first {
-                it.name == ComposeNames.ENDRESTARTGROUP && it.valueParameters.size == 0
+                it.name == ComposeNames.EndRestartGroup && it.parameters.size == 1
             }
     }
 
@@ -483,9 +485,10 @@ class ComposableFunctionBodyTransformer(
             composerIrClass
                 .functions
                 .firstOrNull {
-                    it.name == ComposeNames.SHOULD_EXECUTE && it.valueParameters.size == 2 &&
-                            it.valueParameters.first().type.isBoolean() &&
-                            it.valueParameters.drop(1).first().type.isInt()
+                    it.name == ComposeNames.ShouldExecute &&
+                            it.parameters.size == 3 &&
+                            it.parameters[1].type.isBoolean() &&
+                            it.parameters[2].type.isInt()
                 }
         else null
     }
@@ -503,19 +506,19 @@ class ComposableFunctionBodyTransformer(
             ComposeCallableIds.updateChangedFlags
         )?.let {
             val owner = it.owner
-            if (owner.valueParameters.size == 1) owner else null
+            if (owner.parameters.size == 1) owner else null
         }
     }
 
     private val isTraceInProgressFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.isTraceInProgress).singleOrNull {
-            it.owner.valueParameters.isEmpty()
+            it.owner.parameters.isEmpty()
         }?.owner
     }
 
     private val traceEventStartFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.traceEventStart).singleOrNull {
-            it.owner.valueParameters.map { p -> p.type } == listOf(
+            it.owner.parameters.map { p -> p.type } == listOf(
                 context.irBuiltIns.intType,
                 context.irBuiltIns.intType,
                 context.irBuiltIns.intType,
@@ -526,7 +529,7 @@ class ComposableFunctionBodyTransformer(
 
     private val traceEventEndFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.traceEventEnd).singleOrNull {
-            it.owner.valueParameters.isEmpty()
+            it.owner.parameters.isEmpty()
         }?.owner
     }
 
@@ -558,8 +561,9 @@ class ComposableFunctionBodyTransformer(
             ?.owner
             ?.functions
             ?.singleOrNull {
-                it.name == ComposeNames.UPDATE_SCOPE &&
-                        it.valueParameters.first().type.arguments.size == 3
+                it.name == ComposeNames.UpdateScope &&
+                        it.parameters.size == 2 &&
+                        it.parameters[1].type.arguments.size == 3
             }
             ?: error("new updateScope not found in result type of endRestartGroup")
     }
@@ -582,7 +586,7 @@ class ComposableFunctionBodyTransformer(
     private val joinKeyFunction by guardedLazy {
         composerIrClass.functions
             .first {
-                it.name == ComposeNames.JOINKEY && it.valueParameters.size == 2
+                it.name == ComposeNames.JoinKey && it.parameters.size == 3
             }
     }
 
@@ -668,7 +672,7 @@ class ComposableFunctionBodyTransformer(
                 defaultParam
             )
         }.also { function ->
-            val assignableParams = function.valueParameters.filter { it.isAssignable }.toSet()
+            val assignableParams = function.parameters.filter { it.isAssignable }.toSet()
             val defaultArgs = assignableParams // only default args and composer are marked as `isAssignable`
 
             if (assignableParams.isNotEmpty()) {
@@ -892,7 +896,7 @@ class ComposableFunctionBodyTransformer(
             changedParam.irCopyToTemporary(
                 // LLVM validation doesn't allow us to have val here.
                 isVar = !context.platform.isJvm() && !context.platform.isJs(),
-                nameHint = "\$dirty",
+                nameHint = $$"$dirty",
                 exactName = true
             )
         else
@@ -1052,7 +1056,7 @@ class ComposableFunctionBodyTransformer(
             changedParam.irCopyToTemporary(
                 // LLVM validation doesn't allow us to have val here.
                 isVar = !context.platform.isJvm() && !context.platform.isJs(),
-                nameHint = "\$dirty",
+                nameHint = $$"$dirty",
                 exactName = true
             )
         else
@@ -1145,9 +1149,8 @@ class ComposableFunctionBodyTransformer(
             // NOTE: the unstable mask is indexed by valueParameter index, which is different
             // than the slotIndex but that is OKAY because we only care about defaults, which
             // also use the value parameter index.
-            val realParams = declaration.valueParameters.take(
-                declaration.contextReceiverParametersCount + scope.realValueParamCount
-            )
+            val realParams = declaration.namedParameters.take(scope.realValueParamCount)
+
             val unstableMask = realParams.map {
                 stabilityInferencer.stabilityOf((it.varargElementType ?: it.type)).knownUnstable()
             }.toBooleanArray()
@@ -1225,10 +1228,10 @@ class ComposableFunctionBodyTransformer(
         call.symbol.owner.parameters.fastForEach { param ->
             val paramName = param.name.asString()
             if (
-                paramName.startsWith(ComposeNames.CHANGED_PARAMETER.asString()) ||
-                paramName.startsWith(ComposeNames.DEFAULT_PARAMETER.asString())
+                paramName.startsWith(ComposeNames.ChangedParameter.asString()) ||
+                paramName.startsWith(ComposeNames.DefaultParameter.asString())
             ) {
-                val parameter = declaration.valueParameters.find { it.name == param.name } ?: error("Expected parameter for ${param.name}")
+                val parameter = declaration.parameters.find { it.name == param.name } ?: error("Expected parameter for ${param.name}")
                 call.arguments[param.indexInParameters] = irGet(parameter)
             }
         }
@@ -1270,10 +1273,7 @@ class ComposableFunctionBodyTransformer(
             -it.scope.level
         }
         for (sourceFixup in sourceFixups) {
-            sourceFixup.call.putValueArgument(
-                sourceFixup.index,
-                irConst(sourceFixup.scope.sourceInformation ?: "")
-            )
+            sourceFixup.call.arguments[sourceFixup.index] = irConst(sourceFixup.scope.sourceInformation ?: "")
         }
         sourceFixups.clear()
     }
@@ -1675,16 +1675,17 @@ class ComposableFunctionBodyTransformer(
         // the outer scope because direct references to the
         // receiver sometimes cause an invalid name, "$<this>", to
         // be generated.
-        val dispatchReceiverParameter = function.dispatchReceiverParameter
-        val outerReceiver = if (dispatchReceiverParameter != null) irTemporary(
-            value = irGet(dispatchReceiverParameter),
-            nameHint = "rcvr"
-        ) else null
+        // todo check if that's still the case
+        val outerReceiver = function.dispatchReceiverParameter?.let {
+            irTemporary(
+                value = irGet(it),
+                nameHint = "rcvr"
+            )
+        }
 
         // Create self-invoke lambda
-        val parameterCount = function.valueParameters.size
-        val contextParameterCount = function.contextReceiverParametersCount
-        val composerIndex = contextParameterCount + numRealValueParameters
+        val parameterCount = function.parameters.size
+        val composerIndex = numRealValueParameters + function.thisParamCount
         val changedIndex = composerIndex + 1
         val defaultIndex = changedIndex + changedParamCount(
             numRealValueParameters,
@@ -1698,11 +1699,8 @@ class ComposableFunctionBodyTransformer(
                         "found $parameterCount"
             }
         } else {
-            val expectedParamCount = defaultIndex +
-                    defaultParamCount(contextParameterCount + numRealValueParameters)
-            require(
-                parameterCount == expectedParamCount
-            ) {
+            val expectedParamCount = defaultIndex + defaultParamCount(numRealValueParameters)
+            require(parameterCount == expectedParamCount) {
                 "Expected $expectedParamCount params for ${function.fqNameWhenAvailable}, " +
                         "found $parameterCount"
             }
@@ -1715,30 +1713,30 @@ class ComposableFunctionBodyTransformer(
         ) { fn ->
             fn.parent = function
             val newComposer = fn.addValueParameter(
-                ComposeNames.COMPOSER_PARAMETER.identifier,
+                ComposeNames.ComposerParameter.identifier,
                 composerIrClass.defaultType
                     .replaceArgumentsWithStarProjections()
                     .makeNullable()
             )
             fn.addValueParameter(
-                ComposeNames.FORCE_PARAMETER,
+                ComposeNames.ForceParameter,
                 builtIns.intType
             )
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 // Call the function again with the same parameters
                 +irReturn(
                     irCall(function.symbol).apply {
-                        symbol.owner
-                            .valueParameters
-                            .fastForEach { param ->
-                                arguments[param.indexInParameters] = irGet(param)
-                            }
+                        symbol.owner.parameters.fastForEach { param ->
+                            arguments[param.indexInParameters] =
+                                if (param.kind == IrParameterKind.DispatchReceiver) {
+                                    outerReceiver?.let(::irGet)
+                                } else {
+                                    irGet(param)
+                                }
+                        }
 
                         // new composer
-                        putValueArgument(
-                            composerIndex,
-                            irGet(newComposer)
-                        )
+                        arguments[composerIndex] = irGet(newComposer)
 
                         // the call in updateScope needs to *always* have the low bit set to 1.
                         // This ensures that the body of the function is actually executed.
@@ -1750,8 +1748,6 @@ class ComposableFunctionBodyTransformer(
 
                         defaultParam?.putAsValueArgumentIn(this, defaultIndex)
 
-                        extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
-                        dispatchReceiver = outerReceiver?.let { irGet(it) }
                         function.typeParameters.fastForEachIndexed { index, parameter ->
                             typeArguments[index] = parameter.defaultType
                         }
@@ -1786,8 +1782,9 @@ class ComposableFunctionBodyTransformer(
         val shouldExecuteFunction = shouldExecuteFunction
         return if (shouldExecuteFunction != null) {
             irMethodCall(irCurrentComposer(), shouldExecuteFunction).apply {
-                putValueArgument(0, parametersChanged)
-                putValueArgument(1, flags)
+                // 0th is receiver
+                arguments[1] = parametersChanged
+                arguments[2] = flags
             }
         } else {
             irOrOr(
@@ -2027,7 +2024,7 @@ class ComposableFunctionBodyTransformer(
         val sourceInformation = irCall(
             sourceInformationFunction
         ).also {
-            it.putValueArgument(0, scope.irCurrentComposer())
+            it.arguments[0] = scope.irCurrentComposer()
         }
         recordSourceParameter(sourceInformation, 1, scope)
         return sourceInformation
@@ -2043,8 +2040,8 @@ class ComposableFunctionBodyTransformer(
             element.startOffset,
             element.endOffset
         ).also {
-            it.putValueArgument(0, scope.irCurrentComposer())
-            it.putValueArgument(1, key)
+            it.arguments[0] = scope.irCurrentComposer()
+            it.arguments[1] = key
             recordSourceParameter(it, 2, scope)
         }
     }
@@ -2058,7 +2055,7 @@ class ComposableFunctionBodyTransformer(
             element.startOffset,
             element.endOffset
         ).also {
-            it.putValueArgument(0, scope.irCurrentComposer())
+            it.arguments[0] = scope.irCurrentComposer()
         }
     }
 
@@ -2087,7 +2084,6 @@ class ComposableFunctionBodyTransformer(
         traceEventStartFunction?.let { traceEventStart ->
             val declaration = scope.function
             val startOffset = declaration.body!!.startOffset
-            val endOffset = declaration.body!!.endOffset
 
             val name = declaration.kotlinFqName
             val file = declaration.file.name
@@ -2107,10 +2103,10 @@ class ComposableFunctionBodyTransformer(
 
             irIfTraceInProgress(
                 irCall(traceEventStart).also {
-                    it.putValueArgument(0, key)
-                    it.putValueArgument(1, dirty1)
-                    it.putValueArgument(2, dirty2)
-                    it.putValueArgument(3, irConst(traceInfo))
+                    it.arguments[0] = key
+                    it.arguments[1] = dirty1
+                    it.arguments[2] = dirty2
+                    it.arguments[3] = irConst(traceInfo)
                 }
             )
         }
@@ -2146,7 +2142,8 @@ class ComposableFunctionBodyTransformer(
                     element.startOffset,
                     element.endOffset
                 ).also {
-                    it.putValueArgument(0, key)
+                    // 0th is the receiver
+                    it.arguments[1] = key
                 }
             ),
             scope
@@ -2206,8 +2203,9 @@ class ComposableFunctionBodyTransformer(
                 element.startOffset,
                 element.endOffset
             ).also {
-                it.putValueArgument(0, element.irSourceKey())
-                it.putValueArgument(1, joinedData)
+                // 0th is the receiver
+                it.arguments[1] = element.irSourceKey()
+                it.arguments[2] = joinedData
             },
             scope
         )
@@ -2219,15 +2217,17 @@ class ComposableFunctionBodyTransformer(
 
     private fun irEndToMarker(marker: IrExpression, scope: Scope.BlockScope): IrExpression {
         return irMethodCall(scope.irCurrentComposer(), endToMarkerFunction!!).apply {
-            putValueArgument(0, marker)
+            // 0th is the receiver
+            arguments[1] = marker
         }
     }
 
     private fun irJoinKeyChain(keyExprs: List<IrExpression>): IrExpression {
         return keyExprs.reduce { accumulator, value ->
             irMethodCall(irCurrentComposer(), joinKeyFunction).apply {
-                putValueArgument(0, accumulator)
-                putValueArgument(1, value)
+                // 0th is the receiver
+                arguments[1] = accumulator
+                arguments[2] = value
             }
         }
     }
@@ -2245,12 +2245,11 @@ class ComposableFunctionBodyTransformer(
                 irIfThenElse(
                     condition = irEqual(irGet(tmpVal), irNull()),
                     thenPart = irNull(),
-                    elsePart = irCall(symbol).apply {
-                        dispatchReceiver = irGet(tmpVal)
-                        args.fastForEachIndexed { i, arg ->
-                            putValueArgument(i, arg)
-                        }
-                    }
+                    elsePart = irCall(
+                        symbol = symbol,
+                        dispatchReceiver = irGet(tmpVal),
+                        args = args
+                    )
                 )
             )
         )
@@ -2551,8 +2550,7 @@ class ComposableFunctionBodyTransformer(
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.CallScope,
-                is Scope.ReturnScope,
-                -> {
+                is Scope.ReturnScope -> {
                     // Ignore
                 }
                 is Scope.FunctionScope -> {
@@ -2949,14 +2947,13 @@ class ComposableFunctionBodyTransformer(
         )
 
         val ownerFn = expression.symbol.owner
-        val numValueParams = ownerFn.valueParameters.size
-        val numContextParams = ownerFn.contextReceiverParametersCount
+        val numParams = ownerFn.parameters.size
         val numDefaults: Int
         val numChanged: Int
-        val numRealValueParams: Int
+        val numRealParams: Int
 
-        val hasDefaults = ownerFn.valueParameters.any {
-            it.name == ComposeNames.DEFAULT_PARAMETER
+        val hasDefaults = ownerFn.parameters.any {
+            it.kind == IrParameterKind.Regular && it.name == ComposeNames.DefaultParameter
         }
         if (!hasDefaults && expression.isInvoke()) {
             // in the case of an invoke without any defaults, all of the parameters are going to
@@ -2965,48 +2962,45 @@ class ComposableFunctionBodyTransformer(
             // be defaulted though, so we can calculate the number of real parameters based on
             // the total number of parameters
             numDefaults = 0
-            numChanged = changedParamCountFromTotal(
-                // Subtracting context params from total since they are included in thisParams
-                numValueParams - numContextParams + ownerFn.thisParamCount
-            )
-            numRealValueParams = numValueParams -
-                    numContextParams -
+            // TODO double check how this works with local lambdas since we add a slot for its instance
+            //  on the function side
+            numChanged = changedParamCountFromTotal(numParams)
+            numRealParams = numParams -
                     1 - // composer param
                     numChanged
         } else {
-            // Context receiver params are value parameters and will precede real params, calculate
-            // the amount of real params by finding the index off the last real param (if any) and
-            // offsetting it by the amount of context receiver params.
-            val composerParamIndex = ownerFn.valueParameters.indexOfFirst {
-                it.name == ComposeNames.COMPOSER_PARAMETER
+            val composerParamIndex = ownerFn.parameters.indexOfFirst {
+                it.kind == IrParameterKind.Regular && it.name == ComposeNames.ComposerParameter
             }
-            numRealValueParams = if (composerParamIndex != -1) {
-                composerParamIndex - numContextParams
-            } else {
-                0
+            require(composerParamIndex >= 0) {
+                $$"Expected a $composer parameter in $${ownerFn.render()}"
             }
+            numChanged = changedParamCount(composerParamIndex, 0 /* this params are already counted */)
             numDefaults = if (hasDefaults) {
-                defaultParamCount(numContextParams + numRealValueParams)
+                val receiverCount = ownerFn.thisParamCount
+                defaultParamCount(composerParamIndex - receiverCount)
             } else {
                 0
             }
-            numChanged = changedParamCount(numRealValueParams, ownerFn.thisParamCount)
+            numRealParams = numParams -
+                    1 - // composer param
+                    numChanged -
+                    numDefaults
         }
 
-        val expectedNumParams = numContextParams +
-                numRealValueParams +
+        val expectedNumParams = numRealParams +
                 1 + // composer param
                 numChanged +
                 numDefaults
-        require(numValueParams == expectedNumParams) {
-            "Expected $expectedNumParams params for ${ownerFn.name}, but got $numValueParams"
+        require(numParams == expectedNumParams) {
+            "Expected $expectedNumParams params for ${ownerFn.render()}, but got $numParams"
         }
 
-        val composerIndex = numContextParams + numRealValueParams
+        val composerIndex = numRealParams
         val changedArgIndex = composerIndex + 1
         val defaultArgIndex = changedArgIndex + numChanged
-        val defaultArgs = (defaultArgIndex until numValueParams).map {
-            expression.getValueArgument(it)
+        val defaultArgs = (defaultArgIndex until numParams).map {
+            expression.arguments[it]
         }
         val hasDefaultArgs = defaultArgs.isNotEmpty()
 
@@ -3017,59 +3011,55 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
-        val contextMeta = mutableListOf<CallArgumentMeta>()
-        val paramMeta = mutableListOf<CallArgumentMeta>()
-
-        for (index in 0 until numContextParams + numRealValueParams) {
-            val arg = expression.getValueArgument(index)
+        var dispatchMeta: CallArgumentMeta? = null
+        val argsMeta = mutableListOf<CallArgumentMeta>()
+        var valueParamIndex = 0
+        for (i in 0 until composerIndex) {
+            val arg = expression.arguments[i]
+            val param = ownerFn.parameters[i]
             if (arg == null) {
-                val param = expression.symbol.owner.valueParameters[index]
                 if (param.varargElementType == null) {
                     // ComposerParamTransformer should not allow for any null arguments on a composable
                     // invocation unless the parameter is vararg. If this is null here, we have
                     // missed something.
                     error("Unexpected null argument for composable call")
                 } else {
-                    paramMeta.add(CallArgumentMeta(isVararg = true))
+                    argsMeta.add(CallArgumentMeta(isVararg = true))
                     continue
                 }
             }
-            if (index < numContextParams) {
-                val meta = argumentMetaOf(arg, isProvided = true)
-                contextMeta.add(meta)
-            } else {
-                val bitIndex = defaultsBitIndex(index)
-                val maskValue = if (hasDefaultArgs) defaultMasks[defaultsParamIndex(index)] else 0
-                val meta = argumentMetaOf(arg, isProvided = maskValue and (0b1 shl bitIndex) == 0)
-                paramMeta.add(meta)
+            when (param.kind) {
+                IrParameterKind.DispatchReceiver -> {
+                    dispatchMeta = argumentMetaOf(arg, isProvided = true)
+                }
+                IrParameterKind.Context,
+                IrParameterKind.ExtensionReceiver -> {
+                    val meta = argumentMetaOf(arg, isProvided = true)
+                    argsMeta.add(meta)
+                }
+                IrParameterKind.Regular -> {
+                    val index = valueParamIndex++
+                    val bitIndex = defaultsBitIndex(index)
+                    val maskValue = if (hasDefaultArgs) defaultMasks[defaultsParamIndex(index)] else 0
+                    val meta = argumentMetaOf(arg, isProvided = maskValue and (0b1 shl bitIndex) == 0)
+                    argsMeta.add(meta)
+                }
             }
         }
 
-        val extensionMeta = expression.extensionReceiver?.let {
-            argumentMetaOf(it, isProvided = true)
-        }
-        val dispatchMeta = expression.dispatchReceiver?.let {
-            argumentMetaOf(it, isProvided = true)
-        }
+        val changedArgs = buildChangedArgumentsForCall(argsMeta + listOfNotNull(dispatchMeta))
 
-        val changedParams = buildChangedArgumentsForCall(
-            contextArgs = contextMeta,
-            valueArgs = paramMeta,
-            extensionArg = extensionMeta,
-            dispatchArg = dispatchMeta
-        )
-
-        changedParams.fastForEachIndexed { i, param ->
-            expression.putValueArgument(changedArgIndex + i, param)
+        changedArgs.fastForEachIndexed { i, arg ->
+            expression.arguments[changedArgIndex + i] = arg
         }
 
         currentFunctionScope.metrics.recordComposableCall(
             expression,
-            paramMeta
+            argsMeta
         )
         metrics.recordComposableCall(
             expression,
-            paramMeta
+            argsMeta
         )
         recordCallInSource(call = expression)
 
@@ -3082,14 +3072,15 @@ class ComposableFunctionBodyTransformer(
         val inputArgs = mutableListOf<IrExpression>()
         var hasSpreadArgs = false
         var calculationArg: IrExpression? = null
-        for (i in 0 until expression.valueArgumentsCount) {
-            val param = expression.symbol.owner.valueParameters[i]
-            val arg = expression.getValueArgument(i)
+        for (i in 0 until expression.arguments.size) {
+            val param = expression.symbol.owner.parameters[i]
+            val arg = expression.arguments[i]
                 ?: error("Unexpected null argument found on key call")
-            if (param.name.asString().startsWith('$'))
-            // we are done. synthetic args go at
-            // the end
+            if (param.name.asString().startsWith('$')) {
+                // we are done. synthetic args go at
+                // the end
                 break
+            }
 
             when {
                 param.name.identifier == "calculation" -> {
@@ -3133,12 +3124,7 @@ class ComposableFunctionBodyTransformer(
         // Build the change parameters as if this was a call to remember to ensure the
         // use of the $dirty flags are calculated correctly.
         val inputArgMetas = inputArgs.map { argumentMetaOf(it, isProvided = true) }.also {
-            buildChangedArgumentsForCall(
-                contextArgs = emptyList(),
-                valueArgs = it,
-                extensionArg = null,
-                dispatchArg = null
-            )
+            buildChangedArgumentsForCall(it)
         }
 
         // If intrinsic remember uses $dirty, we are not sure if it is going to be populated,
@@ -3391,14 +3377,15 @@ class ComposableFunctionBodyTransformer(
         encounteredComposableCall(withGroups = true)
         val keyArgs = mutableListOf<IrExpression>()
         var blockArg: IrExpression? = null
-        for (i in 0 until expression.valueArgumentsCount) {
-            val param = expression.symbol.owner.valueParameters[i]
-            val arg = expression.getValueArgument(i)
+        for (i in 0 until expression.arguments.size) {
+            val param = expression.symbol.owner.parameters[i]
+            val arg = expression.arguments[i]
                 ?: error("Unexpected null argument found on key call")
-            if (param.name.asString().startsWith('$'))
-            // we are done. synthetic args go at
-            // the end
+            if (param.name.asString().startsWith('$')) {
+                // we are done. synthetic args go at
+                // the end
                 break
+            }
 
             when {
                 param.name.identifier == "block" -> {
@@ -3441,7 +3428,7 @@ class ComposableFunctionBodyTransformer(
 
                 val value = expression.symbol.owner
                 return if (
-                    value is IrValueParameter && value.name == ComposeNames.COMPOSER_PARAMETER
+                    value is IrValueParameter && value.name == ComposeNames.ComposerParameter
                 ) {
                     irCurrentComposer()
                 } else {
@@ -3478,23 +3465,14 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun buildChangedArgumentsForCall(
-        contextArgs: List<CallArgumentMeta>,
-        valueArgs: List<CallArgumentMeta>,
-        extensionArg: CallArgumentMeta?,
-        dispatchArg: CallArgumentMeta?,
-    ): List<IrExpression> {
-        val allArgs = contextArgs +
-                listOfNotNull(extensionArg) +
-                valueArgs +
-                listOfNotNull(dispatchArg)
+    private fun buildChangedArgumentsForCall(args: List<CallArgumentMeta>): List<IrExpression> {
         // passing in 0 for thisParams since they should be included in the params list
-        val changedCount = changedParamCount(allArgs.size, 0)
+        val changedCount = changedParamCount(args.size, 0)
         val result = mutableListOf<IrExpression>()
         for (i in 0 until changedCount) {
             val start = i * SLOTS_PER_INT
-            val end = min(start + SLOTS_PER_INT, allArgs.size)
-            val slice = allArgs.subList(start, end)
+            val end = min(start + SLOTS_PER_INT, args.size)
+            val slice = args.subList(start, end)
             result.add(buildChangedArgumentForCall(slice))
         }
         return result
@@ -3547,19 +3525,8 @@ class ComposableFunctionBodyTransformer(
                         val expr = if (slot == 0) {
                             it
                         } else {
-                            val int = context.irBuiltIns.intType
                             val bitsToShiftLeft = slot * BITS_PER_SLOT
-
-                            irCall(
-                                int.binaryOperator(
-                                    OperatorNameConventions.SHL,
-                                    int
-                                ),
-                                null,
-                                it,
-                                null,
-                                irConst(bitsToShiftLeft)
-                            )
+                            irShl(it, irConst(bitsToShiftLeft))
                         }
                         orExprs.add(expr)
                     }
@@ -3612,7 +3579,7 @@ class ComposableFunctionBodyTransformer(
                         val fn = scope.function
                         val maskParam = scope.dirty ?: scope.changedParameter
                         if (maskParam != null && fn.typeParameters.isNotEmpty()) {
-                            for (it in fn.valueParameters) {
+                            for (it in fn.parameters) {
                                 val classifier = it.type.classifierOrNull
                                 if (classifier == param.symbol) {
                                     val parentSlot = scope.allTrackedParams.indexOf(it)
@@ -3983,7 +3950,7 @@ class ComposableFunctionBodyTransformer(
                 get() = transformer.inlineLambdaInfo.isCrossinlineLambda(function)
 
             val inComposableCall: Boolean
-                get() = (parent as? Scope.CallScope)?.expression?.let { call ->
+                get() = (parent as? CallScope)?.expression?.let { call ->
                     with(transformer) {
                         call is IrCall && (call.isComposableCall() || call.isSyntheticComposableCall())
                     }
@@ -4089,31 +4056,34 @@ class ComposableFunctionBodyTransformer(
                 val defaultParams = mutableListOf<IrValueParameter>()
                 val changedParams = mutableListOf<IrValueParameter>()
                 for (param in function.parameters) {
-                    if (param.kind != IrParameterKind.Regular) {
-                        continue
-                    }
-
-                    val paramName = param.name.asString()
-                    when {
-                        paramName == ComposeNames.COMPOSER_PARAMETER.identifier ->
-                            composerParameter = param
-                        paramName.startsWith(ComposeNames.DEFAULT_PARAMETER.identifier) ->
-                            defaultParams += param
-                        paramName.startsWith(ComposeNames.CHANGED_PARAMETER.identifier) ->
-                            changedParams += param
-                        paramName.startsWith("\$context_receiver_") ||
-                                paramName.startsWith("\$name\$for\$destructuring") ||
-                                paramName.startsWith("\$noName_") ||
-                                paramName == "\$this" -> Unit
-                        else -> realValueParamCount++
+                    when (param.kind) {
+                        IrParameterKind.DispatchReceiver,
+                        IrParameterKind.ExtensionReceiver -> {
+                            slotCount++
+                        }
+                        IrParameterKind.Context -> {
+                            realValueParamCount++
+                        }
+                        IrParameterKind.Regular -> {
+                            val paramName = param.name.asString()
+                            when {
+                                paramName == ComposeNames.ComposerParameter.identifier ->
+                                    composerParameter = param
+                                paramName.startsWith(ComposeNames.DefaultParameter.identifier) ->
+                                    defaultParams += param
+                                paramName.startsWith(ComposeNames.ChangedParameter.identifier) ->
+                                    changedParams += param
+                                paramName.startsWith("\$context_receiver_") ||
+                                        paramName.startsWith("\$name\$for\$destructuring") ||
+                                        paramName.startsWith("\$noName_") ||
+                                        paramName == "\$this" -> Unit
+                                else -> realValueParamCount++
+                            }
+                        }
                     }
                 }
-                slotCount = realValueParamCount
-                slotCount += function.contextReceiverParametersCount
-                if (function.extensionReceiverParameter != null) slotCount++
-                if (function.dispatchReceiverParameter != null) {
-                    slotCount++
-                } else if (function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+                slotCount += realValueParamCount
+                if (function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
                     slotCount++
                 }
                 changedParameter = if (composerParameter != null) {
@@ -4127,7 +4097,7 @@ class ComposableFunctionBodyTransformer(
                 defaultParameter = if (defaultParams.isNotEmpty()) {
                     transformer.IrDefaultBitMaskValueImpl(
                         defaultParams,
-                        function.contextReceiverParametersCount + realValueParamCount,
+                        realValueParamCount,
                     )
                 } else {
                     null
@@ -4137,8 +4107,10 @@ class ComposableFunctionBodyTransformer(
             val isComposable = composerParameter != null
 
             val allTrackedParams = buildList {
+                var parameterCount = realValueParamCount
                 function.parameters.fastForEach {
                     if (it.kind == IrParameterKind.Context) {
+                        parameterCount--
                         add(it)
                     }
                 }
@@ -4147,7 +4119,6 @@ class ComposableFunctionBodyTransformer(
                         add(it)
                     }
                 }
-                var parameterCount = realValueParamCount
                 function.parameters.fastForEach {
                     if (parameterCount > 0 && it.kind == IrParameterKind.Regular) {
                         parameterCount--
@@ -4197,18 +4168,6 @@ class ComposableFunctionBodyTransformer(
                 return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
             }
 
-            private fun packageName(): String? {
-                var parent = function.parent
-                while (true) {
-                    when (parent) {
-                        is IrPackageFragment -> return parent.packageFqName.asString()
-                        is IrDeclaration -> parent = parent.parent
-                        else -> break
-                    }
-                }
-                return null
-            }
-
             private class IntrinsicRememberFixup(
                 val isMemoizedLambda: Boolean,
                 val args: List<IrExpression>,
@@ -4250,7 +4209,8 @@ class ComposableFunctionBodyTransformer(
                 intrinsicRememberFixups.fastForEach {
                     val invalid = invalidExpr(it.isMemoizedLambda, it.args, it.metas)
                     // $composer.cache(invalid, calc)
-                    it.call.putValueArgument(0, invalid)
+                    // 0th argument is the $composer
+                    it.call.arguments[1] = invalid
                 }
             }
         }
@@ -4545,10 +4505,7 @@ class ComposableFunctionBodyTransformer(
 
         override fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int) {
             params.fastForEachIndexed { i, param ->
-                fn.putValueArgument(
-                    startIndex + i,
-                    irGet(param)
-                )
+                fn.arguments[startIndex + i] = irGet(param)
             }
         }
     }
@@ -4650,7 +4607,7 @@ class ComposableFunctionBodyTransformer(
                 }
 
                 // we _only_ use this pattern for the slots where the body of the function
-                // actually uses that parametser, otherwise we pass in 0b000 which will transfer
+                // actually uses that parameter, otherwise we pass in 0b000 which will transfer
                 // none of the bits to the rhs
                 val rhs = (start until end).fold(0) { mask, slot ->
                     if (usedParams[slot]) mask or bitsForSlot(0b001, slot) else mask
@@ -4725,21 +4682,19 @@ class ComposableFunctionBodyTransformer(
         ) {
             used = true
             params.fastForEachIndexed { index, param ->
-                fn.putValueArgument(
-                    startIndex + index,
+                fn.arguments[startIndex + index] =
                     if (index == 0) {
                         irUpdateChangedFlags(irOr(irGet(param), irConst(if (lowBit) 0b1 else 0b0)))
                     } else {
                         irUpdateChangedFlags(irGet(param))
                     }
-                )
             }
         }
 
         private fun irUpdateChangedFlags(expression: IrExpression): IrExpression {
             return updateChangedFlagsFunction?.let {
                 irCall(it).also {
-                    it.putValueArgument(0, expression)
+                    it.arguments[0] = expression
                 }
             } ?: expression
         }
@@ -4763,11 +4718,9 @@ class ComposableFunctionBodyTransformer(
             )
 
             return irCall(
-                if (bitsToShiftLeft > 0) shiftLeft else shiftRight,
-                null,
-                value,
-                null,
-                irConst(abs(bitsToShiftLeft))
+                symbol = if (bitsToShiftLeft > 0) shiftLeft else shiftRight,
+                dispatchReceiver = value,
+                args = arrayOf(irConst(abs(bitsToShiftLeft)))
             )
         }
     }
@@ -4912,7 +4865,7 @@ private fun IrFunction.callInformation(): String =
 // parameters are in sorted order.
 private fun IrFunction.parameterInformation(): String {
     val builder = StringBuilder("P(")
-    val parameters = valueParameters.filter {
+    val parameters = namedParameters.filter {
         !it.name.asString().startsWith("$")
     }
     val sortIndex = mapOf(
