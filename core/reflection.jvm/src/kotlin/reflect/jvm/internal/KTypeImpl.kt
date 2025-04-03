@@ -140,6 +140,15 @@ internal class KTypeImpl(
         return KTypeImpl(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
     }
 
+    override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType {
+        val result =
+            if (isDefinitelyNotNull)
+                DefinitelyNotNullType.makeDefinitelyNotNull(type.unwrap(), true) ?: type
+            else
+                (type as? DefinitelyNotNullType)?.original ?: type
+        return KTypeImpl(result, computeJavaType)
+    }
+
     override val abbreviation: KType?
         get() = type.getAbbreviation()?.let { KTypeImpl(it, computeJavaType, isAbbreviation = true) }
 

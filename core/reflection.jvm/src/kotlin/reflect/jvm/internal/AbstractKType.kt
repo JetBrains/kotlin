@@ -13,6 +13,8 @@ internal abstract class AbstractKType : KTypeBase {
 
     abstract fun makeNullableAsSpecified(nullable: Boolean): AbstractKType
 
+    abstract fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType
+
     abstract val abbreviation: KType?
 
     abstract val isDefinitelyNotNullType: Boolean
