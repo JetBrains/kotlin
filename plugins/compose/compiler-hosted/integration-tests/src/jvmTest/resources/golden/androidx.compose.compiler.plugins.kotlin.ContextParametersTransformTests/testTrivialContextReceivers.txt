@@ -14,7 +14,8 @@ fun Test() { }
 // ------------------------------------------
 
 @Composable
-fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
+context(foo: Foo)
+fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {

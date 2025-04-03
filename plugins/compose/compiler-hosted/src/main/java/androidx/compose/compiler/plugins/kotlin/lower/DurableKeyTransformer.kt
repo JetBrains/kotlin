@@ -173,7 +173,7 @@ open class DurableKeyTransformer(
 
     protected fun IrSimpleFunction.signatureString(): String {
         return buildString {
-            parameterOfKind(IrParameterKind.ExtensionReceiver)?.let {
+            firstParameterOfKind(IrParameterKind.ExtensionReceiver)?.let {
                 append(it.type.asString())
                 append(".")
             }

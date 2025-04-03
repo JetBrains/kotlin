@@ -1756,8 +1756,11 @@ fun IrType.isKComposableFunction() =
                 it.packageFqName == InternalPackage
     } ?: false
 
-fun IrFunction.parameterOfKind(kind: IrParameterKind) =
+fun IrFunction.firstParameterOfKind(kind: IrParameterKind) =
     parameters.firstOrNull { it.kind == kind }
 
 val IrFunction.namedParameters
     get() = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+
+val IrValueParameter.isReceiver
+    get() = kind == IrParameterKind.ExtensionReceiver || kind == IrParameterKind.DispatchReceiver

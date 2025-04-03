@@ -36,7 +36,7 @@ fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "*<B()>")
       with(Bar()) {
-        B(%this%with, %this%with, %composer, 0)
+        B(%this%with@Test.<anonymous>, %this%with, %composer, 0)
       }
       %composer.endReplaceGroup()
     }
