@@ -58,6 +58,7 @@ internal fun produceObjCExportInterface(
     val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
     val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
     val errorOnNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportErrorOnNameCollisions)
+    val explicitMethodFamily = config.configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily)
 
     val problemCollector = ObjCExportCompilerProblemCollector(context)
 
@@ -75,7 +76,8 @@ internal fun produceObjCExportInterface(
                 errorOnNameCollisions -> ObjCExportNameCollisionMode.ERROR
                 reportNameCollisions -> ObjCExportNameCollisionMode.WARNING
                 else -> ObjCExportNameCollisionMode.NONE
-            }
+            },
+            explicitMethodFamily = explicitMethodFamily,
     )
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
