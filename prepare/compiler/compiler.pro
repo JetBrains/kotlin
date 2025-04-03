@@ -84,6 +84,13 @@
 -dontwarn org.w3c.dom.Window
 -dontwarn org.slf4j.**
 
+# coroutines-bundling related
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn android.annotation.SuppressLint
+
+# IJ reintroduced it in com.intellij.openapi.util.io.FileUtil for KTIJ-29067
+-dontwarn gnu.trove.TObjectHashingStrategy
+
 # This class in com.intellij.platform.utils has accidental dependency on Java 11,
 # but it is not used in the production code, so it should be fine to ignore this.
 # The fix commit in platform: cbf405263b98ef2ad0ecb0d5a47dc18e1b325c9f
