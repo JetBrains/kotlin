@@ -14,14 +14,11 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -378,7 +375,7 @@ internal constructor(
         if (output.exists()) output.deleteRecursively()
 
         val cmdArgs = xcodebuildArguments(frameworkFiles, output, mergeWithResources = { slice ->
-            if (hasFiles(slice.resources)) {
+            if (slice.resources != null) {
                 val frameworkTempDir = temporaryDir
                     .resolve(buildType.getName())
                     .resolve(slice.descriptor.target.name)
@@ -402,19 +399,6 @@ internal constructor(
             }
         })
         execOperations.exec { it.commandLine(cmdArgs) }
-    }
-
-    private fun hasFiles(resourcesDir: File?): Boolean {
-        // If resources directory is null, return false
-        if (resourcesDir == null) return false
-
-        // Check if the directory exists and is actually a directory
-        if (!resourcesDir.exists() || !resourcesDir.isDirectory) return false
-
-        // Recursively check for files in the directory and its subdirectories
-        return resourcesDir.walkTopDown()
-            .filter { it.isFile }
-            .any()
     }
 
     internal companion object {
