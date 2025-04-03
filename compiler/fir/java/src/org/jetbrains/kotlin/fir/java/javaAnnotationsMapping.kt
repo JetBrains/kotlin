@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -277,21 +278,52 @@ private fun JavaAnnotationArgument.mapJavaRetentionArgument(): FirExpression? {
 private fun fillAnnotationArgumentMapping(
     session: FirSession,
     lookupTag: ConeClassLikeLookupTagImpl,
+    javaAnnotation: JavaAnnotation,
     annotationArguments: Collection<JavaAnnotationArgument>,
     destination: MutableMap<Name, FirExpression>,
     source: KtSourceElement?,
 ) {
     if (annotationArguments.isEmpty()) return
 
-    val annotationClassSymbol = lookupTag.toSymbol(session)
-    val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)
-        ?.declarations
-        ?.firstIsInstanceOrNull<FirConstructor>()
+    val parameterNameToTypeRef = if (session.kind == FirSession.Kind.Library) {
+        // Binary session dependencies work differently in the CLI and the Analysis API mode,
+        // so some common mechanism has to be used to eliminate the difference.
+        // This approach works both for Java and Kotlin annotations, as in the end all of them are just .class files.
+        val binaryClass = javaAnnotation.resolve()
+        binaryClass?.annotationParametersMapping(session, source)
+    } else {
+        // For source sessions symbol provider-based search is used as it is more precise
+        // Technically, the Java-based approach may be used here as well provided the resolved class is not a light class
+        val sourceClass = lookupTag.toSymbol(session)?.fir as? FirRegularClass
+        sourceClass?.annotationParametersMapping()
+    }
+
     annotationArguments.associateTo(destination) { argument ->
         val name = argument.name ?: StandardClassIds.Annotations.ParameterNames.value
-        val parameter = annotationConstructor?.valueParameters?.find { it.name == name }
-        name to argument.toFirExpression(session, JavaTypeParameterStack.EMPTY, parameter?.returnTypeRef, source)
+        val typeRef = parameterNameToTypeRef?.get(name)
+        name to argument.toFirExpression(session, JavaTypeParameterStack.EMPTY, typeRef, source)
     }
+}
+
+private fun JavaClass.annotationParametersMapping(
+    session: FirSession,
+    source: KtSourceElement?,
+): Map<Name, FirTypeRef>? {
+    return this.takeIf(JavaClass::isAnnotationType)
+        ?.methods
+        ?.associate { javaMethod ->
+            javaMethod.name to javaMethod.returnType.toFirJavaTypeRef(session, source)
+        }
+}
+
+private fun FirRegularClass.annotationParametersMapping(): Map<Name, FirTypeRef>? {
+    return this.takeIf { it.classKind == ClassKind.ANNOTATION_CLASS }
+        ?.declarations
+        ?.firstIsInstanceOrNull<FirConstructor>()
+        ?.valueParameters
+        ?.associate { parameter ->
+            parameter.name to parameter.returnTypeRef
+        }
 }
 
 internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
@@ -383,7 +415,7 @@ private fun buildFirAnnotation(
 
                     else -> javaAnnotation.arguments.ifNotEmpty {
                         val mapping = LinkedHashMap<Name, FirExpression>(size)
-                        fillAnnotationArgumentMapping(session, lookupTag, this, mapping, source)
+                        fillAnnotationArgumentMapping(session, lookupTag, javaAnnotation, this, mapping, source)
                         mapping
                     }
                 }.orEmpty()

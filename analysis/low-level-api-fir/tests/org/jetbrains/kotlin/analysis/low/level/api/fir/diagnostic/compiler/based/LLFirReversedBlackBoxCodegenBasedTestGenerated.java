@@ -455,6 +455,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("transitiveAnnotationsViaJava.kt")
+    public void testTransitiveAnnotationsViaJava() {
+      runTest("compiler/testData/codegen/box/annotations/transitiveAnnotationsViaJava.kt");
+    }
+
+    @Test
     @TestMetadata("typealiasAnnotationWithNonTrivialTypeArguments.kt")
     public void testTypealiasAnnotationWithNonTrivialTypeArguments() {
       runTest("compiler/testData/codegen/box/annotations/typealiasAnnotationWithNonTrivialTypeArguments.kt");
