@@ -467,6 +467,12 @@ internal class SymbolLightAccessorMethod private constructor(
                         originKind = JvmDeclarationOriginKind.OTHER,
                         auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
                     )
+                } ?: declaration.takeIf { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }?.psiSafe<KtDeclaration>()?.let {
+                    LightMemberOriginForDeclaration(
+                        originalElement = it,
+                        originKind = JvmDeclarationOriginKind.OTHER,
+                        auxiliaryOriginalElement = it
+                    )
                 }
 
                 return SymbolLightAccessorMethod(
