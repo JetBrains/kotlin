@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("compiler-tests-convention")
+    id("share-foreign-java-nullability-annotations")
 }
 
 dependencies {
@@ -44,6 +45,8 @@ dependencies {
 
     testApi(toolsJarApi())
     testRuntimeOnly(toolsJar())
+
+    jakartaAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
 }
 
 optInToExperimentalCompilerApi()
