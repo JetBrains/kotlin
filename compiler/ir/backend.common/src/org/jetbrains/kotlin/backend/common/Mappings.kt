@@ -31,9 +31,9 @@ var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDef
 
 var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = false)
 
-open class Mapping {
-    val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
+var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
+open class Mapping {
     abstract class DeclarationMapping<K : IrDeclaration, V> {
         abstract operator fun get(declaration: K): V?
         abstract operator fun set(declaration: K, value: V?)

@@ -188,7 +188,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                     .filterIsInstance<IrConstructor>()
                     .single()
                     .let {
-                        context.mapping.capturedConstructors[it] ?: it
+                        it.capturedConstructor ?: it
                     }
             }
 
