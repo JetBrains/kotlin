@@ -1,9 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextReceivers
 // ISSUE: KT-76527
 
 fun foo(f: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(String) Int.() -> Unit) {
+    f("", 1)
     with("") {
-        <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>f<!>(1)
+        f(1)
+        1.f()
     }
 }
