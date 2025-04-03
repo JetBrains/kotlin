@@ -149,8 +149,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val coreSymbolicationUseOnlyKotlinImage: Boolean
         get() = when (configuration.get(BinaryOptions.coreSymbolicationImageListType)) {
-            null,
             CoreSymbolicationImageListType.ALL_LOADED -> false
+            null,
             CoreSymbolicationImageListType.ONLY_KOTLIN -> true
         }
 
