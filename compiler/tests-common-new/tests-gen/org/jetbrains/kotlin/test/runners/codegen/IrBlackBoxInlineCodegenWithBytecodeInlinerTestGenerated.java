@@ -7526,6 +7526,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
         }
 
         @Test
+        @TestMetadata("effectivelyPrivateInlineFun.kt")
+        public void testEffectivelyPrivateInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/effectivelyPrivateInlineFun.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
         public void testLeakingPrivateTopLevelLateinitVar() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateTopLevelLateinitVar.kt");
