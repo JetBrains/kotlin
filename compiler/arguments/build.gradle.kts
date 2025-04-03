@@ -15,6 +15,7 @@ sourceSets {
 
 dependencies {
     api(kotlinStdlib())
+    api(project(":compiler:arguments.common"))
 
     implementation(libs.kotlinx.serialization.json)
 
