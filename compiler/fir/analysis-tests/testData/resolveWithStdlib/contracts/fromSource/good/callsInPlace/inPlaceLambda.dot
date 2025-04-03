@@ -40,7 +40,7 @@ digraph inPlaceLambda_kt {
                         13 [label="Function call arguments enter"];
                         14 [label="Function call arguments exit"];
                     }
-                    15 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                    15 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     16 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     17 [label="Exit block"];
                 }
@@ -87,7 +87,7 @@ digraph inPlaceLambda_kt {
                 26 [label="Function call arguments enter"];
                 27 [label="Function call arguments exit"];
             }
-            28 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            28 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             29 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_12 {
                 color=blue
@@ -105,7 +105,7 @@ digraph inPlaceLambda_kt {
                             35 [label="Function call arguments enter"];
                             36 [label="Function call arguments exit"];
                         }
-                        37 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                        37 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                         38 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                         39 [label="Exit block"];
                     }

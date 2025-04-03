@@ -128,11 +128,11 @@ digraph plusAssignWithLambdaInRhs_kt {
                                         46 [label="Function call arguments enter"];
                                         47 [label="Function call arguments exit"];
                                     }
-                                    48 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                                    48 [label="Function call enter: R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
                                     49 [label="Function call exit: R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()" style="filled" fillcolor=yellow];
                                     50 [label="Function call arguments exit"];
                                 }
-                                51 [label="Function call enter: R?C|kotlin/Function1.invoke|(...)"];
+                                51 [label="Function call enter: R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(...)"];
                                 52 [label="Function call exit: R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(...)" style="filled" fillcolor=yellow];
                                 53 [label="Exit block"];
                             }

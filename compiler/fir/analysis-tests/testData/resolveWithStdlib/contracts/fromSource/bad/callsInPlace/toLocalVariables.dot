@@ -60,7 +60,7 @@ digraph toLocalVariables_kt {
                         20 [label="Function call arguments enter"];
                         21 [label="Function call arguments exit"];
                     }
-                    22 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                    22 [label="Function call enter: R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     23 [label="Function call exit: R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     24 [label="Exit block"];
                 }
@@ -90,7 +90,7 @@ digraph toLocalVariables_kt {
                 39 [label="Function call arguments enter"];
                 40 [label="Function call arguments exit"];
             }
-            41 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            41 [label="Function call enter: R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             42 [label="Function call exit: R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             43 [label="Exit block"];
         }

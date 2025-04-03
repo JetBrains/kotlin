@@ -26,7 +26,7 @@ digraph flowFromInplaceLambda3_kt {
                 6 [label="Function call arguments enter"];
                 7 [label="Function call arguments exit"];
             }
-            8 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            8 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             9 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             10 [label="Exit block"];
         }
@@ -58,7 +58,7 @@ digraph flowFromInplaceLambda3_kt {
                 16 [label="Function call arguments enter"];
                 17 [label="Function call arguments exit"];
             }
-            18 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            18 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             19 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             20 [label="Exit block"];
         }
@@ -90,7 +90,7 @@ digraph flowFromInplaceLambda3_kt {
                 26 [label="Function call arguments enter"];
                 27 [label="Function call arguments exit"];
             }
-            28 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            28 [label="Function call enter: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             29 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             30 [label="Exit block"];
         }

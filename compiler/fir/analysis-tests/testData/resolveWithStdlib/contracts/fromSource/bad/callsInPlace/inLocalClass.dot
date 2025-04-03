@@ -41,7 +41,7 @@ digraph inLocalClass_kt {
                 15 [label="Function call arguments enter"];
                 16 [label="Function call arguments exit"];
             }
-            17 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            17 [label="Function call enter: R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             18 [label="Function call exit: R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             19 [label="Exit block"];
         }
@@ -80,7 +80,7 @@ digraph inLocalClass_kt {
                     34 [label="Function call arguments enter"];
                     35 [label="Function call arguments exit"];
                 }
-                36 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                36 [label="Function call enter: R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                 37 [label="Function call exit: R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                 38 [label="Exit block"];
             }
@@ -99,7 +99,7 @@ digraph inLocalClass_kt {
                 43 [label="Function call arguments enter"];
                 44 [label="Function call arguments exit"];
             }
-            45 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            45 [label="Function call enter: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             46 [label="Function call exit: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             47 [label="Exit block"];
         }

@@ -6,5 +6,5 @@ fun foo() {
 
     val <!UNUSED_VARIABLE!>unusedReceiver<!> = "bar"
 
-    usedReceiver.ext(10)
+    usedReceiver.<!UNINITIALIZED_VARIABLE!>ext<!>(10)
 }
