@@ -126,9 +126,9 @@ class DurableFunctionKeyTransformer(
         typeArgumentsCount = 0,
         constructorTypeArgumentsCount = 0,
     ).apply {
-        putValueArgument(0, irConst(key.key.hashCode()))
-        putValueArgument(1, irConst(key.startOffset))
-        putValueArgument(2, irConst(key.endOffset))
+        arguments[0] = irConst(key.key.hashCode())
+        arguments[1] = irConst(key.startOffset)
+        arguments[2] = irConst(key.endOffset)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {

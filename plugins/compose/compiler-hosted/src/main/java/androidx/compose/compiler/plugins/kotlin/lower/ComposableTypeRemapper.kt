@@ -39,12 +39,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal fun IrFunction.needsComposableRemapping(): Boolean {
     if (
-        dispatchReceiverParameter?.type.containsComposableAnnotation() ||
-        extensionReceiverParameter?.type.containsComposableAnnotation() ||
         returnType.containsComposableAnnotation()
     ) return true
 
-    for (param in valueParameters) {
+    for (param in parameters) {
         if (param.type.containsComposableAnnotation()) return true
     }
     return false

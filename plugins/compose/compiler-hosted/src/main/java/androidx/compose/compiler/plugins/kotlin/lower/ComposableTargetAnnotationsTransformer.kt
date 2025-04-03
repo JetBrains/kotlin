@@ -188,8 +188,7 @@ class ComposableTargetAnnotationsTransformer(
                 parameterOwners[parameter.symbol] = declaration to currentParameter++
             }
         }
-        declaration.valueParameters.forEach { recordParameter(it) }
-        declaration.extensionReceiverParameter?.let { recordParameter(it) }
+        declaration.targetParameters.forEach { recordParameter(it) }
 
         val result = super.visitFunction(declaration)
         currentOwner = oldOwner
@@ -258,7 +257,7 @@ class ComposableTargetAnnotationsTransformer(
                 ) ?: InferenceCallTargetNode(this, expression)
         if (target.isOverlyWide()) return result
 
-        val arguments = expression.valueArguments.filterIndexed { index, argument ->
+        val arguments = expression.targetArguments.filterIndexed { index, argument ->
             argument?.let {
                 it.isComposableLambda || it.isComposableParameter || (
                         if (
@@ -278,26 +277,12 @@ class ComposableTargetAnnotationsTransformer(
                         ) {
                             // If the parameter is a default value, grab the type from the function
                             // being called.
-                            expression.symbol.owner.valueParameters.let { parameters ->
+                            expression.symbol.owner.targetParameters.let { parameters ->
                                 if (index < parameters.size) parameters[index].type else null
                             }
                         } else it.type)?.isOrHasComposableLambda == true
             } == true
         }.filterNotNull().toMutableList()
-
-        fun recordArgument(argument: IrExpression?) {
-            if (
-                argument != null && (
-                        argument.isComposableLambda ||
-                                argument.isComposableParameter ||
-                                argument.type.isOrHasComposableLambda
-                        )
-            ) {
-                arguments.add(argument)
-            }
-        }
-
-        recordArgument(expression.extensionReceiver)
 
         infer.visitCall(
             call = inferenceNodeOf(expression, transformer),
@@ -407,7 +392,7 @@ class ComposableTargetAnnotationsTransformer(
 
     private fun IrElement.findTransformedLambda(): IrFunctionExpression? =
         when (this) {
-            is IrCall -> valueArguments.firstNotNullOfOrNull { it?.findTransformedLambda() }
+            is IrCall -> targetArguments.firstNotNullOfOrNull { it?.findTransformedLambda() }
             is IrGetField -> symbol.owner.initializer?.findTransformedLambda()
             is IrBody -> statements.firstNotNullOfOrNull { it.findTransformedLambda() }
             is IrReturn -> value.findTransformedLambda()
@@ -431,13 +416,13 @@ class ComposableTargetAnnotationsTransformer(
         if (ComposableTargetClass != null && ComposableOpenTargetClass != null) {
             when (this) {
                 is Token -> annotation(ComposableTargetClass).also {
-                    it.putValueArgument(0, irConst(value))
+                    it.arguments[0] = irConst(value)
                 }
                 is Open ->
                     if (index < 0) null else annotation(
                         ComposableOpenTargetClass
                     ).also {
-                        it.putValueArgument(0, irConst(index))
+                        it.arguments[0] = irConst(index)
                     }
             }
         } else null
@@ -449,7 +434,7 @@ class ComposableTargetAnnotationsTransformer(
         if (ComposableInferredTargetClass != null) {
             listOf(
                 annotation(ComposableInferredTargetClass).also {
-                    it.putValueArgument(0, irConst(serialize()))
+                    it.arguments[0] = irConst(serialize())
                 }
             )
         } else emptyList()
@@ -493,8 +478,8 @@ class ComposableTargetAnnotationsTransformer(
      */
     private val IrFunction.isComposable
         get() =
-            valueParameters.any { it.name == ComposeNames.ComposerParameter } ||
-                    annotations.hasAnnotation(ComposeFqNames.Composable)
+            annotations.hasAnnotation(ComposeFqNames.Composable) ||
+                    parameters.any { it.kind == IrParameterKind.Regular && it.name == ComposeNames.ComposerParameter }
 
     private val IrType.isSamComposable
         get() =
@@ -519,10 +504,10 @@ class ComposableTargetAnnotationsTransformer(
     private val IrType.isComposable get() = isComposableLambda || isSamComposable
 
     private fun IrFunction.hasComposableParameter() =
-        valueParameters.any { it.type.isComposable }
+        targetParameters.any { it.type.isComposable }
 
     private fun IrCall.hasComposableArguments() =
-        valueArguments.any { argument ->
+        targetArguments.any { argument ->
             argument?.type?.let { type ->
                 (type.isOrHasComposableLambda || type.isSamComposable)
             } == true
@@ -658,14 +643,8 @@ class InferenceFunctionDeclaration(
 
     private fun parameters(): List<InferenceFunction> =
         with(transformer) {
-            function.valueParameters.filter { it.type.isOrHasComposableLambda }.map { parameter ->
+            function.targetParameters.filter { it.type.isOrHasComposableLambda }.map { parameter ->
                 InferenceFunctionParameter(transformer, parameter)
-            }.let { parameters ->
-                function.extensionReceiverParameter?.let {
-                    if (it.type.isOrHasComposableLambda) {
-                        parameters + listOf(InferenceFunctionParameter(transformer, it))
-                    } else parameters
-                } ?: parameters
             }
         }
 
@@ -696,18 +675,12 @@ class InferenceFunctionCallType(
             val target = call.symbol.owner.annotations.target.let { target ->
                 if (target.isUnspecified) defaultTarget else target
             }
-            val parameters = call.valueArguments.filterNotNull().filter {
+            val parameters = call.targetArguments.filterNotNull().filter {
                 it.type.isOrHasComposableLambda
             }.map {
                 it.type.toScheme(defaultTarget)
             }.toMutableList()
 
-            fun recordParameter(expression: IrExpression?) {
-                if (expression != null && expression.type.isOrHasComposableLambda) {
-                    parameters.add(expression.type.toScheme(defaultTarget))
-                }
-            }
-            recordParameter(call.extensionReceiver)
             val result = if (call.type.isOrHasComposableLambda)
                 call.type.toScheme(defaultTarget)
             else null
@@ -1006,9 +979,7 @@ class InferenceResolvedParameter(
 }
 
 private inline fun <reified T> IrConstructorCall.firstParameterOrNull() =
-    if (valueArgumentsCount >= 1) {
-        (getValueArgument(0) as? IrConst)?.value as? T
-    } else null
+    (arguments.firstOrNull() as? IrConst)?.value as? T
 
 private val IrConstructorCall.isComposableTarget
     get() =
@@ -1043,10 +1014,15 @@ private fun IrType.samOwnerOrNull() =
         } else null
     }
 
-private val IrCall.valueArguments
-    get() = Array(valueArgumentsCount) {
-        getValueArgument(it)
-    }.toList()
+private val IrCall.targetArguments
+    get() = arguments.filterIndexed { index, p ->
+        symbol.owner.parameters[index].kind != IrParameterKind.DispatchReceiver
+    }
+
+private val IrFunction.targetParameters
+    get() = parameters.filterIndexed { index, p ->
+        symbol.owner.parameters[index].kind != IrParameterKind.DispatchReceiver
+    }
 
 private fun <T> Iterable<T>.takeUpTo(n: Int): List<T> =
     if (n <= 0) emptyList() else take(n)
@@ -1056,11 +1032,9 @@ private fun <T> Iterable<T>.takeUpTo(n: Int): List<T> =
  * it is called.
  */
 private fun IrFunction.hasOverlyWideParameters(): Boolean =
-    valueParameters.any {
+    parameters.any {
         it.type.isAny() || it.type.isNullableAny()
     }
 
 private fun IrFunction.hasOpenTypeParameters(): Boolean =
-    valueParameters.any { it.type.isTypeParameter() } ||
-            dispatchReceiverParameter?.type?.isTypeParameter() == true ||
-            extensionReceiverParameter?.type?.isTypeParameter() == true
+    parameters.any { it.type.isTypeParameter() }
