@@ -55916,6 +55916,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("flexibleTypesSubstitution.kt")
+      public void testFlexibleTypesSubstitution() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/flexibleTypesSubstitution.kt");
+      }
+
+      @Test
       @TestMetadata("genericSubstitution.kt")
       public void testGenericSubstitution() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/genericSubstitution.kt");
@@ -55925,6 +55931,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("isSubclassOfIsSuperclassOf.kt")
       public void testIsSubclassOfIsSuperclassOf() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/isSubclassOfIsSuperclassOf.kt");
+      }
+
+      @Test
+      @TestMetadata("nullablilitySubstitution.kt")
+      public void testNullablilitySubstitution() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/nullablilitySubstitution.kt");
       }
 
       @Test
