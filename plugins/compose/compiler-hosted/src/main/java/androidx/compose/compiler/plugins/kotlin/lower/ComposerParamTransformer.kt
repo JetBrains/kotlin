@@ -366,7 +366,7 @@ class ComposerParamTransformer(
         )
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
-        val ownerFn = when {
+        val newFn = when {
             symbol.owner.isComposableDelegatedAccessor() -> {
                 if (!symbol.owner.hasComposableAnnotation()) {
                     symbol.owner.annotations += createComposableAnnotation()
@@ -385,48 +385,48 @@ class ComposerParamTransformer(
             startOffset,
             endOffset,
             type,
-            ownerFn.symbol,
+            newFn.symbol,
             typeArguments.size,
             origin,
             superQualifierSymbol
-        ).also {
-            it.copyAttributes(this)
-            it.copyTypeArgumentsFrom(this)
-            it.dispatchReceiver = dispatchReceiver
-            it.extensionReceiver = extensionReceiver
+        ).also { newCall ->
+            newCall.copyAttributes(this)
+            newCall.copyTypeArgumentsFrom(this)
+
             val argumentsMissing = mutableListOf<Boolean>()
-            for (i in 0 until valueArgumentsCount) {
-                val arg = getValueArgument(i)
-                val param = ownerFn.valueParameters[i]
-                val hasDefault = ownerFn.hasDefaultForParam(i)
-                argumentsMissing.add(arg == null && hasDefault)
-                if (arg != null) {
-                    it.putValueArgument(i, arg)
-                } else if (hasDefault) {
-                    it.putValueArgument(i, defaultArgumentFor(param))
-                } else {
-                    // do nothing
+            arguments.fastForEachIndexed { i, arg ->
+                val p = newFn.parameters[i]
+                when (p.kind) {
+                    IrParameterKind.DispatchReceiver,
+                    IrParameterKind.ExtensionReceiver -> {
+                        newCall.arguments[p.indexInParameters] = arg
+                    }
+                    else -> {
+                        val hasDefault = newFn.hasDefaultForParam(i)
+                        argumentsMissing.add(arg == null && hasDefault)
+                        if (arg != null) {
+                            newCall.arguments[p.indexInParameters] = arg
+                        } else if (hasDefault) {
+                            newCall.arguments[p.indexInParameters] = defaultArgumentFor(p)
+                        } else {
+                            // do nothing
+                        }
+                    }
                 }
             }
-            val valueParams = valueArgumentsCount
-            val realValueParams = valueParams - ownerFn.contextReceiverParametersCount
-            var argIndex = valueArgumentsCount
-            it.putValueArgument(
-                argIndex++,
-                IrGetValueImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    composerParam.symbol
-                )
-            )
+
+            val valueParams = arguments.indices.count { i ->
+                val p = newFn.parameters[i]
+                p.kind != IrParameterKind.DispatchReceiver &&
+                        p.kind != IrParameterKind.ExtensionReceiver
+            }
+            var argIndex = arguments.size
+            newCall.arguments[argIndex++] = irGet(composerParam)
 
             // $changed[n]
-            for (i in 0 until changedParamCount(realValueParams, ownerFn.thisParamCount)) {
-                if (argIndex < ownerFn.valueParameters.size) {
-                    it.putValueArgument(
-                        argIndex++,
-                        irConst(0)
-                    )
+            for (i in 0 until changedParamCount(valueParams, newFn.thisParamCount)) {
+                if (argIndex < newFn.parameters.size) {
+                    newCall.arguments[argIndex++] = irConst(0)
                 } else {
                     error("1. expected value parameter count to be higher: ${this.dumpSrc()}")
                 }
@@ -436,14 +436,11 @@ class ComposerParamTransformer(
             for (i in 0 until defaultParamCount(valueParams)) {
                 val start = i * BITS_PER_INT
                 val end = min(start + BITS_PER_INT, valueParams)
-                if (argIndex < ownerFn.valueParameters.size) {
+                if (argIndex < newFn.parameters.size) {
                     val bits = argumentsMissing
                         .toBooleanArray()
                         .sliceArray(start until end)
-                    it.putValueArgument(
-                        argIndex++,
-                        irConst(bitMask(*bits))
-                    )
+                    newCall.arguments[argIndex++] = irConst(bitMask(*bits))
                 } else if (argumentsMissing.any { it }) {
                     error("2. expected value parameter count to be higher: ${this.dumpSrc()}")
                 }
@@ -503,7 +500,7 @@ class ComposerParamTransformer(
                 constructorTypeArgumentsCount = 0,
                 origin = null
             ).also {
-                it.putValueArgument(0, underlyingType.defaultValue(startOffset, endOffset))
+                it.arguments[0] = underlyingType.defaultValue(startOffset, endOffset)
             }
         }
     }
@@ -550,15 +547,7 @@ class ComposerParamTransformer(
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
         ).also {
-            it.putValueArgument(
-                0,
-                IrConstImpl.string(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    builtIns.stringType,
-                    name
-                )
-            )
+            it.arguments[0] = irConst(name)
         }
     }
 
@@ -566,19 +555,20 @@ class ComposerParamTransformer(
     // we only add a default mask parameter if one of the parameters has a default
     // expression. Note that if this is a "fake override" method, then only the overridden
         // symbols will have the default value expressions
-        valueParameters.any { it.defaultValue != null } ||
+        parameters.any { it.defaultValue != null } ||
                 overriddenSymbols.any { it.owner.requiresDefaultParameter() }
 
     private fun IrSimpleFunction.hasDefaultForParam(index: Int): Boolean {
         // checking for default value isn't enough, you need to ensure that none of the overrides
         // have it as well...
-        if (valueParameters[index].defaultValue != null) return true
+        if (parameters[index].kind != IrParameterKind.Regular) return false
+        if (parameters[index].defaultValue != null) return true
 
         return overriddenSymbols.any {
             // ComposableFunInterfaceLowering copies extension receiver as a value
             // parameter, which breaks indices for overrides. fun interface cannot
             // have parameters defaults, however, so we can skip here if mismatch is detected.
-            it.owner.valueParameters.size == valueParameters.size &&
+            it.owner.parameters.size == parameters.size &&
                     it.owner.hasDefaultForParam(index)
         }
     }
@@ -700,8 +690,8 @@ class ComposerParamTransformer(
             }
 
             // update parameter types so they are ready to accept the default values
-            fn.valueParameters.fastForEach { param ->
-                if (fn.hasDefaultForParam(param.indexInOldValueParameters)) {
+            fn.parameters.fastForEach { param ->
+                if (fn.hasDefaultForParam(param.indexInParameters)) {
                     param.type = param.type.defaultParameterType()
                 }
             }
@@ -751,8 +741,8 @@ class ComposerParamTransformer(
         }
 
         var makeStub = false
-        for (i in valueParameters.indices) {
-            val param = valueParameters[i]
+        for (i in parameters.indices) {
+            val param = parameters[i]
             if (
                 hasDefaultForParam(i) &&
                 param.type.isInlineClassType() &&
@@ -780,13 +770,11 @@ class ComposerParamTransformer(
                     irReturn(
                         copy.symbol,
                         irCall(source).apply {
-                            dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
-                            extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
                             copy.typeParameters.fastForEachIndexed { index, param ->
                                 typeArguments[index] = param.defaultType
                             }
-                            copy.valueParameters.fastForEachIndexed { index, param ->
-                                putValueArgument(index, irGet(param))
+                            copy.parameters.fastForEachIndexed { index, param ->
+                                arguments[param.indexInParameters] = irGet(param)
                             }
                         },
                         copy.returnType
