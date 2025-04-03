@@ -77,6 +77,8 @@ class JvmBackendContext(
 
     override val mapping: Mapping = Mapping()
 
+    val allConstructorsWithCapturedConstructorCreated = mutableSetOf<IrConstructor>()
+
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
     override val symbols = JvmSymbols(this)
