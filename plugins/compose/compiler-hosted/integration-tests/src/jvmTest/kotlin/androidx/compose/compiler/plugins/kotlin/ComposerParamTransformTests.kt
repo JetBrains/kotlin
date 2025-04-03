@@ -18,8 +18,10 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.lower.firstParameterOfKind
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -250,8 +252,8 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                 element.accept(
                     object : IrVisitorVoid() {
                         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                            val composer = declaration.valueParameters.firstOrNull {
-                                it.name == ComposeNames.ComposerParameter
+                            val composer = declaration.parameters.firstOrNull {
+                                it.kind == IrParameterKind.Regular && it.name == ComposeNames.ComposerParameter
                             }
                             val oldComposer = currentComposer
                             if (composer != null) currentComposer = composer
@@ -450,8 +452,8 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                         if (declaration.fqNameForIrSerialization.asString() == targetFqName) {
                             assertEquals(1, declaration.overriddenSymbols.size)
                             val firstParameterOfOverridden =
-                                declaration.overriddenSymbols.first().owner.valueParameters.first()
-                                    .takeIf { it.name.asString() == "c" }!!
+                                declaration.overriddenSymbols.first().owner.firstParameterOfKind(IrParameterKind.Regular)
+                                    .takeIf { it?.name?.asString() == "c" }!!
                             assertEquals(
                                 "kotlin.Function2",
                                 firstParameterOfOverridden.type.classFqName?.asString()
@@ -502,8 +504,8 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                         val callee = expression.symbol.owner
                         if (callee.fqNameForIrSerialization.asString() == targetFqName) {
                             val firstParameterOfOverridden =
-                                callee.overriddenSymbols.first().owner.valueParameters.first()
-                                    .takeIf { it.name.asString() == "c" }!!
+                                callee.overriddenSymbols.first().owner.firstParameterOfKind(IrParameterKind.Regular)
+                                    .takeIf { it?.name?.asString() == "c" }!!
                             assertEquals(
                                 "kotlin.Function2",
                                 firstParameterOfOverridden.type.classFqName?.asString()

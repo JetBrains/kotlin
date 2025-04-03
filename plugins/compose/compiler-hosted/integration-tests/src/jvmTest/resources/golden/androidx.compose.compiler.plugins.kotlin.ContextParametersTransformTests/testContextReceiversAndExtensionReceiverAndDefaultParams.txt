@@ -14,7 +14,8 @@ fun String.B(a: Int, b: String = "", c: Int = 1) { }
 // ------------------------------------------
 
 @Composable
-fun String.B(foo: Foo, bar: Bar, fooBar: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+context(foo: Foo, bar: Bar, fooBar: FooBar)
+fun String.B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)P(4,2,5):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {

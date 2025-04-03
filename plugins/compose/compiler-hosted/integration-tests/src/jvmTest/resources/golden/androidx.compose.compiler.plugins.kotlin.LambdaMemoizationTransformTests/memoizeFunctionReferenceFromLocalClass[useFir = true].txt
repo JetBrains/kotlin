@@ -24,7 +24,7 @@ class MainActivity {
 class MainActivity {
   val test: <no name provided> = object : Test {
     override fun go() {
-      <this>
+      <this>@MainActivity
     }
   }
   @Composable
