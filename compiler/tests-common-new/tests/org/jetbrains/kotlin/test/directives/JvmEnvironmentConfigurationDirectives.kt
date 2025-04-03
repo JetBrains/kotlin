@@ -31,6 +31,8 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val WITH_JAKARTA_ANNOTATIONS by directive("Add jakarta nullability annotations to the test classpath")
+
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
 
     val USE_JAVAC by directive("Enable javac integration (has no effect on non-K1 tests)")

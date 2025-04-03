@@ -223,6 +223,40 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Jakarta {
+      @Test
+      public void testAllFilesPresentInJakarta() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("default.kt")
+      public void testDefault() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/default.kt");
+      }
+
+      @Test
+      @TestMetadata("errors.kt")
+      public void testErrors() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/errors.kt");
+      }
+
+      @Test
+      @TestMetadata("ignore.kt")
+      public void testIgnore() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/ignore.kt");
+      }
+
+      @Test
+      @TestMetadata("warnings.kt")
+      public void testWarnings() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/warnings.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     public class Jsr305 {
