@@ -26,19 +26,19 @@ public class A<T> {
 
 fun main(a: A<String>, a1: A<String?>) {
     a.foo("", null)?.length
-    a.foo("", null).length
-    a.foo(null, "").length
+    a.foo("", null)<!UNSAFE_CALL!>.<!>length
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!UNSAFE_CALL!>.<!>length
 
     a.bar().length
-    a.bar()!!.length
+    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
-    a.field.length
+    a.field<!UNSAFE_CALL!>.<!>length
 
-    a.baz("").length
+    a.baz("")<!UNSAFE_CALL!>.<!>length
     a.baz("")?.length
-    a.baz(null).length
+    a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>length
 
     a1.baz("")!!.length
-    a1.baz(null)!!.length
+    a1.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)!!.length
 }
