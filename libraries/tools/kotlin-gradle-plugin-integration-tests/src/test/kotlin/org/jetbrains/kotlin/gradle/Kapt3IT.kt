@@ -1217,7 +1217,7 @@ open class Kapt3IT : Kapt3BaseIT() {
                  * https://github.com/gradle/gradle/issues/32778
                  */
                 warningMode = WarningMode.None,
-            )
+            ).disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }
 
