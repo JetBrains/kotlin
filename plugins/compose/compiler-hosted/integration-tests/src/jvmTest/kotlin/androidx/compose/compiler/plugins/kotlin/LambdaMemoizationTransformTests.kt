@@ -35,7 +35,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             languageVersion = languageVersionSettings.languageVersion,
             apiVersion = languageVersionSettings.apiVersion,
             specificFeatures = mapOf(
-                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+                LanguageFeature.ContextParameters to LanguageFeature.State.ENABLED
             )
         )
     }
@@ -557,29 +557,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 fun Something() {
                     val x = remember { Stable() }
                     val shouldMemoize = x::qux
-                }
-            """
-        )
-    }
-
-    // Reference to function with context receivers does not currently support memoization.
-    @Test
-    fun testNonComposableFunctionReferenceWithStableContextReceiverNotMemoized() {
-        verifyGoldenComposeIrTransform(
-            source = """
-                import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.remember
-
-                class StableReceiver
-                class Stable {
-                    context(StableReceiver)
-                    fun qux() {}
-                }
-
-                @Composable
-                fun Something() {
-                    val x = remember { Stable() }
-                    val shouldNotMemoize = x::qux
                 }
             """
         )
