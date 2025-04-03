@@ -110,7 +110,7 @@ class WrapJsComposableLambdaLowering(
      * this lowering might be skipped to avoid redundant code generation.
      */
     private fun shouldSkipLowering(): Boolean {
-        val function2 = context.function(2)
+        val function2 = context.irBuiltIns.functionN(2)
         val skipLowering = getTopLevelClass(ComposeClassIds.ComposableLambda).owner.superTypes.any {
             it.classOrNull == function2
         }

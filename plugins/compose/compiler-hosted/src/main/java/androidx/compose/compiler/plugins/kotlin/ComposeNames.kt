@@ -3,29 +3,28 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.name.Name
 
 object ComposeNames {
-    val COMPOSER = Name.identifier("composer")
-    val COMPOSER_PARAMETER = Name.identifier("\$composer")
-    val CHANGED_PARAMETER = Name.identifier("\$changed")
-    val FORCE_PARAMETER = Name.identifier("\$force")
-    val STABILITY_FLAG = Name.identifier("\$stable")
-    val STABILITY_PROP_FLAG = Name.identifier("\$stableprop")
-    val STABILITY_GETTER_FLAG = "\$stableprop_getter"
-    val DEFAULT_PARAMETER = Name.identifier("\$default")
-    val JOINKEY = Name.identifier("joinKey")
-    val STARTRESTARTGROUP = Name.identifier("startRestartGroup")
-    val ENDRESTARTGROUP = Name.identifier("endRestartGroup")
-    val UPDATE_SCOPE = Name.identifier("updateScope")
-    val SOURCEINFORMATION = "sourceInformation"
-    val SOURCEINFORMATIONMARKERSTART = "sourceInformationMarkerStart"
-    val IS_TRACE_IN_PROGRESS = "isTraceInProgress"
-    val TRACE_EVENT_START = "traceEventStart"
-    val TRACE_EVENT_END = "traceEventEnd"
-    val SOURCEINFORMATIONMARKEREND = "sourceInformationMarkerEnd"
-    val UPDATE_CHANGED_FLAGS = "updateChangedFlags"
-    val CURRENTMARKER = Name.identifier("currentMarker")
-    val ENDTOMARKER = Name.identifier("endToMarker")
-    val REMEMBER_COMPOSABLE_LAMBDA = "rememberComposableLambda"
-    val REMEMBER_COMPOSABLE_LAMBDAN = "rememberComposableLambdaN"
-    val DEFAULT_IMPLS = Name.identifier("ComposeDefaultImpls")
-    val SHOULD_EXECUTE = Name.identifier("shouldExecute")
+    val ComposerParameter = Name.identifier($$"$composer")
+    val ChangedParameter = Name.identifier($$"$changed")
+    val ForceParameter = Name.identifier($$"$force")
+    val DefaultParameter = Name.identifier($$"$default")
+    val StabilityFlag = Name.identifier($$"$stable")
+    val StabilityFlagProperty = Name.identifier($$"$stableprop")
+    val StabilityFlagPropertyGetter = $$"$stableprop_getter"
+    val JoinKey = Name.identifier("joinKey")
+    val StartRestartGroup = Name.identifier("startRestartGroup")
+    val EndRestartGroup = Name.identifier("endRestartGroup")
+    val UpdateScope = Name.identifier("updateScope")
+    val SourceInformation = "sourceInformation"
+    val SourceInformationMarkerStart = "sourceInformationMarkerStart"
+    val IsTraceInProgress = "isTraceInProgress"
+    val TraceEventStart = "traceEventStart"
+    val TraceEventEnd = "traceEventEnd"
+    val SourceInformationMarkerEnd = "sourceInformationMarkerEnd"
+    val UpdateChangedFlags = "updateChangedFlags"
+    val CurrentMarker = Name.identifier("currentMarker")
+    val EndToMarker = Name.identifier("endToMarker")
+    val RememberComposableLambda = "rememberComposableLambda"
+    val RememberComposableLambdaN = "rememberComposableLambdaN"
+    val DefaultImpls = Name.identifier("ComposeDefaultImpls")
+    val ShouldExecute = Name.identifier("shouldExecute")
 }

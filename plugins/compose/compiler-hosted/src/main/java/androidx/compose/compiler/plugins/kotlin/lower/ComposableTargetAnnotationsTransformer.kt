@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import kotlin.collections.set
 
 /**
  * This transformer walks the IR tree to infer the applier annotations such as ComposableTarget,
@@ -494,7 +493,7 @@ class ComposableTargetAnnotationsTransformer(
      */
     private val IrFunction.isComposable
         get() =
-            valueParameters.any { it.name == ComposeNames.COMPOSER_PARAMETER } ||
+            valueParameters.any { it.name == ComposeNames.ComposerParameter } ||
                     annotations.hasAnnotation(ComposeFqNames.Composable)
 
     private val IrType.isSamComposable

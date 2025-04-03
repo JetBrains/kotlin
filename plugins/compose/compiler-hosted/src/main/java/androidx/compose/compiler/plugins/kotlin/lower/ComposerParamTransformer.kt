@@ -307,8 +307,7 @@ class ComposerParamTransformer(
                                             error("Context parameters are not supported in function references")
                                         }
                                         IrParameterKind.DispatchReceiver,
-                                        IrParameterKind.ExtensionReceiver
-                                            -> {
+                                        IrParameterKind.ExtensionReceiver -> {
                                             adapterFn.parameters.first { it.kind == IrParameterKind.ExtensionReceiver }
                                         }
                                         IrParameterKind.Regular -> {
@@ -532,7 +531,7 @@ class ComposerParamTransformer(
     private fun IrSimpleFunction.lambdaInvokeWithComposerParam(): IrSimpleFunction {
         val argCount = parameters.size
         val extraParams = composeSyntheticParamCount(argCount)
-        val newFnClass = context.function(argCount + extraParams - /* dispatch receiver */ 1).owner
+        val newFnClass = context.irBuiltIns.functionN(argCount + extraParams - /* dispatch receiver */ 1)
         val newInvoke = newFnClass.functions.first {
             it.name == OperatorNameConventions.INVOKE
         }
@@ -595,7 +594,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
-        assert(parameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
+        assert(parameters.lastOrNull()?.name != ComposeNames.ComposerParameter) {
             "Attempted to add composer param to $this, but it has already been added."
         }
         return deepCopyWithSymbolsAndMetadata(parent).also { fn ->
@@ -658,19 +657,19 @@ class ComposerParamTransformer(
                 param.isAssignable = param.defaultValue != null
             }
 
-            val currentParams = fn.valueParameters.size
-            val realParams = currentParams - fn.contextReceiverParametersCount
+            val currentParams = fn.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+            val realParams = currentParams
 
             // $composer
             val composerParam = fn.addValueParameter {
-                name = ComposeNames.COMPOSER_PARAMETER
+                name = ComposeNames.ComposerParameter
                 type = composerType.makeNullable()
                 origin = IrDeclarationOrigin.DEFINED
                 isAssignable = true
             }
 
             // $changed[n]
-            val changed = ComposeNames.CHANGED_PARAMETER.identifier
+            val changed = ComposeNames.ChangedParameter.identifier
             for (i in 0 until changedParamCount(realParams, fn.thisParamCount)) {
                 fn.addValueParameter(
                     if (i == 0) changed else "$changed$i",
@@ -680,7 +679,7 @@ class ComposerParamTransformer(
 
             // $default[n]
             if (fn.requiresDefaultParameter()) {
-                val defaults = ComposeNames.DEFAULT_PARAMETER.identifier
+                val defaults = ComposeNames.DefaultParameter.identifier
                 for (i in 0 until defaultParamCount(currentParams)) {
                     fn.addValueParameter(
                         if (i == 0) defaults else "$defaults$i",
