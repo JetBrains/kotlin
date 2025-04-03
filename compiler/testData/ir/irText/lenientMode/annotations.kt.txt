@@ -1,0 +1,14 @@
+// FILE: common.kt
+
+open annotation class Ann : Annotation {
+  val s: Array<out String>
+    field = s
+    get
+
+  constructor(vararg s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

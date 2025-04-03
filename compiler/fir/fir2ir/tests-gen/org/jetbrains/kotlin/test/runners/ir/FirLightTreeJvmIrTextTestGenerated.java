@@ -4557,6 +4557,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     }
 
     @Test
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() {
+      runTest("compiler/testData/ir/irText/lenientMode/annotations.kt");
+    }
+
+    @Test
     @TestMetadata("lenientModeStubs.kt")
     public void testLenientModeStubs() {
       runTest("compiler/testData/ir/irText/lenientMode/lenientModeStubs.kt");
