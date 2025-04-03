@@ -134,6 +134,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         public void testOnClassifierDeclaration() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/onClassifierDeclaration.kt");
         }
+
+        @Test
+        @TestMetadata("typealiasToContextFunctionType.kt")
+        public void testTypealiasToContextFunctionType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/typealiasToContextFunctionType.kt");
+        }
       }
 
       @Nested
