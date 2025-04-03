@@ -39,9 +39,7 @@ interface Test {
       } else if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
       }
-      if (%default and 0b0010 != 0) {
-        %dirty = %dirty or 0b00110000
-      } else if (%changed and 0b00110000 == 0) {
+      if (%changed and 0b00110000 == 0) {
         %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
           %composer.changed(%this%)
         } else {
@@ -49,9 +47,7 @@ interface Test {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%default and 0b0100 != 0) {
-        %dirty = %dirty or 0b000110000000
-      } else if (%changed and 0b000110000000 == 0) {
+      if (%changed and 0b000110000000 == 0) {
         %dirty = %dirty or if (%composer.changed(%this%)) 0b000100000000 else 0b10000000
       }
       if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {

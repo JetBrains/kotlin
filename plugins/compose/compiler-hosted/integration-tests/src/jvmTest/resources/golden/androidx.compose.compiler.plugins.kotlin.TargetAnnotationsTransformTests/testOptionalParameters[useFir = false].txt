@@ -132,9 +132,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
   } else if (%changed and 0b00110000000000000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(six)) 0b00100000000000000000 else 0b00010000000000000000
   }
-  if (%default and 0b01000000 != 0) {
-    %dirty = %dirty or 0b000110000000000000000000
-  } else if (%changed and 0b000110000000000000000000 == 0) {
+  if (%changed and 0b000110000000000000000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b000100000000000000000000 else 0b10000000000000000000
   }
   if (%dirty and 0b10010010010010010011 != 0b10010010010010010010 || !%composer.skipping) {

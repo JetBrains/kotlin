@@ -398,10 +398,11 @@ class ComposerParamTransformer(
                 val p = newFn.parameters[i]
                 when (p.kind) {
                     IrParameterKind.DispatchReceiver,
-                    IrParameterKind.ExtensionReceiver -> {
+                    IrParameterKind.ExtensionReceiver,
+                    IrParameterKind.Context -> {
                         newCall.arguments[p.indexInParameters] = arg
                     }
-                    else -> {
+                    IrParameterKind.Regular -> {
                         val hasDefault = newFn.hasDefaultForParam(i)
                         argumentsMissing.add(arg == null && hasDefault)
                         if (arg != null) {
@@ -415,16 +416,15 @@ class ComposerParamTransformer(
                 }
             }
 
-            val valueParams = arguments.indices.count { i ->
+            val valueParamCount = arguments.indices.count { i ->
                 val p = newFn.parameters[i]
-                p.kind != IrParameterKind.DispatchReceiver &&
-                        p.kind != IrParameterKind.ExtensionReceiver
+                p.kind == IrParameterKind.Regular
             }
             var argIndex = arguments.size
             newCall.arguments[argIndex++] = irGet(composerParam)
 
             // $changed[n]
-            for (i in 0 until changedParamCount(valueParams, newFn.thisParamCount)) {
+            for (i in 0 until changedParamCount(valueParamCount, newFn.thisParamCount)) {
                 if (argIndex < newFn.parameters.size) {
                     newCall.arguments[argIndex++] = irConst(0)
                 } else {
@@ -433,9 +433,9 @@ class ComposerParamTransformer(
             }
 
             // $default[n]
-            for (i in 0 until defaultParamCount(valueParams)) {
+            for (i in 0 until defaultParamCount(valueParamCount)) {
                 val start = i * BITS_PER_INT
-                val end = min(start + BITS_PER_INT, valueParams)
+                val end = min(start + BITS_PER_INT, valueParamCount)
                 if (argIndex < newFn.parameters.size) {
                     val bits = argumentsMissing
                         .toBooleanArray()
@@ -647,7 +647,7 @@ class ComposerParamTransformer(
                 param.isAssignable = param.defaultValue != null
             }
 
-            val currentParams = fn.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+            val currentParams = fn.parameters.count { it.kind == IrParameterKind.Regular }
             val realParams = currentParams
 
             // $composer

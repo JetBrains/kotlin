@@ -27,7 +27,7 @@ fun A(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
-    if (%default and 0b0100 != 0) {
+    if (%default and 0b0001 != 0) {
       a = 1
     }
     if (isTraceInProgress()) {
@@ -49,10 +49,10 @@ fun B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default:
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
-    if (%default and 0b00010000 != 0) {
+    if (%default and 0b0010 != 0) {
       b = ""
     }
-    if (%default and 0b00100000 != 0) {
+    if (%default and 0b0100 != 0) {
       c = 1
     }
     if (isTraceInProgress()) {
@@ -77,13 +77,13 @@ fun C(a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
   if (%dirty and 0b0001 != 0 || !%composer.skipping) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-      if (%default and 0b0100 != 0) {
+      if (%default and 0b0010 != 0) {
         bar = Bar()
         %dirty = %dirty and 0b001110000000.inv()
       }
     } else {
       %composer.skipToGroupEnd()
-      if (%default and 0b0100 != 0) {
+      if (%default and 0b0010 != 0) {
         %dirty = %dirty and 0b001110000000.inv()
       }
     }
