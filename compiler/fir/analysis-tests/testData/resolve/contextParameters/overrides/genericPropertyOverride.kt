@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-63246
 
@@ -7,13 +7,25 @@ abstract class Base<T> {
     abstract fun <R> String.foo(): Int?
 
     context(r: R)
+    abstract fun <R> T.foo(t: T): Int?
+
+    context(r: R)
     abstract val <R> String.bar: Int?
+
+    context(r: R)
+    abstract val <R> T.baz: Int?
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Child<!> : Base<String>() {
+class Child : Base<String>() {
     context(child: RChild)
     override fun <RChild> String.foo(): Int? = 1
 
     context(child: RChild)
-    <!NOTHING_TO_OVERRIDE!>override<!> val <RChild> String.bar: Int? get() = 1
+    override fun <RChild> String.foo(t: String): Int? = 1
+
+    context(child: RChild)
+    override val <RChild> String.bar: Int? get() = 1
+
+    context(child: RChild)
+    override val <RChild> String.baz: Int? get() = 1
 }
