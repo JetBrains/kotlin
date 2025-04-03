@@ -549,9 +549,11 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                         """.trimIndent()
                 }
             }
-            val replacementExtensionReceiver = replacement.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
-            require(replacementExtensionReceiver == null) {
-                "Static replacement must have no extension receiver but ${replacementExtensionReceiver!!.render()} found"
+            val replacementIllegalReceiver = replacement.parameters.firstOrNull {
+                it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context
+            }
+            require(replacementIllegalReceiver == null) {
+                "Static replacement must have no extension receiver or context parameters but ${replacementIllegalReceiver!!.render()} found"
             }
             val structure = buildList(implementationStructure.size) {
                 add(RegularMapping(dispatchReceiverParameter!!))
