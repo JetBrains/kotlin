@@ -10265,7 +10265,7 @@ public fun <T> Array<out T>.toList(): List<T> {
     return when (size) {
         0 -> emptyList()
         1 -> listOf(this[0])
-        else -> this.toMutableList()
+        else -> copyOf().asList()
     }
 }
 
