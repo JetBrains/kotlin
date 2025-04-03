@@ -126,8 +126,6 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isVarArgs(): Boolean = false
 
-    override val kotlinOrigin: KtDeclaration? get() = containingPropertyDeclaration
-
     //TODO Fix it when SymbolConstructorValueParameter be ready
     private val isParameter: Boolean get() = containingPropertyDeclaration == null || containingPropertyDeclaration is KtParameter
 
@@ -461,13 +459,21 @@ internal class SymbolLightAccessorMethod private constructor(
                         propertyPsi.setter
                 }
 
+                fun KaPropertySymbol.sourceMemberGeneratedLightMemberOrigin() =
+                    this.takeIf { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }?.psiSafe<KtDeclaration>()?.let {
+                        LightMemberOriginForDeclaration(
+                            originalElement = it,
+                            originKind = JvmDeclarationOriginKind.OTHER
+                        )
+                    }
+
                 val lightMemberOrigin = declaration.sourcePsiSafe<KtDeclaration>()?.let {
                     LightMemberOriginForDeclaration(
                         originalElement = it,
                         originKind = JvmDeclarationOriginKind.OTHER,
                         auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
                     )
-                }
+                } ?: declaration.sourceMemberGeneratedLightMemberOrigin()
 
                 return SymbolLightAccessorMethod(
                     ktAnalysisSession = this@createPropertyAccessors,
