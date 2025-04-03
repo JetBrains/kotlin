@@ -159,6 +159,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 ?: SourceInfoType.CORESYMBOLICATION.takeIf { debug && target.supportsCoreSymbolication() }
                 ?: SourceInfoType.NOOP
 
+    val coreSymbolicationUseOnlyKotlinImage: Boolean
+        get() = when (configuration.get(BinaryOptions.coreSymbolicationImageListType)) {
+            null,
+            CoreSymbolicationImageListType.ALL_LOADED -> false
+            CoreSymbolicationImageListType.ONLY_KOTLIN -> true
+        }
+
     val defaultGCSchedulerType
         get() =
             when (gc) {
