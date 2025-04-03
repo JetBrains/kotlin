@@ -186,9 +186,8 @@ private fun IrClass.hasStableMarkedDescendant(): Boolean {
 }
 
 private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
-    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)
-        ?.getValueArgument(0) as? IrConst
-            )?.value as? Int
+    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.arguments[0] as? IrConst)
+        ?.value as? Int
 
 private data class SymbolForAnalysis(
     val symbol: IrClassifierSymbol,

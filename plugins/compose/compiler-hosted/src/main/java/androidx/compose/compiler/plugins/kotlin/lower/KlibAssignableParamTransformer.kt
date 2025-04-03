@@ -77,7 +77,7 @@ class KlibAssignableParamTransformer(
 
     @OptIn(IrImplementationDetail::class)
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        val assignableParams = declaration.valueParameters.filter { it.isAssignable }
+        val assignableParams = declaration.parameters.filter { it.isAssignable }
 
         if (assignableParams.isEmpty()) {
             return super.visitFunction(declaration)

@@ -69,7 +69,7 @@ fun CallTest(%composer: Composer?, %changed: Int) {
     Test(<block>{
       class <no name provided> : TestContent {
         @Composable
-        override fun Content(%this%Test: String, %composer: Composer?, %changed: Int) {
+        override fun String.Content(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Content):Test.kt")
           val %dirty = %changed
@@ -92,7 +92,7 @@ fun CallTest(%composer: Composer?, %changed: Int) {
           }
           val tmp0_rcvr = <this>
           %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            tmp0_rcvr.Content(%this%Test, %composer, updateChangedFlags(%changed or 0b0001))
+            tmp0_rcvr.Content(%composer, updateChangedFlags(%changed or 0b0001))
           }
         }
       }

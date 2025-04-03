@@ -60,15 +60,15 @@ class ComposerIntrinsicTransformer(
             // argument expression and we are good.
             val expectedArgumentsCount = 1 + // composer parameter
                     1 // changed parameter
-            assert(expression.valueArgumentsCount == expectedArgumentsCount) {
+            assert(expression.arguments.size == expectedArgumentsCount) {
                 """
                     Composer call doesn't match expected argument count:
                         expected: $expectedArgumentsCount,
-                        actual: ${expression.valueArgumentsCount},
+                        actual: ${expression.arguments.size},
                         expression: ${expression.dump()}
                 """.trimIndent()
             }
-            return expression.getValueArgument(0)
+            return expression.arguments[0]
                 ?: error("Expected non-null composer argument")
         }
         return super.visitCall(expression)
