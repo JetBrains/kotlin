@@ -13625,6 +13625,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("contextualExtensionImplicitInvoke.kt")
+        public void testContextualExtensionImplicitInvoke() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextualExtensionImplicitInvoke.kt");
+        }
+
+        @Test
         @TestMetadata("contextualFunctionalTypeConversion.kt")
         public void testContextualFunctionalTypeConversion() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextualFunctionalTypeConversion.kt");
