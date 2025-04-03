@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImplWithShape
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -56,7 +55,7 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
     private fun IrSimpleFunction.accessorBody(delegate: IrPropertyReference, receiverFieldOrExpression: IrStatement?): IrBody =
         context.createIrBuilder(symbol, startOffset, endOffset).run {
-            val value = valueParameters.singleOrNull()?.let(::irGet)
+            val value = parameters.lastOrNull()?.takeIf { it.kind == IrParameterKind.Regular }?.let(::irGet)
             val isGetter = value == null
             if (isGetter) {
                 delegate.constInitializer?.let { return@run irExprBody(it) }
@@ -69,7 +68,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 is IrExpression -> receiverFieldOrExpression
                 else -> throw AssertionError("not a field/variable/expression: ${receiverFieldOrExpression.render()}")
             }
-            val unboundReceiver = extensionReceiverParameter ?: dispatchReceiverParameter
+            val unboundReceiver = getReceiverParameterOrNull()
             val field = delegate.field?.owner
             val access = if (field == null) {
                 val accessor = if (isGetter) delegate.getter!! else delegate.setter!!
@@ -78,14 +77,14 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                     // only one receiver can be bound, and if the property has both, the extension receiver cannot be bound.
                     // The frontend must also ensure the receiver of the delegated property (extension if present, dispatch
                     // otherwise) is a subtype of the unbound receiver (if there is one; and there can *only* be one).
-                    if (accessor.owner.dispatchReceiverParameter != null) {
-                        dispatchReceiver = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
-                    }
-                    if (accessor.owner.extensionReceiverParameter != null) {
-                        extensionReceiver = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
-                    }
-                    if (value != null) {
-                        putValueArgument(0, value)
+                    for (parameter in accessor.owner.parameters) {
+                        arguments[parameter] = when (parameter.kind) {
+                            IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> {
+                                boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
+                            }
+                            IrParameterKind.Regular -> value
+                            IrParameterKind.Context -> error("no context receivers in property references yet: ${dump()}")
+                        }
                     }
                 }
             } else {
@@ -96,7 +95,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         }
 
     // Some receivers don't need to be stored in fields and can be reevaluated every time an accessor is called:
-    private fun IrExpression.canInline(visibleScopes: Set<IrDeclarationParent>): Boolean = when (this) {
+    private fun IrExpression?.canInline(visibleScopes: Set<IrDeclarationParent>): Boolean = when (this) {
+        null -> true
         is IrGetValue -> {
             // Reads of immutable variables are stable, but value parameters of the constructor are not in scope:
             val value = symbol.owner
@@ -106,14 +106,13 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             // Reads of final fields of stable values are stable, but fields in other files can become non-final:
             val field = symbol.owner
             field.isFinal && field.fileParentOrNull.let { it != null && it in visibleScopes }
-                    && receiver?.canInline(visibleScopes) != false
+                    && receiver.canInline(visibleScopes)
         }
         is IrCall -> {
             // Same applies to reads of properties with default getters, but non-final properties may be overridden by `var`s:
             val callee = symbol.owner
             callee.isFinalDefaultValGetter && callee.fileParentOrNull.let { it != null && it in visibleScopes }
-                    && dispatchReceiver?.canInline(visibleScopes) != false
-                    && extensionReceiver?.canInline(visibleScopes) != false
+                    && arguments.all { it.canInline(visibleScopes) }
         }
         else -> {
             // Constants and singleton object accesses are always stable:
@@ -138,8 +137,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         val delegate = getPropertyReferenceForOptimizableDelegatedProperty() ?: return null
         val oldField = backingField ?: return null
 
-        val receiver = (delegate.dispatchReceiver ?: delegate.extensionReceiver)
-            ?.transform(this@PropertyReferenceDelegationTransformer, null)
+        val receiver = delegate.getReceiverOrNull()?.transform(this@PropertyReferenceDelegationTransformer, null)
         backingField = receiver?.takeIf { !it.canInline(parents.toSet()) }?.let {
             context.irFactory.buildField {
                 updateFrom(oldField)
@@ -163,9 +161,10 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 irExprBody(
                     delegate.deepCopyWithSymbols().apply {
                         origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
-                        when {
-                            delegate.dispatchReceiver != null -> dispatchReceiver = boundReceiver
-                            delegate.extensionReceiver != null -> extensionReceiver = boundReceiver
+                        if (delegate.dispatchReceiver != null) {
+                            insertDispatchReceiver(boundReceiver)
+                        } else {
+                            insertExtensionReceiver(boundReceiver)
                         }
                     }
                 )
@@ -187,6 +186,16 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         return listOfNotNull(this, delegateMethod, receiverBlock)
     }
 
+    private fun IrFunction.getReceiverParameterOrNull(): IrValueParameter? {
+        return dispatchReceiverParameter ?: parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
+    }
+
+    private fun IrPropertyReference.getReceiverOrNull(): IrExpression? {
+        return getReceiverParameterOrNull()?.indexInParameters?.let(arguments::get)
+    }
+
+    private fun IrPropertyReference.getReceiverParameterOrNull(): IrValueParameter? = getter?.owner?.getReceiverParameterOrNull()
+
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
         val delegate = declaration.delegate.initializer
         if (delegate !is IrPropertyReference ||
@@ -195,7 +204,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         ) return super.visitLocalDelegatedProperty(declaration)
 
         // Variables are cheap, so optimizing them out is not really necessary.
-        val receiver = (delegate.dispatchReceiver ?: delegate.extensionReceiver)?.let { receiver ->
+        val receiver = delegate.getReceiverOrNull()?.let { receiver ->
             with(declaration.delegate) { buildVariable(parent, startOffset, endOffset, origin, name, receiver.type) }.apply {
                 initializer = receiver.transform(this@PropertyReferenceDelegationTransformer, null)
             }
