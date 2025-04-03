@@ -67,7 +67,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         }
 
         if (declaration is FirClass && declaration.isInterface) {
-            reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_ON_INTERFACE, context)
+            reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT, context)
         }
 
         if (declaration is FirCallableDeclaration) {

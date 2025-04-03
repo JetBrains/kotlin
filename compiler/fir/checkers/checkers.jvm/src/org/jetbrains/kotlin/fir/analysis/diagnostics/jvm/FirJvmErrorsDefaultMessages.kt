@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_ON_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
@@ -301,7 +300,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME, "'@JvmExposeBoxed' with name is applicable only to functions, getters and setters.")
         map.put(
             USELESS_JVM_EXPOSE_BOXED,
-            "'@JvmExposeBoxed' does nothing on this declaration - it is a callable declarations without inline class in its signature."
+            "Useless '@JvmExposeBoxed', it is a callable declaration with no inline value class in its signature."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND,
@@ -309,19 +308,19 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JVM_EXPOSE_BOXED_REQUIRES_NAME,
-            "The declaration is unmangled, leading to ambiguity - specify name in '@JvmExposeBoxed' annotation."
+            "This declaration requires a name in the '@JvmExposeBoxed' annotation."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME,
-            "'@JvmExposeBoxed' does not rename, leading to ambiguity."
+            "The name in '@JvmExposeBoxed' cannot coincide with that of the declaration."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME,
-            "'@JvmExposeBoxed' and '@JvmName' cannot have the same name, leading to ambiguity."
+            "The name in '@JvmExposeBoxed' cannot coincide with the one in '@JvmName'."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT,
-            "'@JvmExposeBoxed' cannot expose open and abstract functions, as well as functions in interfaces."
+            "'@JvmExposeBoxed' cannot expose functions which are open or abstract, or member of an interface."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC,
@@ -334,10 +333,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED,
             "'@JvmExposeBoxed' cannot expose inline functions with reified type parameters."
-        )
-        map.put(
-            JVM_EXPOSE_BOXED_ON_INTERFACE,
-            "'@JvmExposeBoxed' cannot be applied to interfaces, since it cannot expose open and abstract methods."
         )
 
         map.put(

@@ -5843,12 +5843,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.JVM_EXPOSE_BOXED_ON_INTERFACE) { firDiagnostic ->
-        JvmExposeBoxedOnInterfaceImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE) { firDiagnostic ->
         WrongNullabilityForJavaOverrideImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

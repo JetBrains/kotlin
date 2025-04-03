@@ -4900,11 +4900,6 @@ internal class JvmExposeBoxedCannotExposeReifiedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposeReified
 
-internal class JvmExposeBoxedOnInterfaceImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedOnInterface
-
 internal class WrongNullabilityForJavaOverrideImpl(
     override val override: KaCallableSymbol,
     override val base: KaCallableSymbol,
