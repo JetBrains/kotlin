@@ -8,28 +8,39 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.erasedTopLevelCopy
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 @Suppress("unused")
-class InlineFunctionSerializationPreProcessing(private val context: LoweringContext) : IrVisitorVoid(), FileLoweringPass {
+class InlineFunctionSerializationPreProcessing(
+    private val context: LoweringContext
+) : IrVisitor<Unit, IrDeclarationWithVisibility?>(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+    override fun visitElement(element: IrElement, data: IrDeclarationWithVisibility?) {
+        element.acceptChildren(this, element as? IrDeclarationWithVisibility ?: data)
     }
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclarationWithVisibility?) {
+        super.visitSimpleFunction(declaration, data)
         if (!declaration.isInline || declaration.body == null || declaration.symbol.isConsideredAsPrivateForInlining()) return
         declaration.erasedTopLevelCopy = declaration.copyAndEraseTypeParameters().convertToTopLevel()
+    }
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclarationWithVisibility?) {
+        if (data != null && !data.isEffectivelyPrivate() && inlinedBlock.isEffectivelyPrivate()) {
+            inlinedBlock.inlinedFunctionSymbol = null
+        }
+        super.visitInlinedFunctionBlock(inlinedBlock, data)
     }
 
     private fun IrSimpleFunction.copyAndEraseTypeParameters(): IrSimpleFunction {
@@ -44,5 +55,9 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
         parent = file
 
         return this
+    }
+
+    private fun IrInlinedFunctionBlock.isEffectivelyPrivate(): Boolean {
+        return inlinedFunctionSymbol?.isConsideredAsPrivateForInlining() == true
     }
 }
