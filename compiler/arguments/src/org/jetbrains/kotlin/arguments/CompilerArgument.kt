@@ -16,6 +16,7 @@ data class CompilerArgument(
     val shortName: String? = null,
     val deprecatedName: String? = null,
     val description: ReleaseDependent<String>,
+    val delimiter: Delimiter?,
 
     val valueType: KotlinArgumentValueType<*>,
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
@@ -23,7 +24,19 @@ data class CompilerArgument(
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 
     val additionalAnnotations: List<Annotation>,
-) : WithKotlinReleaseVersionsMetadata
+
+    @kotlinx.serialization.Transient
+    val compilerName: String? = null,
+) : WithKotlinReleaseVersionsMetadata {
+    // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
+    enum class Delimiter(val constantName: String) {
+        Default("default"),
+        None("none"),
+        PathSeparator("path-separator"),
+        Space("space"),
+        Semicolon("semicolon"),
+    }
+}
 
 @KotlinArgumentsDslMarker
 class CompilerArgumentBuilder {
@@ -34,6 +47,9 @@ class CompilerArgumentBuilder {
 
     lateinit var valueType: KotlinArgumentValueType<*>
     var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
+
+    var compilerName: String? = null
+    var delimiter: CompilerArgument.Delimiter? = null
 
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
@@ -52,8 +68,8 @@ class CompilerArgumentBuilder {
         )
     }
 
-    fun additionalAnnotation(annotation: Annotation) {
-        additionalAnnotations.add(annotation)
+    fun additionalAnnotations(vararg annotation: Annotation) {
+        additionalAnnotations.addAll(annotation)
     }
 
     fun build(): CompilerArgument = CompilerArgument(
@@ -65,6 +81,8 @@ class CompilerArgumentBuilder {
         valueDescription = valueDescription,
         releaseVersionsMetadata = releaseVersionsMetadata,
         additionalAnnotations = additionalAnnotations,
+        compilerName = compilerName,
+        delimiter = delimiter,
     )
 }
 

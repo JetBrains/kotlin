@@ -42,7 +42,11 @@ enum class JvmTarget(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
             stabilizedVersion = KotlinReleaseVersion.v1_4_0,
         )
-    )
+    );
+
+    companion object {
+        const val SUPPORTED_VERSIONS_DESCRIPTION = "1.8 and 9–24"
+    }
 }
 
 object KotlinJvmTargetAsNameSerializer : KSerializer<JvmTarget> {
