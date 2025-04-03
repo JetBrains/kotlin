@@ -45,7 +45,7 @@ interface ThemeToken<T>  {
 }
 val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
   @Composable
-  override fun resolve(%this%ThemeToken: MaterialTheme, %composer: Composer?, %changed: Int): Int {
+  override fun MaterialTheme.resolve(%composer: Composer?, %changed: Int): Int {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(resolve):Test.kt")
     if (isTraceInProgress()) {

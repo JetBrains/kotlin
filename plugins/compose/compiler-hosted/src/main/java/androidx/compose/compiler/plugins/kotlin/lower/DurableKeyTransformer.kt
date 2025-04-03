@@ -111,107 +111,33 @@ open class DurableKeyTransformer(
         return aTry
     }
 
-    override fun visitDelegatingConstructorCall(
-        expression: IrDelegatingConstructorCall,
-    ): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val owner = expression.symbol.owner
 
         // annotations are represented as constructor calls in IR, but the parameters need to be
         // compile-time values only, so we can't transform them at all.
-        if (owner.parentAsClass.isAnnotationClass) return expression
-
-        val name = owner.name.asJvmFriendlyString()
-
-        return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
-                    }
-                }
-            }
-            expression
+        if (
+            (expression is IrConstructorCall || expression is IrDelegatingConstructorCall) &&
+                owner.parentAsClass.isAnnotationClass
+        ) {
+            return expression
         }
-    }
-
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-        val owner = expression.symbol.owner
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
-                    }
+            // The value argument counter is not /technically/ needed, but it preserves 0-indexed labels
+            var valueArgCount = 0
+            for (i in 0 until expression.arguments.size) {
+                val arg = expression.arguments[i]
+                val label = when (expression.symbol.owner.parameters[i].kind) {
+                    IrParameterKind.DispatchReceiver -> $$"$this"
+                    IrParameterKind.ExtensionReceiver -> $$$"$$this"
+                    IrParameterKind.Context,
+                    IrParameterKind.Regular -> "arg-${valueArgCount++}"
                 }
-            }
-            expression
-        }
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val owner = expression.symbol.owner
-
-        // annotations are represented as constructor calls in IR, but the parameters need to be
-        // compile-time values only, so we can't transform them at all.
-        if (owner.parentAsClass.isAnnotationClass) return expression
-
-        val name = owner.name.asJvmFriendlyString()
-
-        return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
                 if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
-                    }
-                }
-            }
-            expression
-        }
-    }
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val owner = expression.symbol.owner
-        val name = owner.name.asJvmFriendlyString()
-
-        return enter("call-$name") {
-            expression.dispatchReceiver = enter("\$this") {
-                expression.dispatchReceiver?.transform(this, null)
-            }
-            expression.extensionReceiver = enter("\$\$this") {
-                expression.extensionReceiver?.transform(this, null)
-            }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg != null) {
-                    enter("arg-$i") {
-                        expression.putValueArgument(i, arg.transform(this, null))
+                    enter(label) {
+                        expression.arguments[i] = arg.transform(this, null)
                     }
                 }
             }
@@ -247,13 +173,16 @@ open class DurableKeyTransformer(
 
     protected fun IrSimpleFunction.signatureString(): String {
         return buildString {
-            extensionReceiverParameter?.let {
+            parameterOfKind(IrParameterKind.ExtensionReceiver)?.let {
                 append(it.type.asString())
                 append(".")
             }
             append(name.asJvmFriendlyString())
             append('(')
-            append(valueParameters.joinToString(",") { it.type.asString() })
+            append(
+                namedParameters
+                    .joinToString(",") { it.type.asString() }
+            )
             append(')')
             append(returnType.asString())
         }

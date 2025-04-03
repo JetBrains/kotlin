@@ -70,7 +70,7 @@ class CopyDefaultValuesFromExpectLowering(
 
     private fun isApplicable(declaration: IrFunction): Boolean {
         return declaration.hasComposableAnnotation() ||
-                declaration.valueParameters.any {
+                declaration.parameters.any {
                     it.type.hasAnnotation(ComposeFqNames.Composable)
                 }
     }
@@ -84,8 +84,8 @@ class CopyDefaultValuesFromExpectLowering(
 
         val actualForExpected = original.findActualForExpected()
 
-        original.valueParameters.forEachIndexed { index, expectValueParameter ->
-            val actualValueParameter = actualForExpected.valueParameters[index]
+        original.parameters.forEachIndexed { index, expectValueParameter ->
+            val actualValueParameter = actualForExpected.parameters[index]
             val expectDefaultValue = expectValueParameter.defaultValue
             if (expectDefaultValue != null) {
                 actualValueParameter.defaultValue = expectDefaultValue
@@ -228,20 +228,7 @@ class CopyDefaultValuesFromExpectLowering(
                 }
 
             is IrFunction ->
-                if (!parent.descriptor.isExpect)
-                    null
-                else when (parameter) {
-                    parent.dispatchReceiverParameter ->
-                        parent.findActualForExpected().dispatchReceiverParameter!!
-
-                    parent.extensionReceiverParameter ->
-                        parent.findActualForExpected().extensionReceiverParameter!!
-
-                    else -> {
-                        assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
-                        parent.findActualForExpected().valueParameters[parameter.indexInOldValueParameters]
-                    }
-                }
+                parent.findActualForExpected().parameters[parameter.indexInParameters]
 
             else -> error(parent)
         }

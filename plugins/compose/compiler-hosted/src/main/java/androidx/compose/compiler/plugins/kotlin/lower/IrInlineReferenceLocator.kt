@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -74,9 +75,9 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 expression.acceptChildrenVoid(this)
                 val function = expression.symbol.owner
                 if (function.isInlineFunctionCall(context)) {
-                    for (parameter in function.valueParameters) {
+                    for (parameter in function.parameters) {
                         if (parameter.isInlinedFunction()) {
-                            expression.getValueArgument(parameter.indexInOldValueParameters)
+                            expression.arguments[parameter.indexInParameters]
                                 ?.also { inlineFunctionExpressions += it }
                                 ?.unwrapLambda()
                                 ?.let { inlineLambdaToParameter[it] = parameter }
@@ -95,7 +96,7 @@ private fun IrFunction.isInlineFunctionCall(context: IrPluginContext) =
 
 // Constructors can't be marked as inline in metadata, hence this hack.
 private fun IrFunction.isInlineArrayConstructor(context: IrPluginContext): Boolean =
-    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.let {
+    this is IrConstructor && parameters.size == 2 && constructedClass.symbol.let {
         it == context.irBuiltIns.arrayClass ||
                 it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
     }
@@ -118,8 +119,9 @@ private val IrStatementOrigin?.isLambdaBlockOrigin: Boolean
 // This is copied from JvmIrInlineUtils.kt in the Kotlin compiler, since we
 // need to check for synthetic composable functions.
 private fun IrValueParameter.isInlinedFunction(): Boolean =
-    indexInOldValueParameters >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction() ||
-            type.isSyntheticComposableFunction()) &&
+    kind == IrParameterKind.Regular &&
+            !isNoinline &&
+            (type.isFunction() || type.isSuspendFunction() || type.isSyntheticComposableFunction()) &&
             // Parameters with default values are always nullable, so check the expression too.
             // Note that the frontend has a diagnostic for nullable inline parameters, so actually
             // making this return `false` requires using `@Suppress`.
