@@ -1,3 +1,21 @@
 > b 6
-Breakpoint 1: where = [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [..] at kt33055.kt:6:12, [..]
+> r
+> bt
+* thread #1, [..] stop reason = breakpoint 1.1
+  * frame #0: [..]`kfun:#question(subject=Subject, names=[]){}kotlin.String at kt33055.kt:6:12
+    frame #1: [..]`kfun:#main(args=[]){} at kt33055.kt:14:13
+    frame #2: [..]`Konan_start(args=[]) at [..]
+    frame #3: [..]
+    frame #4: [..]
+> n
+> bt
+* thread #1, [..] stop reason = breakpoint 1.2
+  * frame #0: [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [inlined] <inlined-lambda> at kt33055.kt:6:24
+    frame #1: [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [inlined] kfun:kotlin#apply__at__0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}0:0 at Standard.kt:83:5
+    frame #2: [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [inlined] kfun:kotlin.text#buildString(kotlin.Function1<kotlin.text.StringBuilder,kotlin.Unit>){}kotlin.String at StringBuilder.kt:503:28
+    frame #3: [..]`kfun:#question(subject=Subject, names=[]){}kotlin.String at kt33055.kt:6:12
+    frame #4: [..]`kfun:#main(args=[]){} at kt33055.kt:14:13
+    frame #5: [..]`Konan_start(args=[]) at [..]
+    frame #6: [..]
+    frame #7: [..]
 > q
