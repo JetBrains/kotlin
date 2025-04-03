@@ -676,7 +676,11 @@ internal object MapArguments : ResolutionStage() {
             return null
         }
 
-        return runIf(context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+        val languageVersionSettings = context.session.languageVersionSettings
+        return runIf(
+            languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) ||
+                    languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+        ) {
             contextExpectedTypes
         }
     }
