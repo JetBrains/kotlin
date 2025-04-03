@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.konan.test.blackbox.support.AcceptablePropertyValues
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
@@ -14,6 +15,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
@@ -46,6 +50,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
 @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTest : AbstractNativeBlackBoxTest() {
+
+    @BeforeEach
+    fun assumeNoAggressiveScheduler() {
+        // Aggressive scheduler is too slow for some tests KT-76415.
+        // And we don't have an API to disable only a subset of the tests: KT-76524.
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+    }
+
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 }
