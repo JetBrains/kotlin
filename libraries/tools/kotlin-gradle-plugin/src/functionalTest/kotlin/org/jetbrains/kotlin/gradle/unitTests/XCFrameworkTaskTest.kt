@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
@@ -47,7 +48,7 @@ class XCFrameworkTaskTest {
             listOf(
                 project.buildFile("bin/iosSimulatorArm64/releaseFramework/test.framework")
             ),
-            xcframeworkTask.xcframeworkSlices().map { it.file }
+            xcframeworkTask.xcframeworkSlices().map { it.descriptor.file }
         )
     }
 
@@ -74,7 +75,7 @@ class XCFrameworkTaskTest {
                 project.buildFile("bin/iosSimulatorArm64/releaseFramework/test.framework"),
                 project.buildFile("bin/iosArm64/releaseFramework/test.framework"),
             ),
-            xcframeworkTask.xcframeworkSlices().map { it.file }
+            xcframeworkTask.xcframeworkSlices().map { it.descriptor.file }
         )
     }
 
@@ -102,7 +103,7 @@ class XCFrameworkTaskTest {
                 project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/test.framework"),
                 project.buildFile("bin/iosArm64/releaseFramework/test.framework"),
             ),
-            xcframeworkTask.xcframeworkSlices().map { it.file }
+            xcframeworkTask.xcframeworkSlices().map { it.descriptor.file }
         )
     }
 
@@ -132,7 +133,7 @@ class XCFrameworkTaskTest {
                 project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/test.framework"),
                 project.buildFile("testXCFrameworkTemp/fatframework/release/watchos/test.framework"),
             ),
-            xcframeworkTask.xcframeworkSlices().map { it.file }
+            xcframeworkTask.xcframeworkSlices().map { it.descriptor.file }
         )
 
         val universalFrameworkTasks = xcframeworkTask.taskDependencies.getDependencies(null)
@@ -304,5 +305,5 @@ fun XCFrameworkTask.xcodebuildArguments(
     fileExists = fileExists,
 )
 
-fun XCFrameworkTask.singleFrameworkName() = singleFrameworkName(xcFrameworkName.get())
-fun XCFrameworkTask.xcframeworkSlices() = xcframeworkSlices(singleFrameworkName())
+internal fun XCFrameworkTask.singleFrameworkName() = singleFrameworkName(xcFrameworkName.get())
+internal fun XCFrameworkTask.xcframeworkSlices() = xcframeworkSlices(singleFrameworkName())

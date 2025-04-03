@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
@@ -68,7 +70,7 @@ class XCFrameworkKotlinArtifactsTest {
                 project.buildFile("testXCFrameworkTemp/ios_arm64/release/test.framework"),
                 project.buildFile("testXCFrameworkTemp/fatframework/release/iosSimulator/test.framework"),
             ),
-            xcframeworkTask.xcframeworkSlices().map { it.file },
+            xcframeworkTask.xcframeworkSlices().map { it.descriptor.file },
         )
         assertEquals(
             project.buildFile("testXCFrameworkTemp/ios_arm64/release/test.framework"),
