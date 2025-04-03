@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.expressions.calleeReference
-import org.jetbrains.kotlin.fir.expressions.unwrapLValue
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -76,11 +73,27 @@ abstract class VariableInitializationCheckProcessor {
                 is VariableDeclarationNode -> processVariableDeclaration(node, scope, properties, scopes)
                 is VariableAssignmentNode -> processVariableAssignment(node, properties, reporter, context, scope, scopes)
                 is QualifiedAccessNode -> processQualifiedAccess(
-                    node, properties,
+                    node, node.fir, properties,
                     doNotReportUninitializedVariable,
                     doNotReportConstantUninitialized,
                     reporter, context
                 )
+                is FunctionCallEnterNode -> {
+                    val call = node.fir
+                    if (call is FirImplicitInvokeCall) {
+                        // TODO(KT-76534) CFG should have a QualifiedAccessNode for the implicit receiver
+                        val receiverExitNode = (node.firstPreviousNode as? FunctionCallArgumentsExitNode)?.explicitReceiverExitNode
+                        val receiver = (call.dispatchReceiver ?: call.explicitReceiver) as? FirQualifiedAccessExpression
+                        if (receiverExitNode != null && receiver != null) {
+                            processQualifiedAccess(
+                                receiverExitNode, receiver, properties,
+                                doNotReportUninitializedVariable,
+                                doNotReportConstantUninitialized,
+                                reporter, context
+                            )
+                        }
+                    }
+                }
                 is CFGNodeWithSubgraphs<*> -> {
                     processSubGraphs(
                         graph, node, properties, context, reporter,
@@ -179,7 +192,8 @@ abstract class VariableInitializationCheckProcessor {
     }
 
     private fun VariableInitializationInfoData.processQualifiedAccess(
-        node: QualifiedAccessNode,
+        node: CFGNode<*>,
+        expression: FirQualifiedAccessExpression,
         properties: Set<FirVariableSymbol<*>>,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
@@ -187,18 +201,18 @@ abstract class VariableInitializationCheckProcessor {
         context: CheckerContext,
     ) {
         if (doNotReportUninitializedVariable) return
-        if (node.fir is FirWhenSubjectExpression) return
-        if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) return
-        val symbol = node.fir.calleeReference.toResolvedVariableSymbol() ?: return
+        if (expression is FirWhenSubjectExpression) return
+        if (expression.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) return
+        val symbol = expression.calleeReference.toResolvedVariableSymbol() ?: return
         if (doNotReportConstantUninitialized && symbol.isConst) return
         if (
             !symbol.isLateInit &&
             !symbol.isExternal &&
-            node.fir.hasMatchingReceiver(this) &&
+            expression.hasMatchingReceiver(this) &&
             symbol in properties &&
             !symbol.isInitializedAt(node, data = this)
         ) {
-            reportUninitializedVariable(reporter, node, symbol, context)
+            reportUninitializedVariable(reporter, expression, symbol, context)
         }
     }
 
@@ -259,7 +273,7 @@ abstract class VariableInitializationCheckProcessor {
 
     protected abstract fun reportUninitializedVariable(
         reporter: DiagnosticReporter,
-        node: QualifiedAccessNode,
+        expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
         context: CheckerContext,
     )

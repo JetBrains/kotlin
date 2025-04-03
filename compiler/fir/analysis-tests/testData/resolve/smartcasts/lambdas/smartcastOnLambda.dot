@@ -37,7 +37,7 @@ digraph smartcastOnLambda_kt {
                         13 [label="Function call arguments enter"];
                         14 [label="Function call arguments exit"];
                     }
-                    15 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                    15 [label="Function call enter: R|<local>/func|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     16 [label="Function call exit: R|<local>/func|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
                     17 [label="Exit block"];
                 }

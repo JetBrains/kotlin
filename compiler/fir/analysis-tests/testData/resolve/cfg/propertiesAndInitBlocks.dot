@@ -263,7 +263,7 @@ digraph propertiesAndInitBlocks_kt {
                 84 [label="Function call arguments enter"];
                 85 [label="Function call arguments exit"];
             }
-            86 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            86 [label="Function call enter: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             87 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             88 [label="Exit block"];
         }
