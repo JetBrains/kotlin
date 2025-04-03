@@ -9,11 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
@@ -33,6 +29,9 @@ import java.nio.file.StandardOpenOption
  *
  * The task generates a `package.json` file with the necessary dependencies and then triggers
  * the Node.js packaging manager to perform the installation.
+ *
+ * **Note:** Only one instance of this task should be registered, as it uses a lock file mechanism.
+ * Having multiple tasks of this type is unnecessary and may lead to conflicts or redundant work.
  *
  */
 @DisableCachingByDefault

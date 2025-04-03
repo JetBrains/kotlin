@@ -75,6 +75,7 @@ val setupYarnLock by tasks.registering(Copy::class) {
     into(kotlinGradlePluginProjectDir.resolve("src/common/resources/org/jetbrains/kotlin/gradle/targets/js/yarn").absolutePath)
 }
 
+// The task is supposed to run manually to upgrade NPM versions and lock files
 val generateAll by tasks.registering {
     dependsOn(
         generateNpmVersions,
