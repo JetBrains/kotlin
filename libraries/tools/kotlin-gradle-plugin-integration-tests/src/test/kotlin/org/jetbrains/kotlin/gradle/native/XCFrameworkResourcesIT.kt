@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -17,11 +18,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
-import kotlin.io.path.copyToRecursively
-import kotlin.io.path.createFile
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.deleteRecursively
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @NativeGradlePluginTests
@@ -288,6 +285,9 @@ private fun TestProject.configureForResources(
                     },
                     relativeResourcePlacement = project.provider { File("embedResources") },
                 )
+
+                val xcTask = project.tasks.getByName("assembleSharedDebugXCFramework") as XCFrameworkTask
+                xcTask.copyResources(publication.resolveResources(target), target.konanTarget)
             }
         }
     }
