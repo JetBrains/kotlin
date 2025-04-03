@@ -39,7 +39,7 @@ typedef struct _CSRange {
 
 typedef unsigned long long CSArchitecture;
 
-constexpr auto kCSNow = std::numeric_limits<long long>::max();
+constexpr auto kCSNow = 1ull<<63;
 
 namespace {
 
@@ -48,7 +48,7 @@ CSSymbolicatorRef (*CSSymbolicatorCreateWithPid)(pid_t pid);
 CSSymbolOwnerRef (*CSSymbolicatorGetSymbolOwnerWithAddressAtTime)(
     CSSymbolicatorRef symbolicator,
     unsigned long long address,
-    long long time
+    unsigned long long time
 );
 
 CSSourceInfoRef (*CSSymbolOwnerGetSourceInfoWithAddress)(
