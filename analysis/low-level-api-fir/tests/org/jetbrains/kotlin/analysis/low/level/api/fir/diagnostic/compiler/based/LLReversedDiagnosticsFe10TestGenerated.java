@@ -22780,12 +22780,6 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
-        @TestMetadata("kt41394.kt")
-        public void testKt41394() {
-          runTest("compiler/testData/diagnostics/tests/inference/regressions/kt41394.kt");
-        }
-
-        @Test
         @TestMetadata("kt4420.kt")
         public void testKt4420() {
           runTest("compiler/testData/diagnostics/tests/inference/regressions/kt4420.kt");
@@ -22855,6 +22849,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         @TestMetadata("noRecursionOnCallingPureKotlinFunctionAsSyntheticJavaAccessor.kt")
         public void testNoRecursionOnCallingPureKotlinFunctionAsSyntheticJavaAccessor() {
           runTest("compiler/testData/diagnostics/tests/inference/regressions/noRecursionOnCallingPureKotlinFunctionAsSyntheticJavaAccessor.kt");
+        }
+
+        @Test
+        @TestMetadata("preferLowerToUpperConstraint.kt")
+        public void testPreferLowerToUpperConstraint() {
+          runTest("compiler/testData/diagnostics/tests/inference/regressions/preferLowerToUpperConstraint.kt");
         }
       }
 
