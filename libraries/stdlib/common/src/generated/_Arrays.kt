@@ -4944,14 +4944,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<T>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5143,10 +5136,7 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     val size = size
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
-    val list = ArrayList<T>(n)
-    for (index in size - n until size)
-        list.add(this[index])
-    return list
+    return copyOfRange(size - n, size).asList()
 }
 
 /**
@@ -5433,13 +5423,11 @@ public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Ch
  * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T> {
-    val list = ArrayList<T>()
-    for (item in this) {
-        if (!predicate(item))
-            break
-        list.add(item)
-    }
-    return list
+    var i = 0
+    while (i < size && predicate(this[i])) i++
+    return if (i == 0) emptyList()
+           else if (i == 1) listOf(this[0])
+           else copyOfRange(0, i).asList()
 }
 
 /**
