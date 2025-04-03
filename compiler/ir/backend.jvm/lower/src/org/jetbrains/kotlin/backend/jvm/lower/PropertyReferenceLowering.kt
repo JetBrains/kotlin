@@ -184,13 +184,20 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         )
     }
 
+    private fun IrFunction.findExtensionReceiverParameter(): IrValueParameter? = parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
+
+    private fun IrCallableReference<*>.findExtensionReceiver(): IrExpression? {
+        val extensionParameter = getter?.owner?.findExtensionReceiverParameter() ?: return null
+        return arguments[extensionParameter.indexInParameters]
+    }
+
     private fun propertyReferenceKindFor(expression: IrCallableReference<*>): PropertyReferenceKind =
         expression.getter?.owner?.let {
-            val boundReceivers = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver).size
-            val needReceivers = listOfNotNull(it.dispatchReceiverParameter, it.extensionReceiverParameter).size
+            val boundReceivers = listOfNotNull(expression.dispatchReceiver, expression.findExtensionReceiver()).size
+            val needReceivers = listOfNotNull(it.dispatchReceiverParameter, it.findExtensionReceiverParameter()).size
             // PropertyReference1 will swap the receivers if bound with the extension one, and PropertyReference0
             // has no way to bind two receivers at once.
-            check(boundReceivers < 2 && (expression.extensionReceiver == null || needReceivers < 2)) {
+            check(boundReceivers < 2 && (expression.findExtensionReceiver() == null || needReceivers < 2)) {
                 "Property reference with two receivers is not supported: ${expression.render()}"
             }
             propertyReferenceKind(expression, expression.setter != null, needReceivers - boundReceivers)
@@ -267,13 +274,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression =
         cachedKProperty(expression)
 
-    private fun IrSimpleFunction.usesParameter(index: Int): Boolean {
+    private fun IrSimpleFunction.usesParameter(parameter: IrValueParameter): Boolean {
         parentClassId?.let { containerId ->
             // This function was imported from a jar. Didn't run the inline class lowering yet though - have to map manually.
             val replaced = context.inlineClassReplacements.getReplacementFunction(this) ?: this
             val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(replaced)
-            val localIndex = signature.parameters.take(index + if (replaced.extensionReceiverParameter != null) 1 else 0)
-                .sumOf { it.asmType.size } + (if (replaced.dispatchReceiverParameter != null) 1 else 0)
+            val hasDispatchReceiverAsInt = if (replaced.dispatchReceiverParameter != null) 1 else 0
+            val nonDispatchIndex = parameter.indexInParameters - hasDispatchReceiverAsInt
+            val localIndex = signature.parameters.take(nonDispatchIndex).sumOf { it.asmType.size } + hasDispatchReceiverAsInt
             // Null checks are removed during inlining, so we can ignore them.
             return loadCompiledInlineFunction(
                 containerId,
@@ -284,7 +292,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 context.state
             ).node.usesLocalExceptParameterNullCheck(localIndex)
         }
-        return hasChild { it is IrGetValue && it.symbol == valueParameters[index].symbol }
+        return hasChild { it is IrGetValue && it.symbol == parameters[parameter.indexInParameters].symbol }
     }
 
     // Assuming that the only functions that take PROPERTY_REFERENCE_FOR_DELEGATE-kind references are getValue,
@@ -296,12 +304,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         // for inline functions, since for non-inline ones we need to provide some non-null value, and if they're not
         // in the same file, they can start using it without forcing a recompilation of this file.
         if (!expression.symbol.owner.isInline) return super.visitCall(expression)
-        for (index in expression.symbol.owner.valueParameters.indices) {
-            val value = expression.getValueArgument(index)
+        for (parameter in expression.symbol.owner.parameters) {
+            val value = expression.arguments[parameter]
             if (value is IrCallableReference<*> && value.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
                 val resolved = expression.symbol.owner.resolveFakeOverride() ?: expression.symbol.owner
-                if (!usesPropertyParameterCache.getOrPut(resolved.symbol) { resolved.usesParameter(index) }) {
-                    expression.putValueArgument(index, IrConstImpl.constNull(value.startOffset, value.endOffset, value.type))
+                if (!usesPropertyParameterCache.getOrPut(resolved.symbol) { resolved.usesParameter(parameter) }) {
+                    expression.arguments[parameter] = IrConstImpl.constNull(value.startOffset, value.endOffset, value.type)
                 }
             }
         }
@@ -323,8 +331,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 PropertyInstance(createReflectedKProperty(expression), data.kProperties.size)
             }
             irCall(arrayItemGetter).apply {
-                dispatchReceiver = irGetField(null, data.kPropertiesField)
-                putValueArgument(0, irInt(index))
+                arguments[0] = irGetField(null, data.kPropertiesField)
+                arguments[1] = irInt(index)
             }
         }
     }
@@ -391,7 +399,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).irBlock {
             +referenceClass
             +irCall(referenceClass.constructors.single()).apply {
-                expression.getBoundReceiver()?.let { putValueArgument(0, it) }
+                expression.getBoundReceiver()?.let { arguments[0] = it }
             }
         }
     }
@@ -431,11 +439,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
                     receiverFromField ?: irImplicitCast(irGet(parameters[1]), expression.receiverType)
                 }
-                call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
-                    if (call.symbol.owner.dispatchReceiverParameter == null)
+                call.symbol.owner.findExtensionReceiverParameter()?.let {
+                    val receiverValue = if (call.symbol.owner.dispatchReceiverParameter == null)
                         receiverFromField ?: irImplicitCast(irGet(parameters[1]), it.type)
                     else
                         irImplicitCast(irGet(parameters[if (receiverFromField != null) 1 else 2]), it.type)
+                    call.insertExtensionReceiver(receiverValue)
                 }
             }
 
@@ -517,6 +526,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             // See FunctionReferenceLowering.FunctionReferenceBuilder.createFakeBoundReceiverForJvmStaticInObject.
             val objectClass = callee.parentAsClass
             IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
-        } else dispatchReceiver ?: extensionReceiver
+        } else dispatchReceiver ?: findExtensionReceiver()
     }
 }
