@@ -117,6 +117,17 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             )
             configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
         }
+
+        if (JvmEnvironmentConfigurationDirectives.WITH_JAKARTA_ANNOTATIONS in registeredDirectives) {
+            System.getProperty("jakarta.annotations.classpath").let { classPath ->
+                classPath ?: error("'jakarta.annotations.classpath' property is unset")
+                classPath.split(File.pathSeparator)
+            }.forEach { absoluteFilename ->
+                configuration.addJvmClasspathRoot(
+                    File(absoluteFilename)
+                )
+            }
+        }
     }
 
     private fun createJsr305Jar(configuration: CompilerConfiguration): File {

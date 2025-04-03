@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JAKARTA_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -85,6 +86,13 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
             defaultDirectives {
                 ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
                 +WITH_JSR305_TEST_ANNOTATIONS
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/*") {
+            defaultDirectives {
+                +WITH_JAKARTA_ANNOTATIONS
+                JDK_KIND with TestJdkKind.FULL_JDK_11
             }
         }
 
