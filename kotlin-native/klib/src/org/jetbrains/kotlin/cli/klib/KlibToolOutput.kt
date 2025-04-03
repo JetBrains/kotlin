@@ -35,3 +35,9 @@ internal class KlibToolOutput(
         stderr.appendLine(t.stackTraceToString())
     }
 }
+
+private interface Foo {
+    fun a(a: List<String>)
+
+    fun a(a: List<Int>)
+}
