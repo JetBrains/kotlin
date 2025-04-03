@@ -279,6 +279,12 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 used(a30)
                 used(a31)
             }
+
+            @Composable
+            @NonRestartableComposable
+            fun Test() {
+                Example()
+            }
         """
     )
 
@@ -355,6 +361,12 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 used(a29)
                 used(a30)
                 used(a31)
+            }
+
+            @Composable
+            @NonRestartableComposable
+            fun Test() {
+                Example()
             }
         """
     )

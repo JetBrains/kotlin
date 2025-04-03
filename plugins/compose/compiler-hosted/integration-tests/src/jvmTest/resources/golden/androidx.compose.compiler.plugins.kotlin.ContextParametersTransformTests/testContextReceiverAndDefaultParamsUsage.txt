@@ -39,7 +39,7 @@ fun Parent(%composer: Composer?, %changed: Int) {
     with(Foo()) {
       Test(%this%with, null, 0, %composer, 0, 0b0110)
       Test(%this%with, "a", 0, %composer, 0b00110000, 0b0100)
-      Test(%this%with, null, 101, %composer, 0b000110000000, 0b0010)
+      Test(%this%with, null, 101, %composer, 0, 0b0010)
       Test(%this%with, "Yes", 10, %composer, 0b000110110000, 0)
     }
     if (isTraceInProgress()) {
