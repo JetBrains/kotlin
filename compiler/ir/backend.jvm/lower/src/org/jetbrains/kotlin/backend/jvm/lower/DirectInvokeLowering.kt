@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.nonDispatchArguments
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -46,7 +45,6 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                 visitFunctionReferenceInvoke(expression, receiver)
 
             receiver is IrBlock -> receiver.asInlinableFunctionReference()
-                ?.takeIf { ref -> ref.getArgumentsWithIr().none { it.first.kind == IrParameterKind.ExtensionReceiver } }
                 ?.let { reference -> visitLambdaInvoke(expression, reference) } ?: expression
 
             else ->
@@ -61,7 +59,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         val scope = currentScope!!.scope
         val declarationParent = scope.getLocalDeclarationParent()
         val function = reference.symbol.owner
-        if (expression.symbol.owner.parameters.none { it.kind == IrParameterKind.Context || it.kind == IrParameterKind.Regular }) {
+        if (expression.symbol.owner.parameters.none { it.kind == IrParameterKind.Regular }) {
             return function.inline(declarationParent)
         }
         return context.createIrBuilder(scope.scopeOwnerSymbol).run {
