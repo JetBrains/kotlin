@@ -1,4 +1,4 @@
-// LANGUAGE: +SuspendFunctionsInFunInterfaces +JvmIrEnabledByDefault
+// LANGUAGE: +SuspendFunctionsInFunInterfaces
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY

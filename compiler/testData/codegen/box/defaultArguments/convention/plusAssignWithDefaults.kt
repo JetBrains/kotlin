@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperArrayConventionSetterWithDefaultCalls
 var inc: String = ""
 
 class X {

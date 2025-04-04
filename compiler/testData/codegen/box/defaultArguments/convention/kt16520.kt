@@ -1,4 +1,3 @@
-// LANGUAGE: +ProperArrayConventionSetterWithDefaultCalls
 var result = "fail"
 
 class A {
