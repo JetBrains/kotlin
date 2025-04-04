@@ -396,7 +396,6 @@ data class BuildOptions(
         nativeOptions.enableKlibsCrossCompilation?.let {
             arguments.add("-Pkotlin.native.enableKlibsCrossCompilation=${it}")
         }
-
     }
 
     enum class ConfigurationCacheProblems {
@@ -445,6 +444,10 @@ fun BuildOptions.disableConfigurationCacheForGradle7(
 
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+
+fun BuildOptions.disableKlibsCrossCompilation() = copy(
+    nativeOptions = nativeOptions.copy(enableKlibsCrossCompilation = false)
+)
 
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
 

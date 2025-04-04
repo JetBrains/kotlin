@@ -49,7 +49,7 @@ private class AssembleFramework(
 )
 
 private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment): AssembleFramework? {
-    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation()) return null
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation) return null
 
     val envTargets = environment.targets
     val needFatFramework = envTargets.size > 1

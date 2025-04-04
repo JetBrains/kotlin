@@ -128,7 +128,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         val requiredDependencies = mutableSetOf<String>()
         val distribution = Distribution(bundleDir.absolutePath, konanDataDir = konanDataDir)
         konanTargets.forEach { konanTarget ->
-            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) {
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation) {
                 val konanPropertiesLoader = loadConfigurables(
                     konanTarget,
                     distribution.properties,
