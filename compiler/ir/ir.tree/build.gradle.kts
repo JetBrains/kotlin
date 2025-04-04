@@ -10,6 +10,7 @@ dependencies {
     api(project(":core:descriptors"))
     api(project(":core:deserialization"))
     api(project(":compiler:frontend.common"))
+    api(project(":compiler:ir.signatures"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:config"))
 

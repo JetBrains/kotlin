@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.fromIrFile
 
 class IrSymbolDeserializer(
     private val symbolTable: ReferenceSymbolTable,
@@ -26,7 +27,7 @@ class IrSymbolDeserializer(
     private val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     irInterner: IrInterningService,
     private val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
-    fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
+    fileSignature: IdSignature.FileSignature = IdSignature.FileSignature.fromIrFile(fileSymbol),
     private val deserializePublicSymbolWithOwnerInUnknownFile: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
     /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */

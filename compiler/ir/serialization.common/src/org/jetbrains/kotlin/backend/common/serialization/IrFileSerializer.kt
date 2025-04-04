@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -303,7 +303,7 @@ open class IrFileSerializer(
         val signature: IdSignature = when {
             !symbol.isBound && settings.reuseExistingSignaturesForSymbols -> symbol.signature
                 ?: error("Given symbol is unbound and have no signature: $symbol")
-            symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+            symbol is IrFileSymbol -> IdSignature.FileSignature.fromIrFile(symbol) // TODO: special signature for files?
             else -> {
                 val symbolOwner = symbol.owner
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.fromIrFile
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -38,7 +39,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
     private var currentFileSignatureX: IdSignature.FileSignature? = null
 
     override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R {
-        currentFileSignatureX = file?.let { IdSignature.FileSignature(it) }
+        currentFileSignatureX = file?.let { IdSignature.FileSignature.fromIrFile(it) }
         try {
             return block()
         } finally {
