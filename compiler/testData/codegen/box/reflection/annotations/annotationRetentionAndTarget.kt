@@ -11,10 +11,11 @@ fun box(): String {
     val a = Anno::class.annotations
     assertEquals(listOf(
         "@kotlin.annotation.Target(allowedTargets={CLASS})",
-        "@kotlin.annotation.Retention(value=RUNTIME)",
+        "@kotlin.annotation.Retention(RUNTIME)",
     ), a.map {
         // JDK 11+ renders arrays as "{...}" instead of "[...]"
-        it.toString().replace('[', '{').replace(']', '}')
+        // JDK 17+ doesn't render "value="
+        it.toString().replace('[', '{').replace(']', '}').replace("value=", "")
     })
 
     return "OK"
