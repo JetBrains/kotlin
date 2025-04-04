@@ -179,10 +179,10 @@ internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(
     enabledOnCurrenHost: Boolean,
     konanTarget: KonanTarget,
 ): KotlinNativeProvider {
-    if (enabledOnCurrenHost) {
-        return KotlinNativeFromToolchainProvider(project, konanTarget, kotlinNativeBundleBuildService)
+    return if (enabledOnCurrenHost) {
+        KotlinNativeFromToolchainProvider(project, konanTarget, kotlinNativeBundleBuildService)
     } else {
-        return NoopKotlinNativeProvider(project)
+        NoopKotlinNativeProvider(project)
     }
 }
 

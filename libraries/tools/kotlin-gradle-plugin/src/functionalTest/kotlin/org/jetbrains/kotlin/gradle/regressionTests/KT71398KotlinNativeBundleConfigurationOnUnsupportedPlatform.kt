@@ -22,6 +22,7 @@ class KT71398KotlinNativeBundleConfigurationOnUnsupportedPlatform {
         val project = buildProjectWithMPP(preApplyCode = {
             project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
             project.extraProperties.set("kotlin.native.toolchain.enabled", "true")
+            project.extraProperties.set("kotlin.native.enableKlibsCrossCompilation", "false")
         }) {
             val kotlin = project.multiplatformExtension
             kotlin.macosArm64()

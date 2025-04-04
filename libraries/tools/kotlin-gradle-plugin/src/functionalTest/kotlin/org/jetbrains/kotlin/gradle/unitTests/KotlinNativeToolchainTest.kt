@@ -67,7 +67,6 @@ class KotlinNativeToolchainTest {
 
         val project = buildProjectWithMPP {
             setUpKotlinNativeToolchainWithStableVersion()
-            project.extraProperties.set("kotlin.native.enableKlibsCrossCompilation", "true")
         }
         project.multiplatformExtension.iosX64()
         project.multiplatformExtension.iosArm64()

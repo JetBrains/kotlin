@@ -46,7 +46,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.description = "Generates Kotlin/Native interop library '${interop.name}' " +
                     "for compilation '${compilation.compilationName}'" +
                     "of target '${it.konanTarget.name}'."
-            val enabledOnCurrentHost = compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation()
+            val enabledOnCurrentHost = compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation
             it.enabled = enabledOnCurrentHost
             it.definitionFile.set(params.settings.definitionFile)
             it.kotlinNativeProvider.set(it.chooseKotlinNativeProvider(enabledOnCurrentHost, it.konanTarget))
@@ -77,7 +77,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                 createCInteropApiElementsKlibArtifact(compilation, interop, interopTask)
 
                 // Add the interop library in publication.
-                if (compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation()) {
+                if (compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation) {
                     createKlibArtifact(
                         compilation,
                         classifier = interop.classifier,
