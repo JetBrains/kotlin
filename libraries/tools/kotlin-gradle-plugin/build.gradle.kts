@@ -279,7 +279,8 @@ tasks {
     named<ProcessResources>("processCommonResources") {
         val propertiesToExpand = mapOf(
             "projectVersion" to project.version,
-            "kotlinNativeVersion" to project.kotlinNativeVersion
+            "kotlinNativeVersion" to project.kotlinNativeVersion,
+            "kotlinWebNpmToolingDirName" to kotlinWebNpmToolingDirName,
         )
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)

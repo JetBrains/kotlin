@@ -35,6 +35,10 @@ val generateNpmVersions by generator(
         "org.jetbrains.kotlin.generators.gradle.targets.js.npmPackageRoot",
         npmProjectDefault.get().asFile.absolutePath
     )
+    systemProperty(
+        "org.jetbrains.kotlin.npm.tooling.name",
+        kotlinWebNpmToolingDirName
+    )
 }
 
 val npmProjectSetup = project.layout.buildDirectory.map { it.dir("npm-project-installed") }

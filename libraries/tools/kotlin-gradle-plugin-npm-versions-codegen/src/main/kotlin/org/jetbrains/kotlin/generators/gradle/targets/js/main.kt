@@ -16,6 +16,7 @@ import java.security.MessageDigest
 fun main() {
     val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot"]
     val npmPackageRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.targets.js.npmPackageRoot"]
+    val npmToolingName = System.getProperties()["org.jetbrains.kotlin.npm.tooling.name"]
     val packageName = "org.jetbrains.kotlin.gradle.targets.js"
     val className = "NpmVersions"
     val fileName = "$className.kt"
@@ -70,7 +71,8 @@ fun main() {
             @OptIn(ExperimentalStdlibApi::class)
             put("version", md.digest().toHexString())
             put("dependencies", dependencies.map { "    \"${it.name}\": \"${it.version}\"" })
-            put("newline", "\n");
+            put("newline", "\n")
+            put("kotlinNpmToolingName", npmToolingName)
         }
 
     packageJson.writer().use {

@@ -1,5 +1,5 @@
 {
-  "name": "kotlin-npm-tooling",
+  "name": "$kotlinNpmToolingName",
   "version": "$version",
   "private": true,
   "devDependencies": {},

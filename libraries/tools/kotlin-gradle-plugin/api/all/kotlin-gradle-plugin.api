@@ -4168,7 +4168,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPackag
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask$Companion;
-	public static final field KOTLIN_NPM_TOOLING_NAME Ljava/lang/String;
 	public static final field NAME Ljava/lang/String;
 	public abstract fun getArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getDestination ()Lorg/gradle/api/file/DirectoryProperty;
@@ -4177,6 +4176,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToo
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask$Companion {
+	public final fun getNPM_TOOLING_DIR_NAME ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/RootPackageJsonTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask, org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonFilesTask, org/jetbrains/kotlin/gradle/targets/js/npm/UsesKotlinNpmResolutionManager {

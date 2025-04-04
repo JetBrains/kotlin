@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import java.nio.channels.FileChannel
 import java.nio.file.StandardOpenOption
 
@@ -69,7 +70,7 @@ internal constructor() :
                 val packageJsonFile = destinationDir.resolve(NpmProject.PACKAGE_JSON)
                 if (nodeModules.getFile().exists()) return // return from install
                 val toolingPackageJson = PackageJson(
-                    KOTLIN_NPM_TOOLING_NAME,
+                    NPM_TOOLING_DIR_NAME,
                     versionsHash.get()
                 ).apply {
                     private = true
@@ -97,6 +98,8 @@ internal constructor() :
     companion object {
         const val NAME = "kotlinToolingInstall"
 
-        const val KOTLIN_NPM_TOOLING_NAME = "kotlin-npm-tooling"
+        val NPM_TOOLING_DIR_NAME: String by lazy {
+            loadPropertyFromResources("project.properties", "kotlin.web.npm.tooling.dir.name")
+        }
     }
 }
