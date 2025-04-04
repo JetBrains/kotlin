@@ -595,6 +595,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
         is ConeCapturedType -> captureCapturedType(type)
         is ConeDefinitelyNotNullType -> captureFromExpressionInternal(type.original)?.makeConeTypeDefinitelyNotNullOrNotNull(this)
         is ConeFlexibleType -> {
+            @Suppress("AssignedValueIsNeverRead")
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             // Flexible types can either have projections in both bounds or just the upper bound (raw types and arrays).
             // Since the scope of flexible types is built from the lower bound, we don't gain any safety from only capturing the
@@ -608,6 +609,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             }
         }
         is ConeIntersectionType -> {
+            @Suppress("AssignedValueIsNeverRead")
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
