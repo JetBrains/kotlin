@@ -380,7 +380,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
@@ -2058,7 +2058,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )
         map.put(
-            INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER,
+            INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR,
             "''{0}'' inherits invisible abstract {1}",
             DECLARATION_NAME,
             prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),

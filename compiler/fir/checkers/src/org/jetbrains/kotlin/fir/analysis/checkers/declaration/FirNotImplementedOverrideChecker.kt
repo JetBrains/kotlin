@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_ME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
@@ -131,7 +131,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         }
         if (!canHaveAbstractDeclarations) {
             val (fromInterfaceOrEnum, notFromInterfaceOrEnum) = notImplementedSymbols.partition {
-                it.unwrapFakeOverrides().isFromInterfaceOrEnum(context)
+                it.unwrapFakeOverrides().isFromInterfaceOrEnum()
             }
             val containingDeclaration = context.containingDeclarations.lastOrNull()
             val (fromInitializerOfEnumEntry, notFromInitializerOfEnumEntry) = fromInterfaceOrEnum.partition {
@@ -164,7 +164,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
             }
         }
         if (!canHaveAbstractDeclarations && invisibleSymbols.isNotEmpty()) {
-            reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, classSymbol, invisibleSymbols)
+            reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR, classSymbol, invisibleSymbols)
         }
 
         manyImplementationsDelegationSymbols.forEach {
@@ -222,6 +222,6 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 containingDeclaration.initializer.let { it is FirAnonymousObjectExpression && it.anonymousObject == this }
     }
 
-    private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
+    private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(): Boolean =
         (getContainingClassSymbol() as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
 }
