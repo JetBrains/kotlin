@@ -3164,11 +3164,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val property: KaVariableSymbol
     }
 
-    interface ValReassignmentViaBackingFieldWarning : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = ValReassignmentViaBackingFieldWarning::class
-        val property: KaVariableSymbol
-    }
-
     interface CapturedValInitialization : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CapturedValInitialization::class
         val property: KaVariableSymbol
