@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplementationByDelegationWithDifferentGenericSignature
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
-import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSynchronizationByValueClassesAndPrimitives
 import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
@@ -93,7 +92,7 @@ object FirJvmErrors {
     val OVERLOADS_ABSTRACT: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_ABSTRACT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OVERLOADS_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OVERLOADS_LOCAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_LOCAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR", ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val OVERLOADS_PRIVATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_PRIVATE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val DEPRECATED_JAVA_ANNOTATION: KtDiagnosticFactory1<FqName> = KtDiagnosticFactory1("DEPRECATED_JAVA_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val JVM_PACKAGE_NAME_CANNOT_BE_EMPTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_PACKAGE_NAME_CANNOT_BE_EMPTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)

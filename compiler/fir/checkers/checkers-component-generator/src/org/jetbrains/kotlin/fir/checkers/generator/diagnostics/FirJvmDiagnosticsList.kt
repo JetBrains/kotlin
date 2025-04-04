@@ -119,9 +119,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val OVERLOADS_ABSTRACT by error<KtAnnotationEntry>()
         val OVERLOADS_INTERFACE by error<KtAnnotationEntry>()
         val OVERLOADS_LOCAL by error<KtAnnotationEntry>()
-        val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR by deprecationError<KtAnnotationEntry>(
-            ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
-        )
+        val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR by error<KtAnnotationEntry>()
         val OVERLOADS_PRIVATE by warning<KtAnnotationEntry>()
         val DEPRECATED_JAVA_ANNOTATION by warning<KtAnnotationEntry> {
             parameter<FqName>("kotlinName")

@@ -4185,10 +4185,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OverloadsAnnotationClassConstructorError::class
     }
 
-    interface OverloadsAnnotationClassConstructorWarning : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = OverloadsAnnotationClassConstructorWarning::class
-    }
-
     interface OverloadsPrivate : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = OverloadsPrivate::class
     }
