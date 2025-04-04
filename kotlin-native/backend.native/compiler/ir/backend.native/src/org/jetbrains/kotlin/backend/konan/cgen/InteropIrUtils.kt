@@ -35,10 +35,21 @@ private val cCall = RuntimeNames.cCall
 
 // Make sure external stubs always get proper annotaions.
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
-        this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
-                // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
-                || this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
+fun IrDeclaration.hasCCallAnnotation(name: String): Boolean {
+
+    if (this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))) {
+//        println("${render()} HAS ANNO $name")
+        return true
+    }
+
+    // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
+    val annotations1 = this.descriptor.annotations
+    if (annotations1.hasAnnotation(cCall.child(Name.identifier(name)))) {
+        error("ALARM!!! ${render()} HAS ANNO $name FOUND ONLY VIA DESCRIPTORS")
+//        return true
+    }
+    return false
+}
 
 internal fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")
 
