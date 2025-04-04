@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import kotlin.reflect.KProperty
 
 class GuardedLazy<out T>(initializer: () -> T) {
@@ -28,6 +29,7 @@ class GuardedLazy<out T>(initializer: () -> T) {
                 _value = _initializer!!()
                 _initializer = null
             } catch (e: Throwable) {
+                rethrowIntellijPlatformExceptionIfNeeded(e)
                 throw java.lang.IllegalStateException("Error initializing $name", e)
             }
         }
