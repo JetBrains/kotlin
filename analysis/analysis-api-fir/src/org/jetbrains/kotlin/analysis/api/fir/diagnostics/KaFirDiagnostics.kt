@@ -880,10 +880,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RestrictedRetentionForExpressionAnnotationError::class
     }
 
-    interface RestrictedRetentionForExpressionAnnotationWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = RestrictedRetentionForExpressionAnnotationWarning::class
-    }
-
     interface WrongAnnotationTarget : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = WrongAnnotationTarget::class
         val actualTarget: String

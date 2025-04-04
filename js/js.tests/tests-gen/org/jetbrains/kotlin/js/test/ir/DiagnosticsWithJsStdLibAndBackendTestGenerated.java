@@ -361,21 +361,4 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name/legalPackageName.kt");
     }
   }
-
-  @Nested
-  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures")
-  @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
-  public class UnsupportedFeatures {
-    @Test
-    public void testAllFilesPresentInUnsupportedFeatures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-    }
-
-    @Test
-    @TestMetadata("annotations.kt")
-    public void testAnnotations() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures/annotations.kt");
-    }
-  }
 }

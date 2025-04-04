@@ -404,7 +404,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ANNOTATION_ON_SUPERCLASS by deprecationError<KtAnnotationEntry>(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
-        val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by deprecationError<PsiElement>(LanguageFeature.RestrictRetentionForExpressionAnnotations)
+        val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR by error<PsiElement>()
         val WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
             parameter<Collection<KotlinTarget>>("allowedTargets")
