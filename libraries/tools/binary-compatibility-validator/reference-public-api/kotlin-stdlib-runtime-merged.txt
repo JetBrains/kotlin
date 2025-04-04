@@ -6300,6 +6300,7 @@ public final class kotlin/time/Instant$Companion {
 	public final fun getDISTANT_PAST ()Lkotlin/time/Instant;
 	public final fun now ()Lkotlin/time/Instant;
 	public final fun parse (Ljava/lang/CharSequence;)Lkotlin/time/Instant;
+	public final fun parseOrNull (Ljava/lang/CharSequence;)Lkotlin/time/Instant;
 }
 
 public final class kotlin/time/MeasureTimeKt {
