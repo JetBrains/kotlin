@@ -98,6 +98,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 Name.special("<shared dependencies of ${mainModuleName.asString()}>")
             )
             moduleData.bindSession(this)
+            register(FirModuleData::class, moduleData)
 
             FirSessionConfigurator(this).apply {
                 for (extensionRegistrar in extensionRegistrars) {
