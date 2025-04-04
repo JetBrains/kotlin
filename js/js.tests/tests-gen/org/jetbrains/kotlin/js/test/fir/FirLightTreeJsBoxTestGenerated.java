@@ -2578,6 +2578,18 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
       }
 
       @Test
+      @TestMetadata("privateDataClass.kt")
+      public void testPrivateDataClass() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateDataClass.kt");
+      }
+
+      @Test
+      @TestMetadata("privateDataClassInFile.kt")
+      public void testPrivateDataClassInFile() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateDataClassInFile.kt");
+      }
+
+      @Test
       @TestMetadata("privateInnerClass.kt")
       public void testPrivateInnerClass() {
         runTest("js/js.translator/testData/box/esModules/jsExport/privateInnerClass.kt");
@@ -7548,6 +7560,18 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     @TestMetadata("jsExportInClass.kt")
     public void testJsExportInClass() {
       runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateDataClass.kt")
+    public void testPrivateDataClass() {
+      runTest("js/js.translator/testData/box/jsExport/privateDataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateDataClassInFile.kt")
+    public void testPrivateDataClassInFile() {
+      runTest("js/js.translator/testData/box/jsExport/privateDataClassInFile.kt");
     }
 
     @Test
