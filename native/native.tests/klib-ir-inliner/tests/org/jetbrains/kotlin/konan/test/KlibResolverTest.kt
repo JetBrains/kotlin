@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.*
@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertContainsElements
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.utils.*
+import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
+import org.jetbrains.kotlin.test.utils.patchManifestAsMap
+import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
@@ -188,85 +190,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    assertTrue(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
                 }
             }
-        }
-    }
-
-    @Test
-    @DisplayName("-nowarn cmdline param suppresses warning when resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifestWithNowarn() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
-        var aKlib: KLIB? = null
-        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true, extraCmdLineParams = listOf("-nowarn")) { module, successKlib ->
-            when (module.name) {
-                "a" -> aKlib = successKlib.resultingArtifact
-                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                "c" -> {
-                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
-                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    assertFalse(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
-                }
-            }
-        }
-    }
-
-    @Test
-    @DisplayName("-Werror cmdline param causes error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerror() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
-        var aKlib: KLIB? = null
-        try {
-            modules.compileModules(
-                produceUnpackedKlibs = false,
-                useLibraryNamesInCliArguments = true,
-                extraCmdLineParams = listOf("-Werror"),
-            ) { module, successKlib ->
-                when (module.name) {
-                    "a" -> aKlib = successKlib.resultingArtifact
-                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                    "c" -> fail ("Normally should not get here")
-                }
-            }
-        } catch (cte: CompilationToolException) {
-            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
-            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
-        }
-    }
-
-    @Test
-    @DisplayName("-Werror and -nowarn cmdline params cause error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerrorNowarn() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
-        var aKlib: KLIB? = null
-        try {
-            modules.compileModules(
-                produceUnpackedKlibs = false,
-                useLibraryNamesInCliArguments = true,
-                extraCmdLineParams = listOf("-Werror", "-nowarn"),
-            ) { module, successKlib ->
-                when (module.name) {
-                    "a" -> aKlib = successKlib.resultingArtifact
-                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                    "c" -> fail ("Normally should not get here")
-                }
-            }
-        } catch (cte: CompilationToolException) {
-            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
-            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
         }
     }
 

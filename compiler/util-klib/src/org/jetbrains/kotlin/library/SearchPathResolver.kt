@@ -212,7 +212,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L? {
         return resolveOrNull(unresolved, isDefaultLink)
             ?: run {
-                logger.warning("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+                logger.log("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
                 null
             }
     }
