@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
-// LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments -NullableNothingInReifiedPosition
+// LANGUAGE: -NullableNothingInReifiedPosition
 class A<T>
 class C<T, G>
 class D<T>

@@ -1878,11 +1878,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val typeParameter: KaTypeParameterSymbol
     }
 
-    interface TypeParameterAsReifiedArrayWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = TypeParameterAsReifiedArrayWarning::class
-        val typeParameter: KaTypeParameterSymbol
-    }
-
     interface ReifiedTypeForbiddenSubstitution : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ReifiedTypeForbiddenSubstitution::class
         val type: KaType
