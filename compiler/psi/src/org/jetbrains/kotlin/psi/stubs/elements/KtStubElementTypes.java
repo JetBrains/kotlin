@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
+    @SuppressWarnings("unused")
+    IElementType _DEPENDENT_TOKENS_INIT = KtTokens._DEPENDENT_TOKENS_INIT; // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
+
     KtClassElementType CLASS = new KtClassElementType("CLASS");
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");

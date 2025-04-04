@@ -20,9 +20,13 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
+import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
 
 public interface KtTokens {
+    @SuppressWarnings("unused")
+    IElementType _DEPENDENT_TOKENS_INIT = KDocElementTypes._DEPENDENT_TOKENS_INIT; // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
+
     int INVALID_Id = 0;
     int EOF_Id = 1;
     int RESERVED_Id = 2;

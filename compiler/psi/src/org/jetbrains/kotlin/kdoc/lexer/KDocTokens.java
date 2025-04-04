@@ -22,6 +22,8 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +33,9 @@ import org.jetbrains.kotlin.kdoc.parser.KDocParser;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl;
 
 public interface KDocTokens {
+    @SuppressWarnings("unused")
+    IElementType _DEPENDENT_TOKENS_INIT = TokenType.WHITE_SPACE; // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
+
     ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", KotlinLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
