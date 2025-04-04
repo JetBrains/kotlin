@@ -30,6 +30,7 @@ internal fun KaSession.isVisibleInObjC(symbol: KaSymbol?): Boolean = when (symbo
  * Doesn't check visibility of containing symbol, so nested callables are visible
  */
 internal fun KaSession.isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
+    if (symbol.hasContextParameters()) return false
     if (symbol.hasNoProvidedName()) return false
     if (!isPublic(symbol)) return false
     if (symbol.isExpect) return false
@@ -57,6 +58,11 @@ internal fun KaClassSymbol.hasNoProvidedName(): Boolean {
 
 internal fun KaCallableSymbol.hasNoProvidedName(): Boolean {
     return name == SpecialNames.NO_NAME_PROVIDED
+}
+
+@OptIn(KaExperimentalApi::class)
+internal fun KaCallableSymbol.hasContextParameters(): Boolean {
+    return contextParameters.isNotEmpty()
 }
 
 /*

@@ -137,6 +137,7 @@ private fun AnnotationDescriptor.hidesFromObjC(): Boolean =
 private fun CallableMemberDescriptor.isHiddenFromObjC(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isHiddenFromObjC()
+    contextReceiverParameters.isNotEmpty() -> true
     else -> annotations.any(AnnotationDescriptor::hidesFromObjC)
 }
 
