@@ -164,8 +164,9 @@ class Instants {
         assertPrints(instant.toString(), "2020-08-30T15:40:00Z")
 
         // Failing to parse an invalid string returns null.
-        val notAnInstant = Instant.parseOrNull("Ten o'clock today")
-        assertPrints(notAnInstant, "null")
+        assertPrints(Instant.parseOrNull("Ten o'clock today"), "null")
+        assertPrints(Instant.parseOrNull("2020-08-32T15:40:00Z"), "null")
+        assertPrints(Instant.parseOrNull("+10000000000000-08-01T15:40:00Z"), "null")
     }
 
     @Sample

@@ -365,7 +365,6 @@ public class Instant internal constructor(
          */
         public fun parse(input: CharSequence): Instant = parseIso(input).toInstant()
 
-
         /**
          * Parses an ISO 8601 string that represents an instant (for example, `2020-08-30T18:43:00Z`),
          * or returns `null` if the string cannot be parsed or the boundaries of [Instant] are exceeded.
@@ -394,7 +393,6 @@ public class Instant internal constructor(
          * @sample samples.time.Instants.parseOrNull
          */
         public fun parseOrNull(input: CharSequence): Instant? = parseIso(input).toInstantOrNull()
-
 
         /**
          * An instant value that is far in the past.
