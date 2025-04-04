@@ -363,7 +363,15 @@ public class Instant internal constructor(
          * @see Instant.toString for formatting.
          * @sample samples.time.Instants.parsing
          */
-        public fun parse(input: CharSequence): Instant = parseIso(input).toInstant()
+        public fun parse(input: CharSequence): Instant = parseIso(input, onError = { error, input ->
+            throw InstantFormatException("$error when parsing an Instant from \"${input.truncateForErrorMessage(64)}\"")
+        }) { epochSeconds, nanosecondsOfSecond ->
+            if (epochSeconds < MIN.epochSeconds || epochSeconds > MAX.epochSeconds)
+                throw InstantFormatException(
+                    "The parsed date is outside the range representable by Instant (Unix epoch second $epochSeconds)"
+                )
+            fromEpochSeconds(epochSeconds, nanosecondsOfSecond)
+        }
 
         /**
          * Parses an ISO 8601 string that represents an instant (for example, `2020-08-30T18:43:00Z`),
@@ -392,7 +400,22 @@ public class Instant internal constructor(
          * @see Instant.toString for formatting.
          * @sample samples.time.Instants.parseOrNull
          */
-        public fun parseOrNull(input: CharSequence): Instant? = parseIso(input).toInstantOrNull()
+        public fun parseOrNull(input: CharSequence): Instant? {
+            val result = parseIso(input, onError = { _, _ -> PARSING_FAILED }) { epochSeconds, nanosecondsOfSecond ->
+                if (epochSeconds < MIN.epochSeconds || epochSeconds > MAX.epochSeconds) {
+                    PARSING_FAILED
+                } else {
+                    fromEpochSeconds(epochSeconds, nanosecondsOfSecond)
+                }
+            }
+            return if (result === PARSING_FAILED) {
+                null
+            } else {
+                result as Instant
+            }
+        }
+
+        private val PARSING_FAILED = Any()
 
         /**
          * An instant value that is far in the past.
@@ -548,12 +571,17 @@ private class UnboundLocalDateTime(
 }
 
 @ExperimentalTime
-private fun parseIso(isoString: CharSequence): InstantParseResult {
-    fun parseFailure(error: String): InstantParseResult.Failure = InstantParseResult.Failure(
-        error = "$error when parsing an Instant from \"${isoString.truncateForErrorMessage(64)}\"",
-        input = isoString
+private fun <T : Any> parseIso(
+    isoString: CharSequence,
+    onError: (error: String, input: CharSequence) -> T,
+    onSuccess: (epochSeconds: Long, nanosecondsOfSecond: Int) -> T
+): T {
+    fun parseFailure(error: String): T = onError(
+        "$error when parsing an Instant from \"${isoString.truncateForErrorMessage(64)}\"",
+        isoString
     )
-    fun expect(what: String, where: Int, predicate: (Char) -> Boolean): InstantParseResult.Failure? {
+
+    fun expect(what: String, where: Int, predicate: (Char) -> Boolean): T? {
         val c = isoString[where]
         return if (predicate(c)) {
             null
@@ -561,9 +589,10 @@ private fun parseIso(isoString: CharSequence): InstantParseResult {
             parseFailure("Expected $what, but got '$c' at position $where")
         }
     }
+
     val s = isoString
     var i = 0
-    if (s.isEmpty()) { return InstantParseResult.Failure(error = "An empty string is not a valid Instant", input = isoString) }
+    if (s.isEmpty()) { return onError("An empty string is not a valid Instant", isoString) }
     val yearSign = when (val c = s[i]) {
         '+', '-' -> { ++i; c }
         else -> ' '
@@ -680,36 +709,7 @@ private fun parseIso(isoString: CharSequence): InstantParseResult {
     if (hour > 23) { return parseFailure("Expected hour in 0..23, got $hour") }
     if (minute > 59) { return parseFailure("Expected minute-of-hour in 0..59, got $minute") }
     if (second > 59) { return parseFailure("Expected second-of-minute in 0..59, got $second") }
-    return UnboundLocalDateTime(year, month, day, hour, minute, second, nanosecond).toInstant(offsetSeconds, InstantParseResult::Success)
-}
-
-@ExperimentalTime
-private sealed interface InstantParseResult {
-    fun toInstant(): Instant
-    fun toInstantOrNull(): Instant?
-
-    class Success(val epochSeconds: Long, val nanosecondsOfSecond: Int) : InstantParseResult {
-        override fun toInstant(): Instant {
-            if (epochSeconds < Instant.MIN.epochSeconds || epochSeconds > Instant.MAX.epochSeconds)
-                throw InstantFormatException(
-                    "The parsed date is outside the range representable by Instant (Unix epoch second $epochSeconds)"
-                )
-            return Instant.fromEpochSeconds(epochSeconds, nanosecondsOfSecond)
-        }
-
-        override fun toInstantOrNull(): Instant? = if (epochSeconds < Instant.MIN.epochSeconds || epochSeconds > Instant.MAX.epochSeconds) {
-            null
-        } else {
-            Instant.fromEpochSeconds(epochSeconds, nanosecondsOfSecond)
-        }
-    }
-    class Failure(val error: String, val input: CharSequence) : InstantParseResult {
-        override fun toInstant(): Instant {
-            throw InstantFormatException("$error when parsing an Instant from \"${input.truncateForErrorMessage(64)}\"")
-        }
-
-        override fun toInstantOrNull(): Instant? = null
-    }
+    return UnboundLocalDateTime(year, month, day, hour, minute, second, nanosecond).toInstant(offsetSeconds, onSuccess)
 }
 
 @ExperimentalTime
