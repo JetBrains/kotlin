@@ -34,13 +34,10 @@ class JvmPackagePartProvider(
     private var allPackageNamesCache: Set<String>? = null
 
     override val allPackageNames: Set<String>
-        get() {
-            // assuming that the modifications of loadedModules happen in predictable moments now, so nos syncronization is used
-            if (allPackageNamesCache == null) {
-                allPackageNamesCache = loadedModules.flatMapTo(mutableSetOf<String>()) { it.mapping.packageFqName2Parts.keys }
-            }
-            return allPackageNamesCache!!
-        }
+        // assuming that the modifications of loadedModules happen in predictable moments now, so no synchronization is used
+        get() = allPackageNamesCache
+            ?: loadedModules.flatMapTo(mutableSetOf()) { it.mapping.packageFqName2Parts.keys }
+                .also { allPackageNamesCache = it }
 
     // TODO: redesign to avoid cache-unfriendly usages, see KT-76516
     fun addRoots(roots: List<JavaRoot>, messageCollector: MessageCollector) {
