@@ -1194,14 +1194,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ANNOTATION_ON_SUPERCLASS.errorFactory) { firDiagnostic ->
+    add(FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR) { firDiagnostic ->
         AnnotationOnSuperclassErrorImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.ANNOTATION_ON_SUPERCLASS.warningFactory) { firDiagnostic ->
-        AnnotationOnSuperclassWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

@@ -403,7 +403,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ClassId>("annotation")
         }
 
-        val ANNOTATION_ON_SUPERCLASS by deprecationError<KtAnnotationEntry>(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
+        val ANNOTATION_ON_SUPERCLASS_ERROR by error<KtAnnotationEntry>()
         val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR by error<PsiElement>()
         val WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
