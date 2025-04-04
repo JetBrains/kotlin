@@ -6389,14 +6389,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR.errorFactory) { firDiagnostic ->
+    add(FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR) { firDiagnostic ->
         ConcurrentHashMapContainsOperatorErrorImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR.warningFactory) { firDiagnostic ->
-        ConcurrentHashMapContainsOperatorWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

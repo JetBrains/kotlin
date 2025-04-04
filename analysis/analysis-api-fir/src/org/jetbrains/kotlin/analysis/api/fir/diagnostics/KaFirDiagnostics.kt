@@ -4451,10 +4451,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConcurrentHashMapContainsOperatorError::class
     }
 
-    interface ConcurrentHashMapContainsOperatorWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ConcurrentHashMapContainsOperatorWarning::class
-    }
-
     interface SpreadOnSignaturePolymorphicCallError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SpreadOnSignaturePolymorphicCallError::class
     }

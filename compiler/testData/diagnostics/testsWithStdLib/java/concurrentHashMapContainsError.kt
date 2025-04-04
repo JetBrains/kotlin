@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +ProhibitConcurrentHashMapContains
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {

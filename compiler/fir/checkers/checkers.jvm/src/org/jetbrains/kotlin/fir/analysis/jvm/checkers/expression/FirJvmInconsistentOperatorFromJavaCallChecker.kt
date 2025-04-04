@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -57,7 +56,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(Mp
     private fun FirNamedFunctionSymbol.check(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
         // Unwrap SubstitutionOverride origin if necessary
         if (originalOrSelf().callableId == CONCURRENT_HASH_MAP_CALLABLE_ID) {
-            reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, context)
+            reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, context)
             return true
         }
 
