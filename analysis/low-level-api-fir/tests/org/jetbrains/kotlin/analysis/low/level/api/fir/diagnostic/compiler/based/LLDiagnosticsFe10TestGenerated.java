@@ -18404,6 +18404,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("flexibleCapturedReceiver.kt")
+        public void testFlexibleCapturedReceiver() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/flexibleCapturedReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("genericWildcardUpperBound.kt")
         public void testGenericWildcardUpperBound() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/genericWildcardUpperBound.kt");
