@@ -27,6 +27,13 @@ import org.jetbrains.kotlin.ir.util.*
  */
 fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound && owner.isEffectivelyPrivate()
 
+/**
+ * Checks if the given function is available in the inlined scope.
+ * - Effectively private declarations are not available (outside the given file).
+ * - Local declarations are always fine because they will be copied with inline declaration.
+ */
+fun IrFunctionSymbol.isConsideredAsPrivateAndNotLocalForInlining(): Boolean = this.isBound && owner.isEffectivelyPrivate() && !owner.isLocal
+
 interface CallInlinerStrategy {
     /**
      * TypeOf function requires some custom backend-specific processing. This is a customization point for that.
