@@ -163,6 +163,11 @@ private val noDispatchReceiverApplyingPhase = makeIrModulePhase(
     name = "NoDispatchReceiverAnnotationApplyingLowering",
 )
 
+private val noDispatchReceiverApplyingPhaseOnFirstStage = makeIrModulePhase(
+    { _: JsPreSerializationLoweringContext -> NoDispatchReceiverAnnotationApplyingLowering },
+    name = "NoDispatchReceiverAnnotationApplyingLoweringOnFirstStage",
+)
+
 private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
     { context: JsIrBackendContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
     name = "JsCodeOutliningLoweringOnSecondStage",
@@ -737,6 +742,7 @@ fun jsLoweringsOfTheFirstPhase(
         this += upgradeCallableReferences
     }
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+        this += noDispatchReceiverApplyingPhaseOnFirstStage
         this += jsCodeOutliningPhaseOnFirstStage
     }
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
