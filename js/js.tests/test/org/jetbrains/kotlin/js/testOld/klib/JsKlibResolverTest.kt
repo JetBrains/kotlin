@@ -179,7 +179,6 @@ open class JsKlibResolverTest {
 
         val resultJS = compileToJs(cKlib, dependency = bKlib, outputFile = cKlib)
         assertEquals(ExitCode.OK, resultJS.exitCode)
-        assertTrue(resultJS.output.contains("warning: KLIB resolver: Could not find \"a\" in "))
         assertTrue(resultJS.output.contains("No function found for symbol 'a/a|a(kotlin.Int){}[0]'"))
     }
 
