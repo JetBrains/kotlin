@@ -1028,7 +1028,6 @@ class KmpResolutionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             transitiveConfiguration()
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     consumedTargetConfiguration()
                 }
@@ -1043,7 +1042,6 @@ class KmpResolutionIT : KGPBaseTest() {
             addPublishedProjectToRepositories(transitiveProducer)
             directConfiguration()
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     intermediateSubsetTargetConfiguration()
                     sourceSets.commonMain.get().dependencies {
@@ -1063,7 +1061,6 @@ class KmpResolutionIT : KGPBaseTest() {
             consumerConfiguration()
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     consumedTargetConfiguration()
                     sourceSets.commonMain.get().dependencies {

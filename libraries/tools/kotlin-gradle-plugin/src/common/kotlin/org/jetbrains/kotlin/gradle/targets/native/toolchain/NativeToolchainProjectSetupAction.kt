@@ -21,7 +21,7 @@ internal val NativeToolchainProjectSetupAction = KotlinProjectSetupCoroutine {
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     if (kotlinTargets.flatMap { target -> target.compilations }
             .filterIsInstance<AbstractKotlinNativeCompilation>()
-            .any { it.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) }
+            .any { it.target.enabledOnCurrentHostForKlibCompilation }
     ) {
         addKotlinNativeBundleConfiguration(project)
         KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)

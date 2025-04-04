@@ -36,7 +36,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
         val subsetProducer = project("empty", version) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     targetSubset()
                     sourceSets.all {
@@ -52,7 +51,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
                 project.setUklibResolutionStrategy()
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     targetSubset()
                     macosArm64()
@@ -299,7 +297,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositories(publishedProject)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
-                project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     jvm()
