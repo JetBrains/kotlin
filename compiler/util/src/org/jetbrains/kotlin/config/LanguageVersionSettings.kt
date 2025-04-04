@@ -42,14 +42,12 @@ enum class LanguageFeature(
     UnderscoresInNumericLiterals(KOTLIN_1_1),
     DivisionByZeroInConstantExpressions(KOTLIN_1_1),
     InlineConstVals(KOTLIN_1_1),
-    OperatorRem(KOTLIN_1_1),
     OperatorProvideDelegate(KOTLIN_1_1),
     ShortSyntaxForPropertyGetters(KOTLIN_1_1),
     RefinedSamAdaptersPriority(KOTLIN_1_1),
     SafeCallBoundSmartCasts(KOTLIN_1_1),
     TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1),
     NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1),
-    DefaultImportOfPackageKotlinComparisons(KOTLIN_1_1),
     Coroutines(
         KOTLIN_1_1, ApiVersion.KOTLIN_1_1,
         "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
@@ -60,7 +58,6 @@ enum class LanguageFeature(
 
     InlineDefaultFunctionalParameters(KOTLIN_1_2),
     SoundSmartCastsAfterTry(KOTLIN_1_2),
-    DeprecatedFieldForInvisibleCompanionObject(KOTLIN_1_2),
     NullabilityAssertionOnExtensionReceiver(KOTLIN_1_2),
     SafeCastCheckBoundSmartCasts(KOTLIN_1_2),
     CapturedInClosureSmartCasts(KOTLIN_1_2),
@@ -68,11 +65,9 @@ enum class LanguageFeature(
     LateinitLocalVariables(KOTLIN_1_2),
     InnerClassInEnumEntryClass(KOTLIN_1_2),
     CallableReferencesToClassMembersWithEmptyLHS(KOTLIN_1_2),
-    ThrowNpeOnExplicitEqualsForBoxedNull(KOTLIN_1_2),
     JvmPackageName(KOTLIN_1_2),
     AssigningArraysToVarargsInNamedFormInAnnotations(KOTLIN_1_2),
     ExpectedTypeFromCast(KOTLIN_1_2),
-    DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
     // 1.3
 

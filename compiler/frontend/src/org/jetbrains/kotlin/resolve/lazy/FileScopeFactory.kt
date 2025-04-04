@@ -44,7 +44,7 @@ class FileScopeFactory(
     private val components: ImportResolutionComponents
 ) {
     private val defaultImports =
-        analyzerServices.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
+        analyzerServices.getDefaultImports(includeLowPriorityImports = false).map(::DefaultImportImpl)
 
     private val defaultLowPriorityImports = analyzerServices.defaultLowPriorityImports.map(::DefaultImportImpl)
 

@@ -258,18 +258,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xlegacy-smart-cast-after-try"
-        description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Disables(LanguageFeature.SoundSmartCastsAfterTry)
-        )
-
-        stubLifecycle()
-    }
-
-    compilerArgument {
         name = "Xreport-perf"
         description = "Report detailed performance statistics.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

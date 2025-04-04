@@ -36,7 +36,6 @@ abstract class KaBaseDefaultImportsProvider : KaDefaultImportsProvider {
 
     private fun getKaDefaultImports(firDefaultImportProvider: DefaultImportProvider): List<KaDefaultImport> = buildList {
         firDefaultImportProvider.getDefaultImports(
-            defaultImportOfPackageKotlinComparisons = true /*supported since Kotlin 1.1*/,
             includeLowPriorityImports = false
         ).mapTo(this) { import ->
             KaDefaultImportImpl(ImportPath(import.fqName, import.isAllUnder), KaDefaultImportPriority.HIGH)

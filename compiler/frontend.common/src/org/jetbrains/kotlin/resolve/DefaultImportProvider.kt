@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -43,19 +41,11 @@ abstract class DefaultImportProvider {
 
     open val defaultLowPriorityImports: List<ImportPath> get() = emptyList()
 
-    fun getDefaultImports(languageVersionSettings: LanguageVersionSettings, includeLowPriorityImports: Boolean): List<ImportPath> =
-        getDefaultImports(
-            languageVersionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons),
-            includeLowPriorityImports
-        )
-
-
-
-    fun getDefaultImports(defaultImportOfPackageKotlinComparisons: Boolean, includeLowPriorityImports: Boolean): List<ImportPath> =
+    fun getDefaultImports(includeLowPriorityImports: Boolean): List<ImportPath> =
         defaultImports(
             DefaultImportsKey(
-                defaultImportOfPackageKotlinComparisons,
-                includeLowPriorityImports,
+                includeKotlinComparisons = true,
+                includeLowPriorityImports = includeLowPriorityImports,
             )
         )
 

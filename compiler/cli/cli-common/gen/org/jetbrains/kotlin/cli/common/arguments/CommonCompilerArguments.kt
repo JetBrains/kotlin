@@ -277,17 +277,6 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         }
 
     @Argument(
-        value = "-Xlegacy-smart-cast-after-try",
-        description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks.",
-    )
-    @Disables(LanguageFeature.SoundSmartCastsAfterTry)
-    var legacySmartCastAfterTry: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xreport-perf",
         description = "Report detailed performance statistics.",
     )

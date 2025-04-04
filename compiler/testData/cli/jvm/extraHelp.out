@@ -155,7 +155,6 @@ where advanced options include:
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xinline-classes           Enable experimental inline classes.
-  -Xlegacy-smart-cast-after-try Allow 'var' smart casts even in the presence of assignments in 'try' blocks.
   -Xreport-perf              Report detailed performance statistics.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
   -Xmetadata-version         Change the metadata version of the generated binary files.
