@@ -94,7 +94,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         val closestGetter = context.findClosest<FirPropertyAccessor> { it.isGetter }?.symbol ?: return
         if (propertySymbol.getterSymbol != closestGetter) return
 
-        reporter.reportOn(backingFieldReference.source, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, propertySymbol, context)
+        reporter.reportOn(backingFieldReference.source, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, propertySymbol, context)
     }
 
     private fun checkValReassignmentOnValueParameterOrEnumEntry(

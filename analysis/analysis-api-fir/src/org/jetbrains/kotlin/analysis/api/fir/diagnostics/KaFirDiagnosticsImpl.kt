@@ -3807,12 +3807,6 @@ internal class ValReassignmentViaBackingFieldErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ValReassignmentViaBackingFieldError
 
-internal class ValReassignmentViaBackingFieldWarningImpl(
-    override val property: KaVariableSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ValReassignmentViaBackingFieldWarning
-
 internal class CapturedValInitializationImpl(
     override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,

@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSingleNamedFunctionAs
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes
 import org.jetbrains.kotlin.config.LanguageFeature.RestrictRetentionForExpressionAnnotations
-import org.jetbrains.kotlin.config.LanguageFeature.RestrictionOfValReassignmentViaBackingField
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -791,7 +790,7 @@ object FirErrors {
     val UNINITIALIZED_ENUM_ENTRY: KtDiagnosticFactory1<FirEnumEntrySymbol> = KtDiagnosticFactory1("UNINITIALIZED_ENUM_ENTRY", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtExpression::class)
     val UNINITIALIZED_ENUM_COMPANION: KtDiagnosticFactory1<FirRegularClassSymbol> = KtDiagnosticFactory1("UNINITIALIZED_ENUM_COMPANION", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtExpression::class)
     val VAL_REASSIGNMENT: KtDiagnosticFactory1<FirVariableSymbol<*>> = KtDiagnosticFactory1("VAL_REASSIGNMENT", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtExpression::class)
-    val VAL_REASSIGNMENT_VIA_BACKING_FIELD: KtDiagnosticFactoryForDeprecation1<FirBackingFieldSymbol> = KtDiagnosticFactoryForDeprecation1("VAL_REASSIGNMENT_VIA_BACKING_FIELD", RestrictionOfValReassignmentViaBackingField, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtExpression::class)
+    val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR: KtDiagnosticFactory1<FirBackingFieldSymbol> = KtDiagnosticFactory1("VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtExpression::class)
     val CAPTURED_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("CAPTURED_VAL_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val CAPTURED_MEMBER_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("CAPTURED_MEMBER_VAL_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val NON_INLINE_MEMBER_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("NON_INLINE_MEMBER_VAL_INITIALIZATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
