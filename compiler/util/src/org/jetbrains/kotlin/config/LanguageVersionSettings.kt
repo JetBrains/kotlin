@@ -441,6 +441,9 @@ enum class LanguageFeature(
     // this feature will eventually switch this warning to an error
     ProhibitScriptTopLevelInnerClasses(sinceVersion = null, kind = OTHER),
 
+    // Special test-only feature for logging fixation order
+    FixationLogs(sinceVersion = null, kind = TEST_ONLY),
+
     // Experimental features
 
     ExpectRefinement(sinceVersion = null),

@@ -1,0 +1,16 @@
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
+     >: TypeVariable(VR)
+     >: kotlin/Int
+     = kotlin/Int
+    FIXED TO: kotlin/Int
+TypeVariable(VR) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/Int?
+     <: kotlin/Int
+     = kotlin/Int
+********************************
+CHOSEN for fixation: TypeVariable(VR) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/Int?
+     <: kotlin/Int
+     = kotlin/Int
+    FIXED TO: kotlin/Int
+********************************

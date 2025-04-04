@@ -97,6 +97,73 @@ class VariableFixationFinder(
     private val isTypeInferenceForSelfTypesSupported: Boolean
         get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
 
+    val provideFixationLogs: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.FixationLogs)
+
+    val fixationLogs = mutableListOf<FixationLogRecord>()
+
+    class FixationLogRecord(val map: Map<TypeVariableMarker, FixationLogVariableInfo>, val chosen: TypeVariableMarker?) {
+        var fixedTo: KotlinTypeMarker? = null
+
+        override fun toString(): String = buildString {
+            if (chosen != null) {
+                append("CHOSEN for fixation: ")
+                append(chosen)
+                append(" --- ")
+                append(map[chosen])
+                if (fixedTo != null) {
+                    append("    FIXED TO: ")
+                    append(fixedTo)
+                    appendLine()
+                }
+            }
+            for ((variable, info) in map) {
+                if (variable === chosen) continue
+                append(variable)
+                append(" --- ")
+                append(info)
+            }
+            append("********************************")
+            appendLine()
+        }
+
+        internal fun isSimilarTo(record: FixationLogRecord): Boolean {
+            if (record.chosen !== chosen) return false
+            if (record.map.size != map.size) return false
+            for ((variable, info) in record.map) {
+                if (!info.isSimilarTo(map[variable])) return false
+            }
+            return true
+        }
+
+        private fun FixationLogVariableInfo.isSimilarTo(info: FixationLogVariableInfo?): Boolean {
+            if (info == null) return false
+            if (readiness != info.readiness) return false
+            if (constraints.size != info.constraints.size) return false
+            for (i in 0 until constraints.size) {
+                if (constraints[i] !== info.constraints[i]) return false
+            }
+            return true
+        }
+    }
+
+    class FixationLogVariableInfo(val readiness: TypeVariableFixationReadiness, val constraints: List<Constraint>) {
+        override fun toString(): String = buildString {
+            append(readiness)
+            appendLine()
+            for (constraint in constraints) {
+                append("    ")
+                when (constraint.kind) {
+                    ConstraintKind.LOWER -> append(" >: ")
+                    ConstraintKind.UPPER -> append(" <: ")
+                    ConstraintKind.EQUALITY -> append(" = ")
+                }
+                append(constraint.type)
+                appendLine()
+            }
+        }
+    }
+
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
@@ -188,8 +255,24 @@ class VariableFixationFinder(
             languageVersionSettings,
         )
 
-        val candidate =
-            allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
+        val candidate = if (provideFixationLogs && isK2) {
+            val readinessPerVariable = allTypeVariables.associateWith {
+                FixationLogVariableInfo(
+                    getTypeVariableReadiness(it, dependencyProvider),
+                    notFixedTypeVariables[it]?.constraints.orEmpty()
+                )
+            }
+            val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
+            val newRecord = FixationLogRecord(
+                readinessPerVariable.mapKeys { (key, _) -> this.allTypeVariables[key]!! }, this.allTypeVariables[chosen]
+            )
+            if (fixationLogs.isEmpty() || !fixationLogs.last().isSimilarTo(newRecord)) {
+                fixationLogs += newRecord
+            }
+            chosen
+        } else {
+            allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) }
+        } ?: return null
 
         return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null

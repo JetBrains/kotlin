@@ -582,6 +582,9 @@ class PostponedArgumentInputTypesResolver(
             resultType,
             createFixVariableConstraintPosition(variable, resolvedAtomByTypeVariableProvider(variable))
         )
+        if (isK2 && variableFixationFinder.provideFixationLogs) {
+            variableFixationFinder.fixationLogs.last().fixedTo = resultType
+        }
 
         return true
     }
