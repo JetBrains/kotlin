@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DEPRECATED_JAVA_ANNOTATION
@@ -368,7 +368,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING
         )
         map.put(
-            CONCURRENT_HASH_MAP_CONTAINS_OPERATOR,
+            CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR,
             "Method 'contains' from ConcurrentHashMap might have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
                     "Use the explicit form of the call to 'containsKey'/'containsValue'/'contains' or cast the value to 'kotlin.collections.Map' instead. " +
                     "See https://youtrack.jetbrains.com/issue/KT-18053 for more details."

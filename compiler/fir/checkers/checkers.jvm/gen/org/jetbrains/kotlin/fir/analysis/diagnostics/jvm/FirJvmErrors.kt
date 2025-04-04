@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplementationByDelegationWithDifferentGenericSignature
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
-import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConcurrentHashMapContains
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSynchronizationByValueClassesAndPrimitives
@@ -163,7 +162,7 @@ object FirJvmErrors {
     val SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE: KtDiagnosticFactoryForDeprecation1<ConeKotlinType> = KtDiagnosticFactoryForDeprecation1("SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE", ProhibitSynchronizationByValueClassesAndPrimitives, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val JVM_SYNTHETIC_ON_DELEGATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_SYNTHETIC_ON_DELEGATE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class)
-    val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("CONCURRENT_HASH_MAP_CONTAINS_OPERATOR", ProhibitConcurrentHashMapContains, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL", ProhibitSpreadOnSignaturePolymorphicCall, SourceElementPositioningStrategies.SPREAD_OPERATOR, PsiElement::class)
     val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val NO_REFLECTION_IN_CLASS_PATH: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_REFLECTION_IN_CLASS_PATH", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

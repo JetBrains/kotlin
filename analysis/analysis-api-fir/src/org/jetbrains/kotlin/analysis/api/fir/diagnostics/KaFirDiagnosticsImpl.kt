@@ -5368,11 +5368,6 @@ internal class ConcurrentHashMapContainsOperatorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConcurrentHashMapContainsOperatorError
 
-internal class ConcurrentHashMapContainsOperatorWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConcurrentHashMapContainsOperatorWarning
-
 internal class SpreadOnSignaturePolymorphicCallErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
