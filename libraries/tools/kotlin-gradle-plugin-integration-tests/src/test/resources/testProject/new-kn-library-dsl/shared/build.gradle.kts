@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.withPodspec
 
 plugins {
