@@ -257,10 +257,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR by error<PsiElement>()
-        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError<PsiElement>(
-            ProhibitSpreadOnSignaturePolymorphicCall,
-            PositioningStrategy.SPREAD_OPERATOR
-        )
+        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
         val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
         val SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {

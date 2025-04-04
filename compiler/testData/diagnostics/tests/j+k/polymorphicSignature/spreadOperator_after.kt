@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +PolymorphicSignature +ProhibitSpreadOnSignaturePolymorphicCall
+// LANGUAGE: +PolymorphicSignature
 // FULL_JDK
 
 import java.lang.invoke.MethodHandle
