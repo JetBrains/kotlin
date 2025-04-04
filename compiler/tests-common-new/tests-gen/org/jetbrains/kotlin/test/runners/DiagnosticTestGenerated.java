@@ -25143,6 +25143,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("manyImplNotImplementedComplexHierarchy.kt")
+      public void testManyImplNotImplementedComplexHierarchy() {
+        runTest("compiler/testData/diagnostics/tests/j+k/manyImplNotImplementedComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("manyImplNotImplementedComplexHierarchy2.kt")
+      public void testManyImplNotImplementedComplexHierarchy2() {
+        runTest("compiler/testData/diagnostics/tests/j+k/manyImplNotImplementedComplexHierarchy2.kt");
+      }
+
+      @Test
       @TestMetadata("matchers.kt")
       public void testMatchers() {
         runTest("compiler/testData/diagnostics/tests/j+k/matchers.kt");
