@@ -330,18 +330,15 @@ open class FirKaptAnalysisHandlerExtension(
         }
 
         if (sourcesOutputDir == null || classesOutputDir == null || stubsOutputDir == null) {
-            if (mode != AptMode.WITH_COMPILATION) {
-                val nonExistentOptionName = when {
-                    sourcesOutputDir == null -> "Sources output directory"
-                    classesOutputDir == null -> "Classes output directory"
-                    stubsOutputDir == null -> "Stubs output directory"
-                    else -> throw IllegalStateException()
-                }
-                val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
-                    ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
-
-                logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
+            val nonExistentOptionName = when {
+                sourcesOutputDir == null -> "Sources output directory"
+                classesOutputDir == null -> "Classes output directory"
+                else -> "Stubs output directory"
             }
+            val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
+                ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
+
+            logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
             return false
         }
 
