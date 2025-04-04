@@ -98,7 +98,9 @@ class VariableFixationFinder(
         // Currently used in 2.2+ ONLY for self-type based declared upper bounds
         // Captured types are difficult to manipulate, so with T <: Captured(...)
         // it's better to fix T earlier than T >: SomeRegularType / T <: SomeRegularType
-        READY_FOR_FIXATION_CAPTURED_UPPER,
+        // TODO: it would be probably better to use READY_FOR_FIXATION_UPPER here and to have
+        // it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
+        READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
 
         // K1 used this for reified type parameters, mainly to get discriminateNothingForReifiedParameter.kt working
         // KT-55691 lessens the need for this readiness kind in K2,
@@ -127,7 +129,7 @@ class VariableFixationFinder(
         areAllProperConstraintsSelfTypeBased(variable) -> if (!fixationEnhancementsIn22 || isReified(variable)) {
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         } else {
-            TypeVariableFixationReadiness.READY_FOR_FIXATION_CAPTURED_UPPER
+            TypeVariableFixationReadiness.READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
         }
 
         // Prevents from fixation
