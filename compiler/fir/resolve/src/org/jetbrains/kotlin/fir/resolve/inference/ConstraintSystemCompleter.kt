@@ -199,6 +199,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             break
         }
+        if (variableFixationFinder.provideFixationLogs && completionMode == ConstraintSystemCompletionMode.FULL) {
+            with(variableFixationFinder) { logFixedTo() }
+        }
     }
 
     private fun ConstraintSystemCompletionContext.findFirstVariableForFixation(

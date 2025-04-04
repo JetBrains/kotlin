@@ -2,6 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-74999
 // FIR_DUMP
+// FIXATION_LOGS
 
 interface Traversable {
     fun foo(): String = "fail"

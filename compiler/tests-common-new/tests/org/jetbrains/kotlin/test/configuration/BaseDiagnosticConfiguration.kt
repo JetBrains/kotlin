@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.FixationLogsCollectionConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
@@ -132,6 +133,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         ::CommonEnvironmentConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
+        ::FixationLogsCollectionConfigurator,
     )
 
     useAdditionalSourceProviders(
@@ -157,6 +159,7 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDi
         ::FirCfgConsistencyHandler,
         ::FirResolvedTypesVerifier,
         ::FirScopeDumpHandler,
+        ::FirFixationLogHandler,
     )
 }
 

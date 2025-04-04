@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -37,7 +38,9 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
     val resultTypeResolver: ResultTypeResolver =
         ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val variableFixationFinder: VariableFixationFinder =
-        VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
+        VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings).apply {
+            provideFixationLogs = session.languageVersionSettings.getFlag(AnalysisFlags.fixationLogsCollectionMode)
+        }
     val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(
             resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext

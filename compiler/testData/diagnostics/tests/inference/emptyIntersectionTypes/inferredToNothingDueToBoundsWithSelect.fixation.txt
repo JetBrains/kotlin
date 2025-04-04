@@ -1,0 +1,19 @@
+CHOSEN for fixation: TypeVariable(T) --- FORBIDDEN
+     <: CapturedType(*)
+********************************
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+     <: CapturedType(*)
+     <: TypeVariable(K)
+     = CapturedType(*)
+    FIXED TO: CapturedType(*)
+TypeVariable(K) --- READY_FOR_FIXATION_LOWER
+     >: Path
+     >: CapturedType(*)
+     = Traversable
+********************************
+CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_LOWER
+     >: Path
+     >: CapturedType(*)
+     = Traversable
+    FIXED TO: Traversable
+********************************
