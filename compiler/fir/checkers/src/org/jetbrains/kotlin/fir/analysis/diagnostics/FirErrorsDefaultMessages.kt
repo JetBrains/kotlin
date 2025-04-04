@@ -99,7 +99,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_CLASS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_IN_CONTRACT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_SUPERCLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD
@@ -1185,7 +1185,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EMPTY
         )
         map.put(REDUNDANT_ANNOTATION, "Annotation ''{0}'' is redundant.", CLASS_ID)
-        map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclasses are meaningless.")
+        map.put(ANNOTATION_ON_SUPERCLASS_ERROR, "Annotations on superclasses are meaningless.")
         map.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR, "Expression annotations with retention other than SOURCE are prohibited.")
         map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''. Applicable targets: {1}", TO_STRING, KOTLIN_TARGETS)
         map.put(WRONG_ANNOTATION_TARGET_WARNING, "Application of this annotation to target ''{0}'' will be forbidden soon. Applicable targets: {1}", TO_STRING, KOTLIN_TARGETS)
