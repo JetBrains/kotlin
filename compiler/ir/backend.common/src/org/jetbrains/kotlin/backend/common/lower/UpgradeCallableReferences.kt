@@ -368,6 +368,12 @@ open class UpgradeCallableReferences(
                 // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
                 // we already have such klib, so need to handle it. We just ignore extra type parameters
                 val cleanedTypeArgumentCount = minOf(typeArguments.size, referencedFunction.allTypeParameters.size)
+                val cleanedTypeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType }
+
+                val typeArgumentsMap = referencedFunction.allTypeParameters.mapIndexed { i, typeParameter ->
+                    typeParameter.symbol to cleanedTypeArguments[i]
+                }.toMap()
+
                 val exprToReturn = this@UpgradeCallableReferences
                     .context
                     .createIrBuilder(symbol)
@@ -382,7 +388,8 @@ open class UpgradeCallableReferences(
                             "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
                         }
                         for ((originalParameter, localParameter) in (boundParameters + unboundParameters).zip(parameters)) {
-                            arguments[originalParameter.indexInParameters] = irGet(localParameter)
+                            arguments[originalParameter.indexInParameters] =
+                                irGet(localParameter).implicitCastIfNeededTo(originalParameter.type.substitute(typeArgumentsMap))
                         }
                     }
                 +irReturn(exprToReturn)
