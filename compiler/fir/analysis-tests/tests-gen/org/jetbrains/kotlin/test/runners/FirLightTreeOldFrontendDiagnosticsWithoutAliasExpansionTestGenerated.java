@@ -2530,6 +2530,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/pcla")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Pcla {
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reflection")
     @TestDataPath("$PROJECT_ROOT")
     public class Reflection {

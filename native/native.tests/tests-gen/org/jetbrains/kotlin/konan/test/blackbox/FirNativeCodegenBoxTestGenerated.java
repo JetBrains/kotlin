@@ -20154,6 +20154,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           public void testKt76058() {
             runTest("compiler/testData/codegen/box/inference/pcla/issues/kt76058.kt");
           }
+
+          @Test
+          @TestMetadata("kt76171.kt")
+          public void testKt76171() {
+            runTest("compiler/testData/codegen/box/inference/pcla/issues/kt76171.kt");
+          }
         }
 
         @Nested
