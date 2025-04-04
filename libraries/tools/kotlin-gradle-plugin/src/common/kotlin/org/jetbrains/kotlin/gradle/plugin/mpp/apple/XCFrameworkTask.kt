@@ -253,7 +253,19 @@ internal constructor(
         }
     }
 
-    fun copyResources(resources: Provider<File>, target: KonanTarget) {
+    /**
+     * Adds the specified resource directory to the grouped resources for the given Kotlin/Native target.
+     *
+     * Resources are categorized based on their corresponding Apple platform (macOS, iOS, tvOS, etc.).
+     * This method maps the provided KonanTarget to its associated Apple platform category and adds
+     * the resource directory to that category's collection.
+     *
+     * @param resources a provider supplying the directory to be added as a resource. The directory
+     *                  will be registered as an input file for the task.
+     * @param target the Kotlin/Native target (KonanTarget) that specifies which Apple platform
+     *              category these resources should be included in (e.g., iOS device, iOS simulator).
+     */
+    fun addTargetResources(resources: Provider<File>, target: KonanTarget) {
         inputs.files(resources)
         val group = AppleTarget.values().first { it.targets.contains(target) }
         groupedResourcesFiles.getOrPut(group) { mutableListOf() }.add(resources.get())
