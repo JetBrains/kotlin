@@ -77,7 +77,6 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::noCheckActual,
             CommonCompilerArguments::newInference,
             CommonCompilerArguments::inlineClasses,
-            CommonCompilerArguments::legacySmartCastAfterTry,
             CommonCompilerArguments::reportPerf,
             CommonCompilerArguments::listPhases,
             CommonCompilerArguments::profilePhases,

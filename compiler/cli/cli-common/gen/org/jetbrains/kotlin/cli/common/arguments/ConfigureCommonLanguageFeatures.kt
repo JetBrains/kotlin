@@ -22,10 +22,6 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
         put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.legacySmartCastAfterTry) {
-        put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
-    }
-
     if (arguments.inferenceCompatibility) {
         put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
     }

@@ -15,7 +15,7 @@ enum class DefaultImportPriority {
             defaultImportProvider: DefaultImportProvider?,
             languageVersionSettings: LanguageVersionSettings
         ): List<ImportPath>? =
-            defaultImportProvider?.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false)
+            defaultImportProvider?.getDefaultImports(includeLowPriorityImports = false)
     },
     LOW {
         override fun getAllDefaultImports(
