@@ -35,6 +35,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
         DeprecatedProperty(
+            "kotlin.native.enableKlibsCrossCompilation",
+            "Klibs cross compilation is enabled by default. " +
+                    "You can disable it by setting the property `kotlin.native.disableKlibsCrossCompilation` to true.",
+        ), // Since 2.2.20
+        DeprecatedProperty(
             propertyName = "kotlin.incremental.useClasspathSnapshot",
             details = "History based incremental compilation approach for JVM platform is removed." +
                     " Kotlin Gradle plugin is now using a more efficient approach based on ABI snapshots."

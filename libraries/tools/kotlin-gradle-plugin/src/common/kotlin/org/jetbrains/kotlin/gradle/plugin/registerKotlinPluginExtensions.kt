@@ -164,7 +164,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, AndroidPluginWithoutAndroidTargetChecker)
         register(project, NoKotlinTargetsDeclaredChecker)
         register(project, DisabledCinteropCommonizationInHmppProjectChecker)
-        register(project, DisabledNativeTargetsChecker)
         register(project, JsEnvironmentChecker)
         register(project, WasmJsEnvironmentChecker)
         register(project, WasmWasiEnvironmentChecker)

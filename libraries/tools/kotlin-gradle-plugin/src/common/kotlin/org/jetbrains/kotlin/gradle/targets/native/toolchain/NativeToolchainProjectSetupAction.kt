@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
@@ -21,7 +20,7 @@ internal val NativeToolchainProjectSetupAction = KotlinProjectSetupCoroutine {
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     if (kotlinTargets.flatMap { target -> target.compilations }
             .filterIsInstance<AbstractKotlinNativeCompilation>()
-            .any { it.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) }
+            .any { it.enabledOnCurrentHostForKlibCompilation }
     ) {
         addKotlinNativeBundleConfiguration(project)
         KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)

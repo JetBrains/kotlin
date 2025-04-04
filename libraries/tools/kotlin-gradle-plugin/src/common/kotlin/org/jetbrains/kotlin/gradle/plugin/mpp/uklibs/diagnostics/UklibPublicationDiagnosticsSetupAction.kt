@@ -24,17 +24,6 @@ internal val UklibPublicationDiagnosticsSetupAction = KotlinProjectSetupAction {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> Unit
     }
 
-    if (!project.kotlinPropertiesProvider.enableKlibsCrossCompilation) {
-        /**
-         * Uklib must publish with all fragments. Make sure cross compilation is enabled, so that Apple klib compilations run
-         */
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.UklibPublicationWithoutCrossCompilation(
-                severity = if (HostManager.hostIsMac) WARNING else ERROR
-            ).get()
-        )
-    }
-
     /**
      * Check that KGP model is compliant with Uklib limitations; this function does validations as a side effect
      */

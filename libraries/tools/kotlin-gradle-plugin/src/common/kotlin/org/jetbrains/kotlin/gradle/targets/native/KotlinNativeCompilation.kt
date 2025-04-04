@@ -95,7 +95,7 @@ open class KotlinSharedNativeCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
 ) : AbstractKotlinNativeCompilation(
     compilation,
-    konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(compilation.project.kotlinPropertiesProvider) } ?: konanTargets.first()
+    konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(compilation.project.kotlinPropertiesProvider, false) } ?: konanTargets.first()
 ),
     KotlinMetadataCompilation<Any> {
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget

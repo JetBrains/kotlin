@@ -11,17 +11,11 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
-import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRunFactory
-import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRunFactory
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -36,9 +30,9 @@ abstract class KotlinNativeTarget @Inject constructor(
     val konanTarget: KonanTarget,
 ) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
     KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
-    project,
-    KotlinPlatformType.native
-) {
+        project,
+        KotlinPlatformType.native
+    ) {
 
     init {
         attributes.attribute(konanTargetAttribute, konanTarget.name)
@@ -100,7 +94,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+        get() = enabledOnCurrentHostForKlibCompilation
 
     override val compilerOptions: KotlinNativeCompilerOptions = project.objects
         .newInstance<KotlinNativeCompilerOptionsDefault>()

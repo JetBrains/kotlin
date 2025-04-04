@@ -99,7 +99,7 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
         .all { kotlinTarget ->
             /** Publication for [KotlinMetadataTarget] is created in [createRootPublication] */
             if (kotlinTarget is KotlinMetadataTarget) return@all
-            if (kotlinTarget is KotlinAndroidTarget)
+            if (kotlinTarget is KotlinAndroidTarget || kotlinTarget is KotlinNativeTarget)
             // Android targets have their variants created in afterEvaluate; TODO handle this better?
                 project.whenEvaluated { kotlinTarget.createTargetSpecificMavenPublications(publishing.publications) }
             else

@@ -178,7 +178,7 @@ abstract class AbstractKotlinNativeCompile<
         // That is why we moved setting this property to task registration
         // and added convention for backwards compatibility.
         project.provider {
-            konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+            konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider, false)
         }
     )
 

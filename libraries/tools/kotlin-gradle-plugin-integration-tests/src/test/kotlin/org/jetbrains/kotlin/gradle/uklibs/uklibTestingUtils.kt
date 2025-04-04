@@ -256,16 +256,9 @@ internal fun Project.setUklibPublicationStrategy(strategy: KmpPublicationStrateg
         strategy.propertyName,
     )
     when (strategy) {
-        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> enableCrossCompilation()
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> Unit
         KmpPublicationStrategy.StandardKMPPublication -> Unit
     }
-}
-
-fun Project.enableCrossCompilation(enable: Boolean = true) {
-    propertiesExtension.set(
-        PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION,
-        enable.toString(),
-    )
 }
 
 internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy = KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
