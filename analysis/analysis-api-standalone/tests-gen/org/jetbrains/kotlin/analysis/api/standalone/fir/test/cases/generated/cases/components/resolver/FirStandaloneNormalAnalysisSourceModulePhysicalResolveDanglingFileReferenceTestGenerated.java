@@ -170,6 +170,12 @@ public class FirStandaloneNormalAnalysisSourceModulePhysicalResolveDanglingFileR
     }
 
     @Test
+    @TestMetadata("samConstructor.kt")
+    public void testSamConstructor() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/samConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("syntheticFieldVariable.kt")
     public void testSyntheticFieldVariable() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/syntheticFieldVariable.kt");
