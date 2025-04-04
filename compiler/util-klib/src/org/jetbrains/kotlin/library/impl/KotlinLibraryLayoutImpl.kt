@@ -8,10 +8,6 @@ import java.nio.file.FileSystem
 open class KotlinLibraryLayoutImpl(val klib: File, override val component: String?) : KotlinLibraryLayout {
     val isZipped = klib.isFile
 
-    init {
-        if (isZipped) zippedKotlinLibraryChecks(klib)
-    }
-
     override val libFile = if (isZipped) File("/") else klib
 
     override val libraryName
