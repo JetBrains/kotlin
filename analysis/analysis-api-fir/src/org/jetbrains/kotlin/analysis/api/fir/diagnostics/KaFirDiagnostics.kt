@@ -4441,10 +4441,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SpreadOnSignaturePolymorphicCallError::class
     }
 
-    interface SpreadOnSignaturePolymorphicCallWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = SpreadOnSignaturePolymorphicCallWarning::class
-    }
-
     interface JavaSamInterfaceConstructorReference : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JavaSamInterfaceConstructorReference::class
     }
