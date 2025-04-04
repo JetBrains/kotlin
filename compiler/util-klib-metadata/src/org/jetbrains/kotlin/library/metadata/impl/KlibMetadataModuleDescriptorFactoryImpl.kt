@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.isNativeStdlib
-import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
@@ -59,7 +57,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             storageManager,
             moduleDescriptor,
             configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
-            compositePackageFragmentAddend = runIf(library.isNativeStdlib || library.isJsStdlib || library.isWasmStdlib) {
+            compositePackageFragmentAddend = runIf(library.isAnyPlatformStdlib) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
             },
             lookupTracker = lookupTracker

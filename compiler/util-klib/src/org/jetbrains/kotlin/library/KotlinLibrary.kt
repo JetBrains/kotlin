@@ -122,14 +122,21 @@ interface IrLibrary {
     fun fileEntries(fileIndex: Int): ByteArray?
 }
 
+/** Whether [this] is a Kotlin/Native stdlib. */
 val BaseKotlinLibrary.isNativeStdlib: Boolean
     get() = uniqueName == KOTLIN_NATIVE_STDLIB_NAME && builtInsPlatform == BuiltInsPlatform.NATIVE
 
+/** Whether [this] is a Kotlin/JS stdlib. */
 val BaseKotlinLibrary.isJsStdlib: Boolean
     get() = uniqueName == KOTLIN_JS_STDLIB_NAME && builtInsPlatform == BuiltInsPlatform.JS
 
+/** Whether [this] is a Kotlin/Wasm stdlib. */
 val BaseKotlinLibrary.isWasmStdlib: Boolean
     get() = uniqueName == KOTLIN_WASM_STDLIB_NAME && builtInsPlatform == BuiltInsPlatform.WASM
+
+/** Whether [this] is either Kotlin/Native, Kotlin/JS or Kotlin/Wasm stdlib. */
+val BaseKotlinLibrary.isAnyPlatformStdlib: Boolean
+    get() = isNativeStdlib || isJsStdlib || isWasmStdlib
 
 val BaseKotlinLibrary.uniqueName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
