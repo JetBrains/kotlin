@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitScriptTopLevelInnerCl
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSingleNamedFunctionAsExpression
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes
-import org.jetbrains.kotlin.config.LanguageFeature.RestrictRetentionForExpressionAnnotations
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -325,7 +324,7 @@ object FirErrors {
     val OVERRIDE_DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, FirDeprecationInfo> = KtDiagnosticFactory2("OVERRIDE_DEPRECATION", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val REDUNDANT_ANNOTATION: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("REDUNDANT_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val ANNOTATION_ON_SUPERCLASS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("ANNOTATION_ON_SUPERCLASS", ProhibitUseSiteTargetAnnotationsOnSuperTypes, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION", RestrictRetentionForExpressionAnnotations, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val WRONG_ANNOTATION_TARGET: KtDiagnosticFactory2<String, Collection<KotlinTarget>> = KtDiagnosticFactory2("WRONG_ANNOTATION_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val WRONG_ANNOTATION_TARGET_WARNING: KtDiagnosticFactory2<String, Collection<KotlinTarget>> = KtDiagnosticFactory2("WRONG_ANNOTATION_TARGET_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET: KtDiagnosticFactory3<String, String, Collection<KotlinTarget>> = KtDiagnosticFactory3("WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)

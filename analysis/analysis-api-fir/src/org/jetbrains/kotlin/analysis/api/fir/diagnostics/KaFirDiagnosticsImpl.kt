@@ -1053,11 +1053,6 @@ internal class RestrictedRetentionForExpressionAnnotationErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RestrictedRetentionForExpressionAnnotationError
 
-internal class RestrictedRetentionForExpressionAnnotationWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RestrictedRetentionForExpressionAnnotationWarning
-
 internal class WrongAnnotationTargetImpl(
     override val actualTarget: String,
     override val allowedTargets: List<KotlinTarget>,
