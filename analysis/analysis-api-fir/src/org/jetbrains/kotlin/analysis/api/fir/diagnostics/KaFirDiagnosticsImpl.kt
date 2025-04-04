@@ -5045,11 +5045,6 @@ internal class OverloadsAnnotationClassConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.OverloadsAnnotationClassConstructorError
 
-internal class OverloadsAnnotationClassConstructorWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.OverloadsAnnotationClassConstructorWarning
-
 internal class OverloadsPrivateImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
