@@ -1598,6 +1598,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("integerConstantOperator.kt")
+    public void testIntegerConstantOperator() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/integerConstantOperator.kt");
+    }
+
+    @Test
     @TestMetadata("integerLiteralCall.kt")
     public void testIntegerLiteralCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/integerLiteralCall.kt");
