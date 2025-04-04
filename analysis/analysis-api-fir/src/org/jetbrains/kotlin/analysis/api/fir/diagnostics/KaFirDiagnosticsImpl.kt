@@ -4536,13 +4536,6 @@ internal class ProtectedCallFromPublicInlineErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ProtectedCallFromPublicInlineError
 
-internal class ProtectedCallFromPublicInlineImpl(
-    override val inlineDeclaration: KaSymbol,
-    override val referencedDeclaration: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ProtectedCallFromPublicInline
-
 internal class PrivateClassMemberFromInlineImpl(
     override val inlineDeclaration: KaSymbol,
     override val referencedDeclaration: KaSymbol,

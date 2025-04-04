@@ -63,9 +63,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     ) : FirDefaultVisitor<Unit, CheckerContext>() {
         private val isEffectivelyPrivateApiFunction: Boolean = inlineFunEffectiveVisibility.privateApi
 
-        private val prohibitProtectedCallFromInline: Boolean =
-            session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitProtectedCallFromInline)
-
         override fun visitElement(element: FirElement, data: CheckerContext) {}
 
         // prevent delegation to visitQualifiedAccessExpression, which causes redundant diagnostics
@@ -328,8 +325,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             ) {
                 val factory = when {
                     isConstructorCall -> FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
-                    prohibitProtectedCallFromInline -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
-                    else -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE
+                    else -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
                 }
                 reporter.reportOn(source, factory, inlineFunction.symbol, calledDeclaration, context)
             }
