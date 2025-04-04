@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// JDK_KIND: FULL_JDK_17
 // FILE: test/J.java
 package test;
 public sealed class J permits J1, J2 {}
