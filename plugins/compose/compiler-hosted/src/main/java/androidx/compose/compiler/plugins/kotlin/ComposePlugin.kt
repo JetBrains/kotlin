@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.io.FileNotFoundException
 
 internal const val COMPOSE_PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
@@ -725,6 +726,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                     )
                     emptySet()
                 } catch (e: Exception) {
+                    rethrowIntellijPlatformExceptionIfNeeded(e)
                     configuration.messageCollector.report(
                         CompilerMessageSeverity.ERROR,
                         e.message ?: "Error parsing stability configuration at $path"
