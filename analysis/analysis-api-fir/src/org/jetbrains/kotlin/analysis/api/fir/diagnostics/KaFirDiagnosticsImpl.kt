@@ -2859,13 +2859,6 @@ internal class InvisibleAbstractMemberFromSuperErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.InvisibleAbstractMemberFromSuperError
 
-internal class InvisibleAbstractMemberFromSuperWarningImpl(
-    override val classOrObject: KaClassLikeSymbol,
-    override val invisibleDeclarations: List<KaCallableSymbol>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.InvisibleAbstractMemberFromSuperWarning
-
 internal class AmbiguousAnonymousTypeInferredImpl(
     override val superTypes: List<KaType>,
     firDiagnostic: KtPsiDiagnostic,

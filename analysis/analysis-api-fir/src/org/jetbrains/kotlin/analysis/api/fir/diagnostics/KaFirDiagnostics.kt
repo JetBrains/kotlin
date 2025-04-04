@@ -2387,12 +2387,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val invisibleDeclarations: List<KaCallableSymbol>
     }
 
-    interface InvisibleAbstractMemberFromSuperWarning : KaFirDiagnostic<KtClassOrObject> {
-        override val diagnosticClass get() = InvisibleAbstractMemberFromSuperWarning::class
-        val classOrObject: KaClassLikeSymbol
-        val invisibleDeclarations: List<KaCallableSymbol>
-    }
-
     interface AmbiguousAnonymousTypeInferred : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = AmbiguousAnonymousTypeInferred::class
         val superTypes: List<KaType>
