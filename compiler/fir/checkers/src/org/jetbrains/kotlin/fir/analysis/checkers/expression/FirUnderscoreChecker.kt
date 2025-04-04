@@ -27,9 +27,6 @@ object FirUnderscoreChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
             is FirResolvedQualifier -> {
                 checkUnderscoreDiagnostics(expression.source, context, reporter, true)
             }
-            is FirSmartCastExpression -> {
-                check(expression.originalExpression)
-            }
         }
     }
 
