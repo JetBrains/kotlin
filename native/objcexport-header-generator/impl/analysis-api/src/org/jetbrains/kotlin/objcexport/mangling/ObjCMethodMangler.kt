@@ -19,9 +19,6 @@ internal class ObjCMethodMangler {
 
     private val mangledMethods = mutableMapOf<String, ObjCMemberDetails>()
 
-    /**
-     * Returns null when mangling failed by some reason
-     */
     fun mangle(member: ObjCExportStub, containingStub: ObjCExportStub): ObjCExportStub {
         if (!member.isSwiftNameMethod()) return member
         if (!contains(member)) {

@@ -6,21 +6,21 @@ import org.jetbrains.kotlin.objcexport.ObjCExportContext
 
 
 internal fun ObjCExportContext.mangleObjCMethods(
-  stubs: List<ObjCExportStub>,
-  containingStub: ObjCExportStub,
+    stubs: List<ObjCExportStub>,
+    containingStub: ObjCExportStub,
 ): List<ObjCExportStub> {
     if (!stubs.hasMethodConflicts()) return stubs
-  val mangler = ObjCMethodMangler()
+    val mangler = ObjCMethodMangler()
     return stubs.map { member ->
-      if (member.isSwiftNameMethod()) mangler.mangle(member, containingStub)
-      else member
+        if (member.isSwiftNameMethod()) mangler.mangle(member, containingStub)
+        else member
     }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
 internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
     val with = if (attribute.isConstructor) "With" else ""
     return if (attribute.parameters.isEmpty())
-      listOf(attribute.name + attribute.postfix)
+        listOf(attribute.name + attribute.postfix)
     else if (attribute.parameters.size == 1) {
         listOf(
             (attribute.name + with + attribute.parameters.first()
@@ -74,7 +74,7 @@ internal fun buildMangledParameters(attribute: ObjCMemberDetails): List<String> 
 }
 
 internal fun ObjCExportStub.isSwiftNameMethod(): Boolean {
-  return this is ObjCMethod && isSwiftNameMethod()
+    return this is ObjCMethod && isSwiftNameMethod()
 }
 
 internal fun ObjCMethod.isSwiftNameMethod(): Boolean {
@@ -111,7 +111,7 @@ internal val ObjCMethod.isInstance: String
     }
 
 internal fun getMemberKey(method: ObjCMethod) =
-    method.isInstance + getSwiftNameAttribute(method) + method.parameters.joinToString { it.name }
+    method.isInstance + getSwiftNameAttribute(method)
 
 internal fun getSwiftNameAttribute(method: ObjCMethod) =
     method.attributes.first { attr -> attr.startsWith("swift_name") }
