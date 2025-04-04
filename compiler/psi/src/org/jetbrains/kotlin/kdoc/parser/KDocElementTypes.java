@@ -23,8 +23,11 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 
 public class KDocElementTypes {
-    @SuppressWarnings("unused")
-    public static final IElementType _DEPENDENT_TOKENS_INIT = KDocTokens._DEPENDENT_TOKENS_INIT; // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
+    static {
+        // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
+        @SuppressWarnings("unused")
+        IElementType dependentTokensInit = KDocTokens.KDOC;
+    }
 
     public static final KDocElementType KDOC_SECTION = new KDocElementType("KDOC_SECTION", KDocSection.class);
     public static final KDocElementType KDOC_TAG = new KDocElementType("KDOC_TAG", KDocTag.class);
