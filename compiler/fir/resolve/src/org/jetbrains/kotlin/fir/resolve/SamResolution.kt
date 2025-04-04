@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -154,7 +156,7 @@ class FirSamResolver(
         val newTypeParameters = firRegularClass.typeParameters.map { typeParameter ->
             val declaredTypeParameter = typeParameter.symbol.fir
             FirTypeParameterBuilder().apply {
-                source = declaredTypeParameter.source
+                source = declaredTypeParameter.source?.fakeElement(KtFakeSourceElementKind.SamConstructor)
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.SamConstructor
                 resolvePhase = FirResolvePhase.DECLARATIONS
@@ -182,15 +184,17 @@ class FirSamResolver(
             val declared = oldTypeParameter.symbol.fir
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
-                    source = typeRef.source
+                    source = typeRef.source?.fakeElement(KtFakeSourceElementKind.SamConstructor)
                     coneType = substitutor.substituteOrSelf(typeRef.coneType)
                 }
             }
         }
 
+        val fakeSource = firRegularClass.source?.fakeElement(KtFakeSourceElementKind.SamConstructor)
+
         return buildSimpleFunction {
             moduleData = session.moduleData
-            source = firRegularClass.source
+            source = fakeSource
             name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
             val visibility = firRegularClass.visibility
@@ -212,7 +216,7 @@ class FirSamResolver(
                 )
 
             returnTypeRef = buildResolvedTypeRef {
-                source = null
+                source = fakeSource
                 coneType = substitutedReturnType
             }
 
@@ -221,7 +225,7 @@ class FirSamResolver(
                 containingDeclarationSymbol = syntheticFunctionSymbol
                 origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
-                    source = firRegularClass.source
+                    source = fakeSource
                     coneType = substitutedFunctionType
                 }
                 name = SAM_PARAMETER_NAME
