@@ -1,3 +1,8 @@
+// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// ^^^ KT-76233, KT-76547: With IR Inliner in pre-serialization, deserialized IR seems valid,
+// but JS output has extra invalid line within `//region block: imports` clause:
+//      var User = foo.bar.baz.User;
+
 // MODULE: lib
 // FILE: lib.kt
 @file:JsQualifier("foo.bar.baz")
