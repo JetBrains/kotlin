@@ -595,17 +595,29 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
         is ConeCapturedType -> captureCapturedType(type)
         is ConeDefinitelyNotNullType -> captureFromExpressionInternal(type.original)?.makeConeTypeDefinitelyNotNullOrNotNull(this)
         is ConeFlexibleType -> {
-            @Suppress("AssignedValueIsNeverRead")
-            capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
-            // Flexible types can either have projections in both bounds or just the upper bound (raw types and arrays).
-            // Since the scope of flexible types is built from the lower bound, we don't gain any safety from only capturing the
-            // upper bound.
-            // At the same time, capturing of raw(-like) types leads to issues like KT-63982 or breaks tests like
-            // testData/codegen/box/reflection/typeOf/rawTypes_after.kt.
-            // Therefore, we return null if nothing was captured for either bound.
-            type.mapTypesOrNull(this) {
-                intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(it) ?: return null)
-                    .withNullability(it.canBeNull(session), this)
+            when (type.unwrapToSimpleTypeUsingLowerBound()) {
+                is ConeCapturedType -> {
+                    type.mapTypesOrNull(this) { captureFromExpressionInternal(it) }
+                }
+                is ConeLookupTagBasedType, is ConeIntersectionType -> {
+                    @Suppress("AssignedValueIsNeverRead")
+                    capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
+                    // Flexible types can either have projections in both bounds or just the upper bound (raw types and arrays).
+                    // Since the scope of flexible types is built from the lower bound, we don't gain any safety from only capturing the
+                    // upper bound.
+                    // At the same time, capturing of raw(-like) types leads to issues like KT-63982 or breaks tests like
+                    // testData/codegen/box/reflection/typeOf/rawTypes_after.kt.
+                    // Therefore, we return null if nothing was captured for either bound.
+                    type.mapTypesOrNull(this) {
+                        intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(it) ?: return null)
+                            .withNullability(it.canBeNull(session), this)
+                    }
+                }
+                // None of these types have arguments that could be captured.
+                is ConeIntegerLiteralType,
+                is ConeStubType,
+                is ConeTypeVariableType,
+                    -> null
             }
         }
         is ConeIntersectionType -> {
