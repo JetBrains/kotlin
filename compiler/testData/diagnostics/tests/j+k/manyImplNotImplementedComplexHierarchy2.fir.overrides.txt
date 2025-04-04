@@ -1,6 +1,6 @@
 Child:
-  [IntersectionOverride]: public? final override fun func(): R|kotlin/Unit| from Use site scope of /Child [id: 0]
-    [IntersectionOverride]: public? final override fun func(): R|kotlin/Unit| from Use site scope of /Parent [id: 1]
+  [IntersectionOverride]: public final override fun func(): R|kotlin/Unit| from Use site scope of /Child [id: 0]
+    [IntersectionOverride]: public final override fun func(): R|kotlin/Unit| from Use site scope of /Parent [id: 1]
       [Enhancement]: public final fun func(): R|kotlin/Unit| from Java enhancement scope for /GrandParent [id: 2]
         [Enhancement]: public open fun func(): R|kotlin/Unit| from Java enhancement scope for /ITop [id: 3]
       [Enhancement]: public open fun func(): R|kotlin/Unit| from Java enhancement scope for /ISecondary [id: 4]

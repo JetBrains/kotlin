@@ -15,4 +15,4 @@ interface IS {
     fun replace(key: String, value: String): String? = null
 }
 
-abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class ZS<!> : MyMap<String, String>(), IS
+abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class ZS<!> : MyMap<String, String>(), IS
