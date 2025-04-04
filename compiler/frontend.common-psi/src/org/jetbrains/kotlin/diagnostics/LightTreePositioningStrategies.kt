@@ -13,6 +13,8 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
+import org.jetbrains.kotlin.KtNodeTypes.SAFE_ACCESS_EXPRESSION
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -672,7 +674,7 @@ object LightTreePositioningStrategies {
                 }
             }
             val nodeToStart = when (node.tokenType) {
-                in QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
+                DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
                 KtNodeTypes.CLASS -> tree.findLastChildByType(node, KtNodeTypes.SUPER_TYPE_LIST) ?: node
                 else -> node
             }
@@ -737,7 +739,7 @@ object LightTreePositioningStrategies {
                     return mark(it, it.startOffset, it.endOffset, tree)
                 }
             }
-            if (node.tokenType in KtTokens.QUALIFIED_ACCESS) {
+            if (node.tokenType.let { it == DOT_QUALIFIED_EXPRESSION || it == SAFE_ACCESS_EXPRESSION }) {
                 val selector = tree.selector(node)
                 if (selector != null) {
                     return markElement(selector, startOffset, endOffset, tree, node)

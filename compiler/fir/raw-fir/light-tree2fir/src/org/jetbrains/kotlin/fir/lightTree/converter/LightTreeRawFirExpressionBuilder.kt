@@ -134,7 +134,7 @@ class LightTreeRawFirExpressionBuilder(
             ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
             CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
             CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
-            in QUALIFIED_ACCESS -> convertQualifiedExpression(expression)
+            DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> convertQualifiedExpression(expression)
             CALL_EXPRESSION -> convertCallExpression(expression)
             WHEN -> convertWhenExpression(expression)
             ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
