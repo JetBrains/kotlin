@@ -34,10 +34,10 @@ CONSTRUCTOR:
               isActual: false
               isExpect: false
               isReified: false
-              location: CLASS
+              location: LOCAL
               modality: FINAL
               name: A
-              origin: SOURCE
+              origin: SAM_CONSTRUCTOR
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -59,10 +59,10 @@ CONSTRUCTOR:
           isActual: false
           isExpect: false
           isReified: false
-          location: CLASS
+          location: LOCAL
           modality: FINAL
           name: A
-          origin: SOURCE
+          origin: SAM_CONSTRUCTOR
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL
@@ -77,10 +77,10 @@ CONSTRUCTOR:
       isActual: false
       isExpect: false
       isReified: false
-      location: CLASS
+      location: LOCAL
       modality: FINAL
       name: A
-      origin: SOURCE
+      origin: SAM_CONSTRUCTOR
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -132,10 +132,10 @@ CONSTRUCTOR:
               isActual: false
               isExpect: false
               isReified: false
-              location: CLASS
+              location: LOCAL
               modality: FINAL
               name: A
-              origin: SOURCE
+              origin: SAM_CONSTRUCTOR
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -159,10 +159,10 @@ CONSTRUCTOR:
                   isActual: false
                   isExpect: false
                   isReified: false
-                  location: CLASS
+                  location: LOCAL
                   modality: FINAL
                   name: A
-                  origin: SOURCE
+                  origin: SAM_CONSTRUCTOR
                   upperBounds: []
                   variance: INVARIANT
                   visibility: LOCAL
@@ -211,10 +211,10 @@ CONSTRUCTOR:
               isActual: false
               isExpect: false
               isReified: false
-              location: CLASS
+              location: LOCAL
               modality: FINAL
               name: A
-              origin: SOURCE
+              origin: SAM_CONSTRUCTOR
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL

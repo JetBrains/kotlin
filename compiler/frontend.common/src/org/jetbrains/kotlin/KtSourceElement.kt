@@ -519,6 +519,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object SamConversion : KtFakeSourceElementKind()
 
     /**
+     * For synthetic functions created for SAM constructors.
+     */
+    object SamConstructor : KtFakeSourceElementKind()
+
+    /**
      * For it.functionFromAny() calls on a stub type
      */
     object CastToAnyForStubTypes : KtFakeSourceElementKind()
