@@ -23,7 +23,7 @@ private val isErrorParameterKey = extrasKeyOf<Boolean>("isErrorParameter")
  * Becomes
  * ```c
  * @interface Foo
- * - barValue:(int32_t)value error:(NSError * _Nullable)error __attribute__((swift_name("value(value:)")));
+ * - (id<Foo> _Nullable)valueValue:(int64_t)value error_:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("value(value_:)")));
  * @end
  * ```
  *
