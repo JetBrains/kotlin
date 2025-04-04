@@ -2256,12 +2256,6 @@ internal class TypeParameterAsReifiedArrayErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeParameterAsReifiedArrayError
 
-internal class TypeParameterAsReifiedArrayWarningImpl(
-    override val typeParameter: KaTypeParameterSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeParameterAsReifiedArrayWarning
-
 internal class ReifiedTypeForbiddenSubstitutionImpl(
     override val type: KaType,
     firDiagnostic: KtPsiDiagnostic,

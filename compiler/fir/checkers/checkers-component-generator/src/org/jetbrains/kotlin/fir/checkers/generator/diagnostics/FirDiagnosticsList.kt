@@ -854,7 +854,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
-        val TYPE_PARAMETER_AS_REIFIED_ARRAY by deprecationError<PsiElement>(LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments) {
+        val TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR by error<PsiElement> {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
