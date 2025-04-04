@@ -25,10 +25,10 @@ public class GrandParent implements ITop {
 }
 
 // FILE: main.kt
-open <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Parent<!> : GrandParent(), ISecondary
+open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Parent<!> : GrandParent(), ISecondary
 
-<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Intermediate<!> : GrandParent(), IChild
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Intermediate<!> : GrandParent(), IChild
 
-<!CANNOT_INFER_VISIBILITY("func")!>class OtherIntermediate<!> : Parent(), ISecondary
+class OtherIntermediate : Parent(), ISecondary
 
-abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Child<!> : Parent(), IChild
+abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Child<!> : Parent(), IChild

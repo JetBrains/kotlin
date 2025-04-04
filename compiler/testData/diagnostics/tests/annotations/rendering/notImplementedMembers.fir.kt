@@ -46,4 +46,4 @@ interface GI : G {
 }
 
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED("Class 'AG1'; a")!>class AG1<!>(val a: A, val g: G) : A by a, G by g
-<!CANNOT_INFER_VISIBILITY("a"), MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED("Class 'AG2'; a")!>class AG2<!>() : AI, GI
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED("Class 'AG2'; a")!>class AG2<!>() : AI, GI
