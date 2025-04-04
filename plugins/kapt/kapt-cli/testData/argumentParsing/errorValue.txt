@@ -4,6 +4,6 @@ blah
 
 # after
 -P
-plugin:org.jetbrains.kotlin.kapt3:aptMode=compile
+plugin:org.jetbrains.kotlin.kapt3:aptMode=stubsAndApt
 -Kapt-sources
 blah

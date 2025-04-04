@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.modules.isAtLeastJava9
 import org.jetbrains.kotlin.kapt.cli.CliToolOption.Format.*
@@ -115,9 +118,9 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
     }
 
     if (!aptModePassed) {
-        val isK2 = "-Xuse-k2-kapt" in transformed && (transformed.any { it.startsWith("-language-version=2") } ||
+        val isK2 = "-Xuse-k2-kapt=false" !in transformed && transformed.none { it.startsWith("-language-version=1") } &&
                 transformed.lastIndexOf("-language-version").takeIf { it >= 0 }
-                    ?.let { transformed.getOrNull(it + 1)?.startsWith('2') } == true)
+                    ?.let { transformed.getOrNull(it + 1)?.startsWith('1') } != true
 
         transformed.addAll(0, kaptArg(KaptCliOption.APT_MODE_OPTION, if (isK2) "stubsAndApt" else "compile"))
     }
