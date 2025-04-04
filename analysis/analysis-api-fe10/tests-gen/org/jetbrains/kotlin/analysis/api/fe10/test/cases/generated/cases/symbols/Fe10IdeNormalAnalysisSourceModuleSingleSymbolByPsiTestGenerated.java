@@ -221,6 +221,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("lateinitVariable.kt")
+  public void testLateinitVariable() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/lateinitVariable.kt");
+  }
+
+  @Test
   @TestMetadata("localTypeAlias.kt")
   public void testLocalTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/localTypeAlias.kt");
@@ -803,6 +809,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     @TestMetadata("inlinePropertyWithBackingField.kt")
     public void testInlinePropertyWithBackingField() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/inlinePropertyWithBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("lateinitDestructingDeclarationWithoutInitialization.kt")
+    public void testLateinitDestructingDeclarationWithoutInitialization() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/lateinitDestructingDeclarationWithoutInitialization.kt");
+    }
+
+    @Test
+    @TestMetadata("lateinitLoopParameter.kt")
+    public void testLateinitLoopParameter() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/lateinitLoopParameter.kt");
     }
 
     @Test
