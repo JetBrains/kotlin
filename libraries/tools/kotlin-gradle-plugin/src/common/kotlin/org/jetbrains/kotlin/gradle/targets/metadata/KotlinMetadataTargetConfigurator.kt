@@ -198,7 +198,7 @@ class KotlinMetadataTargetConfigurator :
                 // This logic can be simplified, see KT-64523
                 val shouldBeDisabled = platformCompilations
                     .filterIsInstance<KotlinNativeCompilation>()
-                    .none { it.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) }
+                    .none { it.target.enabledOnCurrentHostForKlibCompilation }
                 if (shouldBeDisabled) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
                     compileTaskProvider.configure { it.enabled = false }
@@ -233,8 +233,8 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
-            || isFromUklib
+    private val ResolvedArtifactResult.isMpp: Boolean
+        get() = variant.attributes.containsMultiplatformAttributes || isFromUklib
 }
 
 internal fun Project.locateOrRegisterGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =

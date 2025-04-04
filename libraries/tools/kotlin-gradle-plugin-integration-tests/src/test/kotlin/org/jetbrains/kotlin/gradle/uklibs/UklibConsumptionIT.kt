@@ -177,7 +177,6 @@ class UklibConsumptionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositories(publisher)
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
                 // project.plugins.apply("com.android.library")
                 // with(project.extensions.getByType(LibraryExtension::class.java)) {

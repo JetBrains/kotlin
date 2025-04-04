@@ -39,7 +39,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @TestMetadata("klibCrossCompilationWithGradlePropertyEnabled")
+    @TestMetadata("klibCrossCompilationWithGradlePropertyDisabled")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
         val buildOptions =
@@ -59,7 +59,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 )
             )
         nativeProject(
-            "klibCrossCompilationWithGradlePropertyEnabled",
+            "klibCrossCompilationWithGradlePropertyDisabled",
             gradleVersion,
             buildOptions = buildOptions
         ) {

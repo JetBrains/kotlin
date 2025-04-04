@@ -11,8 +11,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
-import org.jetbrains.kotlin.gradle.targets.native.internal.*
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     override val name: String,
     val project: Project,
-    val konanTarget: KonanTarget
+    val konanTarget: KonanTarget,
 ) : InternalKotlinTargetPreset<T> {
 
     init {
@@ -116,7 +118,25 @@ internal val KonanTarget.isCurrentHost: Boolean
  *
  * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
  */
-internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(provider: PropertiesProvider) =
-    HostManager().isEnabled(this) || provider.enableKlibsCrossCompilation
+internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
+    provider: PropertiesProvider
+) = if (provider.disableKlibsCrossCompilation) {
+    // If cross-compilation is disabled use standard HostManager enablement check
+    HostManager().isEnabled(this)
+} else {
+    // Otherwise, allow compilation for all targets
+    true
+}
 
-internal fun KonanTarget.enabledOnCurrentHostForBinariesCompilation() = HostManager().isEnabled(this)
+internal val KotlinTarget.enabledOnCurrentHostForKlibCompilation: Boolean
+    get() = when (this) {
+        is KotlinNativeTarget -> {
+            konanTarget.enabledOnCurrentHostForKlibCompilation(
+                project.kotlinPropertiesProvider
+            )
+        }
+        else -> true
+    }
+
+internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
+    get() = HostManager().isEnabled(this)

@@ -118,7 +118,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
         task.dependsOn(compilation.compileTaskProvider)
 
-        val enabledOnCurrentHost = binary.konanTarget.enabledOnCurrentHostForBinariesCompilation()
+        val enabledOnCurrentHost = binary.konanTarget.enabledOnCurrentHostForBinariesCompilation
         task.enabled = enabledOnCurrentHost
         task.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
         task.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })

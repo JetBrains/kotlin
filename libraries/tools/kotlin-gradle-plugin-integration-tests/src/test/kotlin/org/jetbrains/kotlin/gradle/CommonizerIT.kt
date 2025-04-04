@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.appendText
@@ -643,7 +642,7 @@ open class CommonizerIT : KGPBaseTest() {
                 ":compileNativeMainKotlinMetadata",
                 buildOptions = defaultBuildOptions.copy(
                     nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                        enableKlibsCrossCompilation = false
+                        disableKlibsCrossCompilation = true
                     )
                 )
             ) {
@@ -651,14 +650,7 @@ open class CommonizerIT : KGPBaseTest() {
                 assertOutputContains("Unresolved reference 'linux'")
             }
 
-            buildAndFail(
-                ":compileNativeMainKotlinMetadata",
-                buildOptions = defaultBuildOptions.copy(
-                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                        enableKlibsCrossCompilation = true
-                    )
-                )
-            ) {
+            buildAndFail(":compileNativeMainKotlinMetadata") {
                 assertTasksFailed(":compileNativeMainKotlinMetadata")
                 assertOutputContains("Unresolved reference 'linux'")
             }
@@ -708,39 +700,27 @@ open class CommonizerIT : KGPBaseTest() {
                 build(
                     "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
                         nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                            enableKlibsCrossCompilation = false
+                            disableKlibsCrossCompilation = true
                         )
                     )
                 ) {
                     checkCommonizedMetadataBuildOnMac()
                 }
-                build(
-                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
-                        nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                            enableKlibsCrossCompilation = true
-                        )
-                    )
-                ) {
+                build("commonizeCInterop") {
                     checkCommonizedMetadataBuildOnMac()
                 }
             } else {
                 build(
                     "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
                         nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                            enableKlibsCrossCompilation = false
+                            disableKlibsCrossCompilation = true
                         )
                     )
                 ) {
                     checkCommonizedMetadataBuildOnNonMac()
                 }
 
-                build(
-                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
-                        nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                            enableKlibsCrossCompilation = true
-                        )
-                    )
-                ) {
+                build("commonizeCInterop") {
                     checkCommonizedMetadataBuildOnNonMac()
                 }
             }

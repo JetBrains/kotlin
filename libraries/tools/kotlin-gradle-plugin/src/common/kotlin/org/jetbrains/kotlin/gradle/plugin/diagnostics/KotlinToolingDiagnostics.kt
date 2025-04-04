@@ -69,7 +69,7 @@ internal object KotlinToolingDiagnostics {
         fun get() = build {
             title("Uklib Publication Without Klib Cross-Compilation")
                 .description("Publication of ${Uklib.UKLIB_NAME} without cross compilation will not work on non-macOS hosts")
-                .solution("Please enable cross-compilation by specifying ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=true in gradle.properties")
+                .solution("Please enable cross-compilation by specifying ${KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION}=false in gradle.properties")
         }
     }
 
