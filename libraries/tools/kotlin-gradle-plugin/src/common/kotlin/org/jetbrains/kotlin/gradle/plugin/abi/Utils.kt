@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.createResolvable
@@ -40,16 +38,6 @@ internal fun KotlinTarget.toKlibTarget(): KlibTarget {
         else -> throw IllegalArgumentException("Unsupported platform type: $platformType")
     }
     return KlibTarget(name, targetName)
-}
-
-/**
- * Checks the specified target is supported by the host compiler.
- */
-internal fun targetIsSupported(target: KotlinTarget, propertiesProvider: PropertiesProvider): Boolean {
-    return when (target) {
-        is KotlinNativeTarget -> target.konanTarget.enabledOnCurrentHostForKlibCompilation(propertiesProvider)
-        else -> true
-    }
 }
 
 /**
