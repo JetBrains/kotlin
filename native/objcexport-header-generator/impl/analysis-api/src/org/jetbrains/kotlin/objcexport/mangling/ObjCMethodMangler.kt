@@ -21,11 +21,12 @@ internal class ObjCMethodMangler {
 
     fun mangle(member: ObjCExportStub, containingStub: ObjCExportStub): ObjCExportStub {
         if (!member.isSwiftNameMethod()) return member
+        require(member is ObjCMethod)
         if (!contains(member)) {
-            cacheMember(member as ObjCMethod)
+            cacheMember(member)
             return member
         } else {
-            val key = getMemberKey(member as ObjCMethod)
+            val key = getMemberKey(member)
             val attribute = mangledMethods[key] ?: error("No cached item for $member")
             val mangledAttribute = attribute.mangleAttribute()
             val cloned = member.copy(
