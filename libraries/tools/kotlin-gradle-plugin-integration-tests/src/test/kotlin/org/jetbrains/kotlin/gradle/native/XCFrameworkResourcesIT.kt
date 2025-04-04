@@ -287,7 +287,7 @@ private fun TestProject.configureForResources(
                 )
 
                 val xcTask = project.tasks.getByName("assembleSharedDebugXCFramework") as XCFrameworkTask
-                xcTask.copyResources(publication.resolveResources(target), target.konanTarget)
+                xcTask.addTargetResources(publication.resolveResources(target), target.konanTarget)
             }
         }
     }
