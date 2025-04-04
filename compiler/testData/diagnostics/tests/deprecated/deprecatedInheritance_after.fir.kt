@@ -79,7 +79,7 @@ open class NWEH: NotDeprecated, WarningDeprecated, ErrorDeprecated, HiddenDeprec
 
 class WE2: WE()
 
-<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class NWE2<!>: WE(), NotDeprecated
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class NWE2<!>: WE(), NotDeprecated
 
 class NWE3: WE(), NotDeprecated {
     override fun f() {

@@ -81,17 +81,21 @@ inline fun <D> chooseIntersectionVisibilityOrNull(
     toSymbol: (D) -> FirCallableSymbol<*>,
     isAbstract: (D) -> Boolean,
 ): Visibility? {
-    val nonAbstract = nonSubsumedOverrides.filter {
+    val nonAbstractOverrides = nonSubsumedOverrides.filter {
         // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
         !isAbstract(it) && toSymbol(it).callableId != StandardClassIds.Callables.clone
     }
-    val allAreAbstract = nonAbstract.isEmpty()
+    val allAreAbstract = nonAbstractOverrides.isEmpty()
 
     if (allAreAbstract) {
         return findMaxVisibilityOrNull(nonSubsumedOverrides, toSymbol)
     }
 
-    return nonAbstract.singleOrNull()?.let(toSymbol)?.rawStatus?.visibility
+    val firstVisibility = nonAbstractOverrides.firstOrNull()?.let(toSymbol)?.rawStatus?.visibility ?: return null
+    for (nonAbstract in nonAbstractOverrides.drop(1)) {
+        if (toSymbol(nonAbstract).rawStatus.visibility != firstVisibility) return null
+    }
+    return firstVisibility
 }
 
 val FirCallableSymbol<*>.isAbstractAccordingToRawStatus: Boolean

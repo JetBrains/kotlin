@@ -29,4 +29,9 @@ public class Parent extends GrandParent implements ISecondary {
 }
 
 // FILE: main.kt
+
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Intermediate<!> : GrandParent(), IChild
+
+class OtherIntermediate : Parent(), ISecondary
+
 abstract class Child : Parent(), IChild
