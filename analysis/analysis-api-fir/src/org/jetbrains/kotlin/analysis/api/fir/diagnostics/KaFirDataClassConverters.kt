@@ -2613,12 +2613,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE) { firDiagnostic ->
-        ReifiedTypeInCatchClauseImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE) { firDiagnostic ->
         TypeParameterInCatchClauseImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -606,7 +606,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SPREAD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBILITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS
@@ -1705,7 +1704,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Variance annotations are only allowed for type parameters of classes and interfaces."
         )
         map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter cannot have a default value.")
-        map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is prohibited for catch parameter.")
         map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is prohibited for catch parameter.")
 
         map.put(

@@ -406,6 +406,7 @@ enum class LanguageFeature(
     UnstableSmartcastOnDelegatedProperties(KOTLIN_2_3, kind = BUG_FIX), // KTLC-273
     ForbidAnnotationsWithUseSiteTargetOnExpressions(KOTLIN_2_3, kind = BUG_FIX), // KT-75242
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, kind = BUG_FIX), // KTLC-279
+    AllowReifiedTypeInCatchClause(KOTLIN_2_3, kind = OTHER), // KT-54363
 
     // End of 2.* language features --------------------------------------------------
 

@@ -513,7 +513,6 @@ object FirErrors {
     val REDUNDANT_PROJECTION: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("REDUNDANT_PROJECTION", WARNING, SourceElementPositioningStrategies.VARIANCE_MODIFIER, KtTypeProjection::class)
     val VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.VARIANCE_MODIFIER, KtTypeParameter::class)
     val CATCH_PARAMETER_WITH_DEFAULT_VALUE: KtDiagnosticFactory0 = KtDiagnosticFactory0("CATCH_PARAMETER_WITH_DEFAULT_VALUE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    val REIFIED_TYPE_IN_CATCH_CLAUSE: KtDiagnosticFactory0 = KtDiagnosticFactory0("REIFIED_TYPE_IN_CATCH_CLAUSE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val TYPE_PARAMETER_IN_CATCH_CLAUSE: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPE_PARAMETER_IN_CATCH_CLAUSE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val GENERIC_THROWABLE_SUBCLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("GENERIC_THROWABLE_SUBCLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtTypeParameter::class)
     val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class)

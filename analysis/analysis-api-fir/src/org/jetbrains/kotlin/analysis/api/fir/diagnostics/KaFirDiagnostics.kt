@@ -1855,10 +1855,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CatchParameterWithDefaultValue::class
     }
 
-    interface ReifiedTypeInCatchClause : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ReifiedTypeInCatchClause::class
-    }
-
     interface TypeParameterInCatchClause : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypeParameterInCatchClause::class
     }
