@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.utils.strings.StringsKt;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.kotlin.ElementTypeUtilsKt.NULL_ELEMENT_TYPE_INDEX;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 /*package*/ abstract class AbstractKotlinParsing {
@@ -158,9 +159,12 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         myBuilder.advanceLexer();
     }
 
-    protected int getTokenId() {
+    /**
+     * The index works as an identifier but not as an index from the file beginning
+     */
+    protected int getTokenIndex() {
         IElementType elementType = tt();
-        return (elementType instanceof KtToken) ? ((KtToken)elementType).tokenId : INVALID_Id;
+        return (elementType != null) ? elementType.getIndex() : NULL_ELEMENT_TYPE_INDEX;
     }
 
     protected IElementType tt() {
@@ -321,24 +325,24 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
                     pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses))) {
                 break;
             }
-            switch (getTokenId()) {
-                case LPAR_Id:
+            switch (getTokenIndex()) {
+                case LPAR_INDEX:
                     openParentheses++;
                     opens.push(LPAR);
                     break;
-                case LT_Id:
+                case LT_INDEX:
                     openAngleBrackets++;
                     opens.push(LT);
                     break;
-                case LBRACE_Id:
+                case LBRACE_INDEX:
                     openBraces++;
                     opens.push(LBRACE);
                     break;
-                case LBRACKET_Id:
+                case LBRACKET_INDEX:
                     openBrackets++;
                     opens.push(LBRACKET);
                     break;
-                case RPAR_Id:
+                case RPAR_INDEX:
                     openParentheses--;
                     if (opens.isEmpty() || opens.pop() != LPAR) {
                         if (pattern.handleUnmatchedClosing(RPAR)) {
@@ -346,13 +350,13 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
                         }
                     }
                     break;
-                case GT_Id:
+                case GT_INDEX:
                     openAngleBrackets--;
                     break;
-                case RBRACE_Id:
+                case RBRACE_INDEX:
                     openBraces--;
                     break;
-                case RBRACKET_Id:
+                case RBRACKET_INDEX:
                     openBrackets--;
                     break;
             }

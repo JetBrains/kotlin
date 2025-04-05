@@ -523,21 +523,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
             @NotNull NameParsingMode nameParsingModeForObject,
             @NotNull DeclarationParsingMode declarationParsingMode
     ) {
-        switch (getTokenId()) {
-            case CLASS_KEYWORD_Id:
-            case INTERFACE_KEYWORD_Id:
+        switch (getTokenIndex()) {
+            case CLASS_KEYWORD_INDEX:
+            case INTERFACE_KEYWORD_INDEX:
                 return parseClass(detector.isEnumDetected(), true);
-            case FUN_KEYWORD_Id:
+            case FUN_KEYWORD_INDEX:
                 return parseFunction();
-            case VAL_KEYWORD_Id:
-            case VAR_KEYWORD_Id:
+            case VAL_KEYWORD_INDEX:
+            case VAR_KEYWORD_INDEX:
                 return parseProperty(declarationParsingMode);
-            case TYPE_ALIAS_KEYWORD_Id:
+            case TYPE_ALIAS_KEYWORD_INDEX:
                 return parseTypeAlias();
-            case OBJECT_KEYWORD_Id:
+            case OBJECT_KEYWORD_INDEX:
                 parseObject(nameParsingModeForObject, true);
                 return OBJECT_DECLARATION;
-            case IDENTIFIER_Id:
+            case IDENTIFIER_INDEX:
                 if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
                     return parseClass(true, false);
                 }

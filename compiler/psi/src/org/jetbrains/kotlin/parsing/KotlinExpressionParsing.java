@@ -625,53 +625,53 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private boolean parseAtomicExpression() {
         boolean ok = true;
 
-        switch (getTokenId()) {
-            case LPAR_Id:
+        switch (getTokenIndex()) {
+            case LPAR_INDEX:
                 parseParenthesizedExpression();
                 break;
-            case LBRACKET_Id:
+            case LBRACKET_INDEX:
                 parseCollectionLiteralExpression();
                 break;
-            case THIS_KEYWORD_Id:
+            case THIS_KEYWORD_INDEX:
                 parseThisExpression();
                 break;
-            case SUPER_KEYWORD_Id:
+            case SUPER_KEYWORD_INDEX:
                 parseSuperExpression();
                 break;
-            case OBJECT_KEYWORD_Id:
+            case OBJECT_KEYWORD_INDEX:
                 parseObjectLiteral();
                 break;
-            case THROW_KEYWORD_Id:
+            case THROW_KEYWORD_INDEX:
                 parseThrow();
                 break;
-            case RETURN_KEYWORD_Id:
+            case RETURN_KEYWORD_INDEX:
                 parseReturn();
                 break;
-            case CONTINUE_KEYWORD_Id:
+            case CONTINUE_KEYWORD_INDEX:
                 parseJump(CONTINUE);
                 break;
-            case BREAK_KEYWORD_Id:
+            case BREAK_KEYWORD_INDEX:
                 parseJump(BREAK);
                 break;
-            case IF_KEYWORD_Id:
+            case IF_KEYWORD_INDEX:
                 parseIf();
                 break;
-            case WHEN_KEYWORD_Id:
+            case WHEN_KEYWORD_INDEX:
                 parseWhen();
                 break;
-            case TRY_KEYWORD_Id:
+            case TRY_KEYWORD_INDEX:
                 parseTry();
                 break;
-            case FOR_KEYWORD_Id:
+            case FOR_KEYWORD_INDEX:
                 parseFor();
                 break;
-            case WHILE_KEYWORD_Id:
+            case WHILE_KEYWORD_INDEX:
                 parseWhile();
                 break;
-            case DO_KEYWORD_Id:
+            case DO_KEYWORD_INDEX:
                 parseDoWhile();
                 break;
-            case IDENTIFIER_Id:
+            case IDENTIFIER_INDEX:
                 // Try to parse anonymous function with context parameters
                 if (at(CONTEXT_KEYWORD) && lookahead(1) == LPAR) {
                     if (parseLocalDeclaration(true, false)) {
@@ -683,11 +683,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 parseSimpleNameExpression();
                 break;
-            case LBRACE_Id:
+            case LBRACE_INDEX:
                 parseFunctionLiteral();
                 break;
-            case INTERPOLATION_PREFIX_Id:
-            case OPEN_QUOTE_Id:
+            case INTERPOLATION_PREFIX_INDEX:
+            case OPEN_QUOTE_INDEX:
                 parseStringTemplate();
                 break;
             /*
@@ -701,28 +701,28 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
              *   : "null"
              *   ;
              */
-            case TRUE_KEYWORD_Id:
-            case FALSE_KEYWORD_Id:
+            case TRUE_KEYWORD_INDEX:
+            case FALSE_KEYWORD_INDEX:
                 parseOneTokenExpression(BOOLEAN_CONSTANT);
                 break;
-            case INTEGER_LITERAL_Id:
+            case INTEGER_LITERAL_INDEX:
                 parseOneTokenExpression(INTEGER_CONSTANT);
                 break;
-            case CHARACTER_LITERAL_Id:
+            case CHARACTER_LITERAL_INDEX:
                 parseOneTokenExpression(CHARACTER_CONSTANT);
                 break;
-            case FLOAT_LITERAL_Id:
+            case FLOAT_LITERAL_INDEX:
                 parseOneTokenExpression(FLOAT_CONSTANT);
                 break;
-            case NULL_KEYWORD_Id:
+            case NULL_KEYWORD_INDEX:
                 parseOneTokenExpression(NULL);
                 break;
-            case CLASS_KEYWORD_Id:
-            case INTERFACE_KEYWORD_Id:
-            case FUN_KEYWORD_Id:
-            case VAL_KEYWORD_Id:
-            case VAR_KEYWORD_Id:
-            case TYPE_ALIAS_KEYWORD_Id:
+            case CLASS_KEYWORD_INDEX:
+            case INTERFACE_KEYWORD_INDEX:
+            case FUN_KEYWORD_INDEX:
+            case VAL_KEYWORD_INDEX:
+            case VAR_KEYWORD_INDEX:
+            case TYPE_ALIAS_KEYWORD_INDEX:
                 if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
                     ok = false;
                 }
@@ -984,9 +984,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parseWhenCondition() {
         PsiBuilder.Marker condition = mark();
         myBuilder.disableNewlines();
-        switch (getTokenId()) {
-            case IN_KEYWORD_Id:
-            case NOT_IN_Id:
+        switch (getTokenIndex()) {
+            case IN_KEYWORD_INDEX:
+            case NOT_IN_INDEX:
                 PsiBuilder.Marker mark = mark();
                 advance(); // IN_KEYWORD or NOT_IN
                 mark.done(OPERATION_REFERENCE);
@@ -1000,8 +1000,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
                 condition.done(WHEN_CONDITION_IN_RANGE);
                 break;
-            case IS_KEYWORD_Id:
-            case NOT_IS_Id:
+            case IS_KEYWORD_INDEX:
+            case NOT_IS_INDEX:
                 advance(); // IS_KEYWORD or NOT_IS
 
                 if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
@@ -1012,10 +1012,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
                 condition.done(WHEN_CONDITION_IS_PATTERN);
                 break;
-            case RBRACE_Id:
-            case ELSE_KEYWORD_Id:
-            case ARROW_Id:
-            case DOT_Id:
+            case RBRACE_INDEX:
+            case ELSE_KEYWORD_INDEX:
+            case ARROW_INDEX:
+            case DOT_INDEX:
                 error("Expecting an expression, is-condition or in-condition");
                 condition.done(WHEN_CONDITION_EXPRESSION);
                 break;

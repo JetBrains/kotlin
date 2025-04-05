@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.kdoc.parser;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.kotlin.ElementTypeChecker;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 
+@SuppressWarnings("WeakerAccess") // Let all static identifiers be public as well as corresponding elements
 public class KDocElementTypes {
     static {
         // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
@@ -29,7 +31,15 @@ public class KDocElementTypes {
         IElementType dependentTokensInit = KDocTokens.KDOC;
     }
 
+    public static final int KDOC_SECTION_INDEX = KDocTokens.MARKDOWN_INLINE_LINK_INDEX + 1;
+    public static final int KDOC_TAG_INDEX = KDOC_SECTION_INDEX + 1;
+    public static final int KDOC_NAME_INDEX = KDOC_TAG_INDEX + 1;
+
     public static final KDocElementType KDOC_SECTION = new KDocElementType("KDOC_SECTION", KDocSection.class);
     public static final KDocElementType KDOC_TAG = new KDocElementType("KDOC_TAG", KDocTag.class);
     public static final KDocElementType KDOC_NAME = new KDocElementType("KDOC_NAME", KDocName.class);
+
+    static {
+        ElementTypeChecker.checkExplicitStaticIndexesMatchImplicit(KDocElementTypes.class);
+    }
 }

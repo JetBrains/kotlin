@@ -69,3 +69,5 @@ object ElementTypeUtils {
         }
     }
 }
+
+const val NULL_ELEMENT_TYPE_INDEX: Int = IElementType.FIRST_TOKEN_INDEX - 1

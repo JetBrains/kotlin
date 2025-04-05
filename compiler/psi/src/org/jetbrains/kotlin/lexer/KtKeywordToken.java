@@ -20,24 +20,23 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class KtKeywordToken extends KtSingleValueToken {
-
     /**
      * Generate keyword (identifier that has a keyword meaning in all possible contexts)
      */
-    @Deprecated
     public static KtKeywordToken keyword(String value) {
         return keyword(value, value);
     }
 
+    @Deprecated
     public static KtKeywordToken keyword(String value, int tokenId) {
         return keyword(value, value, tokenId);
     }
 
-    @Deprecated
     public static KtKeywordToken keyword(String debugName, String value) {
         return new KtKeywordToken(debugName, value, false);
     }
 
+    @Deprecated
     public static KtKeywordToken keyword(String debugName, String value, int tokenId) {
         return new KtKeywordToken(debugName, value, false, tokenId);
     }
@@ -45,23 +44,23 @@ public class KtKeywordToken extends KtSingleValueToken {
     /**
      * Generate soft keyword (identifier that has a keyword meaning only in some contexts)
      */
-    @Deprecated
     public static KtKeywordToken softKeyword(String value) {
         return new KtKeywordToken(value, value, true);
     }
 
+    @Deprecated
     public static KtKeywordToken softKeyword(String value, int tokenId) {
         return new KtKeywordToken(value, value, true, tokenId);
     }
 
     private final boolean myIsSoft;
 
-    @Deprecated
     protected KtKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft) {
         super(debugName, value);
         myIsSoft = isSoft;
     }
 
+    @Deprecated
     protected KtKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft, int tokenId) {
         super(debugName, value, tokenId);
         myIsSoft = isSoft;
