@@ -226,10 +226,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                                 isFinal = false,
                             )
 
-                            // The part after '?:' is needed for methods with default implementations in collection interfaces:
-                            // MutableMap.remove() and getOrDefault().
-                            val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride || !specialBridge.isOverriding }
-                                ?: specialBridge.overridden
+                            val superTarget = targetFunction
 
                             if (superBridge.signature == superTarget.jvmMethod) {
                                 // If the resulting bridge to a super member matches the signature of the bridge callee,
