@@ -22,11 +22,11 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.CommonTokens;
 import org.jetbrains.kotlin.ElementTypeChecker;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser;
@@ -38,12 +38,10 @@ public class KDocTokens {
     static {
         // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
         @SuppressWarnings("unused")
-        IElementType dependentTokensInit = TokenType.WHITE_SPACE;
+        IElementType dependentTokensInit = CommonTokens.WHITE_SPACE;
     }
 
-    private final static int START_OFFSET = 9; // The specific value is calculated based on already initialized internal elements
-
-    public final static int KDOC_INDEX = START_OFFSET + 1;
+    public final static int KDOC_INDEX = CommonTokens.DUMMY_HOLDER_INDEX + 1;
     public final static int START_INDEX = KDOC_INDEX + 1;
     public final static int END_INDEX = START_INDEX + 1;
     public final static int LEADING_ASTERISK_INDEX = END_INDEX + 1;
