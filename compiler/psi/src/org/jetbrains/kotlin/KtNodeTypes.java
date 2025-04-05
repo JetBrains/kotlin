@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
+@SuppressWarnings("WeakerAccess") // Let all static identifiers be public as well as corresponding elements
 public class KtNodeTypes {
     public static final IElementType CLASS     = KtStubElementTypes.CLASS;
     public static final IElementType FUN       = KtStubElementTypes.FUNCTION;
@@ -98,6 +99,58 @@ public class KtNodeTypes {
     public static final IFileElementType EXPRESSION_CODE_FRAGMENT = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT;
     public static final IFileElementType BLOCK_CODE_FRAGMENT = KtStubElementTypes.BLOCK_CODE_FRAGMENT;
 
+    public static final int KT_FILE_INDEX = KtStubElementTypes.STRING_INTERPOLATION_PREFIX_INDEX + 1;
+    public static final int DESTRUCTURING_DECLARATION_INDEX = KT_FILE_INDEX + 1;
+    public static final int DESTRUCTURING_DECLARATION_ENTRY_INDEX = DESTRUCTURING_DECLARATION_INDEX + 1;
+    public static final int SCRIPT_INITIALIZER_INDEX = DESTRUCTURING_DECLARATION_ENTRY_INDEX + 1;
+    public static final int PROPERTY_DELEGATE_INDEX = SCRIPT_INITIALIZER_INDEX + 1;
+    public static final int CONSTRUCTOR_DELEGATION_CALL_INDEX = PROPERTY_DELEGATE_INDEX + 1;
+    public static final int CONSTRUCTOR_DELEGATION_REFERENCE_INDEX = CONSTRUCTOR_DELEGATION_CALL_INDEX + 1;
+    public static final int PARENTHESIZED_INDEX = CONSTRUCTOR_DELEGATION_REFERENCE_INDEX + 1;
+    public static final int RETURN_INDEX = PARENTHESIZED_INDEX + 1;
+    public static final int THROW_INDEX = RETURN_INDEX + 1;
+    public static final int CONTINUE_INDEX = THROW_INDEX + 1;
+    public static final int BREAK_INDEX = CONTINUE_INDEX + 1;
+    public static final int IF_INDEX = BREAK_INDEX + 1;
+    public static final int CONDITION_INDEX = IF_INDEX + 1;
+    public static final int THEN_INDEX = CONDITION_INDEX + 1;
+    public static final int ELSE_INDEX = THEN_INDEX + 1;
+    public static final int TRY_INDEX = ELSE_INDEX + 1;
+    public static final int CATCH_INDEX = TRY_INDEX + 1;
+    public static final int FINALLY_INDEX = CATCH_INDEX + 1;
+    public static final int FOR_INDEX = FINALLY_INDEX + 1;
+    public static final int WHILE_INDEX = FOR_INDEX + 1;
+    public static final int DO_WHILE_INDEX = WHILE_INDEX + 1;
+    public static final int LOOP_RANGE_INDEX = DO_WHILE_INDEX + 1;
+    public static final int BODY_INDEX = LOOP_RANGE_INDEX + 1;
+    public static final int BLOCK_INDEX = BODY_INDEX + 1;
+    public static final int LAMBDA_EXPRESSION_INDEX = BLOCK_INDEX + 1;
+    public static final int FUNCTION_LITERAL_INDEX = LAMBDA_EXPRESSION_INDEX + 1;
+    public static final int ANNOTATED_EXPRESSION_INDEX = FUNCTION_LITERAL_INDEX + 1;
+    public static final int OPERATION_REFERENCE_INDEX = ANNOTATED_EXPRESSION_INDEX + 1;
+    public static final int LABEL_INDEX = OPERATION_REFERENCE_INDEX + 1;
+    public static final int LABEL_QUALIFIER_INDEX = LABEL_INDEX + 1;
+    public static final int THIS_EXPRESSION_INDEX = LABEL_QUALIFIER_INDEX + 1;
+    public static final int SUPER_EXPRESSION_INDEX = THIS_EXPRESSION_INDEX + 1;
+    public static final int BINARY_EXPRESSION_INDEX = SUPER_EXPRESSION_INDEX + 1;
+    public static final int BINARY_WITH_TYPE_INDEX = BINARY_EXPRESSION_INDEX + 1;
+    public static final int IS_EXPRESSION_INDEX = BINARY_WITH_TYPE_INDEX + 1;
+    public static final int PREFIX_EXPRESSION_INDEX = IS_EXPRESSION_INDEX + 1;
+    public static final int POSTFIX_EXPRESSION_INDEX = PREFIX_EXPRESSION_INDEX + 1;
+    public static final int LABELED_EXPRESSION_INDEX = POSTFIX_EXPRESSION_INDEX + 1;
+    public static final int CALL_EXPRESSION_INDEX = LABELED_EXPRESSION_INDEX + 1;
+    public static final int ARRAY_ACCESS_EXPRESSION_INDEX = CALL_EXPRESSION_INDEX + 1;
+    public static final int INDICES_INDEX = ARRAY_ACCESS_EXPRESSION_INDEX + 1;
+    public static final int CALLABLE_REFERENCE_EXPRESSION_INDEX = INDICES_INDEX + 1;
+    public static final int SAFE_ACCESS_EXPRESSION_INDEX = CALLABLE_REFERENCE_EXPRESSION_INDEX + 1;
+    public static final int OBJECT_LITERAL_INDEX = SAFE_ACCESS_EXPRESSION_INDEX + 1;
+    public static final int WHEN_INDEX = OBJECT_LITERAL_INDEX + 1;
+    public static final int WHEN_ENTRY_INDEX = WHEN_INDEX + 1;
+    public static final int WHEN_ENTRY_GUARD_INDEX = WHEN_ENTRY_INDEX + 1;
+    public static final int WHEN_CONDITION_IN_RANGE_INDEX = WHEN_ENTRY_GUARD_INDEX + 1;
+    public static final int WHEN_CONDITION_IS_PATTERN_INDEX = WHEN_CONDITION_IN_RANGE_INDEX + 1;
+    public static final int WHEN_CONDITION_EXPRESSION_INDEX = WHEN_CONDITION_IS_PATTERN_INDEX + 1;
+
     public static final IFileElementType KT_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
 
     public static final IElementType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration.class);
@@ -160,4 +213,8 @@ public class KtNodeTypes {
     public static final IElementType WHEN_CONDITION_IN_RANGE   = new KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange.class);
     public static final IElementType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
     public static final IElementType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
+
+    static {
+        ElementTypeChecker.checkExplicitStaticIndexesMatchImplicit(KtNodeTypes.class);
+    }
 }

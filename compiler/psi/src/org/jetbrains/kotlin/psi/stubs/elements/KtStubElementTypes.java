@@ -7,15 +7,90 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.kotlin.ElementTypeChecker;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
+import static org.jetbrains.kotlin.lexer.KtTokens.ACTUAL_KEYWORD_INDEX;
+
+@SuppressWarnings("WeakerAccess") // Let all static identifiers be public as well as corresponding elements
 public class KtStubElementTypes {
     static {
         // It forces initializing tokens in strict order that provides possibility to match indexes and static identifiers
         @SuppressWarnings("unused")
         IElementType dependentTokensInit = KtTokens.EOF;
     }
+
+    public static final int CLASS_INDEX = ACTUAL_KEYWORD_INDEX + 1;
+    public static final int FUNCTION_INDEX = CLASS_INDEX + 1;
+    public static final int PROPERTY_INDEX = FUNCTION_INDEX + 1;
+    public static final int PROPERTY_ACCESSOR_INDEX = PROPERTY_INDEX + 1;
+    public static final int BACKING_FIELD_INDEX = PROPERTY_ACCESSOR_INDEX + 1;
+    public static final int TYPEALIAS_INDEX = BACKING_FIELD_INDEX + 1;
+    public static final int ENUM_ENTRY_INDEX = TYPEALIAS_INDEX + 1;
+    public static final int OBJECT_DECLARATION_INDEX = ENUM_ENTRY_INDEX + 1;
+    public static final int CLASS_INITIALIZER_INDEX = OBJECT_DECLARATION_INDEX + 1;
+    public static final int SECONDARY_CONSTRUCTOR_INDEX = CLASS_INITIALIZER_INDEX + 1;
+    public static final int PRIMARY_CONSTRUCTOR_INDEX = SECONDARY_CONSTRUCTOR_INDEX + 1;
+    public static final int VALUE_PARAMETER_INDEX = PRIMARY_CONSTRUCTOR_INDEX + 1;
+    public static final int VALUE_PARAMETER_LIST_INDEX = VALUE_PARAMETER_INDEX + 1;
+    public static final int TYPE_PARAMETER_INDEX = VALUE_PARAMETER_LIST_INDEX + 1;
+    public static final int TYPE_PARAMETER_LIST_INDEX = TYPE_PARAMETER_INDEX + 1;
+    public static final int ANNOTATION_ENTRY_INDEX = TYPE_PARAMETER_LIST_INDEX + 1;
+    public static final int ANNOTATION_INDEX = ANNOTATION_ENTRY_INDEX + 1;
+    public static final int ANNOTATION_TARGET_INDEX = ANNOTATION_INDEX + 1;
+    public static final int CLASS_BODY_INDEX = ANNOTATION_TARGET_INDEX + 1;
+    public static final int IMPORT_LIST_INDEX = CLASS_BODY_INDEX + 1;
+    public static final int FILE_ANNOTATION_LIST_INDEX = IMPORT_LIST_INDEX + 1;
+    public static final int IMPORT_DIRECTIVE_INDEX = FILE_ANNOTATION_LIST_INDEX + 1;
+    public static final int IMPORT_ALIAS_INDEX = IMPORT_DIRECTIVE_INDEX + 1;
+    public static final int PACKAGE_DIRECTIVE_INDEX = IMPORT_ALIAS_INDEX + 1;
+    public static final int MODIFIER_LIST_INDEX = PACKAGE_DIRECTIVE_INDEX + 1;
+    public static final int TYPE_CONSTRAINT_LIST_INDEX = MODIFIER_LIST_INDEX + 1;
+    public static final int TYPE_CONSTRAINT_INDEX = TYPE_CONSTRAINT_LIST_INDEX + 1;
+    public static final int NULLABLE_TYPE_INDEX = TYPE_CONSTRAINT_INDEX + 1;
+    public static final int INTERSECTION_TYPE_INDEX = NULLABLE_TYPE_INDEX + 1;
+    public static final int TYPE_REFERENCE_INDEX = INTERSECTION_TYPE_INDEX + 1;
+    public static final int USER_TYPE_INDEX = TYPE_REFERENCE_INDEX + 1;
+    public static final int DYNAMIC_TYPE_INDEX = USER_TYPE_INDEX + 1;
+    public static final int FUNCTION_TYPE_INDEX = DYNAMIC_TYPE_INDEX + 1;
+    public static final int TYPE_CODE_FRAGMENT_INDEX = FUNCTION_TYPE_INDEX + 1;
+    public static final int EXPRESSION_CODE_FRAGMENT_INDEX = TYPE_CODE_FRAGMENT_INDEX + 1;
+    public static final int BLOCK_CODE_FRAGMENT_INDEX = EXPRESSION_CODE_FRAGMENT_INDEX + 1;
+    public static final int TYPE_PROJECTION_INDEX = BLOCK_CODE_FRAGMENT_INDEX + 1;
+    public static final int FUNCTION_TYPE_RECEIVER_INDEX = TYPE_PROJECTION_INDEX + 1;
+    public static final int REFERENCE_EXPRESSION_INDEX = FUNCTION_TYPE_RECEIVER_INDEX + 1;
+    public static final int DOT_QUALIFIED_EXPRESSION_INDEX = REFERENCE_EXPRESSION_INDEX + 1;
+    public static final int ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION_INDEX = DOT_QUALIFIED_EXPRESSION_INDEX + 1;
+    public static final int TYPE_ARGUMENT_LIST_INDEX = ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION_INDEX + 1;
+    public static final int VALUE_ARGUMENT_LIST_INDEX = TYPE_ARGUMENT_LIST_INDEX + 1;
+    public static final int VALUE_ARGUMENT_INDEX = VALUE_ARGUMENT_LIST_INDEX + 1;
+    public static final int CONTRACT_EFFECT_LIST_INDEX = VALUE_ARGUMENT_INDEX + 1;
+    public static final int CONTRACT_EFFECT_INDEX = CONTRACT_EFFECT_LIST_INDEX + 1;
+    public static final int LAMBDA_ARGUMENT_INDEX = CONTRACT_EFFECT_INDEX + 1;
+    public static final int VALUE_ARGUMENT_NAME_INDEX = LAMBDA_ARGUMENT_INDEX + 1;
+    public static final int SUPER_TYPE_LIST_INDEX = VALUE_ARGUMENT_NAME_INDEX + 1;
+    public static final int INITIALIZER_LIST_INDEX = SUPER_TYPE_LIST_INDEX + 1;
+    public static final int DELEGATED_SUPER_TYPE_ENTRY_INDEX = INITIALIZER_LIST_INDEX + 1;
+    public static final int SUPER_TYPE_CALL_ENTRY_INDEX = DELEGATED_SUPER_TYPE_ENTRY_INDEX + 1;
+    public static final int SUPER_TYPE_ENTRY_INDEX = SUPER_TYPE_CALL_ENTRY_INDEX + 1;
+    public static final int CONSTRUCTOR_CALLEE_INDEX = SUPER_TYPE_ENTRY_INDEX + 1;
+    public static final int CONTEXT_RECEIVER_INDEX = CONSTRUCTOR_CALLEE_INDEX + 1;
+    public static final int CONTEXT_RECEIVER_LIST_INDEX = CONTEXT_RECEIVER_INDEX + 1;
+    public static final int NULL_INDEX = CONTEXT_RECEIVER_LIST_INDEX + 1;
+    public static final int BOOLEAN_CONSTANT_INDEX = NULL_INDEX + 1;
+    public static final int FLOAT_CONSTANT_INDEX = BOOLEAN_CONSTANT_INDEX + 1;
+    public static final int CHARACTER_CONSTANT_INDEX = FLOAT_CONSTANT_INDEX + 1;
+    public static final int INTEGER_CONSTANT_INDEX = CHARACTER_CONSTANT_INDEX + 1;
+    public static final int CLASS_LITERAL_EXPRESSION_INDEX = INTEGER_CONSTANT_INDEX + 1;
+    public static final int COLLECTION_LITERAL_EXPRESSION_INDEX = CLASS_LITERAL_EXPRESSION_INDEX + 1;
+    public static final int STRING_TEMPLATE_INDEX = COLLECTION_LITERAL_EXPRESSION_INDEX + 1;
+    public static final int LONG_STRING_TEMPLATE_ENTRY_INDEX = STRING_TEMPLATE_INDEX + 1;
+    public static final int SHORT_STRING_TEMPLATE_ENTRY_INDEX = LONG_STRING_TEMPLATE_ENTRY_INDEX + 1;
+    public static final int LITERAL_STRING_TEMPLATE_ENTRY_INDEX = SHORT_STRING_TEMPLATE_ENTRY_INDEX + 1;
+    public static final int ESCAPE_STRING_TEMPLATE_ENTRY_INDEX = LITERAL_STRING_TEMPLATE_ENTRY_INDEX + 1;
+    public static final int SCRIPT_INDEX = ESCAPE_STRING_TEMPLATE_ENTRY_INDEX + 1;
+    public static final int STRING_INTERPOLATION_PREFIX_INDEX = SCRIPT_INDEX + 1;
 
     public static final KtClassElementType CLASS = new KtClassElementType("CLASS");
     public static final KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
@@ -185,4 +260,8 @@ public class KtStubElementTypes {
     public static final KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 
     public static final KtStringInterpolationPrefixElementType STRING_INTERPOLATION_PREFIX = new KtStringInterpolationPrefixElementType("STRING_INTERPOLATION_PREFIX");
+
+    static {
+        ElementTypeChecker.checkExplicitStaticIndexesMatchImplicit(KtStubElementTypes.class);
+    }
 }
