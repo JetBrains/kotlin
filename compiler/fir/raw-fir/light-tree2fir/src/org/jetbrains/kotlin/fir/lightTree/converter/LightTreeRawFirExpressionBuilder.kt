@@ -50,8 +50,31 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.ANNOTATION_ENTRY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.ANNOTATION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.BOOLEAN_CONSTANT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CHARACTER_CONSTANT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_INITIALIZER_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_LITERAL_EXPRESSION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.DOT_QUALIFIED_EXPRESSION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FLOAT_CONSTANT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FUNCTION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.INTEGER_CONSTANT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.LAMBDA_ARGUMENT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.NULL_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.PROPERTY_ACCESSOR_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.PROPERTY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.REFERENCE_EXPRESSION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SECONDARY_CONSTRUCTOR_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.STRING_TEMPLATE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPE_ARGUMENT_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPE_REFERENCE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.VALUE_ARGUMENT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.VALUE_ARGUMENT_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.VALUE_ARGUMENT_NAME_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.VALUE_PARAMETER_LIST_INDEX
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -120,49 +143,49 @@ class LightTreeRawFirExpressionBuilder(
 
     /*****    EXPRESSIONS    *****/
     fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
-        return when (expression.tokenType) {
-            LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
-            BINARY_EXPRESSION -> convertBinaryExpression(expression)
-            BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
+        return when (expression.index) {
+            LAMBDA_EXPRESSION_INDEX -> convertLambdaExpression(expression)
+            BINARY_EXPRESSION_INDEX -> convertBinaryExpression(expression)
+            BINARY_WITH_TYPE_INDEX -> convertBinaryWithTypeRHSExpression(expression) {
                 this.getOperationSymbol().toFirOperation()
             }
-            IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression) {
+            IS_EXPRESSION_INDEX -> convertBinaryWithTypeRHSExpression(expression) {
                 if (this == "is") FirOperation.IS else FirOperation.NOT_IS
             }
-            LABELED_EXPRESSION -> convertLabeledExpression(expression)
-            PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
-            ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
-            CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
-            CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
-            DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> convertQualifiedExpression(expression)
-            CALL_EXPRESSION -> convertCallExpression(expression)
-            WHEN -> convertWhenExpression(expression)
-            ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
-            COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(expression)
-            STRING_TEMPLATE -> convertStringTemplate(expression)
-            is KtConstantExpressionElementType -> convertConstantExpression(expression)
-            REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
-            DO_WHILE -> convertDoWhile(expression)
-            WHILE -> convertWhile(expression)
-            FOR -> convertFor(expression)
-            TRY -> convertTryExpression(expression)
-            IF -> convertIfExpression(expression)
-            BREAK, CONTINUE -> convertLoopJump(expression)
-            RETURN -> convertReturn(expression)
-            THROW -> convertThrow(expression)
-            PARENTHESIZED -> {
+            LABELED_EXPRESSION_INDEX -> convertLabeledExpression(expression)
+            PREFIX_EXPRESSION_INDEX, POSTFIX_EXPRESSION_INDEX -> convertUnaryExpression(expression)
+            ANNOTATED_EXPRESSION_INDEX -> convertAnnotatedExpression(expression)
+            CLASS_LITERAL_EXPRESSION_INDEX -> convertClassLiteralExpression(expression)
+            CALLABLE_REFERENCE_EXPRESSION_INDEX -> convertCallableReferenceExpression(expression)
+            DOT_QUALIFIED_EXPRESSION_INDEX, SAFE_ACCESS_EXPRESSION_INDEX -> convertQualifiedExpression(expression)
+            CALL_EXPRESSION_INDEX -> convertCallExpression(expression)
+            WHEN_INDEX -> convertWhenExpression(expression)
+            ARRAY_ACCESS_EXPRESSION_INDEX -> convertArrayAccessExpression(expression)
+            COLLECTION_LITERAL_EXPRESSION_INDEX -> convertCollectionLiteralExpression(expression)
+            STRING_TEMPLATE_INDEX -> convertStringTemplate(expression)
+            NULL_INDEX, BOOLEAN_CONSTANT_INDEX, FLOAT_CONSTANT_INDEX, CHARACTER_CONSTANT_INDEX, INTEGER_CONSTANT_INDEX -> convertConstantExpression(expression)
+            REFERENCE_EXPRESSION_INDEX -> convertSimpleNameExpression(expression)
+            DO_WHILE_INDEX -> convertDoWhile(expression)
+            WHILE_INDEX -> convertWhile(expression)
+            FOR_INDEX -> convertFor(expression)
+            TRY_INDEX -> convertTryExpression(expression)
+            IF_INDEX -> convertIfExpression(expression)
+            BREAK_INDEX, CONTINUE_INDEX -> convertLoopJump(expression)
+            RETURN_INDEX -> convertReturn(expression)
+            THROW_INDEX -> convertThrow(expression)
+            PARENTHESIZED_INDEX -> {
                 val content = expression.getExpressionInParentheses()
                 context.forwardLabelUsagePermission(expression, content)
                 getAsFirExpression(content, "Empty parentheses", sourceWhenInvalidExpression = expression)
             }
-            PROPERTY_DELEGATE, INDICES, CONDITION, LOOP_RANGE ->
+            PROPERTY_DELEGATE_INDEX, INDICES_INDEX, CONDITION_INDEX, LOOP_RANGE_INDEX ->
                 getAsFirExpression(expression.getChildExpression(), errorReason, sourceWhenInvalidExpression = expression)
-            THIS_EXPRESSION -> convertThisExpression(expression)
-            SUPER_EXPRESSION -> convertSuperExpression(expression)
+            THIS_EXPRESSION_INDEX -> convertThisExpression(expression)
+            SUPER_EXPRESSION_INDEX -> convertSuperExpression(expression)
 
-            OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
-            FUN -> declarationBuilder.convertFunctionDeclaration(expression)
-            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
+            OBJECT_LITERAL_INDEX -> declarationBuilder.convertObjectLiteral(expression)
+            FUNCTION_INDEX -> declarationBuilder.convertFunctionDeclaration(expression)
+            DESTRUCTURING_DECLARATION_INDEX -> declarationBuilder.convertDestructingDeclaration(expression)
                 .toFirDestructingDeclaration(this, baseModuleData)
             else -> buildErrorExpression(
                 expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),
@@ -182,14 +205,14 @@ class LightTreeRawFirExpressionBuilder(
 
         val functionSymbol = FirAnonymousFunctionSymbol()
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
-            when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(
+            when (it.index) {
+                VALUE_PARAMETER_LIST_INDEX -> valueParameterList += declarationBuilder.convertValueParameters(
                     valueParameters = it,
                     functionSymbol,
                     ValueParameterDeclaration.LAMBDA
                 )
-                BLOCK -> block = it
-                ARROW -> hasArrow = true
+                BLOCK_INDEX -> block = it
+                ARROW_INDEX -> hasArrow = true
             }
         }
 
@@ -302,9 +325,9 @@ class LightTreeRawFirExpressionBuilder(
         val output = mutableListOf<LighterASTNode?>()
         input.add(binaryExpression)
         while (input.isNotEmpty()) {
-            var node = input.pop()
-            when (node?.tokenType) {
-                BINARY_EXPRESSION -> {
+            val node = input.pop()
+            when (node?.index) {
+                BINARY_EXPRESSION_INDEX -> {
                     val (leftNode, opNode, rightNode) = extractBinaryExpression(node)
 
                     if (opNode.asText.getOperationSymbol() != PLUS) {
@@ -314,7 +337,7 @@ class LightTreeRawFirExpressionBuilder(
                     input.add(leftNode)
                     input.add(rightNode)
                 }
-                PARENTHESIZED -> {
+                PARENTHESIZED_INDEX -> {
                     val content = node.getExpressionInParentheses()
                     input.add(content)
                 }
@@ -391,14 +414,14 @@ class LightTreeRawFirExpressionBuilder(
         // No need for the callee name since arguments are already generated
         context.calleeNamesForLambda.removeLast()
 
-        when (operationToken) {
-            ELVIS ->
+        when (operationToken.index.toInt()) {
+            ELVIS_INDEX ->
                 return leftArgAsFir.generateNotNullOrOther(rightArgAsFir, baseSource)
-            ANDAND, OROR ->
+            ANDAND_INDEX, OROR_INDEX ->
                 return leftArgAsFir.generateLazyLogicalOperation(rightArgAsFir, operationToken == ANDAND, baseSource)
-            in OperatorConventions.IN_OPERATIONS ->
+            IN_KEYWORD_INDEX, NOT_IN_INDEX ->
                 return rightArgAsFir.generateContainsOperation(leftArgAsFir, operationToken == NOT_IN, baseSource, operationReferenceSource)
-            in OperatorConventions.COMPARISON_OPERATIONS ->
+            LT_INDEX, GT_INDEX, LTEQ_INDEX, GTEQ_INDEX ->
                 return leftArgAsFir.generateComparisonExpression(rightArgAsFir, operationToken, baseSource, operationReferenceSource)
         }
         val conventionCallName = operationToken.toBinaryName()
@@ -455,9 +478,9 @@ class LightTreeRawFirExpressionBuilder(
         var leftArgAsFir: FirExpression? = null
         lateinit var firType: FirTypeRef
         binaryExpression.forEachChildren {
-            when (it.tokenType) {
-                OPERATION_REFERENCE -> operationTokenName = it.asText
-                TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
+            when (it.index) {
+                OPERATION_REFERENCE_INDEX -> operationTokenName = it.asText
+                TYPE_REFERENCE_INDEX -> firType = declarationBuilder.convertType(it)
                 else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
             }
         }
@@ -485,15 +508,15 @@ class LightTreeRawFirExpressionBuilder(
 
         labeledExpression.forEachChildren {
             context.setNewLabelUserNode(it)
-            when (it.tokenType) {
-                LABEL_QUALIFIER -> {
+            when (it.index) {
+                LABEL_QUALIFIER_INDEX -> {
                     val name = it.asText.dropLast(1)
                     labelSource = it.getChildNodesByType(LABEL).single().toFirSourceElement()
                     context.addNewLabel(buildLabel(name, labelSource!!))
                     forbiddenLabelKind = getForbiddenLabelKind(name, isRepetitiveLabel)
                 }
-                BLOCK -> firExpression = declarationBuilder.convertBlock(it)
-                PROPERTY -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
+                BLOCK_INDEX -> firExpression = declarationBuilder.convertBlock(it)
+                PROPERTY_INDEX -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
                 else -> if (it.isExpression()) firExpression = getAsFirStatement(it)
             }
         }
@@ -572,10 +595,10 @@ class LightTreeRawFirExpressionBuilder(
         var firExpression: FirElement? = null
         val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
-            when (it.tokenType) {
-                ANNOTATION -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
-                ANNOTATION_ENTRY -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
-                BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
+            when (it.index) {
+                ANNOTATION_INDEX -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
+                ANNOTATION_ENTRY_INDEX -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
+                BLOCK_INDEX -> firExpression = declarationBuilder.convertBlockExpression(it)
                 else -> if (it.isExpression()) {
                     context.forwardLabelUsagePermission(annotatedExpression, it)
                     firExpression = getAsFirStatement(it)
@@ -729,24 +752,24 @@ class LightTreeRawFirExpressionBuilder(
         var superNode: LighterASTNode? = null
         callSuffix.forEachChildren { child ->
             fun process(node: LighterASTNode) {
-                when (node.tokenType) {
-                    REFERENCE_EXPRESSION -> {
+                when (node.index) {
+                    REFERENCE_EXPRESSION_INDEX -> {
                         name = node.asText
                     }
-                    SUPER_EXPRESSION -> {
+                    SUPER_EXPRESSION_INDEX -> {
                         superNode = node
                     }
-                    PARENTHESIZED -> if (node.tokenType != TokenType.ERROR_ELEMENT) {
+                    PARENTHESIZED_INDEX -> if (node.tokenType != TokenType.ERROR_ELEMENT) {
                         additionalArgument = getAsFirExpression(node.getExpressionInParentheses(), "Incorrect invoke receiver", sourceWhenInvalidExpression = node)
                     }
-                    TYPE_ARGUMENT_LIST -> {
+                    TYPE_ARGUMENT_LIST_INDEX -> {
                         firTypeArguments += declarationBuilder.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
                     }
-                    VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> {
+                    VALUE_ARGUMENT_LIST_INDEX, LAMBDA_ARGUMENT_INDEX -> {
                         hasArguments = true
                         valueArguments += node
                     }
-                    else -> if (node.tokenType != TokenType.ERROR_ELEMENT) {
+                    else -> if (node.index != CommonTokens.ERROR_ELEMENT_INDEX) {
                         additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
                     }
                 }
@@ -958,21 +981,21 @@ class LightTreeRawFirExpressionBuilder(
         var guard: FirExpression? = null
         var shouldBindSubject = false
         whenEntry.forEachChildren {
-            when (it.tokenType) {
-                WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, subjectVariable)
-                WHEN_CONDITION_IN_RANGE -> {
+            when (it.index) {
+                WHEN_CONDITION_EXPRESSION_INDEX -> conditions += convertWhenConditionExpression(it, subjectVariable)
+                WHEN_CONDITION_IN_RANGE_INDEX -> {
                     val (condition, shouldBind) = convertWhenConditionInRange(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
-                WHEN_CONDITION_IS_PATTERN -> {
+                WHEN_CONDITION_IS_PATTERN_INDEX -> {
                     val (condition, shouldBind) = convertWhenConditionIsPattern(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
-                WHEN_ENTRY_GUARD -> guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard", sourceWhenInvalidExpression = it)
-                ELSE_KEYWORD -> isElse = true
-                BLOCK -> firBlock = declarationBuilder.convertBlock(it)
+                WHEN_ENTRY_GUARD_INDEX -> guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard", sourceWhenInvalidExpression = it)
+                ELSE_KEYWORD_INDEX -> isElse = true
+                BLOCK_INDEX -> firBlock = declarationBuilder.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
@@ -1023,12 +1046,11 @@ class LightTreeRawFirExpressionBuilder(
         var conditionSource: KtLightSourceElement? = null
         whenCondition.forEachChildren {
             when {
-                it.tokenType == OPERATION_REFERENCE && it.asText == NOT_IN.value -> {
-                    conditionSource = it.toFirSourceElement()
-                    isNegate = true
-                }
                 it.tokenType == OPERATION_REFERENCE -> {
                     conditionSource = it.toFirSourceElement()
+                    if (it.asText == NOT_IN.value) {
+                        isNegate = true
+                    }
                 }
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No range in condition with range")
             }
@@ -1482,10 +1504,10 @@ class LightTreeRawFirExpressionBuilder(
         var thenBlock: LighterASTNode? = null
         var elseBlock: LighterASTNode? = null
         ifExpression.forEachChildren {
-            when (it.tokenType) {
-                CONDITION -> firCondition = getAsFirExpression(it, "If statement should have condition")
-                THEN -> thenBlock = it
-                ELSE -> elseBlock = it
+            when (it.index) {
+                CONDITION_INDEX -> firCondition = getAsFirExpression(it, "If statement should have condition")
+                THEN_INDEX -> thenBlock = it
+                ELSE_INDEX -> elseBlock = it
             }
         }
         return IfNodeComponents(firCondition, thenBlock, elseBlock)
@@ -1499,15 +1521,14 @@ class LightTreeRawFirExpressionBuilder(
             ) {
                 parent = parent.getParent() ?: return true
             }
-            val parentTokenType = parent.tokenType
-            return when (parentTokenType) {
-                BLOCK -> parent.getLastChildExpression() == this && parent.usedAsExpression
-                TRY, CATCH -> parent.usedAsExpression
-                THEN, ELSE, WHEN_ENTRY -> parent.getParent()?.usedAsExpression ?: true
-                CLASS_INITIALIZER, SCRIPT_INITIALIZER, SECONDARY_CONSTRUCTOR, FUNCTION_LITERAL, FINALLY -> false
-                FUN, PROPERTY_ACCESSOR -> parent.getChildrenAsArray().any { it?.tokenType == EQ }
-                DOT_QUALIFIED_EXPRESSION -> parent.getFirstChild() == this
-                BODY -> when (parent.getParent()?.tokenType) {
+            return when (parent.index) {
+                BLOCK_INDEX -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                TRY_INDEX, CATCH_INDEX -> parent.usedAsExpression
+                THEN_INDEX, ELSE_INDEX, WHEN_ENTRY_INDEX -> parent.getParent()?.usedAsExpression ?: true
+                CLASS_INITIALIZER_INDEX, SCRIPT_INITIALIZER_INDEX, SECONDARY_CONSTRUCTOR_INDEX, FUNCTION_LITERAL_INDEX, FINALLY_INDEX -> false
+                FUNCTION_INDEX, PROPERTY_ACCESSOR_INDEX -> parent.getChildrenAsArray().any { it?.tokenType == EQ }
+                DOT_QUALIFIED_EXPRESSION_INDEX -> parent.getFirstChild() == this
+                BODY_INDEX -> when (parent.getParent()?.tokenType) {
                     FOR, WHILE, DO_WHILE -> false
                     else -> true
                 }
@@ -1621,12 +1642,12 @@ class LightTreeRawFirExpressionBuilder(
      */
     fun convertValueArguments(valueArguments: LighterASTNode): List<FirExpression> {
         return valueArguments.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                VALUE_ARGUMENT -> container += convertValueArgument(node)
-                LAMBDA_EXPRESSION,
-                LABELED_EXPRESSION,
-                ANNOTATED_EXPRESSION,
-                -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
+            when (node.index) {
+                VALUE_ARGUMENT_INDEX -> container += convertValueArgument(node)
+                LAMBDA_EXPRESSION_INDEX,
+                LABELED_EXPRESSION_INDEX,
+                ANNOTATED_EXPRESSION_INDEX,
+                    -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
                     // TODO(KT-66553) remove and set in builder
                     @OptIn(RawFirApi::class)
                     replaceIsTrailingLambda(newIsTrailingLambda = true)
@@ -1644,11 +1665,11 @@ class LightTreeRawFirExpressionBuilder(
         var isSpread = false
         var firExpression: FirExpression? = null
         valueArgument.forEachChildren {
-            when (it.tokenType) {
-                VALUE_ARGUMENT_NAME -> identifier = it.asText
-                MUL -> isSpread = true
-                STRING_TEMPLATE -> firExpression = convertStringTemplate(it)
-                is KtConstantExpressionElementType -> firExpression = convertConstantExpression(it)
+            when (it.index) {
+                VALUE_ARGUMENT_NAME_INDEX -> identifier = it.asText
+                MUL_INDEX -> isSpread = true
+                STRING_TEMPLATE_INDEX -> firExpression = convertStringTemplate(it)
+                NULL_INDEX, BOOLEAN_CONSTANT_INDEX, FLOAT_CONSTANT_INDEX, CHARACTER_CONSTANT_INDEX, INTEGER_CONSTANT_INDEX -> firExpression = convertConstantExpression(it)
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Argument is absent")
             }
         }

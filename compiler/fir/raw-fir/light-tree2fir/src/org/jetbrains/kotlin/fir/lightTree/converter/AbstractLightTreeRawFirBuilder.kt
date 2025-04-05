@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens.KDOC_INDEX
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
@@ -168,11 +169,24 @@ abstract class AbstractLightTreeRawFirBuilder(
         for (kid in kidsArray) {
             if (kid == null) break
             val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens ||
-                tokenType == TokenType.ERROR_ELEMENT || tokenType == TokenType.BAD_CHARACTER
-            ) {
+
+            when (kid.index) {
+                EOL_COMMENT_INDEX,
+                BLOCK_COMMENT_INDEX,
+                KDOC_INDEX,
+                SHEBANG_COMMENT_INDEX,
+                CommonTokens.WHITE_SPACE_INDEX,
+                SEMICOLON_INDEX,
+                CommonTokens.ERROR_ELEMENT_INDEX,
+                CommonTokens.BAD_CHARACTER_INDEX -> {
+                    continue
+                }
+            }
+
+            if (tokenType in skipTokens) {
                 continue
             }
+
             f(kid)
         }
     }
@@ -183,11 +197,24 @@ abstract class AbstractLightTreeRawFirBuilder(
         val container = mutableListOf<T>()
         for (kid in kidsArray) {
             if (kid == null) break
-            val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType == TokenType.ERROR_ELEMENT) continue
+            when (kid.index) {
+                EOL_COMMENT_INDEX,
+                BLOCK_COMMENT_INDEX,
+                KDOC_INDEX,
+                SHEBANG_COMMENT_INDEX,
+                CommonTokens.WHITE_SPACE_INDEX,
+                SEMICOLON_INDEX,
+                CommonTokens.ERROR_ELEMENT_INDEX -> {
+                    continue
+                }
+            }
+
             f(kid, container)
         }
 
         return container
     }
+
+    protected val LighterASTNode?.index: Int
+        get() = this?.tokenType?.index?.toInt() ?: NULL_ELEMENT_TYPE_INDEX
 }

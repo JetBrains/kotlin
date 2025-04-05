@@ -55,6 +55,42 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.BACKING_FIELD_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_BODY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_INITIALIZER_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CONTEXT_RECEIVER_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CONTRACT_EFFECT_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.DOT_QUALIFIED_EXPRESSION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.DYNAMIC_TYPE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.ENUM_ENTRY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FILE_ANNOTATION_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FUNCTION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FUNCTION_TYPE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FUNCTION_TYPE_RECEIVER_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.INTERSECTION_TYPE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.MODIFIER_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.NULLABLE_TYPE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.OBJECT_DECLARATION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.PACKAGE_DIRECTIVE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.PRIMARY_CONSTRUCTOR_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.PROPERTY_ACCESSOR_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.PROPERTY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.REFERENCE_EXPRESSION_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SCRIPT_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SECONDARY_CONSTRUCTOR_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SUPER_TYPE_CALL_ENTRY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SUPER_TYPE_ENTRY_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.SUPER_TYPE_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPEALIAS_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPE_ARGUMENT_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPE_CONSTRAINT_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPE_PARAMETER_LIST_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.TYPE_REFERENCE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.USER_TYPE_INDEX
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.VALUE_PARAMETER_LIST_INDEX
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -86,29 +122,29 @@ class LightTreeRawFirDeclarationBuilder(
         context.packageFqName = FqName.ROOT
         var packageDirective: FirPackageDirective? = null
         file.forEachChildren { child ->
-            when (child.tokenType) {
-                FILE_ANNOTATION_LIST -> {
+            when (child.index) {
+                FILE_ANNOTATION_LIST_INDEX -> {
                     withContainerSymbol(fileSymbol) {
                         convertAnnotationsOnlyTo(child, fileAnnotations)
                     }
                 }
-                PACKAGE_DIRECTIVE -> {
+                PACKAGE_DIRECTIVE_INDEX -> {
                     packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
-                IMPORT_LIST -> importList += convertImportDirectives(child)
-                CLASS -> firDeclarationList += convertClass(child)
-                FUN -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
-                KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
-                TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
-                OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
-                DESTRUCTURING_DECLARATION -> {
+                IMPORT_LIST_INDEX -> importList += convertImportDirectives(child)
+                CLASS_INDEX -> firDeclarationList += convertClass(child)
+                FUNCTION_INDEX -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
+                PROPERTY_INDEX -> firDeclarationList += convertPropertyDeclaration(child)
+                TYPEALIAS_INDEX -> firDeclarationList += convertTypeAlias(child)
+                OBJECT_DECLARATION_INDEX -> firDeclarationList += convertClass(child)
+                DESTRUCTURING_DECLARATION_INDEX -> {
                     val initializer = buildFirDestructuringDeclarationInitializer(child)
                     firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement(), initializer)
                 }
-                SCRIPT -> {
+                SCRIPT_INDEX -> {
                     // TODO: scripts aren't supported yet
                 }
-                MODIFIER_LIST -> modifierList += child
+                MODIFIER_LIST_INDEX -> modifierList += child
             }
         }
 
@@ -140,14 +176,14 @@ class LightTreeRawFirDeclarationBuilder(
 
     fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList<FirStatement> { node, container ->
-            when (node.tokenType) {
-                CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
-                FUN -> container += convertFunctionDeclaration(node)
-                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
-                DESTRUCTURING_DECLARATION -> container +=
+            when (node.index) {
+                CLASS_INDEX, OBJECT_DECLARATION_INDEX -> container += convertClass(node) as FirStatement
+                FUNCTION_INDEX -> container += convertFunctionDeclaration(node)
+                PROPERTY_INDEX -> container += convertPropertyDeclaration(node) as FirStatement
+                DESTRUCTURING_DECLARATION_INDEX -> container +=
                     convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
-                TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
-                CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
+                TYPEALIAS_INDEX -> container += convertTypeAlias(node) as FirStatement
+                CLASS_INITIALIZER_INDEX -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
                 else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
             }
         }
@@ -171,9 +207,9 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertPackageDirective(packageNode: LighterASTNode): FirPackageDirective {
         var packageName: FqName = FqName.ROOT
         packageNode.forEachChildren {
-            when (it.tokenType) {
+            when (it.index) {
                 //TODO separate logic for both expression types
-                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = parsePackageName(it)
+                DOT_QUALIFIED_EXPRESSION_INDEX, REFERENCE_EXPRESSION_INDEX -> packageName = parsePackageName(it)
             }
         }
         return buildPackageDirective {
@@ -377,17 +413,17 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertAnnotationTarget(annotationUseSiteTarget: LighterASTNode): AnnotationUseSiteTarget {
         lateinit var annotationTarget: AnnotationUseSiteTarget
         annotationUseSiteTarget.forEachChildren {
-            when (it.tokenType) {
-                ALL_KEYWORD -> annotationTarget = ALL
-                FIELD_KEYWORD -> annotationTarget = FIELD
-                FILE_KEYWORD -> annotationTarget = FILE
-                PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
-                GET_KEYWORD -> annotationTarget = PROPERTY_GETTER
-                SET_KEYWORD -> annotationTarget = PROPERTY_SETTER
-                RECEIVER_KEYWORD -> annotationTarget = RECEIVER
-                PARAM_KEYWORD -> annotationTarget = CONSTRUCTOR_PARAMETER
-                SETPARAM_KEYWORD -> annotationTarget = SETTER_PARAMETER
-                DELEGATE_KEYWORD -> annotationTarget = PROPERTY_DELEGATE_FIELD
+            when (it.index) {
+                ALL_KEYWORD_INDEX -> annotationTarget = ALL
+                FIELD_KEYWORD_INDEX -> annotationTarget = FIELD
+                FILE_KEYWORD_INDEX -> annotationTarget = FILE
+                PROPERTY_KEYWORD_INDEX -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
+                GET_KEYWORD_INDEX -> annotationTarget = PROPERTY_GETTER
+                SET_KEYWORD_INDEX -> annotationTarget = PROPERTY_SETTER
+                RECEIVER_KEYWORD_INDEX -> annotationTarget = RECEIVER
+                PARAM_KEYWORD_INDEX -> annotationTarget = CONSTRUCTOR_PARAMETER
+                SETPARAM_KEYWORD_INDEX -> annotationTarget = SETTER_PARAMETER
+                DELEGATE_KEYWORD_INDEX -> annotationTarget = PROPERTY_DELEGATE_FIELD
             }
         }
 
@@ -482,15 +518,15 @@ class LightTreeRawFirDeclarationBuilder(
             val classSymbol = FirRegularClassSymbol(context.currentClassId)
             withContainerSymbol(classSymbol) {
                 classNode.forEachChildren {
-                    when (it.tokenType) {
-                        CLASS_KEYWORD -> classKind = ClassKind.CLASS
-                        INTERFACE_KEYWORD -> classKind = ClassKind.INTERFACE
-                        OBJECT_KEYWORD -> classKind = ClassKind.OBJECT
-                        TYPE_PARAMETER_LIST -> typeParameterList = it
-                        PRIMARY_CONSTRUCTOR -> primaryConstructor = it
-                        SUPER_TYPE_LIST -> superTypeList = it
-                        TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                        CLASS_BODY -> classBody = it
+                    when (it.index) {
+                        CLASS_KEYWORD_INDEX -> classKind = ClassKind.CLASS
+                        INTERFACE_KEYWORD_INDEX -> classKind = ClassKind.INTERFACE
+                        OBJECT_KEYWORD_INDEX -> classKind = ClassKind.OBJECT
+                        TYPE_PARAMETER_LIST_INDEX -> typeParameterList = it
+                        PRIMARY_CONSTRUCTOR_INDEX -> primaryConstructor = it
+                        SUPER_TYPE_LIST_INDEX -> superTypeList = it
+                        TYPE_CONSTRAINT_LIST_INDEX -> typeConstraints += convertTypeConstraints(it)
+                        CLASS_BODY_INDEX -> classBody = it
                     }
                 }
 
@@ -911,17 +947,17 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
         val modifierLists = mutableListOf<LighterASTNode>()
         var firDeclarations = classBody.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
-                CLASS -> container += convertClass(node)
-                FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
-                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
-                TYPEALIAS -> container += convertTypeAlias(node)
-                OBJECT_DECLARATION -> container += convertClass(node)
-                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper) //anonymousInitializer
-                SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
-                MODIFIER_LIST -> modifierLists += node
-                DESTRUCTURING_DECLARATION -> {
+            when (node.index) {
+                ENUM_ENTRY_INDEX -> container += convertEnumEntry(node, classWrapper)
+                CLASS_INDEX -> container += convertClass(node)
+                FUNCTION_INDEX -> container += convertFunctionDeclaration(node) as FirDeclaration
+                PROPERTY_INDEX -> container += convertPropertyDeclaration(node, classWrapper)
+                TYPEALIAS_INDEX -> container += convertTypeAlias(node)
+                OBJECT_DECLARATION_INDEX -> container += convertClass(node)
+                CLASS_INITIALIZER_INDEX -> container += convertAnonymousInitializer(node, classWrapper) //anonymousInitializer
+                SECONDARY_CONSTRUCTOR_INDEX -> container += convertSecondaryConstructor(node, classWrapper)
+                MODIFIER_LIST_INDEX -> modifierLists += node
+                DESTRUCTURING_DECLARATION_INDEX -> {
                     val initializer = buildFirDestructuringDeclarationInitializer(node)
                     container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement(), initializer)
                 }
@@ -984,13 +1020,11 @@ class LightTreeRawFirDeclarationBuilder(
         withContainerSymbol(constructorSymbol) {
             var modifiersIfPresent: ModifierList? = null
             val valueParameters = mutableListOf<ValueParameter>()
-            var hasConstructorKeyword = false
             primaryConstructor?.forEachChildren {
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
                         modifiersIfPresent = convertModifierList(it)
                     }
-                    CONSTRUCTOR_KEYWORD -> hasConstructorKeyword = true
                     VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(
                         it,
                         constructorSymbol,
@@ -1267,11 +1301,11 @@ class LightTreeRawFirDeclarationBuilder(
         var typeParametersNode: LighterASTNode? = null
 
         typeAlias.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifierList(it)
-                IDENTIFIER -> identifier = it.asText
-                TYPE_REFERENCE -> typeRefNode = it
-                TYPE_PARAMETER_LIST -> typeParametersNode = it
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> modifiers = convertModifierList(it)
+                IDENTIFIER_INDEX -> identifier = it.asText
+                TYPE_REFERENCE_INDEX -> typeRefNode = it
+                TYPE_PARAMETER_LIST_INDEX -> typeParametersNode = it
             }
         }
 
@@ -1347,20 +1381,20 @@ class LightTreeRawFirDeclarationBuilder(
         withContainerSymbol(propertySymbol, isLocal) {
             val propertySource = property.toFirSourceElement()
             property.forEachChildren {
-                when (it.tokenType) {
-                    MODIFIER_LIST -> {
+                when (it.index) {
+                    MODIFIER_LIST_INDEX -> {
                         modifiers = convertModifierList(it)
                     }
-                    TYPE_PARAMETER_LIST -> typeParameterList = it
-                    COLON -> isReturnType = true
-                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
-                    TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                    PROPERTY_DELEGATE -> delegate = it
-                    VAR_KEYWORD -> isVar = true
-                    PROPERTY_ACCESSOR -> {
+                    TYPE_PARAMETER_LIST_INDEX -> typeParameterList = it
+                    COLON_INDEX -> isReturnType = true
+                    TYPE_REFERENCE_INDEX -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
+                    TYPE_CONSTRAINT_LIST_INDEX -> typeConstraints += convertTypeConstraints(it)
+                    PROPERTY_DELEGATE_INDEX -> delegate = it
+                    VAR_KEYWORD_INDEX -> isVar = true
+                    PROPERTY_ACCESSOR_INDEX -> {
                         accessors += it
                     }
-                    BACKING_FIELD -> fieldDeclaration = it
+                    BACKING_FIELD_INDEX -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
                         propertyInitializer = withForcedLocalContext {
@@ -1527,12 +1561,12 @@ class LightTreeRawFirDeclarationBuilder(
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
-                VAR_KEYWORD -> isVar = true
-                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> convertAnnotationsOnlyTo(it, annotations)
+                VAR_KEYWORD_INDEX -> isVar = true
+                DESTRUCTURING_DECLARATION_ENTRY_INDEX -> entries += convertDestructingDeclarationEntry(it)
                 // Property delegates should be ignored as they aren't a valid initializers
-                PROPERTY_DELEGATE -> {}
+                PROPERTY_DELEGATE_INDEX -> {}
                 else -> if (it.isExpression()) firExpression =
                     expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
             }
@@ -1558,10 +1592,10 @@ class LightTreeRawFirDeclarationBuilder(
         var identifier: String? = null
         var firType: FirTypeRef? = null
         entry.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
-                IDENTIFIER -> identifier = it.asText
-                TYPE_REFERENCE -> firType = convertType(it)
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> convertAnnotationsOnlyTo(it, annotations)
+                IDENTIFIER_INDEX -> identifier = it.asText
+                TYPE_REFERENCE_INDEX -> firType = convertType(it)
             }
         }
 
@@ -1609,13 +1643,13 @@ class LightTreeRawFirDeclarationBuilder(
 
         getterOrSetter.forEachChildren {
             if (it.asText == "set") isGetter = false
-            when (it.tokenType) {
-                SET_KEYWORD -> isGetter = false
-                MODIFIER_LIST -> {
+            when (it.index) {
+                SET_KEYWORD_INDEX -> isGetter = false
+                MODIFIER_LIST_INDEX -> {
                     modifiers = convertModifierList(it)
                 }
-                TYPE_REFERENCE -> returnType = convertType(it)
-                VALUE_PARAMETER_LIST -> {
+                TYPE_REFERENCE_INDEX -> returnType = convertType(it)
+                VALUE_PARAMETER_LIST_INDEX -> {
                     // getter can have an empty value parameter list
                     if (!isGetter) {
                         firValueParameters = convertSetterParameter(
@@ -1623,8 +1657,8 @@ class LightTreeRawFirDeclarationBuilder(
                         )
                     }
                 }
-                CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
-                BLOCK -> block = it
+                CONTRACT_EFFECT_LIST_INDEX -> outerContractDescription = obtainContractDescription(it)
+                BLOCK_INDEX -> block = it
                 else -> if (it.isExpression()) expression = it
             }
         }
@@ -1875,18 +1909,18 @@ class LightTreeRawFirDeclarationBuilder(
         withContainerSymbol(functionSymbol, isLocal) {
             val target: FirFunctionTarget
             functionDeclaration.forEachChildren {
-                when (it.tokenType) {
-                    MODIFIER_LIST -> {
+                when (it.index) {
+                    MODIFIER_LIST_INDEX -> {
                         modifiers = convertModifierList(it)
                     }
-                    TYPE_PARAMETER_LIST -> typeParameterList = it
-                    VALUE_PARAMETER_LIST -> valueParametersList = it //must convert later, because it can contains "return"
-                    COLON -> isReturnType = true
-                    TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
-                    TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                    CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
-                    BLOCK -> block = it
-                    EQ -> hasEqToken = true
+                    TYPE_PARAMETER_LIST_INDEX -> typeParameterList = it
+                    VALUE_PARAMETER_LIST_INDEX -> valueParametersList = it //must convert later, because it can contains "return"
+                    COLON_INDEX -> isReturnType = true
+                    TYPE_REFERENCE_INDEX -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
+                    TYPE_CONSTRAINT_LIST_INDEX -> typeConstraints += convertTypeConstraints(it)
+                    CONTRACT_EFFECT_LIST_INDEX -> outerContractDescription = obtainContractDescription(it)
+                    BLOCK_INDEX -> block = it
+                    EQ_INDEX -> hasEqToken = true
                     else -> if (it.isExpression()) expression = it
                 }
             }
@@ -2094,17 +2128,17 @@ class LightTreeRawFirDeclarationBuilder(
         val delegateFieldsMap = mutableMapOf<Int, FirFieldSymbol>()
         var index = 0
         delegationSpecifiers.forEachChildren {
-            when (it.tokenType) {
-                SUPER_TYPE_ENTRY -> {
+            when (it.index) {
+                SUPER_TYPE_ENTRY_INDEX -> {
                     superTypeRefs += convertType(it)
                     index++
                 }
-                SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(it).apply {
+                SUPER_TYPE_CALL_ENTRY_INDEX -> convertConstructorInvocation(it).apply {
                     superTypeCalls += DelegatedConstructorWrapper(first, second, it.toFirSourceElement())
                     superTypeRefs += first
                     index++
                 }
-                DELEGATED_SUPER_TYPE_ENTRY -> {
+                DELEGATED_SUPER_TYPE_ENTRY_INDEX -> {
                     superTypeRefs += convertExplicitDelegation(it, delegateFieldsMap, index)
                     index++
                 }
@@ -2252,10 +2286,10 @@ class LightTreeRawFirDeclarationBuilder(
         var identifier: String? = null
         var firType: FirTypeRef? = null
         typeParameter.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> typeParameterModifiers = convertTypeParameterModifiers(it)
-                IDENTIFIER -> identifier = it.asText
-                TYPE_REFERENCE -> firType = convertType(it)
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> typeParameterModifiers = convertTypeParameterModifiers(it)
+                IDENTIFIER_INDEX -> identifier = it.asText
+                TYPE_REFERENCE_INDEX -> firType = convertType(it)
             }
         }
 
@@ -2304,18 +2338,18 @@ class LightTreeRawFirDeclarationBuilder(
 
         var firType: FirTypeRef? = null
         type.forEachChildren {
-            when (it.tokenType) {
-                TYPE_REFERENCE -> firType = convertType(it)
-                MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
-                USER_TYPE -> firType = convertUserType(typeRefSource, it)
-                NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
-                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers)
-                DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
+            when (it.index) {
+                TYPE_REFERENCE_INDEX -> firType = convertType(it)
+                MODIFIER_LIST_INDEX -> allTypeModifiers += convertModifierList(it)
+                USER_TYPE_INDEX -> firType = convertUserType(typeRefSource, it)
+                NULLABLE_TYPE_INDEX -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
+                FUNCTION_TYPE_INDEX -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers)
+                DYNAMIC_TYPE_INDEX -> firType = buildDynamicTypeRef {
                     source = typeRefSource
                     isMarkedNullable = false
                 }
-                INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
-                CONTEXT_RECEIVER_LIST, TokenType.ERROR_ELEMENT -> firType =
+                INTERSECTION_TYPE_INDEX -> firType = convertIntersectionType(typeRefSource, it, false)
+                CONTEXT_RECEIVER_LIST_INDEX, CommonTokens.ERROR_ELEMENT_INDEX -> firType =
                     buildErrorTypeRef {
                         source = typeRefSource
                         diagnostic = ConeSyntaxDiagnostic("Unwrapped type is null")
@@ -2382,16 +2416,16 @@ class LightTreeRawFirDeclarationBuilder(
     ): FirTypeRef {
         lateinit var firType: FirTypeRef
         nullableType.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
-                USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
-                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers, isNullable)
-                NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
-                DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> allTypeModifiers += convertModifierList(it)
+                USER_TYPE_INDEX -> firType = convertUserType(typeRefSource, it, isNullable)
+                FUNCTION_TYPE_INDEX -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers, isNullable)
+                NULLABLE_TYPE_INDEX -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
+                DYNAMIC_TYPE_INDEX -> firType = buildDynamicTypeRef {
                     source = typeRefSource
                     isMarkedNullable = true
                 }
-                INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, isNullable)
+                INTERSECTION_TYPE_INDEX -> firType = convertIntersectionType(typeRefSource, it, isNullable)
             }
         }
 
@@ -2412,13 +2446,13 @@ class LightTreeRawFirDeclarationBuilder(
         val firTypeArguments = mutableListOf<FirTypeProjection>()
         var typeArgumentsSource: KtSourceElement? = null
         userType.forEachChildren {
-            when (it.tokenType) {
-                USER_TYPE -> simpleFirUserType = convertUserType(typeRefSource, it) as? FirUserTypeRef //simple user type
-                REFERENCE_EXPRESSION -> {
+            when (it.index) {
+                USER_TYPE_INDEX -> simpleFirUserType = convertUserType(typeRefSource, it) as? FirUserTypeRef //simple user type
+                REFERENCE_EXPRESSION_INDEX -> {
                     identifierSource = it.toFirSourceElement()
                     identifier = it.asText
                 }
-                TYPE_ARGUMENT_LIST -> {
+                TYPE_ARGUMENT_LIST_INDEX -> {
                     typeArgumentsSource = it.toFirSourceElement()
                     firTypeArguments += convertTypeArguments(it, allowedUnderscoredTypeArgument = false)
                 }
@@ -2476,10 +2510,10 @@ class LightTreeRawFirDeclarationBuilder(
         lateinit var firType: FirTypeRef
         var isStarProjection = false
         typeProjection.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertTypeArgumentModifierList(it)
-                TYPE_REFERENCE -> firType = convertType(it)
-                MUL -> isStarProjection = true
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> modifiers = convertTypeArgumentModifierList(it)
+                TYPE_REFERENCE_INDEX -> firType = convertType(it)
+                MUL_INDEX -> isStarProjection = true
             }
         }
 
@@ -2518,11 +2552,11 @@ class LightTreeRawFirDeclarationBuilder(
         val parameters = mutableListOf<FirFunctionTypeParameter>()
         var contextList: LighterASTNode? = null
         functionType.forEachChildren {
-            when (it.tokenType) {
-                FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
-                VALUE_PARAMETER_LIST -> parameters += convertFunctionTypeParameters(it)
-                TYPE_REFERENCE -> returnTypeReference = convertType(it)
-                CONTEXT_RECEIVER_LIST -> contextList = it
+            when (it.index) {
+                FUNCTION_TYPE_RECEIVER_INDEX -> receiverTypeReference = convertReceiverType(it)
+                VALUE_PARAMETER_LIST_INDEX -> parameters += convertFunctionTypeParameters(it)
+                TYPE_REFERENCE_INDEX -> returnTypeReference = convertType(it)
+                CONTEXT_RECEIVER_LIST_INDEX -> contextList = it
             }
         }
 
@@ -2610,13 +2644,13 @@ class LightTreeRawFirDeclarationBuilder(
         var firExpression: FirExpression? = null
         var destructuringDeclaration: DestructuringDeclaration? = null
         valueParameter.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VAL_KEYWORD -> isVal = true
-                VAR_KEYWORD -> isVar = true
-                IDENTIFIER -> identifier = it.asText
-                TYPE_REFERENCE -> {}
-                DESTRUCTURING_DECLARATION -> destructuringDeclaration = convertDestructingDeclaration(it)
+            when (it.index) {
+                MODIFIER_LIST_INDEX -> modifiers = convertModifierList(it)
+                VAL_KEYWORD_INDEX -> isVal = true
+                VAR_KEYWORD_INDEX -> isVar = true
+                IDENTIFIER_INDEX -> identifier = it.asText
+                TYPE_REFERENCE_INDEX -> {}
+                DESTRUCTURING_DECLARATION_INDEX -> destructuringDeclaration = convertDestructingDeclaration(it)
                 else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it, "Should have default value")
             }
         }

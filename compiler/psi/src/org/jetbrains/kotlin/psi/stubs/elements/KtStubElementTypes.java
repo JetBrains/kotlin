@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.ElementTypeChecker;
@@ -21,7 +22,10 @@ public class KtStubElementTypes {
         IElementType dependentTokensInit = KtTokens.EOF;
     }
 
-    public static final int CLASS_INDEX = ACTUAL_KEYWORD_INDEX + 1;
+    public static final IElementType PSI_FILE_STUB = PsiFileStubImpl.TYPE;
+
+    public static final int PSI_FILE_STUB_INDEX = ACTUAL_KEYWORD_INDEX + 1;
+    public static final int CLASS_INDEX = PSI_FILE_STUB_INDEX + 1;
     public static final int FUNCTION_INDEX = CLASS_INDEX + 1;
     public static final int PROPERTY_INDEX = FUNCTION_INDEX + 1;
     public static final int PROPERTY_ACCESSOR_INDEX = PROPERTY_INDEX + 1;
