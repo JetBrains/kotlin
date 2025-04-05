@@ -400,6 +400,8 @@ public class Instant internal constructor(
          * @see Instant.toString for formatting.
          * @sample samples.time.Instants.parseOrNull
          */
+        @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+        @SinceKotlin("2.2")
         public fun parseOrNull(input: CharSequence): Instant? {
             val result = parseIso(input, onError = { _, _ -> PARSING_FAILED }) { epochSeconds, nanosecondsOfSecond ->
                 if (epochSeconds < MIN.epochSeconds || epochSeconds > MAX.epochSeconds) {
