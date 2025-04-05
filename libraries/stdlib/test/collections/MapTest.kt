@@ -978,4 +978,24 @@ class MapTest {
         assertEquals(kclasses[A::class], 28)
         assertEquals(kclasses[B::class], 29)
     }
+
+    private enum class Status {
+        NEW, IN_PROGRESS, COMPLETED
+    }
+
+    @Test
+    fun partition() {
+        data class Mission(val id: String)
+        data class Activity(val status: Status)
+
+        val map = mapOf(
+            Mission("M1") to listOf(Activity(Status.NEW), Activity(Status.IN_PROGRESS)),
+            Mission("M2") to listOf(Activity(Status.IN_PROGRESS), Activity(Status.COMPLETED)),
+            Mission("M3") to listOf(Activity(Status.COMPLETED), Activity(Status.COMPLETED)),
+        )
+        val result = map.partition { it.value.all { activity -> activity.status == Status.COMPLETED } }
+
+        assertEquals(1, result.first.size)
+        assertEquals(2, result.second.size)
+    }
 }
