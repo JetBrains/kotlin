@@ -179,6 +179,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("fakeOverrideGenericBaseWithIrInliner.kt")
+      public void testFakeOverrideGenericBaseWithIrInliner() {
+        runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideGenericBaseWithIrInliner.kt");
+      }
+
+      @Test
       @TestMetadata("fakeOverrideInDefaultMultiModule.kt")
       public void testFakeOverrideInDefaultMultiModule() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideInDefaultMultiModule.kt");

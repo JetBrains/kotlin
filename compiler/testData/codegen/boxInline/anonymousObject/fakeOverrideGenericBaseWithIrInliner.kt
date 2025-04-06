@@ -1,6 +1,5 @@
-// SKIP_UNBOUND_IR_SERIALIZATION
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
-// See also a variant of this test with pre-serialization IR Inliner: fakeOverrideGenericBaseWithIrInliner.kt
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 
 // NO_CHECK_LAMBDA_INLINING
 
