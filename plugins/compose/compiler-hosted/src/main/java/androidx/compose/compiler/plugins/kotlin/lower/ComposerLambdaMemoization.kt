@@ -207,6 +207,58 @@ private class FunctionContext(
     }
 }
 
+private class AnonymousInitializerContext(override val declaration: IrAnonymousInitializer): DeclarationContext() {
+    override val composable: Boolean = false
+    override val symbol: IrSymbol = declaration.symbol
+    override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
+    override val functionContext: FunctionContext? = null
+
+    val locals = mutableSetOf<IrValueDeclaration>()
+    var collectors = mutableListOf<CaptureCollector>()
+
+    override fun declareLocal(local: IrValueDeclaration?) {
+        if (local != null) {
+            locals.add(local)
+        }
+    }
+
+    override fun recordCapture(local: IrValueDeclaration?): Boolean {
+        val containsLocal = locals.contains(local)
+        if (local != null && collectors.isNotEmpty() && containsLocal) {
+            for (collector in collectors) {
+                collector.recordCapture(local)
+            }
+        }
+        if (local != null && !containsLocal) {
+            captures.add(local)
+        }
+        return containsLocal
+    }
+
+    override fun recordCapture(local: IrSymbolOwner?) {
+        if (local != null) {
+            val captures = localDeclarationCaptures[local]
+            for (collector in collectors) {
+                collector.recordCapture(local)
+                if (captures != null) {
+                    for (capture in captures) {
+                        collector.recordCapture(capture)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun pushCollector(collector: CaptureCollector) {
+        collectors.add(collector)
+    }
+
+    override fun popCollector(collector: CaptureCollector) {
+        require(collectors.lastOrNull() == collector)
+        collectors.removeAt(collectors.size - 1)
+    }
+}
+
 private class ClassContext(override val declaration: IrClass) : DeclarationContext() {
     override val composable: Boolean = false
     override val symbol get() = declaration.symbol
@@ -370,9 +422,10 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
-        if (declaration is IrFunction)
+        // contexts for those declarations are already created
+        if (declaration is IrClass || declaration is IrFunction || declaration is IrAnonymousInitializer) {
             return super.visitDeclaration(declaration)
-
+        }
         val functionContext = currentFunctionContext
         if (functionContext != null) {
             declarationContextStack.push(FunctionLocalSymbol(declaration, functionContext))
@@ -421,6 +474,15 @@ class ComposerLambdaMemoization(
         }
         declarationContextStack.push(context)
         val result = super.visitClass(declaration)
+        declarationContextStack.pop()
+        return result
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
+        val context = AnonymousInitializerContext(declaration)
+        declarationContextStack.recordLocalDeclaration(context)
+        declarationContextStack.push(context)
+        val result = super.visitAnonymousInitializer(declaration)
         declarationContextStack.pop()
         return result
     }
