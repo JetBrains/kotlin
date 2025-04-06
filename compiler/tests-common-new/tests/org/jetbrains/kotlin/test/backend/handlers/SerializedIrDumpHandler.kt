@@ -205,7 +205,7 @@ class SerializedIrDumpHandler(
                      * There were no fake overrides for synthetic accessors in IR built by Fir2Ir.
                      */
                     true
-                } else if (declaration is IrSimpleFunction &&
+                } else if ((declaration is IrSimpleFunction || declaration is IrProperty) &&
                     declaration.parent.let { it is IrClass && it.visibility == DescriptorVisibilities.LOCAL } &&
                     declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE &&
                     testServices.moduleStructure.modules.first().languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
