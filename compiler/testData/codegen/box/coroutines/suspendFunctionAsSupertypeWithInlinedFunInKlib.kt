@@ -2,8 +2,6 @@
 // LANGUAGE: +SuspendFunctionAsSupertype
 // LANGUAGE: +IrInlinerBeforeKlibSerialization
 // ^^^ This test demonstrates how after IR Inliner on 1st phase, there is no discrepancy in the name of value parameter of `FAKE_OVERRIDE name:invoke`
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-// ^^^ K1/JS testrunners deliberately crash with `+IrInlinerBeforeKlibSerialization`
 
 import kotlin.coroutines.*
 
