@@ -1,3 +1,7 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, NATIVE
+// ^^^ KT-76547: Insertion of synthetic accessors during pre-serialization lowerings leads to wrong synthaccessors order in dump
+// in runners FirJsKlibSyntheticAccessorTestGenerated and FirNativeKlibSyntheticAccessorTestGenerated
+
 // KT-72862: <missing declarations>
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
