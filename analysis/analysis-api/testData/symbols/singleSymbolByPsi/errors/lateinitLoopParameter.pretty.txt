@@ -1,1 +1,1 @@
-val something: A
+lateinit val something: A

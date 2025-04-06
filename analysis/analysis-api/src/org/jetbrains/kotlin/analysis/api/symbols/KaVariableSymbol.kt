@@ -397,6 +397,11 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
 
+    /**
+     * Whether the variable is a [late-initialized variable](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
+     */
+    public abstract val isLateInit: Boolean
+
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 

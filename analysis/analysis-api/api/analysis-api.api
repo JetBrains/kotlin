@@ -954,6 +954,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaLocalVariableS
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
+	public abstract fun isLateInit ()Z
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol, org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {

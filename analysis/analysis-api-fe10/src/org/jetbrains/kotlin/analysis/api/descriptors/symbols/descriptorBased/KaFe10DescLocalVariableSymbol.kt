@@ -32,6 +32,9 @@ internal class KaFe10DescLocalVariableSymbol(
     override val returnType: KaType
         get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
+    override val isLateInit: Boolean
+        get() = withValidityAssertion { descriptor.isLateInit }
+
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromSource<KaLocalVariableSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }

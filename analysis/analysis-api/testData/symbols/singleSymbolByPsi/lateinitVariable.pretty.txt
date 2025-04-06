@@ -1,1 +1,1 @@
-var something: MyClass
+lateinit var something: MyClass
