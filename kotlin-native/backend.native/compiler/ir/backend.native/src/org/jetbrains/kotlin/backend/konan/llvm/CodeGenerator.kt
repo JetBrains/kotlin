@@ -1223,12 +1223,16 @@ internal abstract class FunctionGenerationContext(
         positionAtEnd(bbExit)
     }
 
-    internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?): DILocationRef? {
-        if (!context.shouldContainLocationDebugInfo()) return null
-        update(currentBlock, startLocationInfo, endLocation)
-        val debugLocation = codegen.generateLocationInfo(startLocationInfo)
-        currentPositionHolder.setBuilderDebugLocation(debugLocation)
-        return debugLocation
+    internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?) {
+        if (!context.shouldContainLocationDebugInfo()) return
+
+        // If there is no actual offset, use the previous one if it exists.
+        if (startLocationInfo.line != 0 || basicBlockToLastLocation[currentBlock] == null)
+            update(currentBlock, startLocationInfo, endLocation)
+        if (startLocationInfo.line != 0 || !currentPositionHolder.hasDebugLocation()) {
+            val debugLocation = codegen.generateLocationInfo(startLocationInfo)
+            currentPositionHolder.setBuilderDebugLocation(debugLocation)
+        }
     }
 
     fun indirectBr(address: LLVMValueRef, destinations: Collection<LLVMBasicBlockRef>): LLVMValueRef? {
@@ -1554,6 +1558,8 @@ internal abstract class FunctionGenerationContext(
             if (!context.shouldContainLocationDebugInfo()) return
             LLVMBuilderSetDebugLocation(builder, debugLocation)
         }
+
+        fun hasDebugLocation() = context.shouldContainLocationDebugInfo() && LLVMGetCurrentDebugLocation2(builder) != null
     }
 
     private var currentPositionHolder: PositionHolder = PositionHolder()
