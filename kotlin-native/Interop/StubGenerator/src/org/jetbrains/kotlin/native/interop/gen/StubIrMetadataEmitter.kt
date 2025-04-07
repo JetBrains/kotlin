@@ -133,6 +133,8 @@ internal class ModuleMetadataEmitter(
                     km.companionObject = element.companion?.nestedName()
                     if (element is ClassStub.Enum) {
                         km.kmEnumEntries += element.entries.map { mapEnumEntry(it, classVisitingContext) }
+                        // Always generate `.entries` for CEnums.
+                        km.hasEnumEntries = true
                     }
                 }
             }

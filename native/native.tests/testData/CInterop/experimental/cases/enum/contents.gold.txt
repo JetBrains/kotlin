@@ -31,6 +31,8 @@ library {
 
       @kotlinx/cinterop/internal/ConstantValue.UInt(value = 2u)
       THREE,
+
+      // has Enum.entries
     }
 
     public final companion object dependency/E1.Companion {

@@ -82,7 +82,8 @@ internal class CEnumClassGenerator(
                 descriptor.enumEntries.mapTo(enumIrClass.declarations) { entryDescriptor ->
                     createEnumEntry(descriptor, entryDescriptor)
                 }
-                enumClassMembersGenerator.generateSpecialMembers(enumIrClass)
+                // Always generate `.entries` for CEnums.
+                enumClassMembersGenerator.generateSpecialMembers(enumIrClass, withEnumEntries = true)
                 enumIrClass.addChild(cEnumCompanionGenerator.generate(enumIrClass))
                 enumIrClass.addChild(cEnumVarClassGenerator.generate(enumIrClass))
             }

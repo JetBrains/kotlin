@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -428,7 +429,12 @@ internal class ClassGenerator(
     }
 
     private fun generateAdditionalMembersForEnumClass(irClass: IrClass) {
-        EnumClassMembersGenerator(declarationGenerator).generateSpecialMembers(irClass)
+        EnumClassMembersGenerator(declarationGenerator).generateSpecialMembers(
+            irClass,
+            context.languageVersionSettings.supportsFeature(
+                LanguageFeature.EnumEntries
+            )
+        )
     }
 
     private fun generateFieldsForContextReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
