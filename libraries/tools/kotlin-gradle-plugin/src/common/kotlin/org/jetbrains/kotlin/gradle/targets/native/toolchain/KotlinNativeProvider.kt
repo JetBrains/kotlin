@@ -86,7 +86,7 @@ internal class KotlinNativeFromToolchainProvider(
                 } else {
                     providerFactory.of(NativeVersionValueSource::class.java) {
                         it.parameters.bundleDirectory.set(project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath })
-                        it.parameters.reinstallBundle.set(reinstallBundle)
+                        it.parameters.reinstallBundle.set(kotlinNativeBundleBuildService.zip(reinstallBundle) { service, reinstallRequested -> reinstallRequested && service.getReinstallLock() })
                         it.parameters.kotlinNativeVersion.set(NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project))
                         it.parameters.simpleKotlinNativeVersion.set(project.nativeProperties.kotlinNativeVersion)
                         it.parameters.kotlinNativeCompilerConfiguration.set(

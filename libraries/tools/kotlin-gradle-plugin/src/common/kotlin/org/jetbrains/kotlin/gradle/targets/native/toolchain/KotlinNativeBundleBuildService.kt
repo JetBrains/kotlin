@@ -75,6 +75,11 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     @get:Inject
     abstract val archiveOperations: ArchiveOperations
 
+    private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
+
+    @Synchronized
+    internal fun getReinstallLock(): Boolean = canBeReinstalled.also { canBeReinstalled = false }
+
     companion object {
         private val log = Logging.getLogger(KotlinNativeBundleBuildService::class.java)
 

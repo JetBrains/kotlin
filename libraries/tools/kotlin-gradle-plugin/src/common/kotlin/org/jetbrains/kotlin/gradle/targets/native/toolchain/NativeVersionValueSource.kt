@@ -101,10 +101,11 @@ internal abstract class NativeVersionValueSource :
         reinstallFlag: Boolean,
         bundleDir: File,
     ) {
-        if (reinstallFlag && canBeReinstalled) {
+        if (reinstallFlag) {
             logger.info("Removing Kotlin/Native bundle")
-            bundleDir.deleteRecursively()
-            canBeReinstalled = false // we don't need to reinstall k/n if it was reinstalled once during the same build
+            if (!bundleDir.deleteRecursively()) {
+                logger.warn("Failed to remove Kotlin/Native bundle from ${bundleDir.absolutePath}")
+            }
         }
     }
 
@@ -135,7 +136,6 @@ internal abstract class NativeVersionValueSource :
     }
 
     companion object {
-        private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
         private const val MARKER_FILE = "provisioned.ok"
         val logger = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.native.toolchain")
         internal fun isSnapshotVersion(kotlinNativeVersion: String): Boolean =
