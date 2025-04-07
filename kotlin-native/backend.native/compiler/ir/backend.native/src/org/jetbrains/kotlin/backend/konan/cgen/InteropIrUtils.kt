@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.types.*
@@ -33,12 +32,8 @@ internal fun IrType.isCEnumType(): Boolean {
 
 private val cCall = RuntimeNames.cCall
 
-// Make sure external stubs always get proper annotaions.
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
-                // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
-                || this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
 
 internal fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")
 
