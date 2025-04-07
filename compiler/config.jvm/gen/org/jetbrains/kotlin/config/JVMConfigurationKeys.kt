@@ -105,9 +105,6 @@ object JVMConfigurationKeys {
     val LAMBDAS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("Lambdas code generation scheme")
 
     @JvmField
-    val INDY_ALLOW_ANNOTATED_LAMBDAS = CompilerConfigurationKey.create<Boolean>("Allow using indy for lambdas with annotations")
-
-    @JvmField
     val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("Paths to .klib libraries")
 
     @JvmField
@@ -282,10 +279,6 @@ var CompilerConfiguration.samConversions: JvmClosureGenerationScheme?
 var CompilerConfiguration.lambdas: JvmClosureGenerationScheme?
     get() = get(JVMConfigurationKeys.LAMBDAS)
     set(value) { put(JVMConfigurationKeys.LAMBDAS, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.indyAllowAnnotatedLambdas: Boolean
-    get() = getBoolean(JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS)
-    set(value) { put(JVMConfigurationKeys.INDY_ALLOW_ANNOTATED_LAMBDAS, value) }
 
 var CompilerConfiguration.klibPaths: List<String>
     get() = getList(JVMConfigurationKeys.KLIB_PATHS)

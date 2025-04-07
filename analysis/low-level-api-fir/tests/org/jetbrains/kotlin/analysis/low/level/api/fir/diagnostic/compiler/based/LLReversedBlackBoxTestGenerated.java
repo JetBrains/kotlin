@@ -33596,9 +33596,15 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
-      @TestMetadata("runtimeAnnotationDisablesIndyLambdaGeneration.kt")
-      public void testRuntimeAnnotationDisablesIndyLambdaGeneration() {
-        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotationDisablesIndyLambdaGeneration.kt");
+      @TestMetadata("runtimeAnnotation.kt")
+      public void testRuntimeAnnotation() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("runtimeAnnotation_allowAnnotatedLambdas.kt")
+      public void testRuntimeAnnotation_allowAnnotatedLambdas() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotation_allowAnnotatedLambdas.kt");
       }
 
       @Test

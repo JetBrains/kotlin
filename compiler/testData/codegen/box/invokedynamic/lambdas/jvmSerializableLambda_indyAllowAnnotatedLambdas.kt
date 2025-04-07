@@ -1,7 +1,6 @@
-// LANGUAGE: +LightweightLambdas
+// LANGUAGE: +LightweightLambdas +JvmIndyAllowLambdasWithAnnotations
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
-// JVM_INDY_ALLOW_ANNOTATED_LAMBDAS
 // FULL_JDK
 // WITH_STDLIB
 

@@ -80,6 +80,9 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         if (annotationsInMetadata) {
             result[LanguageFeature.AnnotationsInMetadata] = LanguageFeature.State.ENABLED
         }
+        if (!indyAllowAnnotatedLambdas) {
+            result[LanguageFeature.JvmIndyAllowLambdasWithAnnotations] = LanguageFeature.State.DISABLED
+        }
 
         // If a JVM default mode is enabled via `-jvm-default` or `-Xjvm-default`, also forcibly enable a few flags that fix incomplete
         // error reporting in some cases.

@@ -261,10 +261,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
     )
-
-    val JVM_INDY_ALLOW_ANNOTATED_LAMBDAS by directive(
-        description = "Allow indy on lambdas with annotations"
-    )
 }
 
 fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule, testServices: TestServices): Boolean {

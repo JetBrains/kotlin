@@ -5,18 +5,22 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// 3 java/lang/invoke/LambdaMetafactory
+// 0 java/lang/invoke/LambdaMetafactory
 
 import kotlin.jvm.internal.Lambda
 
-@Target(AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
 public annotation class SomeAnnotation
 
 fun box(): String {
     val a = @SomeAnnotation {}
     val b = @SomeAnnotation fun () {}
     val c = @SomeAnnotation fun Any.() {}
+
+    a()
+    b()
+    42.c()
 
     return "OK"
 }
