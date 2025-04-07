@@ -93,6 +93,12 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
         }
 
         @Test
+        @TestMetadata("leakingPrivateMethodThroughReference.kt")
+        public void testLeakingPrivateMethodThroughReference() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughReference.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateNestedClassThroughInternalInlineFun.kt")
         public void testLeakingPrivateNestedClassThroughInternalInlineFun() {
           runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateNestedClassThroughInternalInlineFun.kt");
