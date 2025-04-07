@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
 
-internal class NativeIrInliner(
+internal fun NativeIrInliner(
         generationState: NativeGenerationState,
         inlineMode: InlineMode,
-) : FunctionInlining(
+) = FunctionInlining(
         context = generationState.context,
         NativeInlineFunctionResolver(generationState, inlineMode),
-        produceOuterThisFields = false,
 )
