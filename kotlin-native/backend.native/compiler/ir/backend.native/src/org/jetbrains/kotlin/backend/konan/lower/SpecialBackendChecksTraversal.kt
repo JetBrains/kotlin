@@ -478,7 +478,9 @@ private class BackendChecker(
                         reportBoundFunctionReferenceError(expression, callee, captures)
                 }
                 callee.symbol == symbols.immutableBlobOf -> {
-                    val varargs = expression.arguments.single() as IrVararg
+                    val arg = expression.arguments.single()
+                            ?: reportError(expression, "expected at least one element")
+                    val varargs = arg as IrVararg
                     val elements = varargs.elements
                     if (elements.any { it is IrSpreadElement })
                         reportError(varargs, "no spread elements allowed here")
