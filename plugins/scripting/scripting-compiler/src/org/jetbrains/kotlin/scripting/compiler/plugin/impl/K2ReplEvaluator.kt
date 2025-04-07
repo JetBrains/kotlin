@@ -30,7 +30,9 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         val currentConfiguration = lastEvaluatedSnippet?.let {
             configuration.with {
                 jvm {
-                    lastSnippetClassLoader(it.get().result.scriptInstance?.javaClass?.classLoader)
+                    (it.get().result.scriptClass?.java ?: it.get().result.scriptInstance?.javaClass)?.let {
+                        lastSnippetClassLoader(it.classLoader)
+                    }
                 }
             }
         } ?: configuration

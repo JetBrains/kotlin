@@ -244,7 +244,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     private fun IrDeclarationParent.toFirClass(): FirRegularClass? {
-        return (this as? IrClass)?.classIdOrFail?.toLookupTag()?.toRegularClassSymbol(session)?.fir
+        return ((this as? IrClass)?.metadata as? FirMetadataSource.Class)?.fir as? FirRegularClass
     }
 
     private fun IrAnnotationContainer.convertAnnotations(): List<FirAnnotation> {

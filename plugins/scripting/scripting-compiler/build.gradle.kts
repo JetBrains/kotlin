@@ -7,6 +7,8 @@ plugins {
     id("jps-compatible")
 }
 
+val kotlinxSerializationGradlePluginClasspath by configurations.creating
+
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
@@ -15,6 +17,7 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
     compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
@@ -35,6 +38,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
+    testImplementation(project(":compiler:fir:plugin-utils"))
     testApi(projectTests(":compiler:tests-common")) { // TODO: drop this, it's based on JUnit4
         exclude(group = "com.nordstrom.tools", module = "junit-foundation")
     }
@@ -49,6 +53,8 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+
+    kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
 }
 
 optInToExperimentalCompilerApi()
@@ -74,12 +80,14 @@ javadocJar()
 testsJar()
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
+    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath)
     workingDir = rootDir
     useJUnitPlatform()
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
+    val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
     doFirst {
         systemProperty("kotlin.test.script.classpath", scriptClasspath)
+        systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
     }
 }
 
