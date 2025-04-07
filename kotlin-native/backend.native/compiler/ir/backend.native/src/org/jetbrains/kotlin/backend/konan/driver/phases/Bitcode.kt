@@ -91,6 +91,12 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
         pipeline = ::ThreadSanitizerPipeline
 )
 
+internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
+        name = "StackProtectorPhase",
+        postactions = getDefaultLlvmModuleActions(),
+        op = ::applySspAttributes
+)
+
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "RemoveRedundantSafepoints",
         postactions = getDefaultLlvmModuleActions(),
@@ -139,6 +145,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
+        it.runPhase(StackProtectorPhase, module)
         it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runPhase(ModuleBitcodeOptimizationPhase, module)
         it.runPhase(LTOBitcodeOptimizationPhase, module)

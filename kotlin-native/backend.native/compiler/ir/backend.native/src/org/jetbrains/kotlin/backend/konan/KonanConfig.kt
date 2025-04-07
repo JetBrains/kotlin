@@ -522,6 +522,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val threadsCount = configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
 
+    val stackProtectorMode = configuration.get(BinaryOptions.stackProtector) ?: StackProtectorMode.NO
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
@@ -531,9 +533,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
         if (sanitizer != null)
             append("-sanitizer${sanitizer.name}")
-        if (checkStateAtExternalCalls) {
+        if (checkStateAtExternalCalls)
             append("-check_state_at_external_calls")
-        }
+        if (stackProtectorMode != StackProtectorMode.NO)
+            append("-stack_protector${stackProtectorMode.name}")
     }
 
     private val systemCacheFlavorString = buildString {
