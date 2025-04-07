@@ -1,5 +1,0 @@
-Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected expression 'FirSingleExpressionBlock' to be resolved
-	at org.jetbrains.kotlin.fir.types.FirTypeUtilsKt.getResolvedType(FirTypeUtils.kt:214)
-	at org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.transformBlock(FirCallCompletionResultsWriterTransformer.kt:1124)
-	at org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.transformBlock(FirCallCompletionResultsWriterTransformer.kt:73)
-	at org.jetbrains.kotlin.fir.expressions.FirBlock.transform(FirBlock.kt:32)

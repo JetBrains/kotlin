@@ -209,15 +209,22 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun runPCLARelatedTasksForCandidate(candidate: Candidate) {
+        // NB: The order is important here, especially for the case of delegated var property with an implicit type.
+        // (see usages of `isImplicitTypedProperty` at FirDeclarationsResolveTransformer.transformPropertyAccessorsWithDelegate)
         for (postponedCall in candidate.postponedPCLACalls) {
             postponedCall.expression.transformSingle(this, null)
         }
 
+        // Currently, those callbacks are only from nested FirDelegatedPropertyInferenceSession.
+        // They update the property / accessor types _and_ resolve setter if it wasn't yet resolved (again implicitly typed delegated var).
+        // It should be done _after_ completion of the delegation call.
         for (callback in candidate.onPCLACompletionResultsWritingCallbacks) {
             callback(finalSubstitutor)
         }
 
         // TODO: Be aware of exponent
+        // This should happen after `onPCLACompletionResultsWritingCallbacks`,
+        // to guarantee that the setter of implicitly typed delegated var is resolved.
         val firStubTypeTransformer = FirTypeVariablesAfterPCLATransformer(finalSubstitutor)
         for (lambda in candidate.lambdasAnalyzedWithPCLA) {
             lambda.transformSingle(firStubTypeTransformer, null)
@@ -1323,6 +1330,25 @@ class FirCallCompletionResultsWriterTransformer(
 
             else -> toErrorReference(errorDiagnostic)
         }
+    }
+
+    override fun <E : FirElement> transformElement(
+        element: E,
+        data: ExpectedArgumentType?,
+    ): E {
+        // FirCallCompletionResultsWriterTransformer is expected to transform only a call and its expression arguments.
+        // Though one of the arguments might be a lambda with arbitrary declarations inside, for a non-PCLA case all of them should be
+        // processed in IndependentMode and fully completed.
+        // In the case of PCLA, we use a dedicated FirTypeVariablesAfterPCLATransformer for adapting all the type variable usages inside the
+        // lambda.
+        //
+        // This `if` is not only a fast-path avoiding unnecessary tree traversal, but also semantically necessary to avoid
+        // traversal of some nodes that are not fully ready yet.
+        // The main case currently is a delegated _var_ property inside PCLA, for which deliberately not resolve its setter until the
+        // completion ends
+        // (see usages of `isImplicitTypedProperty` at FirDeclarationsResolveTransformer.transformPropertyAccessorsWithDelegate).
+        if (element is FirDeclaration) return element
+        return super.transformElement(element, data)
     }
 }
 
