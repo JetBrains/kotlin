@@ -864,7 +864,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("originalExpression", expression, withReplace = true, withTransform = true)
-        +field("typesFromSmartCast", StandardTypes.collection.withArgs(coneKotlinTypeType))
+        +field("upperTypesFromSmartCast", StandardTypes.collection.withArgs(coneKotlinTypeType))
         +field("smartcastType", typeRef)
         +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
         +field("isStable", boolean)

@@ -25,7 +25,7 @@ abstract class FirSmartCastExpression : FirExpression() {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract val originalExpression: FirExpression
-    abstract val typesFromSmartCast: Collection<ConeKotlinType>
+    abstract val upperTypesFromSmartCast: Collection<ConeKotlinType>
     abstract val smartcastType: FirTypeRef
     abstract val smartcastTypeWithoutNullableNothing: FirTypeRef?
     abstract val isStable: Boolean

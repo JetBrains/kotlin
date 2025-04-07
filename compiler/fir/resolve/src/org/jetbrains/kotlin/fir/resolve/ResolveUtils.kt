@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -526,31 +525,31 @@ private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
 fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    val (upperTypesStability, upperTypesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
 
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType(session)
 
-    val allTypes = if (originalType !is ConeStubType) typesFromSmartCast + originalType else typesFromSmartCast
-    if (allTypes.all { it is ConeDynamicType }) return expression
+    val allUpperTypes = if (originalType !is ConeStubType) upperTypesFromSmartCast + originalType else upperTypesFromSmartCast
+    if (allUpperTypes.all { it is ConeDynamicType }) return expression
 
-    val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
-    if (intersectedType == originalType && intersectedType !is ConeDynamicType) return expression
+    val intersectedUpperType = ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
+    if (intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType) return expression
 
     return buildSmartCastExpression {
         originalExpression = expression
-        smartcastStability = stability
+        smartcastStability = upperTypesStability
         smartcastType = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            coneType = intersectedType
+            coneType = intersectedUpperType
         }
         // Example (1): if (x is String) { ... }, where x: dynamic
         //   the dynamic type will "consume" all other, erasing information.
         // Example (2): if (x == null) { ... },
         //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
-        val nonNothingTypes = allTypes.filter { !it.isKindOfNothing }
+        val nonNothingTypes = allUpperTypes.filter { !it.isKindOfNothing }
         if (
-            intersectedType.isKindOfNothing &&
+            intersectedUpperType.isKindOfNothing &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
             originalType !is ConeStubType &&
@@ -561,8 +560,8 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
                 coneType = ConeTypeIntersector.intersectTypes(session.typeContext, nonNothingTypes)
             }
         }
-        this.typesFromSmartCast = typesFromSmartCast
-        coneTypeOrNull = if (stability == SmartcastStability.STABLE_VALUE) intersectedType else originalTypeWithAliases
+        this.upperTypesFromSmartCast = upperTypesFromSmartCast
+        coneTypeOrNull = if (upperTypesStability == SmartcastStability.STABLE_VALUE) intersectedUpperType else originalTypeWithAliases
     }
 }
 

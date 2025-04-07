@@ -32,7 +32,7 @@ internal class FirSmartCastExpressionImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var originalExpression: FirExpression,
-    override val typesFromSmartCast: Collection<ConeKotlinType>,
+    override val upperTypesFromSmartCast: Collection<ConeKotlinType>,
     override var smartcastType: FirTypeRef,
     override var smartcastTypeWithoutNullableNothing: FirTypeRef?,
     override val smartcastStability: SmartcastStability,

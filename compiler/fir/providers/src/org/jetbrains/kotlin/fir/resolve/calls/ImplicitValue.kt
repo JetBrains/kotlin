@@ -79,7 +79,7 @@ sealed class ImplicitValue<S>(
                     source = this@ImplicitValue.originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
                     coneType = this@ImplicitValue.type
                 }
-                typesFromSmartCast = listOf(this@ImplicitValue.type)
+                upperTypesFromSmartCast = listOf(this@ImplicitValue.type)
                 smartcastStability = SmartcastStability.STABLE_VALUE
                 coneTypeOrNull = this@ImplicitValue.type
             }

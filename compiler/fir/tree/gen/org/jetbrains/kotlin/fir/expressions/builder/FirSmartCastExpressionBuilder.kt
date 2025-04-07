@@ -28,7 +28,7 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var originalExpression: FirExpression
-    lateinit var typesFromSmartCast: Collection<ConeKotlinType>
+    lateinit var upperTypesFromSmartCast: Collection<ConeKotlinType>
     lateinit var smartcastType: FirTypeRef
     var smartcastTypeWithoutNullableNothing: FirTypeRef? = null
     lateinit var smartcastStability: SmartcastStability
@@ -38,7 +38,7 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             originalExpression,
-            typesFromSmartCast,
+            upperTypesFromSmartCast,
             smartcastType,
             smartcastTypeWithoutNullableNothing,
             smartcastStability,
