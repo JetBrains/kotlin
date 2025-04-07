@@ -110,16 +110,16 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t24.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t25.kt
 /tmp/t25.kt:7:5: error: can't override 'toString', override 'description' instead
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t26.kt
-/tmp/t26.kt:11:9: error: '@kotlinx.cinterop.ObjCAction method' must not have extension receiver.
+/tmp/t26.kt:11:9: error: '@kotlinx.cinterop.ObjCAction method' cannot have extension receiver.
     fun String.foo() = println(this)
         ^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t27.kt
-/tmp/t27.kt:11:13: error: unexpected @kotlinx.cinterop.ObjCAction method parameter type: 'kotlin.String'
+/tmp/t27.kt:11:13: error: unexpected @kotlinx.cinterop.ObjCAction method parameter type: 'String'
 Only Objective-C object types are supported here.
     fun foo(x: String) = println(x)
             ^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t28.kt
-/tmp/t28.kt:8:5: error: unexpected @kotlinx.cinterop.ObjCAction method return type: 'kotlin.Int'
+/tmp/t28.kt:8:5: error: unexpected @kotlinx.cinterop.ObjCAction method return type: 'Int'
 Only 'Unit' is supported here.
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -128,11 +128,11 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t29.k
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t30.kt
-/tmp/t30.kt:10:9: error: '@kotlinx.cinterop.ObjCOutlet' must not have extension receiver.
+/tmp/t30.kt:10:9: error: '@kotlinx.cinterop.ObjCOutlet' cannot have extension receiver.
     var NSObject.x: NSObject
         ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t31.kt
-/tmp/t31.kt:10:12: error: unexpected @kotlinx.cinterop.ObjCOutlet type: 'kotlin.String'
+/tmp/t31.kt:10:12: error: unexpected @kotlinx.cinterop.ObjCOutlet type: 'String'
 Only Objective-C object types are supported here.
     var x: String
            ^^^^^^
