@@ -117,6 +117,7 @@ private class BackendChecker(
     private fun IrConstructor.isOverrideInit() =
             this.annotations.hasAnnotation(InteropFqNames.objCOverrideInit)
 
+    // Already migrated to FIR Checker: FirNativeObjCOverrideInitChecker.checkCanGenerateOverrideInit()
     private fun checkCanGenerateOverrideInit(irClass: IrClass, constructor: IrConstructor) {
         val superClass = irClass.getSuperClassNotAny()!!
         val superConstructors = superClass.constructors.filter {
@@ -156,6 +157,7 @@ private class BackendChecker(
                         l.name == r.name && l.type == r.type
                     }
 
+    // Already migrated to FIR Checker: FirNativeObjCActionChecker.checkCanGenerateActionImp()
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
         val action = "@${objCActionClassId.asFqNameString()}"
 
@@ -178,6 +180,7 @@ private class BackendChecker(
         checkCanGenerateFunctionImp(function)
     }
 
+    // Already migrated to FIR Checker: FirNativeObjCOutletChecker.checkCanGenerateOutletSetterImp()
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun checkCanGenerateOutletSetterImp(property: IrProperty) {
 
