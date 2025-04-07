@@ -10,7 +10,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskContainer
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
-import org.jetbrains.kotlin.gradle.dsl.abi.VariantConfigurator
 import org.jetbrains.kotlin.gradle.internal.NamedDomainObjectConfiguratorImpl
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ internal open class VariantConfiguratorImpl @Inject constructor(
     private val layout: ProjectLayout,
     private val objects: ObjectFactory,
     private val tasks: TaskContainer,
-) : NamedDomainObjectConfiguratorImpl<AbiValidationVariantSpec>(objects), VariantConfigurator<AbiValidationVariantSpec> {
+) : NamedDomainObjectConfiguratorImpl<AbiValidationVariantSpec>(objects) {
     override val type: Class<AbiValidationVariantSpec> get() = AbiValidationVariantSpec::class.java
 
     override fun factory(name: String): AbiValidationVariantSpec {
@@ -30,18 +29,6 @@ internal open class VariantConfiguratorImpl @Inject constructor(
         element.configureCommon(layout)
         element.configureLegacyTasks(projectName, tasks, layout)
     }
-
-    override fun register(name: String, configure: AbiValidationVariantSpec.() -> Unit) {
-        super.doRegister(name, configure)
-    }
-
-    override fun register(name: String) {
-        super.doRegister(name, null)
-    }
-
-    fun add(variant: AbiValidationVariantSpecImpl) {
-        doAdd(variant)
-    }
 }
 
 internal open class MultiplatformVariantConfiguratorImpl @Inject constructor(
@@ -49,8 +36,7 @@ internal open class MultiplatformVariantConfiguratorImpl @Inject constructor(
     private val layout: ProjectLayout,
     private val objects: ObjectFactory,
     private val tasks: TaskContainer,
-) : NamedDomainObjectConfiguratorImpl<AbiValidationMultiplatformVariantSpec>(objects),
-    VariantConfigurator<AbiValidationMultiplatformVariantSpec> {
+) : NamedDomainObjectConfiguratorImpl<AbiValidationMultiplatformVariantSpec>(objects) {
     override val type: Class<AbiValidationMultiplatformVariantSpec> get() = AbiValidationMultiplatformVariantSpec::class.java
 
     override fun factory(name: String): AbiValidationMultiplatformVariantSpecImpl {
@@ -61,17 +47,5 @@ internal open class MultiplatformVariantConfiguratorImpl @Inject constructor(
         element.configureCommon(layout)
         element.configureMultiplatform()
         element.configureLegacyTasks(projectName, tasks, layout)
-    }
-
-    override fun register(name: String, configure: AbiValidationMultiplatformVariantSpec.() -> Unit) {
-        super.doRegister(name, configure)
-    }
-
-    override fun register(name: String) {
-        super.doRegister(name, null)
-    }
-
-    fun add(variant: AbiValidationMultiplatformVariantSpecImpl) {
-        doAdd(variant)
     }
 }

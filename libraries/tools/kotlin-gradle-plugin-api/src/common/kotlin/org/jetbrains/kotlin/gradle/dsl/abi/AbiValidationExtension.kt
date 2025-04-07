@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  *
  * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 /*
 We can't mark top level extensions with @ExperimentalAbiValidation because
@@ -54,52 +54,88 @@ interface AbiValidationExtension : AbiValidationVariantSpec {
     val enabled: Property<Boolean>
 
     /**
-     * All ABI validation report variants that are available in this project.
+     * Create new report variant without configuring.
+     *
+     * ```kotlin
+     * kotlin {
+     *     abiValidation {
+     *         createVariant("my")
+     *     }
+     * }
+     * ```
+     * When creating a variant, appropriate tasks will be created to generate the dump and check it,
+     * and it is possible to specify individual filters for the new variant.
      *
      * See [AbiValidationVariantSpec] for more details about report variants.
      *
-     * By default, each project always has one variant, called the main variant. It is named [AbiValidationVariantSpec.MAIN_VARIANT_NAME] and is configured in the `kotlin {}` block:
+     * The created version can be further configured by its name.
      *
      * ```kotlin
      * kotlin {
      *     abiValidation {
-     *         // main variant configuration
-     *     }
-     * }
-     * ```
-     *
-     * This is a live mutable collection. New custom variants can be created using special functions such as [NamedDomainObjectContainer.create] or [NamedDomainObjectContainer.register].
-     * Variants can also be configured at the time of their creation:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         variants.register("my") {
-     *             // 'my' variant configuration, not main
-     *         }
-     *     }
-     * }
-     * ```
-     * Or later:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         variants.register("my")
-     *     }
-     * }
-     * //
-     * kotlin {
-     *     abiValidation {
-     *         variants.getByName("my").filters {
-     *             // configure filters for 'my' variant
+     *         configureVariant("my") {
+     *             // configure 'my' variant
      *         }
      *     }
      * }
      * ```
      */
     @ExperimentalAbiValidation
-    val variants: VariantConfigurator<AbiValidationVariantSpec>
+    fun createVariant(name: String)
+
+    /**
+     * Create new report variant with configuring.
+     *
+     * ```kotlin
+     * kotlin {
+     *     abiValidation {
+     *         createVariant("my") {
+     *             // configure 'my' variant
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * See [AbiValidationVariantSpec] for more details about report variants.
+     */
+    @ExperimentalAbiValidation
+    fun createVariant(name: String, action: Action<AbiValidationVariantSpec>)
+
+    /**
+     * Configure report variant by name.
+     *
+     * ```kotlin
+     * kotlin {
+     *     abiValidation {
+     *         configureVariant("my") {
+     *             // configure 'my' variant
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * See [AbiValidationVariantSpec] for more details about report variants.
+     */
+    @ExperimentalAbiValidation
+    fun configureVariant(name: String, action: Action<AbiValidationVariantSpec>)
+
+    /**
+     * Configure report variants that have already been created or are being created in the future.
+     *
+     * ```kotlin
+     * kotlin {
+     *     abiValidation {
+     *         configureAllVariants {
+     *             // configure all variants
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * See [AbiValidationVariantSpec] for more details about report variants.
+     */
+    @ExperimentalAbiValidation
+    fun configureAllVariants(action: Action<AbiValidationVariantSpec>)
 }
 
 /**
@@ -130,16 +166,18 @@ interface AbiValidationExtension : AbiValidationVariantSpec {
  *```kotlin
  * kotlin {
  *     abiValidation {
- *         variants.getByName("my").legacyDump.legacyDumpTaskProvider
- *         variants.getByName("my").legacyDump.legacyCheckTaskProvider
- *         variants.getByName("my").legacyDump.legacyUpdateTaskProvider
+ *         configureVariant("my") {
+ *             legacyDump.legacyDumpTaskProvider
+ *             legacyDump.legacyCheckTaskProvider
+ *             legacyDump.legacyUpdateTaskProvider
+ *         }
  *     }
  * }
  * ```
  *
  * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 /*
 We can't mark top level extensions with @ExperimentalAbiValidation because
