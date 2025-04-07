@@ -18,13 +18,12 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * All the refiners are lazily applied to [KaModule.baseContentScope] to build [KaModule.contentScope].
  * The computation of the refined content scope happens inside [KaContentScopeProvider].
  *
- * This allows extensions providing synthetic non-Kotlin sources to bring those source files
- * into the relevant module, library, or SDK scopes and shadow existing sources in a backend-agnostic manner.
+ * For example, this allows extensions providing synthetic non-Kotlin sources to bring those source files into the relevant module, library,
+ * or SDK scopes and shadow existing sources in a backend-agnostic manner.
  *
- * Note that implementations of [KotlinContentScopeRefiner] cannot access [KaModule.contentScope],
- * as it's not yet built when [getEnlargementScopes]/[getRestrictionScopes] are called.
- *
- * For extensions producing Kotlin source, please see the [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider].
+ * Note that implementations of [KotlinContentScopeRefiner] cannot access [KaModule.contentScope], as it's not yet built when
+ * [getEnlargementScopes]/[getRestrictionScopes] are called. Furthermore, implementations must not use [KotlinProjectStructureProvider], as
+ * the content scope may be accessed during [KaModule] computation.
  */
 public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
     /**
