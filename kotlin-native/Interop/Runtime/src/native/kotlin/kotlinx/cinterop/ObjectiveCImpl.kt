@@ -197,14 +197,6 @@ private external fun ObjCWeakReferenceImpl.init(objcPtr: NativePtr)
 
 // Konan runtme:
 
-@Deprecated("Use plain Kotlin cast of String to NSString", level = DeprecationLevel.ERROR)
-@GCUnsafeCall("Kotlin_Interop_CreateNSStringFromKString")
-public external fun CreateNSStringFromKString(str: String?): NativePtr
-
-@Deprecated("Use plain Kotlin cast of NSString to String", level = DeprecationLevel.ERROR)
-@GCUnsafeCall("Kotlin_Interop_CreateKStringFromNSString")
-public external fun CreateKStringFromNSString(ptr: NativePtr): String?
-
 @PublishedApi
 @GCUnsafeCall("Kotlin_Interop_CreateObjCObjectHolder")
 internal external fun createObjCObjectHolder(ptr: NativePtr): Any?
