@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
@@ -291,7 +292,13 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow { _, flow ->
             val smartCasts = codeFragment.codeFragmentContext?.smartCasts.orEmpty()
             for ((realVariable, exactTypes) in smartCasts) {
-                flow.addTypeStatement(PersistentTypeStatement(variableStorage.remember(realVariable), exactTypes.toPersistentSet()))
+                flow.addTypeStatement(
+                    PersistentTypeStatement(
+                        variableStorage.remember(realVariable),
+                        upperTypes = exactTypes.toPersistentSet(),
+                        lowerTypes = persistentSetOf(),
+                    )
+                )
             }
         }
     }

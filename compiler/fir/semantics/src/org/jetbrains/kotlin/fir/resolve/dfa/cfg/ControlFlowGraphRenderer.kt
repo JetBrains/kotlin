@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
@@ -164,7 +163,7 @@ private class ControlFlowGraphRenderer(
                         append(" = ").append(aliased.renderHtmlLike())
                     } else {
                         getTypeStatement(variable)?.let {
-                            append(": ").append(it.upperTypes.renderHtmlLike())
+                            append(": ").append(it.renderTypeHtmlLike())
                         }
                     }
                 } else if (variable is SyntheticVariable) {
@@ -188,11 +187,11 @@ private class ControlFlowGraphRenderer(
 
     private fun Statement.renderHtmlLike(): String = when (this) {
         is OperationStatement -> "${variable.renderHtmlLike()} ${operation.renderHtmlLike()}"
-        is TypeStatement -> "${variable.renderHtmlLike()}: ${upperTypes.renderHtmlLike()}"
+        is TypeStatement -> "${variable.renderHtmlLike()}: ${renderTypeHtmlLike()}"
     }
 
-    private fun Set<ConeKotlinType>.renderHtmlLike(): String =
-        joinToString(separator = " & ").renderHtmlLike()
+    private fun TypeStatement.renderTypeHtmlLike(): String =
+        renderType().renderHtmlLike()
 
     /**
      * Sanitize string for rendering with HTML-like syntax.
