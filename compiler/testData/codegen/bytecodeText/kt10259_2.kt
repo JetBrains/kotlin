@@ -19,5 +19,5 @@ inline fun test(crossinline s: () -> Unit) {
 // 2 INNERCLASS Kt10259_2Kt\$test\$1\$1
 // 2 INNERCLASS Kt10259_2Kt\$box\$\$inlined\$test\$1\s
 // 2 INNERCLASS Kt10259_2Kt\$box\$\$inlined\$test\$1\$1
-// 1 INNERCLASS kotlin.jvm.internal.Ref\$ObjectRef kotlin.jvm.internal.Ref ObjectRef
+// 1 INNERCLASS kotlin.jvm.internal.Ref\$StringRef kotlin.jvm.internal.Ref StringRef
 // 10 INNERCLASS

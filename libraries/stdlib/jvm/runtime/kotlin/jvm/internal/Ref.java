@@ -19,6 +19,15 @@ public class Ref {
         }
     }
 
+    public static final class StringRef implements Serializable {
+        public String element;
+
+        @Override
+        public String toString() {
+            return element;
+        }
+    }
+
     public static final class ByteRef implements Serializable {
         public byte element;
 

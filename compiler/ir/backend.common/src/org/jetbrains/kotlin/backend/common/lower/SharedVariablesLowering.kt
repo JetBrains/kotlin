@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *
  * becomes
  *
- *     var x = ObjectRef<String>()
+ *     var x = StringRef()
  *     x.element = "a"
  *     run {
  *         x.element = "b"

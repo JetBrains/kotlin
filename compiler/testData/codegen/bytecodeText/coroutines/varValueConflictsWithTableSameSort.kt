@@ -51,7 +51,7 @@ fun box(): String {
 /* 1 load in the catch (e: Throwable) { throw e } block which is implicitly wrapped around try/finally */
 // 1 ALOAD 3\s+ATHROW
 /* 1 load in result = s */
-// 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
+// 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$StringRef\.element
 /* 1 load in spill */
 // 1 ALOAD 3\s+PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\.L\$1 : Ljava/lang/Object;
 /* 2 loads in println(s) */

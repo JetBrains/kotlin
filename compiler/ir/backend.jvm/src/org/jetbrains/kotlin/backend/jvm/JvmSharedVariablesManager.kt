@@ -61,7 +61,17 @@ class JvmSharedVariablesManager(
         primitiveType.classifierOrFail to RefProvider(refClass, primitiveType)
     }
 
-    private val objectRefProvider = run {
+    private val stringRefProvider = run {
+        val refClass = irFactory.addClass(refNamespaceClass) {
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+            name = Name.identifier("StringRef")
+        }.apply {
+            createThisReceiverParameter()
+        }
+        RefProvider(refClass, irBuiltIns.stringType)
+    }
+
+    val objectRefProvider = run {
         val refClass = irFactory.addClass(refNamespaceClass) {
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = Name.identifier("ObjectRef")
@@ -76,10 +86,11 @@ class JvmSharedVariablesManager(
     }
 
     fun getProvider(valueType: IrType): RefProvider =
-        if (valueType.isPrimitiveType())
-            primitiveRefProviders.getValue(valueType.classifierOrFail)
-        else
-            objectRefProvider
+        when {
+            valueType.isPrimitiveType() -> primitiveRefProviders.getValue(valueType.classifierOrFail)
+            valueType.isString() -> stringRefProvider
+            else -> objectRefProvider
+        }
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val valueType = originalDeclaration.type
