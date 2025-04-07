@@ -2,6 +2,9 @@
 // ^^^ Muted because accessor for function/constructor/property references are not generated for JS and first stage. To be fixed in KT-69797.
 // Can be replaced with ignore after KT-69941
 
+// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// ^^^ KT-76547: With pre-serialization inliner: error: Reference to function 'privateMethod' can not be evaluated: Private function declared in module <lib> can not be accessed in module <main>
+
 // KT-72862: Undefined symbols
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // KT-72862: No function found for symbol

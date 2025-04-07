@@ -1,4 +1,5 @@
 // LANGUAGE: -IrInlinerBeforeKlibSerialization
+// SKIP_UNBOUND_IR_SERIALIZATION
 // ^^^ KT-76547, KT-76592: With IR Inliner in pre-serialization, some type parameters are dumped as <unbound IrTypeParameterSymbolImpl> before serialization.
 // After deserialization, they have valid name. This mismatch causes test to fail
 
