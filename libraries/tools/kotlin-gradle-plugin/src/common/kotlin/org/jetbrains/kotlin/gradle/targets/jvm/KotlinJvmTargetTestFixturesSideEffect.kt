@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
-import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
@@ -16,11 +17,11 @@ internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { targ
     if (target !is KotlinJvmTarget && target !is KotlinWithJavaTarget<*, *>) return@KotlinTargetSideEffect
 
     target.project.plugins.withId(JAVA_TEST_FIXTURES_PLUGIN_ID) {
-        val testFixturesSourceSet = target.project.javaSourceSets.findByName(TEST_FIXTURES_FEATURE_NAME)
+        val testFixturesSourceSet = target.project.javaSourceSets.findByName(TEST_FIXTURE_SOURCESET_NAME)
         if (testFixturesSourceSet == null) {
             target.project.logger.warn(
                 "The `$JAVA_TEST_FIXTURES_PLUGIN_ID` plugin has been detected, " +
-                        "however the `$TEST_FIXTURES_FEATURE_NAME` source set cannot be found. " +
+                        "however the `$TEST_FIXTURE_SOURCESET_NAME` source set cannot be found. " +
                         "`internal` declarations can be not available in the test fixtures.",
             )
             return@withId
@@ -30,10 +31,27 @@ internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         testFixturesCompilation.associateWith(mainCompilation)
         testCompilation.associateWith(testFixturesCompilation)
+        if (target is KotlinJvmTarget) {
+            // Only applicable for KMP
+            val testFixturesApiElements = target.project.configurations.getByName(testFixturesSourceSet.apiElementsConfigurationName)
+            testFixturesApiElements.extendsFrom(
+                target.project.configurations.getByName(mainCompilation.apiConfigurationName)
+            )
+            testFixturesApiElements.extendsFrom(
+                target.project.configurations.getByName(testFixturesCompilation.apiConfigurationName)
+            )
+            (testFixturesSourceSet.output.classesDirs as? ConfigurableFileCollection)?.from(
+                testFixturesCompilation.output.classesDirs
+            ) ?: target.project.logger.warn(
+                "Failed to add to $JAVA_TEST_FIXTURES_PLUGIN_ID plugin source set ${testFixturesSourceSet.name} Kotlin outputs. " +
+                        "Please create a new Kotlin issue for this problem: https://kotl.in/issue"
+            )
+            testFixturesSourceSet.output.dir(testFixturesCompilation.output.resourcesDir)
+        }
         val defaultSourceSetNames = setOf(mainCompilation.defaultSourceSet.name, testFixturesCompilation.defaultSourceSet.name)
             .joinToString(separator = ", ", prefix = "'", postfix = "'")
         target.project.logger.debug(
-            "The `$JAVA_TEST_FIXTURES_PLUGIN_ID` plugin has been detected, and the `$TEST_FIXTURES_FEATURE_NAME` " +
+            "The `$JAVA_TEST_FIXTURES_PLUGIN_ID` plugin has been detected, and the `$TEST_FIXTURE_SOURCESET_NAME` " +
                     "source set has been associated with the $defaultSourceSetNames source sets to provide `internal` declarations access."
         )
     }

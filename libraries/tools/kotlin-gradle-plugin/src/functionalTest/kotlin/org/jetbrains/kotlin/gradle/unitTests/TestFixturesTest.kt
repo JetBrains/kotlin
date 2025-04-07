@@ -7,16 +7,23 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.api.tasks.testing.Test as TestTask
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import kotlin.test.Test
+import org.jetbrains.kotlin.gradle.utils.targets
+import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TestFixturesTest {
     @Test
@@ -66,6 +73,68 @@ class TestFixturesTest {
         project.evaluate()
     }
 
+    @Test
+    fun kt75808testFixtureDependenciesAreExposedCorrectly() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        ) {
+            kotlin {
+                jvm()
+            }
+
+            dependencies {
+                "testFixturesApi"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+                "jvmTestFixturesApi"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+            }
+        }
+
+        project.evaluate()
+
+        val testFixturesApiElements = project.configurations.getByName("testFixturesApiElements")
+        val allDeps = testFixturesApiElements.allDependencies
+        assertEquals(2, testFixturesApiElements.allDependencies.count())
+        assertTrue(
+            actual = allDeps.any { dependency ->
+                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-coroutines-core"
+            },
+            message = "Outgoing configuration does not contain 'org.jetbrains.kotlinx:kotlinx-coroutines-core' dependency"
+        )
+        assertTrue(
+            actual = allDeps.any { dependency ->
+                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-serialization-json"
+            },
+            message = "Outgoing configuration does not contain 'org.jetbrains.kotlinx:kotlinx-serialization-json' dependency"
+        )
+    }
+
+    @Test
+    fun kt75808testFixtureClassesAreExposedCorrectly() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        ) {
+            kotlin {
+                jvm()
+            }
+
+            dependencies {
+                "testFixturesApi"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+                "jvmTestFixturesApi"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+            }
+        }
+
+        project.evaluate()
+
+        val testFixturesCompilation = project.kotlinExtension
+            .targets.single { it is KotlinJvmTarget }
+            .compilations.getByName("testFixtures")
+        val outputs = testFixturesCompilation.output.classesDirs.files
+        val testFixturesSourceSet = project.javaSourceSets.getByName("testFixtures")
+        assertTrue(
+            actual = testFixturesSourceSet.output.classesDirs.files.containsAll(outputs),
+            message = "Expected 'testFixtures' source set to contain ${outputs.joinToString { it.absolutePath }}, but actual content is  " +
+                    testFixturesSourceSet.output.classesDirs.files.joinToString { it.absolutePath }
+        )
+    }
 
     private fun testNoDuplicatedResourcesInClasspath(project: ProjectInternal, targetPrefix: String? = null) = with(project) {
         plugins.apply("java-test-fixtures")

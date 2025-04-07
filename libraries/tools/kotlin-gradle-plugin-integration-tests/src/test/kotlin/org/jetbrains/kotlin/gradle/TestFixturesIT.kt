@@ -33,7 +33,7 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test fixtures can access internals of the main JVM source set in KMP projects")
+    @DisplayName("Test fixtures can access internals of the main JVM source set in KMP projects using 'withJava()'")
     @MppGradlePluginTests
     @GradleTest
     @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
@@ -186,6 +186,18 @@ class TestFixturesIT : KGPBaseTest() {
             }
 
             build("compileTestKotlin")
+        }
+    }
+
+    @DisplayName("KT-75808: Correct project dependency on testFixtures")
+    @MppGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_4 // 'testFixturesApi' configuration is only available in KMP projects since this version
+    )
+    fun testProjectDependencyOnKmpTestFixtures(gradleVersion: GradleVersion) {
+        project("kmp-jvm-test-fixtures", gradleVersion) {
+            build(":lib:testClasses")
         }
     }
 
