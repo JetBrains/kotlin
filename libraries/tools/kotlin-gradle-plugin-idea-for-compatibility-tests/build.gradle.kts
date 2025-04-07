@@ -17,7 +17,7 @@ repositories {
         mavenCentral()
     }
 
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+    maven(url = "https://redirector.kotlinlang.org/maven/bootstrap")
     maven(url = "https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies")
 }
 
