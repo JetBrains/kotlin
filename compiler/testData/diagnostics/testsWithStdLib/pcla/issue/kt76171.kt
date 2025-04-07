@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-76171
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume

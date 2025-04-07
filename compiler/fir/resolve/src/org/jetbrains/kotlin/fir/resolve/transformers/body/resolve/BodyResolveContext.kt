@@ -42,7 +42,9 @@ class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
     val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
-    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
+    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf(),
+    // If `this` context is defined for some local class
+    val parentContext: BodyResolveContext? = null
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
@@ -83,8 +85,55 @@ class BodyResolveContext(
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
 
-    @set:PrivateForInline
-    var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
+    // Potentially, we might just initialize it with null and make the `inferenceSession` getter look like
+    // _inferenceSession ?: parentContext?.inferenceSession ?: FirInferenceSession.DEFAULT.
+    // But that might lead to poor performance in the most common case.
+    @Suppress("PropertyName")
+    @PrivateForInline
+    var _inferenceSession: FirInferenceSession? =
+        when {
+            parentContext == null -> FirInferenceSession.DEFAULT
+            else -> null
+        }
+
+    val inferenceSession: FirInferenceSession
+        @OptIn(PrivateForInline::class)
+        get() = _inferenceSession
+        // It's important that we re-use the session from the parent context.
+        // As in different moments the value might be restored _there_ (in the parent context)
+        // while it wouldn't be reflected if we just copied it once at the creation of the local-class-context.
+        //
+        // It's only important for the case like
+        // pclaBuilder {
+        //    object {
+        //       var implicitlyTypedDelegatedVar by delegate()
+        //
+        //    }
+        //    ...
+        // }
+        //
+        // There we would resolve the setter and relevant `setValue` call only after the whole `pclaBuilder` call is completed
+        // So, the relevant PCLA session would be dead at the moment and the default one would be set back
+        // for the `parentContext!!.inferenceSession`.
+        //
+        // NB: Looks like we should use this session only for PCLA to be able
+        // to use information from local class inside it.
+        // However, we should not use other kinds of inference sessions,
+        // otherwise we can "inherit" type variables from there provoking inference problems
+            ?: parentContext!!.inferenceSession as? FirPCLAInferenceSession
+            ?: FirInferenceSession.DEFAULT
+
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
+        val oldSession = this._inferenceSession
+        this._inferenceSession = inferenceSession
+        return try {
+            inferenceSession.block()
+        } finally {
+            this._inferenceSession = oldSession
+        }
+    }
 
     @set:PrivateForInline
     var isInsideAssignmentRhs: Boolean = false
@@ -359,17 +408,6 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
-        val oldSession = this.inferenceSession
-        this.inferenceSession = inferenceSession
-        return try {
-            inferenceSession.block()
-        } finally {
-            this.inferenceSession = oldSession
-        }
-    }
-
-    @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
         return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol), f)
     }
@@ -404,7 +442,10 @@ class BodyResolveContext(
         returnTypeCalculator: ReturnTypeCalculator,
         targetedLocalClasses: Set<FirClassLikeDeclaration>
     ): BodyResolveContext =
-        BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
+        BodyResolveContext(
+            returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested,
+            parentContext = this,
+        ).apply {
             file = this@BodyResolveContext.file
             fileImportsScope += this@BodyResolveContext.fileImportsScope
             specialTowerDataContexts.putAll(this@BodyResolveContext.specialTowerDataContexts)
@@ -413,13 +454,6 @@ class BodyResolveContext(
             containingRegularClass = this@BodyResolveContext.containingRegularClass
             replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
             anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
-            // Looks like we should copy this session only for builder inference to be able
-            // to use information from local class inside it.
-            // However, we should not copy other kinds of inference sessions,
-            // otherwise we can "inherit" type variables from there provoking inference problems
-            if (this@BodyResolveContext.inferenceSession is FirPCLAInferenceSession) {
-                inferenceSession = this@BodyResolveContext.inferenceSession
-            }
         }
 
     // withElement PUBLIC API
