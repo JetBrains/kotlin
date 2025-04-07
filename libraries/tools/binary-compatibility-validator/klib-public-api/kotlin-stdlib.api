@@ -13278,12 +13278,6 @@ final fun kotlinx.cinterop.internal/detachObjCObject(kotlinx.cinterop/ObjCObject
 final fun kotlinx.cinterop/Block_copy(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlinx.cinterop/Block_copy|Block_copy(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
-final fun kotlinx.cinterop/CreateKStringFromNSString(kotlin.native.internal/NativePtr): kotlin/String? // kotlinx.cinterop/CreateKStringFromNSString|CreateKStringFromNSString(kotlin.native.internal.NativePtr){}[0]
-
-// Targets: [native]
-final fun kotlinx.cinterop/CreateNSStringFromKString(kotlin/String?): kotlin.native.internal/NativePtr // kotlinx.cinterop/CreateNSStringFromKString|CreateNSStringFromKString(kotlin.String?){}[0]
-
-// Targets: [native]
 final fun kotlinx.cinterop/allocObjCObject(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlinx.cinterop/allocObjCObject|allocObjCObject(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
