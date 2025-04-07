@@ -13,7 +13,7 @@ fun foo(v: Variants): String {
         return "B"
     }
 
-    return <!NO_ELSE_IN_WHEN!>when<!> (v) {
+    return when (v) {
         is Variants.A -> "A"
     }
 }

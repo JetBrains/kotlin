@@ -394,6 +394,12 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
             if (!equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) return
             val argument = equalityOperatorCall.arguments[1]
 
+            val knownNonValues = (equalityOperatorCall.arguments.firstOrNull() as? FirSmartCastExpression)
+                ?.lowerTypesFromSmartCast
+                ?.mapNotNull { (it as? DfaType.Symbol)?.symbol?.fir }
+                .orEmpty()
+            data.removeAll(knownNonValues)
+
             @OptIn(UnsafeExpressionUtility::class)
             val symbol = argument.toResolvedCallableReferenceUnsafe()?.resolvedSymbol as? FirVariableSymbol<*> ?: return
             val checkedEnumEntry = symbol.fir as? FirEnumEntry ?: return
@@ -442,7 +448,6 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> true
                 else -> return
             }
-
             val symbol = when (val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression()) {
                 is FirResolvedQualifier -> {
                     val firClass = (argument.symbol as? FirRegularClassSymbol)?.fir
@@ -466,8 +471,21 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 FirOperation.NOT_IS -> true
                 else -> return
             }
+            inferVariantsFromSubjectSmartCast(typeOperatorCall, data)
             val symbol = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(data.session).toSymbol(data.session) ?: return
             processBranch(symbol, isNegated, data)
+        }
+
+        private fun inferVariantsFromSubjectSmartCast(typeOperatorCall: FirCall, data: Flags) {
+            val subject = typeOperatorCall.arguments.firstOrNull() as? FirSmartCastExpression ?: return
+
+            for (knownNonType in subject.lowerTypesFromSmartCast) {
+                val symbol = when (knownNonType) {
+                    is DfaType.Cone -> knownNonType.type.toSymbol(data.session)
+                    is DfaType.Symbol -> knownNonType.symbol
+                }
+                processBranch(symbol ?: continue, isNegated = false, data)
+            }
         }
 
         private fun processBranch(symbolToCheck: FirBasedSymbol<*>, isNegated: Boolean, flags: Flags) {

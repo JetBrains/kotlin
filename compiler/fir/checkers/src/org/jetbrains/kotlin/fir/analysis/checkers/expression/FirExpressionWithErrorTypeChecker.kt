@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReference
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
@@ -50,6 +51,7 @@ object FirExpressionWithErrorTypeChecker : FirBasicExpressionChecker(MppCheckerK
         // All these variants inherit an error from a referred expression
         if (expression is FirDesugaredAssignmentValueReferenceExpression ||
             expression is FirWhenSubjectExpression ||
+            expression is FirSmartCastExpression ||
             expression is FirCheckedSafeCallSubject
         ) return
         // Below we do a return in case expression has its own diagnostic or has a diagnostic inside child nodes

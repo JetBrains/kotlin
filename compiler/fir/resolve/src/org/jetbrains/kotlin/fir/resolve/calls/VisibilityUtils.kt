@@ -171,6 +171,7 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
                     upperTypesFromSmartCast = listOf(originalTypeNotNullable)
                     smartcastStability = expressionWithSmartcastIfStable.smartcastStability
                     coneTypeOrNull = originalTypeNotNullable
+                    lowerTypesFromSmartCast = emptyList()
                 }
             else -> originalExpression
         }

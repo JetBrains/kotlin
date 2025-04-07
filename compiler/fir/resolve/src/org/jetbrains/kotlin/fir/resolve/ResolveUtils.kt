@@ -525,23 +525,33 @@ private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
 fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
-    val (upperTypesStability, upperTypesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
 
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType(session)
 
-    val allUpperTypes = if (originalType !is ConeStubType) upperTypesFromSmartCast + originalType else upperTypesFromSmartCast
-    if (allUpperTypes.all { it is ConeDynamicType }) return expression
+    val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
 
-    val intersectedUpperType = ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
-    if (intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType) return expression
+    val intersectedUpperType = when {
+        allUpperTypes.any { it !is ConeDynamicType } -> ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
+        else -> null
+    }.takeUnless {
+        it == originalType && it !is ConeDynamicType
+    }
+
+    if (
+        smartcastStatement.lowerTypes.isEmpty() &&
+        (intersectedUpperType == null || intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType)
+    ) {
+        return expression
+    }
 
     return buildSmartCastExpression {
         originalExpression = expression
-        smartcastStability = upperTypesStability
+        smartcastStability = smartcastStatement.upperTypesStability
         smartcastType = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            coneType = intersectedUpperType
+            coneType = intersectedUpperType ?: originalType
         }
         // Example (1): if (x is String) { ... }, where x: dynamic
         //   the dynamic type will "consume" all other, erasing information.
@@ -549,7 +559,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
         val nonNothingTypes = allUpperTypes.filter { !it.isKindOfNothing }
         if (
-            intersectedUpperType.isKindOfNothing &&
+            intersectedUpperType?.isKindOfNothing == true &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
             originalType !is ConeStubType &&
@@ -560,8 +570,18 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
                 coneType = ConeTypeIntersector.intersectTypes(session.typeContext, nonNothingTypes)
             }
         }
-        this.upperTypesFromSmartCast = upperTypesFromSmartCast
-        coneTypeOrNull = if (upperTypesStability == SmartcastStability.STABLE_VALUE) intersectedUpperType else originalTypeWithAliases
+        this.upperTypesFromSmartCast = smartcastStatement.upperTypes
+        coneTypeOrNull = when {
+            smartcastStatement.upperTypesStability == SmartcastStability.STABLE_VALUE && intersectedUpperType != null -> intersectedUpperType
+            else -> originalTypeWithAliases
+        }
+        // We don't have an analogue of `coneTypeOrNull` for non-types because we can't denote a union,
+        // and `commonSuperClass()` would not be correct.
+        // Imagine a `sealed class S` with variants `A : S()`, `B : S()`, `C : S()`.
+        // If `x: ¬(A | B)`, this doesn't yet mean that `x: ¬S`.
+        this.lowerTypesFromSmartCast = smartcastStatement.lowerTypes
+            .takeIf { smartcastStatement.lowerTypesStability == SmartcastStability.STABLE_VALUE }
+            .orEmpty()
     }
 }
 

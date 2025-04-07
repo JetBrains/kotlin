@@ -4,7 +4,7 @@ enum class Enum { A, B, C }
 
 fun foo(e: Enum): Int {
     if (e == Enum.A) return 1
-    return <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    return when (e) {
         Enum.B -> 2
         Enum.C -> 3
     }
@@ -13,7 +13,7 @@ fun foo(e: Enum): Int {
 fun bar(e: Enum): Int {
     if (e == Enum.A) return 1
     if (e == Enum.B) return 2
-    return <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    return when (e) {
         Enum.C -> 3
     }
 }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
@@ -167,13 +168,36 @@ abstract class FirDataFlowAnalyzer(
      *
      * @param expression The variable access expression.
      */
-    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? {
+    open fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartCastStatement? {
         val flow = currentSmartCastPosition ?: return null
         // Can have an unstable alias to a stable variable, so don't resolve aliases here.
         val variable = flow.getRealVariableWithoutUnwrappingAlias(expression) ?: return null
-        val types = flow.getTypeStatement(variable)?.upperTypes?.ifEmpty { null } ?: return null
-        return variable.getStability(flow, types) to types
+        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty }
+        val upperTypes = typeStatement?.upperTypes
+        val upperTypesStability = when {
+            upperTypes != null -> variable.getStability(flow, targetTypes = upperTypes)
+            else -> SmartcastStability.STABLE_VALUE
+        }
+        // If there are any assignments to local variables, we can no longer guarantee
+        // that the lower type bound is correct.
+        val stabilityWithNoTargetTypes = variable.getStability(flow, targetTypes = null)
+        val lowerTypes = typeStatement?.lowerTypes
+        return if (upperTypes?.isNotEmpty() == true || lowerTypes?.isNotEmpty() == true) {
+            SmartCastStatement(
+                upperTypes.orEmpty(), upperTypesStability,
+                lowerTypes.orEmpty(), stabilityWithNoTargetTypes,
+            )
+        } else {
+            null
+        }
     }
+
+    data class SmartCastStatement(
+        val upperTypes: Set<ConeKotlinType>,
+        val upperTypesStability: SmartcastStability,
+        val lowerTypes: Set<DfaType>,
+        val lowerTypesStability: SmartcastStability,
+    )
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo> =
         graphBuilder.returnExpressionsOfAnonymousFunction(function) ?: error("anonymous function ${function.render()} not analyzed")
@@ -409,6 +433,7 @@ abstract class FirDataFlowAnalyzer(
                         val expressionVariable = SyntheticVariable(typeOperatorCall)
                         if (operandVariable.isReal()) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
+                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
                         }
                         if (!type.canBeNull(components.session)) {
                             // x is (T & Any) => x != null
@@ -573,21 +598,26 @@ abstract class FirDataFlowAnalyzer(
         if (leftOperandVariable !is RealVariable && rightOperandVariable !is RealVariable) return
 
         if (operation == FirOperation.EQ || operation == FirOperation.NOT_EQ) {
-            if (hasOverriddenEquals(leftOperandType)) return
+            if (hasUntrustworthyOverriddenEquals(leftOperandType)) return
         }
 
-        if (leftOperandVariable is RealVariable) {
-            flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperandType))
+        fun addEqualityImplications(variable: DataFlowVariable?, otherOperand: FirExpression) {
+            if (variable !is RealVariable) return
+            flow.addImplication((expressionVariable eq isEq) implies (variable typeEq otherOperand.resolvedType))
+
+            (otherOperand as? FirResolvable)?.calleeReference?.toResolvedBaseSymbol()?.let { symbol ->
+                flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
+            }
         }
-        if (rightOperandVariable is RealVariable) {
-            flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperandType))
-        }
+
+        addEqualityImplications(leftOperandVariable, rightOperand)
+        addEqualityImplications(rightOperandVariable, leftOperand)
     }
 
-    private fun hasOverriddenEquals(type: ConeKotlinType): Boolean {
+    private fun hasUntrustworthyOverriddenEquals(type: ConeKotlinType): Boolean {
         val session = components.session
         val symbolsForType = collectSymbolsForType(type, session)
-        if (symbolsForType.any { it.hasEqualsOverride(session, checkModality = true) }) return true
+        if (symbolsForType.any { it.hasUntrustworthyEqualsOverride(session, checkModality = true) }) return true
 
         val superTypes = lookupSuperTypes(
             symbolsForType,
@@ -600,10 +630,10 @@ abstract class FirDataFlowAnalyzer(
             it.fullyExpandedType(session).toRegularClassSymbol(session)
         }
 
-        return superClassSymbols.any { it.hasEqualsOverride(session, checkModality = false) }
+        return superClassSymbols.any { it.hasUntrustworthyEqualsOverride(session, checkModality = false) }
     }
 
-    private fun FirClassSymbol<*>.hasEqualsOverride(session: FirSession, checkModality: Boolean): Boolean {
+    private fun FirClassSymbol<*>.hasUntrustworthyEqualsOverride(session: FirSession, checkModality: Boolean): Boolean {
         val status = resolvedStatus
         if (checkModality && status.modality != Modality.FINAL) return true
         if (status.isExpect) return true
@@ -612,6 +642,8 @@ abstract class FirDataFlowAnalyzer(
             StandardClassIds.Any -> return false
             // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
             StandardClassIds.Float, StandardClassIds.Double -> return true
+            // kotlin.Enum has `equals()`, but we know it's reasonable
+            StandardClassIds.Enum -> return false
         }
 
         // When the class belongs to a different module, "equals" contract might be changed without re-compilation
