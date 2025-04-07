@@ -103,8 +103,9 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
 
         inlineFunctionResolver.callInlinerStrategy.at(data, expression)
         return CallInlining(
-            actualCallee,
             context,
+            actualCallee,
+            data.file,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
             produceOuterThisFields
@@ -133,8 +134,9 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
 }
 
 private class CallInlining(
-    val callee: IrFunction,
-    val context: LoweringContext,
+    private val context: LoweringContext,
+    private val callee: IrFunction,
+    private val currentFile: IrFile,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean,
     private val produceOuterThisFields: Boolean
@@ -223,6 +225,17 @@ private class CallInlining(
         val inlinedFunctionSymbol: IrFunctionSymbol,
         val returnableBlockSymbol: IrReturnableBlockSymbol,
     ) : IrElementTransformerVoid() {
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock {
+            inlinedBlock.transformChildrenVoid(this)
+            if (currentFile.fileEntry == inlinedBlock.inlinedFunctionFileEntry) return inlinedBlock
+
+            val symbol = inlinedBlock.inlinedFunctionSymbol
+            if (symbol != null && symbol.isConsideredAsPrivateAndNotLocalForInlining()) {
+                inlinedBlock.inlinedFunctionSymbol = null
+            }
+            return inlinedBlock
+        }
+
         override fun visitReturn(expression: IrReturn): IrExpression {
             expression.transformChildrenVoid(this)
             if (expression.returnTargetSymbol == inlinedFunctionSymbol) {
