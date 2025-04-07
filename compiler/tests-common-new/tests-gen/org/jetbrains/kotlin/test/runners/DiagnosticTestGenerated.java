@@ -14921,6 +14921,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("returnTypeMismatchNullability.kt")
+      public void testReturnTypeMismatchNullability() {
+        runTest("compiler/testData/diagnostics/tests/functionLiterals/returnTypeMismatchNullability.kt");
+      }
+
+      @Test
       @TestMetadata("underscopeParameters.kt")
       public void testUnderscopeParameters() {
         runTest("compiler/testData/diagnostics/tests/functionLiterals/underscopeParameters.kt");
