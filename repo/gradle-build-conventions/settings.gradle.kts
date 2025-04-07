@@ -5,7 +5,7 @@ pluginManagement {
     includeBuild("../gradle-settings-conventions")
 
     repositories {
-        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
         mavenCentral()
         google()
         gradlePluginPortal()

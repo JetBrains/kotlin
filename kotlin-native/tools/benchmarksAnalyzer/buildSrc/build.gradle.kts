@@ -33,7 +33,7 @@ kotlin {
 }
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     mavenCentral()
     gradlePluginPortal()
 }

@@ -668,7 +668,7 @@ allprojects {
             }
         }
 
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies") {
+        maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
             content {
                 includeModule("org.jetbrains.dukat", "dukat")
                 includeModule("org.jetbrains.kotlin", "android-dx")
