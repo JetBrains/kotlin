@@ -1,5 +1,4 @@
 // ISSUE: KT-76171
-// IGNORE_BACKEND_K2: ANY
 // WITH_STDLIB
 
 import kotlin.coroutines.Continuation
