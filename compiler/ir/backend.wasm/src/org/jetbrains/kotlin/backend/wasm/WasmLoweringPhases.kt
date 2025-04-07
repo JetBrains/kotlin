@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.lower.DelegatedPropertyOptimizationLowering
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
@@ -282,6 +283,12 @@ private val upgradeCallableReferences = makeIrModulePhase(
         )
     },
     name = "UpgradeCallableReferences"
+)
+
+private val delegatedPropertyOptimizationPhase = makeIrModulePhase(
+    lowering = ::DelegatedPropertyOptimizationLowering,
+    name = "DelegatedPropertyOptimization",
+    prerequisite = setOf()
 )
 
 private val propertyReferenceLowering = makeIrModulePhase(
@@ -639,6 +646,7 @@ fun getWasmLowerings(
         enumEntryCreateGetInstancesFunsLoweringPhase,
         enumSyntheticFunsLoweringPhase,
 
+        delegatedPropertyOptimizationPhase,
         propertyReferenceLowering,
         callableReferencePhase,
 
