@@ -229,7 +229,9 @@ internal object ArgumentCheckingProcessor {
                     val constraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]?.constraints
                     val constraintTypes = constraints?.mapNotNull { it.type as? ConeKotlinType }
                     if (!constraintTypes.isNullOrEmpty()) {
-                        return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes)
+                        return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
+                            withNullability(type.isMarkedNullable, session.typeContext)
+                        }
                     }
 
                     val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
