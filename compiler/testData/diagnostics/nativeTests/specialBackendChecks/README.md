@@ -1,7 +1,7 @@
 This testsuit fir specialBackendChecks on Mac hosts relies on platform libs are installed.
 To run testsuit locally, make sure the above is executed first:
-- `./gradlew :kotlin-native:platformLibs:macos_arm64Install` or 
-- `./gradlew :kotlin-native:platformLibs:macos_x64Install`
+- `./gradlew :kotlin-native:platformLibs:macos_arm64Install` and 
+- `./gradlew :kotlin-native:platformLibs:linux_x64Install`
 
 This testsuit is run differently for K1 and K2 frontends:
 - K1/N manual: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh -language-version 1.9`, 
@@ -16,72 +16,142 @@ For not yet migrated checks, the output must be the same as below.
 ```text
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t1.kt
 /tmp/t1.kt:12:5: error: variadic function pointers are not supported
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t1.kt -target linux_x64
+/tmp/t1.kt:12:5: error: variadic function pointers are not supported
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t10.kt
+/tmp/t10.kt:8:5: error: type kotlin.Function1<*, kotlin.Int>  of callback parameter 1 is not supported here: * as 1 parameter type
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t10.kt -target linux_x64
 /tmp/t10.kt:8:5: error: type kotlin.Function1<*, kotlin.Int>  of callback parameter 1 is not supported here: * as 1 parameter type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t11.kt
 /tmp/t11.kt:8:5: error: type kotlin.Function1<in kotlin.Int, kotlin.Int>  of callback parameter 1 is not supported here: in-variance of 1 parameter type
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t11.kt -target linux_x64
+/tmp/t11.kt:8:5: error: type kotlin.Function1<in kotlin.Int, kotlin.Int>  of callback parameter 1 is not supported here: in-variance of 1 parameter type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t12.kt
+/tmp/t12.kt:8:5: error: type kotlinx.cinterop.CValue<*>?  of callback parameter 1 is not supported here: must not be nullable
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t12.kt -target linux_x64
 /tmp/t12.kt:8:5: error: type kotlinx.cinterop.CValue<*>?  of callback parameter 1 is not supported here: must not be nullable
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t13.kt
 /tmp/t13.kt:9:5: error: type kotlinx.cinterop.CValue<T of <root>.bar>  of callback parameter 1 is not supported here: must be parameterized with concrete class
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t13.kt -target linux_x64
+/tmp/t13.kt:9:5: error: type kotlinx.cinterop.CValue<T of <root>.bar>  of callback parameter 1 is not supported here: must be parameterized with concrete class
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t14.kt
+/tmp/t14.kt:10:5: error: type kotlinx.cinterop.CValue<<root>.Z>  of callback parameter 1 is not supported here: not a structure or too complex
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t14.kt -target linux_x64
 /tmp/t14.kt:10:5: error: type kotlinx.cinterop.CValue<<root>.Z>  of callback parameter 1 is not supported here: not a structure or too complex
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t37.kt
 /tmp/t37.kt:8:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t37.kt -target linux_x64
+/tmp/t37.kt:8:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t38.kt
 /tmp/t38.kt:8:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t38.kt -target linux_x64
+/tmp/t38.kt:8:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t40.kt
+/tmp/t40.kt:10:5: error: kotlinx.cinterop.staticCFunction must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t40.kt:10:21
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t40.kt -target linux_x64
 /tmp/t40.kt:10:5: error: kotlinx.cinterop.staticCFunction must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t40.kt:10:21
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t41.kt
 /tmp/t41.kt:9:5: error: kotlinx.cinterop.staticCFunction must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t41.kt:7:17: x
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t41.kt -target linux_x64
+/tmp/t41.kt:9:5: error: kotlinx.cinterop.staticCFunction must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t41.kt:7:17: x
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t42.kt
+/tmp/t42.kt:8:5: error: c function signature element mismatch: expected 'kotlin.Any', got 'kotlin.String'
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t42.kt -target linux_x64
 /tmp/t42.kt:8:5: error: c function signature element mismatch: expected 'kotlin.Any', got 'kotlin.String'
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t43.kt
 /tmp/t43.kt:5:21: error: receiver's type kotlin.Float is not an integer type
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t43.kt -target linux_x64
+/tmp/t43.kt:5:21: error: receiver's type kotlin.Float is not an integer type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t44.kt
+/tmp/t44.kt:5:21: error: type argument kotlin.Float is not an integer type
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t44.kt -target linux_x64
 /tmp/t44.kt:5:21: error: type argument kotlin.Float is not an integer type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t45.kt
 /tmp/t45.kt:5:21: error: unable to sign extend kotlin.Int to kotlin.Short
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t45.kt -target linux_x64
+/tmp/t45.kt:5:21: error: unable to sign extend kotlin.Int to kotlin.Short
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t46.kt
+/tmp/t46.kt:5:21: error: unable to narrow kotlin.Int to kotlin.Long
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t46.kt -target linux_x64
 /tmp/t46.kt:5:21: error: unable to narrow kotlin.Int to kotlin.Long
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t47.kt
 /tmp/t47.kt:5:21: error: unable to convert kotlin.Int to kotlin.String
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t47.kt -target linux_x64
+/tmp/t47.kt:5:21: error: unable to convert kotlin.Int to kotlin.String
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t60.kt
+/tmp/t60.kt:6:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t60.kt -target linux_x64
 /tmp/t60.kt:6:5: error: subclasses of kotlinx.cinterop.NativePointed cannot have properties with backing fields
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t63.kt
 /tmp/t63.kt:26:17: error: calling suspend functions from `autoreleasepool {}` is prohibited, see https://youtrack.jetbrains.com/issue/KT-50786
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t63.kt -target linux_x64
+/tmp/t63.kt:26:17: error: calling suspend functions from `autoreleasepool {}` is prohibited, see https://youtrack.jetbrains.com/issue/KT-50786
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t64.kt
+/tmp/t64.kt:29:17: error: calling suspend functions from `autoreleasepool {}` is prohibited, see https://youtrack.jetbrains.com/issue/KT-50786
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t64.kt -target linux_x64
 /tmp/t64.kt:29:17: error: calling suspend functions from `autoreleasepool {}` is prohibited, see https://youtrack.jetbrains.com/issue/KT-50786
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t8.kt
 /tmp/t8.kt:8:5: error: type kotlin.Function0<*>  of callback parameter 1 is not supported here: * as return type
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t8.kt -target linux_x64
+/tmp/t8.kt:8:5: error: type kotlin.Function0<*>  of callback parameter 1 is not supported here: * as return type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t9.kt
 /tmp/t9.kt:8:5: error: type kotlin.Function0<out kotlin.Int>  of callback parameter 1 is not supported here: out-variance of return type
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t9.kt -target linux_x64
+/tmp/t9.kt:8:5: error: type kotlin.Function0<out kotlin.Int>  of callback parameter 1 is not supported here: out-variance of return type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t48.kt
+/tmp/t48.kt:11:12: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t48.kt:11:50
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t48.kt -target linux_x64
 /tmp/t48.kt:11:12: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t48.kt:11:50
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t49.kt
 /tmp/t49.kt:7:12: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t49.kt:7:61: x
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t49.kt -target linux_x64
+/tmp/t49.kt:7:12: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t49.kt:7:61: x
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t50.kt
+/tmp/t50.kt:12:16: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t50.kt:12:54
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t50.kt -target linux_x64
 /tmp/t50.kt:12:16: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t50.kt:12:54
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t51.kt
 /tmp/t51.kt:10:28: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t51.kt:10:66
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t51.kt -target linux_x64
+/tmp/t51.kt:10:28: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t51.kt:10:66
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t54.kt
+/tmp/t54.kt:4:44: error: no spread elements allowed here
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t54.kt -target linux_x64
 /tmp/t54.kt:4:44: error: no spread elements allowed here
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t55.kt
 /tmp/t55.kt:4:37: error: all elements of binary blob must be constants
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t55.kt -target linux_x64
+/tmp/t55.kt:4:37: error: all elements of binary blob must be constants
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t56.kt
 /tmp/t56.kt:4:29: error: incorrect value for binary data: 1000
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t56.kt -target linux_x64
+/tmp/t56.kt:4:29: error: incorrect value for binary data: 1000
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t57.kt
+/tmp/t57.kt:4:13: error: expected at least one element
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t57.kt -target linux_x64
 /tmp/t57.kt:4:13: error: expected at least one element
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef/t52.kt
 /tmp/t52.kt:6:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t52.kt:6:33: x
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef/t52.kt -target linux_x64
+/tmp/t52.kt:6:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t52.kt:6:33: x
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef/t53.kt
+/tmp/t53.kt:10:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
+    /tmp/t53.kt:10:23
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef/t53.kt -target linux_x64
 /tmp/t53.kt:10:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t53.kt:10:23
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t15.kt
@@ -165,10 +235,18 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
 /tmp/t7.kt:6:40: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
 /tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt -target linux_x64
+/tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t36.kt
+/tmp/t36.kt:7:13: error: native interop types constructors must not be called directly
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t36.kt -target linux_x64
 /tmp/t36.kt:7:13: error: native interop types constructors must not be called directly
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect/t58.kt
 /tmp/t58.kt:6:5: error: non-reified type parameters with recursive bounds are not supported yet: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo>] reified:false
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect/t58.kt -target linux_x64
+/tmp/t58.kt:6:5: error: non-reified type parameters with recursive bounds are not supported yet: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo>] reified:false
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect/t59.kt
+/tmp/t59.kt:6:5: error: non-reified type parameters with recursive bounds are not supported yet: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo>] reified:false
+compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect/t59.kt -target linux_x64
 /tmp/t59.kt:6:5: error: non-reified type parameters with recursive bounds are not supported yet: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo>] reified:false
 ```
