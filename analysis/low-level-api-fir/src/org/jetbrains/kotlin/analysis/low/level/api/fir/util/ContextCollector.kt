@@ -287,7 +287,7 @@ private class ContextCollectorVisitor(
                     continue
                 }
 
-                smartCasts[typeStatement.variable] = typeStatement.exactType
+                smartCasts[typeStatement.variable] = typeStatement.upperTypes
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.

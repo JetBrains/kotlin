@@ -170,7 +170,7 @@ abstract class FirDataFlowAnalyzer(
         val flow = currentSmartCastPosition ?: return null
         // Can have an unstable alias to a stable variable, so don't resolve aliases here.
         val variable = flow.getRealVariableWithoutUnwrappingAlias(expression) ?: return null
-        val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
+        val types = flow.getTypeStatement(variable)?.upperTypes?.ifEmpty { null } ?: return null
         return variable.getStability(flow, types) to types
     }
 

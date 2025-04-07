@@ -26,16 +26,16 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
 
 sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
-    abstract val exactType: Set<ConeKotlinType>
+    abstract val upperTypes: Set<ConeKotlinType>
 
     val isEmpty: Boolean
-        get() = exactType.isEmpty()
+        get() = upperTypes.isEmpty()
 
     val isNotEmpty: Boolean
         get() = !isEmpty
 
     final override fun toString(): String {
-        return "$variable: ${exactType.joinToString(separator = " & ")}"
+        return "$variable: ${upperTypes.joinToString(separator = " & ")}"
     }
 }
 

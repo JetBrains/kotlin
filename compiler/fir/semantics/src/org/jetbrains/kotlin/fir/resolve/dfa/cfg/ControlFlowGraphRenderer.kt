@@ -164,7 +164,7 @@ private class ControlFlowGraphRenderer(
                         append(" = ").append(aliased.renderHtmlLike())
                     } else {
                         getTypeStatement(variable)?.let {
-                            append(": ").append(it.exactType.renderHtmlLike())
+                            append(": ").append(it.upperTypes.renderHtmlLike())
                         }
                     }
                 } else if (variable is SyntheticVariable) {
@@ -188,7 +188,7 @@ private class ControlFlowGraphRenderer(
 
     private fun Statement.renderHtmlLike(): String = when (this) {
         is OperationStatement -> "${variable.renderHtmlLike()} ${operation.renderHtmlLike()}"
-        is TypeStatement -> "${variable.renderHtmlLike()}: ${exactType.renderHtmlLike()}"
+        is TypeStatement -> "${variable.renderHtmlLike()}: ${upperTypes.renderHtmlLike()}"
     }
 
     private fun Set<ConeKotlinType>.renderHtmlLike(): String =
