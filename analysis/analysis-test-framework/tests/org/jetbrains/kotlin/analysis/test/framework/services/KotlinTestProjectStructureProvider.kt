@@ -25,7 +25,7 @@ class KotlinTestProjectStructureProvider(
     private val ktTestModuleStructure: KtTestModuleStructure,
 ) : KotlinStaticProjectStructureProvider() {
     override fun getNotUnderContentRootModule(project: Project): KaNotUnderContentRootModule {
-        error("Not-under content root modules most be initialized explicitly in tests")
+        error("Not-under content root modules must be initialized explicitly in tests")
     }
 
     override fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule {
@@ -44,6 +44,8 @@ class KotlinTestProjectStructureProvider(
 
         computeSpecialModule(containingFile)?.let { return it }
 
+        // If the module cannot be found, in contrast to `KotlinStandaloneProjectStructureProvider`, we throw an exception instead of
+        // returning a not-under-content-root module to make the absence explicit and clear in tests.
         return ktTestModuleStructure.mainModules.firstOrNull { module ->
             element in module.ktModule.contentScope
         }?.ktModule

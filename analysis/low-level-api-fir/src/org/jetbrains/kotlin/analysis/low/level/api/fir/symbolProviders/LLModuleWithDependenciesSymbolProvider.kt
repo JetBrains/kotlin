@@ -41,6 +41,28 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+/**
+ * The module-level [FirSymbolProvider] for an [LLFirSession], composing multiple kinds of symbol providers for the module's own content
+ * ([providers]) and its dependencies ([dependencyProvider]).
+ *
+ * ### Module content inclusion
+ *
+ * [LLModuleWithDependenciesSymbolProvider] must and must only provide symbols for declarations in the associated module's content scope.
+ *
+ * In general, the following statements should all be consistent with each other for a given `declaration` and `module`:
+ *
+ * - `declaration` is included in `module`’s content scope.
+ * - The project structure provider provides `module` for `declaration` (or chooses a competing, equally valid candidate based on use-site
+ *   module disambiguation).
+ * - The symbol provider for `module`'s FIR session provides a symbol for `declaration`.
+ *
+ * Content scopes are the source of truth in this matter. As such, the implementation of the symbol provider must be consistent with the
+ * content scope. This is not always intuitive. For example, the content scope of a library module may exclude certain files from the
+ * library which are nonetheless physically present in an underlying JAR.
+ *
+ * [KotlinProjectStructureProvider][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider] has the same
+ * responsibility, which is the burden of the Analysis API platform.
+ */
 internal class LLModuleWithDependenciesSymbolProvider(
     session: FirSession,
     val providers: List<FirSymbolProvider>,

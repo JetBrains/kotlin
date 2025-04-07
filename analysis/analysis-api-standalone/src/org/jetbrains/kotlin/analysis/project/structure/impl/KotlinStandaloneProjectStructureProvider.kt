@@ -33,7 +33,7 @@ internal class KotlinStandaloneProjectStructureProvider(
     private val ktNotUnderContentRootModuleWithoutPsiFile by lazy {
         KaNotUnderContentRootModuleImpl(
             name = "unnamed-outside-content-root",
-            moduleDescription = "Standalone-not-under-content-root-module-without-psi-file",
+            moduleDescription = "Standalone not-under-content-root module without a PSI file.",
             project = project,
         )
     }
@@ -64,12 +64,14 @@ internal class KotlinStandaloneProjectStructureProvider(
                 .withAttachment("useSiteModule", useSiteModule?.asDebugString())
         }
 
-        return allModules.firstOrNull { module -> virtualFile in module.contentScope }
-            ?: throw KotlinExceptionWithAttachments("Cannot find a KaModule for the VirtualFile")
-                .withPsiAttachment("containingFile", containingFile)
-                .withAttachment("useSiteModule", useSiteModule?.asDebugString())
-                .withAttachment("path", virtualFile.path)
-                .withAttachment("modules", allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
+        return allModules
+            .firstOrNull { module -> virtualFile in module.contentScope }
+            ?: KaNotUnderContentRootModuleImpl(
+                file = containingFile,
+                name = "unnamed-outside-content-root",
+                moduleDescription = "Standalone not-under-content-root module with a PSI file.",
+                project = project,
+            )
     }
 
     override fun getImplementingModules(module: KaModule): List<KaModule> {

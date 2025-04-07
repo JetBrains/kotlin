@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 /**
  * [KotlinProjectStructureProvider] provides information about the project's structure as managed by the Analysis API platform.
  *
+ * The project structure provider must only provide a [KaModule] for files/PSI elements which are included in that module's
+ * [content scope][KaModule.contentScope]. Implementations of [KotlinProjectStructureProvider] are encouraged to check containing files
+ * against the content scopes of candidate [KaModule]s.
+ *
  * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
  */
 public interface KotlinProjectStructureProvider {
