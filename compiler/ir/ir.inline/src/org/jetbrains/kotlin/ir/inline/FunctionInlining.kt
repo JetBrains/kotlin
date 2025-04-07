@@ -35,13 +35,25 @@ import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @PhaseDescription("FunctionInlining")
-open class FunctionInlining(
+class FunctionInlining @JvmIrInlineExperimental constructor(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
-    private val insertAdditionalImplicitCasts: Boolean = true,
-    private val regenerateInlinedAnonymousObjects: Boolean = false,
-    private val produceOuterThisFields: Boolean = true,
+    private val insertAdditionalImplicitCasts: Boolean,
+    private val regenerateInlinedAnonymousObjects: Boolean,
+    private val produceOuterThisFields: Boolean,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
+
+    constructor(
+        context: LoweringContext,
+        inlineFunctionResolver: InlineFunctionResolver,
+    ) : this(
+        context,
+        inlineFunctionResolver,
+        insertAdditionalImplicitCasts = true,
+        regenerateInlinedAnonymousObjects = false,
+        produceOuterThisFields = false
+    )
+
     init {
         require(!produceOuterThisFields || context is CommonBackendContext) {
             "The inliner can generate outer fields only with param `context` of type `CommonBackendContext`"

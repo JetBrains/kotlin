@@ -152,7 +152,12 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    ::WasmFunctionInlining.bind(InlineMode.PRIVATE_INLINE_FUNCTIONS),
+    { context: WasmBackendContext ->
+        WasmFunctionInlining(
+            context,
+            InlineMode.PRIVATE_INLINE_FUNCTIONS
+        )
+    },
     name = "InlineOnlyPrivateFunctions",
     prerequisite = setOf(wrapInlineDeclarationsWithReifiedTypeParametersLowering, arrayConstructorPhase)
 )
@@ -171,10 +176,9 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
 
 private val inlineAllFunctionsPhase = makeIrModulePhase(
     { context: WasmBackendContext ->
-        FunctionInlining(
+        WasmFunctionInlining(
             context,
-            WasmInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
-            produceOuterThisFields = false,
+            InlineMode.ALL_INLINE_FUNCTIONS,
         )
     },
     name = "InlineAllFunctions",

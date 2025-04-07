@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
 
-internal class WasmFunctionInlining(
+internal fun WasmFunctionInlining(
     context: WasmBackendContext,
     inlineMode: InlineMode,
-) : FunctionInlining(
+) = FunctionInlining(
     context = context,
     inlineFunctionResolver = WasmInlineFunctionResolver(context, inlineMode),
-    produceOuterThisFields = false,
 )

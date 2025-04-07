@@ -56,7 +56,6 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         FunctionInlining(
             context,
             PreSerializationPrivateInlineFunctionResolver(context),
-            produceOuterThisFields = false,
         )
     },
     name = "InlineOnlyPrivateFunctions",
@@ -106,7 +105,6 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
         FunctionInlining(
             context,
             PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),
-            produceOuterThisFields = false,
         )
     },
     name = "InlineAllFunctions",
