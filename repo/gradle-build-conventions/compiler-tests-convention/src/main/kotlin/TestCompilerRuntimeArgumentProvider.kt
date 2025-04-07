@@ -23,8 +23,10 @@ import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JSR305_PATH
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.CommandLineArgumentProvider
@@ -75,7 +77,7 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val testDataFiles: ConfigurableFileCollection
+    abstract val testDataFiles: ListProperty<Directory>
 
     @get:InputFile
     @get:Classpath

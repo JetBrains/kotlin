@@ -20,7 +20,7 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     thirdPartyJava9Annotations.value(extension.thirdPartyJava9Annotations)
     thirdPartyJsr305.value(extension.thirdPartyJsr305)
     testDataMap.value(extension.testDataMap)
-    testDataFiles.from(extension.testDataFiles)
+    testDataFiles.value(extension.testDataFiles)
 }
 
 tasks.withType<Test>().configureEach {

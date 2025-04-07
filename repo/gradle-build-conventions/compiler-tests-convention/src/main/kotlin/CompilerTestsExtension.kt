@@ -7,10 +7,11 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.project.IsolatedProject
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
@@ -65,12 +66,12 @@ abstract class CompilerTestsExtension(private val project: Project) {
         }
     }
 
-    internal abstract val testDataFiles: ConfigurableFileTree
+    internal abstract val testDataFiles: ListProperty<Directory>
     internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
 
     fun testData(isolatedProject: IsolatedProject, relativePath: String) {
         val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath)
-        testDataFiles.from(testDataDirectory)
+        testDataFiles.add(testDataDirectory)
         testDataMap.put(
             testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
             testDataDirectory.asFile.relativeTo(project.projectDir).path.replace("\\", "/")
