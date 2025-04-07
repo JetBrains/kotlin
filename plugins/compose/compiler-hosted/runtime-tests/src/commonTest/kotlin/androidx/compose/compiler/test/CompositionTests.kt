@@ -349,6 +349,8 @@ class CompositionTests {
     @Test
     fun earlyReturnInKey() = compositionTest {
         compose {
+            Text(returnKey("a_key", "first"))
+
             key("key") {
                 Text("before")
                 return@compose
@@ -358,6 +360,7 @@ class CompositionTests {
         }
 
         validate {
+            Text("first")
             Text("before")
         }
     }
@@ -495,6 +498,13 @@ fun EnumNullableParameter(enum: TestComposeEnum?) {
 @Composable
 fun EnumParameterLambda(enum: () -> TestComposeEnum) {
     Text(enum().name)
+}
+
+@Composable
+fun returnKey(key: String, value: String): String {
+    key(key) {
+        return value
+    }
 }
 
 @Composable

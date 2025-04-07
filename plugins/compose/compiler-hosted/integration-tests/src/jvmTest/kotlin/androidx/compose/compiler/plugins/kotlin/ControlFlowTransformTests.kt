@@ -2597,4 +2597,18 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             }
         """
     )
+
+    @Test
+    fun earlyReturnKeyWithValue() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(): String {
+                key(1) {
+                    return "foo"
+                }
+            }
+        """
+    )
 }

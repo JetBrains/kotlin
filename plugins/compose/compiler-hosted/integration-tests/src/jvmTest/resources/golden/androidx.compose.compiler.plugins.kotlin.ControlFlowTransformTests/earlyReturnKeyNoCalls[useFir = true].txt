@@ -24,7 +24,14 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     %composer.startMovableGroup(<>, 1)
-    Unit
+    %composer.endMovableGroup()
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      Test(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+    return
     %composer.endMovableGroup()
     if (isTraceInProgress()) {
       traceEventEnd()

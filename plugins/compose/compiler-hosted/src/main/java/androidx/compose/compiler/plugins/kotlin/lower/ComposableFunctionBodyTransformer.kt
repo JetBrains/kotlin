@@ -3406,7 +3406,7 @@ class ComposableFunctionBodyTransformer(
         if (blockArg !is IrFunctionExpression)
             error("Expected function expression but was ${blockArg?.let { it::class }}")
 
-        val (block, resultVar) = blockArg.function.body!!.asBodyAndResultVar()
+        val (block, resultVar) = blockArg.function.body!!.asBodyAndResultVar(expectedTarget = blockArg.function)
 
         var transformed: IrExpression = block
 
