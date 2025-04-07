@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
@@ -21,9 +23,10 @@ import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -38,6 +41,9 @@ class TestReplReceiver1() { fun checkReceiver(block: ReplReceiver1.() -> Any) = 
 private val dependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
 class CustomK2ReplTest {
+
+    private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
 
     @Test
     fun testSimple() {
@@ -190,6 +196,56 @@ class CustomK2ReplTest {
             }
         )
     }
+
+    @Test
+    fun testKotlinxSerialization() {
+        if (!isK2) return
+        val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                """
+                    import kotlinx.serialization.*
+                    import kotlinx.serialization.json.*
+
+                    @Serializable
+                    data class User(val firstName: String, val lastName: String)
+                """,
+                """
+                    val jsonData = Json.encodeToString(User("James", "Bond"))
+                    jsonData
+                """,
+                """
+                    val obj = Json.decodeFromString<User>("{\"firstName\":\"James\", \"lastName\":\"Bond\"}")
+                    obj.firstName + " " + obj.lastName
+                """,
+                """
+                    val obj2 = Json.decodeFromString<User>(jsonData)
+                    obj2.lastName + ", " + obj2.firstName + " " + obj2.lastName
+                """.trimIndent()
+            ),
+            sequenceOf(
+                null,
+                """{"firstName":"James","lastName":"Bond"}""",
+                "James Bond",
+                "Bond, James Bond",
+            ),
+            baseCompilationConfiguration.with {
+                updateClasspath(
+                    runBlocking {
+                        dependenciesResolver.resolve("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+                    }.valueOrThrow()
+                )
+                compilerOptions(
+                    "-Xplugin=$serializationPluginClasspath"
+                )
+            },
+            baseEvaluationConfiguration.with {
+                jvm {
+                    baseClassLoader(null)
+                }
+            }
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
@@ -230,9 +286,12 @@ private fun checkEvaluatedSnippetsResultVals(
     evaluationResults: ResultWithDiagnostics<List<LinkedSnippet<KJvmEvaluatedSnippet>>>
 ) {
     val expectedIter = expectedResultVals.iterator()
-    val successResults = evaluationResults.valueOr {
-        fail("Evaluation failed:\n  ${it.reports.joinToString("\n  ") { it.message }}")
-        return
+    val successResults = evaluationResults.valueOr { failure ->
+        fail(
+            "Evaluation failed:\n  ${failure.reports.joinToString("\n  ") {
+                    it.exception?.toString() ?: it.message
+                }}"
+        )
     }
     for (res in successResults) {
         if (!expectedIter.hasNext()) break

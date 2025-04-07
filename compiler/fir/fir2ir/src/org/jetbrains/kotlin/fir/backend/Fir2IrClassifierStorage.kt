@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -223,11 +224,11 @@ class Fir2IrClassifierStorage(
         require(firClass is FirRegularClass)
         val symbol = createClassSymbol()
         val classId = firClass.symbol.classId
-        val parentId = classId.outerClassId
-        val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
+        val parentClassLookupTag = firClass.containingClassForLocalAttr
+            ?: classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }?.toLookupTag()
         val irParent = declarationStorage.findIrParent(
             classId.packageFqName,
-            parentClass?.toLookupTag(),
+            parentClassLookupTag,
             firClass.symbol,
             firClass.origin
         )!!
