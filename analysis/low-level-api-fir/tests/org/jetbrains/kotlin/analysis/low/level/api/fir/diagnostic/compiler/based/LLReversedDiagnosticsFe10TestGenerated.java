@@ -31241,6 +31241,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("multipleJavaCandidates.kt")
+      public void testMultipleJavaCandidates() {
+        runTest("compiler/testData/diagnostics/tests/namedArguments/multipleJavaCandidates.kt");
+      }
+
+      @Test
       @TestMetadata("multipleJavaOverloadsNamedArgumentsNotAllowed.kt")
       public void testMultipleJavaOverloadsNamedArgumentsNotAllowed() {
         runTest("compiler/testData/diagnostics/tests/namedArguments/multipleJavaOverloadsNamedArgumentsNotAllowed.kt");
