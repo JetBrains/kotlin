@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan.lower
+package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 private val KPROPERTIES_FOR_DELEGATION by IrDeclarationOriginImpl
 
 
-internal class DelegatedPropertyOptimizationLowering(val generationState: NativeGenerationState) : FileLoweringPass {
+class DelegatedPropertyOptimizationLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         var refId = 0
         val newFields = mutableListOf<IrField>()
@@ -66,15 +66,19 @@ internal class DelegatedPropertyOptimizationLowering(val generationState: Native
             }
 
             override fun visitProperty(declaration: IrProperty): IrProperty {
-                withLazyFieldFor(declaration.takeIf { it.isDelegated }) {
-                    declaration.transformChildrenVoid(this)
+                context.irFactory.stageController.restrictTo(declaration) {
+                    withLazyFieldFor(declaration.takeIf { it.isDelegated }) {
+                        declaration.transformChildrenVoid(this)
+                    }
                 }
                 return declaration
             }
 
             override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-                withLazyFieldFor(declaration) {
-                    declaration.transformChildrenVoid(this)
+                context.irFactory.stageController.restrictTo(declaration) {
+                    withLazyFieldFor(declaration) {
+                        declaration.transformChildrenVoid(this)
+                    }
                 }
                 return declaration
             }
