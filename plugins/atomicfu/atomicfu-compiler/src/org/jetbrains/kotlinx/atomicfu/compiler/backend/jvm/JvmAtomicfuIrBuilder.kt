@@ -150,12 +150,12 @@ class JvmAtomicfuIrBuilder(
         valueType: IrType,
         fieldName: String
     ) = irCall(atomicfuSymbols.newUpdater(fieldUpdaterClass)).apply {
-        putValueArgument(0, atomicfuSymbols.javaClassReference(parentClass.symbol.starProjectedType)) // tclass
+        arguments[0] = atomicfuSymbols.javaClassReference(parentClass.symbol.starProjectedType) // tclass
         if (fieldUpdaterClass == atomicfuSymbols.javaAtomicRefFieldUpdaterClass) {
-            putValueArgument(1, atomicfuSymbols.javaClassReference(valueType)) // vclass
-            putValueArgument(2, irString(fieldName)) // fieldName
+            arguments[1] = atomicfuSymbols.javaClassReference(valueType) // vclass
+            arguments[2] = irString(fieldName) // fieldName
         } else {
-            putValueArgument(1, irString(fieldName)) // fieldName
+            arguments[1] = irString(fieldName) // fieldName
         }
     }
 
