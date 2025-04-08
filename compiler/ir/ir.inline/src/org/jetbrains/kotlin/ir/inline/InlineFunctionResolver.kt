@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.util.*
  */
 fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound && (isPrivate(owner.visibility) || owner.isLocal)
 
+fun IrFunctionSymbol.isConsideredAsPrivateAndNotLocalForInlining(): Boolean = this.isBound && isPrivate(owner.visibility) && !owner.isLocal
+
 interface CallInlinerStrategy {
     /**
      * TypeOf function requires some custom backend-specific processing. This is a customization point for that.

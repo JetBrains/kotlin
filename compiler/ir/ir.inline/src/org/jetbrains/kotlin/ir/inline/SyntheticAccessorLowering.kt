@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGen
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -172,7 +171,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
                 return super.visitFunctionAccess(expression, data = null)
 
             val targetFunction = expression.symbol.owner
-            if (!targetFunction.isNonLocalPrivateFunction() || expression.checkIncorrectCrossFileDeclarationAccess())
+            if (!targetFunction.symbol.isConsideredAsPrivateAndNotLocalForInlining() || expression.checkIncorrectCrossFileDeclarationAccess())
                 return super.visitFunctionAccess(expression, data)
 
             // Generate and memoize the accessor. The visibility can be narrowed later.
@@ -247,9 +246,6 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     }
 
     companion object {
-        private fun IrFunction.isNonLocalPrivateFunction(): Boolean =
-            isPrivate(visibility) && !isLocal
-
         private fun IrField.isNonLocalBackingField(): Boolean =
             correspondingPropertySymbol?.owner?.isLocal == false
     }
