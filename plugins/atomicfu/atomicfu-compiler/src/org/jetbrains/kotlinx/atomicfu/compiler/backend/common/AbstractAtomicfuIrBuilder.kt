@@ -61,9 +61,7 @@ abstract class AbstractAtomicfuIrBuilder(
      */
     abstract fun irCallFunction (
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall
 
@@ -82,9 +80,7 @@ abstract class AbstractAtomicfuIrBuilder(
         } ?: error("No $functionName function found in ${atomicHandlerClassSymbol.owner.render()}")
         return irCallFunction(
             functionSymbol,
-            dispatchReceiver = getAtomicHandler,
-            extensionReceiver = null,
-            valueArguments,
+            listOf(getAtomicHandler) + valueArguments,
             valueType
         )
     }

@@ -35,20 +35,20 @@ class JvmAtomicfuIrBuilder(
 
     override fun irCallFunction(
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall {
-        val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            this.extensionReceiver = extensionReceiver
-            valueArguments.forEachIndexed { i, arg ->
-                putValueArgument(i, arg?.let {
-                    val expectedParameterType = symbol.owner.valueParameters[i].type
-                    if (valueType.isBoolean() && !arg.type.isInt() && expectedParameterType.isInt()) toInt(it) else it
-                })
+        val castedArgs = arguments.mapIndexed { i, arg ->
+            val p = symbol.owner.parameters[i]
+            if (p.kind == IrParameterKind.Regular && arg != null &&
+                valueType.isBoolean() && !arg.type.isInt() && p.type.isInt()) {
+                toInt(arg)
+            } else {
+                arg
             }
+        }
+        val irCall = irCall(symbol).apply {
+            castedArgs.forEachIndexed { i, arg -> this.arguments[i] = arg }
         }
         return if (valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }

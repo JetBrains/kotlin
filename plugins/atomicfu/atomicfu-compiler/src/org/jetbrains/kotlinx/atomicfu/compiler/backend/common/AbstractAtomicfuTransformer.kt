@@ -492,12 +492,20 @@ abstract class AbstractAtomicfuTransformer(
             val transformedAction = action.apply {
                 function.body?.transform(this@AtomicFunctionCallTransformer, parentFunction)
             }.deepCopyWithSymbols(parentFunction)
-            val atomicHandlerReceiverValueParam = getAtomicHandlerValueParameterReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val arguments = buildList {
+                parentFunction.firstNonLocalFunctionForLambdaParent.parameters[0].let {
+                    if (it.kind == IrParameterKind.DispatchReceiver) {
+                        add(it.capture())
+                    }
+                }
+                add(atomicHandlerReceiver)
+                atomicHandlerExtraArg?.let { add(it) }
+                add(transformedAction)
+            }
             return irCallFunction(
                 symbol = loopFunc.symbol,
-                dispatchReceiver = parentFunction.firstNonLocalFunctionForLambdaParent.dispatchReceiverParameter?.capture(),
-                extensionReceiver = null,
-                valueArguments = buildList { add(atomicHandlerReceiverValueParam); atomicHandlerExtraArg?.let { add(it) }; add(transformedAction) },
+                arguments = arguments,
                 valueType = valueType
             )
         }

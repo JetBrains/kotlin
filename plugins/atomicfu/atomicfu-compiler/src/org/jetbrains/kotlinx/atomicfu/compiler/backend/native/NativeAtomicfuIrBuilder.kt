@@ -8,6 +8,8 @@ package org.jetbrains.kotlinx.atomicfu.compiler.backend.native
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -25,26 +27,29 @@ class NativeAtomicfuIrBuilder(
 
     override fun irCallFunction(
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall = irCall(symbol).apply {
-        val isAtomicArrayHandler = dispatchReceiver != null && atomicfuSymbols.isAtomicArrayHandlerType(dispatchReceiver.type)
+        val isAtomicArrayHandler = symbol.owner.parameters[0].kind == IrParameterKind.DispatchReceiver &&
+                atomicfuSymbols.isAtomicArrayHandlerType(symbol.owner.parameters[0].type)
+
+        fun isIndexParameter(p: IrValueParameter) = p.type.isInt() && p.name.asString().contains("index")
+
+        val castedArgs = arguments.mapIndexed { i, arg ->
+            val p = symbol.owner.parameters[i]
+            if (p.kind == IrParameterKind.Regular && arg != null &&
+                isAtomicArrayHandler && valueType.isBoolean() && !isIndexParameter(symbol.owner.parameters[i])) {
+                toInt(arg)
+            } else {
+                arg
+            }
+        }
         val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            this.extensionReceiver = extensionReceiver
             if (symbol.owner.typeParameters.isNotEmpty()) {
                 require(symbol.owner.typeParameters.size == 1) { "Only K/N atomic intrinsics are parameterized with a type of the updated volatile field. A function with more type parameters is being invoked: ${symbol.owner.render()}" }
                 typeArguments[0] = valueType
             }
-            valueArguments.forEachIndexed { i, arg ->
-                if (isAtomicArrayHandler && valueType.isBoolean() && i != 0) {
-                    putValueArgument(i, arg?.let { toInt(it) })
-                } else {
-                    putValueArgument(i, arg)
-                }
-            }
+            castedArgs.forEachIndexed { i, arg -> this.arguments[i] = arg }
         }
         return if (isAtomicArrayHandler && valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
@@ -170,9 +175,7 @@ class NativeAtomicfuIrBuilder(
         vararg valueArguments: IrExpression?
     ): IrCall = irCallFunction(
         symbol = symbol,
-        dispatchReceiver = null,
-        extensionReceiver = propertyRef,
-        valueArguments = valueArguments.toList(),
+        arguments = listOf(propertyRef) + valueArguments.toList(),
         valueType = receiverType
     )
 
