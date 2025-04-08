@@ -793,7 +793,7 @@ abstract class AbstractAtomicfuTransformer(
     }
 
     private fun IrFunction.checkActionParameter(): Boolean {
-        val action = valueParameters.last()
+        val action = parameters.last()
         return action.name.asString() == ACTION &&
                 action.type.classOrNull == irBuiltIns.functionN(1).symbol
     }
