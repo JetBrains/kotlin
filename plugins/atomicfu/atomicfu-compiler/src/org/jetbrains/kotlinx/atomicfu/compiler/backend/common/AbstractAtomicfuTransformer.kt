@@ -580,7 +580,7 @@ abstract class AbstractAtomicfuTransformer(
             declaration: IrSimpleFunction,
             atomicHandlerType: AtomicHandlerType
         ): IrSimpleFunction {
-            val valueType = atomicfuSymbols.atomicToPrimitiveType(declaration.extensionReceiverParameter!!.type as IrSimpleType)
+            val valueType = atomicfuSymbols.atomicToPrimitiveType(declaration.extensionReceiverParameterType!!)
             // Try find the transformed atomic extension in the parent container
             findDeclaration<IrSimpleFunction> {
                 it.name.asString() == mangleAtomicExtension(declaration.name.asString(), atomicHandlerType, valueType)
@@ -799,7 +799,7 @@ abstract class AbstractAtomicfuTransformer(
         atomicHandlerType: AtomicHandlerType,
         atomicExtension: IrFunction
     ): IrSimpleFunction {
-        val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicExtension.extensionReceiverParameter!!.type as IrSimpleType)
+        val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicExtension.extensionReceiverParameterType!!)
         val mangledName = mangleAtomicExtension(atomicExtension.name.asString(), atomicHandlerType, valueType)
         return pluginContext.irFactory.buildFun {
             name = Name.identifier(mangledName)
@@ -850,7 +850,7 @@ abstract class AbstractAtomicfuTransformer(
         } ?: false
 
     private fun IrFunction.isAtomicExtension(): Boolean =
-        if (extensionReceiverParameter != null && extensionReceiverParameter!!.type.isAtomicType()) {
+        if (extensionReceiverParameterType?.type?.isAtomicType() ?: false) {
             require(this.isInline) {
                 "Non-inline extension functions on kotlinx.atomicfu.Atomic* classes are not allowed, " +
                         "please add inline modifier to the function ${this.render()}."
@@ -861,6 +861,9 @@ abstract class AbstractAtomicfuTransformer(
             }
             true
         } else false
+
+    private val IrFunction.extensionReceiverParameterType: IrSimpleType?
+        get() = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type as? IrSimpleType
 
     internal fun IrFunction.isTransformedAtomicExtension(): Boolean =
         name.asString().contains("\$$ATOMICFU") && valueParameters.isNotEmpty() && valueParameters[0].name.asString() == ATOMIC_HANDLER
