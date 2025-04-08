@@ -54827,6 +54827,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/contextParameters.kt");
+      }
+
+      @Test
       @TestMetadata("findParameterByName.kt")
       public void testFindParameterByName() {
         runTest("compiler/testData/codegen/box/reflection/parameters/findParameterByName.kt");

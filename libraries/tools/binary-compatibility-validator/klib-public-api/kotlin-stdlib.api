@@ -211,6 +211,10 @@ open annotation class kotlin/DslMarker : kotlin/Annotation { // kotlin/DslMarker
     constructor <init>() // kotlin/DslMarker.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/ExperimentalContextParameters : kotlin/Annotation { // kotlin/ExperimentalContextParameters|null[0]
+    constructor <init>() // kotlin/ExperimentalContextParameters.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/ExperimentalMultiplatform : kotlin/Annotation { // kotlin/ExperimentalMultiplatform|null[0]
     constructor <init>() // kotlin/ExperimentalMultiplatform.<init>|<init>(){}[0]
 }
