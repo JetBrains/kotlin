@@ -170,7 +170,8 @@ class ConstraintInjector(
         typeCheckerState: TypeCheckerStateForConstraintInjector,
         constraintsToProcess: Collection<Pair<TypeVariableMarker, Constraint>>
     ) {
-        for ((typeVariable, constraint) in constraintsToProcess) {
+        val reducedConstraints = if (constraintsToProcess.size < 4) constraintsToProcess else constraintsToProcess.toSet()
+        for ((typeVariable, constraint) in reducedConstraints) {
             if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
 
             val typeVariableConstructor = typeVariable.freshTypeConstructor(c)
