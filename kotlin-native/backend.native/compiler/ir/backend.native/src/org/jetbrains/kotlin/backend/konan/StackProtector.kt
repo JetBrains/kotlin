@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.backend.konan
 import kotlinx.cinterop.toKString
 import llvm.LLVMGetValueName
 import llvm.LLVMIsAFunction
+import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.konan.driver.phases.OptimizationState
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
+import org.jetbrains.kotlin.backend.konan.llvm.name
 import kotlin.sequences.forEach
 
 enum class StackProtectorMode {
@@ -30,7 +32,7 @@ enum class StackProtectorMode {
 internal fun applySspAttributes(context: OptimizationState, module: LLVMModuleRef) {
     context.llvmConfig.sspMode.attribute?.let { sspAttribute ->
         getFunctions(module)
-                .filter { LLVMIsAFunction(it) != null && LLVMGetValueName(it)?.toKString() != "__clang_call_terminate" }
+                .filter { LLVMIsDeclaration(it) == 0 && it.name != "__clang_call_terminate" }
                 .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
     }
 }
