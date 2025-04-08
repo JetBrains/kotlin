@@ -180,6 +180,17 @@ public interface KaSourceModule : KaModule {
  *
  * The library module should either have the exact dependencies it was compiled with or, if unknown, a single
  * [KaLibraryFallbackDependenciesModule].
+ *
+ * ### Platform-specific content scope restriction
+ *
+ * In the K2 implementation of the Analysis API, the [contentScope] of the library module is restricted to file types that are relevant for
+ * the [targetPlatform]. For example, a JVM library module filters out any files that are not `.class` and `.kotlin_builtins` files. This
+ * allows the Analysis API to exclude content which isn't relevant for the target platform, such as `.knm` files in a JVM library.
+ *
+ * While most proper library module setups don't need such filtering, there are both pathological as well as legitimate use cases in the
+ * wild. For example, certain Kotlin stdlib setups required both the `kotlin-stdlib` and `kotlin-stdlib-common` JARs to be part of the same
+ * [KaLibraryModule] (this has been fixed with 2.x stdlibs). Such a library module has the JVM target platform, and we need to exclude
+ * `.kotlin_metadata` files from the content scope.
  */
 public interface KaLibraryModule : KaModule {
     /**
@@ -274,6 +285,9 @@ public interface KaLibrarySourceModule : KaModule {
  *
  * [KaLibraryFallbackDependenciesModule] is not [resolvable][isResolvable] and thus cannot be a use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.analyze]
  * call. It should not be returned by [KaModuleProvider.getModule].
+ *
+ * The content of the fallback dependencies module is filtered by the target platform in exactly the same way as [KaLibraryModule]s. Please
+ * see the KDoc of [KaLibraryModule] for more information.
  */
 @KaPlatformInterface
 public interface KaLibraryFallbackDependenciesModule : KaModule {
