@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
@@ -22,7 +25,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
-import org.jetbrains.kotlin.fir.analysis.collectors.components.*
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.analysis.js.checkers.JsDeclarationCheckers
@@ -33,13 +38,16 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
-import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmBaseDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmBaseExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmBaseTypeCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
@@ -47,23 +55,29 @@ internal abstract class AbstractLLFirDiagnosticsCollector(
 ) : AbstractDiagnosticCollector(
     session,
     createComponents = { reporter ->
-        CheckersFactory.createComponents(session, reporter, filter)
+        session.checkersFactory.createComponents(filter, reporter)
     }
 )
 
+private val FirSession.checkersFactory: LLCheckersFactory by FirSession.sessionComponentAccessor()
 
-private object CheckersFactory {
-    fun createComponents(
-        session: FirSession,
-        reporter: DiagnosticReporter,
-        filter: DiagnosticCheckerFilter,
-    ): DiagnosticCollectorComponents {
-        val module = session.llFirModuleData.ktModule
-        val platform = module.targetPlatform
-        val extensionCheckers = session.extensionService.additionalCheckers
-        val declarationCheckers = createDeclarationCheckers(filter, platform, extensionCheckers)
-        val expressionCheckers = createExpressionCheckers(filter, platform, extensionCheckers)
-        val typeCheckers = createTypeCheckers(filter, platform, extensionCheckers)
+/**
+ * In the CLI mode all checkers are created once during the session initialization phase.
+ * In the Analysis API checkers depend on [DiagnosticCheckerFilter].
+ *
+ * This factory provides an efficient way to get checkers for a given filter.
+ *
+ * @see org.jetbrains.kotlin.fir.analysis.CheckersComponent
+ */
+internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponent {
+    private val declarationCheckersProvider = Provider(session, ::createDeclarationCheckers)
+    private val expressionCheckersProvider = Provider(session, ::createExpressionCheckers)
+    private val typeCheckersProvider = Provider(session, ::createTypeCheckers)
+
+    fun createComponents(filter: DiagnosticCheckerFilter, reporter: DiagnosticReporter): DiagnosticCollectorComponents {
+        val declarationCheckers = declarationCheckersProvider.getOrCreateCheckers(filter)
+        val expressionCheckers = expressionCheckersProvider.getOrCreateCheckers(filter)
+        val typeCheckers = typeCheckersProvider.getOrCreateCheckers(filter)
 
         val regularComponents = buildList {
             if (!filter.runExtraCheckers && !filter.runExperimentalCheckers) {
@@ -74,9 +88,54 @@ private object CheckersFactory {
             add(TypeCheckersDiagnosticComponent(session, reporter, typeCheckers))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
         }.toTypedArray()
+
         return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
     }
 
+    /**
+     * This provider allows creating checkers lazily based on a given [filter][DiagnosticCheckerFilter].
+     */
+    private class Provider<T>(
+        private val session: FirSession,
+        private val checkersFactory: (
+            filter: DiagnosticCheckerFilter,
+            platform: TargetPlatform,
+            additionalCheckers: List<FirAdditionalCheckersExtension>,
+        ) -> T,
+    ) {
+        /** @see filterToCheckersMapUpdater */
+        @Volatile
+        private var filterToCheckersMap: SmartFMap<DiagnosticCheckerFilter, T> = SmartFMap.emptyMap()
+
+        fun getOrCreateCheckers(filter: DiagnosticCheckerFilter): T {
+            // Happy-path to avoid checkers recreation
+            filterToCheckersMap[filter]?.let { return it }
+
+            val checkers = createCheckers(filter)
+            do {
+                val oldMap = filterToCheckersMap
+                oldMap[filter]?.let { return it }
+
+                val newMap = oldMap.plus(filter, checkers)
+            } while (!filterToCheckersMapUpdater.compareAndSet(/* obj = */ this, /* expect = */ oldMap, /* update = */ newMap))
+
+            return checkers
+        }
+
+        private fun createCheckers(filter: DiagnosticCheckerFilter): T {
+            val platform = session.llFirModuleData.platform
+            val additionalCheckers = session.extensionService.additionalCheckers
+            return checkersFactory(filter, platform, additionalCheckers)
+        }
+
+        companion object {
+            private val filterToCheckersMapUpdater = AtomicReferenceFieldUpdater.newUpdater(
+                /* tclass = */ Provider::class.java,
+                /* vclass = */ SmartFMap::class.java,
+                /* fieldName = */ "filterToCheckersMap",
+            )
+        }
+    }
 
     private fun createDeclarationCheckers(
         filter: DiagnosticCheckerFilter,

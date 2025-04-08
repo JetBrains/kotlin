@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
@@ -48,6 +49,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
         FirLookupDefaultStarImportsInSourcesSettingHolder::class,
         createLookupDefaultStarImportsInSourcesSettingHolder(languageVersionSettings)
     )
+    register(LLCheckersFactory::class, LLCheckersFactory(this))
     registerResolveExtensionTool()
 }
 
