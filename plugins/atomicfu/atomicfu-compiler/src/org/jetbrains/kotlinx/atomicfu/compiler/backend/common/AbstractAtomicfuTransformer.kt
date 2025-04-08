@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
+import kotlin.collections.plus
 
 abstract class AbstractAtomicfuTransformer(
     val pluginContext: IrPluginContext,
@@ -392,7 +393,7 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-            val receiver = (expression.extensionReceiver ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
+            val receiver = (expression.getExtensionReceiver() ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
             val propertyGetterCall = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
             if (!propertyGetterCall.type.isAtomicType()) return super.visitCall(expression, data)
             val valueType = if (receiver is IrTypeOperatorCallImpl) {
@@ -437,7 +438,7 @@ abstract class AbstractAtomicfuTransformer(
                 )
                 return super.visitExpression(atomicCall, data)
             }
-            if (expression.symbol.owner.isInline && expression.extensionReceiver != null) {
+            if (expression.symbol.owner.isInline && expression.getExtensionReceiver() != null) {
                 requireNotNull(data) { "Expected containing function of the call ${expression.render()}, but found null." }
                 val declaration = expression.symbol.owner
                 val irCall = builder.transformAtomicExtensionCall(

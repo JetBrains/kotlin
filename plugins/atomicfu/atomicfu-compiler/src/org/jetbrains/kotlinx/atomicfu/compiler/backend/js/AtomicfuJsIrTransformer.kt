@@ -166,7 +166,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
             expression.eraseAtomicFactory()?.let { return it.transform(this, data) }
             val isInline = expression.symbol.owner.isInline
-            val receiver = (expression.extensionReceiver ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
+            val receiver = (expression.getExtensionReceiver() ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
             val propertyGetterCall = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
             if (!propertyGetterCall.type.isAtomicValueType()) return super.visitCall(expression, data)
             val valueType = if (receiver is IrTypeOperatorCallImpl) {
