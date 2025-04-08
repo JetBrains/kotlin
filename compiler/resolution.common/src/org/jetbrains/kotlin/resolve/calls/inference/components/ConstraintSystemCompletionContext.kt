@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
@@ -42,17 +40,10 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     abstract fun resolveForkPointsConstraints()
 
     fun <A : PostponedResolvedAtomMarker> analyzeArgumentWithFixedParameterTypes(
-        languageVersionSettings: LanguageVersionSettings,
         postponedArguments: List<A>,
         analyze: (A) -> Unit
     ): Boolean {
-        val useBuilderInferenceOnlyIfNeeded =
-            languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
-        val argumentToAnalyze = if (useBuilderInferenceOnlyIfNeeded) {
-            findPostponedArgumentWithFixedInputTypes(postponedArguments)
-        } else {
-            findPostponedArgumentWithFixedOrPostponedInputTypes(postponedArguments)
-        }
+        val argumentToAnalyze = findPostponedArgumentWithFixedInputTypes(postponedArguments)
 
         if (argumentToAnalyze != null) {
             analyze(argumentToAnalyze)
@@ -63,7 +54,6 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     }
 
     fun <A : PostponedResolvedAtomMarker> analyzeNextReadyPostponedArgument(
-        languageVersionSettings: LanguageVersionSettings,
         postponedArguments: List<A>,
         completionMode: ConstraintSystemCompletionMode,
         analyze: (A) -> Unit
@@ -77,7 +67,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
             }
         }
 
-        return analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments, analyze)
+        return analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze)
     }
 
     fun <A : PostponedResolvedAtomMarker> analyzeRemainingNotAnalyzedPostponedArgument(
@@ -94,20 +84,13 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         return false
     }
 
-    fun <A : PostponedResolvedAtomMarker> hasLambdaToAnalyze(
-        languageVersionSettings: LanguageVersionSettings,
-        postponedArguments: List<A>
-    ): Boolean {
-        return analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments) {}
+    fun <A : PostponedResolvedAtomMarker> hasLambdaToAnalyze(postponedArguments: List<A>): Boolean {
+        return analyzeArgumentWithFixedParameterTypes(postponedArguments) {}
     }
 
     // Avoiding smart cast from filterIsInstanceOrNull looks dirty
     private fun <A : PostponedResolvedAtomMarker> findPostponedArgumentWithRevisableExpectedType(postponedArguments: List<A>): A? =
         postponedArguments.firstOrNull { argument -> argument is PostponedAtomWithRevisableExpectedType }
-
-    private fun <T : PostponedResolvedAtomMarker> findPostponedArgumentWithFixedOrPostponedInputTypes(
-        postponedArguments: List<T>
-    ) = postponedArguments.firstOrNull { argument -> argument.inputTypes.all { containsOnlyFixedOrPostponedVariables(it) } }
 
     private fun <T : PostponedResolvedAtomMarker> findPostponedArgumentWithFixedInputTypes(
         postponedArguments: List<T>

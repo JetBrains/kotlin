@@ -18855,12 +18855,6 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
-      @TestMetadata("withExpectedType.kt")
-      public void testWithExpectedType() {
-        runTest("compiler/testData/codegen/box/inference/pcla/withExpectedType.kt");
-      }
-
-      @Test
       @TestMetadata("withoutAnnotation.kt")
       public void testWithoutAnnotation() {
         runTest("compiler/testData/codegen/box/inference/pcla/withoutAnnotation.kt");

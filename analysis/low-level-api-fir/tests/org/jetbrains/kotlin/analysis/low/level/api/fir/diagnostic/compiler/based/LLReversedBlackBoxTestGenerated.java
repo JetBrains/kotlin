@@ -24947,12 +24947,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
-    @TestMetadata("kt47316.kt")
-    public void testKt47316() {
-      runTest("compiler/testData/codegen/box/inference/kt47316.kt");
-    }
-
-    @Test
     @TestMetadata("kt49838.kt")
     public void testKt49838() {
       runTest("compiler/testData/codegen/box/inference/kt49838.kt");
@@ -25106,12 +25100,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("unsafeVarianceCodegen.kt")
     public void testUnsafeVarianceCodegen() {
       runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
-    }
-
-    @Test
-    @TestMetadata("violatingUpperBoundForSelfType.kt")
-    public void testViolatingUpperBoundForSelfType() {
-      runTest("compiler/testData/codegen/box/inference/violatingUpperBoundForSelfType.kt");
     }
 
     @Nested
@@ -25379,12 +25367,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("topDownCompletionWithTwoBuilderInferenceCalls.kt")
       public void testTopDownCompletionWithTwoBuilderInferenceCalls() {
         runTest("compiler/testData/codegen/box/inference/pcla/topDownCompletionWithTwoBuilderInferenceCalls.kt");
-      }
-
-      @Test
-      @TestMetadata("withExpectedType.kt")
-      public void testWithExpectedType() {
-        runTest("compiler/testData/codegen/box/inference/pcla/withExpectedType.kt");
       }
 
       @Test

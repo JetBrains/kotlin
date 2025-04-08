@@ -79,13 +79,12 @@ class KotlinConstraintSystemCompleter(
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
             if (completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA && hasLambdaToAnalyze(
-                    languageVersionSettings,
                     postponedArguments
                 )
             ) return
 
             // Stage 1: analyze postponed arguments with fixed parameter types
-            if (analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments, analyze))
+            if (analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze))
                 continue
 
             val isThereAnyReadyForFixationVariable = variableFixationFinder.findFirstVariableForFixation(
@@ -149,7 +148,7 @@ class KotlinConstraintSystemCompleter(
             }
 
             // Stage 5: analyze the next ready postponed argument
-            if (analyzeNextReadyPostponedArgument(languageVersionSettings, postponedArguments, completionMode, analyze))
+            if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode, analyze))
                 continue
 
             // Stage 6: fix next ready type variable with proper constraints
