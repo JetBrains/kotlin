@@ -1,4 +1,12 @@
 base/KaConstantValue.kt:ErrorValue:errorMessage
+calls/KaCall.kt:@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+) calls
+calls/KaCall.kt:@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+) singleFunctionCallOrNull()
 compile/CodeFragmentCapturedValue.kt:@KaExperimentalApi sealed CodeFragmentCapturedValue
 compile/CodeFragmentCapturedValue.kt:CodeFragmentCapturedValue:@KaExperimentalApi ContextReceiver
 compile/CodeFragmentCapturedValue.kt:CodeFragmentCapturedValue:@KaExperimentalApi ExtensionReceiver

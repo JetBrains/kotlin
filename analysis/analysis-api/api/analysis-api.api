@@ -151,6 +151,11 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstan
 	public abstract fun getValue-Mh2AYeg ()S
 }
 
+public final class org/jetbrains/kotlin/analysis/api/calls/KaCallKt {
+	public static final synthetic fun getCalls (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Ljava/util/List;
+	public static final synthetic fun singleFunctionCallOrNull (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
+}
+
 public final class org/jetbrains/kotlin/analysis/api/components/DefaultTypeClassIds {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/components/DefaultTypeClassIds;
 	public final fun getANY ()Lorg/jetbrains/kotlin/name/ClassId;
