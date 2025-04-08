@@ -42947,6 +42947,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("complexCases.kt")
+      public void testComplexCases() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/complexCases.kt");
+      }
+
+      @Test
       @TestMetadata("conversionInLastStatementOfWhenBranch.kt")
       public void testConversionInLastStatementOfWhenBranch() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/conversionInLastStatementOfWhenBranch.kt");
