@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,220 +13,200 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
-            FirModifierChecker,
-            FirConflictsDeclarationChecker,
-            FirTypeConstraintsChecker,
-            FirReservedUnderscoreDeclarationChecker,
-            FirUpperBoundViolatedDeclarationChecker,
-            FirExposedVisibilityDeclarationChecker,
-            FirCyclicTypeBoundsChecker,
-            FirExpectActualDeclarationChecker,
-            FirExpectRefinementChecker,
-            FirRequiresOptInOnExpectChecker,
-            FirAmbiguousAnonymousTypeChecker,
-            FirExplicitApiDeclarationChecker,
-            FirAnnotationChecker,
-            FirPublishedApiChecker,
-            FirContextReceiversDeprecatedDeclarationChecker,
-            FirOptInMarkedDeclarationChecker,
-            FirExpectConsistencyChecker,
-            FirOptionalExpectationDeclarationChecker,
-            FirMissingDependencySupertypeInDeclarationsChecker,
-            FirContextParametersDeclarationChecker,
-            FirUnusedReturnValueChecker,
-            FirReturnValueAnnotationsChecker,
-        )
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+        FirModifierChecker,
+        FirConflictsDeclarationChecker,
+        FirTypeConstraintsChecker,
+        FirReservedUnderscoreDeclarationChecker,
+        FirUpperBoundViolatedDeclarationChecker,
+        FirExposedVisibilityDeclarationChecker,
+        FirCyclicTypeBoundsChecker,
+        FirExpectActualDeclarationChecker,
+        FirExpectRefinementChecker,
+        FirRequiresOptInOnExpectChecker,
+        FirAmbiguousAnonymousTypeChecker,
+        FirExplicitApiDeclarationChecker,
+        FirAnnotationChecker,
+        FirPublishedApiChecker,
+        FirContextReceiversDeprecatedDeclarationChecker,
+        FirOptInMarkedDeclarationChecker,
+        FirExpectConsistencyChecker,
+        FirOptionalExpectationDeclarationChecker,
+        FirMissingDependencySupertypeInDeclarationsChecker,
+        FirContextParametersDeclarationChecker,
+        FirUnusedReturnValueChecker,
+        FirReturnValueAnnotationsChecker,
+    )
 
-    override val classLikeCheckers: Set<FirClassLikeChecker>
-        get() = setOf(
-            FirExpectActualClassifiersAreInBetaChecker,
-        )
+    override val classLikeCheckers: Set<FirClassLikeChecker> = setOf(
+        FirExpectActualClassifiersAreInBetaChecker,
+    )
 
-    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
-        get() = setOf(
-            FirKClassWithIncorrectTypeArgumentChecker,
-            FirImplicitNothingReturnTypeChecker,
-            FirDynamicReceiverChecker,
-            FirExtensionShadowedByMemberChecker.Regular,
-            FirExtensionShadowedByMemberChecker.ForExpectDeclaration,
-        )
+    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> = setOf(
+        FirKClassWithIncorrectTypeArgumentChecker,
+        FirImplicitNothingReturnTypeChecker,
+        FirDynamicReceiverChecker,
+        FirExtensionShadowedByMemberChecker.Regular,
+        FirExtensionShadowedByMemberChecker.ForExpectDeclaration,
+    )
 
-    override val functionCheckers: Set<FirFunctionChecker>
-        get() = setOf(
-            FirContractChecker,
-            FirFunctionParameterChecker,
-            FirFunctionReturnChecker,
-            FirInlineDeclarationChecker,
-            FirNonMemberFunctionsChecker,
-            FirSuspendLimitationsChecker,
-            FirInfixFunctionDeclarationChecker,
-            FirOperatorModifierChecker,
-            FirTailrecFunctionChecker,
-        )
+    override val functionCheckers: Set<FirFunctionChecker> = setOf(
+        FirContractChecker,
+        FirFunctionParameterChecker,
+        FirFunctionReturnChecker,
+        FirInlineDeclarationChecker,
+        FirNonMemberFunctionsChecker,
+        FirSuspendLimitationsChecker,
+        FirInfixFunctionDeclarationChecker,
+        FirOperatorModifierChecker,
+        FirTailrecFunctionChecker,
+    )
 
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-        get() = setOf(
-            FirFunctionNameChecker,
-            FirFunctionTypeParametersSyntaxChecker,
-            FirMemberFunctionsChecker,
-            FirDataObjectContentChecker,
-            ContractSyntaxV2FunctionChecker,
-            FirAnyDeprecationChecker,
-        )
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
+        FirFunctionNameChecker,
+        FirFunctionTypeParametersSyntaxChecker,
+        FirMemberFunctionsChecker,
+        FirDataObjectContentChecker,
+        ContractSyntaxV2FunctionChecker,
+        FirAnyDeprecationChecker,
+    )
 
-    override val propertyCheckers: Set<FirPropertyChecker>
-        get() = setOf(
-            FirInapplicableLateinitChecker,
-            FirDestructuringDeclarationChecker,
-            FirConstPropertyChecker,
-            FirPropertyAccessorsTypesChecker,
-            FirPropertyTypeParametersChecker,
-            FirInitializerTypeMismatchChecker,
-            FirDelegatedPropertyChecker,
-            FirPropertyFieldTypeChecker,
-            FirPropertyFromParameterChecker,
-            FirLocalVariableTypeParametersSyntaxChecker,
-            FirDelegateUsesExtensionPropertyTypeParameterChecker,
-            FirLocalExtensionPropertyChecker,
-            ContractSyntaxV2PropertyChecker,
-            FirVolatileAnnotationChecker,
-            FirInlinePropertyChecker,
-            FirUnnamedPropertyChecker,
-            FirContextualPropertyWithBackingFieldChecker
-        )
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+        FirInapplicableLateinitChecker,
+        FirDestructuringDeclarationChecker,
+        FirConstPropertyChecker,
+        FirPropertyAccessorsTypesChecker,
+        FirPropertyTypeParametersChecker,
+        FirInitializerTypeMismatchChecker,
+        FirDelegatedPropertyChecker,
+        FirPropertyFieldTypeChecker,
+        FirPropertyFromParameterChecker,
+        FirLocalVariableTypeParametersSyntaxChecker,
+        FirDelegateUsesExtensionPropertyTypeParameterChecker,
+        FirLocalExtensionPropertyChecker,
+        ContractSyntaxV2PropertyChecker,
+        FirVolatileAnnotationChecker,
+        FirInlinePropertyChecker,
+        FirUnnamedPropertyChecker,
+        FirContextualPropertyWithBackingFieldChecker,
+    )
 
-    override val backingFieldCheckers: Set<FirBackingFieldChecker>
-        get() = setOf(
-            FirExplicitBackingFieldForbiddenChecker,
-            FirExplicitBackingFieldsUnsupportedChecker,
-        )
+    override val backingFieldCheckers: Set<FirBackingFieldChecker> = setOf(
+        FirExplicitBackingFieldForbiddenChecker,
+        FirExplicitBackingFieldsUnsupportedChecker,
+    )
 
-    override val classCheckers: Set<FirClassChecker>
-        get() = setOf(
-            FirOverrideChecker.Regular,
-            FirOverrideChecker.ForExpectClass,
-            FirNotImplementedOverrideChecker,
-            FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
-            FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
-            FirThrowableSubclassChecker,
-            FirOpenMemberChecker,
-            FirClassVarianceChecker,
-            FirSealedSupertypeChecker,
-            FirMemberPropertiesChecker,
-            FirImplementationMismatchChecker.Regular,
-            FirImplementationMismatchChecker.ForExpectClass,
-            FirTypeParametersInObjectChecker,
-            FirSupertypesChecker,
-            FirPrimaryConstructorSuperTypeChecker,
-            FirDynamicSupertypeChecker,
-            FirDataClassConsistentDataCopyAnnotationChecker,
-            FirEnumCompanionInEnumConstructorCallChecker,
-            FirBadInheritedJavaSignaturesChecker,
-            FirSealedInterfaceAllowedChecker,
-            FirMixedFunctionalTypesInSupertypesChecker.Regular,
-            FirMixedFunctionalTypesInSupertypesChecker.ForExpectClass,
-        )
+    override val classCheckers: Set<FirClassChecker> = setOf(
+        FirOverrideChecker.Regular,
+        FirOverrideChecker.ForExpectClass,
+        FirNotImplementedOverrideChecker,
+        FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
+        FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
+        FirThrowableSubclassChecker,
+        FirOpenMemberChecker,
+        FirClassVarianceChecker,
+        FirSealedSupertypeChecker,
+        FirMemberPropertiesChecker,
+        FirImplementationMismatchChecker.Regular,
+        FirImplementationMismatchChecker.ForExpectClass,
+        FirTypeParametersInObjectChecker,
+        FirSupertypesChecker,
+        FirPrimaryConstructorSuperTypeChecker,
+        FirDynamicSupertypeChecker,
+        FirDataClassConsistentDataCopyAnnotationChecker,
+        FirEnumCompanionInEnumConstructorCallChecker,
+        FirBadInheritedJavaSignaturesChecker,
+        FirSealedInterfaceAllowedChecker,
+        FirMixedFunctionalTypesInSupertypesChecker.Regular,
+        FirMixedFunctionalTypesInSupertypesChecker.ForExpectClass,
+    )
 
-    override val regularClassCheckers: Set<FirRegularClassChecker>
-        get() = setOf(
-            FirAnnotationClassDeclarationChecker,
-            FirOptInAnnotationClassChecker,
-            FirCommonConstructorDelegationIssuesChecker,
-            FirDelegationSuperCallInEnumConstructorChecker,
-            FirDelegationInExpectClassSyntaxChecker,
-            FirDelegationInInterfaceSyntaxChecker,
-            FirEnumClassSimpleChecker,
-            FirLocalEntityNotAllowedChecker,
-            FirManyCompanionObjectsChecker,
-            FirMethodOfAnyImplementedInInterfaceChecker,
-            FirDataClassPrimaryConstructorChecker,
-            FirDataClassNonPublicConstructorChecker,
-            FirFunInterfaceDeclarationChecker.Regular,
-            FirFunInterfaceDeclarationChecker.ForExpectClass,
-            FirNestedClassChecker,
-            FirValueClassDeclarationChecker.Regular,
-            FirValueClassDeclarationChecker.ForExpectClass,
-            FirOuterClassArgumentsRequiredChecker,
-            FirPropertyInitializationChecker,
-            FirDelegateFieldTypeMismatchChecker,
-            FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
-            FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
-            FirFiniteBoundRestrictionChecker,
-            FirNonExpansiveInheritanceRestrictionChecker,
-            FirObjectConstructorChecker,
-            FirInlineClassDeclarationChecker,
-            FirEnumEntryInitializationChecker,
-        )
+    override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
+        FirAnnotationClassDeclarationChecker,
+        FirOptInAnnotationClassChecker,
+        FirCommonConstructorDelegationIssuesChecker,
+        FirDelegationSuperCallInEnumConstructorChecker,
+        FirDelegationInExpectClassSyntaxChecker,
+        FirDelegationInInterfaceSyntaxChecker,
+        FirEnumClassSimpleChecker,
+        FirLocalEntityNotAllowedChecker,
+        FirManyCompanionObjectsChecker,
+        FirMethodOfAnyImplementedInInterfaceChecker,
+        FirDataClassPrimaryConstructorChecker,
+        FirDataClassNonPublicConstructorChecker,
+        FirFunInterfaceDeclarationChecker.Regular,
+        FirFunInterfaceDeclarationChecker.ForExpectClass,
+        FirNestedClassChecker,
+        FirValueClassDeclarationChecker.Regular,
+        FirValueClassDeclarationChecker.ForExpectClass,
+        FirOuterClassArgumentsRequiredChecker,
+        FirPropertyInitializationChecker,
+        FirDelegateFieldTypeMismatchChecker,
+        FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
+        FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
+        FirFiniteBoundRestrictionChecker,
+        FirNonExpansiveInheritanceRestrictionChecker,
+        FirObjectConstructorChecker,
+        FirInlineClassDeclarationChecker,
+        FirEnumEntryInitializationChecker,
+    )
 
-    override val constructorCheckers: Set<FirConstructorChecker>
-        get() = setOf(
-            FirConstructorAllowedChecker,
-            FirMissingConstructorKeywordSyntaxChecker,
-        )
+    override val constructorCheckers: Set<FirConstructorChecker> = setOf(
+        FirConstructorAllowedChecker,
+        FirMissingConstructorKeywordSyntaxChecker,
+    )
 
-    override val fileCheckers: Set<FirFileChecker>
-        get() = setOf(
-            FirImportsChecker,
-            FirOptInImportsChecker,
-            FirUnresolvedInMiddleOfImportChecker,
-            FirTopLevelPropertiesChecker,
-            FirPackageConflictsWithClassifierChecker,
-        )
+    override val fileCheckers: Set<FirFileChecker> = setOf(
+        FirImportsChecker,
+        FirOptInImportsChecker,
+        FirUnresolvedInMiddleOfImportChecker,
+        FirTopLevelPropertiesChecker,
+        FirPackageConflictsWithClassifierChecker,
+    )
 
-    override val scriptCheckers: Set<FirScriptChecker>
-        get() = setOf(
-            FirScriptPropertiesChecker
-        )
+    override val scriptCheckers: Set<FirScriptChecker> = setOf(
+        FirScriptPropertiesChecker,
+    )
 
-    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
-        get() = setOf(
-            FirCallsEffectAnalyzer,
-        )
+    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
+        FirCallsEffectAnalyzer,
+    )
 
-    override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
-        get() = setOf(
-            FirPropertyInitializationAnalyzer,
-        )
+    override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = setOf(
+        FirPropertyInitializationAnalyzer,
+    )
 
-    override val typeParameterCheckers: Set<FirTypeParameterChecker>
-        get() = setOf(
-            FirTypeParameterBoundsChecker.Regular,
-            FirTypeParameterBoundsChecker.ForExpectClass,
-            FirTypeParameterVarianceChecker,
-            FirReifiedTypeParameterChecker,
-            FirTypeParameterSyntaxChecker,
-        )
+    override val typeParameterCheckers: Set<FirTypeParameterChecker> = setOf(
+        FirTypeParameterBoundsChecker.Regular,
+        FirTypeParameterBoundsChecker.ForExpectClass,
+        FirTypeParameterVarianceChecker,
+        FirReifiedTypeParameterChecker,
+        FirTypeParameterSyntaxChecker,
+    )
 
-    override val typeAliasCheckers: Set<FirTypeAliasChecker>
-        get() = setOf(
-            FirAnyTypeAliasChecker,
-            FirActualTypeAliasChecker,
-        )
+    override val typeAliasCheckers: Set<FirTypeAliasChecker> = setOf(
+        FirAnyTypeAliasChecker,
+        FirActualTypeAliasChecker,
+    )
 
-    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
-        get() = setOf(
-            FirAnonymousFunctionParametersChecker,
-            FirAnonymousFunctionTypeParametersChecker,
-            FirInlinedLambdaNonSourceAnnotationsChecker,
-            FirSuspendAnonymousFunctionChecker,
-            FirMissingDependencyClassForLambdaReceiverChecker,
-        )
+    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(
+        FirAnonymousFunctionParametersChecker,
+        FirAnonymousFunctionTypeParametersChecker,
+        FirInlinedLambdaNonSourceAnnotationsChecker,
+        FirSuspendAnonymousFunctionChecker,
+        FirMissingDependencyClassForLambdaReceiverChecker,
+    )
 
-    override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>
-        get() = setOf(
-            FirAnonymousInitializerInInterfaceChecker
-        )
+    override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker> = setOf(
+        FirAnonymousInitializerInInterfaceChecker
+    )
 
-    override val valueParameterCheckers: Set<FirValueParameterChecker>
-        get() = setOf(
-            FirValueParameterDefaultValueTypeMismatchChecker,
-            FirMissingDependencyClassForParameterChecker,
-        )
+    override val valueParameterCheckers: Set<FirValueParameterChecker> = setOf(
+        FirValueParameterDefaultValueTypeMismatchChecker,
+        FirMissingDependencyClassForParameterChecker,
+    )
 
-    override val enumEntryCheckers: Set<FirEnumEntryChecker>
-        get() = setOf(
-            FirEnumEntriesRedeclarationChecker,
-        )
+    override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(
+        FirEnumEntriesRedeclarationChecker,
+    )
 }
