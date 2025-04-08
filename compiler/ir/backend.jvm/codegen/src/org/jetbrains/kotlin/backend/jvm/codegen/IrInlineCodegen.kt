@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
@@ -17,10 +18,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -159,10 +157,18 @@ class IrInlineCodegen(
                     if (inlineArgumentsInPlace) {
                         codegen.visitor.addInplaceArgumentStartMarker()
                     }
-                    // Here we replicate the old backend: reusing the locals for everything except extension receivers.
-                    // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
-                    //   local will not be visible in the debugger, so this needs to be reconsidered.
-                    val argValue = if (irValueParameter.kind != IrParameterKind.ExtensionReceiver) {
+                    // When stopping at a breakpoint placed in an inline function, arguments which reuse an existing
+                    //   local will not be visible in the debugger, so this is suitable only for:
+                    //   * Belongs to InlineOnly inline functions and is not an extension parameter.
+                    //     2           // <-- Breakpoint here must point at the extension receiver line number, not let line number
+                    //         .let {}
+                    //   * Inline parameters.
+                    //   * Continuation argument.
+                    val argValue = if (
+                        (irValueParameter.parent as IrDeclaration).isInlineOnly() && irValueParameter.kind != IrParameterKind.ExtensionReceiver ||
+                        irValueParameter.isInlineParameter() ||
+                        irValueParameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+                    ) {
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)

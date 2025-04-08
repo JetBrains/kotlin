@@ -3593,6 +3593,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     }
 
     @Test
+    @TestMetadata("kt69624.kt")
+    public void testKt69624() {
+      runTest("compiler/testData/codegen/bytecodeText/inline/kt69624.kt");
+    }
+
+    @Test
     @TestMetadata("linenumberForOneParametersArgumentCall.kt")
     public void testLinenumberForOneParametersArgumentCall() {
       runTest("compiler/testData/codegen/bytecodeText/inline/linenumberForOneParametersArgumentCall.kt");
