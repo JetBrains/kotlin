@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -39,12 +38,9 @@ import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class BodyResolveContext(
-    val returnTypeCalculator: ReturnTypeCalculator,
+    @set:PrivateForInline
+    var returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
-    val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
-    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf(),
-    // If `this` context is defined for some local class
-    val parentContext: BodyResolveContext? = null
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
@@ -85,55 +81,8 @@ class BodyResolveContext(
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
 
-    // Potentially, we might just initialize it with null and make the `inferenceSession` getter look like
-    // _inferenceSession ?: parentContext?.inferenceSession ?: FirInferenceSession.DEFAULT.
-    // But that might lead to poor performance in the most common case.
-    @Suppress("PropertyName")
-    @PrivateForInline
-    var _inferenceSession: FirInferenceSession? =
-        when {
-            parentContext == null -> FirInferenceSession.DEFAULT
-            else -> null
-        }
-
-    val inferenceSession: FirInferenceSession
-        @OptIn(PrivateForInline::class)
-        get() = _inferenceSession
-        // It's important that we re-use the session from the parent context.
-        // As in different moments the value might be restored _there_ (in the parent context)
-        // while it wouldn't be reflected if we just copied it once at the creation of the local-class-context.
-        //
-        // It's only important for the case like
-        // pclaBuilder {
-        //    object {
-        //       var implicitlyTypedDelegatedVar by delegate()
-        //
-        //    }
-        //    ...
-        // }
-        //
-        // There we would resolve the setter and relevant `setValue` call only after the whole `pclaBuilder` call is completed
-        // So, the relevant PCLA session would be dead at the moment and the default one would be set back
-        // for the `parentContext!!.inferenceSession`.
-        //
-        // NB: Looks like we should use this session only for PCLA to be able
-        // to use information from local class inside it.
-        // However, we should not use other kinds of inference sessions,
-        // otherwise we can "inherit" type variables from there provoking inference problems
-            ?: parentContext!!.inferenceSession as? FirPCLAInferenceSession
-            ?: FirInferenceSession.DEFAULT
-
-
-    @OptIn(PrivateForInline::class)
-    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
-        val oldSession = this._inferenceSession
-        this._inferenceSession = inferenceSession
-        return try {
-            inferenceSession.block()
-        } finally {
-            this._inferenceSession = oldSession
-        }
-    }
+    @set:PrivateForInline
+    var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
     @set:PrivateForInline
     var isInsideAssignmentRhs: Boolean = false
@@ -170,6 +119,11 @@ class BodyResolveContext(
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
     var containingClassDeclarations: ArrayDeque<FirClass> = ArrayDeque()
+
+    @set:PrivateForInline
+    var targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet()
+
+    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
@@ -408,6 +362,17 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
+    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
+        val oldSession = this.inferenceSession
+        this.inferenceSession = inferenceSession
+        return try {
+            inferenceSession.block()
+        } finally {
+            this.inferenceSession = oldSession
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
         return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol), f)
     }
@@ -438,23 +403,36 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    fun createSnapshotForLocalClasses(
+    inline fun <T> forLocalClasses(
         returnTypeCalculator: ReturnTypeCalculator,
-        targetedLocalClasses: Set<FirClassLikeDeclaration>
-    ): BodyResolveContext =
-        BodyResolveContext(
-            returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested,
-            parentContext = this,
-        ).apply {
-            file = this@BodyResolveContext.file
-            fileImportsScope += this@BodyResolveContext.fileImportsScope
-            specialTowerDataContexts.putAll(this@BodyResolveContext.specialTowerDataContexts)
-            containers = this@BodyResolveContext.containers
-            containingClassDeclarations = ArrayDeque(this@BodyResolveContext.containingClassDeclarations)
-            containingRegularClass = this@BodyResolveContext.containingRegularClass
-            replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
-            anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
+        targetedLocalClasses: Set<FirClassLikeDeclaration>,
+        f: () -> T,
+    ): T {
+        val oldReturnTypeCalculator = this.returnTypeCalculator
+        val oldTargetedLocalClasses = this.targetedLocalClasses
+        return try {
+            this.returnTypeCalculator = returnTypeCalculator
+            this.targetedLocalClasses = targetedLocalClasses
+            f()
+        } finally {
+            this.returnTypeCalculator = oldReturnTypeCalculator
+            this.targetedLocalClasses = oldTargetedLocalClasses
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withReturnTypeCalculator(
+        returnTypeCalculator: ReturnTypeCalculator,
+        f: () -> T,
+    ): T {
+        val oldReturnTypeCalculator = this.returnTypeCalculator
+        return try {
+            this.returnTypeCalculator = returnTypeCalculator
+            f()
+        } finally {
+            this.returnTypeCalculator = oldReturnTypeCalculator
+        }
+    }
 
     // withElement PUBLIC API
 
