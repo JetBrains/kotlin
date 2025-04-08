@@ -1,3 +1,8 @@
+// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// ^^^ KT-76234, KT-76547: With IR Inliner in pre-serialization, deserialized IR seems valid,
+// but JS output has extra invalid first line within `function box()` body:
+//      Parent;
+
 package foo
 
 import kotlinx.js.JsPlainObject

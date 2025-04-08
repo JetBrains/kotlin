@@ -1,3 +1,8 @@
+// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// ^^^ KT-76235, KT-76547: With IR Inliner in pre-serialization, deserialized IR seems valid,
+// but JS output has extra invalid line within `protoOf(box$slambda).doResume_5yljmg_k$ = function ()` body:
+//      tmp_0.tmp00__1 = Options;
+
 // ISSUE: KT-70078
 
 import kotlinx.js.JsPlainObject
