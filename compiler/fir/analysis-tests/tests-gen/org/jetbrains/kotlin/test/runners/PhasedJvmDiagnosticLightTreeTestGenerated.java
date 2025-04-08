@@ -58326,6 +58326,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("enumMapWithPair.kt")
+      public void testEnumMapWithPair() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/enumMapWithPair.kt");
+      }
+
+      @Test
       @TestMetadata("exceptionInRepeatedAnnotation.kt")
       public void testExceptionInRepeatedAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/exceptionInRepeatedAnnotation.kt");
