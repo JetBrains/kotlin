@@ -564,8 +564,8 @@ abstract class AbstractAtomicfuIrBuilder(
                     )
                     val upd = createTmpVariable(
                         irCall(atomicfuSymbols.invoke1Symbol).apply {
-                            dispatchReceiver = irGet(action)
-                            putValueArgument(0, irGet(cur))
+                            arguments[0] = irGet(action)
+                            arguments[1] = irGet(cur)
                         }, "atomicfu\$upd", false
                     )
                     +irIfThen(
