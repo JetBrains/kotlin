@@ -181,7 +181,7 @@ abstract class AbstractAtomicfuIrBuilder(
         require(this is IrFunctionAccessExpression) {
             "Expected atomic array factory invocation, but found: ${this.render()}."
         }
-        return getValueArgument(0)?.deepCopyWithSymbols()
+        return arguments[0]?.deepCopyWithSymbols()
             ?: error("Atomic array factory should take at least one argument: ${this.render()}" + CONSTRAINTS_MESSAGE)
     }
 
