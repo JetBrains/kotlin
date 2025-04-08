@@ -54,7 +54,7 @@ internal fun buildCall(
             }
         }
         valueArguments.let {
-            it.withIndex().forEach { (i, arg) -> putValueArgument(i, arg) }
+            it.withIndex().forEach { (i, arg) -> arguments[i] = arg }
         }
     }
 
@@ -180,7 +180,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     val name = if (isSetter) arrayField.setterName() else arrayField.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, valueType)
-        this.valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        this.parameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
@@ -190,10 +190,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = setSymbol,
                         type = irBuiltIns.unitType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(index, valueParameter.capture())
-                    ).apply {
-                        this.dispatchReceiver = arrayGetter
-                    }
+                        valueArguments = listOf(arrayGetter, index, valueParameter.capture())
+                    )
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
                     val getSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType), GET)
@@ -202,10 +200,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = getSymbol,
                         type = valueType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(index)
-                    ).apply {
-                        dispatchReceiver = getField
-                    }
+                        valueArguments = listOf(getField, index)
+                    )
                 }
             )
         )
