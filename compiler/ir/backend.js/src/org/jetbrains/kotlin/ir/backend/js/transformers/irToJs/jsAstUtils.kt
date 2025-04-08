@@ -116,7 +116,6 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     val functionContext = context.newDeclaration(declaration, localNameGenerator)
 
-    val functionParams = declaration.valueParameters.map { it to functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
@@ -131,12 +130,11 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     function.name = name
 
-    fun JsFunction.addParameter(parameter: JsName, irValueParameter: IrValueParameter) {
-        parameters.add(JsParameter(parameter).withSource(irValueParameter, functionContext, useNameOf = irValueParameter))
+    declaration.nonDispatchParameters.forEach { param ->
+        val name = functionContext.getNameForValueDeclaration(param)
+        function.parameters.add(JsParameter(name).withSource(param, functionContext, useNameOf = param))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it), it) }
-    functionParams.forEach { (irValueParameter, name) -> function.addParameter(name, irValueParameter) }
     check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
 
     return function
