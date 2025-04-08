@@ -1,70 +1,77 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75316
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
-enum class MyEnum {
-    X, Y
+open class MyClass {
+    object NestedInheritor : MyClass()
+
+    companion object {
+        val myClassProp: MyClass = MyClass()
+        val stringProp: String = ""
+        fun getNestedInheritor() = NestedInheritor
+    }
 }
 
-fun foo(a: MyEnum) {}
+val ClassMemberAlias = MyClass.NestedInheritor
 
-fun myRunWithMyEnum(b: () -> MyEnum) {}
-fun <T> myRun(b: () -> T): T = TODO()
+class E1(m: String): Exception(m)
+class E2(m: String): Exception(m)
+class E3(m: String): Exception(m)
 
-fun <X> id(x: X): X = TODO()
+fun <T>receive(e: T) {}
+fun <T> run(b: () -> T): T = b()
 
-fun main(b: Boolean, i: Int) {
-    val L = MyEnum.X
-
-    val m1: MyEnum = try {
-        X
-    } catch(e: Exception) {
-        Y
-    } catch (t: Throwable) {
-        L
+fun testTryCatch() {
+    val c: MyClass = try {
+        <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+        // [UNRESOLVED_REFERENCE] Unresolved reference 'NestedInheritor'.
+        NestedInheritor
+    } catch (e: E1) {
+        <!UNRESOLVED_REFERENCE!>myClassProp<!>
+        // [UNRESOLVED_REFERENCE] Unresolved reference 'myClassProp'.
+        myClassProp
+    } catch (e: E2) {
+        <!UNRESOLVED_REFERENCE!>stringProp<!>
+        // [UNRESOLVED_REFERENCE] Unresolved reference 'stringProp'.
+        <!ARGUMENT_TYPE_MISMATCH!>stringProp<!>
+        // [ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is 'String', but 'MyClass' was expected.
+    } finally {
+        ClassMemberAlias
     }
 
-    val m2: MyEnum = try {
-        X
-    } catch(e: Exception) {
+    receive<MyClass>(
         try {
-            X
-        } catch(e: Exception) {
-            Y
-        } catch (t: Throwable) {
-            L
-        }
-    } catch (t: Throwable) {
-        L
-    }
-
-    foo(
-        try {
-            X
-        } catch(e: Exception) {
-            Y
-        } catch (t: Throwable) {
-            L
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            NestedInheritor
+        } catch(e: E1) {
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            myClassProp
+        } catch (e: E2) {
+            <!UNRESOLVED_REFERENCE!>stringProp<!>
+            <!ARGUMENT_TYPE_MISMATCH!>stringProp<!>
+        } catch (e: E3) {
+            <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()
+            <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()
+        } finally {
+            ClassMemberAlias
         }
     )
 
-    myRunWithMyEnum {
+    run<MyClass> {
         try {
-            X
-        } catch(e: Exception) {
-            Y
-        } catch (t: Throwable) {
-            L
-        }
-    }
-
-    myRun<MyEnum> {
-        try {
-            X
-        } catch(e: Exception) {
-            Y
-        } catch (t: Throwable) {
-            L
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            NestedInheritor
+        } catch(e: E1) {
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            myClassProp
+        } catch(e: E2) {
+            <!UNRESOLVED_REFERENCE!>stringProp<!>
+            <!ARGUMENT_TYPE_MISMATCH!>stringProp<!>
+        } catch(e: E3) {
+            <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()
+            <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()
+        } finally {
+            ClassMemberAlias
         }
     }
 }

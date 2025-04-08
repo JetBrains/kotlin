@@ -1,111 +1,75 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75316
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
-enum class MyEnum {
-    X, Y
+open class MyClass {
+    object NestedInheritor : MyClass()
+
+    companion object {
+        val myClassProp: MyClass = MyClass()
+        val stringProp: String = ""
+        fun getNestedInheritor() = NestedInheritor
+    }
 }
 
-fun foo(a: MyEnum) {}
+val ClassMemberAlias = MyClass.NestedInheritor
 
-fun myRunWithMyEnum(b: () -> MyEnum) {}
-fun <T> myRun(b: () -> T): T = TODO()
+fun <T>receive(e: T) {}
+fun <T> run(b: () -> T): T = b()
 
-fun <X> id(x: X): X = TODO()
-
-fun main(b: Boolean, i: Int) {
-    val L = MyEnum.X
-
-    val m1: MyEnum = when (i) {
-        0 -> X
-        1 -> {
-            Y
+fun testIfElse(i: Int) {
+    val s: MyClass =
+        if (i == 0) {
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            NestedInheritor
         }
-        else -> L
-    }
-
-    val m2: MyEnum =
-        if (i == 0) X
         else if (i == 1) {
-            Y
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            myClassProp
         }
-        else L
+        else ClassMemberAlias
 
-    val m3: MyEnum = when (i) {
-        0 -> when (i.hashCode()) {
-            1 -> X
-            else -> Y
+    val s2: MyClass =
+        <!INITIALIZER_TYPE_MISMATCH!>if (i == 2) {
+            <!UNRESOLVED_REFERENCE!>stringProp<!>
+            stringProp
         }
-        1 -> {
-            Y
-        }
-        else -> L
-    }
+        else ClassMemberAlias<!>
 
-    foo(
-        when (i) {
-            0 -> X
-            1 -> {
-                Y
-            }
-            else -> L
+    receive<MyClass>(
+        if (i == 0) {
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            // KT-76400
         }
+        else if (i == 1) {
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            // KT-76400
+        }
+        else if (i == 2) {
+            <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()
+            <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()
+        }
+        else if (i == 3) {
+            <!UNRESOLVED_REFERENCE!>stringProp<!>
+            <!UNRESOLVED_REFERENCE!>stringProp<!>
+            // KT-76400
+        }
+        else ClassMemberAlias
     )
 
-    foo(
-        if (i == 0) X
+    run<MyClass> {
+        if (i == 0) {
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            // KT-76400
+        }
         else if (i == 1) {
-            Y
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            // KT-76400
         }
-        else L
-    )
-
-    myRunWithMyEnum {
-        when (i) {
-            0 -> X
-            1 -> {
-                Y
-            }
-            else -> L
-        }
-    }
-
-    myRun<MyEnum> {
-        when (i) {
-            0 -> when (i.hashCode()) {
-                1 -> X
-                else -> Y
-            }
-            1 -> {
-                Y
-            }
-            else -> L
-        }
-    }
-
-    myRun<MyEnum> {
-        when (i) {
-            0 -> X
-            1 -> {
-                Y
-            }
-            else -> L
-        }
-    }
-
-    myRun<MyEnum> {
-        if (i == 0) X
-        else if (i == 1) {
-            Y
-        }
-        else L
-    }
-
-    myRun<MyEnum> {
-        if (i == 0) X
-        else if (i == 1) {
-            Y
-        }
-        else L
+        else ClassMemberAlias
     }
 }

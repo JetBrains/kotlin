@@ -52973,15 +52973,93 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("anonymousFun.kt")
+        public void testAnonymousFun() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/anonymousFun.kt");
+        }
+
+        @Test
+        @TestMetadata("bound.kt")
+        public void testBound() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/bound.kt");
+        }
+
+        @Test
+        @TestMetadata("contextParameters.kt")
+        public void testContextParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/contextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultArg.kt")
+        public void testDefaultArg() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/defaultArg.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedType.kt")
+        public void testExpectedType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/expectedType.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedTypeEnum.kt")
+        public void testExpectedTypeEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/expectedTypeEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("generic.kt")
+        public void testGeneric() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/generic.kt");
+        }
+
+        @Test
+        @TestMetadata("infixFun.kt")
+        public void testInfixFun() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/infixFun.kt");
+        }
+
+        @Test
         @TestMetadata("invisibleImported.kt")
         public void testInvisibleImported() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/invisibleImported.kt");
         }
 
         @Test
+        @TestMetadata("lambda.kt")
+        public void testLambda() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/lambda.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaEnum.kt")
+        public void testLambdaEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/lambdaEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaReceiver.kt")
+        public void testLambdaReceiver() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/lambdaReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaReceiverParametrized.kt")
+        public void testLambdaReceiverParametrized() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/lambdaReceiverParametrized.kt");
+        }
+
+        @Test
         @TestMetadata("multipleOverloads.kt")
         public void testMultipleOverloads() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/multipleOverloads.kt");
+        }
+
+        @Test
+        @TestMetadata("namedArg.kt")
+        public void testNamedArg() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/namedArg.kt");
         }
 
         @Test
@@ -52997,9 +53075,33 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("operatorOverload.kt")
+        public void testOperatorOverload() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/operatorOverload.kt");
+        }
+
+        @Test
+        @TestMetadata("overload.kt")
+        public void testOverload() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/overload.kt");
+        }
+
+        @Test
         @TestMetadata("pcla.kt")
         public void testPcla() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/pcla.kt");
+        }
+
+        @Test
+        @TestMetadata("regularArg.kt")
+        public void testRegularArg() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/regularArg.kt");
+        }
+
+        @Test
+        @TestMetadata("regularArgEnum.kt")
+        public void testRegularArgEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/regularArgEnum.kt");
         }
 
         @Test
@@ -53018,6 +53120,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("simpleGeneric.kt")
         public void testSimpleGeneric() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/simpleGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleVarargs.kt")
+        public void testSimpleVarargs() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition/simpleVarargs.kt");
         }
 
         @Test
@@ -53050,6 +53158,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("elvisOperator.kt")
+        public void testElvisOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/elvisOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("elvisOperatorEnum.kt")
+        public void testElvisOperatorEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/elvisOperatorEnum.kt");
+        }
+
+        @Test
         @TestMetadata("equalityOperator.kt")
         public void testEqualityOperator() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/equalityOperator.kt");
@@ -53068,6 +53188,24 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("explicitReturnTypes.kt")
+        public void testExplicitReturnTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/explicitReturnTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("extensions.kt")
+        public void testExtensions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/extensions.kt");
+        }
+
+        @Test
+        @TestMetadata("functionalTypes.kt")
+        public void testFunctionalTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/functionalTypes.kt");
+        }
+
+        @Test
         @TestMetadata("lambdasReturnStatements.kt")
         public void testLambdasReturnStatements() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/lambdasReturnStatements.kt");
@@ -53077,6 +53215,24 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("lambdasReturnStatementsWithResolvedQualifiers.kt")
         public void testLambdasReturnStatementsWithResolvedQualifiers() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/lambdasReturnStatementsWithResolvedQualifiers.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullAssertion.kt")
+        public void testNotNullAssertion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/notNullAssertion.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullAssertionEnum.kt")
+        public void testNotNullAssertionEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/notNullAssertionEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("propInitializers.kt")
+        public void testPropInitializers() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/propInitializers.kt");
         }
 
         @Test
@@ -53104,9 +53260,21 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("tryCatchStatementsEnum.kt")
+        public void testTryCatchStatementsEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/tryCatchStatementsEnum.kt");
+        }
+
+        @Test
         @TestMetadata("whenIfLastStatement.kt")
         public void testWhenIfLastStatement() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/whenIfLastStatement.kt");
+        }
+
+        @Test
+        @TestMetadata("whenIfLastStatementEnum.kt")
+        public void testWhenIfLastStatementEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/whenIfLastStatementEnum.kt");
         }
       }
 
@@ -53148,6 +53316,24 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("invisibleImported.kt")
         public void testInvisibleImported() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/invisibleImported.kt");
+        }
+
+        @Test
+        @TestMetadata("isInIf.kt")
+        public void testIsInIf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/isInIf.kt");
+        }
+
+        @Test
+        @TestMetadata("isInWhen.kt")
+        public void testIsInWhen() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/isInWhen.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInterop.kt")
+        public void testJavaInterop() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/javaInterop.kt");
         }
 
         @Test
@@ -53193,9 +53379,33 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("singleDefiniteExpectedType.kt")
+        public void testSingleDefiniteExpectedType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/singleDefiniteExpectedType.kt");
+        }
+
+        @Test
+        @TestMetadata("typeCast.kt")
+        public void testTypeCast() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/typeCast.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameter.kt")
         public void testTypeParameter() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/typeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParametersComplex.kt")
+        public void testTypeParametersComplex() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/typeParametersComplex.kt");
+        }
+
+        @Test
+        @TestMetadata("unsupportedTypePosition.kt")
+        public void testUnsupportedTypePosition() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition/unsupportedTypePosition.kt");
         }
       }
     }
