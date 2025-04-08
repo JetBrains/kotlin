@@ -6190,6 +6190,10 @@ public final class kotlin/time/Clock$System : kotlin/time/Clock {
 	public fun now ()Lkotlin/time/Instant;
 }
 
+public final class kotlin/time/ClocksKt {
+	public static final fun fromTimeSource (Lkotlin/time/TimeSource;Lkotlin/time/Instant;)Lkotlin/time/Clock;
+}
+
 public abstract interface class kotlin/time/ComparableTimeMark : java/lang/Comparable, kotlin/time/TimeMark {
 	public abstract fun compareTo (Lkotlin/time/ComparableTimeMark;)I
 	public abstract fun equals (Ljava/lang/Object;)Z
