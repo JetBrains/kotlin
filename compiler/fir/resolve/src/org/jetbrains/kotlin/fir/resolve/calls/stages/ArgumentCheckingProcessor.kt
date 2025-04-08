@@ -193,7 +193,8 @@ internal object ArgumentCheckingProcessor {
         }
 
         // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
-        if (expectedType != null) {
+
+        if (expectedType != null && shouldRunConversion()) {
             context.typeContext.argumentTypeWithCustomConversion(
                 session = session,
                 expectedType = expectedType,
@@ -205,6 +206,15 @@ internal object ArgumentCheckingProcessor {
         }
 
         checkApplicabilityForArgumentType(atom, argumentTypeForApplicabilityCheck, position)
+    }
+
+    private fun ArgumentContext.shouldRunConversion(): Boolean {
+        // Currently, we only apply conversions for arguments, not lambda's return expressions
+        if (anonymousFunctionIfReturnExpression != null) {
+            // For latest LV it's equal to `return false`
+            return !session.languageVersionSettings.supportsFeature(LanguageFeature.DoNotRunSuspendConversionForLambdaReturnStatements)
+        }
+        return true
     }
 
     private fun ArgumentContext.checkApplicabilityForArgumentType(

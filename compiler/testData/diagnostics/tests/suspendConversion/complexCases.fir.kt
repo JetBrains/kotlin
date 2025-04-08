@@ -16,12 +16,12 @@ fun test() {
 
     val y: suspend () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>x<!>
 
-    produceSuspend { x }
-    produceSuspend { x.takeMe() }
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>x<!> }
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>x.takeMe()<!> }
 
     runSuspend(<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>)
     runSuspend((fun() {}).takeMe()) 
-    produceSuspend { fun() {} }
-    produceSuspend(fun () = fun () {})
-    produceSuspend { (fun() {}).takeMe() }
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>fun() {}<!> }
+    produceSuspend(fun () = <!RETURN_TYPE_MISMATCH!>fun () {}<!>)
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>(fun() {}).takeMe()<!> }
 }
