@@ -1713,6 +1713,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("anonymousObjectInInlineFunctionWithInlinedFunInKlib.kt")
+    public void testAnonymousObjectInInlineFunctionWithInlinedFunInKlib() {
+      runTest("native/native.tests/testData/codegen/kclass/anonymousObjectInInlineFunctionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("bindClassToObjCName.kt")
     public void testBindClassToObjCName() {
       runTest("native/native.tests/testData/codegen/kclass/bindClassToObjCName.kt");
