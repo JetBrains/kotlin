@@ -442,11 +442,10 @@ abstract class AbstractAtomicfuTransformer(
                 requireNotNull(data) { "Expected containing function of the call ${expression.render()}, but found null." }
                 val declaration = expression.symbol.owner
                 val irCall = builder.transformAtomicExtensionCall(
+                    originalCall = expression,
                     atomicHandler = atomicHandler,
                     dispatchReceiver = dispatchReceiver,
-                    callDispatchReceiver = expression.dispatchReceiver,
                     atomicHandlerExtraArg = atomicHandlerExtraArg,
-                    callValueArguments = List(expression.valueArgumentsCount) { expression.getValueArgument(it) },
                     callTypeArguments = expression.typeArguments,
                     originalAtomicExtension = declaration,
                     parentFunction = data
@@ -512,25 +511,27 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         private fun AbstractAtomicfuIrBuilder.transformAtomicExtensionCall(
+            originalCall: IrCall,
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
-            callDispatchReceiver: IrExpression?,
             atomicHandlerExtraArg: IrExpression?,
-            callValueArguments: List<IrExpression?>,
             callTypeArguments: List<IrType?>,
             originalAtomicExtension: IrSimpleFunction,
             parentFunction: IrFunction
         ): IrCall {
             val parent = originalAtomicExtension.parent as IrDeclarationContainer
             val transformedAtomicExtension = parent.getOrBuildTransformedAtomicExtension(originalAtomicExtension, atomicHandler.type)
-            val atomicHandlerReceiverValueParam = getAtomicHandlerValueParameterReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val extensionReceiverParameter = originalCall.extensionReceiverParameterIndex
+            val transformedArguments = buildList {
+                addAll(originalCall.arguments.subList(0, extensionReceiverParameter))
+                add(atomicHandlerReceiver)
+                atomicHandlerExtraArg?.let { add(it) }
+                addAll(originalCall.arguments.subList(extensionReceiverParameter + 1, originalCall.arguments.size))
+            }
+
             return irCall(transformedAtomicExtension.symbol).apply {
-                this.dispatchReceiver = callDispatchReceiver
-                this.extensionReceiver = null
-                var shift = 0
-                putValueArgument(shift++, atomicHandlerReceiverValueParam)
-                atomicHandlerExtraArg?.let { putValueArgument(shift++, it) }
-                callValueArguments.forEachIndexed { i, arg -> putValueArgument(i + shift, arg); }
+                transformedArguments.forEachIndexed { i, arg -> arguments[i] = arg }
                 callTypeArguments.forEachIndexed { i, irType ->
                     typeArguments[i] = irType
                 }
@@ -807,10 +808,17 @@ abstract class AbstractAtomicfuTransformer(
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
             containerSource = atomicExtension.containerSource
         }.apply {
-            dispatchReceiverParameter = atomicExtension.dispatchReceiverParameter?.deepCopyWithSymbols(this)
             atomicExtension.typeParameters.forEach { addTypeParameter(it.name.asString(), it.representativeUpperBound) }
+            // original: [dr, c1, c2, er, arg1, arg2]
+            // transformed: [dr, c1, c2] + [atomic handlers] + [arg1, arg2]
+            val extensionParameterIndex = atomicExtension.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
+            parameters += atomicExtension.parameters.subList(0, extensionParameterIndex)
+                .map { it.deepCopyWithSymbols(this) }
             addAtomicHandlerValueParameters(atomicHandlerType, valueType)
-            atomicExtension.valueParameters.forEach { addValueParameter(it.name, it.type) }
+            atomicExtension.parameters.subList(extensionParameterIndex + 1, atomicExtension.parameters.size).forEach {
+                addValueParameter(it.name, it.type)
+            }
+
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent
         }
