@@ -230,10 +230,8 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                         expression.endOffset,
                         target = transformedAtomicExtension.symbol,
                         type = expression.type,
-                        valueArguments = expression.getValueArguments() + accessors
-                    ).apply {
-                        dispatchReceiver = expression.dispatchReceiver
-                    }
+                        valueArguments = listOfNotNull(expression.dispatchReceiver) + expression.getValueArguments() + accessors
+                    )
                     return super.visitCall(irCall, data)
                 }
             }
