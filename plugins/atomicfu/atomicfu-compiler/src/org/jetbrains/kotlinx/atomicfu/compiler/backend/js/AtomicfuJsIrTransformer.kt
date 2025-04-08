@@ -255,15 +255,15 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             // val arr = AtomicIntArray(size) -> val arr = new Int32Array(size)
             if (expression.isAtomicArrayConstructor()) {
                 val arrayConstructorSymbol =
-                    context.getArrayConstructorSymbol(expression.type as IrSimpleType) { it.owner.valueParameters.size == 1 }
-                val size = expression.getValueArgument(0)
+                    context.getArrayConstructorSymbol(expression.type as IrSimpleType) { it.owner.parameters.size == 1 }
+                val size = expression.arguments[0]
                 return IrConstructorCallImpl(
                     expression.startOffset, expression.endOffset,
                     arrayConstructorSymbol.owner.returnType, arrayConstructorSymbol,
                     typeArgumentsCount = arrayConstructorSymbol.owner.typeParameters.size,
                     constructorTypeArgumentsCount = 0,
                 ).apply {
-                    putValueArgument(0, size)
+                    arguments[0] = size
                 }
             }
             return super.visitConstructorCall(expression, data)
