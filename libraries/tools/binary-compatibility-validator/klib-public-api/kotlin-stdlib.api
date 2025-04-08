@@ -5083,6 +5083,7 @@ final fun (kotlin.sequences/Sequence<kotlin/UShort>).kotlin.sequences/sum(): kot
 final fun (kotlin.text/MatchGroupCollection).kotlin.text/get(kotlin/String): kotlin.text/MatchGroup? // kotlin.text/get|get@kotlin.text.MatchGroupCollection(kotlin.String){}[0]
 final fun (kotlin.text/StringBuilder).kotlin.text/append(kotlin/Array<out kotlin/Any?>...): kotlin.text/StringBuilder // kotlin.text/append|append@kotlin.text.StringBuilder(kotlin.Array<out|kotlin.Any?>...){}[0]
 final fun (kotlin.text/StringBuilder).kotlin.text/append(kotlin/Array<out kotlin/String?>...): kotlin.text/StringBuilder // kotlin.text/append|append@kotlin.text.StringBuilder(kotlin.Array<out|kotlin.String?>...){}[0]
+final fun (kotlin.time/TimeSource).kotlin.time/asClock(kotlin.time/Instant): kotlin.time/Clock // kotlin.time/asClock|asClock@kotlin.time.TimeSource(kotlin.time.Instant){}[0]
 final fun (kotlin/Array<out kotlin/Boolean>).kotlin.collections/toBooleanArray(): kotlin/BooleanArray // kotlin.collections/toBooleanArray|toBooleanArray@kotlin.Array<out|kotlin.Boolean>(){}[0]
 final fun (kotlin/Array<out kotlin/Byte>).kotlin.collections/average(): kotlin/Double // kotlin.collections/average|average@kotlin.Array<out|kotlin.Byte>(){}[0]
 final fun (kotlin/Array<out kotlin/Byte>).kotlin.collections/sum(): kotlin/Int // kotlin.collections/sum|sum@kotlin.Array<out|kotlin.Byte>(){}[0]
