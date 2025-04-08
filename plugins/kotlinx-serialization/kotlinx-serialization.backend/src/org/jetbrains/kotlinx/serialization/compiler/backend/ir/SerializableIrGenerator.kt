@@ -121,7 +121,7 @@ class SerializableIrGenerator(
                 !irClass.isAbstractOrSealedSerializableClass
             ) {
                 val getDescriptorExpr = if (irClass.isStaticSerializable) {
-                    getStaticSerialDescriptorExpr()
+                    getStaticSerialDescriptorExprForConstructor()
                 } else {
                     // synthetic constructor is created only for internally serializable classes - so companion definitely exists
                     val companionObject = irClass.companionObject()!!
@@ -192,9 +192,15 @@ class SerializableIrGenerator(
                 }
         }
 
-    private fun IrBlockBodyBuilder.getStaticSerialDescriptorExpr(): IrExpression {
-        val serializerIrClass = irClass.classSerializer(compilerContext)!!.owner
-        // internally generated serializer always declared inside serializable class
+    private fun IrBlockBodyBuilder.getStaticSerialDescriptorExprForConstructor(): IrExpression {
+        val serializerIrClass = if (!irClass.hasKeepGeneratedSerializerAnnotation) {
+            irClass.classSerializer(compilerContext)!!.owner
+            // internally generated serializer always declared inside serializable class
+        } else {
+            // if KeepGeneratedSerializer is specified, constructors are always created for kept serializer
+            irClass.generatedSerializer?.owner
+                ?: throw IllegalStateException("Generated serializer for $irClass with keep serializer was not found ")
+        }
 
         val serialDescriptorGetter =
             serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!.owner

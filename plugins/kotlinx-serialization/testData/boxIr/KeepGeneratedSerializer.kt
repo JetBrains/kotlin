@@ -243,6 +243,11 @@ fun box(): String = boxWrapper {
     assertEquals("Container", Container.serializer().descriptor.serialName, "Container.serializer() illegal")
     assertEquals("""{"properties":[{"type":"Container","properties":[]}]}""", Json.encodeToString(Container.serializer(), Container(listOf(Container(emptyList())))))
     assertEquals("""{"properties":[{"type":"Container","properties":[]}]}""", Json.encodeToString(Container.CustomSerializer, Container(listOf(Container(emptyList())))))
+
+    assertFailsWith<MissingFieldException> {
+        // test for fix of https://github.com/Kotlin/kotlinx.serialization/issues/2974
+        Json.decodeFromString(ParametrizedData.generatedSerializer(Data.serializer()), "{}")
+    }
 }
 
 inline fun <reified T : Any> test(
