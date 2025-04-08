@@ -399,7 +399,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
 
         private fun IrCall.eraseAtomicFactory() =
             when {
-                isAtomicFactory() -> getValueArgument(0) ?: error("Atomic factory should take at least one argument: ${this.render()}")
+                isAtomicFactory() -> arguments[0] ?: error("Atomic factory should take at least one argument: ${this.render()}")
                 isAtomicArrayFactory() -> buildObjectArray()
                 isReentrantLockFactory() -> context.buildConstNull()
                 isTraceFactory() -> context.buildConstNull()
