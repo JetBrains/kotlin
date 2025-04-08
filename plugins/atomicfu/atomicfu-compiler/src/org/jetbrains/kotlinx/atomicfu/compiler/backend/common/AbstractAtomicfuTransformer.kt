@@ -560,7 +560,7 @@ abstract class AbstractAtomicfuTransformer(
             }.apply {
                 val T = if (!valueType.isPrimitiveType()) irBuiltIns.anyNType else valueType
                 val actionReturnType = if (functionName == LOOP) irBuiltIns.unitType else T
-                dispatchReceiverParameter = (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+                parameters += listOfNotNull((parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this))
                 addAtomicHandlerValueParameters(atomicHandler.type, T)
                 addValueParameter(ACTION, atomicfuSymbols.function1Type(T, actionReturnType))
                 with(atomicfuSymbols.createBuilder(symbol)) {
