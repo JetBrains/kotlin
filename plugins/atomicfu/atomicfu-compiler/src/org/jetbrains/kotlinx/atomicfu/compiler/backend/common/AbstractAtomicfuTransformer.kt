@@ -869,7 +869,7 @@ abstract class AbstractAtomicfuTransformer(
         get() = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type as? IrSimpleType
 
     internal fun IrFunction.isTransformedAtomicExtension(): Boolean =
-        name.asString().contains("\$$ATOMICFU") && valueParameters.isNotEmpty() && valueParameters[0].name.asString() == ATOMIC_HANDLER
+        name.asString().contains("\$$ATOMICFU") && parameters.firstOrNull { it.kind == IrParameterKind.Regular }?.name?.asString() == ATOMIC_HANDLER
 
     private fun IrType.isTraceBaseType() =
         classFqName?.let {
