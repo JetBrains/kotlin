@@ -288,19 +288,19 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                     // operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>) {
                     //  return thisRef._a
                     // }
-                    val dispatchReceiver = expression.getValueArgument(0)?.let {
+                    val thisRef = expression.arguments[1]?.let {
                         if (it.isConstNull()) null else it
                     }
                     val fieldAccessors = listOf(
-                        context.buildFieldAccessor(originalField, dispatchReceiver, false),
-                        context.buildFieldAccessor(originalField, dispatchReceiver, true)
+                        context.buildFieldAccessor(originalField, thisRef, false),
+                        context.buildFieldAccessor(originalField, thisRef, true)
                     )
                     return buildCall(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         target = runtimeFunction,
                         type = type,
                         typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(type) else emptyList(),
-                        valueArguments = if (isSetter) listOf(expression.getValueArgument(2)!!, fieldAccessors[0], fieldAccessors[1]) else
+                        valueArguments = if (isSetter) listOf(expression.arguments[3], fieldAccessors[0], fieldAccessors[1]) else
                             fieldAccessors
                     )
                 }
