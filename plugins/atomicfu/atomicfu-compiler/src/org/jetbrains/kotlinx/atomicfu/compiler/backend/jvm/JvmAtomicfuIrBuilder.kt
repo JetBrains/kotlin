@@ -135,8 +135,12 @@ class JvmAtomicfuIrBuilder(
         initValue: IrExpression,
         dispatchReceiver: IrExpression?
     ) : IrFunctionAccessExpression = irCall(atomicBoxType.constructors.first()).apply {
-        putValueArgument(0, initValue)
-        this.dispatchReceiver = dispatchReceiver
+        if (dispatchReceiver == null) {
+            arguments[0] = initValue
+        } else {
+            arguments[0] = dispatchReceiver
+            arguments[1] = initValue
+        }
     }
 
     // val a$FU = j.u.c.a.AtomicIntegerFieldUpdater.newUpdater(A::class, "a")
