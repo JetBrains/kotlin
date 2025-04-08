@@ -186,12 +186,16 @@ object MockLibraryUtil {
     ) {
         val classpath = mutableListOf<String>()
         if (File(sourcesPath).isDirectory) {
-            classpath += "/Users/ilya.goncharov/repos/kotlin-amper/" + sourcesPath
+            if (sourcesPath.startsWith("/")) {
+                classpath += sourcesPath
+            } else {
+                classpath += "/Users/ilya.goncharov/repos/kotlin-amper/" + sourcesPath
+            }
         }
         classpath += extraClasspath
 
         val args = mutableListOf(
-            "/Users/ilya.goncharov/repos/kotlin-amper/" + sourcesPath,
+            if (sourcesPath.startsWith("/")) sourcesPath else ("/Users/ilya.goncharov/repos/kotlin-amper/" + sourcesPath),
             K2JVMCompilerArguments::destination.cliArgument, outDir.absolutePath,
             K2JVMCompilerArguments::classpath.cliArgument, classpath.joinToString(File.pathSeparator)
         ) + extraOptions
