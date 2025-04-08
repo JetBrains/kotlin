@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74932
-// LATEST_LV_DIFFERENCE
 
 fun produceSuspend(func: () -> (suspend () -> Unit)) {}
 fun runSuspend(func: suspend () -> Unit) {}

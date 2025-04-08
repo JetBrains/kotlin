@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 fun produceConcreteA(func: () -> (suspend () -> Unit)): suspend () -> Unit = func()
 fun (() -> (suspend () -> Unit)).produceConcreteB(): suspend () -> Unit = this()
 
