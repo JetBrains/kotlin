@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -156,7 +157,7 @@ class WrapJsComposableLambdaLowering(
         val invokeSymbol = getTopLevelClass(ComposeClassIds.ComposableLambda)
             .functions.single {
                 it.owner.name.asString() == "invoke" &&
-                        argumentsCount == it.owner.parameters.size
+                        argumentsCount == it.owner.parameters.count { it.kind != IrParameterKind.DispatchReceiver }
             }
 
         return IrFunctionReferenceImpl(
