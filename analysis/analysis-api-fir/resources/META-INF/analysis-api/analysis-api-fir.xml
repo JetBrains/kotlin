@@ -56,6 +56,10 @@
     />
   </extensions>
 
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirLibraryTargetPlatformContentScopeRefiner"/>
+  </extensions>
+
   <projectListeners>
     <listener
         class="org.jetbrains.kotlin.analysis.api.fir.KaFirSessionProvider$SessionInvalidationListener"
