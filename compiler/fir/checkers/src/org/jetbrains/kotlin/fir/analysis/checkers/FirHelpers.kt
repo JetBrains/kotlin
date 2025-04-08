@@ -754,6 +754,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
                     when {
                         annotated.name == SpecialNames.DESTRUCT -> TargetLists.T_DESTRUCTURING_DECLARATION
                         annotated.isCatchParameter == true -> TargetLists.T_CATCH_PARAMETER
+                        annotated.isForLoopParameter == true -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
                         else -> TargetLists.T_LOCAL_VARIABLE
                     }
                 annotated.isMember ->

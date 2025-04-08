@@ -1316,7 +1316,9 @@ class LightTreeRawFirExpressionBuilder(
                         },
                         valueParameter.returnTypeRef,
                         extractedAnnotations = valueParameter.annotations
-                    )
+                    ).apply {
+                        isForLoopParameter = true
+                    }
                     if (multiDeclaration != null) {
                         addDestructuringStatements(
                             statements,

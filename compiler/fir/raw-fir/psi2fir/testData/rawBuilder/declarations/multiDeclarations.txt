@@ -4,7 +4,7 @@ FILE: multiDeclarations.kt
         @ForAnno(<strcat>(String(for anno ), prop#))  {
             lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(100)).iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
-                @ForParameter(<strcat>(String(for ), prop#)) lval i: <implicit> = R|<local>/<iterator>|.next#()
+                @ForParameter(<strcat>(String(for ), prop#)) [IsForLoopParameterProperty=true] lval i: <implicit> = R|<local>/<iterator>|.next#()
                  {
                 }
 
@@ -15,7 +15,7 @@ FILE: multiDeclarations.kt
          {
             lval <iterator>: <implicit> = bar#().iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
-                @ForParameter(<strcat>(String(second for ), prop#)) lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
+                @ForParameter(<strcat>(String(second for ), prop#)) [IsForLoopParameterProperty=true] lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
                 lval x: <implicit> = R|<local>/<destruct>|.component1#()
                 @NestedParam(<strcat>(String(destructuring in for ), prop#)) lval y: <implicit> = R|<local>/<destruct>|.component2#()
                  {

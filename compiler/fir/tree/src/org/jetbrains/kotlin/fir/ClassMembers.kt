@@ -223,6 +223,10 @@ private object IsCatchParameterProperty : FirDeclarationDataKey()
 
 var FirProperty.isCatchParameter: Boolean? by FirDeclarationDataRegistry.data(IsCatchParameterProperty)
 
+private object IsForLoopParameterProperty : FirDeclarationDataKey()
+
+var FirProperty.isForLoopParameter: Boolean? by FirDeclarationDataRegistry.data(IsForLoopParameterProperty)
+
 private object DelegatedWrapperDataKey : FirDeclarationDataKey()
 
 class DelegatedWrapperData<D : FirCallableDeclaration>(
