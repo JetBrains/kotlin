@@ -68,6 +68,7 @@ projectTest(
     workingDir = rootDir
 
     useJUnitPlatform()
+    muteWithDatabase()
 
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     val antLauncherJarPathProvider = project.provider {
