@@ -833,9 +833,9 @@ abstract class AbstractAtomicfuTransformer(
 
     private fun IrFunction.isFromKotlinxAtomicfuPackage(): Boolean = parentDeclarationContainer.kotlinFqName.asString().startsWith(AFU_PKG)
 
-    internal fun List<IrValueParameter>.holdsAt(index: Int, paramName: String, type: IrType): Boolean {
-        require(index >= 0 && index < size) { "Index $index is out of bounds of the given value parameter list of size $size" }
-        return get(index).name.asString() == paramName && get(index).type == type
+    internal fun IrFunction.holdsAt(index: Int, paramName: String, type: IrType): Boolean {
+        require(index >= 0 && index < parameters.size) { "Index $index is out of bounds of the given value parameter list of size ${parameters.size}" }
+        return parameters[index].name.asString() == paramName && parameters[index].type == type
     }
 
     private val IrDeclaration.parentDeclarationContainer: IrDeclarationContainer

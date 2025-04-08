@@ -192,13 +192,13 @@ class AtomicfuJvmIrTransformer(
     override fun IrFunction.checkAtomicHandlerValueParameters(atomicHandlerType: AtomicHandlerType, valueType: IrType): Boolean =
         when (atomicHandlerType) {
             AtomicHandlerType.ATOMIC_FIELD_UPDATER -> {
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.javaFUClassSymbol(valueType).defaultType) &&
-                        valueParameters.holdsAt(1, OBJ, irBuiltIns.anyNType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.javaFUClassSymbol(valueType).defaultType) &&
+                        holdsAt(2, OBJ, irBuiltIns.anyNType)
             }
             AtomicHandlerType.BOXED_ATOMIC -> {
-                valueParameters.size > 1 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.javaAtomicBoxClassSymbol(valueType).defaultType)
+                parameters.size > 2 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.javaAtomicBoxClassSymbol(valueType).defaultType)
             }
             AtomicHandlerType.ATOMIC_ARRAY -> {
                 val arrayClassSymbol = atomicfuSymbols.getAtomicArrayClassByValueType(valueType)
@@ -207,9 +207,9 @@ class AtomicfuJvmIrTransformer(
                 } else {
                     arrayClassSymbol.defaultType
                 }
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, type) &&
-                        valueParameters.holdsAt(1, INDEX, irBuiltIns.intType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, type) &&
+                        holdsAt(2, INDEX, irBuiltIns.intType)
             }
             else -> error("Unexpected atomic handler type for JVM backend: $atomicHandlerType")
         }
