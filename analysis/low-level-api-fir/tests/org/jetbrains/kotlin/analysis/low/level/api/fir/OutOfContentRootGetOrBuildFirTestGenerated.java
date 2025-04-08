@@ -510,6 +510,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("javaFieldViaJKJInheritance.kt")
+    public void testJavaFieldViaJKJInheritance() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/javaFieldViaJKJInheritance.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticFieldViaJKJInheritance.kt")
+    public void testJavaStaticFieldViaJKJInheritance() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/javaStaticFieldViaJKJInheritance.kt");
+    }
+
+    @Test
     @TestMetadata("noReceiverOnLambda.kt")
     public void testNoReceiverOnLambda() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/noReceiverOnLambda.kt");
