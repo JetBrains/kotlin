@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
+package org.jetbrains.kotlin.analysis.api.fir.projectStructure
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.module.Module
@@ -32,8 +32,12 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
  *
  * Analysis API platforms need to implement [KotlinProjectStructureProvider][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider]
  * consistently with the content scope restrictions.
+ *
+ * The content scope refiner is limited to the K2 implementation of the Analysis API: The K1 implementation doesn't honor the content scope
+ * of a library module (while resolving calls, for example). If we restrict the content scope of a K1 `KaModule`, we can get unexpected
+ * `KaBaseIllegalPsiException`s when we try to analyze a function symbol acquired via such call resolution.
  */
-internal class KaBaseLibraryTargetPlatformContentScopeRefiner : KotlinContentScopeRefiner {
+internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScopeRefiner {
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
         if (module !is KaLibraryModule && module !is KaLibraryFallbackDependenciesModule) return emptyList()
         return listOf(createFilteringScope(module))
@@ -42,16 +46,16 @@ internal class KaBaseLibraryTargetPlatformContentScopeRefiner : KotlinContentSco
     private fun createFilteringScope(module: KaModule): GlobalSearchScope {
         val targetPlatform = module.targetPlatform
         return when {
-            targetPlatform.all { it is JvmPlatform } -> KaBaseJvmLibraryRestrictionScope(module.project)
-            targetPlatform.all { it is NativePlatform } -> KaBaseKlibLibraryRestrictionScope(module.project)
-            targetPlatform.all { it is JsPlatform } -> KaBaseKlibLibraryRestrictionScope(module.project)
-            targetPlatform.all { it is WasmPlatform } -> KaBaseKlibLibraryRestrictionScope(module.project)
-            else -> KaBaseCommonLibraryRestrictionScope(module.project)
+            targetPlatform.all { it is JvmPlatform } -> KaFirJvmLibraryRestrictionScope(module.project)
+            targetPlatform.all { it is NativePlatform } -> KaFirKlibLibraryRestrictionScope(module.project)
+            targetPlatform.all { it is JsPlatform } -> KaFirKlibLibraryRestrictionScope(module.project)
+            targetPlatform.all { it is WasmPlatform } -> KaFirKlibLibraryRestrictionScope(module.project)
+            else -> KaFirCommonLibraryRestrictionScope(module.project)
         }
     }
 }
 
-private class KaBaseCommonLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
+private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
     override fun contains(file: VirtualFile): Boolean {
         val extension = file.extension
         return extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION ||
@@ -63,12 +67,12 @@ private class KaBaseCommonLibraryRestrictionScope(project: Project) : GlobalSear
     override fun isSearchInLibraries(): Boolean = true
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is KaBaseCommonLibraryRestrictionScope && project == other.project
+        this === other || other is KaFirCommonLibraryRestrictionScope && project == other.project
 
     override fun hashCode(): Int = project.hashCode()
 }
 
-private class KaBaseJvmLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
+private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
     override fun contains(file: VirtualFile): Boolean {
         val extension = file.extension
         return extension == JavaClassFileType.INSTANCE.defaultExtension ||
@@ -79,19 +83,19 @@ private class KaBaseJvmLibraryRestrictionScope(project: Project) : GlobalSearchS
     override fun isSearchInLibraries(): Boolean = true
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is KaBaseJvmLibraryRestrictionScope && project == other.project
+        this === other || other is KaFirJvmLibraryRestrictionScope && project == other.project
 
     override fun hashCode(): Int = project.hashCode()
 }
 
-private class KaBaseKlibLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
+private class KaFirKlibLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
     override fun contains(file: VirtualFile): Boolean = file.extension == KLIB_METADATA_FILE_EXTENSION
 
     override fun isSearchInModuleContent(module: Module): Boolean = false
     override fun isSearchInLibraries(): Boolean = true
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is KaBaseKlibLibraryRestrictionScope && project == other.project
+        this === other || other is KaFirKlibLibraryRestrictionScope && project == other.project
 
     override fun hashCode(): Int = project.hashCode()
 }
