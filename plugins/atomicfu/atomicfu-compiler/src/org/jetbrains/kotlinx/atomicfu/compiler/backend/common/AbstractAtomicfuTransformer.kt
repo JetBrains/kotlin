@@ -617,7 +617,7 @@ abstract class AbstractAtomicfuTransformer(
                 atomicCallReceiver.isThisReceiver() -> {
                     requireNotNull(parentFunction) { "Expected containing function of the call with receiver ${atomicCallReceiver.render()}, but found null." + CONSTRAINTS_MESSAGE }
                     require(parentFunction.isTransformedAtomicExtension())
-                    valueParameterToAtomicHandler(parentFunction.valueParameters[0])
+                    valueParameterToAtomicHandler(parentFunction.parameters.find { it.name.asString() == ATOMIC_HANDLER }!!)
                 }
                 else -> error("Unexpected type of atomic function call receiver: ${atomicCallReceiver.render()}, parentFunction = ${parentFunction?.render()}." + CONSTRAINTS_MESSAGE)
             }
