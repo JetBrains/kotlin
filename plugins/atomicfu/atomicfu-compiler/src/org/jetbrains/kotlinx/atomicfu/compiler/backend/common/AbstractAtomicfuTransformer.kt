@@ -565,9 +565,9 @@ abstract class AbstractAtomicfuTransformer(
                 addValueParameter(ACTION, atomicfuSymbols.function1Type(T, actionReturnType))
                 with(atomicfuSymbols.createBuilder(symbol)) {
                     body = if (functionName == LOOP) {
-                        generateLoopBody(atomicHandler.type, T, valueParameters)
+                        generateLoopBody(atomicHandler.type, T, nonDispatchParameters)
                     } else {
-                        generateUpdateBody(atomicHandler.type, valueType, valueParameters, functionName)
+                        generateUpdateBody(atomicHandler.type, valueType, nonDispatchParameters, functionName)
                     }
                 }
                 returnType = if (functionName == LOOP || functionName == UPDATE) irBuiltIns.unitType else T
