@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.getExtensionReceiver
 
 private const val AFU_PKG = "kotlinx.atomicfu"
 private const val LOCKS = "locks"
@@ -94,14 +95,18 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             // Transform the signature of the inline Atomic* extension declaration:
             // inline fun AtomicRef<T>.foo(arg) { ... } -> inline fun <T> foo(arg', atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit)
             val newDeclaration = atomicExtension.deepCopyWithSymbols(atomicExtension.parent)
-            val type = newDeclaration.extensionReceiverParameter!!.type.atomicToValueType()
+            val type = newDeclaration.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }!!.type.atomicToValueType()
             val getterType = context.buildGetterType(type)
             val setterType = context.buildSetterType(type)
-            newDeclaration.valueParameters = newDeclaration.valueParameters + listOf(
-                buildValueParameter(newDeclaration, GETTER, getterType),
-                buildValueParameter(newDeclaration, SETTER, setterType)
-            )
-            newDeclaration.extensionReceiverParameter = null
+            newDeclaration.parameters = newDeclaration.parameters.toMutableList().apply {
+                removeIf { it.kind == IrParameterKind.ExtensionReceiver }
+                addAll(
+                    listOf(
+                        buildValueParameter(newDeclaration, GETTER, getterType),
+                        buildValueParameter(newDeclaration, SETTER, setterType)
+                    )
+                )
+            }
             atomicExtension.transformedAtomicExtension = newDeclaration
             return newDeclaration
         }
