@@ -500,8 +500,8 @@ abstract class AbstractAtomicfuIrBuilder(
                         nameHint = "atomicfu\$cur", false
                     )
                     +irCall(atomicfuSymbols.invoke1Symbol).apply {
-                        this.dispatchReceiver = irGet(action)
-                        putValueArgument(0, irGet(cur))
+                        arguments[0] = irGet(action)
+                        arguments[1] = irGet(cur)
                     }
                 }
             }
