@@ -95,7 +95,9 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun irGetProperty(property: IrProperty, dispatchReceiver: IrExpression?) =
         irCall(property.getter?.symbol ?: error("Getter is not defined for the property ${property.atomicfuRender()}")).apply {
-            this.dispatchReceiver = dispatchReceiver?.deepCopyWithSymbols()
+            dispatchReceiver?.deepCopyWithSymbols()?.let {
+                arguments[0] = it
+            }
         }
 
     protected fun irVolatileField(
