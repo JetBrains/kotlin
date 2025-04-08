@@ -150,8 +150,7 @@ class AtomicfuJvmIrTransformer(
             is AtomicFieldUpdater -> dispatchReceiver
             is AtomicFieldUpdaterValueParameter -> {
                 require(parentFunction != null && parentFunction.isTransformedAtomicExtension())
-                require(parentFunction.valueParameters[1].name.asString() == OBJ)
-                val obj = parentFunction.valueParameters[1].capture()
+                val obj = parentFunction.parameters.find { it.name.asString() == OBJ }!!.capture()
                 obj
             }
             is AtomicArray -> getAtomicArrayElementIndex(propertyGetterCall)
