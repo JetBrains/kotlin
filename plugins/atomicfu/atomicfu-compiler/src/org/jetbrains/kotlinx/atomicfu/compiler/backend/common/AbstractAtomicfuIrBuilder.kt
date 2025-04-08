@@ -262,8 +262,12 @@ abstract class AbstractAtomicfuIrBuilder(
     ): IrFunctionAccessExpression? =
         atomicArrayClass.getSingleArgCtorOrNull{ argType -> argType.isInt() }?.let { cons ->
             return irCall(cons).apply {
-                putValueArgument(0, size)
-                this.dispatchReceiver = dispatchReceiver
+                if (dispatchReceiver != null) {
+                    arguments[0] = dispatchReceiver
+                    arguments[1] = size
+                } else {
+                    arguments[0] = size
+                }
             }
         }
 
