@@ -313,7 +313,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 this is IrCall -> getAccessors()
                 isThisReceiver() -> {
                     if (parent is IrFunction && parent.isTransformedAtomicExtensionFunction()) {
-                        parent.valueParameters.takeLast(2).map { it.capture() }
+                        parent.parameters.takeLast(2).map { it.capture() }
                     } else null
                 }
                 else -> null
