@@ -62,6 +62,6 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
     }
 
     private fun IrInlinedFunctionBlock.isEffectivelyPrivate(): Boolean {
-        return inlinedFunctionSymbol?.isConsideredAsPrivateForInlining() == true
+        return inlinedFunctionSymbol?.isConsideredAsPrivateAndNotLocalForInlining() == true
     }
 }
