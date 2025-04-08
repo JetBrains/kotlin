@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.model.*
@@ -561,14 +560,7 @@ abstract class AbstractTypeApproximator(
             return typeWithErasedNullability
         }
 
-        return if (!conf.approximateDefinitelyNotNullTypes || languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
-            approximatedOriginalType?.makeDefinitelyNotNullOrNotNull(preserveAttributes = true)
-        } else {
-            if (toSuper)
-                (approximatedOriginalType ?: originalType).withNullability(false)
-            else
-                type.defaultResult(toSuper)
-        }
+        return approximatedOriginalType?.makeDefinitelyNotNullOrNotNull(preserveAttributes = true)
     }
 
     private fun isApproximateDirectionToSuper(effectiveVariance: TypeVariance, toSuper: Boolean) =
