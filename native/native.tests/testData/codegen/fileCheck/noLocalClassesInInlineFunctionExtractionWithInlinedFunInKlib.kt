@@ -1,6 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// IGNORE_BACKEND_K1: NATIVE
 
 // MODULE: lib
 // FILE: A.kt
@@ -13,8 +14,8 @@ class A {
     }.run()
 
     // CHECK: define ptr @"kfun:A#publicMethod(){}kotlin.String"
-    // CHECK: call void @"kfun:A.A$publicMethod$$inlined$internalInlineMethod$1.<init>#internal"
-    // CHECK: call void @"kfun:A.A$publicMethod$$inlined$internalInlineMethod$2.<init>#internal"
+    // CHECK: call void @"kfun:A.A$publicMethod$1.<init>#internal"
+    // CHECK: call void @"kfun:A.A$publicMethod$2.<init>#internal"
     fun publicMethod() = internalInlineMethod(1) + internalInlineMethod(2)
 }
 
@@ -24,11 +25,11 @@ class A {
 // CHECK: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     // Test that the local class is not extracted and not reused in each inline function call site
-    // CHECK: call void @"kfun:box$$inlined$internalInlineMethod$1.<init>#internal"
+    // CHECK: call void @"kfun:box$1.<init>#internal"
     A().internalInlineMethod(3).let {
         if (it != "OK") return it
     }
-    // CHECK: call void @"kfun:box$$inlined$internalInlineMethod$2.<init>#internal"
+    // CHECK: call void @"kfun:box$2.<init>#internal"
     A().internalInlineMethod(4).let {
         if (it != "OK") return it
     }

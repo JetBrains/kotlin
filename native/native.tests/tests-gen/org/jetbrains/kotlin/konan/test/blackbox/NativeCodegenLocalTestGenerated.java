@@ -1151,6 +1151,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("noLocalClassesInInlineFunctionExtractionWithInlinedFunInKlib.kt")
+    public void testNoLocalClassesInInlineFunctionExtractionWithInlinedFunInKlib() {
+      runTest("native/native.tests/testData/codegen/fileCheck/noLocalClassesInInlineFunctionExtractionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("no_frame_on_constant_object_access.kt")
     public void testNo_frame_on_constant_object_access() {
       runTest("native/native.tests/testData/codegen/fileCheck/no_frame_on_constant_object_access.kt");
