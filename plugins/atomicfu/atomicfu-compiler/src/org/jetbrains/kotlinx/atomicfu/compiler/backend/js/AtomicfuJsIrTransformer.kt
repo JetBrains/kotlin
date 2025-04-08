@@ -348,8 +348,8 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                     context.buildFieldAccessor(field, dispatchReceiver, true)
                 )
             } else {
-                val index = getValueArgument(0)!!
-                val arrayGetter = dispatchReceiver as IrCall
+                val arrayGetter = arguments[0] as IrCall
+                val index = arguments[1]!!
                 val arrayField = arrayGetter.getBackingField()
                 listOf(
                     context.buildArrayElementAccessor(arrayField, arrayGetter, index, false),
