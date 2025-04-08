@@ -47,11 +47,6 @@ class ConstraintInjector(
         fun addInitialConstraint(initialConstraint: InitialConstraint)
         fun addError(error: ConstraintSystemError)
 
-        fun addMissedConstraints(
-            position: IncorporationConstraintPosition,
-            constraints: MutableList<Pair<TypeVariableMarker, Constraint>>
-        )
-
         fun resolveForkPointsConstraints()
 
         fun onNewConstraintOrForkPoint()
@@ -111,12 +106,7 @@ class ConstraintInjector(
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
         typeCheckerState.runIsSubtypeOf(lowerType, upperType)
 
-        // Missed constraints are constraints which we skipped in the constraints processor by mistake (incorrect optimization)
-        val missedConstraints = processConstraints(c, typeCheckerState)
-
-        if (missedConstraints != null) {
-            c.addMissedConstraints(typeCheckerState.position, missedConstraints)
-        }
+        processConstraints(c, typeCheckerState)
     }
 
     private fun addEqualityConstraintAndIncorporateIt(
@@ -128,12 +118,7 @@ class ConstraintInjector(
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(typeVariable, equalType)
         typeCheckerState.addEqualityConstraint(typeVariable.typeConstructor(c), equalType)
 
-        // Missed constraints are constraints which we skipped in the constraints processor by mistake (incorrect optimization)
-        val missedConstraints = processConstraints(c, typeCheckerState)
-
-        if (missedConstraints != null) {
-            c.addMissedConstraints(typeCheckerState.position, missedConstraints)
-        }
+        processConstraints(c, typeCheckerState)
     }
 
     fun processGivenForkPointBranchConstraints(
@@ -154,21 +139,19 @@ class ConstraintInjector(
 
     private fun processConstraints(
         c: Context,
-        typeCheckerState: TypeCheckerStateForConstraintInjector,
-        skipProperEqualityConstraints: Boolean = true
-    ): MutableList<Pair<TypeVariableMarker, Constraint>>? {
-        return processConstraintsIgnoringForksData(typeCheckerState, c).also {
-            typeCheckerState.extractForkPointsData()?.let { allForkPointsData ->
-                allForkPointsData.mapTo(c.constraintsFromAllForkPoints) { forkPointData ->
-                    typeCheckerState.position to forkPointData
-                }
+        typeCheckerState: TypeCheckerStateForConstraintInjector
+    ) {
+        processConstraintsIgnoringForksData(typeCheckerState, c)
+        typeCheckerState.extractForkPointsData()?.let { allForkPointsData ->
+            allForkPointsData.mapTo(c.constraintsFromAllForkPoints) { forkPointData ->
+                typeCheckerState.position to forkPointData
+            }
 
-                c.onNewConstraintOrForkPoint()
+            c.onNewConstraintOrForkPoint()
 
-                // During completion, we start processing fork constrains immediately
-                if (c.atCompletionState) {
-                    c.resolveForkPointsConstraints()
-                }
+            // During completion, we start processing fork constrains immediately
+            if (c.atCompletionState) {
+                c.resolveForkPointsConstraints()
             }
         }
     }
@@ -176,11 +159,10 @@ class ConstraintInjector(
     private fun processConstraintsIgnoringForksData(
         typeCheckerState: TypeCheckerStateForConstraintInjector,
         c: Context
-    ): MutableList<Pair<TypeVariableMarker, Constraint>>? {
+    ) {
         while (typeCheckerState.hasConstraintsToProcess()) {
             processGivenConstraints(c, typeCheckerState, typeCheckerState.extractAllConstraints()!!)
         }
-        return null
     }
 
     private fun processGivenConstraints(

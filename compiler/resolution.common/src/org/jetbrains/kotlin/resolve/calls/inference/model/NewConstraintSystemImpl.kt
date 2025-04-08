@@ -141,13 +141,6 @@ class NewConstraintSystemImpl(
         return storage
     }
 
-    override fun addMissedConstraints(
-        position: IncorporationConstraintPosition,
-        constraints: MutableList<Pair<TypeVariableMarker, Constraint>>,
-    ) {
-        storage.missedConstraints.add(position to constraints)
-    }
-
     override fun asConstraintSystemCompleterContext() = apply {
         checkState(State.BUILDING)
 
