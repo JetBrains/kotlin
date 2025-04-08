@@ -415,9 +415,12 @@ abstract class AbstractAtomicfuIrBuilder(
             returnType = irBuiltIns.unitType
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
         }.apply {
-            dispatchReceiverParameter = if (isStatic) null else (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            parameters += listOfNotNull(
+                if (isStatic) null else (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            )
             addValueParameter("value", field.type)
-            val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueParameters[0].type, valueParameters[0].symbol)
+            val arg = parameters.last()
+            val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,arg.type,arg.symbol)
             body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
