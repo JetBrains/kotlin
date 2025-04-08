@@ -61,9 +61,7 @@ abstract class AbstractAtomicfuIrBuilder(
      */
     abstract fun irCallFunction (
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall
 
@@ -82,9 +80,7 @@ abstract class AbstractAtomicfuIrBuilder(
         } ?: error("No $functionName function found in ${atomicHandlerClassSymbol.owner.render()}")
         return irCallFunction(
             functionSymbol,
-            dispatchReceiver = getAtomicHandler,
-            extensionReceiver = null,
-            valueArguments,
+            listOf(getAtomicHandler) + valueArguments,
             valueType
         )
     }
@@ -99,7 +95,9 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun irGetProperty(property: IrProperty, dispatchReceiver: IrExpression?) =
         irCall(property.getter?.symbol ?: error("Getter is not defined for the property ${property.atomicfuRender()}")).apply {
-            this.dispatchReceiver = dispatchReceiver?.deepCopyWithSymbols()
+            dispatchReceiver?.deepCopyWithSymbols()?.let {
+                arguments[0] = it
+            }
         }
 
     protected fun irVolatileField(
@@ -138,7 +136,7 @@ abstract class AbstractAtomicfuIrBuilder(
     // atomic(value = 0) -> 0
     internal fun IrExpression.getAtomicFactoryValueArgument(): IrExpression {
         require(this is IrCall) { "Expected atomic factory invocation but found: ${this.render()}" }
-        return getValueArgument(0)?.deepCopyWithSymbols()
+        return arguments[0]?.deepCopyWithSymbols()
             ?: error("Atomic factory should take at least one argument: ${this.render()}" + CONSTRAINTS_MESSAGE)
     }
 
@@ -183,7 +181,7 @@ abstract class AbstractAtomicfuIrBuilder(
         require(this is IrFunctionAccessExpression) {
             "Expected atomic array factory invocation, but found: ${this.render()}."
         }
-        return getValueArgument(0)?.deepCopyWithSymbols()
+        return arguments[0]?.deepCopyWithSymbols()
             ?: error("Atomic array factory should take at least one argument: ${this.render()}" + CONSTRAINTS_MESSAGE)
     }
 
@@ -253,7 +251,9 @@ abstract class AbstractAtomicfuIrBuilder(
     }
 
     private fun IrClassSymbol.getSingleArgCtorOrNull(predicate: (IrType) -> Boolean): IrConstructorSymbol? =
-        constructors.filter { it.owner.valueParameters.size == 1 && predicate(it.owner.valueParameters[0].type) }.singleOrNull()
+        constructors.filter {
+            it.owner.parameters.size == 1 && predicate(it.owner.parameters[0].type)
+        }.singleOrNull()
 
     protected fun callArraySizeConstructor(
         atomicArrayClass: IrClassSymbol,
@@ -262,8 +262,12 @@ abstract class AbstractAtomicfuIrBuilder(
     ): IrFunctionAccessExpression? =
         atomicArrayClass.getSingleArgCtorOrNull{ argType -> argType.isInt() }?.let { cons ->
             return irCall(cons).apply {
-                putValueArgument(0, size)
-                this.dispatchReceiver = dispatchReceiver
+                if (dispatchReceiver != null) {
+                    arguments[0] = dispatchReceiver
+                    arguments[1] = size
+                } else {
+                    arguments[0] = size
+                }
             }
         }
 
@@ -277,10 +281,10 @@ abstract class AbstractAtomicfuIrBuilder(
             return irCall(cons).apply {
                 val arrayOfNulls = irCall(atomicfuSymbols.arrayOfNulls).apply {
                     typeArguments[0] = valueType
-                    putValueArgument(0, size)
+                    arguments[0] = size
                 }
                 typeArguments[0] = valueType
-                putValueArgument(0, arrayOfNulls)
+                arguments[0] = arrayOfNulls
                 this.dispatchReceiver = dispatchReceiver
             }
         }
@@ -376,7 +380,9 @@ abstract class AbstractAtomicfuIrBuilder(
             returnType = field.type
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
         }.apply {
-            dispatchReceiverParameter = if (isStatic) null else (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            parameters += listOfNotNull(
+                if (isStatic) null else (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            )
             body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
@@ -409,9 +415,12 @@ abstract class AbstractAtomicfuIrBuilder(
             returnType = irBuiltIns.unitType
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
         }.apply {
-            dispatchReceiverParameter = if (isStatic) null else (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            parameters += listOfNotNull(
+                if (isStatic) null else (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+            )
             addValueParameter("value", field.type)
-            val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueParameters[0].type, valueParameters[0].symbol)
+            val arg = parameters.last()
+            val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,arg.type,arg.symbol)
             body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
@@ -491,8 +500,8 @@ abstract class AbstractAtomicfuIrBuilder(
                         nameHint = "atomicfu\$cur", false
                     )
                     +irCall(atomicfuSymbols.invoke1Symbol).apply {
-                        this.dispatchReceiver = irGet(action)
-                        putValueArgument(0, irGet(cur))
+                        arguments[0] = irGet(action)
+                        arguments[1] = irGet(cur)
                     }
                 }
             }
@@ -555,8 +564,8 @@ abstract class AbstractAtomicfuIrBuilder(
                     )
                     val upd = createTmpVariable(
                         irCall(atomicfuSymbols.invoke1Symbol).apply {
-                            dispatchReceiver = irGet(action)
-                            putValueArgument(0, irGet(cur))
+                            arguments[0] = irGet(action)
+                            arguments[1] = irGet(cur)
                         }, "atomicfu\$upd", false
                     )
                     +irIfThen(

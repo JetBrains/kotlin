@@ -130,7 +130,7 @@ class AtomicfuJvmIrTransformer(
                         if (accessor.isGetter) {
                             invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "get", emptyList(), accessor.returnType)
                         } else {
-                            val arg = accessor.valueParameters.first().capture()
+                            val arg = accessor.parameters.last().capture()
                             invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "set", listOf(arg), accessor.returnType)
                         }
                     )
@@ -150,8 +150,7 @@ class AtomicfuJvmIrTransformer(
             is AtomicFieldUpdater -> dispatchReceiver
             is AtomicFieldUpdaterValueParameter -> {
                 require(parentFunction != null && parentFunction.isTransformedAtomicExtension())
-                require(parentFunction.valueParameters[1].name.asString() == OBJ)
-                val obj = parentFunction.valueParameters[1].capture()
+                val obj = parentFunction.parameters.find { it.name.asString() == OBJ }!!.capture()
                 obj
             }
             is AtomicArray -> getAtomicArrayElementIndex(propertyGetterCall)
@@ -174,7 +173,7 @@ class AtomicfuJvmIrTransformer(
             dispatchReceiver: IrExpression?
         ): IrExpression = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver)
 
-        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction
@@ -192,13 +191,13 @@ class AtomicfuJvmIrTransformer(
     override fun IrFunction.checkAtomicHandlerValueParameters(atomicHandlerType: AtomicHandlerType, valueType: IrType): Boolean =
         when (atomicHandlerType) {
             AtomicHandlerType.ATOMIC_FIELD_UPDATER -> {
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.javaFUClassSymbol(valueType).defaultType) &&
-                        valueParameters.holdsAt(1, OBJ, irBuiltIns.anyNType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.javaFUClassSymbol(valueType).defaultType) &&
+                        holdsAt(2, OBJ, irBuiltIns.anyNType)
             }
             AtomicHandlerType.BOXED_ATOMIC -> {
-                valueParameters.size > 1 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.javaAtomicBoxClassSymbol(valueType).defaultType)
+                parameters.size > 2 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.javaAtomicBoxClassSymbol(valueType).defaultType)
             }
             AtomicHandlerType.ATOMIC_ARRAY -> {
                 val arrayClassSymbol = atomicfuSymbols.getAtomicArrayClassByValueType(valueType)
@@ -207,9 +206,9 @@ class AtomicfuJvmIrTransformer(
                 } else {
                     arrayClassSymbol.defaultType
                 }
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, type) &&
-                        valueParameters.holdsAt(1, INDEX, irBuiltIns.intType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, type) &&
+                        holdsAt(2, INDEX, irBuiltIns.intType)
             }
             else -> error("Unexpected atomic handler type for JVM backend: $atomicHandlerType")
         }

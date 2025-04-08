@@ -106,7 +106,7 @@ class AtomicfuNativeIrTransformer(
             }
         }
 
-        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction
@@ -140,13 +140,13 @@ class AtomicfuNativeIrTransformer(
                 } else {
                     arrayClassSymbol.defaultType
                 }
-                valueParameters.size > 2 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, type) &&
-                        valueParameters.holdsAt(1, INDEX, irBuiltIns.intType)
+                parameters.size > 3 &&
+                        holdsAt(1, ATOMIC_HANDLER, type) &&
+                        holdsAt(2, INDEX, irBuiltIns.intType)
             }
             AtomicHandlerType.NATIVE_PROPERTY_REF -> {
-                valueParameters.size > 1 &&
-                        valueParameters.holdsAt(0, ATOMIC_HANDLER, atomicfuSymbols.kMutableProperty0GetterType(valueType))
+                parameters.size > 2 &&
+                        holdsAt(1, ATOMIC_HANDLER, atomicfuSymbols.kMutableProperty0GetterType(valueType))
             }
             else -> error("Unexpected atomic handler type for Native backend: $atomicHandlerType")
         }
