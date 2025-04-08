@@ -23828,6 +23828,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("nonLocalReturnInSubstitutionOverride.kt")
+        public void testNonLocalReturnInSubstitutionOverride() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/nonLocalReturnInSubstitutionOverride.kt");
+        }
+
+        @Test
         @TestMetadata("onlyLocalReturnLambda.kt")
         public void testOnlyLocalReturnLambda() {
           runTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/onlyLocalReturnLambda.kt");
