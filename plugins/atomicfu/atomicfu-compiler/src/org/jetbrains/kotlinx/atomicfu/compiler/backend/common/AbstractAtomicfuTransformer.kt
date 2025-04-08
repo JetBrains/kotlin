@@ -642,7 +642,7 @@ abstract class AbstractAtomicfuTransformer(
         ): IrExpression?
 
         protected fun AtomicArray.getAtomicArrayElementIndex(propertyGetterCall: IrExpression): IrExpression =
-            requireNotNull((propertyGetterCall as IrCall).getValueArgument(0)) {
+            requireNotNull((propertyGetterCall as IrCall).arguments[1]) {
                 "Expected index argument to be passed to the atomic array getter call ${propertyGetterCall.render()}, but found null." + CONSTRAINTS_MESSAGE
             }
 
