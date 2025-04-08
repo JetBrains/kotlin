@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_EXTERNAL_DECLARATION_STUB
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
@@ -204,16 +205,16 @@ class SerializedIrDumpHandler(
                      * There were no fake overrides for synthetic accessors in IR built by Fir2Ir.
                      */
                     true
-                } else if (declaration is IrSimpleFunction &&
-                    declaration.parent.let { it is IrClass && it.name == SpecialNames.NO_NAME_PROVIDED } &&
+                } else if ((declaration is IrSimpleFunction || declaration is IrProperty) &&
+                    declaration.parent.let { it is IrClass && it.visibility == DescriptorVisibilities.LOCAL } &&
                     declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE &&
                     testServices.moduleStructure.modules.first().languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
                 ) {
-                    /** KT-76186: Ignore fake overrides in anonymous local classes declared within IrInlinedFunctionBlock.
+                    /** KT-76186: Ignore fake overrides in local classes declared within IrInlinedFunctionBlock.
                      * There are no such declarations after IR Inliner, but they appear after deserialization.
                      * To make dumps identical, such declarations should not be dumped after deserialization.
                      * However, it would be tricky here to detect whether a local class is declared within IrInlinedFunctionBlock.
-                     * As a much simpler approach, fake overrides in anonymous local classes are not dumped both before and after serialization.
+                     * As a much simpler approach, fake overrides in local classes are not dumped both before and after serialization.
                      */
                     true
                 } else {
