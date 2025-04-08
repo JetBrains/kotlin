@@ -1,21 +1,25 @@
-apply plugin: 'kotlin'
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
-    api project(':kotlin-stdlib-jdk8')
-    testApi RepoDependencies.kotlinTest(project, "junit")
+    api(project(":kotlin-stdlib-jdk8"))
+    testApi(kotlinTest("junit"))
 }
 
 sourceSets {
-    test.kotlin.srcDir 'test'
+    "test" {
+        kotlin.srcDir("test")
+    }
 }
 
-compileTestKotlin {
+tasks.compileTestKotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
-        optIn.addAll([
+        optIn.addAll(
                 "kotlin.ExperimentalStdlibApi",
                 "kotlin.ExperimentalUnsignedTypes",
                 "kotlin.time.ExperimentalTime",
-        ])
+        )
     }
 }
