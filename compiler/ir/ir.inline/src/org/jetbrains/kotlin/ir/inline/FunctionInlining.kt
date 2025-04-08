@@ -227,7 +227,10 @@ private class CallInlining(
     ) : IrElementTransformerVoid() {
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock {
             inlinedBlock.transformChildrenVoid(this)
-            if (currentFile.fileEntry != inlinedBlock.inlinedFunctionFileEntry && !inlinedFunctionSymbol.isPublicApi) {
+            if (currentFile.fileEntry == inlinedBlock.inlinedFunctionFileEntry) return inlinedBlock
+
+            val symbol = inlinedBlock.inlinedFunctionSymbol
+            if (symbol != null && symbol.isConsideredAsPrivateAndNotLocalForInlining()) {
                 inlinedBlock.inlinedFunctionSymbol = null
             }
             return inlinedBlock
