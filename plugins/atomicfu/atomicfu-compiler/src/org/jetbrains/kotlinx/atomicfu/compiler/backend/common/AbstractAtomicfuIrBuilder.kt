@@ -136,7 +136,7 @@ abstract class AbstractAtomicfuIrBuilder(
     // atomic(value = 0) -> 0
     internal fun IrExpression.getAtomicFactoryValueArgument(): IrExpression {
         require(this is IrCall) { "Expected atomic factory invocation but found: ${this.render()}" }
-        return getValueArgument(0)?.deepCopyWithSymbols()
+        return arguments[0]?.deepCopyWithSymbols()
             ?: error("Atomic factory should take at least one argument: ${this.render()}" + CONSTRAINTS_MESSAGE)
     }
 
