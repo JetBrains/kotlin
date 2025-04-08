@@ -163,8 +163,8 @@ class NativeAtomicfuIrBuilder(
             else -> error("Return type of the function ${this.symbol.owner.dump()} is expected to be Int or Long, but found $returnType")
         }
         return irCall(plusOperatorSymbol).apply {
-            dispatchReceiver = this@plus
-            putValueArgument(0, other)
+            arguments[0] = this@plus
+            arguments[1] = other
         }
     }
 
