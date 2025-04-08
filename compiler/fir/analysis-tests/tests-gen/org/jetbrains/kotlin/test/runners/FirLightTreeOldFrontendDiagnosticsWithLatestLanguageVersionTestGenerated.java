@@ -27322,6 +27322,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("loopParameter.kt")
+        public void testLoopParameter() {
+          runTest("compiler/testData/diagnostics/tests/lateinit/local/loopParameter.kt");
+        }
+
+        @Test
         @TestMetadata("uninitialized.kt")
         public void testUninitialized() {
           runTest("compiler/testData/diagnostics/tests/lateinit/local/uninitialized.kt");
