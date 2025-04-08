@@ -647,9 +647,9 @@ abstract class AbstractAtomicfuTransformer(
             }
 
         protected fun AtomicArrayValueParameter.getAtomicArrayElementIndex(parentFunction: IrFunction?): IrExpression {
-            require(parentFunction != null && parentFunction.valueParameters.size > 1)
-            val index = parentFunction.valueParameters[1]
-            require(index.name.asString() == INDEX && index.type == irBuiltIns.intType)
+            require(parentFunction != null && parentFunction.parameters.size > 1)
+            val index = parentFunction.parameters.find { it.name.asString() == INDEX }
+            require(index != null && index.type == irBuiltIns.intType)
             return index.capture()
         }
 
