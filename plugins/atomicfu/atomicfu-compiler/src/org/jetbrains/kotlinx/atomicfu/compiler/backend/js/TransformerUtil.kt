@@ -226,7 +226,7 @@ internal fun IrPluginContext.buildFieldAccessor(
     val name = if (isSetter) field.setterName() else field.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, valueType)
-        valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        if (isSetter) parameters += valueParameter
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
