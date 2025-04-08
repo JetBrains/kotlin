@@ -475,8 +475,8 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         symbol.owner.name.asString() == REENTRANT_LOCK_FACTORY && type.isReentrantLockType()
 
     private fun IrFunction.hasReceiverAccessorParameters(): Boolean {
-        if (valueParameters.size < 2) return false
-        val params = valueParameters.takeLast(2)
+        if (parameters.size < 2) return false
+        val params = parameters.takeLast(2)
         return params[0].name.asString() == GETTER && params[1].name.asString() == SETTER
     }
 
