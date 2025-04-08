@@ -123,8 +123,8 @@ internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
 
 internal fun IrFunctionAccessExpression.getValueArguments() =
-    (0 until valueArgumentsCount).map { i ->
-        getValueArgument(i)
+    arguments.filterIndexed { i, arg ->
+        symbol.owner.parameters[i].kind == IrParameterKind.Regular
     }
 
 internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol)
