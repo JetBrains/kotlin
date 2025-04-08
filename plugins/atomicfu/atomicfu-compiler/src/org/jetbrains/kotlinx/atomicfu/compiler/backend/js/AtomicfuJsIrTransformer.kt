@@ -421,7 +421,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
     }
 
     private fun IrSimpleFunction.isAtomicExtension(): Boolean =
-        extensionReceiverParameter?.let { it.type.isAtomicValueType() && this.isInline } ?: false
+        parameters.find { it.kind == IrParameterKind.ExtensionReceiver }?.let { it.type.isAtomicValueType() && this.isInline } ?: false
 
     private fun IrSymbol.isKotlinxAtomicfuPackage() =
         this.isPublicApi && signature?.packageFqName()?.asString() == AFU_PKG
