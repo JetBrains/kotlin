@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.*
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DeprecationDiagnosticData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.RegularDiagnosticData
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
 import org.jetbrains.kotlin.generators.util.getGenerationPath
@@ -35,6 +36,9 @@ fun generateNonSuppressibleErrorNamesFile(generationPath: File, packageName: Str
             for (diagnostic in combinedDiagnostics.allDiagnostics) {
                 if (diagnostic is RegularDiagnosticData && diagnostic.severity == Severity.ERROR && !diagnostic.isSuppressible) {
                     println("    \"${diagnostic.name}\",")
+                }
+                if (diagnostic is DeprecationDiagnosticData) {
+                    println("    \"${diagnostic.name}_ERROR\",")
                 }
             }
 
