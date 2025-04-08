@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 
 class SourceLinkTransformerTest : BaseAbstractTest() {
 
-    private fun Element.getSourceLink() = select(".symbol .floating-right")
+    private fun Element.getSourceLink() = select(".symbol .source-link")
         .select("a[href]")
         .attr("href")
 
