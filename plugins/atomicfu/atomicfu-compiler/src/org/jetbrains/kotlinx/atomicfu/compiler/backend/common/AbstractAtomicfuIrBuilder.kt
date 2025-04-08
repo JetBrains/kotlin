@@ -251,7 +251,9 @@ abstract class AbstractAtomicfuIrBuilder(
     }
 
     private fun IrClassSymbol.getSingleArgCtorOrNull(predicate: (IrType) -> Boolean): IrConstructorSymbol? =
-        constructors.filter { it.owner.valueParameters.size == 1 && predicate(it.owner.valueParameters[0].type) }.singleOrNull()
+        constructors.filter {
+            it.owner.parameters.size == 1 && predicate(it.owner.parameters[0].type)
+        }.singleOrNull()
 
     protected fun callArraySizeConstructor(
         atomicArrayClass: IrClassSymbol,
