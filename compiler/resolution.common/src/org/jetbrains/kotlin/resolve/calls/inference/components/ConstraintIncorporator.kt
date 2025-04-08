@@ -135,6 +135,7 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint,
     ) {
+        if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
             for (otherConstraint in storageForOtherVariable.getConstraintsContainedSpecifiedTypeVariable(freshTypeConstructor)) {
@@ -161,6 +162,7 @@ class ConstraintIncorporator(
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
+        if (causeOfIncorporationVariable in otherConstraint.derivedFrom) return
         val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )
@@ -307,8 +309,6 @@ class ConstraintIncorporator(
         ) return
 
         val derivedFrom = SmartSet.create(otherConstraint.derivedFrom).also { it.addAll(causeOfIncorporationConstraint.derivedFrom) }
-        if (causeOfIncorporationVariable in derivedFrom) return
-
         derivedFrom.add(causeOfIncorporationVariable)
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
