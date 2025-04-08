@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
+import kotlin.collections.plus
 
 abstract class AbstractAtomicfuTransformer(
     val pluginContext: IrPluginContext,
@@ -288,8 +289,8 @@ abstract class AbstractAtomicfuTransformer(
                             if (accessor.returnType.isBoolean() && delegateVolatileField.type.isInt()) toBoolean(getField) else getField
                         } else {
                             // b = false --> _b$volatile = 0
-                            val arg = accessor.valueParameters.first().capture()
-                            irSetField(dispatchReceiver, delegateVolatileField, if (accessor.valueParameters.first().type.isBoolean() && delegateVolatileField.type.isInt()) toInt(arg) else arg)
+                            val arg = accessor.parameters.last().capture()
+                            irSetField(dispatchReceiver, delegateVolatileField, if (arg.type.isBoolean() && delegateVolatileField.type.isInt()) toInt(arg) else arg)
                         }
                     )
                 }
@@ -392,7 +393,7 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-            val receiver = (expression.extensionReceiver ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
+            val receiver = (expression.getExtensionReceiver() ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
             val propertyGetterCall = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
             if (!propertyGetterCall.type.isAtomicType()) return super.visitCall(expression, data)
             val valueType = if (receiver is IrTypeOperatorCallImpl) {
@@ -421,7 +422,7 @@ abstract class AbstractAtomicfuTransformer(
                         dispatchReceiver = dispatchReceiver,
                         valueType = valueType,
                         atomicHandlerExtraArg = atomicHandlerExtraArg,
-                        action = (expression.getValueArgument(0) as IrFunctionExpression),
+                        action = (expression.arguments[1] as IrFunctionExpression),
                         functionName = functionName,
                         parentFunction = data
                     )
@@ -432,20 +433,19 @@ abstract class AbstractAtomicfuTransformer(
                     dispatchReceiver = dispatchReceiver,
                     valueType = valueType,
                     atomicHandlerExtraArg = atomicHandlerExtraArg,
-                    callValueArguments = List(expression.valueArgumentsCount) { expression.getValueArgument(it) },
+                    callValueArguments = expression.nonDispatchArguments,
                     functionName = functionName
                 )
                 return super.visitExpression(atomicCall, data)
             }
-            if (expression.symbol.owner.isInline && expression.extensionReceiver != null) {
+            if (expression.symbol.owner.isInline && expression.getExtensionReceiver() != null) {
                 requireNotNull(data) { "Expected containing function of the call ${expression.render()}, but found null." }
                 val declaration = expression.symbol.owner
                 val irCall = builder.transformAtomicExtensionCall(
+                    originalCall = expression,
                     atomicHandler = atomicHandler,
                     dispatchReceiver = dispatchReceiver,
-                    callDispatchReceiver = expression.dispatchReceiver,
                     atomicHandlerExtraArg = atomicHandlerExtraArg,
-                    callValueArguments = List(expression.valueArgumentsCount) { expression.getValueArgument(it) },
                     callTypeArguments = expression.typeArguments,
                     originalAtomicExtension = declaration,
                     parentFunction = data
@@ -492,36 +492,46 @@ abstract class AbstractAtomicfuTransformer(
             val transformedAction = action.apply {
                 function.body?.transform(this@AtomicFunctionCallTransformer, parentFunction)
             }.deepCopyWithSymbols(parentFunction)
-            val atomicHandlerReceiverValueParam = getAtomicHandlerValueParameterReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val arguments = buildList {
+                parentFunction.firstNonLocalFunctionForLambdaParent.parameters[0].let {
+                    if (it.kind == IrParameterKind.DispatchReceiver) {
+                        add(it.capture())
+                    }
+                }
+                add(atomicHandlerReceiver)
+                atomicHandlerExtraArg?.let { add(it) }
+                add(transformedAction)
+            }
             return irCallFunction(
                 symbol = loopFunc.symbol,
-                dispatchReceiver = parentFunction.firstNonLocalFunctionForLambdaParent.dispatchReceiverParameter?.capture(),
-                extensionReceiver = null,
-                valueArguments = buildList { add(atomicHandlerReceiverValueParam); atomicHandlerExtraArg?.let { add(it) }; add(transformedAction) },
+                arguments = arguments,
                 valueType = valueType
             )
         }
 
         private fun AbstractAtomicfuIrBuilder.transformAtomicExtensionCall(
+            originalCall: IrCall,
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
-            callDispatchReceiver: IrExpression?,
             atomicHandlerExtraArg: IrExpression?,
-            callValueArguments: List<IrExpression?>,
             callTypeArguments: List<IrType?>,
             originalAtomicExtension: IrSimpleFunction,
             parentFunction: IrFunction
         ): IrCall {
             val parent = originalAtomicExtension.parent as IrDeclarationContainer
             val transformedAtomicExtension = parent.getOrBuildTransformedAtomicExtension(originalAtomicExtension, atomicHandler.type)
-            val atomicHandlerReceiverValueParam = getAtomicHandlerValueParameterReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
+            val extensionReceiverParameter = originalCall.extensionReceiverParameterIndex
+            val transformedArguments = buildList {
+                addAll(originalCall.arguments.subList(0, extensionReceiverParameter))
+                add(atomicHandlerReceiver)
+                atomicHandlerExtraArg?.let { add(it) }
+                addAll(originalCall.arguments.subList(extensionReceiverParameter + 1, originalCall.arguments.size))
+            }
+
             return irCall(transformedAtomicExtension.symbol).apply {
-                this.dispatchReceiver = callDispatchReceiver
-                this.extensionReceiver = null
-                var shift = 0
-                putValueArgument(shift++, atomicHandlerReceiverValueParam)
-                atomicHandlerExtraArg?.let { putValueArgument(shift++, it) }
-                callValueArguments.forEachIndexed { i, arg -> putValueArgument(i + shift, arg); }
+                transformedArguments.forEachIndexed { i, arg -> arguments[i] = arg }
                 callTypeArguments.forEachIndexed { i, irType ->
                     typeArguments[i] = irType
                 }
@@ -550,14 +560,14 @@ abstract class AbstractAtomicfuTransformer(
             }.apply {
                 val T = if (!valueType.isPrimitiveType()) irBuiltIns.anyNType else valueType
                 val actionReturnType = if (functionName == LOOP) irBuiltIns.unitType else T
-                dispatchReceiverParameter = (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+                parameters += listOfNotNull((parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this))
                 addAtomicHandlerValueParameters(atomicHandler.type, T)
                 addValueParameter(ACTION, atomicfuSymbols.function1Type(T, actionReturnType))
                 with(atomicfuSymbols.createBuilder(symbol)) {
                     body = if (functionName == LOOP) {
-                        generateLoopBody(atomicHandler.type, T, valueParameters)
+                        generateLoopBody(atomicHandler.type, T, nonDispatchParameters)
                     } else {
-                        generateUpdateBody(atomicHandler.type, valueType, valueParameters, functionName)
+                        generateUpdateBody(atomicHandler.type, valueType, nonDispatchParameters, functionName)
                     }
                 }
                 returnType = if (functionName == LOOP || functionName == UPDATE) irBuiltIns.unitType else T
@@ -570,7 +580,7 @@ abstract class AbstractAtomicfuTransformer(
             declaration: IrSimpleFunction,
             atomicHandlerType: AtomicHandlerType
         ): IrSimpleFunction {
-            val valueType = atomicfuSymbols.atomicToPrimitiveType(declaration.extensionReceiverParameter!!.type as IrSimpleType)
+            val valueType = atomicfuSymbols.atomicToPrimitiveType(declaration.extensionReceiverParameterType!!)
             // Try find the transformed atomic extension in the parent container
             findDeclaration<IrSimpleFunction> {
                 it.name.asString() == mangleAtomicExtension(declaration.name.asString(), atomicHandlerType, valueType)
@@ -607,7 +617,7 @@ abstract class AbstractAtomicfuTransformer(
                 atomicCallReceiver.isThisReceiver() -> {
                     requireNotNull(parentFunction) { "Expected containing function of the call with receiver ${atomicCallReceiver.render()}, but found null." + CONSTRAINTS_MESSAGE }
                     require(parentFunction.isTransformedAtomicExtension())
-                    valueParameterToAtomicHandler(parentFunction.valueParameters[0])
+                    valueParameterToAtomicHandler(parentFunction.parameters.find { it.name.asString() == ATOMIC_HANDLER }!!)
                 }
                 else -> error("Unexpected type of atomic function call receiver: ${atomicCallReceiver.render()}, parentFunction = ${parentFunction?.render()}." + CONSTRAINTS_MESSAGE)
             }
@@ -619,7 +629,7 @@ abstract class AbstractAtomicfuTransformer(
             dispatchReceiver: IrExpression?
         ): IrExpression
 
-        abstract fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        abstract fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction
@@ -632,14 +642,14 @@ abstract class AbstractAtomicfuTransformer(
         ): IrExpression?
 
         protected fun AtomicArray.getAtomicArrayElementIndex(propertyGetterCall: IrExpression): IrExpression =
-            requireNotNull((propertyGetterCall as IrCall).getValueArgument(0)) {
+            requireNotNull((propertyGetterCall as IrCall).arguments[1]) {
                 "Expected index argument to be passed to the atomic array getter call ${propertyGetterCall.render()}, but found null." + CONSTRAINTS_MESSAGE
             }
 
         protected fun AtomicArrayValueParameter.getAtomicArrayElementIndex(parentFunction: IrFunction?): IrExpression {
-            require(parentFunction != null && parentFunction.valueParameters.size > 1)
-            val index = parentFunction.valueParameters[1]
-            require(index.name.asString() == INDEX && index.type == irBuiltIns.intType)
+            require(parentFunction != null && parentFunction.parameters.size > 1)
+            val index = parentFunction.parameters.find { it.name.asString() == INDEX }
+            require(index != null && index.type == irBuiltIns.intType)
             return index.capture()
         }
 
@@ -741,15 +751,18 @@ abstract class AbstractAtomicfuTransformer(
                         ?: error("Failed to find a transformed atomic extension parent function for ${this.render()}.")
 
         private fun IrValueParameter.remapValueParameters(transformedExtension: IrFunction): IrValueParameter? {
-            if (indexInOldValueParameters < 0 && !type.isAtomicType()) {
+            if (this.kind == IrParameterKind.DispatchReceiver && !type.isAtomicType()) {
                 // data is a transformed function
                 // index == -1 for `this` parameter
                 return transformedExtension.dispatchReceiverParameter
                     ?: error("Dispatch receiver of ${transformedExtension.render()} is null" + CONSTRAINTS_MESSAGE)
             }
-            if (indexInOldValueParameters >= 0) {
-                val shift = transformedExtension.valueParameters.map { it.name.asString() }.count { it.endsWith(ATOMICFU) }
-                return transformedExtension.valueParameters[indexInOldValueParameters + shift]
+            if (this.kind == IrParameterKind.Regular) {
+                val atomicHandlerParametersCount = transformedExtension.parameters.map { it.name.asString() }.count { it.endsWith(ATOMICFU) }
+                // This function maps the original atomic extension parameter to the corresponding parameter from the transformed extension.
+                // There is no ExtensionReceiver parameter in the transformed extension -> the original indexInParameters is shifted by one,
+                // plus the generated atomic handler parameters preceeding the original regular parameters
+                return transformedExtension.parameters.getOrNull(this.indexInParameters - 1 + atomicHandlerParametersCount)
             }
             return null
         }
@@ -780,7 +793,7 @@ abstract class AbstractAtomicfuTransformer(
     }
 
     private fun IrFunction.checkActionParameter(): Boolean {
-        val action = valueParameters.last()
+        val action = parameters.last()
         return action.name.asString() == ACTION &&
                 action.type.classOrNull == irBuiltIns.functionN(1).symbol
     }
@@ -789,7 +802,7 @@ abstract class AbstractAtomicfuTransformer(
         atomicHandlerType: AtomicHandlerType,
         atomicExtension: IrFunction
     ): IrSimpleFunction {
-        val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicExtension.extensionReceiverParameter!!.type as IrSimpleType)
+        val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicExtension.extensionReceiverParameterType!!)
         val mangledName = mangleAtomicExtension(atomicExtension.name.asString(), atomicHandlerType, valueType)
         return pluginContext.irFactory.buildFun {
             name = Name.identifier(mangledName)
@@ -798,10 +811,17 @@ abstract class AbstractAtomicfuTransformer(
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
             containerSource = atomicExtension.containerSource
         }.apply {
-            dispatchReceiverParameter = atomicExtension.dispatchReceiverParameter?.deepCopyWithSymbols(this)
             atomicExtension.typeParameters.forEach { addTypeParameter(it.name.asString(), it.representativeUpperBound) }
+            // original: [dr, c1, c2, er, arg1, arg2]
+            // transformed: [dr, c1, c2] + [atomic handlers] + [arg1, arg2]
+            val extensionParameterIndex = atomicExtension.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
+            parameters += atomicExtension.parameters.subList(0, extensionParameterIndex)
+                .map { it.deepCopyWithSymbols(this) }
             addAtomicHandlerValueParameters(atomicHandlerType, valueType)
-            atomicExtension.valueParameters.forEach { addValueParameter(it.name, it.type) }
+            atomicExtension.parameters.subList(extensionParameterIndex + 1, atomicExtension.parameters.size).forEach {
+                addValueParameter(it.name, it.type)
+            }
+
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent
         }
@@ -813,9 +833,9 @@ abstract class AbstractAtomicfuTransformer(
 
     private fun IrFunction.isFromKotlinxAtomicfuPackage(): Boolean = parentDeclarationContainer.kotlinFqName.asString().startsWith(AFU_PKG)
 
-    internal fun List<IrValueParameter>.holdsAt(index: Int, paramName: String, type: IrType): Boolean {
-        require(index >= 0 && index < size) { "Index $index is out of bounds of the given value parameter list of size $size" }
-        return get(index).name.asString() == paramName && get(index).type == type
+    internal fun IrFunction.holdsAt(index: Int, paramName: String, type: IrType): Boolean {
+        require(index >= 0 && index < parameters.size) { "Index $index is out of bounds of the given value parameter list of size ${parameters.size}" }
+        return parameters[index].name.asString() == paramName && parameters[index].type == type
     }
 
     private val IrDeclaration.parentDeclarationContainer: IrDeclarationContainer
@@ -833,7 +853,7 @@ abstract class AbstractAtomicfuTransformer(
         } ?: false
 
     private fun IrFunction.isAtomicExtension(): Boolean =
-        if (extensionReceiverParameter != null && extensionReceiverParameter!!.type.isAtomicType()) {
+        if (extensionReceiverParameterType?.type?.isAtomicType() ?: false) {
             require(this.isInline) {
                 "Non-inline extension functions on kotlinx.atomicfu.Atomic* classes are not allowed, " +
                         "please add inline modifier to the function ${this.render()}."
@@ -845,8 +865,11 @@ abstract class AbstractAtomicfuTransformer(
             true
         } else false
 
+    private val IrFunction.extensionReceiverParameterType: IrSimpleType?
+        get() = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type as? IrSimpleType
+
     internal fun IrFunction.isTransformedAtomicExtension(): Boolean =
-        name.asString().contains("\$$ATOMICFU") && valueParameters.isNotEmpty() && valueParameters[0].name.asString() == ATOMIC_HANDLER
+        name.asString().contains("\$$ATOMICFU") && parameters.firstOrNull { it.kind == IrParameterKind.Regular }?.name?.asString() == ATOMIC_HANDLER
 
     private fun IrType.isTraceBaseType() =
         classFqName?.let {

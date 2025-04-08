@@ -54,7 +54,7 @@ internal fun buildCall(
             }
         }
         valueArguments.let {
-            it.withIndex().forEach { (i, arg) -> putValueArgument(i, arg) }
+            it.withIndex().forEach { (i, arg) -> arguments[i] = arg }
         }
     }
 
@@ -123,8 +123,8 @@ internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
 
 internal fun IrFunctionAccessExpression.getValueArguments() =
-    (0 until valueArgumentsCount).map { i ->
-        getValueArgument(i)
+    arguments.filterIndexed { i, arg ->
+        symbol.owner.parameters[i].kind == IrParameterKind.Regular
     }
 
 internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol)
@@ -180,7 +180,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     val name = if (isSetter) arrayField.setterName() else arrayField.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, valueType)
-        this.valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        this.parameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
@@ -190,10 +190,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = setSymbol,
                         type = irBuiltIns.unitType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(index, valueParameter.capture())
-                    ).apply {
-                        this.dispatchReceiver = arrayGetter
-                    }
+                        valueArguments = listOf(arrayGetter, index, valueParameter.capture())
+                    )
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
                     val getSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType), GET)
@@ -202,10 +200,8 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = getSymbol,
                         type = valueType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(index)
-                    ).apply {
-                        dispatchReceiver = getField
-                    }
+                        valueArguments = listOf(getField, index)
+                    )
                 }
             )
         )
@@ -230,7 +226,7 @@ internal fun IrPluginContext.buildFieldAccessor(
     val name = if (isSetter) field.setterName() else field.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, valueType)
-        valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        if (isSetter) parameters += valueParameter
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {

@@ -35,20 +35,20 @@ class JvmAtomicfuIrBuilder(
 
     override fun irCallFunction(
         symbol: IrSimpleFunctionSymbol,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall {
-        val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            this.extensionReceiver = extensionReceiver
-            valueArguments.forEachIndexed { i, arg ->
-                putValueArgument(i, arg?.let {
-                    val expectedParameterType = symbol.owner.valueParameters[i].type
-                    if (valueType.isBoolean() && !arg.type.isInt() && expectedParameterType.isInt()) toInt(it) else it
-                })
+        val castedArgs = arguments.mapIndexed { i, arg ->
+            val p = symbol.owner.parameters[i]
+            if (p.kind == IrParameterKind.Regular && arg != null &&
+                valueType.isBoolean() && !arg.type.isInt() && p.type.isInt()) {
+                toInt(arg)
+            } else {
+                arg
             }
+        }
+        val irCall = irCall(symbol).apply {
+            castedArgs.forEachIndexed { i, arg -> this.arguments[i] = arg }
         }
         return if (valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
@@ -135,8 +135,12 @@ class JvmAtomicfuIrBuilder(
         initValue: IrExpression,
         dispatchReceiver: IrExpression?
     ) : IrFunctionAccessExpression = irCall(atomicBoxType.constructors.first()).apply {
-        putValueArgument(0, initValue)
-        this.dispatchReceiver = dispatchReceiver
+        if (dispatchReceiver == null) {
+            arguments[0] = initValue
+        } else {
+            arguments[0] = dispatchReceiver
+            arguments[1] = initValue
+        }
     }
 
     // val a$FU = j.u.c.a.AtomicIntegerFieldUpdater.newUpdater(A::class, "a")
@@ -146,12 +150,12 @@ class JvmAtomicfuIrBuilder(
         valueType: IrType,
         fieldName: String
     ) = irCall(atomicfuSymbols.newUpdater(fieldUpdaterClass)).apply {
-        putValueArgument(0, atomicfuSymbols.javaClassReference(parentClass.symbol.starProjectedType)) // tclass
+        arguments[0] = atomicfuSymbols.javaClassReference(parentClass.symbol.starProjectedType) // tclass
         if (fieldUpdaterClass == atomicfuSymbols.javaAtomicRefFieldUpdaterClass) {
-            putValueArgument(1, atomicfuSymbols.javaClassReference(valueType)) // vclass
-            putValueArgument(2, irString(fieldName)) // fieldName
+            arguments[1] = atomicfuSymbols.javaClassReference(valueType) // vclass
+            arguments[2] = irString(fieldName) // fieldName
         } else {
-            putValueArgument(1, irString(fieldName)) // fieldName
+            arguments[1] = irString(fieldName) // fieldName
         }
     }
 
