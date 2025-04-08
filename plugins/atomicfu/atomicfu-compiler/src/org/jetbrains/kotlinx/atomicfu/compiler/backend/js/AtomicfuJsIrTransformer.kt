@@ -409,7 +409,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         private fun IrCall.buildObjectArray(): IrCall {
             val arrayFactorySymbol = context.referencePackageFunction("kotlin", "arrayOfNulls")
             val arrayElementType = typeArguments[0] ?: error("AtomicArray factory should have a type argument: ${symbol.owner.render()}")
-            val size = getValueArgument(0)
+            val size = arguments[0]
             return buildCall(
                 startOffset, endOffset,
                 target = arrayFactorySymbol,
