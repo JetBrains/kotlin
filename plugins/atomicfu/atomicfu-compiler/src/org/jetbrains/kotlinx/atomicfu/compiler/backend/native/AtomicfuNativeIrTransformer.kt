@@ -106,7 +106,7 @@ class AtomicfuNativeIrTransformer(
             }
         }
 
-        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        override fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction

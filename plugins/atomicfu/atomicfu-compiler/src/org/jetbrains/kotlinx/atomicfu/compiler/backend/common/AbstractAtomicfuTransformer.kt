@@ -629,7 +629,7 @@ abstract class AbstractAtomicfuTransformer(
             dispatchReceiver: IrExpression?
         ): IrExpression
 
-        abstract fun AbstractAtomicfuIrBuilder.getAtomicHandlerValueParameterReceiver(
+        abstract fun AbstractAtomicfuIrBuilder.getAtomicHandlerReceiver(
             atomicHandler: AtomicHandler<*>,
             dispatchReceiver: IrExpression?,
             parentFunction: IrFunction
