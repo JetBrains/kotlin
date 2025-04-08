@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
-import org.junit.Rule;
-import org.jetbrains.kotlin.test.MuteableTestRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,8 +47,6 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
 
     private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
-
-    @Rule public MuteableTestRule muteableTestRule = new MuteableTestRule();
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(
             @NotNull CLICompiler<?> compiler,
