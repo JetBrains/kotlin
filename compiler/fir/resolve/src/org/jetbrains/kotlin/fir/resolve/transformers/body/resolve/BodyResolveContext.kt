@@ -43,7 +43,7 @@ class BodyResolveContext(
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
     val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf(),
-    // If the `this` context is defined for some local class
+    // If `this` context is defined for some local class
     val parentContext: BodyResolveContext? = null
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
@@ -98,7 +98,6 @@ class BodyResolveContext(
 
     val inferenceSession: FirInferenceSession
         @OptIn(PrivateForInline::class)
-
         get() = _inferenceSession
         // It's important that we re-use the session from the parent context.
         // As in different moments the value might be restored _there_ (in the parent context)
@@ -116,12 +115,13 @@ class BodyResolveContext(
         // There we would resolve the setter and relevant `setValue` call only after the whole `pclaBuilder` call is completed
         // So, the relevant PCLA session would be dead at the moment and the default one would be set back
         // for the `parentContext!!.inferenceSession`.
-            ?: parentContext!!.inferenceSession
-                // Looks like we should use this session only for PCLA to be able
-                // to use information from local class inside it.
-                // However, we should not use other kinds of inference sessions,
-                // otherwise we can "inherit" type variables from there provoking inference problems
-                .takeIf { it is FirPCLAInferenceSession } ?: FirInferenceSession.DEFAULT
+        //
+        // NB: Looks like we should use this session only for PCLA to be able
+        // to use information from local class inside it.
+        // However, we should not use other kinds of inference sessions,
+        // otherwise we can "inherit" type variables from there provoking inference problems
+            ?: parentContext!!.inferenceSession as? FirPCLAInferenceSession
+            ?: FirInferenceSession.DEFAULT
 
 
     @OptIn(PrivateForInline::class)
