@@ -40,7 +40,7 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
         VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(
-            resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext, session.languageVersionSettings
+            resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext
         )
 
     val constraintSystemFactory: ConstraintSystemFactory = ConstraintSystemFactory()

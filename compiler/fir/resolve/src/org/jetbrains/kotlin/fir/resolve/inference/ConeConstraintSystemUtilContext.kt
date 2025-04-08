@@ -156,9 +156,6 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
 
-    override val isForcedConsiderExtensionReceiverFromConstrainsInLambda: Boolean
-        get() = true
-
     override val isForcedAllowForkingInferenceSystem: Boolean
         get() = true
 }

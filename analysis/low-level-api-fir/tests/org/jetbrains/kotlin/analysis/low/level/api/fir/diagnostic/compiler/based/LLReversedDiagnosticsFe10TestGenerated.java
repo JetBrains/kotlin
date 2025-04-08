@@ -17965,12 +17965,6 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
-      @TestMetadata("selectOfLambdaWithExtensionDisabled.kt")
-      public void testSelectOfLambdaWithExtensionDisabled() {
-        runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionDisabled.kt");
-      }
-
-      @Test
       @TestMetadata("selectOfLambdaWithExtensionEnabled.kt")
       public void testSelectOfLambdaWithExtensionEnabled() {
         runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionEnabled.kt");

@@ -44,7 +44,5 @@ interface ConstraintSystemUtilContext {
         index: Int
     ): TypeVariableMarker
 
-    val isForcedConsiderExtensionReceiverFromConstrainsInLambda get() = false
-
     val isForcedAllowForkingInferenceSystem get() = false
 }

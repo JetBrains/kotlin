@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -27,7 +25,6 @@ class PostponedArgumentInputTypesResolver(
     private val resultTypeResolver: ResultTypeResolver,
     private val variableFixationFinder: VariableFixationFinder,
     private val resolutionTypeSystemContext: ConstraintSystemUtilContext,
-    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     private class ParameterTypesInfo(
         val parametersFromDeclaration: List<KotlinTypeMarker?>?,
@@ -122,7 +119,7 @@ class PostponedArgumentInputTypesResolver(
         return ParameterTypesInfo(
             if (parameterTypesFromDeclaration != null && isLambda &&
                 parameterTypesFromDeclaration.size + 1 == maxParameterCount &&
-                isExtensionFunction && considerExtensionReceiverFromConstrainsInLambda()
+                isExtensionFunction
             )
                 listOf(null) + parameterTypesFromDeclaration
             else
@@ -185,12 +182,9 @@ class PostponedArgumentInputTypesResolver(
             parameterTypesFromDeclaration?.size ?: 0
         )
 
-        val isFeatureEnabled =
-            considerExtensionReceiverFromConstrainsInLambda()
-
         parameterTypesFromDeclarationOfRelatedLambdas.mapTo(declaredParameterTypes) { (types, isLambda) ->
             if (
-                isFeatureEnabled && isLambda &&
+                isLambda &&
                 (extensionFunctionTypePresentInConstraints || isAnyFunctionExpressionWithReceiver) &&
                 types.size + 1 == maxParameterCount
             )
@@ -201,10 +195,6 @@ class PostponedArgumentInputTypesResolver(
 
         return Triple(declaredParameterTypes, isAnyFunctionExpressionWithReceiver, maxParameterCount)
     }
-
-    private fun considerExtensionReceiverFromConstrainsInLambda() =
-        resolutionTypeSystemContext.isForcedConsiderExtensionReceiverFromConstrainsInLambda ||
-                languageVersionSettings.supportsFeature(LanguageFeature.ConsiderExtensionReceiverFromConstrainsInLambda)
 
     private fun Context.createTypeVariableForReturnType(argument: PostponedAtomWithRevisableExpectedType): TypeVariableMarker =
         with(resolutionTypeSystemContext) {
@@ -362,7 +352,9 @@ class PostponedArgumentInputTypesResolver(
         }
 
         val parametersFromConstraints = parameterTypesInfo.parametersFromConstraints
-        val parametersFromDeclaration = getDeclaredParametersConsideringExtensionFunctionsPresence(parameterTypesInfo)
+        // null for extension parameter has been added in different place already
+        val parametersFromDeclaration = parameterTypesInfo.parametersFromDeclaration
+
         val areAllParameterTypesSpecified = !parametersFromDeclaration.isNullOrEmpty() && parametersFromDeclaration.all { it != null }
         val isExtensionFunction = parameterTypesInfo.isExtensionFunction
         val parametersFromDeclarations = parameterTypesInfo.parametersFromDeclarationOfRelatedLambdas.orEmpty() + parametersFromDeclaration
@@ -511,26 +503,6 @@ class PostponedArgumentInputTypesResolver(
             }
         }
     }
-
-    private fun getDeclaredParametersConsideringExtensionFunctionsPresence(parameterTypesInfo: ParameterTypesInfo): List<KotlinTypeMarker?>? =
-        with(parameterTypesInfo) {
-
-            // If the feature is enabled, null for extension parameter has been added in different place already
-            if (considerExtensionReceiverFromConstrainsInLambda() ||
-                parametersFromConstraints.isNullOrEmpty() || parametersFromDeclaration.isNullOrEmpty()
-            )
-                parametersFromDeclaration
-            else {
-                val oneLessParameterInDeclarationThanInConstraints =
-                    parametersFromConstraints.first().size == parametersFromDeclaration.size + 1
-
-                if (oneLessParameterInDeclarationThanInConstraints && isExtensionFunction) {
-                    listOf(null) + parametersFromDeclaration
-                } else {
-                    parametersFromDeclaration
-                }
-            }
-        }
 
     fun fixNextReadyVariableForParameterTypeIfNeeded(
         c: Context,
