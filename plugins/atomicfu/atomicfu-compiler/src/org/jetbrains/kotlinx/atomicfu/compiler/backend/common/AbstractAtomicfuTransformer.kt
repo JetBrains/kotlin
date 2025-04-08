@@ -422,7 +422,7 @@ abstract class AbstractAtomicfuTransformer(
                         dispatchReceiver = dispatchReceiver,
                         valueType = valueType,
                         atomicHandlerExtraArg = atomicHandlerExtraArg,
-                        action = (expression.getValueArgument(0) as IrFunctionExpression),
+                        action = (expression.arguments[1] as IrFunctionExpression),
                         functionName = functionName,
                         parentFunction = data
                     )
