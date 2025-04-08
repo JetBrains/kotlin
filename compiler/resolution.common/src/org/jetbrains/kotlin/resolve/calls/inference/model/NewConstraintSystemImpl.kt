@@ -687,13 +687,6 @@ class NewConstraintSystemImpl(
 
         constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
 
-        /*
-         * Checking missed constraint can introduce new type mismatch warnings.
-         * It's needed to deprecate green code which works only due to incorrect optimization in the constraint injector.
-         * TODO: remove this code (and `substituteMissedConstraints`) with removing `ProperTypeInferenceConstraintsProcessing` feature
-         */
-        checkMissedConstraints()
-
         val freshTypeConstructor = variable.freshTypeConstructor()
         val variableWithConstraints =
             notFixedTypeVariables.remove(freshTypeConstructor) ?: error("Seems that $variable is being fixed second time")
@@ -749,28 +742,6 @@ class NewConstraintSystemImpl(
         addError(
             errorFactory(upperTypes.toList(), emptyIntersectionTypeInfo.casingTypes.toList(), variable, emptyIntersectionTypeInfo.kind)
         )
-    }
-
-    private fun checkMissedConstraints() {
-        val constraintSystem = this@NewConstraintSystemImpl
-        val errorsByMissedConstraints = buildList {
-            runTransaction {
-                for ((position, constraints) in storage.missedConstraints) {
-                    val fixedVariableConstraints =
-                        constraints.filter { (typeVariable, _) -> typeVariable.freshTypeConstructor() in notFixedTypeVariables }
-                    constraintInjector.processMissedConstraints(constraintSystem, position, fixedVariableConstraints)
-                }
-                errors.filterIsInstance<NewConstraintError>().forEach(::add)
-                false
-            }
-        }
-        val constraintErrors = constraintSystem.errors.filterIsInstance<NewConstraintError>()
-        // Don't report warning if an error on the same call has already been reported
-        if (constraintErrors.isEmpty()) {
-            errorsByMissedConstraints.forEach {
-                constraintSystem.addError(it.transformToWarning())
-            }
-        }
     }
 
     private fun substituteMissedConstraints() {

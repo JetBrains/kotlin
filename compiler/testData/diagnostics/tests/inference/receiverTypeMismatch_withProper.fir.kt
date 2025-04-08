@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 // FILE: Configuration.java
 public class Configuration<S extends State<? extends Configuration<S>>> {

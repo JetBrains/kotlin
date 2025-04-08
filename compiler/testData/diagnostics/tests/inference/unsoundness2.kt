@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 fun main(args: Array<String>) {
     val zero = coerce<Int, String>(0)
