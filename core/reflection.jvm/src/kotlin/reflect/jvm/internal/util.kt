@@ -294,16 +294,21 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
 internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) :
     DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> {
-        val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
-                (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
+        val receiverCount =
+            if (descriptor.contextReceiverParameters.isNotEmpty())
+                -1
+            else
+                (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) + (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
 
         when {
             descriptor.isVar -> when (receiverCount) {
+                -1 -> return KMutablePropertyNImpl<Any?>(container, descriptor)
                 0 -> return KMutableProperty0Impl<Any?>(container, descriptor)
                 1 -> return KMutableProperty1Impl<Any?, Any?>(container, descriptor)
                 2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(container, descriptor)
             }
             else -> when (receiverCount) {
+                -1 -> return KPropertyNImpl<Any?>(container, descriptor)
                 0 -> return KProperty0Impl<Any?>(container, descriptor)
                 1 -> return KProperty1Impl<Any?, Any?>(container, descriptor)
                 2 -> return KProperty2Impl<Any?, Any?, Any?>(container, descriptor)

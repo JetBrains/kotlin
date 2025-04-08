@@ -42,8 +42,9 @@ internal class KParameterState(
     override fun toString(): String {
         return buildString {
             when (kind) {
-                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.INSTANCE -> append("instance parameter")
+                KParameter.Kind.CONTEXT -> append("context parameter ${irParameter.name}")
+                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.VALUE -> append("parameter #$index ${irParameter.name}")
             }
 

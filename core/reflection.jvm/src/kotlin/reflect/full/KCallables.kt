@@ -23,6 +23,12 @@ val KCallable<*>.instanceParameter: KParameter?
     get() = parameters.singleOrNull { it.kind == KParameter.Kind.INSTANCE }
 
 /**
+ * Returns context parameters of this callable.
+ */
+val KCallable<*>.contextParameters: List<KParameter>
+    get() = parameters.filter { it.kind == KParameter.Kind.CONTEXT }
+
+/**
  * Returns a parameter representing the extension receiver instance needed to call this callable,
  * or `null` if this callable is not an extension.
  */
