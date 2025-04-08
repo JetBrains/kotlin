@@ -19,6 +19,7 @@ dependencies {
     testCompileOnly(kotlinTest("junit"))
 
     testImplementation(libs.junit4)
+    testImplementation(project(":compiler:tests-mutes:mutes-junit4"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.platform.launcher)
