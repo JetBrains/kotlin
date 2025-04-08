@@ -130,7 +130,7 @@ class AtomicfuJvmIrTransformer(
                         if (accessor.isGetter) {
                             invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "get", emptyList(), accessor.returnType)
                         } else {
-                            val arg = accessor.valueParameters.first().capture()
+                            val arg = accessor.parameters.last().capture()
                             invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "set", listOf(arg), accessor.returnType)
                         }
                     )

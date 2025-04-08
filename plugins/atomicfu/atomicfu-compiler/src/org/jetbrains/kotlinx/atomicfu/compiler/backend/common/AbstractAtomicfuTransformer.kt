@@ -289,8 +289,8 @@ abstract class AbstractAtomicfuTransformer(
                             if (accessor.returnType.isBoolean() && delegateVolatileField.type.isInt()) toBoolean(getField) else getField
                         } else {
                             // b = false --> _b$volatile = 0
-                            val arg = accessor.valueParameters.first().capture()
-                            irSetField(dispatchReceiver, delegateVolatileField, if (accessor.valueParameters.first().type.isBoolean() && delegateVolatileField.type.isInt()) toInt(arg) else arg)
+                            val arg = accessor.parameters.last().capture()
+                            irSetField(dispatchReceiver, delegateVolatileField, if (arg.type.isBoolean() && delegateVolatileField.type.isInt()) toInt(arg) else arg)
                         }
                     )
                 }
