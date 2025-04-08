@@ -384,10 +384,8 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         }
 
         private fun IrFunction.getGetterReturnType(): IrType? =
-            valueParameters.getOrNull(valueParameters.lastIndex - 1)?.let { getter ->
-                if (getter.name.asString() == GETTER) {
-                    (getter.type as IrSimpleType).arguments.first().typeOrNull
-                } else null
+            parameters.find { it.name.asString() == GETTER }?.let { getter ->
+                (getter.type as IrSimpleType).arguments.first().typeOrNull
             }
 
         private fun IrCall.getAtomicFunctionName(): String =
