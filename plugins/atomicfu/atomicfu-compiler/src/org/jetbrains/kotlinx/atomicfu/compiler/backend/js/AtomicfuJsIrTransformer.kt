@@ -198,7 +198,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 propertyGetterCall.getReceiverAccessors(data)?.let { accessors ->
                     val inlineAtomic = expression.inlineAtomicFunction(valueType, accessors).apply {
                         if (symbol.owner.name.asString() in ATOMICFU_INLINE_FUNCTIONS) {
-                            val lambdaLoop = (getValueArgument(0) as IrFunctionExpression).function
+                            val lambdaLoop = (arguments[0] as IrFunctionExpression).function
                             lambdaLoop.body?.transform(this@AtomicTransformer, data)
                         }
                     }
