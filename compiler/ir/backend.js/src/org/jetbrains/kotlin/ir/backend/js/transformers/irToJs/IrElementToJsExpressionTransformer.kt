@@ -180,7 +180,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
             if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.parameters.last()).makeRef()
-        val arguments = translateCallArguments(expression, context, this)
+        val arguments = translateNonDispatchCallArguments(expression, context, this).map { it.jsArgument }
 
         val constructor = expression.symbol.owner
         if (context.isClassInlineLike(constructor.parentAsClass)) {
@@ -199,7 +199,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
         val function = expression.symbol.owner
-        val arguments = translateCallArguments(expression, context, this)
+        val arguments = translateNonDispatchCallArguments(expression, context, this)
         val klass = function.parentAsClass
 
         require(!context.isClassInlineLike(klass)) {
@@ -209,17 +209,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return when {
             klass.isEffectivelyExternal() -> {
                 val refForExternalClass = klass.getClassRef(context.staticContext)
-                val varargParameterIndex = expression.symbol.owner.valueParameters.indexOfFirst { it.varargElementType != null }
-                if (varargParameterIndex == -1) {
-                    JsNew(refForExternalClass, arguments)
+                if (expression.symbol.owner.parameters.none { it.isVararg }) {
+                    JsNew(refForExternalClass, arguments.memoryOptimizedMap { it.jsArgument })
                 } else {
-                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
-                        expression,
-                        context,
-                        JsNullLiteral(),
-                        arguments,
-                        varargParameterIndex
-                    )
+                    val dummyThisArg = TranslatedCallArgument(klass.thisReceiver!!, null, JsNullLiteral())
+                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(listOf(dummyThisArg) + arguments, context)
                     JsNew(
                         JsInvocation(
                             JsNameRef("apply", JsNameRef("bind", JsNameRef("Function"))),
@@ -231,7 +225,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 }
             }
             else -> {
-                JsNew(klass.getClassRef(context.staticContext), arguments)
+                JsNew(klass.getClassRef(context.staticContext), arguments.memoryOptimizedMap { it.jsArgument })
             }
         }.withSource(expression, context)
     }
