@@ -1263,18 +1263,9 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(property, PropertyFlags.encode(property)))
             .setName(serializeName(property.name))
 
-        val getter = property.getter
-        val setter = property.setter
-        val backingField = property.backingField
-
-        val shouldSerializeGetter = getter?.let(::skipIfPrivate) == false
-        val shouldSerializeSetter = setter?.let(::skipIfPrivate) == false
-        val shouldSerializeBackingField = backingField != null &&
-                (shouldSerializeGetter || shouldSerializeSetter || !skipIfPrivate(backingField))
-
-        if (shouldSerializeBackingField) proto.backingField = serializeIrField(backingField)
-        if (shouldSerializeGetter) proto.getter = serializeIrFunction(getter)
-        if (shouldSerializeSetter) proto.setter = serializeIrFunction(setter)
+        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it) }
+        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it) }
+        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it) }
 
         return proto.build()
     }
@@ -1283,7 +1274,7 @@ open class IrFileSerializer(
         val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
-        if (!(settings.publicAbiOnly && !isInsideInline || settings.bodiesOnlyForInlines &&
+        if (!(settings.bodiesOnlyForInlines &&
                     (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
                     (field.initializer?.expression !is IrConst))
         ) {
