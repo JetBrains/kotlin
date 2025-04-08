@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,22 +13,18 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirNameAwareOnlyCallablesScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScopeWithLazyNestedScope
 import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
-import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isAny
+import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -178,9 +174,9 @@ object JavaScopeProvider : FirScopeProvider() {
     }
 
     private tailrec fun FirRegularClass.findJavaSuperClass(useSiteSession: FirSession): FirRegularClass? {
-        val superClass = superConeTypes.firstNotNullOfOrNull {
+        val superClass = symbol.resolvedSuperTypes.firstNotNullOfOrNull {
             if (it.isAny) return@firstNotNullOfOrNull null
-            it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir?.takeIf { superClass ->
+            it.lookupTagIfAny?.toRegularClassSymbol(useSiteSession)?.fir?.takeIf { superClass ->
                 superClass.classKind == ClassKind.CLASS
             }
         } ?: return null
@@ -195,8 +191,8 @@ object JavaScopeProvider : FirScopeProvider() {
         DFS.dfs(
             listOf(this),
             { regularClass ->
-                regularClass.superConeTypes.mapNotNull {
-                    it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir
+                regularClass.symbol.resolvedSuperTypes.mapNotNull {
+                    it.lookupTagIfAny?.toRegularClassSymbol(useSiteSession)?.fir
                 }
             },
             object : DFS.AbstractNodeHandler<FirRegularClass, Unit>() {
