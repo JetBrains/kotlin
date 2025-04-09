@@ -46,6 +46,7 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.DataClassGeneratedMembers,
     KtFakeSourceElementKind.ImplicitConstructor,
     KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
+    KtFakeSourceElementKind.SamConstructor,
 )
 
 @OptIn(SuspiciousFakeSourceCheck::class)
