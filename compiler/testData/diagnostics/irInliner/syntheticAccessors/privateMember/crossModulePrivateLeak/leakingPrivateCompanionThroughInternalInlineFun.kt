@@ -16,5 +16,5 @@ class A {
 // MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
-    return A().internalInlineFun()
+    return "OK" // Callsite of `A().internalInlineFun()` is omitted, to avoid test pipeline crash in public inliner after error diagnostic in dependent module
 }
