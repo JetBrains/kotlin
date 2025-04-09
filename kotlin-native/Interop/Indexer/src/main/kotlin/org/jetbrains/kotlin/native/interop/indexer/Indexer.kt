@@ -182,7 +182,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    internal fun getHeaderId(file: CXFile?): HeaderId = getHeaderId(this.library, file)
+    internal fun getHeaderId(file: ClangFile?): HeaderId = getHeaderId(this.library, file)
 
     private fun getLocation(cursor: CValue<CXCursor>): Location {
         val headerId = getHeaderId(getContainingFile(cursor))
@@ -456,7 +456,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 val categoryClassName = clang_getCursorDisplayName(categoryClassCursor).convertAndDispose()
                 if (className == categoryClassName) {
                     val categoryFile = getContainingFile(childCursor)
-                    val isCategoryInTheSameFileAsClass = clang_File_isEqual(categoryFile, classFile) != 0
+                    val isCategoryInTheSameFileAsClass = categoryFile == classFile
                     val isCategoryFromDefFile = library.allowIncludingObjCCategoriesFromDefFile
                             && clang_Location_isFromMainFile(clang_getCursorLocation(childCursor)) != 0
                     if (isCategoryInTheSameFileAsClass || isCategoryFromDefFile) {
@@ -1216,7 +1216,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                             val file = memScoped {
                                 val fileVar = alloc<CXFileVar>()
                                 clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
-                                fileVar.value
+                                fileVar.value?.asClangFile()
                             }
 
                             if (file?.canonicalPath in headersCanonicalPaths) {

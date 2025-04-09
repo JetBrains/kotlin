@@ -542,7 +542,7 @@ internal interface Indexer {
     /**
      * Called when entered main file.
      */
-    fun enteredMainFile(file: CXFile) {}
+    fun enteredMainFile(file: ClangFile) {}
 
     /**
      * Called when a file gets #included/#imported.
@@ -571,7 +571,7 @@ internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslation
                 enteredMainFile = staticCFunction { clientData, mainFile, _ ->
                     @Suppress("NAME_SHADOWING")
                     val indexer = clientData!!.asStableRef<Indexer>().get()
-                    indexer.enteredMainFile(mainFile!!)
+                    indexer.enteredMainFile(mainFile!!.asClangFile())
                     // We must ensure only interop types exist in function signature.
                     @Suppress("USELESS_CAST")
                     null as CXIdxClientFile?
@@ -658,17 +658,17 @@ internal class ModulesMap(
 
     data class Module(private val cxModule: CXModule)
 
-    fun getModule(file: CXFile): Module? {
+    fun getModule(file: ClangFile): Module? {
         // `file` is bound to `translationUnit`, however `translationUnitWithModules` is used to access modules.
         // Find the corresponding file in `translationUnitWithModules`:
         val fileInTuWithModules =
-                clang_getFile(translationUnitWithModules, clang_getFileName(file).convertAndDispose())!!
+                clang_getFile(translationUnitWithModules, file.path)!!
 
         return clang_getModuleForFile(translationUnitWithModules, fileInTuWithModules)?.let { Module(it) }
     }
 }
 
-internal fun getHeaderId(library: NativeLibrary, header: CXFile?): HeaderId {
+internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     if (header == null) {
         return HeaderId("builtins")
     }
@@ -678,7 +678,7 @@ internal fun getHeaderId(library: NativeLibrary, header: CXFile?): HeaderId {
 }
 
 class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
-data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<CXFile?>, val ownTranslationUnits: Set<CXTranslationUnit>)
+data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<ClangFile?>, val ownTranslationUnits: Set<CXTranslationUnit>)
 
 internal fun getHeadersAndUnits(
         library: NativeLibrary,
@@ -687,8 +687,8 @@ internal fun getHeadersAndUnits(
         unitsHolder: UnitsHolder
 ): NativeLibraryHeadersAndUnits {
     val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
-    val ownHeaders = mutableSetOf<CXFile?>()
-    val allHeaders = mutableSetOf<CXFile?>(null)
+    val ownHeaders = mutableSetOf<ClangFile?>()
+    val allHeaders = mutableSetOf<ClangFile?>(null)
 
     val filter = library.headerFilter
 
@@ -709,7 +709,7 @@ class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
-        val canonicalPath: String = info.file!!.canonicalPath
+        val canonicalPath: String = info.getFile()!!.canonicalPath
         return unitByBinaryFile.getOrPut(canonicalPath) {
             clang_createTranslationUnit(index, canonicalPath)!!
         }
@@ -721,18 +721,39 @@ class UnitsHolder(val index: CXIndex) : Disposable {
     }
 }
 
+class ClangFile(val cxFile: CXFile) {
+
+    val path: String get() = clang_getFileName(cxFile).convertAndDispose()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is ClangFile && (clang_File_isEqual(cxFile, other.cxFile) != 0)
+    }
+
+    override fun hashCode(): Int = cValue<CXFileUniqueID> {
+        clang_getFileUniqueID(cxFile, ptr)
+    }.hashCode()
+
+    override fun toString(): String = path
+}
+
+fun CXFile.asClangFile(): ClangFile = ClangFile(this)
+fun CXTranslationUnit.getFile(fileName: String): ClangFile? = clang_getFile(this, fileName)?.asClangFile()
+fun CXIdxIncludedFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
+fun CXIdxImportedASTFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
+
 private fun filterHeadersByName(
         compilation: Compilation,
         filter: NativeLibraryHeaderFilter.NameBased,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
         ownTranslationUnits: MutableSet<CXTranslationUnit>,
-        ownHeaders: MutableSet<CXFile?>,
-        allHeaders: MutableSet<CXFile?>,
+        ownHeaders: MutableSet<ClangFile?>,
+        allHeaders: MutableSet<ClangFile?>,
         unitsHolder: UnitsHolder
 ) {
-    val topLevelFiles = mutableSetOf<CXFile>()
-    var mainFile: CXFile? = null
+    val topLevelFiles = mutableSetOf<ClangFile>()
+    var mainFile: ClangFile? = null
     val translationUnits = mutableListOf(translationUnit)
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
@@ -743,14 +764,14 @@ private fun filterHeadersByName(
         val curUnit = translationUnits[curUnitIndex++]
 
         indexTranslationUnit(index, curUnit, 0, object : Indexer {
-            override fun enteredMainFile(file: CXFile) {
+            override fun enteredMainFile(file: ClangFile) {
                 mainFile = file
                 allHeaders += file
             }
 
             override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
                 val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
-                val file = info.file!!
+                val file = info.getFile()!!
 
                 allHeaders += file
 
@@ -771,7 +792,7 @@ private fun filterHeadersByName(
                     val includerPath = includerFile.path
 
                     val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
-                    if (clang_File_isEqual(clang_getFile(curUnit, resolvedSibling), file) != 0) {
+                    if (curUnit.getFile(resolvedSibling) == file) {
                         // included file is accessible from the includer by `name` used as relative path, so
                         // `name` seems to be relative to the includer:
                         Paths.get(includerName).resolveSibling(name).normalize().toString()
@@ -824,8 +845,8 @@ private fun filterHeadersByPredefined(
         index: CXIndex,
         translationUnit: CXTranslationUnit,
         ownTranslationUnits: MutableSet<CXTranslationUnit>,
-        ownHeaders: MutableSet<CXFile?>,
-        allHeaders: MutableSet<CXFile?>,
+        ownHeaders: MutableSet<ClangFile?>,
+        allHeaders: MutableSet<ClangFile?>,
         unitsHolder: UnitsHolder
 ) {
     val translationUnits = mutableListOf(translationUnit)
@@ -833,13 +854,13 @@ private fun filterHeadersByPredefined(
     var curUnitIndex = 0
     while (curUnitIndex < translationUnits.size) {
         indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, object : Indexer {
-            override fun enteredMainFile(file: CXFile) {
+            override fun enteredMainFile(file: ClangFile) {
                 ownHeaders += file
                 allHeaders += file
             }
 
             override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
-                val file = info.file
+                val file = info.getFile()
                 allHeaders += file
                 if (file?.canonicalPath in filter.headers) {
                     ownHeaders += file
@@ -886,7 +907,7 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
                 getHeadersAndUnits(this, index, translationUnit, unitsHolder)
             }
 
-            fun getPath(file: CXFile?) = if (file == null) "<builtins>" else file.canonicalPath
+            fun getPath(file: ClangFile?) = if (file == null) "<builtins>" else file.canonicalPath
             return NativeLibraryHeaders(
                     headers.ownHeaders.map(::getPath).toSet(),
                     headers.importedHeaders.map(::getPath).toSet()
@@ -918,23 +939,22 @@ fun File.sha256(): String {
 
 fun headerContentsHash(filePath: String) = File(filePath).sha256()
 
-internal fun CValue<CXSourceLocation>.getContainingFile(): CXFile? = memScoped {
+internal fun CValue<CXSourceLocation>.getContainingFile(): ClangFile? = memScoped {
     val fileVar = alloc<CXFileVar>()
     clang_getFileLocation(this@getContainingFile, fileVar.ptr, null, null, null)
-    fileVar.value
+    fileVar.value?.asClangFile()
 }
 
 @JvmName("getFileContainingCursor")
-internal fun getContainingFile(cursor: CValue<CXCursor>): CXFile? {
+internal fun getContainingFile(cursor: CValue<CXCursor>): ClangFile? {
     return clang_getCursorLocation(cursor).getContainingFile()
 }
 
-internal val CXFile.path: String get() = clang_getFileName(this).convertAndDispose()
 internal val CXModule.name: String get() = clang_Module_getName(this).convertAndDispose()
 
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
-internal val CXFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
+internal val ClangFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)
