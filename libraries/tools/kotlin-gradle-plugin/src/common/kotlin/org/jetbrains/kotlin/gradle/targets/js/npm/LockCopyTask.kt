@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.io.File
 import javax.inject.Inject
 
@@ -62,10 +63,13 @@ abstract class LockCopyTask : DefaultTask() {
         const val STORE_PACKAGE_LOCK_NAME = "kotlinStorePackageLock"
         const val RESTORE_PACKAGE_LOCK_NAME = "kotlinRestorePackageLock"
         const val UPGRADE_PACKAGE_LOCK = "kotlinUpgradePackageLock"
-        const val PACKAGE_LOCK_MISMATCH_MESSAGE = "Lock file was changed. Run the `$UPGRADE_PACKAGE_LOCK` task to actualize lock file"
         const val KOTLIN_JS_STORE = "kotlin-js-store"
         const val PACKAGE_LOCK = "package-lock.json"
         const val YARN_LOCK = "yarn.lock"
+
+        @InternalKotlinGradlePluginApi
+        fun packageLockMismatchMessage(upgradeTaskName: String) =
+            "Lock file was changed. Run the `$upgradeTaskName` task to actualize lock file"
     }
 }
 

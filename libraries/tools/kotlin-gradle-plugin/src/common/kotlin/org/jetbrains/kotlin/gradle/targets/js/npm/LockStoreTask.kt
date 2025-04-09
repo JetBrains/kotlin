@@ -24,8 +24,7 @@ abstract class LockStoreTask : LockCopyTask() {
     abstract val lockFileAutoReplace: Property<Boolean>
 
     @get:Internal
-    internal open val mismatchMessage: String
-        get() = PACKAGE_LOCK_MISMATCH_MESSAGE
+    internal abstract val mismatchMessage: Property<String>
 
     override fun copy() {
         val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
@@ -54,9 +53,9 @@ abstract class LockStoreTask : LockCopyTask() {
             when (lockFileMismatchReport.get()) {
                 LockFileMismatchReport.NONE -> {}
                 LockFileMismatchReport.WARNING -> {
-                    logger.warn(mismatchMessage)
+                    logger.warn(mismatchMessage.get())
                 }
-                LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage)
+                LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage.get())
                 else -> error("Unknown mismatch report kind")
             }
         }

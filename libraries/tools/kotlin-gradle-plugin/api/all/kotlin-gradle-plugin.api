@@ -3616,7 +3616,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/LockCopyTask : 
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/LockCopyTask$Companion;
 	public static final field KOTLIN_JS_STORE Ljava/lang/String;
 	public static final field PACKAGE_LOCK Ljava/lang/String;
-	public static final field PACKAGE_LOCK_MISMATCH_MESSAGE Ljava/lang/String;
 	public static final field RESTORE_PACKAGE_LOCK_NAME Ljava/lang/String;
 	public static final field STORE_PACKAGE_LOCK_NAME Ljava/lang/String;
 	public static final field UPGRADE_PACKAGE_LOCK Ljava/lang/String;
@@ -5063,7 +5062,6 @@ public class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnPlugin : org/jetbra
 	public static final field RESTORE_YARN_LOCK_NAME Ljava/lang/String;
 	public static final field STORE_YARN_LOCK_NAME Ljava/lang/String;
 	public static final field UPGRADE_YARN_LOCK Ljava/lang/String;
-	public static final field YARN_LOCK_MISMATCH_MESSAGE Ljava/lang/String;
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V

@@ -198,6 +198,33 @@ internal class NodeJsRootPluginApplier(
                 npmInstall.dependsOn(nodeJsRoot.packageManagerExtension.map { it.preInstallTasks })
             }
 
+        val upgradeLock = project.tasks.register(
+            platformDisambiguate.extensionName(LockCopyTask.UPGRADE_PACKAGE_LOCK),
+            LockStoreTask::class.java
+        ) { task ->
+            task.dependsOn(npmInstall)
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
+            task.outputDirectory.set(npm.lockFileDirectory)
+            task.fileName.set(npm.lockFileName)
+
+            task.additionalInputFiles.from(
+                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+            )
+            task.additionalInputFiles.from(
+                task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+            )
+
+            task.lockFileMismatchReport.value(
+                LockFileMismatchReport.NONE
+            ).disallowChanges()
+            task.reportNewLockFile.value(
+                false
+            ).disallowChanges()
+            task.lockFileAutoReplace.value(
+                true
+            ).disallowChanges()
+        }
+
         project.tasks.register(
             platformDisambiguate.extensionName(LockCopyTask.STORE_PACKAGE_LOCK_NAME),
             LockStoreTask::class.java
@@ -224,33 +251,11 @@ internal class NodeJsRootPluginApplier(
             task.lockFileAutoReplace.value(
                 project.provider { npm.requireConfigured().packageLockAutoReplace }
             ).disallowChanges()
-        }
-
-        project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.UPGRADE_PACKAGE_LOCK),
-            LockStoreTask::class.java
-        ) { task ->
-            task.dependsOn(npmInstall)
-            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.PACKAGE_LOCK) })
-            task.outputDirectory.set(npm.lockFileDirectory)
-            task.fileName.set(npm.lockFileName)
-
-            task.additionalInputFiles.from(
-                nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
+            task.mismatchMessage.value(
+                LockCopyTask.packageLockMismatchMessage(
+                    upgradeLock.name
+                )
             )
-            task.additionalInputFiles.from(
-                task.outputDirectory.map { it.file(LockCopyTask.YARN_LOCK) }
-            )
-
-            task.lockFileMismatchReport.value(
-                LockFileMismatchReport.NONE
-            ).disallowChanges()
-            task.reportNewLockFile.value(
-                false
-            ).disallowChanges()
-            task.lockFileAutoReplace.value(
-                true
-            ).disallowChanges()
         }
 
         project.tasks.register(

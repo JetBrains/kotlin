@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -44,6 +45,9 @@ open class YarnPlugin : CommonYarnPlugin {
         const val STORE_YARN_LOCK_NAME = "kotlinStoreYarnLock"
         const val RESTORE_YARN_LOCK_NAME = "kotlinRestoreYarnLock"
         const val UPGRADE_YARN_LOCK = "kotlinUpgradeYarnLock"
-        const val YARN_LOCK_MISMATCH_MESSAGE = "Lock file was changed. Run the `${UPGRADE_YARN_LOCK}` task to actualize lock file"
+
+        @InternalKotlinGradlePluginApi
+        fun yarnLockMismatchMessage(upgradeTaskName: String) =
+            "Lock file was changed. Run the `$upgradeTaskName` task to actualize lock file"
     }
 }

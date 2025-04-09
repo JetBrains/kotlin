@@ -10,7 +10,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK_MISMATCH_MESSAGE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
@@ -49,7 +48,7 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val setProperty: (String) -> String = { ".set($it)" }
 
-    override val mismatchReportMessage: String = PACKAGE_LOCK_MISMATCH_MESSAGE
+    override val mismatchReportMessage: String = LockCopyTask.packageLockMismatchMessage(upgradeTaskName)
 
     @DisplayName("package-lock is OS independent")
     @GradleTest
@@ -91,7 +90,7 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val setProperty: (String) -> String = { " = $it" }
 
-    override val mismatchReportMessage: String = YarnPlugin.YARN_LOCK_MISMATCH_MESSAGE
+    override val mismatchReportMessage: String = YarnPlugin.yarnLockMismatchMessage(upgradeTaskName)
 }
 
 @JsGradlePluginTests
