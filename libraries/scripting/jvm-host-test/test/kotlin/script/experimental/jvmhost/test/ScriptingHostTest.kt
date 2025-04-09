@@ -98,9 +98,9 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testCustomResultField() {
-        val resVal = evalScriptWithResult("42") {
+        val resVal = evalScriptWithResult("42", compilation = {
             resultField("outcome")
-        } as ResultValue.Value
+        }) as ResultValue.Value
         Assert.assertEquals("outcome", resVal.name)
         val resField = resVal.scriptInstance!!::class.java.getDeclaredField("outcome")
         Assert.assertEquals(42, resField.get(resVal.scriptInstance!!))
@@ -349,6 +349,34 @@ class ScriptingHostTest : TestCase() {
         }
     }
 
+    @Test
+    fun testScriptWithProvidedPropertyAccess() {
+        // we do not care about K1 behavior anymore
+        if (IS_COMPILING_WITH_K2) {
+            val result = evalScriptWithResult(
+                """
+                val bar = foo
+                class A {
+                    fun getFoo() = foo
+                }
+                bar + A().getFoo()
+            """.trimIndent(),
+                compilation = {
+                    updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                    providedProperties(
+                        "foo" to "kotlin.String",
+                    )
+                },
+                evaluation = {
+                    providedProperties("foo" to "OK")
+                }
+            )
+            assertTrue(result is ResultValue.Value)
+            assertEquals("OKOK", (result as ResultValue.Value).value)
+        }
+    }
+
+    @Test
     fun testScriptWithUnusedUnresolvedProvidedPropertyType() {
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -572,9 +600,9 @@ class ScriptingHostTest : TestCase() {
         Assert.assertTrue(res0 is ResultWithDiagnostics.Failure)
 
         val output = captureOut {
-            val res1 = evalScriptWithConfiguration(script) {
+            val res1 = evalScriptWithConfiguration(script, compilation = {
                 compilerOptions(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
-            }
+            })
             Assert.assertTrue(res1.reports.none { it.message == error })
             Assert.assertTrue(res1 is ResultWithDiagnostics.Success)
         }
@@ -641,15 +669,15 @@ class ScriptingHostTest : TestCase() {
     fun testCompileOptionsNoStdlib() {
         val script = "println(\"Hi\")"
 
-        val res1 = evalScriptWithConfiguration(script) {
+        val res1 = evalScriptWithConfiguration(script, compilation =  {
             compilerOptions(K2JVMCompilerArguments::noStdlib.cliArgument)
-        }
+        })
         assertTrue(res1 is ResultWithDiagnostics.Failure)
         val regex = "Unresolved reference\\W+println".toRegex()
         res1.reports.find { it.message.contains(regex) }
             ?: fail("Expected unresolved reference report. Reported:\n  ${res1.reports.joinToString("\n  ") { it.message }}")
 
-        val res2 = evalScriptWithConfiguration(script) {
+        val res2 = evalScriptWithConfiguration(script, compilation = {
             refineConfiguration {
                 beforeCompiling { ctx ->
                     ScriptCompilationConfiguration(ctx.compilationConfiguration) {
@@ -657,7 +685,7 @@ class ScriptingHostTest : TestCase() {
                     }.asSuccess()
                 }
             }
-        }
+        })
         // -no-stdlib in refined configuration has no effect
         assertTrue(res2 is ResultWithDiagnostics.Success)
     }
@@ -844,22 +872,25 @@ fun <T> ResultWithDiagnostics<T>.throwOnExceptionResult(): ResultWithDiagnostics
 }
 
 private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()): ResultWithDiagnostics<*> =
-    evalScriptWithConfiguration(script, host)
+    evalScriptWithConfiguration(script, host) {}
 
 private fun evalScriptWithResult(
     script: String,
     host: BasicScriptingHost = BasicJvmScriptingHost(),
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultValue =
-    evalScriptWithConfiguration(script, host, body).throwOnFailure().valueOrNull()!!.returnValue
+    evalScriptWithConfiguration(script, host, compilation, evaluation).throwOnFailure().valueOrNull()!!.returnValue
 
 internal fun evalScriptWithConfiguration(
     script: String,
     host: BasicScriptingHost = BasicJvmScriptingHost(),
-    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultWithDiagnostics<EvaluationResult> {
-    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = body)
-    return host.eval(script.toScriptSource(), compilationConfiguration, null)
+    val compilationConf = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = compilation)
+    val evaluationConf = createJvmEvaluationConfigurationFromTemplate<SimpleScriptTemplate>(body = evaluation)
+    return host.eval(script.toScriptSource(), compilationConf, evaluationConf)
 }
 
 private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOutput: List<String>) {

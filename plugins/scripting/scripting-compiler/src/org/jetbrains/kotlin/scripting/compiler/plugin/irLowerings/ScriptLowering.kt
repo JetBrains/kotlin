@@ -109,8 +109,11 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
             scriptsReceivers.add(it.type)
             scriptsReceivers.add(typeRemapper.remapType(it.type))
         }
+        val externalVariables = irScript.explicitCallParameters.mapTo(mutableSetOf()) { it.symbol }
 
-        return irScript.statements.filterIsInstance<IrClass>().collectCapturersByReceivers(context, irScript, scriptsReceivers)
+        return irScript.statements.filterIsInstance<IrClass>().collectCapturersInScript(
+            context, irScript, scriptsReceivers, externalVariables
+        )
     }
 
     private fun finalizeScriptClass(irScript: IrScript, symbolRemapper: ScriptsToClassesSymbolRemapper) {
