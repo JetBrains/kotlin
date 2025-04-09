@@ -20,7 +20,6 @@ package kotlin
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
     kotlin.contracts.contract {
@@ -39,7 +38,6 @@ public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, Result> context(a: A, b: B, block: context(A, B) () -> Result): Result {
     kotlin.contracts.contract {
@@ -58,7 +56,6 @@ public inline fun <A, B, Result> context(a: A, b: B, block: context(A, B) () -> 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, Result> context(a: A, b: B, c: C, block: context(A, B, C) () -> Result): Result {
     kotlin.contracts.contract {
@@ -77,7 +74,6 @@ public inline fun <A, B, C, Result> context(a: A, b: B, c: C, block: context(A, 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, Result> context(a: A, b: B, c: C, d: D, block: context(A, B, C, D) () -> Result): Result {
     kotlin.contracts.contract {
@@ -96,7 +92,6 @@ public inline fun <A, B, C, D, Result> context(a: A, b: B, c: C, d: D, block: co
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, Result> context(a: A, b: B, c: C, d: D, e: E, block: context(A, B, C, D, E) () -> Result): Result {
     kotlin.contracts.contract {
@@ -115,7 +110,6 @@ public inline fun <A, B, C, D, E, Result> context(a: A, b: B, c: C, d: D, e: E, 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, block: context(A, B, C, D, E, F) () -> Result): Result {
     kotlin.contracts.contract {
@@ -134,7 +128,6 @@ public inline fun <A, B, C, D, E, F, Result> context(a: A, b: B, c: C, d: D, e: 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, block: context(A, B, C, D, E, F, G) () -> Result): Result {
     kotlin.contracts.contract {
@@ -153,7 +146,6 @@ public inline fun <A, B, C, D, E, F, G, Result> context(a: A, b: B, c: C, d: D, 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, block: context(A, B, C, D, E, F, G, H) () -> Result): Result {
     kotlin.contracts.contract {
@@ -172,7 +164,6 @@ public inline fun <A, B, C, D, E, F, G, H, Result> context(a: A, b: B, c: C, d: 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, block: context(A, B, C, D, E, F, G, H, I) () -> Result): Result {
     kotlin.contracts.contract {
@@ -191,7 +182,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, Result> context(a: A, b: B, c: C, 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, block: context(A, B, C, D, E, F, G, H, I, J) () -> Result): Result {
     kotlin.contracts.contract {
@@ -210,7 +200,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, Result> context(a: A, b: B, c: 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, block: context(A, B, C, D, E, F, G, H, I, J, K) () -> Result): Result {
     kotlin.contracts.contract {
@@ -229,7 +218,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, Result> context(a: A, b: B, 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, block: context(A, B, C, D, E, F, G, H, I, J, K, L) () -> Result): Result {
     kotlin.contracts.contract {
@@ -248,7 +236,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, Result> context(a: A, b: 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M) () -> Result): Result {
     kotlin.contracts.contract {
@@ -267,7 +254,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, Result> context(a: A, 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N) () -> Result): Result {
     kotlin.contracts.contract {
@@ -286,7 +272,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, Result> context(a: 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) () -> Result): Result {
     kotlin.contracts.contract {
@@ -305,7 +290,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, Result> context(
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P) () -> Result): Result {
     kotlin.contracts.contract {
@@ -324,7 +308,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Result> conte
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, q: Q, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q) () -> Result): Result {
     kotlin.contracts.contract {
@@ -343,7 +326,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, Result> co
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, q: Q, r: R, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R) () -> Result): Result {
     kotlin.contracts.contract {
@@ -362,7 +344,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, Result>
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, q: Q, r: R, s: S, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S) () -> Result): Result {
     kotlin.contracts.contract {
@@ -381,7 +362,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, Resu
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, q: Q, r: R, s: S, t: T, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T) () -> Result): Result {
     kotlin.contracts.contract {
@@ -400,7 +380,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, R
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, q: Q, r: R, s: S, t: T, u: U, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U) () -> Result): Result {
     kotlin.contracts.contract {
@@ -419,7 +398,6 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N, o: O, p: P, q: Q, r: R, s: S, t: T, u: U, v: V, block: context(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V) () -> Result): Result {
     kotlin.contracts.contract {

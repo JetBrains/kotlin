@@ -43,7 +43,6 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
 public inline fun <$types, $resultType> context($parameters, block: context($types) () -> $resultType): $resultType {
     kotlin.contracts.contract {
