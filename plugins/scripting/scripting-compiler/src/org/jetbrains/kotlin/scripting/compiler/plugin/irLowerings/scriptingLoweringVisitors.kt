@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -531,10 +532,11 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
 }
 
 @OptIn(ExperimentalAPIForScriptingPlugin::class)
-internal fun Collection<IrClass>.collectCapturersByReceivers(
+internal fun Collection<IrClass>.collectCapturersInScript(
     context: IrPluginContext,
     parentDeclaration: IrDeclaration,
-    externalReceivers: Set<IrType>
+    externalReceivers: Set<IrType>,
+    externalVariables: Set<IrVariableSymbol>
 ): Set<IrClass> {
     val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration)
     val capturingClasses = mutableSetOf<IrClass>()
@@ -547,7 +549,7 @@ internal fun Collection<IrClass>.collectCapturersByReceivers(
         override fun visitClass(declaration: IrClass) {
             if (!declaration.isInner) {
                 val closure = annotator.getClassClosure(declaration)
-                if (closure.capturedValues.any { it.owner.type in externalReceivers }) {
+                if (closure.capturedValues.any { it in externalVariables || it.owner.type in externalReceivers }) {
                     fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
                         context.diagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
                     }

@@ -514,12 +514,23 @@ object IrTree : AbstractTreeBuilder() {
         +field("baseClass", irTypeType, nullable = true) {
             deepCopyExcludeFromApply = true
         } // K1
-        +listField("explicitCallParameters", variable, mutability = Var)
+        +listField("explicitCallParameters", variable, mutability = Var) {
+            kDoc = """
+                Stores explicit call parameters configured for the script. In K2 includes the provided properties as well.
+            """.trimIndent()
+        }
         +listField("implicitReceiversParameters", valueParameter, mutability = Var)
         +referencedSymbolList("providedProperties", propertySymbol) {
+            kDoc = """
+                K1 only!! Stores provided properties configured for the script.
+            """.trimIndent()
             deepCopyExcludeFromApply = true
         }
-        +listField("providedPropertiesParameters", valueParameter, mutability = Var)
+        +listField("providedPropertiesParameters", valueParameter, mutability = Var) {
+            kDoc = """
+                K1 only!! Stores provided properties parameters configured for the script.
+            """.trimIndent()
+        }
         +referencedSymbol("resultProperty", propertySymbol, nullable = true)
         +field("earlierScriptsParameter", valueParameter, nullable = true)
         +referencedSymbolList("importedScripts", scriptSymbol, nullable = true)

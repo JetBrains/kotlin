@@ -80,7 +80,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             snippetReceivers.add(typeRemapper.remapType(it.type))
         }
 
-        return irSnippet.body.statements.filterIsInstance<IrClass>().collectCapturersByReceivers(context, irSnippet, snippetReceivers)
+        return irSnippet.body.statements.filterIsInstance<IrClass>().collectCapturersInScript(
+            context, irSnippet, snippetReceivers, emptySet()
+        )
     }
 
     private fun finalizeReplSnippetClass(irSnippet: IrReplSnippet, symbolRemapper: ReplSnippetsToClassesSymbolRemapper) {

@@ -33,12 +33,21 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
 
     abstract var baseClass: IrType?
 
+    /**
+     * Stores explicit call parameters configured for the script. In K2 includes the provided properties as well.
+     */
     abstract var explicitCallParameters: List<IrVariable>
 
     abstract var implicitReceiversParameters: List<IrValueParameter>
 
+    /**
+     * K1 only!! Stores provided properties configured for the script.
+     */
     abstract var providedProperties: List<IrPropertySymbol>
 
+    /**
+     * K1 only!! Stores provided properties parameters configured for the script.
+     */
     abstract var providedPropertiesParameters: List<IrValueParameter>
 
     abstract var resultProperty: IrPropertySymbol?
