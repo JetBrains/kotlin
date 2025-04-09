@@ -1,6 +1,9 @@
 STEP 0:
     dependencies: stdlib
+    arguments: -XXLanguage:-IrInlinerBeforeKlibSerialization
+
 STEP 1:
     dependencies: stdlib
+    arguments: -XXLanguage:-IrInlinerBeforeKlibSerialization
     modifications:
         U : l1.kt.1 -> l1.kt
