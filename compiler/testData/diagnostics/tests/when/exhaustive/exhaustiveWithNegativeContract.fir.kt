@@ -18,7 +18,7 @@ fun ensureNotA(v: Variants) {
 fun foo(v: Variants): String {
     ensureNotA(v)
 
-    return <!NO_ELSE_IN_WHEN!>when<!> (v) {
+    return when (v) {
         is Variants.B -> "B"
     }
 }
