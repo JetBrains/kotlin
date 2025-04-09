@@ -375,6 +375,20 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testLatin1Disabled() {
+        val testName = "latin1"
+        val testCase = generateObjCFramework(testName, listOf("-Xbinary=latin1Strings=false"))
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testLatin1Enabled() {
+        val testName = "latin1"
+        val testCase = generateObjCFramework(testName, listOf("-Xbinary=latin1Strings=true"))
+        compileAndRunSwift(testName, testCase, swiftExtraOpts=listOf("-D", "ENABLE_LATIN1"))
+    }
+
+    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false, true)
     }
