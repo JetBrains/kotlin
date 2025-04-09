@@ -385,7 +385,6 @@ class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
         secondaryConstructor {
             annotations += "SinceKotlin(\"1.5\")"
-            annotations += "WasExperimental(ExperimentalStdlibApi::class)"
             visibility = MethodVisibility.PUBLIC
             expectActual = ExpectActualModifier.Unspecified
             parameter {

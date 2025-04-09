@@ -17,7 +17,6 @@ object ComparableOps : TemplateGroupBase() {
                     annotation("@ExperimentalUnsignedTypes")
                 } else {
                     sinceAtLeast("1.5")
-                    wasExperimental("ExperimentalUnsignedTypes")
                 }
             }
         }

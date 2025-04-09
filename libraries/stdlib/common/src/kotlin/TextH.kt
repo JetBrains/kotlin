@@ -155,7 +155,6 @@ public expect class Regex {
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String>
 
     public companion object {

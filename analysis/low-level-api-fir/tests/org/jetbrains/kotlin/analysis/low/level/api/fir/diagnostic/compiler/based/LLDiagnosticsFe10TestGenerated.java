@@ -50361,15 +50361,15 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("duration.kt")
-      public void testDuration() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/duration.kt");
-      }
-
-      @Test
       @TestMetadata("enumCompanion.kt")
       public void testEnumCompanion() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/enumCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntries.kt")
+      public void testEnumEntries() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/enumEntries.kt");
       }
 
       @Test

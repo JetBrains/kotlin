@@ -351,7 +351,6 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)

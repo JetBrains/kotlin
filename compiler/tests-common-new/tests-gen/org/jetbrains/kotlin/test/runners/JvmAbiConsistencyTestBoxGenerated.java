@@ -53741,12 +53741,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
-      @TestMetadata("flexibleTypes_before.kt")
-      public void testFlexibleTypes_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes_before.kt");
-      }
-
-      @Test
       @TestMetadata("inNestedInline.kt")
       public void testInNestedInline() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/inNestedInline.kt");
@@ -53795,21 +53789,9 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
-      @TestMetadata("mutableCollections_before.kt")
-      public void testMutableCollections_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections_before.kt");
-      }
-
-      @Test
       @TestMetadata("nothing_after.kt")
       public void testNothing_after() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_after.kt");
-      }
-
-      @Test
-      @TestMetadata("nothing_before.kt")
-      public void testNothing_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_before.kt");
       }
 
       @Test
@@ -53822,12 +53804,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("rawTypes_after.kt")
       public void testRawTypes_after() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_after.kt");
-      }
-
-      @Test
-      @TestMetadata("rawTypes_before.kt")
-      public void testRawTypes_before() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_before.kt");
       }
 
       @Test
@@ -53880,12 +53856,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         }
 
         @Test
-        @TestMetadata("flexibleTypes_before.kt")
-        public void testFlexibleTypes_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/flexibleTypes_before.kt");
-        }
-
-        @Test
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/inlineClasses.kt");
@@ -53904,21 +53874,9 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         }
 
         @Test
-        @TestMetadata("mutableCollections_before.kt")
-        public void testMutableCollections_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections_before.kt");
-        }
-
-        @Test
         @TestMetadata("nothing_after.kt")
         public void testNothing_after() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_after.kt");
-        }
-
-        @Test
-        @TestMetadata("nothing_before.kt")
-        public void testNothing_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_before.kt");
         }
 
         @Test
@@ -53931,12 +53889,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         @TestMetadata("rawTypes_after.kt")
         public void testRawTypes_after() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/rawTypes_after.kt");
-        }
-
-        @Test
-        @TestMetadata("rawTypes_before.kt")
-        public void testRawTypes_before() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/rawTypes_before.kt");
         }
 
         @Test
@@ -59941,12 +59893,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("unsignedLiteralsForMaxLongValue.kt")
     public void testUnsignedLiteralsForMaxLongValue() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsForMaxLongValue.kt");
-    }
-
-    @Test
-    @TestMetadata("unsignedLiteralsInApiVersion14.kt")
-    public void testUnsignedLiteralsInApiVersion14() {
-      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsInApiVersion14.kt");
     }
 
     @Test

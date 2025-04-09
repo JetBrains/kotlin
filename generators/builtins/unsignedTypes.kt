@@ -66,7 +66,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println()
 
         out.println("@SinceKotlin(\"1.5\")")
-        out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
         out.println("@JvmInline")
         out.println("public value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
@@ -399,7 +398,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             }
             out.println(" */")
             out.println("@SinceKotlin(\"1.5\")")
-            out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
             out.println("@kotlin.internal.InlineOnly")
             out.print("public inline fun $otherSigned.to$className(): $className = ")
             out.println(when {
@@ -426,7 +424,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 """.trimIndent()
             )
             out.println("@SinceKotlin(\"1.5\")")
-            out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
             out.println("@kotlin.internal.InlineOnly")
             out.print("public inline fun $otherName.to$className(): $className = ")
             out.println("${otherName.lowercase()}To$className(this)")
@@ -566,7 +563,6 @@ import kotlin.internal.*
  * A range of values of type `$elementType`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public class ${elementType}Range(start: $elementType, endInclusive: $elementType) : ${elementType}Progression(start, endInclusive, 1), ClosedRange<${elementType}>, OpenEndRange<${elementType}> {
     override val start: $elementType get() = first
     override val endInclusive: $elementType get() = last
@@ -607,7 +603,6 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
  * A progression of values of type `$elementType`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public open class ${elementType}Progression
 internal constructor(
     start: $elementType,

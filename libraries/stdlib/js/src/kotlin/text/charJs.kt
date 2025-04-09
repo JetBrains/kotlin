@@ -23,7 +23,6 @@ public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercaseChar(): Char = lowercase()[0]
 
@@ -38,7 +37,6 @@ public actual inline fun Char.lowercaseChar(): Char = lowercase()[0]
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercase(): String = toString().asDynamic().toLowerCase().unsafeCast<String>()
 
@@ -60,7 +58,6 @@ public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercaseChar(): Char {
     val uppercase = uppercase()
     return if (uppercase.length > 1) this else uppercase[0]
@@ -77,7 +74,6 @@ public actual fun Char.uppercaseChar(): Char {
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.uppercase(): String = toString().asDynamic().toUpperCase().unsafeCast<String>()
 

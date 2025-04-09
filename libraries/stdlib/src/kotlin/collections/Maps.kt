@@ -148,7 +148,6 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
@@ -179,7 +178,6 @@ internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {

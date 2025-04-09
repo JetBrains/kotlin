@@ -18,7 +18,6 @@ package kotlin.text
  * @sample samples.text.Chars.digitToInt
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(): Int {
     return digitOf(this, 10).also {
         if (it < 0) throw IllegalArgumentException("Char $this is not a decimal digit")
@@ -39,7 +38,6 @@ public fun Char.digitToInt(): Int {
  * @sample samples.text.Chars.digitToInt
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(radix: Int): Int {
     return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
 }
@@ -54,7 +52,6 @@ public fun Char.digitToInt(radix: Int): Int {
  * @sample samples.text.Chars.digitToIntOrNull
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(): Int? {
     return digitOf(this, 10).takeIf { it >= 0 }
 }
@@ -73,7 +70,6 @@ public fun Char.digitToIntOrNull(): Int? {
  * @sample samples.text.Chars.digitToIntOrNull
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(radix: Int): Int? {
     checkRadix(radix)
     return digitOf(this, radix).takeIf { it >= 0 }
@@ -88,7 +84,6 @@ public fun Char.digitToIntOrNull(radix: Int): Int? {
  * @sample samples.text.Chars.digitToChar
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Int.digitToChar(): Char {
     if (this in 0..9) {
         return '0' + this
@@ -106,7 +101,6 @@ public fun Int.digitToChar(): Char {
  * @sample samples.text.Chars.digitToChar
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Int.digitToChar(radix: Int): Char {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
@@ -138,7 +132,6 @@ public expect fun Char.toLowerCase(): Char
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.lowercaseChar(): Char
 
 /**
@@ -152,7 +145,6 @@ public expect fun Char.lowercaseChar(): Char
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.lowercase(): String
 
 /**
@@ -172,7 +164,6 @@ public expect fun Char.toUpperCase(): Char
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.uppercaseChar(): Char
 
 /**
@@ -186,7 +177,6 @@ public expect fun Char.uppercaseChar(): Char
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.uppercase(): String
 
 /**

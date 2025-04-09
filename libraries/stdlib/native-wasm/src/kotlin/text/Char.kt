@@ -154,7 +154,6 @@ public actual fun Char.toUpperCase(): Char = uppercaseCharImpl()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
 
 /**
@@ -168,7 +167,6 @@ public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercase(): String = uppercaseImpl()
 
 /**
@@ -188,7 +186,6 @@ public actual fun Char.toLowerCase(): Char = lowercaseCharImpl()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
 
 /**
@@ -202,7 +199,6 @@ public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.lowercase(): String = lowercaseImpl()
 
 /**

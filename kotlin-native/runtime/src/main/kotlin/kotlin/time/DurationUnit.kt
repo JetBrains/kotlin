@@ -7,7 +7,6 @@ package kotlin.time
 
 
 @SinceKotlin("1.6")
-@WasExperimental(ExperimentalTime::class)
 public actual enum class DurationUnit(internal val scale: Double) {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.

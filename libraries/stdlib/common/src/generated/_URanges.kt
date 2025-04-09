@@ -110,7 +110,6 @@ public fun ULongProgression.lastOrNull(): ULong? {
  * @throws IllegalArgumentException if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntRange.random(): UInt {
     return random(Random)
@@ -122,7 +121,6 @@ public inline fun UIntRange.random(): UInt {
  * @throws IllegalArgumentException if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongRange.random(): ULong {
     return random(Random)
@@ -134,7 +132,6 @@ public inline fun ULongRange.random(): ULong {
  * @throws IllegalArgumentException if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UIntRange.random(random: Random): UInt {
     try {
         return random.nextUInt(this)
@@ -149,7 +146,6 @@ public fun UIntRange.random(random: Random): UInt {
  * @throws IllegalArgumentException if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULongRange.random(random: Random): ULong {
     try {
         return random.nextULong(this)
@@ -162,7 +158,6 @@ public fun ULongRange.random(random: Random): ULong {
  * Returns a random element from this range, or `null` if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntRange.randomOrNull(): UInt? {
     return randomOrNull(Random)
@@ -172,7 +167,6 @@ public inline fun UIntRange.randomOrNull(): UInt? {
  * Returns a random element from this range, or `null` if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongRange.randomOrNull(): ULong? {
     return randomOrNull(Random)
@@ -182,7 +176,6 @@ public inline fun ULongRange.randomOrNull(): ULong? {
  * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 public fun UIntRange.randomOrNull(random: Random): UInt? {
     if (isEmpty())
         return null
@@ -193,7 +186,6 @@ public fun UIntRange.randomOrNull(random: Random): UInt? {
  * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class, ExperimentalUnsignedTypes::class)
 public fun ULongRange.randomOrNull(random: Random): ULong? {
     if (isEmpty())
         return null
@@ -206,7 +198,6 @@ public fun ULongRange.randomOrNull(random: Random): ULong? {
  * Always returns `false` if the [element] is `null`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline operator fun UIntRange.contains(element: UInt?): Boolean {
     return element != null && contains(element)
@@ -218,7 +209,6 @@ public inline operator fun UIntRange.contains(element: UInt?): Boolean {
  * Always returns `false` if the [element] is `null`.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline operator fun ULongRange.contains(element: ULong?): Boolean {
     return element != null && contains(element)
@@ -228,7 +218,6 @@ public inline operator fun ULongRange.contains(element: ULong?): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public operator fun UIntRange.contains(value: UByte): Boolean {
     return contains(value.toUInt())
 }
@@ -237,7 +226,6 @@ public operator fun UIntRange.contains(value: UByte): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public operator fun ULongRange.contains(value: UByte): Boolean {
     return contains(value.toULong())
 }
@@ -246,7 +234,6 @@ public operator fun ULongRange.contains(value: UByte): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public operator fun ULongRange.contains(value: UInt): Boolean {
     return contains(value.toULong())
 }
@@ -255,7 +242,6 @@ public operator fun ULongRange.contains(value: UInt): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public operator fun UIntRange.contains(value: ULong): Boolean {
     return (value shr UInt.SIZE_BITS) == 0uL && contains(value.toUInt())
 }
@@ -264,7 +250,6 @@ public operator fun UIntRange.contains(value: ULong): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public operator fun UIntRange.contains(value: UShort): Boolean {
     return contains(value.toUInt())
 }
@@ -273,7 +258,6 @@ public operator fun UIntRange.contains(value: UShort): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public operator fun ULongRange.contains(value: UShort): Boolean {
     return contains(value.toULong())
 }
@@ -287,7 +271,6 @@ public operator fun ULongRange.contains(value: UShort): Boolean {
  * @sample samples.ranges.Ranges.downTo
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UByte.downTo(to: UByte): UIntProgression {
     return UIntProgression.fromClosedRange(this.toUInt(), to.toUInt(), -1)
 }
@@ -301,7 +284,6 @@ public infix fun UByte.downTo(to: UByte): UIntProgression {
  * @sample samples.ranges.Ranges.downTo
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UInt.downTo(to: UInt): UIntProgression {
     return UIntProgression.fromClosedRange(this, to, -1)
 }
@@ -315,7 +297,6 @@ public infix fun UInt.downTo(to: UInt): UIntProgression {
  * @sample samples.ranges.Ranges.downTo
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun ULong.downTo(to: ULong): ULongProgression {
     return ULongProgression.fromClosedRange(this, to, -1L)
 }
@@ -329,7 +310,6 @@ public infix fun ULong.downTo(to: ULong): ULongProgression {
  * @sample samples.ranges.Ranges.downTo
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UShort.downTo(to: UShort): UIntProgression {
     return UIntProgression.fromClosedRange(this.toUInt(), to.toUInt(), -1)
 }
@@ -338,7 +318,6 @@ public infix fun UShort.downTo(to: UShort): UIntProgression {
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UIntProgression.reversed(): UIntProgression {
     return UIntProgression.fromClosedRange(last, first, -step)
 }
@@ -347,7 +326,6 @@ public fun UIntProgression.reversed(): UIntProgression {
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULongProgression.reversed(): ULongProgression {
     return ULongProgression.fromClosedRange(last, first, -step)
 }
@@ -358,7 +336,6 @@ public fun ULongProgression.reversed(): ULongProgression {
  * @sample samples.ranges.Ranges.stepUInt
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UIntProgression.step(step: Int): UIntProgression {
     checkStepIsPositive(step > 0, step)
     return UIntProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
@@ -370,7 +347,6 @@ public infix fun UIntProgression.step(step: Int): UIntProgression {
  * @sample samples.ranges.Ranges.stepULong
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun ULongProgression.step(step: Long): ULongProgression {
     checkStepIsPositive(step > 0, step)
     return ULongProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
@@ -382,7 +358,6 @@ public infix fun ULongProgression.step(step: Long): ULongProgression {
  * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UByte.until(to: UByte): UIntRange {
     if (to <= UByte.MIN_VALUE) return UIntRange.EMPTY
     return this.toUInt() .. (to - 1u).toUInt()
@@ -394,7 +369,6 @@ public infix fun UByte.until(to: UByte): UIntRange {
  * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UInt.until(to: UInt): UIntRange {
     if (to <= UInt.MIN_VALUE) return UIntRange.EMPTY
     return this .. (to - 1u).toUInt()
@@ -406,7 +380,6 @@ public infix fun UInt.until(to: UInt): UIntRange {
  * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun ULong.until(to: ULong): ULongRange {
     if (to <= ULong.MIN_VALUE) return ULongRange.EMPTY
     return this .. (to - 1u).toULong()
@@ -418,7 +391,6 @@ public infix fun ULong.until(to: ULong): ULongRange {
  * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public infix fun UShort.until(to: UShort): UIntRange {
     if (to <= UShort.MIN_VALUE) return UIntRange.EMPTY
     return this.toUInt() .. (to - 1u).toUInt()
@@ -432,7 +404,6 @@ public infix fun UShort.until(to: UShort): UIntRange {
  * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UInt.coerceAtLeast(minimumValue: UInt): UInt {
     return if (this < minimumValue) minimumValue else this
 }
@@ -445,7 +416,6 @@ public fun UInt.coerceAtLeast(minimumValue: UInt): UInt {
  * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULong.coerceAtLeast(minimumValue: ULong): ULong {
     return if (this < minimumValue) minimumValue else this
 }
@@ -458,7 +428,6 @@ public fun ULong.coerceAtLeast(minimumValue: ULong): ULong {
  * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UByte.coerceAtLeast(minimumValue: UByte): UByte {
     return if (this < minimumValue) minimumValue else this
 }
@@ -471,7 +440,6 @@ public fun UByte.coerceAtLeast(minimumValue: UByte): UByte {
  * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UShort.coerceAtLeast(minimumValue: UShort): UShort {
     return if (this < minimumValue) minimumValue else this
 }
@@ -484,7 +452,6 @@ public fun UShort.coerceAtLeast(minimumValue: UShort): UShort {
  * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UInt.coerceAtMost(maximumValue: UInt): UInt {
     return if (this > maximumValue) maximumValue else this
 }
@@ -497,7 +464,6 @@ public fun UInt.coerceAtMost(maximumValue: UInt): UInt {
  * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULong.coerceAtMost(maximumValue: ULong): ULong {
     return if (this > maximumValue) maximumValue else this
 }
@@ -510,7 +476,6 @@ public fun ULong.coerceAtMost(maximumValue: ULong): ULong {
  * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UByte.coerceAtMost(maximumValue: UByte): UByte {
     return if (this > maximumValue) maximumValue else this
 }
@@ -523,7 +488,6 @@ public fun UByte.coerceAtMost(maximumValue: UByte): UByte {
  * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UShort.coerceAtMost(maximumValue: UShort): UShort {
     return if (this > maximumValue) maximumValue else this
 }
@@ -536,7 +500,6 @@ public fun UShort.coerceAtMost(maximumValue: UShort): UShort {
  * @sample samples.comparisons.ComparableOps.coerceInUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UInt.coerceIn(minimumValue: UInt, maximumValue: UInt): UInt {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
     if (this < minimumValue) return minimumValue
@@ -552,7 +515,6 @@ public fun UInt.coerceIn(minimumValue: UInt, maximumValue: UInt): UInt {
  * @sample samples.comparisons.ComparableOps.coerceInUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULong.coerceIn(minimumValue: ULong, maximumValue: ULong): ULong {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
     if (this < minimumValue) return minimumValue
@@ -568,7 +530,6 @@ public fun ULong.coerceIn(minimumValue: ULong, maximumValue: ULong): ULong {
  * @sample samples.comparisons.ComparableOps.coerceInUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UByte.coerceIn(minimumValue: UByte, maximumValue: UByte): UByte {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
     if (this < minimumValue) return minimumValue
@@ -584,7 +545,6 @@ public fun UByte.coerceIn(minimumValue: UByte, maximumValue: UByte): UByte {
  * @sample samples.comparisons.ComparableOps.coerceInUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UShort.coerceIn(minimumValue: UShort, maximumValue: UShort): UShort {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
     if (this < minimumValue) return minimumValue
@@ -600,7 +560,6 @@ public fun UShort.coerceIn(minimumValue: UShort, maximumValue: UShort): UShort {
  * @sample samples.comparisons.ComparableOps.coerceInUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun UInt.coerceIn(range: ClosedRange<UInt>): UInt {
     if (range is ClosedFloatingPointRange) {
         return this.coerceIn<UInt>(range)
@@ -621,7 +580,6 @@ public fun UInt.coerceIn(range: ClosedRange<UInt>): UInt {
  * @sample samples.comparisons.ComparableOps.coerceInUnsigned
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun ULong.coerceIn(range: ClosedRange<ULong>): ULong {
     if (range is ClosedFloatingPointRange) {
         return this.coerceIn<ULong>(range)

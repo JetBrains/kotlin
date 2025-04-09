@@ -42474,12 +42474,6 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
-    @TestMetadata("unsignedLiteralsInApiVersion14.kt")
-    public void testUnsignedLiteralsInApiVersion14() {
-      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsInApiVersion14.kt");
-    }
-
-    @Test
     @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
     public void testUnsignedLiteralsWithSignedOverflow() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");

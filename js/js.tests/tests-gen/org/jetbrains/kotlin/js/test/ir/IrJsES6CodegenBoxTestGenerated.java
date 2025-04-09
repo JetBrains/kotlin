@@ -43817,12 +43817,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
-    @TestMetadata("unsignedLiteralsInApiVersion14.kt")
-    public void testUnsignedLiteralsInApiVersion14() {
-      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsInApiVersion14.kt");
-    }
-
-    @Test
     @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
     public void testUnsignedLiteralsWithSignedOverflow() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");

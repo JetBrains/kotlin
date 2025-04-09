@@ -284,7 +284,6 @@ public actual class Regex public actual constructor(pattern: String, options: Se
      * @sample samples.text.Regexps.splitToSequence
      */
     @SinceKotlin("1.6")
-    @WasExperimental(ExperimentalStdlibApi::class)
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
         requireNonNegativeLimit(limit)

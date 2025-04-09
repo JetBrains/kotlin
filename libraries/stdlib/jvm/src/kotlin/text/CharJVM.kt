@@ -142,7 +142,6 @@ public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.uppercaseChar(): Char = Character.toUpperCase(this)
 
@@ -157,7 +156,6 @@ public actual inline fun Char.uppercaseChar(): Char = Character.toUpperCase(this
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.uppercase(): String = toString().uppercase()
 
@@ -172,7 +170,6 @@ public actual inline fun Char.uppercase(): String = toString().uppercase()
  * @sample samples.text.Chars.uppercaseLocale
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.uppercase(locale: Locale): String = toString().uppercase(locale)
 
 /**
@@ -193,7 +190,6 @@ public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercaseChar(): Char = Character.toLowerCase(this)
 
@@ -208,7 +204,6 @@ public actual inline fun Char.lowercaseChar(): Char = Character.toLowerCase(this
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercase(): String = toString().lowercase()
 
@@ -223,7 +218,6 @@ public actual inline fun Char.lowercase(): String = toString().lowercase()
  * @sample samples.text.Chars.lowercaseLocale
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.lowercase(locale: Locale): String = toString().lowercase(locale)
 
 /**
@@ -256,7 +250,6 @@ public inline fun Char.toTitleCase(): Char = titlecaseChar()
  * @sample samples.text.Chars.titlecase
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this)
 
@@ -271,7 +264,6 @@ public actual inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this
  * @sample samples.text.Chars.titlecaseLocale
  */
 @SinceKotlin("1.5")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.titlecase(locale: Locale): String {
     val localizedUppercase = uppercase(locale)
     if (localizedUppercase.length > 1) {
