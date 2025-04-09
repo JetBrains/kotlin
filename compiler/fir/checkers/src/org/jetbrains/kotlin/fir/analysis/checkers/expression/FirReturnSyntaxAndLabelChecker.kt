@@ -68,9 +68,6 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
     }
 
     private fun isReturnAllowed(targetSymbol: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
-        if (context.containingDeclarations.lastOrNull() is FirValueParameter) {
-            return false
-        }
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             when (containingDeclaration) {
                 // return from member of local class or anonymous object
@@ -85,7 +82,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                     }
                 }
                 is FirProperty -> if (!containingDeclaration.isLocal) return false
-                is FirValueParameter -> return true
+                is FirValueParameter -> return false
                 else -> {}
             }
         }

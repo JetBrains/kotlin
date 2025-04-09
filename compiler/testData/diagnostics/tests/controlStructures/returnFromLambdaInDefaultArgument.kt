@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76660
 fun foo(s: String = run { return "???" }) = s
