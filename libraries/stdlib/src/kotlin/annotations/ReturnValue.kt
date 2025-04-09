@@ -14,7 +14,6 @@ package kotlin
  */
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN") // KT-75337
 @SinceKotlin("2.2")
 public annotation class IgnorableReturnValue
 
@@ -29,6 +28,5 @@ public annotation class IgnorableReturnValue
  * Placing it without enabling the corresponding feature would result in a compiler error.
  */
 @Target(AnnotationTarget.FILE, AnnotationTarget.CLASS)
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN") // KT-75337
 @SinceKotlin("2.2")
 public annotation class MustUseReturnValue
