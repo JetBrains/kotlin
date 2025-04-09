@@ -254,7 +254,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
                 mutableListOf(
-                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
                 ),
                 mutableListOf(
                     "commonMain", "foo-transitive-1.0-commonMain-.klib",
@@ -271,7 +271,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     "linuxMain", "foo-transitive-1.0-linuxMain-.klib",
                 ),
                 mutableListOf(
-                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
                 ),
                 mutableListOf(
                     "commonMain", "foo-transitive-1.0-commonMain-.klib",
@@ -465,7 +465,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
                 mutableListOf(
-                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
                 ),
                 mutableListOf(
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
@@ -482,7 +482,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     "linuxMain", "uklib-foo-transitive-1.0-linuxMain-",
                 ),
                 mutableListOf(
-                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
                 ),
                 mutableListOf(
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
@@ -668,7 +668,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
                 mutableListOf(
-                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
                 ),
                 mutableListOf(
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
@@ -688,7 +688,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     "linuxMain", "uklib-foo-transitive-1.0-linuxMain-",
                 ),
                 mutableListOf(
-                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-2.2.255-SNAPSHOT-commonMain-.klib",
+                    "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
                 ),
                 mutableListOf(
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
