@@ -1,7 +1,3 @@
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
-// ^^^ KT-76547: Insertion of synthetic accessors during pre-serialization lowerings leads to wrong synthaccessors order in dump
-// in runner FirJsKlibSyntheticAccessorTestGenerated
-
 // FILE: A.kt
 class A {
     private var privateVar = 22
