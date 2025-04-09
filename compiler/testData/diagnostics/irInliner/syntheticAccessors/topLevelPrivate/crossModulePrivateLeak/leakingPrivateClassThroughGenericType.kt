@@ -2,6 +2,12 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 
+// IGNORE_BACKEND: JS_IR
+// ^^^ KT-76547: Error with pre-serialization public inliner:
+// Internal error in body lowering: java.lang.IllegalStateException:
+// Cannot deserialize inline function from a non-Kotlin library: FUN IR_EXTERNAL_DECLARATION_STUB name:inlineFun visibility:internal modality:FINAL <> () returnType:kotlin.String [inline]
+// Function source: null
+
 // MODULE: lib
 // FILE: a.kt
 private class Private
