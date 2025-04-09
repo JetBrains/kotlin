@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
@@ -19,6 +22,8 @@ import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlin.io.readText
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -133,9 +138,9 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
 
                 val original =
-                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/kotlin/new-mpp-wasm-wasi-test-wasm-wasi.wasm")
+                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/kotlin/new-mpp-wasm-wasi-test.wasm")
                 val optimized =
-                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/new-mpp-wasm-wasi-test-wasm-wasi.wasm")
+                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/new-mpp-wasm-wasi-test.wasm")
                 assertTrue {
                     Files.size(original) > Files.size(optimized)
                 }
@@ -256,9 +261,9 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
                 val dist = "build/dist/wasmWasi/productionLibrary"
                 assertFileExists(projectPath.resolve("$dist/foo.txt"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.wasm"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.wasm.map"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.mjs"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm.map"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.mjs"))
             }
         }
     }
@@ -304,7 +309,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":wasmJsNodeTest")
                 assertTasksExecuted(":wasmJsTestTestDevelopmentExecutableCompileSync")
 
-                val packageDir = "build/wasm/packages/mpp-wasm-js-browser-nodejs-wasm-js-test/kotlin"
+                val packageDir = "build/wasm/packages/mpp-wasm-js-browser-nodejs-test/kotlin"
                 assertFileExists(projectPath.resolve("$packageDir/data.json"))
                 assertFileExists(projectPath.resolve("$packageDir/data-test.json"))
             }
@@ -503,6 +508,79 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
             build("wasmJsTest") {
                 assertTasksExecuted(":wasmJsTest")
+            }
+        }
+    }
+
+    @DisplayName("wasm js composite build works")
+    @GradleTest
+    fun testWasmJsCompositeBuild(gradleVersion: GradleVersion) {
+        project(
+            "wasm-composite-build",
+            gradleVersion,
+            // `:compileKotlinWasmJs` task is not compatible with CC on Gradle 7
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
+            fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
+                projectPath.resolve(rootModulePath).toFile()
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .also {
+                        if (!it.exists()) {
+                            it
+                                .parentFile // lib2
+                                .parentFile // node_modules
+                                .parentFile // js
+                                .resolve(NpmProject.PACKAGE_JSON)
+                                .let {
+                                    println("root package.json:")
+                                    println(it.readText())
+                                }
+
+                            it
+                                .parentFile // lib2
+                                .parentFile // node_modules
+                                .parentFile // js
+                                .resolve("packages_imported")
+                                .also {
+                                    println("ALL IMPORTED: ")
+                                    it.listFiles()
+                                        ?.forEach {
+                                            println(it.absolutePath)
+                                        }
+                                    it.resolve(".visited-gradle").let {
+                                        println("visited-gradle content")
+                                        println(it.readText())
+                                    }
+                                }
+                                .resolve("lib2")
+                                .resolve("0.0.0-unspecified")
+                                .resolve(NpmProject.PACKAGE_JSON)
+                                .let {
+                                    println("lib2 package.json state:")
+                                    if (it.exists()) {
+                                        println(it.readText())
+                                    } else {
+                                        println("lib2 package.json does not exists")
+                                    }
+                                }
+
+                            printBuildOutput()
+                        }
+                    }
+                    .let { fromSrcPackageJson(it) }
+                    .let { it?.dependencies }
+                    ?.getValue(moduleName)
+                    ?: error("Not found package $moduleName in $rootModulePath")
+
+            build("build") {
+                val libDecamelizeVersion = moduleVersion("build/wasm/node_modules/lib-lib-2", "decamelize")
+                assertEquals("1.1.1", libDecamelizeVersion)
+
+                val libAsyncVersion = moduleVersion("build/wasm/node_modules/lib-lib-2", "async")
+                assertEquals("2.6.2", libAsyncVersion)
+
+                val appNodeFetchVersion = moduleVersion("build/wasm/node_modules/wasm-composite-build", "node-fetch")
+                assertEquals("3.2.8", appNodeFetchVersion)
             }
         }
     }

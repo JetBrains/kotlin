@@ -14,13 +14,14 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
@@ -171,7 +172,8 @@ abstract class KotlinPackageJsonTask :
                                 nodeJsRoot,
                                 projectPath,
                                 compilationDisambiguatedName
-                            ).compilationNpmResolution
+                            ).compilationNpmResolution,
+                            isWasm = target.platformType == KotlinPlatformType.wasm
                         )
                     }
                 )
@@ -194,12 +196,25 @@ abstract class KotlinPackageJsonTask :
         private fun findDependentTasks(
             rootResolver: KotlinRootNpmResolver,
             compilationNpmResolution: KotlinCompilationNpmResolution,
+            isWasm: Boolean,
         ): Collection<Any> =
             compilationNpmResolution.internalDependencies.map { dependency ->
                 rootResolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
             } + compilationNpmResolution.internalCompositeDependencies.map { dependency ->
-                dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
-                dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
+                dependency.includedBuild?.task(
+                    if (isWasm) {
+                        ":wasm${PACKAGE_JSON_UMBRELLA_TASK_NAME.replaceFirstChar { it.titlecase() }}"
+                    } else {
+                        ":$PACKAGE_JSON_UMBRELLA_TASK_NAME"
+                    }
+                ) ?: error("includedBuild instance is not available")
+                dependency.includedBuild.task(
+                    if (isWasm) {
+                        ":wasm${RootPackageJsonTask.NAME.replaceFirstChar { it.titlecase() }}"
+                    } else {
+                        ":${RootPackageJsonTask.NAME}"
+                    }
+                )
             }
 
         private fun getCompilationResolver(

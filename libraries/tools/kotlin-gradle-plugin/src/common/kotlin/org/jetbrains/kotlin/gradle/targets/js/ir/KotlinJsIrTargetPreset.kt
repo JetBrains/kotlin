@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithJsPresetFunctions.Companion.DEFAULT_JS_NAME
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -29,7 +30,7 @@ open class KotlinJsIrTargetPreset(
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
         return project.objects.KotlinJsIrTarget(project, platformType, isMpp).apply {
-            this.outputModuleName.convention(buildNpmProjectName(project, name))
+            this.outputModuleName.convention(buildNpmProjectName(project, name, DEFAULT_JS_NAME))
             KotlinJsIrTargetMetrics.collectMetrics(
                 isBrowserConfigured = isBrowserConfigured,
                 isNodejsConfigured = isNodejsConfigured,

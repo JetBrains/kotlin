@@ -371,14 +371,18 @@ constructor(
     internal companion object {
         private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
 
-        internal fun buildNpmProjectName(project: Project, targetName: String): String {
+        internal fun buildNpmProjectName(
+            project: Project,
+            targetName: String,
+            defaultTargetName: String,
+        ): String {
             val rootProjectName = project.rootProject.name
 
             val localName = if (project != project.rootProject) {
                 (rootProjectName + project.path).replace(":", "-")
             } else rootProjectName
 
-            val targetPartName = if (targetName.isNotEmpty() && targetName.toLowerCaseAsciiOnly() != "js") {
+            val targetPartName = if (targetName.isNotEmpty() && targetName != defaultTargetName) {
                 targetName
                     .replace(DECAMELIZE_REGEX) {
                         it.groupValues
