@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 private val COPYRIGHT by lazy { File("license/COPYRIGHT_HEADER.txt").readText() }
+private const val ORIGIN_FILE_PATH = "compiler/arguments/src/org/jetbrains/kotlin/arguments/description"
 
 fun main(args: Array<String>) {
     val genDir = File(args[0])
@@ -53,6 +54,7 @@ class ArgumentsInfo(
     val classPackage: String = "org.jetbrains.kotlin.cli.common.arguments.",
     val configuratorName: String? = "${className}Configurator",
     val levelIsFinal: Boolean,
+    val originFileName: String = className,
     val additionalSyntheticArguments: List<String> = emptyList(),
     val additionalGenerator: SmartPrinter.() -> Unit = {},
 )
@@ -82,6 +84,7 @@ val levelToClassNameMap = listOf(
         levelName = CompilerArgumentsLevelNames.jvmCompilerArguments,
         className = "K2JVMCompilerArguments",
         levelIsFinal = true,
+        originFileName = "JvmCompilerArguments",
     ),
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.commonKlibBasedArguments,
@@ -92,21 +95,25 @@ val levelToClassNameMap = listOf(
         levelName = CompilerArgumentsLevelNames.wasmArguments,
         className = "K2WasmCompilerArguments",
         levelIsFinal = false,
+        originFileName = "WasmCompilerArguments",
     ),
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.jsArguments,
         className = "K2JSCompilerArguments",
         levelIsFinal = true,
+        originFileName = "JsCompilerArguments",
     ),
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.nativeArguments,
         className = "K2NativeCompilerArguments",
         levelIsFinal = true,
+        originFileName = "NativeCompilerArguments",
     ),
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.metadataArguments,
         className = "K2MetadataCompilerArguments",
         levelIsFinal = true,
+        originFileName = "MetadataCompilerArguments",
     ),
 ).associateBy { it.levelName }
 
@@ -146,7 +153,9 @@ private fun SmartPrinter.generateArgumentsClass(
     }
 
     print(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
-    println("compiler/cli/cli-arguments-generator")
+    println("generator in :compiler:cli:cli-arguments-generator")
+    println("// Please declare arguments in $ORIGIN_FILE_PATH/${info.originFileName}.kt")
+    println(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX)
     println()
 
     if (!info.levelIsFinal) {

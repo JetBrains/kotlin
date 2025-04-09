@@ -6,7 +6,9 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
 
-// This file was generated automatically. See compiler/cli/cli-arguments-generator
+// This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
+// Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt
+// DO NOT MODIFY IT MANUALLY.
 
 class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
     @Argument(
