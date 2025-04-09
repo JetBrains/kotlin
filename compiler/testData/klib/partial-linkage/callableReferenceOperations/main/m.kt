@@ -17,8 +17,7 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceHashCode() }
     expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceEquals() }
     expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceToString() }
-    // This test should start to pass with klib inlining enabled - KT-64570.
-    expectFailure(linkage("Function 'removedInlineFun' can not be called: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceInvoke() }
+    expectSuccess(123) { removedInlineFunReferenceInvoke() }
 
     // constructor
     expectSuccess(true) { createRemovedCtorReference() is kotlin.reflect.KFunction<*> }
@@ -48,9 +47,8 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceHashCode() }
     expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceEquals() }
     expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceToString() }
-    // Those tests should start to pass with klib inlining enabled - KT-64570.
-    expectFailure(linkage("Property accessor 'removedInlineVal.<get-removedInlineVal>' can not be called: No property accessor found for symbol '/removedInlineVal.<get-removedInlineVal>'")) { removedInlineValReferenceInvoke() }
-    expectFailure(linkage("Property accessor 'removedInlineVal.<get-removedInlineVal>' can not be called: No property accessor found for symbol '/removedInlineVal.<get-removedInlineVal>'")) { removedInlineValReferenceGet() }
+    expectSuccess(321) { removedInlineValReferenceInvoke() }
+    expectSuccess(321) { removedInlineValReferenceGet() }
 
     // var
     expectSuccess(true) { createRemovedVarReference() is kotlin.reflect.KMutableProperty0<*> }
@@ -70,10 +68,9 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceHashCode() }
     expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceEquals() }
     expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceToString() }
-    // Those tests should start to pass with klib inlining enabled - KT-64570.
-    expectFailure(linkage("Property accessor 'removedInlineVar.<get-removedInlineVar>' can not be called: No property accessor found for symbol '/removedInlineVar.<get-removedInlineVar>'")) { removedInlineVarReferenceInvoke() }
-    expectFailure(linkage("Property accessor 'removedInlineVar.<get-removedInlineVar>' can not be called: No property accessor found for symbol '/removedInlineVar.<get-removedInlineVar>'")) { removedInlineVarReferenceGet() }
-    expectFailure(linkage("Property accessor 'removedInlineVar.<set-removedInlineVar>' can not be called: No property accessor found for symbol '/removedInlineVar.<set-removedInlineVar>'")) { removedInlineVarReferenceSet() }
+    expectSuccess(321) { removedInlineVarReferenceInvoke() }
+    expectSuccess(321) { removedInlineVarReferenceGet() }
+    expectSuccess(Unit) { removedInlineVarReferenceSet() }
 
     // var by ::var
     expectSuccess(true) { createRemovedVarDelegateReference() is kotlin.reflect.KMutableProperty0<*> }
