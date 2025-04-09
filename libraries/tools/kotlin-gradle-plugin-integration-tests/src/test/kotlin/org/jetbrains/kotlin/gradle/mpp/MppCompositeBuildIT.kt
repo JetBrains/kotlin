@@ -484,7 +484,9 @@ class MppCompositeBuildIT : KGPBaseTest() {
         project(
             "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
             gradleVersion,
-            buildOptions = buildOptions.disableKmpIsolatedProjectSupport(), // old version of kotlin is involved in this test
+            buildOptions = buildOptions
+                .disableKmpIsolatedProjectSupport() // old version of kotlin is involved in this test
+                .suppressWarningForOldKotlinVersion(gradleVersion),
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }
@@ -554,7 +556,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         project(
             "mpp-composite-build/sample0/consumerBuild",
             gradleVersion,
-            buildOptions = buildOptions,
+            buildOptions = buildOptions.suppressWarningForOldKotlinVersion(gradleVersion),
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }

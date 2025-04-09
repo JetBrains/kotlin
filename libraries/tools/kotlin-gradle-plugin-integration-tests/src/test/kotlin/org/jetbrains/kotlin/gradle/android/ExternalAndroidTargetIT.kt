@@ -104,7 +104,9 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             buildJdk = jdkVersion.location,
         ) {
             modifyProjectForAGPVersion(androidVersion)
-            resolveIdeDependencies { dependencies ->
+            resolveIdeDependencies(
+                buildOptions = buildOptions.suppressAgpWarningSinceGradle814(gradleVersion)
+            ) { dependencies ->
                 dependencies["androidMain"].assertMatches(
                     kotlinStdlibDependencies,
                     jetbrainsAnnotationDependencies,

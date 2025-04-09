@@ -31,6 +31,7 @@ interface TestVersions {
         const val G_8_11 = "8.11.1"
         const val G_8_12 = "8.12.1"
         const val G_8_13 = "8.13"
+        const val G_8_14 = "8.14"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -39,7 +40,7 @@ interface TestVersions {
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
         const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
-        const val MAX_SUPPORTED = G_8_13
+        const val MAX_SUPPORTED = G_8_14
     }
 
     object Kotlin {
@@ -87,10 +88,10 @@ interface TestVersions {
         AGP_85(AGP.AGP_85, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         AGP_86(AGP.AGP_86, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         AGP_87(AGP.AGP_87, GradleVersion.version(Gradle.G_8_9), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
+        AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
+        AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
+        AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
+        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         ;
 
         companion object {

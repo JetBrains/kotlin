@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
-import java.time.Duration
 
 plugins {
     kotlin("jvm")
@@ -229,6 +228,7 @@ val gradleVersions = listOf(
     "8.11.1",
     "8.12.1",
     "8.13",
+    "8.14",
 )
 
 // Keep in sync with testTags.kt
