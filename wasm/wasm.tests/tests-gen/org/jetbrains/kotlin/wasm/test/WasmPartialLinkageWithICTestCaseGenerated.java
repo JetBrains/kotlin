@@ -67,6 +67,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("classTransformationsWithIrInliner")
+  public void testClassTransformationsWithIrInliner() {
+    runTest("compiler/testData/klib/partial-linkage/classTransformationsWithIrInliner/");
+  }
+
+  @Test
   @TestMetadata("externalDeclarations")
   public void testExternalDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarations/");
@@ -85,9 +91,21 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("functionTransformationsWithIrInliner")
+  public void testFunctionTransformationsWithIrInliner() {
+    runTest("compiler/testData/klib/partial-linkage/functionTransformationsWithIrInliner/");
+  }
+
+  @Test
   @TestMetadata("inheritanceIssues")
   public void testInheritanceIssues() {
     runTest("compiler/testData/klib/partial-linkage/inheritanceIssues/");
+  }
+
+  @Test
+  @TestMetadata("inheritanceIssuesWithIrInliner")
+  public void testInheritanceIssuesWithIrInliner() {
+    runTest("compiler/testData/klib/partial-linkage/inheritanceIssuesWithIrInliner/");
   }
 
   @Test
@@ -127,6 +145,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("referencingUnusableDeclarationsWithIrInliner")
+  public void testReferencingUnusableDeclarationsWithIrInliner() {
+    runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarationsWithIrInliner/");
+  }
+
+  @Test
   @TestMetadata("referencingUnusableDeclarationsWithRichReferences")
   public void testReferencingUnusableDeclarationsWithRichReferences() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarationsWithRichReferences/");
@@ -148,6 +172,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   @TestMetadata("removeClass")
   public void testRemoveClass() {
     runTest("compiler/testData/klib/partial-linkage/removeClass/");
+  }
+
+  @Test
+  @TestMetadata("removeClassWithIrInliner")
+  public void testRemoveClassWithIrInliner() {
+    runTest("compiler/testData/klib/partial-linkage/removeClassWithIrInliner/");
   }
 
   @Test
