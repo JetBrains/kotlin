@@ -66,15 +66,15 @@ class WasmDeserializerFacade(
         val mainModule = MainModule.Klib(inputArtifact.outputFile.absolutePath)
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val moduleStructure = ModulesStructure(
-            project,
-            mainModule,
-            configuration,
-            libraries + mainModule.libPath,
-            friendLibraries
+            project = project,
+            mainModule = mainModule,
+            compilerConfiguration = configuration,
+            libraryPaths = libraries + mainModule.libPath,
+            friendDependenciesPaths = friendLibraries
         )
 
         val moduleInfo = loadIr(
-            depsDescriptors = moduleStructure,
+            modulesStructure = moduleStructure,
             irFactory = IrFactoryImplForWasmIC(WholeWorldStageController()),
             loadFunctionInterfacesIntoStdlib = true,
         )

@@ -215,11 +215,11 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ?: error("No library with name $includes ($includesPath) found")
             val kLib = MainModule.Klib(mainLibPath)
             ModulesStructure(
-                targetEnvironment.project,
-                kLib,
-                targetEnvironment.configuration,
-                libraries,
-                friendLibraries
+                project = targetEnvironment.project,
+                mainModule = kLib,
+                compilerConfiguration = targetEnvironment.configuration,
+                libraryPaths = libraries,
+                friendDependenciesPaths = friendLibraries
             ).also {
                 runStandardLibrarySpecialCompatibilityChecks(it.allDependencies, isWasm = arguments.wasm, messageCollector)
             }

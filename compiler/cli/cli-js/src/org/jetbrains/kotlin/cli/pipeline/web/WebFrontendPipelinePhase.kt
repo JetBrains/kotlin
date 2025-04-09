@@ -64,7 +64,13 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         val friendLibraries = configuration.friendLibraries
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
-        val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
+        val moduleStructure = ModulesStructure(
+            project = environmentForJS.project,
+            mainModule = mainModule,
+            compilerConfiguration = configuration,
+            libraryPaths = libraries,
+            friendDependenciesPaths = friendLibraries
+        )
 
         val isWasm = configuration.wasmCompilation
         runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = isWasm, messageCollector)

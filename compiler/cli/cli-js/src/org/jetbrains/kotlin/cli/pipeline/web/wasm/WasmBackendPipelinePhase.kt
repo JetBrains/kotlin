@@ -142,7 +142,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
 
         val irModuleInfo = loadIr(
-            depsDescriptors = module,
+            modulesStructure = module,
             irFactory = irFactory,
             loadFunctionInterfacesIntoStdlib = true,
         )

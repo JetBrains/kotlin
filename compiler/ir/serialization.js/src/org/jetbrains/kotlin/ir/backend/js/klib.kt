@@ -148,15 +148,15 @@ fun deserializeDependencies(
 }
 
 fun loadIr(
-    depsDescriptors: ModulesStructure,
+    modulesStructure: ModulesStructure,
     irFactory: IrFactory,
     filesToLoad: Set<String>? = null,
     loadFunctionInterfacesIntoStdlib: Boolean = false,
 ): IrModuleInfo {
-    val project = depsDescriptors.project
-    val mainModule = depsDescriptors.mainModule
-    val configuration = depsDescriptors.compilerConfiguration
-    val allDependencies = depsDescriptors.allDependencies
+    val project = modulesStructure.project
+    val mainModule = modulesStructure.mainModule
+    val configuration = modulesStructure.compilerConfiguration
+    val allDependencies = modulesStructure.allDependencies
     val messageLogger = configuration.messageCollector
     val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
@@ -166,29 +166,29 @@ fun loadIr(
     when (mainModule) {
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
-            val psi2IrContext = preparePsi2Ir(depsDescriptors, symbolTable, partialLinkageEnabled)
+            val psi2IrContext = preparePsi2Ir(modulesStructure, symbolTable, partialLinkageEnabled)
             val friendModules =
-                mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.uniqueName })
+                mapOf(psi2IrContext.moduleDescriptor.name.asString() to modulesStructure.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForSourceFiles(
                 psi2IrContext,
                 project,
                 configuration,
                 mainModule.files,
-                sortDependencies(depsDescriptors.moduleDependencies),
+                sortDependencies(modulesStructure.moduleDependencies),
                 friendModules,
                 symbolTable,
                 messageLogger,
                 loadFunctionInterfacesIntoStdlib,
-            ) { depsDescriptors.getModuleDescriptor(it) }
+            ) { modulesStructure.getModuleDescriptor(it) }
         }
         is MainModule.Klib -> {
             val mainPath = File(mainModule.libPath).canonicalPath
             val mainModuleLib = allDependencies.find { it.libraryFile.canonicalPath == mainPath }
                 ?: error("No module with ${mainModule.libPath} found")
-            val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModuleLib)
-            val sortedDependencies = sortDependencies(depsDescriptors.moduleDependencies)
-            val friendModules = mapOf(mainModuleLib.uniqueName to depsDescriptors.friendDependencies.map { it.uniqueName })
+            val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
+            val sortedDependencies = sortDependencies(modulesStructure.moduleDependencies)
+            val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(
                 moduleDescriptor,
@@ -199,7 +199,7 @@ fun loadIr(
                 symbolTable,
                 messageLogger,
                 loadFunctionInterfacesIntoStdlib,
-            ) { depsDescriptors.getModuleDescriptor(it) }
+            ) { modulesStructure.getModuleDescriptor(it) }
         }
     }
 }
@@ -401,12 +401,12 @@ class ModulesStructure(
     val project: Project,
     val mainModule: MainModule,
     val compilerConfiguration: CompilerConfiguration,
-    val dependencies: Collection<String>,
+    val libraryPaths: Collection<String>,
     friendDependenciesPaths: Collection<String>,
 ) {
 
     val allDependenciesResolution = CommonKLibResolver.resolveWithoutDependencies(
-        dependencies,
+        libraryPaths,
         compilerConfiguration.messageCollector.toLogger(),
         compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR),
         duplicatedUniqueNameStrategy = compilerConfiguration.get(

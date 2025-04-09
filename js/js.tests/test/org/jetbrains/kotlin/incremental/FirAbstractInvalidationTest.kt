@@ -100,7 +100,7 @@ abstract class FirAbstractInvalidationTest(
             project = environment.project,
             mainModule = MainModule.SourceFiles(sourceFiles),
             compilerConfiguration = configuration,
-            dependencies = libraries,
+            libraryPaths = libraries,
             friendDependenciesPaths = friendLibraries
         )
 

@@ -112,11 +112,11 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                 configFiles
             )
             val module = ModulesStructure(
-                environment.project,
-                kLib,
-                configuration,
-                configuration.libraries,
-                configuration.friendLibraries
+                project = environment.project,
+                mainModule = kLib,
+                compilerConfiguration = configuration,
+                libraryPaths = configuration.libraries,
+                friendDependenciesPaths = configuration.friendLibraries
             ).also {
                 runStandardLibrarySpecialCompatibilityChecks(
                     it.allDependencies,

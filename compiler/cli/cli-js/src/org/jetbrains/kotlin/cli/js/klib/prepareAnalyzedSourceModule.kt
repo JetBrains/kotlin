@@ -22,7 +22,13 @@ fun prepareAnalyzedSourceModule(
     analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb = TopDownAnalyzerFacadeForJSIR,
 ): ModulesStructure {
     val mainModule = MainModule.SourceFiles(files)
-    val sourceModule = ModulesStructure(project, mainModule, configuration, dependencies, friendDependencies)
+    val sourceModule = ModulesStructure(
+        project = project,
+        mainModule = mainModule,
+        compilerConfiguration = configuration,
+        libraryPaths = dependencies,
+        friendDependenciesPaths = friendDependencies
+    )
     return sourceModule.apply {
         runAnalysis(analyzer, analyzerFacade)
     }
