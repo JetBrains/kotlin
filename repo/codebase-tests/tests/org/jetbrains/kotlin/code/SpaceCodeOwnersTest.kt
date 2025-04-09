@@ -12,9 +12,8 @@ import java.io.File
 import kotlin.test.assertIs
 
 class SpaceCodeOwnersTest : TestCase() {
-    private val ownersFile = File(".space/CODEOWNERS")
+    private val ownersFile = File(System.getProperty("codeOwnersTest.spaceCodeOwnersFile"))
     private val owners = parseCodeOwners(ownersFile)
-
 
     fun testOwnerListNoDuplicates() {
         val duplicatedOwnerListEntries = owners.permittedOwners.groupBy { it.name }
@@ -31,6 +30,22 @@ class SpaceCodeOwnersTest : TestCase() {
                 }
             )
         }
+    }
+
+    fun testOwnersAreAddedByTeamsOrEmailAddress() {
+        val invalidOwners = owners.permittedOwners
+            .filterNot { it.name.first() == '"' && it.name.last() == '"' }
+            .filterNot { it.name.contains('@') }
+
+        if (invalidOwners.isEmpty()) return
+
+        fail(
+            buildString {
+                appendLine("Owner(s) ${invalidOwners.joinToString { it.name }} do not meet the required criteria:")
+                appendLine("1. Team name in quotations")
+                appendLine("2. User email address")
+            }
+        )
     }
 
     fun testAllOwnersInOwnerList() {
@@ -249,7 +264,7 @@ private fun parseCodeOwners(file: File): CodeOwners {
     val ownersPattern = "(\"[^\"]+\")|(\\S+)".toRegex()
 
     fun parseOwnerNames(ownerString: String): List<String> {
-        return ownersPattern.findAll(ownerString).map { it.value.removeSurrounding("\"") }.toList()
+        return ownersPattern.findAll(ownerString).map { it.value }.toList()
     }
 
     val permittedOwners = mutableListOf<CodeOwners.OwnerListEntry>()
