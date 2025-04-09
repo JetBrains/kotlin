@@ -49,6 +49,9 @@ infix fun OperationStatement.implies(effect: Statement): Implication = Implicati
 infix fun RealVariable.valueNotEq(symbol: FirBasedSymbol<*>): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.Symbol(symbol)))
 
+infix fun RealVariable.valueNotEq(boolean: Boolean): MutableTypeStatement =
+    MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.BooleanLiteral(boolean)))
+
 infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
 

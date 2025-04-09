@@ -541,6 +541,10 @@ abstract class FirDataFlowAnalyzer(
             if (operand.resolvedType.isBoolean) {
                 flow.addImplication((expressionVariable eq !isEq) implies (operandVariable eq !expected))
             }
+
+            if (operandVariable is RealVariable) {
+                flow.addImplication((expressionVariable eq !isEq) implies (operandVariable valueNotEq expected))
+            }
         } else {
             // expression == non-null const -> expression != null
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable notEq null))

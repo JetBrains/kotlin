@@ -4,7 +4,7 @@
 // FILE: Kotlin.kt
 fun foo(b: Boolean): Int {
     if (b == false) return 1
-    return <!NO_ELSE_IN_WHEN!>when<!> (b) {
+    return when (b) {
         true -> 2
     }
 }
@@ -12,21 +12,21 @@ fun foo(b: Boolean): Int {
 fun bar(): Int {
     val v = Java.getValue()
     if (v == true) return 1
-    return <!NO_ELSE_IN_WHEN!>when<!> (v) {
+    return when (v) {
         false -> 2
     }
 }
 
 fun qux(b: Boolean?): Int {
     if ((b == true) == false) return 1
-    return <!NO_ELSE_IN_WHEN!>when<!> (b) {
+    return when (b) {
         true -> 2
     }
 }
 
 fun quux(b: Boolean?): Int {
     if ((b == true) == true) return 1
-    return <!NO_ELSE_IN_WHEN!>when<!> (b) {
+    return when (b) {
         null -> 2
         false -> 3
     }

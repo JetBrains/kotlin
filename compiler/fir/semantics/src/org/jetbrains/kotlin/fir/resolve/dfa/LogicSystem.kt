@@ -278,7 +278,16 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val variable = next.variable
             if (variable.isReal()) {
                 val impliedType = if (operation == Operation.EqNull) nullableNothingType else anyType
-                result.getOrPut(variable) { MutableTypeStatement(variable) }.upperTypes.add(impliedType)
+                val resultStatement = result.getOrPut(variable) { MutableTypeStatement(variable) }
+                resultStatement.upperTypes.add(impliedType)
+                // We could additionally imply the opposite lower type, but it won't bring us anything new
+                // because `Nothing?` and `Any` are disjoint, and we already store the upper type.
+                // For booleans it makes sense because we don't store `EqTrue` and `EqFalse`.
+                when (operation) {
+                    Operation.EqTrue -> resultStatement.lowerTypes.add(DfaType.BooleanLiteral(false))
+                    Operation.EqFalse -> resultStatement.lowerTypes.add(DfaType.BooleanLiteral(true))
+                    else -> {}
+                }
             }
 
             val statements = logicStatements[variable] ?: continue

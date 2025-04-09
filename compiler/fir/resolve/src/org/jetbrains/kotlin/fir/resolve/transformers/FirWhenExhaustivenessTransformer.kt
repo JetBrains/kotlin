@@ -356,13 +356,21 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
 
     private object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
+            fun recordValue(value: Any?) = when (value) {
+                true -> data.containsTrue = true
+                false -> data.containsFalse = true
+                else -> {}
+            }
+
             if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
+                (equalityOperatorCall.arguments.firstOrNull() as? FirSmartCastExpression)
+                    ?.lowerTypesFromSmartCast
+                    ?.mapNotNull { (it as? DfaType.BooleanLiteral)?.value }
+                    ?.forEach(::recordValue)
+
                 val argument = equalityOperatorCall.arguments[1]
                 if (argument is FirLiteralExpression) {
-                    when (argument.value) {
-                        true -> data.containsTrue = true
-                        false -> data.containsFalse = true
-                    }
+                    recordValue(argument.value)
                 }
             }
         }
@@ -483,6 +491,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 val symbol = when (knownNonType) {
                     is DfaType.Cone -> knownNonType.type.toSymbol(data.session)
                     is DfaType.Symbol -> knownNonType.symbol
+                    else -> null
                 }
                 processBranch(symbol ?: continue, isNegated = false, data)
             }

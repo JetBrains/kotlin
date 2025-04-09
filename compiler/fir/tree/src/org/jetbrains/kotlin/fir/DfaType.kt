@@ -29,4 +29,11 @@ sealed class DfaType {
     data class Symbol(val symbol: FirBasedSymbol<*>) : DfaType() {
         override fun toString(): String = "$symbol"
     }
+
+    /**
+     * A representation of the types corresponding to `true` and `false`.
+     */
+    data class BooleanLiteral(val value: Boolean) : DfaType() {
+        override fun toString(): String = "$value"
+    }
 }
