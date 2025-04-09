@@ -10,6 +10,10 @@ internal var inlineVar: Int
         /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
     internal inline fun <set-inlineVar>(value: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = value)
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt(): Int
+    /* TARGET use-site */ <get-privateVar>()
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt(<set-?>: Int)
+    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)
 private var privateInlineVar2: Int
     private inline fun <get-privateInlineVar2>(): Int
         /* TARGET use-site */ <get-privateVar>()
@@ -20,10 +24,6 @@ private var privateInlineVar1: Int
         /* TARGET use-site */ <get-privateVar>()
     private inline fun <set-privateInlineVar1>(value: Int)
         /* TARGET use-site */ <set-privateVar>(<set-?> = value)
-/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt(): Int
-    /* TARGET use-site */ <get-privateVar>()
-/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt(<set-?>: Int)
-    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)
 
 
 /* MODULE name=<main> */
