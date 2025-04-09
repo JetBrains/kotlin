@@ -202,3 +202,6 @@ val KotlinLibrary.metadataVersion: MetadataVersion?
         val versionIntArray = BinaryVersion.parseVersionArray(versionString) ?: return null
         return MetadataVersion(*versionIntArray)
     }
+
+val KotlinLibrary.hasAbi: Boolean
+    get() = hasIr || irProviderName != null

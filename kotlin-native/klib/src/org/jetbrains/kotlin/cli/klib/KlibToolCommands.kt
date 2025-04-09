@@ -22,16 +22,17 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.library.nativeTargets
-import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment as PackageFragmentProto
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.util.*
+import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment as PackageFragmentProto
 
 internal sealed class KlibToolCommand(
     protected val output: KlibToolOutput,
@@ -111,6 +112,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         irInfo?.meaningfulInlineFunctionNumber?.let { output.appendLine("  Non-local inline functions: $it") }
         output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
+        output.appendLine("Has ABI: ${library.hasAbi}")
         output.appendLine("Manifest properties:")
         manifestProperties.entries.forEach { (key, value) ->
             output.appendLine("  $key=$value")
