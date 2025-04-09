@@ -30188,6 +30188,24 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         public void testAllFilesPresentInHmpp() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
+
+        @Test
+        @TestMetadata("inheritanceFromLibraryExpectClass.kt")
+        public void testInheritanceFromLibraryExpectClass() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromLibraryExpectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("sameLibraryInTwoEdgesOfDiamond.kt")
+        public void testSameLibraryInTwoEdgesOfDiamond() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/sameLibraryInTwoEdgesOfDiamond.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+        }
       }
 
       @Nested

@@ -1,31 +1,52 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM
-// WITH_STDLIB
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
-/*
- * This test is used for general testing of how compiler BB tests for HMPP projects works
- * Js backend is ignored because they use old test infrastructure which doesn't support HMPP
- */
+// MODULE: lib-common
+expect fun foo()
+fun bar() {}
 
-// MODULE: common
-// FILE: common.kt
-expect open class A()
-
-// MODULE: intermediate()()(common)
-// FILE: intermediate.kt
-class B : A() {
-    fun foo(): String = "O"
+class A {
+    fun foo() {}
 }
 
-fun getB(): B = B()
-
-// MODULE: main()()(intermediate)
-// FILE: main.kt
-actual open class A actual constructor() {
-    fun bar(): String = "K"
+expect class B {
+    fun foo()
 }
 
-fun box(): String {
-    val b = getB()
-    return b.foo() + b.bar()
+// MODULE: lib-platform()()(lib-common)
+actual fun foo() {}
+actual class B {
+    actual fun foo() {}
+    fun bar() {}
 }
+
+// MODULE: app-common(lib-common)
+fun commonFun() {}
+
+fun test_common(a: A, b: B) {
+    a.foo()
+    b.foo()
+    bar()
+}
+
+// MODULE: app-inter(lib-common)()(app-common)
+fun interFun() {}
+
+fun test_inter(a: A, b: B) {
+    a.foo()
+    b.foo()
+    commonFun()
+    bar()
+}
+
+// MODULE: app-platform(lib-platform)()(app-inter)
+fun test_platform(a: A, b: B) {
+    a.foo()
+    b.foo()
+    b.bar()
+    commonFun()
+    interFun()
+    bar()
+}
+
+fun box() = "OK"

@@ -29666,6 +29666,24 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public void testAllFilesPresentInHmpp() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
+
+        @Test
+        @TestMetadata("inheritanceFromLibraryExpectClass.kt")
+        public void testInheritanceFromLibraryExpectClass() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromLibraryExpectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("sameLibraryInTwoEdgesOfDiamond.kt")
+        public void testSameLibraryInTwoEdgesOfDiamond() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/sameLibraryInTwoEdgesOfDiamond.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+        }
       }
 
       @Nested
