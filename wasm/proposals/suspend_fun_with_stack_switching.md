@@ -156,6 +156,10 @@ Possible implementations:
   * could be fully managed on call site???
   * for multithreading, it should be thread local
 
+### Using `switch` instruction
+TODO
+* Can we implement same things with switch instruction?
+* May a such implementation be more performant? 
 
 ## Useful links
 * https://kotlinlang.org/docs/coroutines-overview.html
