@@ -122,6 +122,13 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         }
     }
 
+    private val consideredOrigins: Set<FirDeclarationOrigin> = setOf(
+        FirDeclarationOrigin.Source,
+        FirDeclarationOrigin.Synthetic.DataClassMember,
+        FirDeclarationOrigin.Delegated,
+        FirDeclarationOrigin.IntersectionOverride,
+    )
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val typeCheckerState = context.session.typeContext.newTypeCheckerState(
@@ -142,7 +149,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         // check them more granularly. See the relevant comments.
 
         fun checkMember(it: FirCallableSymbol<*>) {
-            val isFromThis = it.containingClassLookupTag() == declaration.symbol.toLookupTag()
+            val isFromThis = it.origin in consideredOrigins && it.containingClassLookupTag() == declaration.symbol.toLookupTag()
 
             if (isFromThis && !it.isSubstitutionOverride) {
                 checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
