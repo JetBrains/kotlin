@@ -276,7 +276,7 @@ public actual class AtomicArray<T> {
      * if the current value equals the [expected value][expectedValue].
      * Returns true if the operation was successful and false only if the current value of the element was not equal to the expected value.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet].
      *
@@ -288,7 +288,7 @@ public actual class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index]
      * if the current value equals the [expected value][expectedValue] and returns the old value of the element in any case.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * In order to maintain compatibility with Java 8, [compareAndExchangeAt] is implemented using [java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet],
      * since [java.util.concurrent.atomic.AtomicReferenceArray.compareAndExchange] method is only available starting from Java 9.

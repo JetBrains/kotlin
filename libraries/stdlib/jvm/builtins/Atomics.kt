@@ -255,7 +255,7 @@ public actual class AtomicReference<T> actual constructor(value: T) {
      * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue],
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.compareAndSet].
      */
@@ -265,7 +265,7 @@ public actual class AtomicReference<T> actual constructor(value: T) {
      * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue]
      * and returns the old value in any case.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * In order to maintain compatibility with Java 8, [compareAndExchange] is implemented using [java.util.concurrent.atomic.AtomicReference.compareAndSet],
      * since [java.util.concurrent.atomic.AtomicReference.compareAndExchange] method is only available starting from Java 9.

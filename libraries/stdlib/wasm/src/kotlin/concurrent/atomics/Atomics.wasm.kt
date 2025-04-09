@@ -253,7 +253,7 @@ public actual class AtomicReference<T> public actual constructor(private var val
      * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue],
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      */
     public actual fun compareAndSet(expectedValue: T, newValue: T): Boolean {
         if (value != expectedValue) return false
@@ -265,7 +265,7 @@ public actual class AtomicReference<T> public actual constructor(private var val
      * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue]
      * and returns the old value in any case.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      */
     public actual fun compareAndExchange(expectedValue: T, newValue: T): T {
         val oldValue = value

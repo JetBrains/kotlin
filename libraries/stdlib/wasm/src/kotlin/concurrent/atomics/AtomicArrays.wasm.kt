@@ -328,7 +328,7 @@ public actual class AtomicArray<T> {
      * if the current value equals the [expected value][expectedValue].
      * Returns true if the operation was successful and false only if the current value of the element was not equal to the expected value.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
@@ -343,7 +343,7 @@ public actual class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index]
      * if the current value equals the [expected value][expectedValue] and returns the old value of the element in any case.
      *
-     * Comparison of values is done by value.
+     * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
