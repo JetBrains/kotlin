@@ -35,7 +35,7 @@ object FirOverrideSignatureClashChecker : FirSimpleFunctionChecker(MppCheckerKin
         val overloads = mutableListOf<FirNamedFunctionSymbol>()
         scope.processFunctionsByName(name) {
             if (it !== declaration.symbol && it.valueParameterSymbols.size == declaration.valueParameters.size &&
-                it.receiverParameterSymbol == null && it.contextParameterSymbols.isEmpty()
+                it.contextParameterSymbols.isEmpty()
             ) {
                 overloads += it
             }
@@ -46,16 +46,19 @@ object FirOverrideSignatureClashChecker : FirSimpleFunctionChecker(MppCheckerKin
         scope.processDirectlyOverriddenFunctions(declaration.symbol) { overriddenSymbol ->
             for (overloadSymbol in overloads) {
                 val unwrappedOverriddenSymbol = overriddenSymbol.unwrapSubstitutionOverrides()
-                if (unwrappedOverriddenSymbol.receiverParameterSymbol != null ||
-                    unwrappedOverriddenSymbol.contextParameterSymbols.isNotEmpty()
-                ) {
+                if (unwrappedOverriddenSymbol.contextParameterSymbols.isNotEmpty()) {
                     continue
                 }
-                val indexedParameterTypes = unwrappedOverriddenSymbol.valueParameterSymbols.map { it.resolvedReturnType }.withIndex()
+                val indexedParameterTypes = with(unwrappedOverriddenSymbol) {
+                    val valueParameterTypes = valueParameterSymbols.map { it.resolvedReturnType }
+                    (receiverParameterSymbol?.let { listOf(it.resolvedType) + valueParameterTypes } ?: valueParameterTypes).withIndex()
+                }
                 if (indexedParameterTypes.none { it.value is ConeTypeParameterType }) continue
                 if (indexedParameterTypes.all { (index, parameterType) ->
-                        parameterType.computeJvmDescriptorRepresentation() ==
-                                overloadSymbol.valueParameterSymbols[index].resolvedReturnType.computeJvmDescriptorRepresentation()
+                        val overloadType = overloadSymbol.receiverParameterSymbol?.let {
+                            if (index == 0) it.resolvedType else overloadSymbol.valueParameterSymbols[index - 1].resolvedReturnType
+                        } ?: overloadSymbol.valueParameterSymbols[index].resolvedReturnType
+                        parameterType.computeJvmDescriptorRepresentation() == overloadType.computeJvmDescriptorRepresentation()
                     }
                 ) {
                     reporter.reportOn(

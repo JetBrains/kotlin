@@ -58309,6 +58309,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("sequenceCollectionIntersectionOverrideKJJ.kt")
+      public void testSequenceCollectionIntersectionOverrideKJJ() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/sequenceCollectionIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
       @TestMetadata("serializableString.kt")
       public void testSerializableString() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/serializableString.kt");
@@ -58360,6 +58366,41 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("UsingObject.kt")
       public void testUsingObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/UsingObject.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/bridges")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Bridges {
+        @Test
+        @TestMetadata("bridgeAndFakeOverride.kt")
+        public void testBridgeAndFakeOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/bridges/bridgeAndFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeAndFakeOverrideExtensionReceiver.kt")
+        public void testBridgeAndFakeOverrideExtensionReceiver() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/bridges/bridgeAndFakeOverrideExtensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeAndFakeOverrideFromGeneric.kt")
+        public void testBridgeAndFakeOverrideFromGeneric() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/bridges/bridgeAndFakeOverrideFromGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeAndFakeOverrideGenericImplementation.kt")
+        public void testBridgeAndFakeOverrideGenericImplementation() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/bridges/bridgeAndFakeOverrideGenericImplementation.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritedBridgeAndFakeOverride.kt")
+        public void testInheritedBridgeAndFakeOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/bridges/inheritedBridgeAndFakeOverride.kt");
+        }
       }
 
       @Nested
