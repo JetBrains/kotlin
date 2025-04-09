@@ -90,7 +90,7 @@ kotlin {
 projectTest(
     jUnitMode = JUnitMode.JUnit5,
     defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_17_0, // TestsWithJava11 and others
+        JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
         JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
         JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
     )
