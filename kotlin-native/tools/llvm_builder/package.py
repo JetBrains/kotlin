@@ -114,7 +114,7 @@ def construct_cmake_flags(
         '-DLLVM_BUILD_UTILS=ON',
         '-DLLVM_INSTALL_UTILS=ON',
         '-DBUG_REPORT_URL=https://youtrack.jetbrains.com/newIssue?project=KT',
-        '-DLIBCXXABI_USE_LLVM_UNWINDER=OFF',
+        #'-DLIBCXXABI_USE_LLVM_UNWINDER=OFF',
     ]
     if not host_is_windows(): # TODO(KT-70399): Enable for all hosts when Windows builder gets zlib.
         cmake_args.append("-DLLVM_ENABLE_ZLIB=FORCE_ON")
@@ -255,7 +255,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     Downloads a single commit from the given repository.
     """
     default_repo = "https://github.com/Kotlin/llvm-project"
-    default_branch = "haitaka/kotlin/llvm-19-apple"
+    default_branch = "haitaka/kotlin/llvm-19.1-apple"
     repo = default_repo if repo is None else repo
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
@@ -349,7 +349,7 @@ def build_distribution(args):
             build_targets = ["install"]
 
         projects = ["clang", "lld"]
-        runtimes = ["compiler-rt"] if host_is_windows() else ["libcxx", "libcxxabi", "compiler-rt"]
+        runtimes = ["compiler-rt"] if host_is_windows() else ["libcxx", "libcxxabi", "libunwind", "compiler-rt"]
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)
