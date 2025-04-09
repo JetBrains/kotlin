@@ -23,8 +23,11 @@ They are building block for:
 * Generators like utilities in standard library (`kotlin.sequences.sequence`)
 
 ```kotlin
-suspend fun foo() {
-    sequence { yield(1) }
+fun foo():Sequence<Any> {
+    return sequence { 
+        yield(1)
+        yieldAll(foo())
+    }
 }
 ```
 
@@ -82,7 +85,7 @@ Low-level APIs
 ```text
 
 fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(completion: Continuation<T>): Any? {
-  val wasmCont: WasmContinuation = wasm_cont_new(suspend_invoke)
+  val wasmCont: WasmContinuation = wasm_cont_new(suspend_invoke) // TODO combine to cont.call/resume_ref?
   
   wasm_resume(wasmCont, this/* suspend fun */, completion) 
       on $kont_tag (c: Continuation<?>, newWasmCont: WasmContinuation) {
