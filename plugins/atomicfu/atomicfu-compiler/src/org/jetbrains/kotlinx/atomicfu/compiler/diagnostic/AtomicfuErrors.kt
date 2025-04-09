@@ -14,9 +14,8 @@ object AtomicfuErrors {
     val PUBLIC_ATOMICS_ARE_FORBIDDEN = KtDiagnosticFactory1<String>("PUBLIC_ATOMICS_ARE_FORBIDDEN",
         Severity.ERROR, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtProperty::class)
 
-    // This diagnostic should be upgraded to error in the next release: KT-70982
     val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN = KtDiagnosticFactory1<String>("PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
-        Severity.WARNING, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtProperty::class)
+        Severity.ERROR, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtProperty::class)
 
     val ATOMIC_PROPERTIES_SHOULD_BE_VAL = KtDiagnosticFactory1<String>("ATOMIC_PROPERTIES_SHOULD_BE_VAL",
         Severity.ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtProperty::class)
