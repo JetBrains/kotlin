@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.util.getChildren
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     return when (this) {
@@ -55,12 +54,15 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
      * Property offsets: <1>..<3>
      * Accessors offsets: <1>..<2>
      */
-    runIf(source?.kind == KtFakeSourceElementKind.DefaultAccessor) {
+    if (source?.kind == KtFakeSourceElementKind.DefaultAccessor) {
         val property = this.propertySymbol.fir
-        if (property.isLocal) return@runIf
-        val (startOffset, endOffset) = property.computeOffsetsWithoutInitializer() ?: return@runIf
-        return f(startOffset, endOffset)
+        if (!property.isLocal) {
+            property.computeOffsetsWithoutInitializer()?.let { (startOffset, endOffset) ->
+                return f(startOffset, endOffset)
+            }
+        }
     }
+
     return source.convertWithOffsets(f)
 }
 
