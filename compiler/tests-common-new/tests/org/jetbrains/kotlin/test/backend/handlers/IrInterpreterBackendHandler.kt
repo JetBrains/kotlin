@@ -42,14 +42,22 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        val evaluator = Evaluator(IrInterpreter(info.irPluginContext.irBuiltIns), globalMetadataInfoHandler)
+        val evaluator = Evaluator(
+            IrInterpreter(info.irPluginContext.irBuiltIns),
+            globalMetadataInfoHandler,
+            module.languageVersionSettings.languageVersion.usesK2,
+        )
         for ((irFile, testFile) in matchIrFileWithTestFile(info.irModuleFragment, module, testServices)) {
             evaluator.evaluate(irFile, testFile)
         }
     }
 }
 
-private class Evaluator(private val interpreter: IrInterpreter, private val globalMetadataInfoHandler: GlobalMetadataInfoHandler) {
+private class Evaluator(
+    private val interpreter: IrInterpreter,
+    private val globalMetadataInfoHandler: GlobalMetadataInfoHandler,
+    private val isK2: Boolean,
+) {
     fun evaluate(irFile: IrFile, testFile: TestFile) {
         object : IrElementTransformerVoid() {
             private fun IrExpression.report(original: IrExpression, startOffsetForDiagnostic: Int? = null): IrExpression {
@@ -99,7 +107,14 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
 
                 val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
                 if (isConst) {
-                    val startOffsetForDiagnostic = declaration.startOffset + "const val  = ".length + declaration.name.asString().length
+                    val startOffsetForDiagnostic =
+                        declaration.startOffset + listOfNotNull(
+                            // Psi2Ir sets startOffset to the "const" keyword, fir2ir to the "val" keyword.
+                            "const ".takeUnless { isK2 },
+                            "val ",
+                            declaration.name.asString(),
+                            " = ",
+                        ).sumOf(String::length)
                     initializer.expression = interpreter.interpret(expression, irFile).report(expression, startOffsetForDiagnostic)
                 }
                 return declaration

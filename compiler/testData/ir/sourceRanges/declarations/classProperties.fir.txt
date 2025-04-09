@@ -24,30 +24,30 @@
           @10:4..13 RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in test.Test'
             @10:4..13 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @10:4..13 GET_VAR '<this>: test.Test declared in test.Test.<get-test1>' type=test.Test origin=null
-    @13:4..16:18 PROPERTY name:test2 visibility:public modality:FINAL [val]
+    @16:4..18 PROPERTY name:test2 visibility:public modality:FINAL [val]
       annotations:
         @13:4..15:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
           @14:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @14:8..25 CONST String type=kotlin.String value="UNUSED_VARIABLE"
-      @13:4..16:18 FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final]
+      @16:4..18 FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final]
         @16:16..18 EXPRESSION_BODY
           @16:16..18 CONST Int type=kotlin.Int value=42
-      @13:4..16:13 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Int
-        @13:4..16:13 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
-        @13:4..16:13 BLOCK_BODY
-          @13:4..16:13 RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in test.Test'
-            @13:4..16:13 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              @13:4..16:13 GET_VAR '<this>: test.Test declared in test.Test.<get-test2>' type=test.Test origin=null
-    @19:4..20:18 PROPERTY name:test3 visibility:private modality:FINAL [val]
-      @19:4..20:18 FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final]
+      @16:4..13 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Int
+        @16:4..13 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
+        @16:4..13 BLOCK_BODY
+          @16:4..13 RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in test.Test'
+            @16:4..13 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              @16:4..13 GET_VAR '<this>: test.Test declared in test.Test.<get-test2>' type=test.Test origin=null
+    @20:4..18 PROPERTY name:test3 visibility:private modality:FINAL [val]
+      @20:4..18 FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final]
         @20:16..18 EXPRESSION_BODY
           @20:16..18 CONST Int type=kotlin.Int value=42
-      @19:4..20:13 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:private modality:FINAL <> (<this>:test.Test) returnType:kotlin.Int
-        @19:4..20:13 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
-        @19:4..20:13 BLOCK_BODY
-          @19:4..20:13 RETURN type=kotlin.Nothing from='private final fun <get-test3> (): kotlin.Int declared in test.Test'
-            @19:4..20:13 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              @19:4..20:13 GET_VAR '<this>: test.Test declared in test.Test.<get-test3>' type=test.Test origin=null
+      @20:4..13 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:private modality:FINAL <> (<this>:test.Test) returnType:kotlin.Int
+        @20:4..13 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
+        @20:4..13 BLOCK_BODY
+          @20:4..13 RETURN type=kotlin.Nothing from='private final fun <get-test3> (): kotlin.Int declared in test.Test'
+            @20:4..13 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              @20:4..13 GET_VAR '<this>: test.Test declared in test.Test.<get-test3>' type=test.Test origin=null
     @23:4..24 PROPERTY name:test4 visibility:public modality:FINAL [val]
       @23:14..24 FUN name:<get-test4> visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Int
         @23:14..24 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test

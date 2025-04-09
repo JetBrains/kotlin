@@ -1248,7 +1248,7 @@ class Fir2IrVisitor(
             builtins.unitType
         else
             (lastOrNull() as? FirExpression)?.resolvedType?.toIrType(c) ?: builtins.unitType
-        return source.convertWithOffsets { startOffset, endOffset ->
+        return source.convertWithOffsets(keywordTokens = null) { startOffset, endOffset ->
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
                     startOffset, endOffset, type, null,

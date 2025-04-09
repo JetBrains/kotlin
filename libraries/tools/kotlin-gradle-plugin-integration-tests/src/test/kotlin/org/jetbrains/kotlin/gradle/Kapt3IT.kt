@@ -21,6 +21,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -751,7 +752,8 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                assertEquals(expected = genKotlinErrorString(4, 7), actual = actual)
+                val expectedPropertyLineNumber = if (buildOptions.languageVersion == LanguageVersion.KOTLIN_1_9.versionString) 4 else 5
+                assertEquals(expected = genKotlinErrorString(expectedPropertyLineNumber, 7), actual = actual)
             }
         }
     }

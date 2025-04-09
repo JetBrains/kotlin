@@ -27,6 +27,18 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("annotatedLocalVariable.kt")
+  public void testAnnotatedLocalVariable() {
+    runTest("compiler/testData/debug/stepping/annotatedLocalVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedProperty.kt")
+  public void testAnnotatedProperty() {
+    runTest("compiler/testData/debug/stepping/annotatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("compiler/testData/debug/stepping/anonymousFunction.kt");

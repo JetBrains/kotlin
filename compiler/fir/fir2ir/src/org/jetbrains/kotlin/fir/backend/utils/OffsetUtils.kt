@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.fir.backend.utils
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.isFiller
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -26,7 +28,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.util.getChildren
 
-fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
+fun AbstractKtSourceElement?.startOffsetSkippingComments(keywordTokens: TokenSet? = null): Int? {
+    if (keywordTokens != null) {
+        (this as? KtSourceElement)?.getChildTokenStartOffsetOrNull(keywordTokens)?.let { return it }
+    }
+
     return when (this) {
         is KtPsiSourceElement -> this.psi.startOffsetSkippingComments
         is KtLightSourceElement -> this.startOffsetSkippingComments
@@ -35,7 +41,11 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
 }
 
 internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
-    return source.convertWithOffsets(f)
+    val tokenSet = when (this) {
+        is FirVariable -> PROPERTY_KEYWORD_TOKENS
+        else -> null
+    }
+    return source.convertWithOffsets(tokenSet, f)
 }
 
 internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
@@ -63,10 +73,13 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
         }
     }
 
-    return source.convertWithOffsets(f)
+    return source.convertWithOffsets(PROPERTY_KEYWORD_TOKENS, f)
 }
 
-internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
+internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(
+    keywordTokens: TokenSet?,
+    f: (startOffset: Int, endOffset: Int) -> T,
+): T {
     val startOffset: Int
     val endOffset: Int
 
@@ -79,7 +92,7 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (star
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
-        startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: UNDEFINED_OFFSET
+        startOffset = this?.startOffsetSkippingComments(keywordTokens) ?: this?.startOffset ?: UNDEFINED_OFFSET
         endOffset = this?.endOffset ?: UNDEFINED_OFFSET
     }
 
@@ -113,7 +126,7 @@ fun FirQualifiedAccessExpression.shouldUseCalleeReferenceAsItsSourceInIr(): Bool
 }
 
 internal inline fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
-    return source.convertWithOffsets(f)
+    return source.convertWithOffsets(keywordTokens = null, f)
 }
 
 internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
@@ -169,6 +182,12 @@ private fun FirProperty.computeOffsetsWithoutInitializer(): Pair<Int, Int>? {
     }
 
     val endOffset = lastMeaningfulChild.endOffset
-    val startOffset = propertySource.startOffsetSkippingComments() ?: propertySource.startOffset
+    val startOffset = propertySource.startOffsetSkippingComments(PROPERTY_KEYWORD_TOKENS)
+        ?: propertySource.startOffset
     return startOffset to endOffset
 }
+
+private val PROPERTY_KEYWORD_TOKENS = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
+
+internal fun KtSourceElement.getChildTokenStartOffsetOrNull(tokenSet: TokenSet): Int? =
+    lighterASTNode.getChildren(treeStructure).firstOrNull { it.tokenType in tokenSet }?.startOffset

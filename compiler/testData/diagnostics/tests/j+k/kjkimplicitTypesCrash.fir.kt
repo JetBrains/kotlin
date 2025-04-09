@@ -12,7 +12,7 @@ public class Java1 extends KotlinClass  {
 // FILE: test.kt
 // The order of Kotlin classes is important
 class B : Java1() {
-    <!ACCIDENTAL_OVERRIDE!>override var e<!> = super.e
+    override <!ACCIDENTAL_OVERRIDE!>var e<!> = super.e
 }
 
 open class KotlinClass {
