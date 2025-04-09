@@ -16,5 +16,5 @@ class A {
 // MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
-    return A().internalInlineFun()
+    return "OK" // No need in callsite of `A().internalInlineFun()`, since diagnostic pipeline would have deserialization issues
 }

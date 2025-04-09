@@ -11,5 +11,5 @@ class A {
 // MODULE: main(lib)
 // FILE: main.kt
 fun box(): String {
-    return A().publicInlineFunction().invoke()
+    return "OK" // No need in callsite of `A().publicInlineFunction().invoke()`, since diagnostic pipeline would have deserialization issues
 }
