@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
 import java.io.File
@@ -22,9 +23,10 @@ import kotlin.test.fail
 
 internal fun TestProject.resolveIdeDependencies(
     subproject: String? = null,
+    buildOptions: BuildOptions = this.buildOptions,
     assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit,
 ) {
-    build("${subproject.orEmpty()}:resolveIdeDependencies") {
+    build("${subproject.orEmpty()}:resolveIdeDependencies", buildOptions = buildOptions) {
         assertions(readIdeDependencies(subproject))
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -52,7 +53,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 }
             }
 
-            build("assembleRelease") {
+            build(
+                "clean", "assembleRelease",
+                buildOptions = buildOptions.suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None)
+            ) {
                 assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
                 val releaseApk = projectPath.resolve("build/outputs/apk/release/project-release-unsigned.apk")
 
