@@ -17,5 +17,5 @@ internal inline fun internalInlineFun() = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_
 // MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
-    return internalInlineFun()
+    return "OK" // Callsite of `internalInlineFun()` is omitted, to avoid test pipeline crash in public inliner after error diagnostic in dependent module
 }
