@@ -10,7 +10,6 @@ import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
@@ -21,28 +20,26 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ImplicitValueStorage
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
-import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class DataFlowAnalyzerContext(private val session: FirSession) {
     val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
@@ -602,7 +599,7 @@ abstract class FirDataFlowAnalyzer(
         if (leftOperandVariable !is RealVariable && rightOperandVariable !is RealVariable) return
 
         if (operation == FirOperation.EQ || operation == FirOperation.NOT_EQ) {
-            if (hasUntrustworthyOverriddenEquals(leftOperandType)) return
+            if (hasUntrustworthyOverriddenEquals(leftOperandType, components.session, components.scopeSession)) return
         }
 
         fun addEqualityImplications(variable: DataFlowVariable?, otherOperand: FirExpression) {
@@ -616,68 +613,6 @@ abstract class FirDataFlowAnalyzer(
 
         addEqualityImplications(leftOperandVariable, rightOperand)
         addEqualityImplications(rightOperandVariable, leftOperand)
-    }
-
-    private fun hasUntrustworthyOverriddenEquals(type: ConeKotlinType): Boolean {
-        val session = components.session
-        val symbolsForType = collectSymbolsForType(type, session)
-        if (symbolsForType.any { it.hasUntrustworthyEqualsOverride(session, checkModality = true) }) return true
-
-        val superTypes = lookupSuperTypes(
-            symbolsForType,
-            lookupInterfaces = false,
-            deep = true,
-            session,
-            substituteTypes = false
-        )
-        val superClassSymbols = superTypes.mapNotNull {
-            it.fullyExpandedType(session).toRegularClassSymbol(session)
-        }
-
-        return superClassSymbols.any { it.hasUntrustworthyEqualsOverride(session, checkModality = false) }
-    }
-
-    private fun FirClassSymbol<*>.hasUntrustworthyEqualsOverride(session: FirSession, checkModality: Boolean): Boolean {
-        val status = resolvedStatus
-        if (checkModality && status.modality != Modality.FINAL) return true
-        if (status.isExpect) return true
-        if (isSmartcastPrimitive(classId)) return false
-        when (classId) {
-            StandardClassIds.Any -> return false
-            // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
-            StandardClassIds.Float, StandardClassIds.Double -> return true
-            // kotlin.Enum has `equals()`, but we know it's reasonable
-            StandardClassIds.Enum -> return false
-        }
-
-        // When the class belongs to a different module, "equals" contract might be changed without re-compilation
-        // But since we had such behavior in FE1.0, it might be too strict to prohibit it now, especially once there's a lot of cases
-        // when different modules belong to a single project, so they're totally safe (see KT-50534)
-        // if (moduleData != session.moduleData) {
-        //     return true
-        // }
-
-        val ownerTag = this.toLookupTag()
-        return this.unsubstitutedScope(
-            session, components.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS
-        ).getFunctions(OperatorNameConventions.EQUALS).any {
-            !it.isSubstitutionOrIntersectionOverride && it.isEquals(session) && ownerTag.isRealOwnerOf(it)
-        }
-    }
-
-    /**
-     * Determines if type smart-casting to the specified [ClassId] can be performed when values are
-     * compared via equality. Because this is determined using the ClassId, only standard built-in
-     * types are considered.
-     */
-    private fun isSmartcastPrimitive(classId: ClassId?): Boolean {
-        return when (classId) {
-            // Support other primitives as well: KT-62246.
-            StandardClassIds.String,
-            -> true
-
-            else -> false
-        }
     }
 
     // ----------------------------------- Jump -----------------------------------
