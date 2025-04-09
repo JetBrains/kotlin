@@ -10533,6 +10533,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/coroutines/generatedCodeMarkers")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("klib")
+      public class GeneratedCodeMarkers {
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/coroutines/generatedCodeMarkers/simple.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("klib")

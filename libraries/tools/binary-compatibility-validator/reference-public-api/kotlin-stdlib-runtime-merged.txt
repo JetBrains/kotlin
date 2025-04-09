@@ -3173,6 +3173,15 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public final class kotlin/coroutines/jvm/internal/GeneratedCodeMarkers {
+	public static final fun checkCOROUTINE_SUSPENDED ()V
+	public static final fun checkContinuation ()V
+	public static final fun checkResult ()V
+	public static final fun lambdaArgumentsUnspilling ()V
+	public static final fun tableswitch ()V
+	public static final fun unreachable ()V
+}
+
 public final class kotlin/coroutines/jvm/internal/SpillingKt {
 	public static final fun nullOutSpilledVariable (Ljava/lang/Object;)Ljava/lang/Object;
 }

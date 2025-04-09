@@ -3251,3 +3251,26 @@ The compiler cleans up dead variables by calling `kotlin.coroutines.jvm.internal
 expected to replace the variable, just like probes.
 
 See "Spilled Variables Cleanup" section.
+
+### Generated Code Markers
+`-Xenhanced-coroutines-debugging` forces the compiler to generate additional linenumbers before the compiler generated code in suspend
+functions and lambdas in order to distinguish them from user code. Additionally, LVT entries are added.
+
+The additional linenumbers mark
+1. Continuation check at the beginning of a suspend function.
+2. Unspilling of arguments of a suspend lambda.
+3. State-machine header (TABLESWITCH of the state-machine).
+4. Check of $result variable at the beginning of the state-machine and after each suspend call.
+5. Check for COROUTINE_SUSPENDED marker after each suspend call.
+6. Default label, which throws IllegalStateException - which is unreachable in normal execution.
+
+The additional LVT entries are
+1. $ecd$checkContinuation$<linenumber>
+2. $ecd$lambdaArgumentsUnspilling$<linenumber>
+3. $ecd$tableswitch$<linenumber>
+4. $ecd$checkResult$<linenumber>
+5. $ecd$checkCOROUTINE_SUSPENDED$<linenumber>
+6. $ecd$unreachable$<linenumber>
+
+These linenumbers are mapped to `GeneratedCodeMarkers.kt` file in stdlib via SMAP by inliner, and point to one-line marker inline function.
+This way, even if unsupported version of debugger is used, it will assume, that this is just normal inlining taking place. 

@@ -10940,6 +10940,22 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/coroutines/generatedCodeMarkers")
+      @TestDataPath("$PROJECT_ROOT")
+      public class GeneratedCodeMarkers {
+        @Test
+        public void testAllFilesPresentInGeneratedCodeMarkers() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/generatedCodeMarkers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/coroutines/generatedCodeMarkers/simple.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
       public class InlineClasses {

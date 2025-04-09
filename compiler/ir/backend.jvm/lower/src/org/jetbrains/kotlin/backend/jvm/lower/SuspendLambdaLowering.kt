@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -262,7 +263,17 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
                     }
                 }, null)
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, localVals.filterNotNull() + body.statements)
+
+                val generatedCodeMarkers =
+                    if (this@SuspendLambdaLowering.context.config.enhancedCoroutinesDebugging) {
+                        this@SuspendLambdaLowering.context.symbols.generatedCodeMarkersInCoroutinesClass.functions.map {
+                            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.owner.returnType, it)
+                        }.toList()
+                    } else emptyList()
+
+                context.irFactory.createBlockBody(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, generatedCodeMarkers + localVals.filterNotNull() + body.statements
+                )
             }
 
             copyAnnotationsFrom(irFunction)

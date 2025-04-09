@@ -127,6 +127,9 @@ where advanced options include:
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
                              If API Level >= 2.2 -- no-op.
+  -Xenhanced-coroutines-debugging
+                             Generate additional linenumber instruction for compiler-generated code
+                             inside suspend functions and lambdas to distinguish them from user code by debugger.
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xvalue-classes            Enable experimental value classes.

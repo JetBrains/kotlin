@@ -800,6 +800,17 @@ If API Level >= 2.2 -- no-op.""",
         }
 
     @Argument(
+        value = "-Xenhanced-coroutines-debugging",
+        description = """Generate additional linenumber instruction for compiler-generated code
+inside suspend functions and lambdas to distinguish them from user code by debugger.""",
+    )
+    var enhancedCoroutinesDebugging: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xno-new-java-annotation-targets",
         description = "Don't generate Java 1.8+ targets for Kotlin annotation classes.",
     )

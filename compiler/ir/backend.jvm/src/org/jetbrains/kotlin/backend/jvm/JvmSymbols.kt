@@ -163,6 +163,17 @@ class JvmSymbols(
         })
     }
 
+    val generatedCodeMarkersInCoroutinesClass: IrClassSymbol = createClass(
+        FqName("kotlin.coroutines.jvm.internal.GeneratedCodeMarkers")
+    ) { klass ->
+        klass.addFunction("checkContinuation", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("lambdaArgumentsUnspilling", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("tableswitch", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("checkResult", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("checkCOROUTINE_SUSPENDED", irBuiltIns.unitType, isStatic = true, isInline = true)
+        klass.addFunction("unreachable", irBuiltIns.unitType, isStatic = true, isInline = true)
+    }
+
     /**
      * This function is used only with the IR inliner. It is needed to ensure that all local declarations inside lambda will be generated,
      * because after inline these lambdas can be dropped.

@@ -88,6 +88,8 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
 
     val ENABLE_DEBUG_MODE by key<Boolean>("Enable debug mode")
 
+    val ENHANCED_COROUTINES_DEBUGGING by key<Boolean>("Mark compiled generated code in coroutines")
+
     val NO_NEW_JAVA_ANNOTATION_TARGETS by key<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
     val ENABLE_IR_INLINER by key<Boolean>("Enable inlining on IR, instead of inlining on bytecode")

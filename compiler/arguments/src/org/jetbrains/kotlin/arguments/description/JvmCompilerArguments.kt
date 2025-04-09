@@ -720,6 +720,15 @@ If API Level >= 2.2 -- no-op.""".asReleaseDependent()
     }
 
     compilerArgument {
+        name = "Xenhanced-coroutines-debugging"
+        description = """Generate additional linenumber instruction for compiler-generated code
+inside suspend functions and lambdas to distinguish them from user code by debugger.""".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        stubLifecycle()
+    }
+
+    compilerArgument {
         name = "Xno-new-java-annotation-targets"
         description = "Don't generate Java 1.8+ targets for Kotlin annotation classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

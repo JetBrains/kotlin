@@ -144,6 +144,9 @@ object JVMConfigurationKeys {
     val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("Enable debug mode")
 
     @JvmField
+    val ENHANCED_COROUTINES_DEBUGGING = CompilerConfigurationKey.create<Boolean>("Mark compiled generated code in coroutines")
+
+    @JvmField
     val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
     @JvmField
@@ -331,6 +334,10 @@ var CompilerConfiguration.linkViaSignatures: Boolean
 var CompilerConfiguration.enableDebugMode: Boolean
     get() = getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     set(value) { put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, value) }
+
+var CompilerConfiguration.enhancedCoroutinesDebugging: Boolean
+    get() = getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
+    set(value) { put(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING, value) }
 
 var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)

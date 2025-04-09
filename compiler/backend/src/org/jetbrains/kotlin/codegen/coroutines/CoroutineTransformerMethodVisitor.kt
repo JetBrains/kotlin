@@ -67,7 +67,13 @@ class CoroutineTransformerMethodVisitor(
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
 
+    private var generatedCodeMarkers: GeneratedCodeMarkers? = null
+
     override fun performTransformations(methodNode: MethodNode) {
+        if (config.enhancedCoroutinesDebugging) {
+            generatedCodeMarkers = GeneratedCodeMarkers.fillOutMarkersAndCleanUpMethodNode(methodNode)
+        }
+
         removeFakeContinuationConstructorCall(methodNode)
 
         replaceReturnsUnitMarkersWithPushingUnitOnStack(methodNode)
@@ -89,7 +95,9 @@ class CoroutineTransformerMethodVisitor(
 
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
-        // First instruction in the method node may change in case of named function
+        // First instruction in the method node is different for named functions and for lambdas
+        //   For named functions, before the first instruction we have continuation check
+        //   For lambdas, we have lambda arguments unspilling
         var actualCoroutineStart = methodNode.instructions.first
 
         if (isForNamedFunction) {
@@ -106,6 +114,10 @@ class CoroutineTransformerMethodVisitor(
             prepareMethodNodePreludeForNamedFunction(methodNode)
         } else if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
             actualCoroutineStart = methodNode.instructions.findLast { isSuspendLambdaParameterMarker(it) }?.next ?: actualCoroutineStart
+        }
+
+        if (!isForNamedFunction) {
+            markFakeLineNumberForLambdaArgumentUnspilling(methodNode)
         }
 
         for (suspensionPoint in suspensionPoints) {
@@ -130,10 +142,43 @@ class CoroutineTransformerMethodVisitor(
             )
         }
 
+        generateStateMachinesTableswitch(methodNode, actualCoroutineStart, suspendMarkerVarIndex, suspensionPoints, stateLabels)
+
+        initializeFakeInlinerVariables(methodNode, stateLabels)
+
+        dropSuspensionMarkers(methodNode)
+        dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
+        methodNode.removeEmptyCatchBlocks()
+        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
+            methodNode.extendParameterRanges()
+            methodNode.extendSuspendLambdaParameterRanges()
+        }
+        dropSuspendLambdaParameterMarkers(methodNode)
+
+        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !config.enableDebugMode) {
+            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
+        }
+
+        generatedCodeMarkers?.addFakeVariablesToLVTAndInitializeThem(methodNode, isForNamedFunction)
+
+        writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
+    }
+
+    private fun generateStateMachinesTableswitch(
+        methodNode: MethodNode,
+        actualCoroutineStart: AbstractInsnNode?,
+        suspendMarkerVarIndex: Int,
+        suspensionPoints: List<SuspensionPoint>,
+        stateLabels: List<LabelNode>,
+    ) {
         methodNode.instructions.apply {
             val tableSwitchLabel = LabelNode()
             val firstStateLabel = LabelNode()
             val defaultLabel = LabelNode()
+
+            insertBefore(actualCoroutineStart, withInstructionAdapter {
+                GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.tableswitch)
+            })
 
             // tableswitch(this.label)
             insertBefore(
@@ -194,27 +239,22 @@ class CoroutineTransformerMethodVisitor(
             insert(last, LineNumberNode(lineNumber, defaultLabel))
 
             insert(last, withInstructionAdapter {
+                GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.unreachable)
+            })
+
+            insert(last, withInstructionAdapter {
                 AsmUtil.genThrow(this, "java/lang/IllegalStateException", ILLEGAL_STATE_ERROR_MESSAGE)
                 areturn(Type.VOID_TYPE)
             })
         }
+    }
 
-        initializeFakeInlinerVariables(methodNode, stateLabels)
-
-        dropSuspensionMarkers(methodNode)
-        dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
-        methodNode.removeEmptyCatchBlocks()
-        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
-            methodNode.extendParameterRanges()
-            methodNode.extendSuspendLambdaParameterRanges()
-        }
-        dropSuspendLambdaParameterMarkers(methodNode)
-
-        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !config.enableDebugMode) {
-            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
-        }
-
-        writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
+    private fun markFakeLineNumberForLambdaArgumentUnspilling(node: MethodNode) {
+        val label = node.instructions.find { isSuspendLambdaParameterMarker(it) }?.findPreviousOrNull { it is LabelNode }
+        if (label == null) return
+        node.instructions.insert(label, withInstructionAdapter {
+            GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.lambdaArgumentsUnspilling)
+        })
     }
 
     // When suspension point is inlined, it is in range of fake inliner variables.
@@ -452,6 +492,8 @@ class CoroutineTransformerMethodVisitor(
             // - Otherwise it's still can be a recursive call. To check it's not the case we set the last bit in the label in
             // `doResume` just before calling the suspend function (see kotlin.coroutines.experimental.jvm.internal.CoroutineImplForNamedFunction).
             // So, if it's set we're in continuation.
+
+            GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.checkContinuation)
 
             visitVarInsn(Opcodes.ALOAD, continuationArgumentIndex)
             instanceOf(objectTypeForState)
@@ -1081,6 +1123,8 @@ class CoroutineTransformerMethodVisitor(
             )
 
             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.checkCOROUTINE_SUSPENDED)
+
                 dup()
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 ifacmpne(continuationLabelAfterLoadedResult.label)
@@ -1217,6 +1261,15 @@ class CoroutineTransformerMethodVisitor(
         return
     }
 
+    private fun InstructionAdapter.generateResumeWithExceptionCheck(dataIndex: Int) {
+        // Check if resumeWithException has been called
+
+        GeneratedCodeMarkers.markFakeLineNumber(this, generatedCodeMarkers?.checkResult)
+
+        load(dataIndex, AsmTypes.OBJECT_TYPE)
+        invokestatic("kotlin/ResultKt", "throwOnFailure", "(Ljava/lang/Object;)V", false)
+    }
+
     private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
 }
 
@@ -1299,13 +1352,6 @@ private fun InstructionAdapter.generateContinuationConstructorCall(
         ),
         false
     )
-}
-
-private fun InstructionAdapter.generateResumeWithExceptionCheck(dataIndex: Int) {
-    // Check if resumeWithException has been called
-
-    load(dataIndex, AsmTypes.OBJECT_TYPE)
-    invokestatic("kotlin/ResultKt", "throwOnFailure", "(Ljava/lang/Object;)V", false)
 }
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index
