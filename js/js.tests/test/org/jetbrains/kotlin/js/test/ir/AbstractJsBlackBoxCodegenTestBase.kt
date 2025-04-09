@@ -228,10 +228,14 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     }
 
     facadeStep(frontendToIrConverter)
-    irHandlersStep()
+    irHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+    }
 
     facadeStep(::JsIrInliningFacade)
-    inlinedIrHandlersStep()
+    inlinedIrHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+    }
 
     facadeStep(serializerFacade)
     klibArtifactsHandlersStep {
