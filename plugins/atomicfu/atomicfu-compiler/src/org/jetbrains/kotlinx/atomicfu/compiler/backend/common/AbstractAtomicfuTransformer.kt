@@ -502,10 +502,8 @@ abstract class AbstractAtomicfuTransformer(
             }.deepCopyWithSymbols(parentFunction)
             val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
             val arguments = buildList {
-                parentFunction.firstNonLocalFunctionForLambdaParent.parameters[0].let {
-                    if (it.kind == IrParameterKind.DispatchReceiver) {
-                        add(it.capture())
-                    }
+                parentFunction.firstNonLocalFunctionForLambdaParent.dispatchReceiverParameter?.let {
+                    add(it.capture())
                 }
                 add(atomicHandlerReceiver)
                 atomicHandlerExtraArg?.let { add(it) }
