@@ -5,6 +5,3 @@ Diagnostics from file:
   for PSI element of type KtParameter at (4,25-35)
     MISSING_DEPENDENCY_SUPERCLASS      text ranges: [(51,61)]
       PSI: KtParameter at (4,25-35)
-  for PSI element of type KtParameter at (4,25-35)
-    MISSING_DEPENDENCY_SUPERCLASS_WARNING      text ranges: [(51,61)]
-      PSI: KtParameter at (4,25-35)

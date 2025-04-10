@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.fir.getOwnerLookupTag
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
+import org.jetbrains.kotlin.utils.SmartSet
 
 /**
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
@@ -34,15 +37,23 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
             return
         }
 
-        val missingSuperTypes = checkMissingDependencySuperTypes(symbol.dispatchReceiverType, source, reporter, context)
+        val checkedSymbols = SmartSet.create<FirBasedSymbol<*>>()
+
+        val dispatchReceiverSymbol = symbol.dispatchReceiverType?.toSymbol(context.session)
+        val missingSuperTypes = checkMissingDependencySuperTypes(dispatchReceiverSymbol, source, reporter, context, isEagerCheck = false)
+        dispatchReceiverSymbol?.let(checkedSymbols::add)
+
         val lazySupertypesUnresolvedByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
         val isEagerCheck = lazySupertypesUnresolvedByDefault || missingSuperTypes
 
-        checkMissingDependencySuperTypes(
-            symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context, isEagerCheck
-        )
-        checkMissingDependencySuperTypes(
-            symbol.resolvedReceiverType?.toSymbol(context.session), source, reporter, context, isEagerCheck
-        )
+        val ownerSymbol = symbol.getOwnerLookupTag()?.toSymbol(context.session)
+        if (ownerSymbol != null && checkedSymbols.add(ownerSymbol)) {
+            checkMissingDependencySuperTypes(ownerSymbol, source, reporter, context, isEagerCheck)
+        }
+
+        val receiverSymbol = symbol.resolvedReceiverType?.toSymbol(context.session)
+        if (receiverSymbol != null && checkedSymbols.add(receiverSymbol)) {
+            checkMissingDependencySuperTypes(receiverSymbol, source, reporter, context, isEagerCheck)
+        }
     }
 }
