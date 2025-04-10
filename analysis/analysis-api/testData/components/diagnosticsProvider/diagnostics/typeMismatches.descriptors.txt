@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtConstantExpression at (5,12-13)
     CONSTANT_EXPECTED_TYPE_MISMATCH      text ranges: [(68,69)]
       PSI: KtConstantExpression at (5,12-13)

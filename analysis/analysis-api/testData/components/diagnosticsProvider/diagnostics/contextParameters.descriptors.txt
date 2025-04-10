@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtContextReceiverList at (14,5-18)
     CONTEXT_PARAMETERS_UNSUPPORTED      text ranges: [(170,183)]
       PSI: KtContextReceiverList at (14,5-18)

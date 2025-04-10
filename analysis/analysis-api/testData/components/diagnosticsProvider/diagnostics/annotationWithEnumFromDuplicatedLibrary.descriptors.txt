@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtConstructorCalleeExpression at (33,2-12)
     NO_VALUE_FOR_PARAMETER      text ranges: [(114,124)]
       PSI: KtConstructorCalleeExpression at (33,2-12)

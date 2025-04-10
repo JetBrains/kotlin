@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtParameter at (3,21-28)
     UNUSED_PARAMETER      text ranges: [(53,54)]
       PSI: KtParameter at (3,21-28)

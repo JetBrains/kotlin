@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtObjectDeclaration at (7,14-48)
     ABSTRACT_MEMBER_NOT_IMPLEMENTED      text ranges: [(110,116)]
       PSI: KtObjectDeclaration at (7,14-48)

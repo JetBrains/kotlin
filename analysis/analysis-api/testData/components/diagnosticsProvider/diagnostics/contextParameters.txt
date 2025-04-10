@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtCallExpression at (37,9-20)
     NO_CONTEXT_ARGUMENT      text ranges: [(546,555)]
       PSI: KtCallExpression at (37,9-20)

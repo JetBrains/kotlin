@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtNamedFunction at (3,1-28)
     ANONYMOUS_FUNCTION_WITH_NAME      text ranges: [(27,30)]
       PSI: KtNamedFunction at (3,1-28)

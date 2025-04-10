@@ -64,7 +64,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                     appendLine("$indentString  PSI: ${psi::class.simpleName} at ${psi.textRange.asLineColumnRange()}")
                 }
 
-                appendLine("Diagnostics from elements:")
+                appendLine("Diagnostics from file:")
                 for (key in diagnosticsInFile) {
                     val element = key.psi
                     appendLine("  for PSI element of type ${element::class.simpleName} at ${element.textRange.asLineColumnRange()}")

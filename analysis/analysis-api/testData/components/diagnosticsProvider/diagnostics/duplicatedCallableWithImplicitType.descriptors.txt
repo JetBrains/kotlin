@@ -1,4 +1,4 @@
-Diagnostics from elements:
+Diagnostics from file:
   for PSI element of type KtCallExpression at (23,20) - (26,2)
     TYPE_MISMATCH      text ranges: [(97,159)]
       PSI: KtCallExpression at (23,20) - (26,2)
