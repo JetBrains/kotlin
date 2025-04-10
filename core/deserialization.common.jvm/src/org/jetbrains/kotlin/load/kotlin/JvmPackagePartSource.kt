@@ -26,7 +26,7 @@ class JvmPackagePartSource(
     packageProto: ProtoBuf.Package,
     nameResolver: NameResolver,
     override val incompatibility: IncompatibleVersionErrorData<MetadataVersion>? = null,
-    override val preReleaseInfo: PreReleaseInfo = PreReleaseInfo(false, listOf()),
+    override val preReleaseInfo: PreReleaseInfo = PreReleaseInfo.DEFAULT_VISIBLE,
     override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
     val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
 ) : DeserializedContainerSource, FacadeClassSource {
@@ -45,7 +45,7 @@ class JvmPackagePartSource(
         packageProto,
         nameResolver,
         incompatibility,
-        PreReleaseInfo(isPreReleaseInvisible, listOf()),
+        PreReleaseInfo(isPreReleaseInvisible),
         abiStability,
         kotlinClass
     )

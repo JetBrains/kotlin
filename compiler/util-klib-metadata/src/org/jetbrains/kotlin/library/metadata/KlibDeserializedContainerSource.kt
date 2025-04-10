@@ -31,8 +31,8 @@ class KlibDeserializedContainerSource(
         incompatibility: IncompatibleVersionErrorData<*>?,
     ) : this(
         preReleaseInfo = PreReleaseInfo(
-            configuration.reportErrorsOnPreReleaseDependencies && (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
-            klib.manifestProperties.propertyList(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES).map { it.trimStart('+') }
+            isInvisible = configuration.reportErrorsOnPreReleaseDependencies && (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
+            poisoningFeatures = klib.manifestProperties.propertyList(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES).map { it.trimStart('+') }
         ),
         presentableString = "Package '$packageFqName'",
         klib = klib,

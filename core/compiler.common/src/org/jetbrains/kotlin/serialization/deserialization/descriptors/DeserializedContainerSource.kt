@@ -34,7 +34,12 @@ enum class DeserializedContainerAbiStability {
     UNSTABLE,
 }
 
-// True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release.
-// List of manually enabled poisoning features.
-// TODO: Does this way of forwarding poisoningFeatures to errors make sense or should it be done somehow different?
-data class PreReleaseInfo(val isInvisible: Boolean, val poisoningFeatures: List<String>)
+/**
+ * @property isInvisible True if this container is "invisible" because it has a pre-release flag.
+ * @property poisoningFeatures The list of manually enabled language features that caused raising the pre-release flag.
+ */
+data class PreReleaseInfo(val isInvisible: Boolean, val poisoningFeatures: List<String> = emptyList()) {
+    companion object {
+        val DEFAULT_VISIBLE = PreReleaseInfo(isInvisible = false)
+    }
+}

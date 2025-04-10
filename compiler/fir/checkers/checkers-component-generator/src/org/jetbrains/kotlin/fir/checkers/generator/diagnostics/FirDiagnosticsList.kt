@@ -2023,7 +2023,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val PRE_RELEASE_CLASS by error<PsiElement> {
             parameter<String>("presentableString")
-            parameter<List<String>>("poisonedFeatures")
+            parameter<List<String>>("poisoningFeatures")
         }
         val IR_WITH_UNSTABLE_ABI_COMPILED_CLASS by error<PsiElement> {
             parameter<String>("presentableString")

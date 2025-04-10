@@ -197,7 +197,7 @@ class JvmClassFileBasedSymbolProvider(
             KotlinJvmBinarySourceElement(
                 kotlinClass,
                 kotlinClass.incompatibility,
-                PreReleaseInfo(kotlinClass.isPreReleaseInvisible, listOf()),
+                PreReleaseInfo(isInvisible = kotlinClass.isPreReleaseInvisible),
                 kotlinClass.abiStability,
             ),
             JavaAwareFlexibleTypeFactory,

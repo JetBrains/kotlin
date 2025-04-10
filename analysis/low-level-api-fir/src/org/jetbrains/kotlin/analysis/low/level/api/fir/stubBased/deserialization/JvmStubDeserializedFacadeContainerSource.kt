@@ -20,7 +20,7 @@ internal class JvmStubDeserializedFacadeContainerSource(
         get() = null
 
     override val preReleaseInfo: PreReleaseInfo
-        get() = PreReleaseInfo(false, listOf())
+        get() = PreReleaseInfo.DEFAULT_VISIBLE
 
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE

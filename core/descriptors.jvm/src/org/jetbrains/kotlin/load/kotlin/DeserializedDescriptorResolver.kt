@@ -46,7 +46,10 @@ class DeserializedDescriptorResolver {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(
-            kotlinClass, kotlinClass.incompatibility, PreReleaseInfo(kotlinClass.isPreReleaseInvisible, listOf()), kotlinClass.abiStability
+            binaryClass = kotlinClass,
+            incompatibility = kotlinClass.incompatibility,
+            preReleaseInfo = PreReleaseInfo(isInvisible = kotlinClass.isPreReleaseInvisible),
+            abiStability = kotlinClass.abiStability
         )
         return ClassData(nameResolver, classProto, kotlinClass.classHeader.metadataVersion, source)
     }

@@ -987,7 +987,6 @@ object FirErrors {
 
     // Compatibility issues
     val INCOMPATIBLE_CLASS: KtDiagnosticFactory2<String, IncompatibleVersionErrorData<*>> = KtDiagnosticFactory2("INCOMPATIBLE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    // TODO: Now poisoning features are forwarded only for FIR, should they be also forwarded for classic frontend in `Errors.java`?
     val PRE_RELEASE_CLASS: KtDiagnosticFactory2<String, List<String>> = KtDiagnosticFactory2("PRE_RELEASE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val IR_WITH_UNSTABLE_ABI_COMPILED_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("IR_WITH_UNSTABLE_ABI_COMPILED_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreRelease
 class KotlinJvmBinarySourceElement(
     val binaryClass: KotlinJvmBinaryClass,
     override val incompatibility: IncompatibleVersionErrorData<MetadataVersion>? = null,
-    override val preReleaseInfo: PreReleaseInfo = PreReleaseInfo(false, listOf()),
+    override val preReleaseInfo: PreReleaseInfo = PreReleaseInfo.DEFAULT_VISIBLE,
     override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
 ) : DeserializedContainerSource {
     override val presentableString: String

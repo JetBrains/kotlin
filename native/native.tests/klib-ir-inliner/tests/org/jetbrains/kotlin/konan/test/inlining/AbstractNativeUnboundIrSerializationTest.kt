@@ -158,7 +158,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         for (functionUnderTest in functionsUnderTest) {
             // Make a copy of the original (fully linked) function but without the body to emulate Fir2IrLazy function.
             val deserializedContainerSource = KlibDeserializedContainerSource(
-                preReleaseInfo = PreReleaseInfo(false, listOf()),
+                preReleaseInfo = PreReleaseInfo.DEFAULT_VISIBLE,
                 presentableString = "Emulation of lazy IR inline function ${functionUnderTest.fullyLinkedIrFunction.render()} from ${library.libraryFile.absolutePath}",
                 klib = library,
                 incompatibility = null,

@@ -3989,7 +3989,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface PreReleaseClass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = PreReleaseClass::class
         val presentableString: String
-        val poisonedFeatures: List<String>
+        val poisoningFeatures: List<String>
     }
 
     interface IrWithUnstableAbiCompiledClass : KaFirDiagnostic<PsiElement> {

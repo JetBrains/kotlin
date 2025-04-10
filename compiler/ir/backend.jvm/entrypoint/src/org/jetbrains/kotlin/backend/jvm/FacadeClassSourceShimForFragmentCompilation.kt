@@ -26,7 +26,7 @@ class FacadeClassSourceShimForFragmentCompilation(private val containingFile: Ps
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
     override val preReleaseInfo: PreReleaseInfo
-        get() = PreReleaseInfo(false, listOf())
+        get() = PreReleaseInfo.DEFAULT_VISIBLE
     override val abiStability: DeserializedContainerAbiStability
         get() = DeserializedContainerAbiStability.STABLE
     override val presentableString: String

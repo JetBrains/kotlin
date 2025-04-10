@@ -289,7 +289,7 @@ class Fir2IrDeclarationStorage(
         override val facadeClassName: JvmClassName?
     ) : DeserializedContainerSource, FacadeClassSource {
         override val incompatibility get() = null
-        override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo(false, listOf())
+        override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
         override val abiStability get() = DeserializedContainerAbiStability.STABLE
         override val presentableString get() = className.internalName
 

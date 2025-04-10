@@ -94,7 +94,7 @@ class KotlinJavascriptPackageFragment(
             get() = null
 
         override val preReleaseInfo: PreReleaseInfo =
-            PreReleaseInfo(configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0, listOf())
+            PreReleaseInfo(isInvisible = configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0)
 
         override val abiStability: DeserializedContainerAbiStability
             get() = DeserializedContainerAbiStability.STABLE

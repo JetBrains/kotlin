@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -55,6 +54,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         additionalOptions: List<String>,
         expectedFileName: String?,
         additionalSources: List<String>,
+        sanitizeCompilerOutput: (String) -> String,
     ): Pair<String, ExitCode> {
         val options =
             if (CommonCompilerArguments::languageVersion.cliArgument in additionalOptions) additionalOptions
@@ -66,7 +66,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         return super.compileKotlin(
             fileName, output, classpath, compiler, options,
             if (expectedFirFile != null && languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile.name else expectedFileName,
-            additionalSources
+            additionalSources, sanitizeCompilerOutput
         )
     }
 
@@ -129,22 +129,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             }
 
         compileKotlin("source.kt", usageDestination, listOf(result), compiler, additionalOptions.toList())
-    }
-
-    private fun doTestPoisoningKotlinFeatureJs(
-        libraryName: String,
-        usageDestination: File,
-    ) {
-        val somePoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
-
-        val result = compileJsLibrary(
-            libraryName,
-            additionalOptions = listOf(
-                "-XXLanguage:+$somePoisoningFeature",
-            )
-        ) {}
-
-        compileKotlin("source.kt", usageDestination, listOf(result), K2JSCompiler())
     }
 
     private fun <T> withPreRelease(block: () -> T): T =
@@ -260,11 +244,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
-    }
-
-    fun testReleaseCompilerAgainstPreReleaseFeatureJs() {
-        // TODO: Sanitize poisoning feature name for data consistency
-        doTestPoisoningKotlinFeatureJs("library", File(tmpdir, "usage.js"))
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreRelease
 class KlibIcDeserializedContainerSource(packageFqName: FqName) : DeserializedContainerSource {
     override val presentableString: String = "Package '$packageFqName'"
     override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
-    override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo(false, listOf())
+    override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
     override val abiStability: DeserializedContainerAbiStability get() = DeserializedContainerAbiStability.STABLE
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
