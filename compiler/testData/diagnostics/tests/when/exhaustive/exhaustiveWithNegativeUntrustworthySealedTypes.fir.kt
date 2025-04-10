@@ -33,7 +33,7 @@ fun bar(v: Variants): String {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
-        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "A?"
+        else -> "A?"
     }
 }
 

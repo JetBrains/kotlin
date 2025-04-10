@@ -176,11 +176,19 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         val status = when {
-            whenExpression.hasElseBranch() -> when {
-                // If there is an else branch and the upper-bound is properly exhaustive, the else branch is redundant.
-                // Otherwise, the when-expression is properly exhaustive based on the else branch.
-                computeUpperBoundStatus() is ExhaustivenessStatus.ProperlyExhaustive -> ExhaustivenessStatus.RedundantlyExhaustive
-                else -> ExhaustivenessStatus.ProperlyExhaustive()
+            whenExpression.hasElseBranch() -> {
+                val status = computeUpperBoundStatus()
+
+                when {
+                    // If there is an else branch and the upper-bound is properly exhaustive, the else branch is redundant.
+                    // Otherwise, the when-expression is properly exhaustive based on the else branch.
+                    // If `symbolEqualsChecks` is not empty, then some checks we relied on during the exhaustiveness
+                    // analysis may be tricked by unsafe `equals()` implementation by the subject, in which case
+                    // the user may want to add `else ->` as an additional measure.
+                    status is ExhaustivenessStatus.ProperlyExhaustive && status.symbolsNotCoveredByUnsafeEquals.isEmpty() ->
+                        ExhaustivenessStatus.RedundantlyExhaustive
+                    else -> ExhaustivenessStatus.ProperlyExhaustive()
+                }
             }
 
             else -> minimumStatus
