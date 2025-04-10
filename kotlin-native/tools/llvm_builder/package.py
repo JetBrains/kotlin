@@ -114,6 +114,7 @@ def construct_cmake_flags(
         '-DLLVM_BUILD_UTILS=ON',
         '-DLLVM_INSTALL_UTILS=ON',
         '-DBUG_REPORT_URL=https://youtrack.jetbrains.com/newIssue?project=KT',
+        '-DLIBCXXABI_USE_LLVM_UNWINDER=OFF',
     ]
     if not host_is_windows(): # TODO(KT-70399): Enable for all hosts when Windows builder gets zlib.
         cmake_args.append("-DLLVM_ENABLE_ZLIB=FORCE_ON")
@@ -216,18 +217,22 @@ def run_command(command: List[str], dry_run):
 
     Note that on Windows we prepare environment with vsdevcmd.bat.
     """
+    env = os.environ
     if host_is_windows():
         if vsdevcmd is None:
             sys.exit("'VsDevCmd.bat' is not set!")
         command = [vsdevcmd, "-arch=amd64", "&&"] + command
         print("Running command: " + ' '.join(command))
     else:
+        if host_is_darwin():
+            # sets CMAKE_OSX_SYSROOT
+            env['SDKROOT'] = 'macosx'
         command = [shlex.quote(arg) for arg in command]
         command = ' '.join(command)
         print("Running command: " + command)
 
     if not dry_run:
-        subprocess.run(command, shell=True, check=True)
+        subprocess.run(command, shell=True, check=True, env=env)
 
 def force_create_directory(parent, name) -> Path:
     build_path = parent / name
@@ -348,7 +353,7 @@ def build_distribution(args):
             build_targets = ["install"]
 
         projects = ["clang", "lld"]
-        runtimes = ["compiler-rt"] if host_is_windows() else ["libcxx", "libcxxabi", "libunwind", "compiler-rt"]
+        runtimes = ["compiler-rt"] if host_is_windows() else ["libcxx", "libcxxabi", "compiler-rt"]
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)
