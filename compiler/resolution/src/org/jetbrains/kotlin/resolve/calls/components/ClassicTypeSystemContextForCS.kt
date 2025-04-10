@@ -30,7 +30,7 @@ class ClassicTypeSystemContextForCS(
         return this.defaultType
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         require(this is NewTypeVariable, this::errorMessage)
         return this.freshTypeConstructor
     }

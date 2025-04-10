@@ -35,7 +35,7 @@ class ResultTypeResolver(
         constraints: List<Constraint>,
         typeVariable: TypeVariableMarker,
     ): KotlinTypeMarker? {
-        val typeVariableConstructor = typeVariable.freshTypeConstructor() as TypeVariableTypeConstructorMarker
+        val typeVariableConstructor = typeVariable.freshTypeConstructor()
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
             if (constraint.position.from !is DeclaredUpperBoundConstraintPosition<*>) return@mapNotNull null
             val typeParameter = typeVariableConstructor.typeParameter ?: return@mapNotNull null
