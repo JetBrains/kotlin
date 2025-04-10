@@ -1,7 +1,11 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+void * DATA_CLASS_WITH_REF_component1(void * self);
+
 void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(void * self, void * o);
+
+_Bool DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t DATA_CLASS_WITH_REF_hashCode(void * self);
 
@@ -11,11 +15,17 @@ NSString * DATA_CLASS_WITH_REF_toString(void * self);
 
 int32_t DATA_CLASS_a_get(void * self);
 
+int32_t DATA_CLASS_component1(void * self);
+
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
+
+_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t DATA_CLASS_hashCode(void * self);
 
 NSString * DATA_CLASS_toString(void * self);
+
+_Bool DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t DATA_OBJECT_WITH_PACKAGE_foo(void * self);
 

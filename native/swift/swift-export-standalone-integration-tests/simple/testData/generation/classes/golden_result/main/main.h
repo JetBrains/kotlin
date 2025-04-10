@@ -11,17 +11,29 @@ NSString * DATA_CLASS_WITH_MANY_FIELDS_b_get(void * self);
 
 void * DATA_CLASS_WITH_MANY_FIELDS_c_get(void * self);
 
+int32_t DATA_CLASS_WITH_MANY_FIELDS_component1(void * self);
+
+NSString * DATA_CLASS_WITH_MANY_FIELDS_component2(void * self);
+
+void * DATA_CLASS_WITH_MANY_FIELDS_component3(void * self);
+
 void * DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(void * self, int32_t a, NSString * b, void * c);
 
 double DATA_CLASS_WITH_MANY_FIELDS_d_get(void * self);
 
 NSString * DATA_CLASS_WITH_MANY_FIELDS_e_get(void * self);
 
+_Bool DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
+
 int32_t DATA_CLASS_WITH_MANY_FIELDS_hashCode(void * self);
 
 NSString * DATA_CLASS_WITH_MANY_FIELDS_toString(void * self);
 
+void * DATA_CLASS_WITH_REF_component1(void * self);
+
 void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(void * self, void * o);
+
+_Bool DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t DATA_CLASS_WITH_REF_hashCode(void * self);
 
@@ -31,7 +43,11 @@ NSString * DATA_CLASS_WITH_REF_toString(void * self);
 
 int32_t DATA_CLASS_a_get(void * self);
 
+int32_t DATA_CLASS_component1(void * self);
+
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
+
+_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t DATA_CLASS_hashCode(void * self);
 
@@ -160,6 +176,8 @@ void namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self,
 void * namespace_NAMESPACED_CLASS_init_allocate();
 
 void namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(void * self);
 

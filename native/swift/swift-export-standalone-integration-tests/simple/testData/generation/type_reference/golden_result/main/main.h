@@ -9,7 +9,11 @@ void * Class_without_package_INNER_OBJECT_get();
 
 int32_t DATA_CLASS_a_get(void * self);
 
+int32_t DATA_CLASS_component1(void * self);
+
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
+
+_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 int32_t DATA_CLASS_hashCode(void * self);
 
@@ -186,6 +190,8 @@ void * namespace_deeper_Class_with_package_init_allocate();
 void namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t namespace_deeper_DATA_OBJECT_a_get(void * self);
+
+_Bool namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * other);
 
 void * namespace_deeper_DATA_OBJECT_get();
 

@@ -10,6 +10,9 @@ public extension ExportedKotlinPackages.kotlin {
         var length: Swift.Int32 {
             get
         }
+        func get(
+            index: Swift.Int32
+        ) -> Swift.Unicode.UTF16.CodeUnit
         func subSequence(
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
@@ -20,6 +23,20 @@ public extension ExportedKotlinPackages.kotlin {
             get {
                 return kotlin_ByteArray_size_get(self.__externalRCRef())
             }
+        }
+        public func get(
+            index: Swift.Int32
+        ) -> Swift.Int8 {
+            return kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
+        }
+        public func set(
+            index: Swift.Int32,
+            value: Swift.Int8
+        ) -> Swift.Void {
+            return kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self.__externalRCRef(), index, value)
+        }
+        public func iterator() -> ExportedKotlinPackages.kotlin.collections.ByteIterator {
+            fatalError()
         }
         public init(
             size: Swift.Int32
@@ -43,6 +60,20 @@ public extension ExportedKotlinPackages.kotlin {
             get {
                 return kotlin_IntArray_size_get(self.__externalRCRef())
             }
+        }
+        public func get(
+            index: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
+        }
+        public func set(
+            index: Swift.Int32,
+            value: Swift.Int32
+        ) -> Swift.Void {
+            return kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
+        }
+        public func iterator() -> ExportedKotlinPackages.kotlin.collections.IntIterator {
+            fatalError()
         }
         public init(
             size: Swift.Int32
@@ -283,6 +314,12 @@ public extension ExportedKotlinPackages.kotlin.time {
     public final class Duration: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     }
 }
+public extension ExportedKotlinPackages.kotlin.collections {
+    open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    open class IntIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+}
 public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
@@ -290,6 +327,11 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
         }
+    }
+    public func get(
+        index: Swift.Int32
+    ) -> Swift.Unicode.UTF16.CodeUnit {
+        return kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
     }
     public func subSequence(
         startIndex: Swift.Int32,

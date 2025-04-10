@@ -72,10 +72,18 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         super.init(__externalRCRef: __kt)
         __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a)
     }
+    public func component1() -> Swift.Int32 {
+        return DATA_CLASS_component1(self.__externalRCRef())
+    }
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
         return main.DATA_CLASS(__externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+    }
+    public func equals(
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -514,6 +522,11 @@ public extension ExportedKotlinPackages.namespace.deeper {
             __externalRCRef: Swift.UnsafeMutableRawPointer?
         ) {
             super.init(__externalRCRef: __externalRCRef)
+        }
+        public func equals(
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            return namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public func hashCode() -> Swift.Int32 {
             return namespace_deeper_DATA_OBJECT_hashCode(self.__externalRCRef())

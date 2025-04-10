@@ -29,6 +29,11 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         ) {
             super.init(__externalRCRef: __externalRCRef)
         }
+        public func plus(
+            other: Swift.Int32
+        ) -> main.Foo.Nested {
+            return main.Foo.Nested(__externalRCRef: Foo_Nested_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        }
     }
     public override init() {
         let __kt = __root___Foo_init_allocate()
@@ -79,5 +84,3 @@ public extension ExportedKotlinPackages.a.b.c {
 // Can't export foo: inline functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
-// Can't export Foo.Nested.plus: operators are not supported yet.
-// Can't export Foo.Nested.plus: operators are not supported yet.

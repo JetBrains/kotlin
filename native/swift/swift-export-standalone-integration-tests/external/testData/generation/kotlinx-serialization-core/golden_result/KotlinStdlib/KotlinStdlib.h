@@ -1,7 +1,13 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+int8_t kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(void * self, int32_t index, int8_t value);
+
 int32_t kotlin_ByteArray_size_get(void * self);
+
+uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 int32_t kotlin_CharSequence_length_get(void * self);
 
@@ -26,6 +32,10 @@ void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_Un
 void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * message, void * cause);
 
 void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * cause);
+
+int32_t kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t index, int32_t value);
 
 int32_t kotlin_IntArray_size_get(void * self);
 
