@@ -130,10 +130,6 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isExported, "suspend functions are not supported yet.")
             return@withSessions false
         }
-        if (isOperator) {
-            unsupportedDeclarationReporter.report(this@isExported, "operators are not supported yet.")
-            return@withSessions false
-        }
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline functions are not supported yet.")
             return@withSessions false

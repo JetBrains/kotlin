@@ -164,6 +164,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("operatorFunctions")
+  public void testOperatorFunctions() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/operatorFunctions/");
+  }
+
+  @Test
   @TestMetadata("overrides")
   public void testOverrides() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/overrides/");

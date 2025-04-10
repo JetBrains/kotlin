@@ -1,0 +1,26 @@
+#include <Foundation/Foundation.h>
+#include <stdint.h>
+
+int32_t generation_operatorFunctions_operatorFunctions_Vector_compareTo__TypesOfArguments__ExportedKotlinPackages_generation_operatorFunctions_operatorFunctions_Vector__(void * self, void * other);
+
+void * generation_operatorFunctions_operatorFunctions_Vector_div__TypesOfArguments__Swift_Int32__(void * self, int32_t scalar);
+
+int32_t generation_operatorFunctions_operatorFunctions_Vector_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void * generation_operatorFunctions_operatorFunctions_Vector_init_allocate();
+
+void generation_operatorFunctions_operatorFunctions_Vector_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__(void * __kt, int32_t x, int32_t y);
+
+void * generation_operatorFunctions_operatorFunctions_Vector_minus__TypesOfArguments__ExportedKotlinPackages_generation_operatorFunctions_operatorFunctions_Vector__(void * self, void * other);
+
+void * generation_operatorFunctions_operatorFunctions_Vector_plus__TypesOfArguments__ExportedKotlinPackages_generation_operatorFunctions_operatorFunctions_Vector__(void * self, void * other);
+
+void * generation_operatorFunctions_operatorFunctions_Vector_times__TypesOfArguments__Swift_Int32__(void * self, int32_t scalar);
+
+NSString * generation_operatorFunctions_operatorFunctions_Vector_toString(void * self);
+
+void * generation_operatorFunctions_operatorFunctions_Vector_unaryMinus(void * self);
+
+int32_t generation_operatorFunctions_operatorFunctions_Vector_x_get(void * self);
+
+int32_t generation_operatorFunctions_operatorFunctions_Vector_y_get(void * self);
