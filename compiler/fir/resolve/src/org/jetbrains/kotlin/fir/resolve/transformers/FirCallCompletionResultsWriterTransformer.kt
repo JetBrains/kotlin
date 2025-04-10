@@ -1020,10 +1020,19 @@ class FirCallCompletionResultsWriterTransformer(
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
         val newData = expectedReturnType?.toExpectedType(data?.contextSensitiveResolutionReplacements)
-        val result = transformElement(anonymousFunction, newData)
+        val result = anonymousFunction
         for ((expression, _) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
+
+        // TODO: Avoid recursive transformation of statements again (KT-76677)
+        // The only thing that seems necessary is writing the resulting type of the block
+        // from already analyzed statements.
+        // On the other hand, what does "resulting type of a block" means and why it's obtained from the last statement-only
+        // is a different question.
+        // Currently, it only seems to be heavily used by org.jetbrains.kotlin.fir.resolve.ResolveUtilsKt.addReturnToLastStatementIfNeeded
+        // below when checking the `isNothing` case.
+        anonymousFunction.body?.let { transformBlock(it, newData) }
 
         val resultReturnType = anonymousFunction.computeReturnType(
             session,

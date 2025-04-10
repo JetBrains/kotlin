@@ -104,6 +104,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
     }
 
     @Test
+    @TestMetadata("nonLocalReturnFromNestedInline.kt")
+    public void testNonLocalReturnFromNestedInline() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/nonLocalReturnFromNestedInline.kt");
+    }
+
+    @Test
     @TestMetadata("parenthesis.kt")
     public void testParenthesis() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/parenthesis.kt");
