@@ -42,6 +42,7 @@ class RuntimePublicAPITest {
         nonPublicPackages: List<String> = emptyList(),
         nonPublicAnnotations: List<String> = emptyList()
     ) {
+        check(false) { "RuntimePublicAPITest have been executed!" }
         val base = File(basePath).absoluteFile.normalize()
         val jarFile = getJarFile(base, jarPattern, System.getProperty("kotlinVersion"))
 

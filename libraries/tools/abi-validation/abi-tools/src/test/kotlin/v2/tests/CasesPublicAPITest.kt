@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.abi.tools.legacy
 
-import org.jetbrains.kotlin.abi.tools.api.*
+import org.jetbrains.kotlin.abi.tools.api.AbiFilters
 import org.jetbrains.kotlin.abi.tools.v2.ToolsV2
-import org.junit.*
+import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestName
 import java.io.File
-import kotlin.io.walk
 import kotlin.test.fail
 
 class CasesPublicAPITest {
@@ -162,6 +162,7 @@ class CasesPublicAPITest {
         includedAnnotatedWith: Set<String> = emptySet(),
         excludedAnnotatedWith: Set<String> = emptySet(),
     ) {
+        check(false) { "CasesPublicAPITest have been executed!" }
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
         val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
