@@ -77,6 +77,12 @@ fun testWhen() {
             }
         }
     }
+
+    consume {
+        <!NO_ELSE_IN_WHEN!>when<!> (a) {
+            "" -> ""
+        }
+    }
 }
 
 fun testIfElse(
