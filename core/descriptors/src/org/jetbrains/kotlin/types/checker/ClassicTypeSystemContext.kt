@@ -499,7 +499,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return hasNoInferInternal(this)
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         errorSupportedOnlyInTypeInference()
     }
 

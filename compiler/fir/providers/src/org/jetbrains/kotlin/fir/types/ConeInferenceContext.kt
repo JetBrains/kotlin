@@ -372,7 +372,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return classSymbol.modality == Modality.FINAL
     }
 
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
+    override fun TypeVariableMarker.freshTypeConstructor(): TypeVariableTypeConstructorMarker {
         require(this is ConeTypeVariable)
         return this.typeConstructor
     }
