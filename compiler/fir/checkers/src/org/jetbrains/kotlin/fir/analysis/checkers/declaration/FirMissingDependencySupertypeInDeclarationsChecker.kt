@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,13 +22,13 @@ object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationC
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirClass) {
-            checkMissingDependencySuperTypes(declaration.symbol, declaration.source, reporter, context, isEagerCheck = false)
+            checkMissingDependencySuperTypes(declaration.symbol, declaration.source, isEagerCheck = false)
         }
 
         if (declaration is FirTypeParameterRefsOwner) {
             for (typeParameter in declaration.typeParameters) {
                 for (upperBound in typeParameter.toConeType().collectUpperBounds()) {
-                    checkMissingDependencySuperTypes(upperBound, typeParameter.source, reporter, context)
+                    checkMissingDependencySuperTypes(upperBound, typeParameter.source)
                 }
             }
         }

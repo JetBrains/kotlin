@@ -31,16 +31,19 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         if (symbol == null) {
-            val receiverType = expression.explicitReceiver?.resolvedType
-                ?.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType(context.session)
-            checkMissingDependencySuperTypes(receiverType, source, reporter, context)
+            val receiverType = expression.explicitReceiver
+                ?.resolvedType
+                ?.unwrapToSimpleTypeUsingLowerBound()
+                ?.fullyExpandedType(context.session)
+
+            checkMissingDependencySuperTypes(receiverType, source)
             return
         }
 
         val checkedSymbols = SmartSet.create<FirBasedSymbol<*>>()
 
         val dispatchReceiverSymbol = symbol.dispatchReceiverType?.toSymbol(context.session)
-        val missingSuperTypes = checkMissingDependencySuperTypes(dispatchReceiverSymbol, source, reporter, context, isEagerCheck = false)
+        val missingSuperTypes = checkMissingDependencySuperTypes(dispatchReceiverSymbol, source, isEagerCheck = false)
         dispatchReceiverSymbol?.let(checkedSymbols::add)
 
         val lazySupertypesUnresolvedByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
@@ -48,12 +51,12 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val ownerSymbol = symbol.getOwnerLookupTag()?.toSymbol(context.session)
         if (ownerSymbol != null && checkedSymbols.add(ownerSymbol)) {
-            checkMissingDependencySuperTypes(ownerSymbol, source, reporter, context, isEagerCheck)
+            checkMissingDependencySuperTypes(ownerSymbol, source, isEagerCheck)
         }
 
         val receiverSymbol = symbol.resolvedReceiverType?.toSymbol(context.session)
         if (receiverSymbol != null && checkedSymbols.add(receiverSymbol)) {
-            checkMissingDependencySuperTypes(receiverSymbol, source, reporter, context, isEagerCheck)
+            checkMissingDependencySuperTypes(receiverSymbol, source, isEagerCheck)
         }
     }
 }
