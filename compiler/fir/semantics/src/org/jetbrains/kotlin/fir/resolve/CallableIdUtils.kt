@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.CallableId
@@ -55,3 +58,6 @@ fun FirAnnotation.fqName(session: FirSession): FqName? {
     val symbol = annotationTypeRef.coneTypeSafe<ConeSimpleKotlinType>()?.toRegularClassSymbol(session) ?: return null
     return symbol.classId.asSingleFqName()
 }
+
+fun ConeClassLikeLookupTag.isRealOwnerOf(declarationSymbol: FirCallableSymbol<*>): Boolean =
+    this == declarationSymbol.dispatchReceiverClassLookupTagOrNull()

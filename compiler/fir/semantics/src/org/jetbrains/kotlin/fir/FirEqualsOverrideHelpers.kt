@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa
+package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
@@ -174,11 +174,11 @@ private fun FirClassSymbol<*>.getDeclaredEqualsOverrideContract(
 }
 
 /**
- * Determines if type smart-casting to the specified [ClassId] can be performed when values are
+ * Determines if type smart-casting to the specified [org.jetbrains.kotlin.name.ClassId] can be performed when values are
  * compared via equality. Because this is determined using the ClassId, only standard built-in
  * types are considered.
  */
-internal fun isSmartcastPrimitive(classId: ClassId?): Boolean {
+fun isSmartcastPrimitive(classId: ClassId?): Boolean {
     return when (classId) {
         // Support other primitives as well: KT-62246.
         StandardClassIds.String,
