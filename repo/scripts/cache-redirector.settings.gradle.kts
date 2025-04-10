@@ -283,7 +283,8 @@ fun URI.isCachedOrLocal() = scheme == "file" ||
         host == "cache-redirector.jetbrains.com" ||
         host == "teamcity.jetbrains.com" ||
         host == "buildserver.labs.intellij.net" ||
-        host == "packages.jetbrains.team"
+        host == "packages.jetbrains.team" ||
+        host == "redirector.kotlinlang.org"
 
 fun RepositoryHandler.findNonCachedRepositories(): List<String> {
     val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
