@@ -77,6 +77,12 @@ fun testWhen() {
             }
         }
     }
+
+    consume {
+        when (a) {
+            "" -> ""
+        }
+    }
 }
 
 fun testIfElse(
