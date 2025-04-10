@@ -2546,6 +2546,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
     }
 
     @Test
+    @TestMetadata("candidateWithImplicitReturnType.kt")
+    public void testCandidateWithImplicitReturnType() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/candidateWithImplicitReturnType.kt");
+    }
+
+    @Test
     @TestMetadata("infixFunction.kt")
     public void testInfixFunction() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/infixFunction.kt");
