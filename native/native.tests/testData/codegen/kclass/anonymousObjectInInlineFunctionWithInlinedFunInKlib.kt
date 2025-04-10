@@ -5,10 +5,6 @@
 // LANGUAGE: +IrInlinerBeforeKlibSerialization
 // IGNORE_BACKEND_K1: NATIVE
 
-// IGNORE_BACKEND: NATIVE
-// ^^^ KT-72441, KT-76547: Remove `IGNORE_BACKEND: NATIVE` after KT-72441.
-// Note: values of `expectedToStringName` are different from ones in `anonymousObjectInInlineFunction.kt`, due to inlining
-
 package codegen.kclass.kclass0
 import kotlin.test.*
 import kotlin.reflect.KClass
