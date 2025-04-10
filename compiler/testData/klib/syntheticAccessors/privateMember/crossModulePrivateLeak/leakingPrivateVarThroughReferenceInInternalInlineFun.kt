@@ -1,3 +1,7 @@
+// IGNORE_BACKEND: JS_IR, NATIVE
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, NATIVE
+// ^^^ Muted because accessor for function/constructor/property references are not generated for JS and first stage. To be fixed in KT-69797.
+
 // KT-72862: Undefined symbols
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // KT-72862: No function found for symbol
