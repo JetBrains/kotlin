@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
+import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
@@ -34,7 +35,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -598,15 +602,28 @@ abstract class FirDataFlowAnalyzer(
 
         if (leftOperandVariable !is RealVariable && rightOperandVariable !is RealVariable) return
 
-        if (operation == FirOperation.EQ || operation == FirOperation.NOT_EQ) {
-            if (hasUntrustworthyOverriddenEquals(leftOperandType, components.session, components.scopeSession)) return
+        val equalsContract = when {
+            operation != FirOperation.EQ && operation != FirOperation.NOT_EQ -> EqualsOverrideContract.SAFE_FOR_SMART_CAST
+            else -> computeEqualsOverrideContract(leftOperandType, components.session, components.scopeSession, trustExpectClasses = false)
         }
+
+        fun FirBasedSymbol<*>.isSingleton(): Boolean = this is FirEnumEntrySymbol
+                // If the object has a problematic `equals()`, it will be reported during `when` exhaustiveness analysis.
+                || this is FirRegularClassSymbol && classKind.isObject
 
         fun addEqualityImplications(variable: DataFlowVariable?, otherOperand: FirExpression) {
             if (variable !is RealVariable) return
-            flow.addImplication((expressionVariable eq isEq) implies (variable typeEq otherOperand.resolvedType))
 
-            (otherOperand as? FirResolvable)?.calleeReference?.toResolvedBaseSymbol()?.let { symbol ->
+            if (equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
+                flow.addImplication((expressionVariable eq isEq) implies (variable typeEq otherOperand.resolvedType))
+            }
+
+            val symbol = when (otherOperand) {
+                is FirPropertyAccessExpression -> otherOperand.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
+                is FirResolvedQualifier -> otherOperand.symbol?.takeIf { it.isSingleton() }
+                else -> null
+            }
+            if (symbol != null) {
                 flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
             }
         }

@@ -72,9 +72,9 @@ fun lookupSuperTypes(
     useSiteSession: FirSession,
     substituteTypes: Boolean,
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+    visitedSymbols: MutableSet<FirClassifierSymbol<*>> = SmartSet.create(),
 ): List<ConeClassLikeType> {
     return SmartList<ConeClassLikeType>().also {
-        val visitedSymbols = SmartSet.create<FirClassifierSymbol<*>>()
         for (symbol in symbols) {
             symbol.collectSuperTypes(it, visitedSymbols, deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
         }

@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: a
 
 open class PhantomEquivalence {

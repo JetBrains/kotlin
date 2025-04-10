@@ -456,6 +456,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> true
                 else -> return
             }
+            inferVariantsFromSubjectSmartCast(equalityOperatorCall, data)
             val symbol = when (val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression()) {
                 is FirResolvedQualifier -> {
                     val firClass = (argument.symbol as? FirRegularClassSymbol)?.fir

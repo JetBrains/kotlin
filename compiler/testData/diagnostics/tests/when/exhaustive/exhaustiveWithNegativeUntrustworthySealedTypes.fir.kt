@@ -17,7 +17,7 @@ fun foo(v: Variants): String {
         return "A"
     }
 
-    return <!NO_ELSE_IN_WHEN!>when<!> (v) {
+    return when (v) {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
@@ -33,7 +33,7 @@ fun bar(v: Variants): String {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
-        else -> "A?"
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "A?"
     }
 }
 
@@ -49,7 +49,7 @@ fun baz(v: Options): String {
         return "A"
     }
 
-    return <!NO_ELSE_IN_WHEN!>when<!> (v) {
+    return when (v) {
         is Options.B -> "B"
     }
 }
