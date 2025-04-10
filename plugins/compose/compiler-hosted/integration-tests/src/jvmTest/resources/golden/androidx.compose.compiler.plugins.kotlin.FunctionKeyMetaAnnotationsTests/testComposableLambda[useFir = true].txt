@@ -43,8 +43,8 @@ ComposableSingletons$TestKt$lambda$511230191$1 {
 }
 
 TestKt {
-    Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-239871899, startOffset=45, endOffset=108]
-    Bar (Landroidx/compose/runtime/Composer;I)V [key=-1333506531, startOffset=110, endOffset=208]
+    Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-239871899, startOffset=58, endOffset=108]
+    Bar (Landroidx/compose/runtime/Composer;I)V [key=-1333506531, startOffset=123, endOffset=208]
     Foo$lambda$0 (Lkotlin/jvm/functions/Function2;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
     Bar$lambda$1 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
 }

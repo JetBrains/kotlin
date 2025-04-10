@@ -5,11 +5,11 @@
         @5:4..10 CALL 'public final fun fail (<this>: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
           @4:4..10 CALL 'public final fun test (<this>: kotlin.String): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null
             @3:4..10 CALL 'public final fun test (): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null
-  @8:0..10:1 FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String [inline]
+  @8:7..10:1 FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String [inline]
     @8:26..10:1 BLOCK_BODY
       @9:4..16 RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String [inline] declared in <root>'
         @9:11..16 CONST String type=kotlin.String value="123"
-  @12:0..14:1 FUN name:test visibility:public modality:FINAL <> (<this>:kotlin.String) returnType:kotlin.String [inline]
+  @12:7..14:1 FUN name:test visibility:public modality:FINAL <> (<this>:kotlin.String) returnType:kotlin.String [inline]
     @12:11..17 VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.String
     @12:33..14:1 BLOCK_BODY
       @13:4..16 RETURN type=kotlin.Nothing from='public final fun test (<this>: kotlin.String): kotlin.String [inline] declared in <root>'

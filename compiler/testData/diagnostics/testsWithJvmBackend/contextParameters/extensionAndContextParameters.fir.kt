@@ -3,19 +3,19 @@
 class A
 class B
 
-<!CONFLICTING_JVM_DECLARATIONS!>context(a: A)
-fun foo() {}<!>
+context(a: A)
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo() {}<!>
 
 <!CONFLICTING_JVM_DECLARATIONS!>fun A.foo() { }<!>
 
-<!CONFLICTING_JVM_DECLARATIONS!>context(a: A, b: B)
-fun bar(){}<!>
+context(a: A, b: B)
+<!CONFLICTING_JVM_DECLARATIONS!>fun bar(){}<!>
 
-<!CONFLICTING_JVM_DECLARATIONS!>context(a: A)
-fun B.bar(){}<!>
+context(a: A)
+<!CONFLICTING_JVM_DECLARATIONS!>fun B.bar(){}<!>
 
-<!CONFLICTING_JVM_DECLARATIONS!>context(a: A, b: B)
-fun qux(){}<!>
+context(a: A, b: B)
+<!CONFLICTING_JVM_DECLARATIONS!>fun qux(){}<!>
 
 <!CONFLICTING_JVM_DECLARATIONS!>fun A.qux(b: B){}<!>
 

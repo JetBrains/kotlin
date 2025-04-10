@@ -10,15 +10,15 @@
     @11:4..18 FUN name:test1 visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Unit
       @11:4..18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
       @11:16..18 BLOCK_BODY
-    @14:4..17:18 FUN name:test2 visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Unit
+    @17:4..18 FUN name:test2 visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Unit
       annotations:
         @14:4..16:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
           @15:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @15:8..25 CONST String type=kotlin.String value="UNUSED_VARIABLE"
-      @14:4..17:18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
+      @17:4..18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
       @17:16..18 BLOCK_BODY
-    @20:4..21:18 FUN name:test3 visibility:private modality:FINAL <> (<this>:test.Test) returnType:kotlin.Unit
-      @20:4..21:18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
+    @21:4..18 FUN name:test3 visibility:private modality:FINAL <> (<this>:test.Test) returnType:kotlin.Unit
+      @21:4..18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
       @21:16..18 BLOCK_BODY
     @3:0..23:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @3:0..23:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

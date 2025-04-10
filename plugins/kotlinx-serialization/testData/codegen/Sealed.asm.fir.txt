@@ -32,6 +32,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
 
     private void <init>() {
         LABEL (L0)
+        LINENUMBER (18)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN
@@ -175,6 +176,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
 public final class Container$Companion : java/lang/Object {
     private void <init>() {
         LABEL (L0)
+        LINENUMBER (18)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN
@@ -234,14 +236,16 @@ public final class Container : java/lang/Object {
           LDC (r)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-        LINENUMBER (19)
+        LINENUMBER (18)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
+        LABEL (L2)
+        LINENUMBER (19)
           ALOAD (0)
           ALOAD (1)
           PUTFIELD (Container, r, LResult;)
           RETURN
-        LABEL (L2)
+        LABEL (L3)
     }
 
     public void <init>(int seen0, Result r, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
@@ -297,6 +301,7 @@ public final class Container : java/lang/Object {
 public final class Result$Companion : java/lang/Object {
     private void <init>() {
         LABEL (L0)
+        LINENUMBER (12)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN
@@ -398,6 +403,7 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
 
     private void <init>() {
         LABEL (L0)
+        LINENUMBER (14)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN
@@ -520,6 +526,7 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
 public final class Result$OK$Companion : java/lang/Object {
     private void <init>() {
         LABEL (L0)
+        LINENUMBER (14)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN
@@ -695,6 +702,7 @@ public final class X$Companion : java/lang/Object {
 
     private void <init>() {
         LABEL (L0)
+        LINENUMBER (6)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN

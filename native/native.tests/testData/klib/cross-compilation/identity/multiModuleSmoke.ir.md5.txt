@@ -3,6 +3,6 @@
 // MODULE: lib2
 3f2864e3320ecb7f3cb78afe8986eb42
 // MODULE: lib3
-adb862e6ca3bc0da5ad4652df34fd2ff
+5a037c0e4455f8444eb056a1ed23217c
 // MODULE: app
 44493dd48ae6a23cbdc7026a968040e8

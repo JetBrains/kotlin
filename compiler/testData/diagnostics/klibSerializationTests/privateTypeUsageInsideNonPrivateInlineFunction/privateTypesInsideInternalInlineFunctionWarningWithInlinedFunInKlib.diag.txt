@@ -15,9 +15,9 @@ private inline fun privateInline(): Any
 
 This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
@@ -48,9 +48,9 @@ private inline fun privateInline(): Any
 
 This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
 

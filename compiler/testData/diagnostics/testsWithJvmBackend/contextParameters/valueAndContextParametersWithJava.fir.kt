@@ -9,6 +9,6 @@ public interface JavaBase {
 import JavaBase
 
 interface KotlinInterface : JavaBase {
-    <!ACCIDENTAL_OVERRIDE!>context(a: String)
-    fun foo(b: String): String<!>
+    context(a: String)
+    <!ACCIDENTAL_OVERRIDE!>fun foo(b: String): String<!>
 }

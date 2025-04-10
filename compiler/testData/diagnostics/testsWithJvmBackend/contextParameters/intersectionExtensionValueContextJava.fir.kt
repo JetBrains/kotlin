@@ -23,6 +23,6 @@ interface IntersectionWithOverride : KotlinContextAndExtensionInterface, JavaInt
     override val String.foo: String
         <!ACCIDENTAL_OVERRIDE!>get() = ""<!>
 
-    <!ACCIDENTAL_OVERRIDE!>context(a: String)
-    override fun String.bar(b: String): String<!>
+    context(a: String)
+    override <!ACCIDENTAL_OVERRIDE!>fun String.bar(b: String): String<!>
 }

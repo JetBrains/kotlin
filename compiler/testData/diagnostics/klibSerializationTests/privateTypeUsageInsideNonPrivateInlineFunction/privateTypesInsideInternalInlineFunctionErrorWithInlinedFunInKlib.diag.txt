@@ -15,9 +15,9 @@ private inline fun privateInline(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:40:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:40:19: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:41:5: error: Public-API inline function accesses a non Public-API declaration
 
@@ -48,9 +48,9 @@ private inline fun privateInline(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:27: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:59:13: error: Public-API inline function accesses a non Public-API declaration
 

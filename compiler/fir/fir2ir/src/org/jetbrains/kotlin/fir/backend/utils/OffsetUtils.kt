@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.isFiller
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -42,6 +40,8 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(keywordTokens: TokenSet
 
 internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     val tokenSet = when (this) {
+        is FirSimpleFunction -> FUNCTION_KEYWORD_TOKENS
+        is FirConstructor -> CONSTRUCTOR_KEYWORD_TOKENS
         is FirVariable -> PROPERTY_KEYWORD_TOKENS
         else -> null
     }
@@ -187,6 +187,8 @@ private fun FirProperty.computeOffsetsWithoutInitializer(): Pair<Int, Int>? {
     return startOffset to endOffset
 }
 
+private val CONSTRUCTOR_KEYWORD_TOKENS = TokenSet.create(KtTokens.CONSTRUCTOR_KEYWORD)
+private val FUNCTION_KEYWORD_TOKENS = TokenSet.create(KtTokens.FUN_KEYWORD)
 private val PROPERTY_KEYWORD_TOKENS = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
 
 internal fun KtSourceElement.getChildTokenStartOffsetOrNull(tokenSet: TokenSet): Int? =

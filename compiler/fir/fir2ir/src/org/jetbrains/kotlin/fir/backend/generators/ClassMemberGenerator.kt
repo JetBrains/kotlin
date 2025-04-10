@@ -125,7 +125,10 @@ internal class ClassMemberGenerator(
                     val irClass = parent as IrClass
                     if (delegatedConstructor != null) {
                         val irDelegatingConstructorCall = conversionScope.forDelegatingConstructorCall(irFunction, irClass) {
-                            delegatedConstructor.toIrDelegatingConstructorCall()
+                            val sourceFirElement = if (firFunction.isPrimary) containingClass!! else delegatedConstructor
+                            sourceFirElement.convertWithOffsets { startOffset, endOffset ->
+                                delegatedConstructor.toIrDelegatingConstructorCall(startOffset, endOffset)
+                            }
                         }
                         body.statements += irDelegatingConstructorCall
                     }
@@ -159,10 +162,12 @@ internal class ClassMemberGenerator(
                     }
 
                     if (delegatedConstructor?.isThis == false) {
-                        val instanceInitializerCall = IrInstanceInitializerCallImpl(
-                            startOffset, endOffset, irClass.symbol, builtins.unitType
-                        )
-                        body.statements += instanceInitializerCall
+                        val sourceFirElement = if (firFunction.isPrimary) containingClass!! else firFunction
+                        body.statements += sourceFirElement.convertWithOffsets { startOffset, endOffset ->
+                            IrInstanceInitializerCallImpl(
+                                startOffset, endOffset, irClass.symbol, this@ClassMemberGenerator.builtins.unitType,
+                            )
+                        }
                     }
 
                     val regularBody = firFunction.body?.let { visitor.convertToIrBlockBody(it) }
@@ -348,14 +353,10 @@ internal class ClassMemberGenerator(
         return this
     }
 
-    internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
+    internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(startOffset: Int, endOffset: Int): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType(c)
         val referencedSymbol = calleeReference.toResolvedConstructorSymbol()
-            ?: return convertWithOffsets { startOffset, endOffset ->
-                IrErrorCallExpressionImpl(
-                    startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
-                )
-            }
+            ?: return IrErrorCallExpressionImpl(startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call")
 
         // Unwrap substitution overrides from both derived class and a superclass
         val constructorSymbol = referencedSymbol
@@ -364,60 +365,56 @@ internal class ClassMemberGenerator(
 
         check(constructorSymbol is FirConstructorSymbol)
 
-        return convertWithOffsets { startOffset, endOffset ->
-            val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-            val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
-            val constructor = constructorSymbol.fir
-            /*
-             * We should generate enum constructor call only if it is used to create new enum entry (so it's a super constructor call)
-             * If it is this constructor call that we are facing secondary constructor of enum, and should generate
-             *   regular delegating constructor call
-             *
-             * enum class Some(val x: Int) {
-             *   A(); // <---- super call, IrEnumConstructorCall
-             *
-             *   constructor() : this(10) // <---- this call, IrDelegatingConstructorCall
-             * }
-             */
-            @OptIn(UnexpandedTypeCheck::class)
-            if ((constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) && this.isSuper) {
-                IrEnumConstructorCallImplWithShape(
-                    startOffset, endOffset,
-                    constructedIrType,
-                    irConstructorSymbol,
-                    typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size,
-                    contextParameterCount = constructor.contextParameters.size,
-                    hasDispatchReceiver = constructor.dispatchReceiverType != null,
-                    hasExtensionReceiver = constructor.isExtension,
-                )
-            } else {
-                IrDelegatingConstructorCallImplWithShape(
-                    startOffset, endOffset,
-                    builtins.unitType,
-                    irConstructorSymbol,
-                    typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size + constructor.contextParameters.size,
-                    contextParameterCount = constructor.contextParameters.size,
-                    hasDispatchReceiver = constructor.dispatchReceiverType != null,
-                    hasExtensionReceiver = constructor.isExtension,
-                )
-            }.let {
-                if (constructor.typeParameters.isNotEmpty()) {
-                    if (typeArguments.isNotEmpty()) {
-                        for ((index, typeArgument) in typeArguments.withIndex()) {
-                            if (index >= constructor.typeParameters.size) break
-                            val irType = (typeArgument as ConeKotlinTypeProjection).type.toIrType(c)
-                            it.typeArguments[index] = irType
-                        }
-                    }
-                }
-                with(callGenerator) {
-                    declarationStorage.enterScope(irConstructorSymbol)
-                    val result = it.applyReceiversAndArguments(this@toIrDelegatingConstructorCall, constructorSymbol, null)
-                    declarationStorage.leaveScope(irConstructorSymbol)
-                    result
-                }
+        val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
+        val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
+        val constructor = constructorSymbol.fir
+        /*
+         * We should generate enum constructor call only if it is used to create new enum entry (so it's a super constructor call)
+         * If it is this constructor call that we are facing secondary constructor of enum, and should generate
+         *   regular delegating constructor call
+         *
+         * enum class Some(val x: Int) {
+         *   A(); // <---- super call, IrEnumConstructorCall
+         *
+         *   constructor() : this(10) // <---- this call, IrDelegatingConstructorCall
+         * }
+         */
+        @OptIn(UnexpandedTypeCheck::class)
+        val call = if ((constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) && this.isSuper) {
+            IrEnumConstructorCallImplWithShape(
+                startOffset, endOffset,
+                constructedIrType,
+                irConstructorSymbol,
+                typeArgumentsCount = constructor.typeParameters.size,
+                valueArgumentsCount = constructor.valueParameters.size,
+                contextParameterCount = constructor.contextParameters.size,
+                hasDispatchReceiver = constructor.dispatchReceiverType != null,
+                hasExtensionReceiver = constructor.isExtension,
+            )
+        } else {
+            IrDelegatingConstructorCallImplWithShape(
+                startOffset, endOffset,
+                builtins.unitType,
+                irConstructorSymbol,
+                typeArgumentsCount = constructor.typeParameters.size,
+                valueArgumentsCount = constructor.valueParameters.size + constructor.contextParameters.size,
+                contextParameterCount = constructor.contextParameters.size,
+                hasDispatchReceiver = constructor.dispatchReceiverType != null,
+                hasExtensionReceiver = constructor.isExtension,
+            )
+        }
+
+        if (constructor.typeParameters.isNotEmpty() && typeArguments.isNotEmpty()) {
+            for ((index, typeArgument) in typeArguments.withIndex()) {
+                if (index >= constructor.typeParameters.size) break
+                call.typeArguments[index] = (typeArgument as ConeKotlinTypeProjection).type.toIrType(c)
+            }
+        }
+
+        with(callGenerator) {
+            declarationStorage.enterScope(irConstructorSymbol)
+            return call.applyReceiversAndArguments(this@toIrDelegatingConstructorCall, constructorSymbol, null).also {
+                declarationStorage.leaveScope(irConstructorSymbol)
             }
         }
     }

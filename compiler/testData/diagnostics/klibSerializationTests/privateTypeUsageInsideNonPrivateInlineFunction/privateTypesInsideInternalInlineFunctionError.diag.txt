@@ -10,9 +10,9 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:37:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionError.kt:40:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:40:19: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionError.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionError.kt:41:5: error: Public-API inline function accesses a non Public-API declaration
 
@@ -38,9 +38,9 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:56:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionError.kt:58:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:58:27: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionError.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionError.kt:59:13: error: Public-API inline function accesses a non Public-API declaration
 

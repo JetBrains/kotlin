@@ -25,6 +25,24 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
   }
 
   @Test
+  @TestMetadata("annotatedConstructor.kt")
+  public void testAnnotatedConstructor() {
+    runTest("compiler/testData/debug/stepping/annotatedConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFunction.kt")
+  public void testAnnotatedFunction() {
+    runTest("compiler/testData/debug/stepping/annotatedFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedInlineFunctionWithDefault.kt")
+  public void testAnnotatedInlineFunctionWithDefault() {
+    runTest("compiler/testData/debug/stepping/annotatedInlineFunctionWithDefault.kt");
+  }
+
+  @Test
   @TestMetadata("annotatedLocalVariable.kt")
   public void testAnnotatedLocalVariable() {
     runTest("compiler/testData/debug/stepping/annotatedLocalVariable.kt");

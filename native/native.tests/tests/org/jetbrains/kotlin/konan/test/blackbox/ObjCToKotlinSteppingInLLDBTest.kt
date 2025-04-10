@@ -109,12 +109,12 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             > b ${CLANG_FILE_NAME}:5
             > run
             > thread step-in
-            [..]`kfun:Bar.foo#internal(_this=[]) at lib.kt:6:5
+            [..]`kfun:Bar.foo#internal(_this=[]) at lib.kt:6:14
                3   	}
                4   	fun createFoo(): Foo = Bar()
                5   	private class Bar : Foo {
             -> 6   	    override fun foo() {
-                	    ^
+                	             ^
                7   	        print("")
                8   	    }
                9   	}
