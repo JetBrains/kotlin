@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -107,6 +109,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         return this == null || this is FirErrorExpression && diagnostic is ConeSyntaxDiagnostic
     }
 
+    @OptIn(ApplicabilityDetail::class)
     private fun checkComponentCall(
         source: KtSourceElement,
         destructuringDeclarationType: ConeKotlinType,
@@ -145,12 +148,21 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     context
                 )
             }
-            is ConeAmbiguityError -> {
+            is ConeAmbiguityError if diagnostic.applicability.isSuccess -> {
                 reporter.reportOn(
                     source,
                     FirErrors.COMPONENT_FUNCTION_AMBIGUITY,
                     diagnostic.name,
                     diagnostic.candidates.map { it.symbol },
+                    context
+                )
+            }
+            is ConeAmbiguityError -> {
+                reporter.reportOn(
+                    source,
+                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    diagnostic.name,
+                    destructuringDeclarationType,
                     context
                 )
             }
