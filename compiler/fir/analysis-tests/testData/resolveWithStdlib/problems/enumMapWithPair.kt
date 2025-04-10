@@ -5,9 +5,11 @@
 
 import java.util.*
 
-class CustomEnumMap<K : Enum<K>, V> private constructor(
-    private val enumMap: EnumMap<K, V>
-) : Map<K,V> by enumMap {
+class CustomEnumMap<KK : Enum<KK>, VV> private constructor(
+    private val enumMap: EnumMap<KK, VV>
+) : Map<KK, VV> by enumMap {
 
-    constructor(p: Pair<K, V>) : this(EnumMap(mapOf(p)))
+    constructor(p: Pair<KK, VV>) : this(EnumMap(mapOf(p)))
 }
+
+fun <KKK, VVV> mapOf(p: Pair<KKK, VVV>): Map<KKK, VVV> = TODO()
