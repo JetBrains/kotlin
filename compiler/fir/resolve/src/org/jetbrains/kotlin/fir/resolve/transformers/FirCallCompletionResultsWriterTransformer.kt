@@ -1020,7 +1020,6 @@ class FirCallCompletionResultsWriterTransformer(
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
         val newData = expectedReturnType?.toExpectedType(data?.contextSensitiveResolutionReplacements)
-        val result = anonymousFunction
         for ((expression, _) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
@@ -1042,9 +1041,9 @@ class FirCallCompletionResultsWriterTransformer(
         )
 
         if (initialReturnType != resultReturnType) {
-            val fakeSource = result.source?.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType)
-            result.replaceReturnTypeRef(result.returnTypeRef.resolvedTypeFromPrototype(resultReturnType, fakeSource))
-            session.lookupTracker?.recordTypeResolveAsLookup(result.returnTypeRef, result.source, context.file.source)
+            val fakeSource = anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType)
+            anonymousFunction.replaceReturnTypeRef(anonymousFunction.returnTypeRef.resolvedTypeFromPrototype(resultReturnType, fakeSource))
+            session.lookupTracker?.recordTypeResolveAsLookup(anonymousFunction.returnTypeRef, anonymousFunction.source, context.file.source)
             needUpdateLambdaType = true
         }
 
@@ -1053,13 +1052,13 @@ class FirCallCompletionResultsWriterTransformer(
             // class ID and annotations. On the other hand, `functionTypeKind()` checks only class ID.
             val kind = initialExpectedType?.functionTypeKindForDeserializedConeType()
                 ?: initialExpectedType?.functionTypeKind(session)
-                ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionTypeKind(session)
-            result.replaceTypeRef(result.constructFunctionTypeRef(session, kind))
-            session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
+                ?: anonymousFunction.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionTypeKind(session)
+            anonymousFunction.replaceTypeRef(anonymousFunction.constructFunctionTypeRef(session, kind))
+            session.lookupTracker?.recordTypeResolveAsLookup(anonymousFunction.typeRef, anonymousFunction.source, context.file.source)
         }
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.
-        result.addReturnToLastStatementIfNeeded(session)
-        return result
+        anonymousFunction.addReturnToLastStatementIfNeeded(session)
+        return anonymousFunction
     }
 
     /**
