@@ -1,0 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
+// FILE: J.java
+public class J {
+    public static J foo() { return null; }
+}
+
+// FILE: test.kt
+fun test() {
+    val (x) = <!COMPONENT_FUNCTION_MISSING!>J.foo()<!>
+}
