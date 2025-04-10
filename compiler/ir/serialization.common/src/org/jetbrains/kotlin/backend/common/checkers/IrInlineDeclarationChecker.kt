@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
@@ -85,5 +86,9 @@ class IrInlineDeclarationChecker(
 
     override fun visitFunction(declaration: IrFunction, data: InlineFunctionInfo?) {
         declaration.acceptChildren(this, data?.insideDeclaration(declaration, declaration.takeIf { it.isInline }))
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression, data: InlineFunctionInfo?) {
+        expression.acceptChildren(this, data)
     }
 }
