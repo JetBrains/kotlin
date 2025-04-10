@@ -26879,6 +26879,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("inaccessibleSuperTypeWithRepeatedContext.kt")
+      public void testInaccessibleSuperTypeWithRepeatedContext() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleSuperTypeWithRepeatedContext.kt");
+      }
+
+      @Test
       @TestMetadata("InaccessibleTypeEagerCheck.kt")
       public void testInaccessibleTypeEagerCheck() {
         runTest("compiler/testData/diagnostics/tests/multimodule/InaccessibleTypeEagerCheck.kt");

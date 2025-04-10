@@ -233,6 +233,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("unavailableRecord.kt")
+  public void testUnavailableRecord() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unavailableRecord.kt");
+  }
+
+  @Test
   @TestMetadata("unresolved.kt")
   public void testUnresolved() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolved.kt");
