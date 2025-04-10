@@ -377,6 +377,7 @@ enum class LanguageFeature(
     ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs(sinceVersion = KOTLIN_2_2, kind = BUG_FIX), // KT-70916
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_2, kind = OTHER), // KT-76606
     FixationEnhancementsIn22(KOTLIN_2_2, kind = OTHER), // KT-76345, KT-71854
+    ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, kind = BUG_FIX), // KT-71138
 
     // 2.3
 
