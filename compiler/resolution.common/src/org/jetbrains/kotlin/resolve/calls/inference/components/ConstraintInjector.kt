@@ -160,9 +160,12 @@ class ConstraintInjector(
         typeCheckerState: TypeCheckerStateForConstraintInjector,
         c: Context
     ) {
+        var x = 0
         while (typeCheckerState.hasConstraintsToProcess()) {
             processGivenConstraints(c, typeCheckerState, typeCheckerState.extractAllConstraints()!!)
+            x++
         }
+        println("$x iteration in processConstraintsIgnoringForksData")
     }
 
     private fun processGivenConstraints(
@@ -171,8 +174,16 @@ class ConstraintInjector(
         constraintsToProcess: Collection<Pair<TypeVariableMarker, Constraint>>
     ) {
         val reducedConstraints = if (constraintsToProcess.size < 4) constraintsToProcess else constraintsToProcess.toSet()
+        println(
+            "${constraintsToProcess.size} (${reducedConstraints.size} unique) constraints processed. " +
+                    "${reducedConstraints.mapTo(mutableSetOf()) { it.first }.size} unique variables"
+        )
+        var x = 0
         for ((typeVariable, constraint) in reducedConstraints) {
-            if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
+            if (c.shouldWeSkipConstraint(typeVariable, constraint)) {
+                x++
+                continue
+            }
 
             val typeVariableConstructor = typeVariable.freshTypeConstructor(c)
             val constraints =
@@ -197,6 +208,7 @@ class ConstraintInjector(
                 constraintIncorporator.incorporate(typeCheckerState, typeVariable, constraintToIncorporate)
             }
         }
+        println("    $x constraints were skipped")
     }
 
     private fun recordReferencesOfOtherTypeVariableInConstraint(
@@ -219,8 +231,15 @@ class ConstraintInjector(
 
         val constraintType = constraint.type
 
-        if (constraintType.typeConstructor() == typeVariable.freshTypeConstructor()) {
-            if (constraintType.lowerBoundIfFlexible().isMarkedNullable() && constraint.kind == LOWER) return false // T? <: T
+        val lowerBoundType = constraintType.lowerBoundIfFlexible()
+        if (lowerBoundType.typeConstructor().isTypeParameterTypeConstructor()) {
+            if (typeVariable.freshTypeConstructor().typeParameter == lowerBoundType.typeConstructor().getTypeParameterClassifier()) {
+                return true
+            }
+        }
+
+        if (lowerBoundType.typeConstructor() == typeVariable.freshTypeConstructor()) {
+            if (lowerBoundType.isMarkedNullable() && constraint.kind == LOWER) return false // T? <: T
 
             return true // T <: T(?!)
         }
