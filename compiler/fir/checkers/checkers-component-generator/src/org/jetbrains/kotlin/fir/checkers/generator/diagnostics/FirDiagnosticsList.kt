@@ -1676,6 +1676,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INVALID_IF_AS_EXPRESSION by error<KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
         val ELSE_MISPLACED_IN_WHEN by error<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)
         val REDUNDANT_ELSE_IN_WHEN by warning<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)
+        val UNSAFE_EXHAUSTIVENESS by warning<PsiElement> {
+            parameter<ClassId>("symbol")
+        }
         val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT by error<KtElement> {
             parameter<String>("illegalReason")
         }

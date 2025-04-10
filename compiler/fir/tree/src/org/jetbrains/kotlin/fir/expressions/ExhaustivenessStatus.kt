@@ -14,7 +14,9 @@ sealed class ExhaustivenessStatus {
      * This value is used if the subject has type other than `Nothing`, in which case it's literally exhaustive only if type's possible
      * cases are properly covered.
      */
-    object ProperlyExhaustive : ExhaustivenessStatus()
+    data class ProperlyExhaustive(
+        val symbolsNotCoveredByUnsafeEquals: List<WhenMissingCase.SymbolsNotCoveredByUnsafeEqualsAreMissing> = emptyList(),
+    ) : ExhaustivenessStatus()
 
     /**
      * This value is used when there is an `else` branch present and the subject type is [ProperlyExhaustive].
@@ -38,10 +40,10 @@ sealed class ExhaustivenessStatus {
 
 
 val FirWhenExpression.isExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive ||
+    get() = exhaustivenessStatus is ExhaustivenessStatus.ProperlyExhaustive ||
             exhaustivenessStatus == ExhaustivenessStatus.ExhaustiveAsNothing ||
             exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive
 
 val FirWhenExpression.isProperlyExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive ||
+    get() = exhaustivenessStatus is ExhaustivenessStatus.ProperlyExhaustive ||
             exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive

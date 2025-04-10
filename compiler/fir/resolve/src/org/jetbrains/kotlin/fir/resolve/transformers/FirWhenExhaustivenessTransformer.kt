@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -156,7 +156,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         if (subjectType == null) {
             whenExpression.replaceExhaustivenessStatus(
                 when {
-                    whenExpression.hasElseBranch() -> ExhaustivenessStatus.ProperlyExhaustive
+                    whenExpression.hasElseBranch() -> ExhaustivenessStatus.ProperlyExhaustive()
                     else -> ExhaustivenessStatus.NotExhaustive.noElseBranch(subjectType = null)
                 }
             )
@@ -179,18 +179,14 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             whenExpression.hasElseBranch() -> when {
                 // If there is an else branch and the upper-bound is properly exhaustive, the else branch is redundant.
                 // Otherwise, the when-expression is properly exhaustive based on the else branch.
-                computeUpperBoundStatus() == ExhaustivenessStatus.ProperlyExhaustive -> ExhaustivenessStatus.RedundantlyExhaustive
-                else -> ExhaustivenessStatus.ProperlyExhaustive
+                computeUpperBoundStatus() is ExhaustivenessStatus.ProperlyExhaustive -> ExhaustivenessStatus.RedundantlyExhaustive
+                else -> ExhaustivenessStatus.ProperlyExhaustive()
             }
 
             else -> minimumStatus
         }
 
         whenExpression.replaceExhaustivenessStatus(status)
-    }
-
-    private fun FirWhenExpression.hasElseBranch(): Boolean {
-        return branches.any { it.condition is FirElseIfTrueCondition }
     }
 
     private fun computeExhaustivenessStatus(whenExpression: FirWhenExpression, subjectType: ConeKotlinType): ExhaustivenessStatus {
@@ -214,7 +210,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             ) {
                 val localStatus = computeStatusForNonIntersectionType(unwrappedSubjectType, session, whenExpression)
                 when {
-                    localStatus === ExhaustivenessStatus.ProperlyExhaustive -> {
+                    localStatus is ExhaustivenessStatus.ProperlyExhaustive -> {
                         status = localStatus
                         break
                     }
@@ -240,9 +236,10 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         val whenMissingCases = mutableListOf<WhenMissingCase>()
         whenMissingCases.collectMissingCases(checkers, whenExpression, unwrappedSubjectType, session)
+        val casesWithUntrustworthyEquals = whenMissingCases.filterIsInstance<WhenMissingCase.SymbolsNotCoveredByUnsafeEqualsAreMissing>()
 
-        return if (whenMissingCases.isEmpty()) {
-            ExhaustivenessStatus.ProperlyExhaustive
+        return if (whenMissingCases.size == casesWithUntrustworthyEquals.size) {
+            ExhaustivenessStatus.ProperlyExhaustive(casesWithUntrustworthyEquals)
         } else {
             ExhaustivenessStatus.NotExhaustive(whenMissingCases, unwrappedSubjectType)
         }
@@ -431,14 +428,13 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         destination: MutableCollection<WhenMissingCase>
     ) {
         val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session) ?: return
-        val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
-        val flags = Flags(allSubclasses, checkedSubclasses, session)
+        val flags = Flags(allSubclasses, session = session)
 
         whenExpression.subjectVariable?.initializer?.let { initializer ->
             inferVariantsFromSubjectSmartCast(initializer, flags)
         }
         whenExpression.accept(ConditionChecker, flags)
-        (allSubclasses - checkedSubclasses).mapNotNullTo(destination) {
+        (allSubclasses - flags.checkedSubclasses - flags.inferredSymbolEqualsChecks.keys).mapNotNullTo(destination) {
             when (it) {
                 is FirClassSymbol<*> -> WhenMissingCase.IsTypeCheckIsMissing(
                     it.classId,
@@ -449,11 +445,21 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 else -> null
             }
         }
+
+        // Explicit checks take precedence over inferred
+        val symbolEqualsChecks = flags.inferredSymbolEqualsChecks + flags.explicitSymbolEqualsChecks
+
+        symbolEqualsChecks.mapNotNullTo(destination) {
+            val classId = (it.key as? FirClassSymbol<*>)?.classId ?: return@mapNotNullTo null
+            WhenMissingCase.SymbolsNotCoveredByUnsafeEqualsAreMissing(classId, it.value)
+        }
     }
 
     private class Flags(
         val allSubclasses: Set<FirBasedSymbol<*>>,
-        val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
+        val checkedSubclasses: MutableSet<FirBasedSymbol<*>> = mutableSetOf(),
+        val explicitSymbolEqualsChecks: MutableMap<FirBasedSymbol<*>, KtSourceElement?> = mutableMapOf(),
+        val inferredSymbolEqualsChecks: MutableMap<FirBasedSymbol<*>, KtSourceElement?> = mutableMapOf(),
         val session: FirSession
     )
 
@@ -461,12 +467,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         if (subject !is FirSmartCastExpression) return
 
         for (knownNonType in subject.lowerTypesFromSmartCast) {
-            val symbol = when (knownNonType) {
-                is DfaType.Cone -> knownNonType.type.toSymbol(data.session)
-                is DfaType.Symbol -> knownNonType.symbol
-                else -> null
+            when (knownNonType) {
+                is DfaType.Cone -> {
+                    val symbol = knownNonType.type.toSymbol(data.session) ?: continue
+                    processBranch(symbol, isNegated = false, data)
+                }
+                is DfaType.Symbol -> data.inferredSymbolEqualsChecks.getOrPut(knownNonType.symbol) { null }
+                else -> {}
             }
-            processBranch(symbol ?: continue, isNegated = false, data)
         }
     }
 
@@ -492,6 +500,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 }
             } ?: return
             processBranch(symbol, isNegated, data)
+            data.explicitSymbolEqualsChecks.getOrPut(symbol) { equalityOperatorCall.source }
         }
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Flags) {

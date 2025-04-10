@@ -4030,6 +4030,12 @@ internal class RedundantElseInWhenImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtWhenEntry>(firDiagnostic, token), KaFirDiagnostic.RedundantElseInWhen
 
+internal class UnsafeExhaustivenessImpl(
+    override val symbol: ClassId,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsafeExhaustiveness
+
 internal class IllegalDeclarationInWhenSubjectImpl(
     override val illegalReason: String,
     firDiagnostic: KtPsiDiagnostic,

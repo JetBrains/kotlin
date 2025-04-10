@@ -1,1 +1,2 @@
 IsTypeCheckIsMissing - is Foo.B
+SymbolsNotCoveredByUnsafeEqualsAreMissing - A

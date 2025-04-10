@@ -97,6 +97,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirExhaustiveWhenChecker,
         FirWhenConditionChecker,
         FirWhenSubjectChecker,
+        FirWhenEqualsOverrideChecker,
         FirCommaInWhenConditionChecker,
         FirConfusingWhenBranchSyntaxChecker,
         FirWhenGuardChecker,

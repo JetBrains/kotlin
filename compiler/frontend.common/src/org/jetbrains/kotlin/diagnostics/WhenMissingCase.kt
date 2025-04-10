@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.render
@@ -64,6 +65,30 @@ sealed class WhenMissingCase {
         override fun toString(): String {
             return callableId.callableName.render()
         }
+    }
+
+    /**
+     * When comparing `object`s as part of a sealed hierarchy via `==`,
+     * the check may sometimes return `false` in such a way that it would not
+     * be safe to exclude the corresponding variant (imagine, for example,
+     * that you received a deserialized `object` and now the check returns
+     * `false`).
+     * When this happens you can say that the object we are comparing with
+     * has "suboptions" defined by the specific `equals()` implementation, and
+     * having just one `== MyObject` check is not enough: there are some other
+     * suboptions that it doesn't account for and those are missing.
+     * Alternatively, you could say that the proper `is MyObject` case is missing,
+     * but not to the point that [IsTypeCheckIsMissing] should be used.
+     *
+     * Unlike other variants of [WhenMissingCase], the presence of this one
+     * doesn't lead to concluding that the `when` expression is not exhaustive.
+     * This is due to the historical reason that people have been writing code
+     * with naive comparisons to objects for quite a while, and we are not ready
+     * to make it red.
+     * Instead, the warning `UNSAFE_EXHAUSTIVENESS` is reported.
+     */
+    class SymbolsNotCoveredByUnsafeEqualsAreMissing(val classId: ClassId, val source: KtSourceElement?) : WhenMissingCase() {
+        override val branchConditionText: String get() = classId.shortClassName.asString()
     }
 
     override fun toString(): String {

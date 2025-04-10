@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -362,6 +363,10 @@ val FirExpression.isStatementLikeExpression: Boolean
 
 private val FirExpression.isIndexedAssignment: Boolean
     get() = this is FirBlock && statements.lastOrNull()?.source?.kind == KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion
+
+fun FirWhenExpression.hasElseBranch(): Boolean {
+    return branches.any { it.condition is FirElseIfTrueCondition }
+}
 
 fun FirBasedSymbol<*>.packageFqName(): FqName {
     return when (this) {
