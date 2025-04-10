@@ -1,6 +1,7 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
 // FREE_COMPILER_ARGS: -XXLanguage:+IrInlinerBeforeKlibSerialization
+// IGNORE_NATIVE_K2: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // IGNORE_NATIVE_K1: optimizationMode=DEBUG
 // FILE: kt42208-1.kt
 fun main() {
