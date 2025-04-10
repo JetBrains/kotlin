@@ -2041,6 +2041,7 @@ final class kotlin.time/Instant : kotlin.io/Serializable, kotlin/Comparable<kotl
         final fun fromEpochSeconds(kotlin/Long, kotlin/Long = ...): kotlin.time/Instant // kotlin.time/Instant.Companion.fromEpochSeconds|fromEpochSeconds(kotlin.Long;kotlin.Long){}[0]
         final fun now(): kotlin.time/Instant // kotlin.time/Instant.Companion.now|now(){}[0]
         final fun parse(kotlin/CharSequence): kotlin.time/Instant // kotlin.time/Instant.Companion.parse|parse(kotlin.CharSequence){}[0]
+        final fun parseOrNull(kotlin/CharSequence): kotlin.time/Instant? // kotlin.time/Instant.Companion.parseOrNull|parseOrNull(kotlin.CharSequence){}[0]
     }
 }
 
