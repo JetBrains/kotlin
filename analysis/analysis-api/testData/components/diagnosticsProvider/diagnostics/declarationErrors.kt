@@ -5,5 +5,4 @@ class A {
 }
 class B: A
 
-// IGNORE_FIR
-// Does not pass because of KT-61296
+// SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK: KT-63221
