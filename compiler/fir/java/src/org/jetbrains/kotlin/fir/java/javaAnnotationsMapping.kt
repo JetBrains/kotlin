@@ -289,7 +289,7 @@ private fun fillAnnotationArgumentMapping(
         // Binary session dependencies work differently in the CLI and the Analysis API mode,
         // so some common mechanism has to be used to eliminate the difference.
         // This approach works both for Java and Kotlin annotations, as in the end all of them are just .class files.
-        val binaryClass = javaAnnotation.resolve()
+        val binaryClass = javaAnnotation.resolve()?.originalClsJavaClass
         binaryClass?.annotationParametersMapping(session, source)
     } else {
         // For source sessions symbol provider-based search is used as it is more precise
