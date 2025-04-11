@@ -74,6 +74,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             .mapNotNull { it.loadIrFragments()?.mainFragment }
             .let { fragments -> if (preserveIcOrder) fragments.sortedBy { it.fragmentTag } else fragments }
 
+        val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
+
         val res = compileWasm(
             wasmCompiledFileFragments = wasmArtifacts,
             moduleName = moduleName,
@@ -84,13 +86,14 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             generateWat = wasmGenerateWat,
             generateDwarf = generateDwarf,
             generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP),
+            useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
 
         writeCompilationResult(
             result = res,
             dir = outputDir,
             fileNameBase = outputName,
-            useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
+            useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
         return res
     }
