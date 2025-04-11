@@ -68,7 +68,7 @@ class WasmBoxRunner(
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            writeCompilationResult(res, dir, baseFileName, false)
+            writeCompilationResult(res, dir, baseFileName)
 
             File(dir, "test.mjs")
                 .ignoreInSizeChecks()

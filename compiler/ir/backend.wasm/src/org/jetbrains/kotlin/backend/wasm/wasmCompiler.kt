@@ -49,7 +49,8 @@ class WasmCompilerResult(
     val jsWrapper: String,
     val wasm: ByteArray,
     val debugInformation: DebugInformation?,
-    val dts: String?
+    val dts: String?,
+    val useDebuggerCustomFormatters: Boolean
 )
 
 class DebugInformation(
@@ -234,7 +235,8 @@ fun compileWasm(
             sourceMapGeneratorForBinary?.generate(),
             sourceMapGeneratorForText?.generate(),
         ),
-        dts = typeScriptFragment?.raw
+        dts = typeScriptFragment?.raw,
+        useDebuggerCustomFormatters = useDebuggerCustomFormatters
     )
 }
 
@@ -465,8 +467,7 @@ ${generateExports(exports)}
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String,
-    useDebuggerCustomFormatters: Boolean
+    fileNameBase: String
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -485,7 +486,7 @@ fun writeCompilationResult(
     result.debugInformation?.sourceMapForText?.let {
         File(dir, "$fileNameBase.wat.map").writeText(it)
     }
-    if (useDebuggerCustomFormatters) {
+    if (result.useDebuggerCustomFormatters) {
         val fileName = "custom-formatters.js"
         val systemClassLoader = ClassLoader.getSystemClassLoader()
         val customFormattersInputStream = systemClassLoader.getResourceAsStream(fileName)

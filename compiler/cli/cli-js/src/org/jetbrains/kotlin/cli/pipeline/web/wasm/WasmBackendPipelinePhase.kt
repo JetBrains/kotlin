@@ -92,8 +92,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         writeCompilationResult(
             result = res,
             dir = outputDir,
-            fileNameBase = outputName,
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            fileNameBase = outputName
         )
         return res
     }
@@ -194,8 +193,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             writeCompilationResult(
                 result = res,
                 dir = outputDir,
-                fileNameBase = outputName,
-                useDebuggerCustomFormatters = useDebuggerCustomFormatters
+                fileNameBase = outputName
             )
 
             return res

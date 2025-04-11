@@ -100,7 +100,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            writeCompilationResult(res, dir, compiledFileBase, true)
+            writeCompilationResult(res, dir, compiledFileBase)
             File(dir, "test.mjs").writeText(testFileContent)
 
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
