@@ -26,6 +26,12 @@ fun foo() {
 
     val <!UNDERSCORE_IS_RESERVED!>_<!> by lazy { 10 }
     var <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()
+
+    val <!UNDERSCORE_IS_RESERVED, VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>_<!>
+    val <!UNDERSCORE_IS_RESERVED!>_<!>: Int
+    val <!UNDERSCORE_IS_RESERVED!>_<!>: String = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
+    val <!UNDERSCORE_IS_RESERVED!>_<!> = 1
+    val <!UNDERSCORE_IS_RESERVED!>_<!>: Int = 1
 }
 
 class Foo() {
@@ -39,3 +45,9 @@ class Foo2() {
 }
 
 val <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()
+
+val Int.<!UNDERSCORE_IS_RESERVED!>_<!>: String
+    get() = this.toString()
+
+val <T> T.<!UNDERSCORE_IS_RESERVED!>_<!>: String
+    get() = this.toString()

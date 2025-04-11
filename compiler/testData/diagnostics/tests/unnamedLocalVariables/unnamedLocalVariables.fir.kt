@@ -26,6 +26,12 @@ fun foo() {
 
     val _ <!UNNAMED_DELEGATED_PROPERTY!>by<!> lazy { 10 }
     <!UNNAMED_VAR_PROPERTY!>var<!> _ = writeTo()
+
+    val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>_<!>
+    val _: Int
+    val _: String = <!INITIALIZER_TYPE_MISMATCH!>1<!>
+    val _ = 1
+    val _: Int = 1
 }
 
 class Foo() {
@@ -39,3 +45,9 @@ class Foo2() {
 }
 
 val <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()
+
+val Int.<!UNDERSCORE_IS_RESERVED!>_<!>: String
+    get() = this.toString()
+
+val <T> T.<!UNDERSCORE_IS_RESERVED!>_<!>: String
+    get() = this.toString()
