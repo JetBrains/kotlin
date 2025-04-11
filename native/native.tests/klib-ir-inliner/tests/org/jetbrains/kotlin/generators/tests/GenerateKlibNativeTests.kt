@@ -56,6 +56,14 @@ fun main() {
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
+            testClass<AbstractFirNativeDiagnosticsWithIrInlinerTestBase>(suiteTestClassName = "FirNativeDiagnosticWithIrInlinerTestGenerated") {
+                model(
+                    relativeRootPath = "irInliner",
+                    pattern = "^([^_](.+))\\.kt$",
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
             testClass<AbstractDiagnosticsNativeTest>(
                 annotations = listOf(*frontendClassic()),
             ) {
