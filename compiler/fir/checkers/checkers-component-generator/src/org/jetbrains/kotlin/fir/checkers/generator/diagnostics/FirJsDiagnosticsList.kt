@@ -115,6 +115,8 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<String>("name")
         }
         val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {

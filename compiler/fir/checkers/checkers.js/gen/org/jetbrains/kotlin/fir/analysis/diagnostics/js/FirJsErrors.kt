@@ -82,6 +82,7 @@ object FirJsErrors {
     val NON_EXPORTABLE_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> = KtDiagnosticFactory2("NON_EXPORTABLE_TYPE", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
     val NON_CONSUMABLE_EXPORTED_IDENTIFIER: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NON_CONSUMABLE_EXPORTED_IDENTIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val NAMED_COMPANION_IN_EXPORTED_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXPORTED_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
+    val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
 
     // Dynamics
     val DELEGATION_BY_DYNAMIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_BY_DYNAMIC", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

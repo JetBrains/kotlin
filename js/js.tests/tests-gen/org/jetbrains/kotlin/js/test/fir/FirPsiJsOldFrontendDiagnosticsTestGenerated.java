@@ -505,6 +505,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("expectActualExports.kt")
+    public void testExpectActualExports() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/expectActualExports.kt");
+    }
+
+    @Test
     @TestMetadata("extendingNonExportedType.kt")
     public void testExtendingNonExportedType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");

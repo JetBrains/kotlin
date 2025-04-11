@@ -15,6 +15,7 @@ object StandardClassIds {
     val BASE_SEQUENCES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("sequences"))
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
+    val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
     val BASE_ANNOTATIONS_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotations")).child(Name.identifier("jvm"))
     val BASE_JVM_INTERNAL_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("internal"))
     val BASE_JVM_FUNCTIONS_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("functions"))
@@ -240,6 +241,9 @@ object StandardClassIds {
         val jvmName = "JvmName".jvmId()
         val Transient = "Transient".jvmId()
 
+        val jsExport = "JsExport".jsId()
+        val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
+
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
 
@@ -329,5 +333,7 @@ private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.i
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
 private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))
+
+private fun String.jsId() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
 private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { (k, v) -> v to k }

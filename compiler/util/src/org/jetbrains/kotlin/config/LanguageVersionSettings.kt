@@ -378,6 +378,7 @@ enum class LanguageFeature(
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_2, kind = OTHER), // KT-76606
     FixationEnhancementsIn22(KOTLIN_2_2, kind = OTHER), // KT-76345, KT-71854
     ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, kind = BUG_FIX), // KT-71138
+    AllowExpectDeclarationsInJsExport(KOTLIN_2_2, kind = OTHER), // KT-64951
 
     // 2.3
 

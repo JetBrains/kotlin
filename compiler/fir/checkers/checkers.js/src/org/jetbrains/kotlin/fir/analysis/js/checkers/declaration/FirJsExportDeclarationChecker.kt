@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -70,7 +71,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind)
         }
 
-        if (declaration.isExpect) {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AllowExpectDeclarationsInJsExport) && declaration.isExpect) {
             reportWrongExportedDeclaration("expect")
         }
 

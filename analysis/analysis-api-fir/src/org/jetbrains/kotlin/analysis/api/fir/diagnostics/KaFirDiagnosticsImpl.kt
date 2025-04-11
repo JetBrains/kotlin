@@ -5472,6 +5472,11 @@ internal class NamedCompanionInExportedInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NamedCompanionInExportedInterface
 
+internal class NotExportedActualDeclarationWhileExpectIsExportedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedActualDeclarationWhileExpectIsExported
+
 internal class NestedJsExportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
