@@ -143,7 +143,7 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
             KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
         }
 
-        internal fun readManifestAndSanitize(klibDir: File, singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?): String {
+        fun readManifestAndSanitize(klibDir: File, singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?): String {
             val manifestFile = File(klibDir, "default/manifest")
             assertTrue(manifestFile.exists()) { "File does not exist: $manifestFile" }
 
