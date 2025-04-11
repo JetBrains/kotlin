@@ -124,7 +124,7 @@ class LLFirResolveSession internal constructor(
         val module = getModule(containingKtFile)
 
         return when (getModuleResolutionStrategy(module)) {
-            LLModuleResolutionStrategy.LAZY -> findSourceFirSymbol(ktDeclaration).also { resolveFirToPhase(it.fir, phase) }
+            LLModuleResolutionStrategy.LAZY -> findSourceFirSymbol(ktDeclaration).also { it.fir.lazyResolveToPhase(phase) }
             LLModuleResolutionStrategy.STATIC -> findCompiledFirSymbol(ktDeclaration, module)
         }
     }
@@ -185,10 +185,6 @@ class LLFirResolveSession internal constructor(
         val searcher = FirDeclarationForCompiledElementSearcher(session)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
-    }
-
-    internal fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
-        declaration.lazyResolveToPhase(toPhase)
     }
 }
 
