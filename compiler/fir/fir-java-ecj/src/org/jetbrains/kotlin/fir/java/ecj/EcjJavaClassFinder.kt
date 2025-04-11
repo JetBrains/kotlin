@@ -9,6 +9,7 @@ import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.eclipse.jdt.internal.compiler.batch.CompilationUnit
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions
 import org.eclipse.jdt.internal.compiler.parser.Parser
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory
@@ -63,11 +64,11 @@ class EcjJavaClassFinder(private val sourceFiles: List<File>) {
 
         // Set up compiler options
         val options = CompilerOptions().apply {
-            // Set Java version to Java 17
-            sourceLevel = 0x110000 // Java 17
+            sourceLevel = ClassFileConstants.JDK11
             targetJDK = sourceLevel
             // Enable parser
             parseLiteralExpressionsAsConstants = true
+            complianceLevel = sourceLevel
         }
 
         // Create a problem reporter and parser
@@ -96,7 +97,7 @@ class EcjJavaClassFinder(private val sourceFiles: List<File>) {
                 }
             } catch (e: Exception) {
                 // Log the error for debugging
-                println("Error parsing ${unit.fileName}: ${e.message}")
+                println("[DEBUG_LOG] Error parsing ${unit.fileName}: ${e.message}")
                 e.printStackTrace()
             }
         }

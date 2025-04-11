@@ -17,8 +17,12 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.generateEntriesGetter
+import org.jetbrains.kotlin.fir.generateValueOfFunction
+import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildField
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -37,6 +42,7 @@ import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
@@ -111,7 +117,7 @@ class EcjJavaClass(
         val modality = when {
             isInterface || isAnnotation -> Modality.ABSTRACT
             isAbstract -> Modality.ABSTRACT
-            isFinal -> Modality.FINAL
+            isFinal || isEnum -> Modality.FINAL
             else -> Modality.OPEN
         }
 
@@ -237,7 +243,11 @@ class EcjJavaClass(
 
         // Process fields
         typeDeclaration.fields?.forEach { field ->
-            if (isInterface || isApiRelated(field)) {
+            println("[DEBUG_LOG] Processing field: ${String(field.name)}, modifiers: ${field.modifiers}")
+
+            // For enum classes, all fields are considered API-related
+            val isEnum = (typeDeclaration.modifiers and ClassFileConstants.AccEnum) != 0
+            if (isInterface || isEnum || isApiRelated(field)) {
                 results.add(processor(field))
             }
         }
@@ -274,14 +284,19 @@ private class EcjLazyJavaDeclarationList(
      * as we cannot control how Java resolution will access [declarations].
      */
     override val declarations: List<FirDeclaration> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val declarations = mutableListOf<FirDeclaration>()
-
         // Get the FirJavaClass and related data
         @OptIn(SymbolInternals::class)
         val firJavaClass = classSymbol.fir as FirJavaClass
         val moduleData = firJavaClass.moduleData
         val classId = classSymbol.classId
         val dispatchReceiver = firJavaClass.defaultType()
+
+        // Separate collections for different types of declarations
+        val methodDeclarations = mutableListOf<FirDeclaration>()
+        val enumEntryDeclarations = mutableListOf<FirDeclaration>()
+        val fieldDeclarations = mutableListOf<FirDeclaration>()
+        val nestedClassDeclarations = mutableListOf<FirDeclaration>()
+        val enumSpecialFunctions = mutableListOf<FirDeclaration>()
 
         // Process API declarations using the processApiDeclarations method of EcjJavaClass
         ecjJavaClass.processApiDeclarations { declaration ->
@@ -341,13 +356,12 @@ private class EcjLazyJavaDeclarationList(
                         }
                     }
 
-                    declarations.add(firMethod)
+                    methodDeclarations.add(firMethod)
                 }
                 is FieldDeclaration -> {
                     // Convert field declaration to FIR
                     val fieldName = Name.identifier(String(declaration.name))
                     val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
-                    val fieldSymbol = FirFieldSymbol(fieldId)
 
                     val isStatic = (declaration.modifiers and ClassFileConstants.AccStatic) != 0
                     val isPublic = (declaration.modifiers and ClassFileConstants.AccPublic) != 0
@@ -369,32 +383,62 @@ private class EcjLazyJavaDeclarationList(
 
                     val effectiveVisibility = visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
 
-                    val firField = buildField {
-                        this.moduleData = moduleData
-                        this.origin = FirDeclarationOrigin.Java.Source
-                        this.name = fieldName
-                        this.symbol = fieldSymbol
-                        this.isVar = !isFinal
+                    // Check if this is an enum entry
+                    // In ECJ, enum entries might not have the static and final modifiers set
 
-                        // For now, just use Int as the return type
-                        this.returnTypeRef = buildResolvedTypeRef {
-                            coneType = StandardClassIds.Int.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                    if (firJavaClass.classKind == ClassKind.ENUM_CLASS) {
+                        // Convert enum entry to FIR
+                        val enumEntrySymbol = FirEnumEntrySymbol(fieldId)
+                        val firEnumEntry = buildEnumEntry {
+                            source = null
+                            this.moduleData = moduleData
+                            symbol = enumEntrySymbol
+                            name = fieldName
+                            status = FirResolvedDeclarationStatusImpl(
+                                Visibilities.Public,
+                                Modality.FINAL,
+                                Visibilities.Public.toEffectiveVisibility(dispatchReceiver.lookupTag)
+                            ).apply {
+                                this.isStatic = true
+                            }
+                            returnTypeRef = buildResolvedTypeRef {
+                                coneType = dispatchReceiver
+                            }
+                            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                            origin = FirDeclarationOrigin.Java.Source
                         }
 
-                        this.status = FirResolvedDeclarationStatusImpl(
-                            visibility,
-                            modality,
-                            effectiveVisibility
-                        ).apply {
-                            this.isStatic = isStatic
+                        enumEntryDeclarations.add(firEnumEntry)
+                    } else {
+                        // Convert regular field to FIR
+                        val fieldSymbol = FirFieldSymbol(fieldId)
+                        val firField = buildField {
+                            this.moduleData = moduleData
+                            this.origin = FirDeclarationOrigin.Java.Source
+                            this.name = fieldName
+                            this.symbol = fieldSymbol
+                            this.isVar = !isFinal
+
+                            // For now, just use Int as the return type
+                            this.returnTypeRef = buildResolvedTypeRef {
+                                coneType = StandardClassIds.Int.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                            }
+
+                            this.status = FirResolvedDeclarationStatusImpl(
+                                visibility,
+                                modality,
+                                effectiveVisibility
+                            ).apply {
+                                this.isStatic = isStatic
+                            }
+
+                            if (!isStatic) {
+                                this.dispatchReceiverType = dispatchReceiver
+                            }
                         }
 
-                        if (!isStatic) {
-                            this.dispatchReceiverType = dispatchReceiver
-                        }
+                        fieldDeclarations.add(firField)
                     }
-
-                    declarations.add(firField)
                 }
                 is TypeDeclaration -> {
                     // Convert nested class declaration to FIR
@@ -412,13 +456,68 @@ private class EcjLazyJavaDeclarationList(
                         moduleData
                     )
 
-                    declarations.add(firNestedClass)
+                    nestedClassDeclarations.add(firNestedClass)
                 }
             }
 
             declaration
         }
 
-        declarations
+        // Add special enum functions if this is an enum class
+        if (firJavaClass.classKind == ClassKind.ENUM_CLASS) {
+            enumSpecialFunctions += generateValuesFunction(
+                classSymbol,
+                null, // classSource
+                firJavaClass.status,
+                FirResolvePhase.ANALYZED_DEPENDENCIES, // classResolvePhase
+                moduleData,
+                classId.packageFqName,
+                classId.relativeClassName
+            )
+
+            enumSpecialFunctions += generateValueOfFunction(
+                classSymbol,
+                null, // classSource
+                firJavaClass.status,
+                FirResolvePhase.ANALYZED_DEPENDENCIES, // classResolvePhase
+                moduleData,
+                classId.packageFqName,
+                classId.relativeClassName
+            )
+
+            enumSpecialFunctions += generateEntriesGetter(
+                classSymbol,
+                null, // classSource
+                firJavaClass.status,
+                FirResolvePhase.ANALYZED_DEPENDENCIES, // classResolvePhase
+                moduleData,
+                classId.packageFqName,
+                classId.relativeClassName
+            )
+        }
+
+        // Combine all declarations in the desired order
+        val result = mutableListOf<FirDeclaration>()
+
+        // For enum classes, the order should be:
+        // 1. Special enum functions (values, valueOf, entries)
+        // 2. Enum entries
+        // 3. Methods
+        // 4. Fields
+        // 5. Nested classes
+        if (firJavaClass.classKind == ClassKind.ENUM_CLASS) {
+            result.addAll(enumSpecialFunctions)
+            result.addAll(enumEntryDeclarations)
+            result.addAll(methodDeclarations)
+            result.addAll(fieldDeclarations)
+            result.addAll(nestedClassDeclarations)
+        } else {
+            // For other classes, the order doesn't matter as much
+            result.addAll(methodDeclarations)
+            result.addAll(fieldDeclarations)
+            result.addAll(nestedClassDeclarations)
+        }
+
+        result
     }
 }

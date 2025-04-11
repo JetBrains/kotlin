@@ -189,27 +189,31 @@ class EcjJavaClassToFirTest : TestCase() {
             }
         """.trimIndent()
 
-        try {
-            val firJavaClass = javaSourceToFir(javaCode)
-            val renderedFir = firJavaClass.render().trim()
+        val firJavaClass = javaSourceToFir(javaCode)
+        val renderedFir = firJavaClass.render().trim()
 
-            // For now, we'll use a placeholder expected text since we're just updating the test format
-            val expectedFir = """
-                public final enum Test : R|kotlin/Any| {
-                    // Placeholder for enum entries and methods
+        val expectedFir = """
+                public final enum class Test : R|kotlin/Any| {
+                    public final static fun values(): R|kotlin/Array<test/Test>| {
+                    }
+
+                    public final static fun valueOf(value: R|kotlin/String|): R|test/Test| {
+                    }
+
+                    public final static val entries: R|kotlin/enums/EnumEntries<test/Test>|
+                        public get(): R|kotlin/enums/EnumEntries<test/Test>|
+
+                    public final static enum entry ONE: R|test/Test|
+                    public final static enum entry TWO: R|test/Test|
+                    public final static enum entry THREE: R|test/Test|
+                    public open fun method(): R|kotlin/Unit|
+
                 }
             """.trimIndent()
 
-            // Use the same comparison method as testSimpleClass
-            assertEquals(expectedFir, renderedFir)
-            assertEquals(ClassKind.ENUM_CLASS, firJavaClass.classKind)
-        } catch (e: IllegalArgumentException) {
-            // The test is failing with "Class not found" error
-            // This is expected since we haven't implemented support for enum classes yet
-            println("Expected error: ${e.message}")
-            // Skip the test for now
-            assertTrue("Skipping test due to expected error: ${e.message}", true)
-        }
+        // Use the same comparison method as testSimpleClass
+        assertEquals(expectedFir, renderedFir)
+        assertEquals(ClassKind.ENUM_CLASS, firJavaClass.classKind)
     }
 
     @Test
