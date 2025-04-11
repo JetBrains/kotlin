@@ -27,7 +27,7 @@ fun box(): String {
         hasFooPrivate::class,
         expectedQualifiedName = null,
         expectedSimpleName = null, // KT-64460: simpleName is explicitly prohibited in NATIVE backend
-        expectedToStringName = "class codegen.kclass.kclass0.box\$hasFooPrivate\$1",
+        expectedToStringName = "class codegen.kclass.kclass0.box\$hasFooPrivate\$1", // KT-76547: TODO: Fix wrong name change
         expectedInstance = hasFooPrivate,
         expectedNotInstance = Any()
     )
@@ -36,7 +36,7 @@ fun box(): String {
         hasFooPublic::class,
         expectedQualifiedName = null,
         expectedSimpleName = null, // KT-64460: simpleName is explicitly prohibited in NATIVE backend
-        expectedToStringName = "class codegen.kclass.kclass0.box\$\$inlined\$getHasFooPublic\$1", // KT-72441: This will change after public inliner
+        expectedToStringName = "class codegen.kclass.kclass0.box\$\$inlined\$getHasFooPublic\$1",
         expectedInstance = hasFooPublic,
         expectedNotInstance = Any()
     )
