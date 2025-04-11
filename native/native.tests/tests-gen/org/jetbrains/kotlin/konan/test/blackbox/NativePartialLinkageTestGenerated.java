@@ -86,6 +86,18 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   }
 
   @Test
+  @TestMetadata("inlineFunctions-noInliningInKlibs")
+  public void testInlineFunctions_noInliningInKlibs() {
+    runTest("compiler/testData/klib/partial-linkage/inlineFunctions-noInliningInKlibs/");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctions-withInliningInKlibs")
+  public void testInlineFunctions_withInliningInKlibs() {
+    runTest("compiler/testData/klib/partial-linkage/inlineFunctions-withInliningInKlibs/");
+  }
+
+  @Test
   @TestMetadata("kt73511")
   public void testKt73511() {
     runTest("compiler/testData/klib/partial-linkage/kt73511/");
