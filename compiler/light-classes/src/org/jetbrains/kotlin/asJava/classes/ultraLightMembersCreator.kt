@@ -387,6 +387,7 @@ internal class UltraLightMembersCreator(
             val resultName = DescriptorUtils.getJvmName(annotated)
             if (resultName !== null || type == MethodType.REGULAR) return resultName
 
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             val propertyAnnotated = when (type) {
                 MethodType.GETTER -> (annotated as? PropertyDescriptor)?.getter
                 MethodType.SETTER -> (annotated as? PropertyDescriptor)?.setter
