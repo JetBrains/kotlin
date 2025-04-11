@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -44,7 +44,7 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
 
     open val outputRenderingMode: OutputRenderingMode = OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES
 
-    private fun findRegularClass(classId: ClassId, module: KaModule, firSession: LLFirResolveSession): FirRegularClassSymbol {
+    private fun findRegularClass(classId: ClassId, module: KaModule, firSession: LLResolutionFacade): FirRegularClassSymbol {
         return firSession.getSessionFor(module).getRegularClassSymbolByClassId(classId) ?: error("'$classId' is not found")
     }
 

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 /**
  * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KaModule].
  */
-class LLFirResolveSession internal constructor(
+class LLResolutionFacade internal constructor(
     val moduleProvider: LLModuleProvider,
     val resolutionStrategyProvider: LLModuleResolutionStrategyProvider,
     val sessionProvider: LLSessionProvider,
@@ -188,6 +188,6 @@ class LLFirResolveSession internal constructor(
     }
 }
 
-fun LLFirResolveSession.getModule(element: PsiElement): KaModule {
+fun LLResolutionFacade.getModule(element: PsiElement): KaModule {
     return KotlinProjectStructureProvider.getModule(project, element, useSiteKtModule)
 }

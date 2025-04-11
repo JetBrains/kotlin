@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -20,17 +20,17 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class LLFirResolveSessionService(project: Project) {
     private val cache = LLFirSessionCache.getInstance(project)
 
-    fun getFirResolveSession(module: KaModule): LLFirResolveSession {
+    fun getFirResolveSession(module: KaModule): LLResolutionFacade {
         return create(module, cache::getSession)
     }
 
-    private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolveSession {
+    private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLResolutionFacade {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
         val resolutionStrategyProvider = createResolutionStrategyProvider(module, moduleProvider)
         val diagnosticProvider = createDiagnosticProvider(moduleProvider, sessionProvider)
 
-        return LLFirResolveSession(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
+        return LLResolutionFacade(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
     }
 
     private fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {

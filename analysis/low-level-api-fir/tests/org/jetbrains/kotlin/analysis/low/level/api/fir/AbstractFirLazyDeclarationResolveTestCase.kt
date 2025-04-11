@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
@@ -48,7 +48,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
     protected fun findFirDeclarationToResolve(
         ktFile: KtFile,
         testServices: TestServices,
-        firResolveSession: LLFirResolveSession,
+        firResolveSession: LLResolutionFacade,
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
         Directives.RESOLVE_FILE in testServices.moduleStructure.allDirectives -> {
             val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
@@ -83,7 +83,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
     protected fun chooseMemberDeclarationIfNeeded(
         symbol: FirBasedSymbol<*>,
         moduleStructure: TestModuleStructure,
-        session: LLFirResolveSession,
+        session: LLResolutionFacade,
     ): FirBasedSymbol<*> {
         val directives = moduleStructure.allDirectives
         val memberSymbol = chooseMemberDeclarationIfNeeded(symbol, session, directives)
@@ -99,7 +99,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
 
     private fun chooseMemberDeclarationIfNeeded(
         symbol: FirBasedSymbol<*>,
-        session: LLFirResolveSession,
+        session: LLResolutionFacade,
         directives: RegisteredDirectives,
     ): FirBasedSymbol<*> {
         val memberClassFilters = listOfNotNull(
@@ -130,7 +130,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
 
     private fun deepSearch(
         classSymbol: FirClassSymbol<*>,
-        session: LLFirResolveSession,
+        session: LLResolutionFacade,
         filter: (FirBasedSymbol<*>) -> Boolean,
     ): FirBasedSymbol<*>? {
         val baseScope = classSymbol.unsubstitutedScope(

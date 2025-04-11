@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModifica
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationEvent
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -87,7 +87,7 @@ private fun doTestInBlockModification(
     elementToModify: PsiElement,
     testServices: TestServices,
     dumpFirFile: Boolean,
-    firSession: LLFirResolveSession,
+    firSession: LLResolutionFacade,
 ): String {
     val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
     val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)

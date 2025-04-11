@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
@@ -105,7 +105,7 @@ private class KaFirUseSiteVisibilityChecker(
     private val effectiveContainers: List<FirDeclaration>,
     private val dispatchReceiver: FirExpression?,
     private val useSiteFile: KaFirFileSymbol,
-    private val firResolveSession: LLFirResolveSession,
+    private val firResolveSession: LLResolutionFacade,
     override val token: KaLifetimeToken,
 ) : KaUseSiteVisibilityChecker {
     override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = withValidityAssertion {

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 open class LowLevelFirAnalyzerFacade(
-    val firResolveSession: LLFirResolveSession,
+    val firResolveSession: LLResolutionFacade,
     val allFirFiles: Map<TestFile, FirFile>,
     private val diagnosticCheckerFilter: DiagnosticCheckerFilter,
 ) : AbstractFirAnalyzerFacade() {

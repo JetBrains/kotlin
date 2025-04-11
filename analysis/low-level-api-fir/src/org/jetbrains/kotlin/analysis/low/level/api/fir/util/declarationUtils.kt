@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
@@ -95,7 +95,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
 }
 
 @KaImplementationDetail
-fun collectUseSiteContainers(element: PsiElement, resolveSession: LLFirResolveSession): List<FirDeclaration>? {
+fun collectUseSiteContainers(element: PsiElement, resolveSession: LLResolutionFacade): List<FirDeclaration>? {
     val containingDeclaration = element.getNonLocalContainingOrThisDeclaration { it.isAutonomousElement } ?: return null
     val containingFile = containingDeclaration.containingKtFile
     val firFile = resolveSession.getOrBuildFirFile(containingFile)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  * may be unacceptable in some cases.
  */
 abstract class AbstractFirLazyDeclarationResolveByReferenceTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
-    override fun checkSession(firSession: LLFirResolveSession) {
+    override fun checkSession(firSession: LLResolutionFacade) {
         require(firSession.isSourceSession)
     }
 

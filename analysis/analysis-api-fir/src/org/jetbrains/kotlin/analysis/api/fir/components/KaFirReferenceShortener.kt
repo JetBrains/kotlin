@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -175,7 +175,7 @@ private class FirTowerDataContextProvider private constructor(
     private val contextProvider: ContextCollector.ContextProvider
 ) {
     companion object {
-        fun create(firResolveSession: LLFirResolveSession, targetElement: KtElement): FirTowerDataContextProvider {
+        fun create(firResolveSession: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
             val firFile = targetElement.containingKtFile.getOrBuildFirFile(firResolveSession)
 
             val sessionHolder = run {
@@ -529,7 +529,7 @@ private class ElementsToShortenCollector(
     private val selection: TextRange,
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
-    private val firResolveSession: LLFirResolveSession,
+    private val firResolveSession: LLResolutionFacade,
 ) {
     val typesToShorten: MutableList<ShortenType> = mutableListOf()
     val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()

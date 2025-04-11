@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -40,7 +40,7 @@ internal val KaClassLikeSymbol.firSymbol: FirClassLikeSymbol<*> get() = (this as
 internal val KaClassSymbol.firSymbol: FirClassSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassSymbol<*>
 
 
-internal fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule {
+internal fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLResolutionFacade): KaModule {
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
@@ -51,7 +51,7 @@ internal fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirRes
     return target.llFirModuleData.ktModule
 }
 
-internal fun KaSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule = when (this) {
+internal fun KaSymbol.getContainingKtModule(firResolveSession: LLResolutionFacade): KaModule = when (this) {
     is KaFirSymbol<*> -> firSymbol.getContainingKtModule(firResolveSession)
     is KaReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(firResolveSession)
     else -> TODO("${this::class}")

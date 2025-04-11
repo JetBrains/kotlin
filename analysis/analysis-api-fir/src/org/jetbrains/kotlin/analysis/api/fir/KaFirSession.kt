@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class KaFirSession
 private constructor(
     val project: Project,
-    val firResolveSession: LLFirResolveSession,
+    val firResolveSession: LLResolutionFacade,
     val extensionTools: List<LLFirResolveExtensionTool>,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
@@ -119,7 +119,7 @@ private constructor(
 
     companion object {
         internal fun createAnalysisSessionByFirResolveSession(
-            firResolveSession: LLFirResolveSession,
+            firResolveSession: LLResolutionFacade,
             token: KaLifetimeToken,
         ): KaFirSession {
             token.assertIsValid()

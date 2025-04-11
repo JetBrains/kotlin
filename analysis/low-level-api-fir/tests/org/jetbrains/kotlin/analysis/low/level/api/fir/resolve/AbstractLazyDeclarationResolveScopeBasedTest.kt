@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
@@ -52,7 +52,7 @@ abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractAnalysisAp
     }
 }
 
-private fun collectAllCallableDeclarations(classSymbol: FirClassSymbol<*>, session: LLFirResolveSession): Collection<FirCallableSymbol<*>> {
+private fun collectAllCallableDeclarations(classSymbol: FirClassSymbol<*>, session: LLResolutionFacade): Collection<FirCallableSymbol<*>> {
     val baseScope = classSymbol.unsubstitutedScope(
         session.useSiteFirSession,
         session.getScopeSessionFor(session.useSiteFirSession),

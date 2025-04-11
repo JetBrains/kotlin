@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.Directives.PRE_RESOLVED_PHASE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.OutputRenderingMode.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  * This test iterates over all [FirResolvePhase] for the selected declaration and dump output after each phase
  */
 abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirLazyDeclarationResolveTestCase() {
-    abstract fun checkSession(firSession: LLFirResolveSession)
+    abstract fun checkSession(firSession: LLResolutionFacade)
 
     protected open val outputExtension: String get() = ".txt"
 
@@ -51,7 +51,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         ktFile: KtFile,
         testServices: TestServices,
         outputRenderingMode: OutputRenderingMode,
-        resolverProvider: (LLFirResolveSession) -> Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)>,
+        resolverProvider: (LLResolutionFacade) -> Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)>,
     ) {
         val resultBuilder = StringBuilder()
         val renderer = lazyResolveRenderer(resultBuilder)

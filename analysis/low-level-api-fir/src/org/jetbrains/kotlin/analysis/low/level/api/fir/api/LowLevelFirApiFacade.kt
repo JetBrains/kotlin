@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Returns [LLFirResolveSession] which corresponds to containing module
+ * Returns [LLResolutionFacade] which corresponds to containing module
  */
-fun KaModule.getFirResolveSession(project: Project): LLFirResolveSession =
+fun KaModule.getFirResolveSession(project: Project): LLResolutionFacade =
     LLFirResolveSessionService.getInstance(project).getFirResolveSession(this)
 
 
@@ -30,7 +30,7 @@ fun KaModule.getFirResolveSession(project: Project): LLFirResolveSession =
  *
  */
 fun KtDeclaration.resolveToFirSymbol(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ): FirBasedSymbol<*> {
     return firResolveSession.resolveToFirSymbol(this, phase)
@@ -44,7 +44,7 @@ fun KtDeclaration.resolveToFirSymbol(
  */
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfType(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ): @kotlin.internal.NoInfer S {
     val symbol = resolveToFirSymbol(firResolveSession, phase)
@@ -62,7 +62,7 @@ inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfTyp
  */
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfTypeSafe(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ): @kotlin.internal.NoInfer S? {
     return resolveToFirSymbol(firResolveSession, phase) as? S
@@ -73,7 +73,7 @@ inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfTyp
  * Returns a list of Diagnostics compiler finds for given [KtElement]
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
-fun KtElement.getDiagnostics(firResolveSession: LLFirResolveSession, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
+fun KtElement.getDiagnostics(firResolveSession: LLResolutionFacade, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
     firResolveSession.getDiagnostics(this, filter)
 
 /**
@@ -81,7 +81,7 @@ fun KtElement.getDiagnostics(firResolveSession: LLFirResolveSession, filter: Dia
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 fun KtFile.collectDiagnosticsForFile(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
     filter: DiagnosticCheckerFilter
 ): Collection<KtPsiDiagnostic> =
     firResolveSession.collectDiagnosticsForFile(this, filter)
@@ -101,10 +101,10 @@ fun KtFile.collectDiagnosticsForFile(
  * @return associated [FirElement] in final resolved state if it exists.
  *
  * @see getOrBuildFirFile
- * @see LLFirResolveSession.getOrBuildFirFor
+ * @see LLResolutionFacade.getOrBuildFirFor
  */
 fun KtElement.getOrBuildFir(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
 ): FirElement? = firResolveSession.getOrBuildFirFor(this)
 
 /**
@@ -113,7 +113,7 @@ fun KtElement.getOrBuildFir(
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
 ) = getOrBuildFir(firResolveSession) as? E
 
 /**
@@ -122,7 +122,7 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
-    firResolveSession: LLFirResolveSession,
+    firResolveSession: LLResolutionFacade,
 ): E {
     val fir = getOrBuildFir(firResolveSession)
     if (fir is E) return fir
@@ -133,5 +133,5 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
  * Get a [FirFile] which was created by [KtElement]
  * Returned [FirFile] can be resolved to any phase from [FirResolvePhase.RAW_FIR] to [FirResolvePhase.BODY_RESOLVE]
  */
-fun KtFile.getOrBuildFirFile(firResolveSession: LLFirResolveSession): FirFile =
+fun KtFile.getOrBuildFirFile(firResolveSession: LLResolutionFacade): FirFile =
     firResolveSession.getOrBuildFirFile(this)

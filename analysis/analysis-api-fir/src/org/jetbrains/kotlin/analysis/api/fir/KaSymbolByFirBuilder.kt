@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -74,7 +74,7 @@ internal class KaSymbolByFirBuilder(
     val analysisSession: KaFirSession,
     val token: KaLifetimeToken,
 ) {
-    private val firResolveSession: LLFirResolveSession get() = analysisSession.firResolveSession
+    private val firResolveSession: LLResolutionFacade get() = analysisSession.firResolveSession
     private val firProvider: FirSymbolProvider get() = rootSession.symbolProvider
     val rootSession: LLFirSession get() = firResolveSession.useSiteFirSession
 

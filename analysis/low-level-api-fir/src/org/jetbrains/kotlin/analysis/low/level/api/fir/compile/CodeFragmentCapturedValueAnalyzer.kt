@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -56,7 +56,7 @@ data class CodeFragmentCapturedId(val symbol: FirBasedSymbol<*>)
 
 @KaImplementationDetail
 object CodeFragmentCapturedValueAnalyzer {
-    fun analyze(resolveSession: LLFirResolveSession, codeFragment: FirCodeFragment): CodeFragmentCapturedValueData {
+    fun analyze(resolveSession: LLResolutionFacade, codeFragment: FirCodeFragment): CodeFragmentCapturedValueData {
         val selfSymbols = CodeFragmentDeclarationCollector().apply { codeFragment.accept(this) }.symbols.toSet()
         val capturedVisitor = CodeFragmentCapturedValueVisitor(resolveSession, selfSymbols)
         codeFragment.accept(capturedVisitor)
@@ -87,7 +87,7 @@ private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
 }
 
 private class CodeFragmentCapturedValueVisitor(
-    private val resolveSession: LLFirResolveSession,
+    private val resolveSession: LLResolutionFacade,
     private val selfSymbols: Set<FirBasedSymbol<*>>,
 ) : FirDefaultVisitorVoid() {
     private val collectedMappings = LinkedHashMap<CodeFragmentCapturedId, CodeFragmentCapturedSymbol>()
