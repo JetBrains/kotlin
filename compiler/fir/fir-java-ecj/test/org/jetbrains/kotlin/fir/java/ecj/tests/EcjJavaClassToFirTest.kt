@@ -135,6 +135,8 @@ class EcjJavaClassToFirTest : TestCase() {
             public open class Test : R|kotlin/Any| {
                 public open fun publicMethod(): R|kotlin/Unit|
 
+                public field publicField: R|kotlin/Int|
+
             }
         """.trimIndent()
 
@@ -165,6 +167,8 @@ class EcjJavaClassToFirTest : TestCase() {
                 public/*package*/ open fun method1(): R|kotlin/Unit|
 
                 public/*package*/ open fun method2(): R|kotlin/Unit|
+
+                public/*package*/ field CONSTANT: R|kotlin/Int|
 
             }
         """.trimIndent()

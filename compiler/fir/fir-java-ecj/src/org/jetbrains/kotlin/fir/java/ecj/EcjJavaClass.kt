@@ -17,18 +17,20 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.buildField
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -38,11 +40,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 
 /**
  * Represents a Java class after ECJ processing.
@@ -345,7 +343,60 @@ private class EcjLazyJavaDeclarationList(
 
                     declarations.add(firMethod)
                 }
-                // TODO: Add support for other declaration types (fields, nested classes, etc.)
+                is FieldDeclaration -> {
+                    // Convert field declaration to FIR
+                    val fieldName = Name.identifier(String(declaration.name))
+                    val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
+                    val fieldSymbol = FirFieldSymbol(fieldId)
+
+                    val isStatic = (declaration.modifiers and ClassFileConstants.AccStatic) != 0
+                    val isPublic = (declaration.modifiers and ClassFileConstants.AccPublic) != 0
+                    val isProtected = (declaration.modifiers and ClassFileConstants.AccProtected) != 0
+                    val isPrivate = (declaration.modifiers and ClassFileConstants.AccPrivate) != 0
+                    val isFinal = (declaration.modifiers and ClassFileConstants.AccFinal) != 0
+
+                    val visibility = when {
+                        isPublic -> Visibilities.Public
+                        isProtected -> Visibilities.Protected
+                        isPrivate -> Visibilities.Private
+                        else -> JavaVisibilities.PackageVisibility
+                    }
+
+                    val modality = when {
+                        isFinal -> Modality.FINAL
+                        else -> Modality.OPEN
+                    }
+
+                    val effectiveVisibility = visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
+
+                    val firField = buildField {
+                        this.moduleData = moduleData
+                        this.origin = FirDeclarationOrigin.Java.Source
+                        this.name = fieldName
+                        this.symbol = fieldSymbol
+                        this.isVar = !isFinal
+
+                        // For now, just use Int as the return type
+                        this.returnTypeRef = buildResolvedTypeRef {
+                            coneType = StandardClassIds.Int.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                        }
+
+                        this.status = FirResolvedDeclarationStatusImpl(
+                            visibility,
+                            modality,
+                            effectiveVisibility
+                        ).apply {
+                            this.isStatic = isStatic
+                        }
+
+                        if (!isStatic) {
+                            this.dispatchReceiverType = dispatchReceiver
+                        }
+                    }
+
+                    declarations.add(firField)
+                }
+                // TODO: Add support for other declaration types (nested classes, etc.)
             }
 
             declaration
