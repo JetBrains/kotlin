@@ -23,11 +23,19 @@ import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.name.FqName
 
-class FirAnnotationTypeQualifierResolver(
-    private val session: FirSession,
+abstract class AbstractJavaAnnotationTypeQualifierResolver(
+    protected val session: FirSession,
     javaTypeEnhancementState: JavaTypeEnhancementState,
-    private val javaModuleAnnotationsProvider: JavaModuleAnnotationsProvider,
 ) : AbstractAnnotationTypeQualifierResolver<FirAnnotation>(javaTypeEnhancementState), FirSessionComponent {
+
+    abstract fun extractDefaultQualifiers(firClass: FirRegularClass): JavaTypeQualifiersByElementType?
+
+    private fun FirExpression.toEnumNames(): List<String> =
+        when (this) {
+            is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
+            is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
+            else -> listOfNotNull(extractEnumValueArgumentInfo()?.enumEntryName?.asString())
+        }
 
     override val isK2: Boolean
         get() = true
@@ -48,15 +56,15 @@ class FirAnnotationTypeQualifierResolver(
             else
                 emptyList()
         }
+}
 
-    private fun FirExpression.toEnumNames(): List<String> =
-        when (this) {
-            is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
-            is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
-            else -> listOfNotNull(extractEnumValueArgumentInfo()?.enumEntryName?.asString())
-        }
+class FirAnnotationTypeQualifierResolver(
+    session: FirSession,
+    javaTypeEnhancementState: JavaTypeEnhancementState,
+    private val javaModuleAnnotationsProvider: JavaModuleAnnotationsProvider,
+) : AbstractJavaAnnotationTypeQualifierResolver(session, javaTypeEnhancementState) {
 
-    fun extractDefaultQualifiers(firClass: FirRegularClass): JavaTypeQualifiersByElementType? {
+    override fun extractDefaultQualifiers(firClass: FirRegularClass): JavaTypeQualifiersByElementType? {
         val classId = firClass.symbol.classId
         val outerClassId = classId.outerClassId
         val parentQualifiers = if (outerClassId != null) {
@@ -74,4 +82,4 @@ class FirAnnotationTypeQualifierResolver(
     }
 }
 
-val FirSession.javaAnnotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver by FirSession.sessionComponentAccessor()
+val FirSession.javaAnnotationTypeQualifierResolver: AbstractJavaAnnotationTypeQualifierResolver by FirSession.sessionComponentAccessor()

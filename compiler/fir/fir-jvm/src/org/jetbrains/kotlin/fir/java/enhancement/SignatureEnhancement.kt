@@ -1048,7 +1048,7 @@ private class DelegatingDeferredReturnTypeWithSubstitution(
 
 private class EnhancementSignatureParts(
     private val session: FirSession,
-    override val annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
+    override val annotationTypeQualifierResolver: AbstractJavaAnnotationTypeQualifierResolver,
     private val typeContainer: FirAnnotationContainer?,
     override val isCovariant: Boolean,
     override val forceOnlyHeadTypeConstructor: Boolean,

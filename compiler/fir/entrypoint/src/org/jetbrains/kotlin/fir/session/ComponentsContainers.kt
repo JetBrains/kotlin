@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmDeserializationExtension
+import org.jetbrains.kotlin.fir.java.enhancement.AbstractJavaAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
@@ -142,7 +143,7 @@ fun FirSession.registerJavaComponents(
         languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
             ?: JavaTypeEnhancementState.getDefault(languageVersionSettings.toKotlinVersion())
     register(
-        FirAnnotationTypeQualifierResolver::class,
+        AbstractJavaAnnotationTypeQualifierResolver::class,
         FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver)
     )
     register(FirEnhancedSymbolsStorage::class, predefinedComponents?.enhancementStorage ?: FirEnhancedSymbolsStorage(this))
