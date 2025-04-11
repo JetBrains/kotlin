@@ -354,6 +354,21 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SubstitutionOverride.kt");
   }
 
+  @TestMetadata("SuperTypeWithBound.kt")
+  public void testSuperTypeWithBound() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBound.kt");
+  }
+
+  @TestMetadata("SuperTypeWithBound2.kt")
+  public void testSuperTypeWithBound2() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBound2.kt");
+  }
+
+  @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
+  public void testSuperTypeWithBoundKotlinCollection() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBoundKotlinCollection.kt");
+  }
+
   @TestMetadata("Throws.kt")
   public void testThrows() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");

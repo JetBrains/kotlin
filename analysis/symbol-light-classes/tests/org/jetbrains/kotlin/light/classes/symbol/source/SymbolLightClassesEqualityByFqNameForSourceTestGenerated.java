@@ -415,6 +415,24 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("SuperTypeWithBound.kt")
+  public void testSuperTypeWithBound() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBound.kt");
+  }
+
+  @Test
+  @TestMetadata("SuperTypeWithBound2.kt")
+  public void testSuperTypeWithBound2() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBound2.kt");
+  }
+
+  @Test
+  @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
+  public void testSuperTypeWithBoundKotlinCollection() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/SuperTypeWithBoundKotlinCollection.kt");
+  }
+
+  @Test
   @TestMetadata("Throws.kt")
   public void testThrows() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Throws.kt");
