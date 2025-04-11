@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.gradle.uklibs
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
+import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
+import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.junit.jupiter.api.DisplayName
+import kotlin.String
+import kotlin.collections.Map
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -844,6 +849,142 @@ class KmpResolutionIT : KGPBaseTest() {
                 ),
             ).prettyPrinted, linuxDependencies.prettyPrinted
         )
+    }
+
+    /**
+     * FIXME: Test Java base plugin resolution in detail because we use different resolvable configuration for Java compilations and
+     * Kotlin jvm compilations
+     */
+    @GradleTest
+    fun `smoke lenient java consumption - java resolvable configurations can fallback to metadata`(
+        version: GradleVersion,
+    ) {
+        val producer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    sourceSets.commonMain.get().addIdentifierClass()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
+
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(producer)
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.dependencies {
+                        api(producer.rootCoordinate)
+                    }
+                }
+            }
+
+            assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+                mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "standard-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmApiElements",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                    "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "metadataApiElements",
+                    ),
+                ).prettyPrinted,
+                buildScriptReturn {
+                    project.ignoreAccessViolations {
+                        project.configurations.getByName(
+                            java.sourceSets.getByName("jvmMain").compileClasspathConfigurationName
+                        ).resolveProjectDependencyComponentsWithArtifacts()
+                    }
+                }.buildAndReturn("assemble").prettyPrinted
+            )
+        }
+    }
+
+    @GradleTest
+    fun `java consumption - with direct lenient Uklib producer and a native-only transitive producer - results in a resolution failure in the consumer`(
+        version: GradleVersion,
+    ) {
+        val transitive = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    sourceSets.commonMain.get().addIdentifierClass()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "transitive"))
+
+        val direct = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(transitive)
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    jvm()
+                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.dependencies {
+                        api(transitive.rootCoordinate)
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "direct"))
+
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(transitive)
+            addPublishedProjectToRepositories(direct)
+            buildScriptInjection {
+                project.plugins.apply("java-library")
+                project.configurations.named("implementation").configure {
+                    it.dependencies.add(project.dependencies.create(direct.rootCoordinate))
+                }
+                java.sourceSets.getByName("main").compileJavaSource(
+                    project,
+                    className = "Consumer",
+                    """
+                        public class Consumer { }
+                    """.trimIndent()
+                )
+            }
+
+            // FIXME: Properly test which configuration failed to resolve
+            buildAndFail("assemble") {
+                assertOutputContains("No matching variant of transitive:empty:1.0 was found")
+            }
+        }
     }
 
     private fun transitiveConsumptionCase(

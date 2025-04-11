@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testing.ComponentPath
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.compilationResolution
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -469,6 +474,89 @@ class UklibConsumptionIT : KGPBaseTest() {
             // FIXME: Is this actually supposed to pass?
             // FIXME: Catch specific compilation failure or reproduce the resolution error
             buildAndFail("assemble", buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion))
+        }
+    }
+
+    @GradleTest
+    fun `uklib consumption - java resolvable configurations can resolve uklibs`(
+        version: GradleVersion,
+    ) {
+        val producer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    linuxArm64()
+                    jvm()
+                    sourceSets.commonMain.get().addIdentifierClass()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
+
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(producer)
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.dependencies {
+                        api(producer.rootCoordinate)
+                    }
+                }
+            }
+
+            assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+                mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "standard-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmApiElements",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                    "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "uklib",
+                                "org.gradle.category" to "library",
+                                "org.gradle.usage" to "kotlin-uklib-api",
+                                "org.jetbrains.kotlin.uklib" to "true",
+                                "org.jetbrains.kotlin.uklibState" to "decompressed",
+                                "org.jetbrains.kotlin.uklibView" to "jvm",
+                            ),
+                        ),
+                        configuration = "uklibApiElements",
+                    ),
+                ).prettyPrinted,
+                buildScriptReturn {
+                    project.ignoreAccessViolations {
+                        project.configurations.getByName(
+                            java.sourceSets.getByName("jvmMain").compileClasspathConfigurationName
+                        ).resolveProjectDependencyComponentsWithArtifacts()
+                    }
+                }.buildAndReturn("assemble").prettyPrinted
+            )
         }
     }
 }
