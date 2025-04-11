@@ -187,7 +187,7 @@ class MemoizedInlineClassReplacements(
                         // FAKE_OVERRIDEs have broken dispatch receivers
                         function.parentAsClass.thisReceiver!!.copyTo(
                             this,
-                            name = Name.identifier("arg0"),
+                            name = Name.identifier("\$this-" + function.parentAsClass.inlineClassFieldName),
                             type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
