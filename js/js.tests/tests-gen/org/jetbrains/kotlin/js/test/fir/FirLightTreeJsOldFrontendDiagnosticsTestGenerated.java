@@ -339,6 +339,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("jsonParseInsideIf.kt")
+    public void testJsonParseInsideIf() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/jsonParseInsideIf.kt");
+    }
+
+    @Test
     @TestMetadata("kt57960.kt")
     public void testKt57960() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/kt57960.kt");
