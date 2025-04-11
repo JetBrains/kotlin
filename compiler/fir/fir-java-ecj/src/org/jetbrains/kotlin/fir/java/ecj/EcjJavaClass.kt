@@ -396,7 +396,24 @@ private class EcjLazyJavaDeclarationList(
 
                     declarations.add(firField)
                 }
-                // TODO: Add support for other declaration types (nested classes, etc.)
+                is TypeDeclaration -> {
+                    // Convert nested class declaration to FIR
+                    val nestedClassName = Name.identifier(String(declaration.name))
+                    val nestedClassId = classId.createNestedClassId(nestedClassName)
+                    val nestedClassSymbol = FirRegularClassSymbol(nestedClassId)
+
+                    // Create a new EcjJavaClass for the nested class
+                    val nestedEcjJavaClass = EcjJavaClass(nestedClassId, declaration)
+
+                    // Convert the nested class to a FirJavaClass
+                    val firNestedClass = nestedEcjJavaClass.convertJavaClassToFir(
+                        nestedClassSymbol,
+                        classSymbol,
+                        moduleData
+                    )
+
+                    declarations.add(firNestedClass)
+                }
             }
 
             declaration

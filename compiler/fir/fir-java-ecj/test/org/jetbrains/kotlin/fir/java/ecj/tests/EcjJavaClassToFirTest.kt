@@ -238,6 +238,50 @@ class EcjJavaClassToFirTest : TestCase() {
         assertEquals(expectedFir, renderedFir)
         assertEquals(ClassKind.ANNOTATION_CLASS, firJavaClass.classKind)
     }
+
+    @Test
+    fun testNestedClasses() {
+        val javaCode = """
+            package test;
+
+            public class Test {
+                public class NestedClass {
+                    public void nestedMethod() {}
+                    public int nestedField;
+                }
+
+                public interface NestedInterface {
+                    void interfaceMethod();
+                    int INTERFACE_CONSTANT = 42;
+                }
+            }
+        """.trimIndent()
+
+        val firJavaClass = javaSourceToFir(javaCode)
+        val renderedFir = firJavaClass.render().trim()
+
+        val expectedFir = """
+            public open class Test : R|kotlin/Any| {
+                public open inner class NestedClass : R|kotlin/Any| {
+                    public open fun nestedMethod(): R|kotlin/Unit|
+
+                    public field nestedField: R|kotlin/Int|
+
+                }
+
+                public abstract inner interface NestedInterface : R|kotlin/Any| {
+                    public/*package*/ open fun interfaceMethod(): R|kotlin/Unit|
+
+                    public/*package*/ field INTERFACE_CONSTANT: R|kotlin/Int|
+
+                }
+
+            }
+        """.trimIndent()
+
+        assertEquals(expectedFir, renderedFir)
+        assertEquals(ClassKind.CLASS, firJavaClass.classKind)
+    }
 }
 
 class DummyFirAnnotationTypeQualifierResolver(
