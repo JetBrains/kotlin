@@ -142,11 +142,11 @@ fun compileWasm(
     configuration: CompilerConfiguration,
     typeScriptFragment: TypeScriptFragment?,
     baseFileName: String,
-    emitNameSection: Boolean = false,
-    generateWat: Boolean = false,
-    generateSourceMaps: Boolean = false,
-    useDebuggerCustomFormatters: Boolean = false,
-    generateDwarf: Boolean = false
+    emitNameSection: Boolean,
+    generateWat: Boolean,
+    generateSourceMaps: Boolean,
+    useDebuggerCustomFormatters: Boolean,
+    generateDwarf: Boolean
 ): WasmCompilerResult {
     val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
