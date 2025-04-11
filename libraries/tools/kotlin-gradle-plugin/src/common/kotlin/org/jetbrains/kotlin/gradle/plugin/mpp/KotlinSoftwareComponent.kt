@@ -50,26 +50,26 @@ abstract class KotlinSoftwareComponent(
 
     internal val uklibUsages: CompletableFuture<List<DefaultKotlinUsageContext>> = CompletableFuture()
 
-    internal suspend fun subcomponentTargets(): List<KotlinTarget> {
+    private suspend fun subcomponentTargetsWithAvailableAtPointers(): List<KotlinTarget> {
         AfterFinaliseCompilations.await()
         return kotlinTargets
-            .filter { target -> target !is KotlinMetadataTarget }
+            .filter { target ->
+                if (target is KotlinMetadataTarget) return@filter false
+                when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+                    KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication ->
+                        // Exclude subcomponent pointer from the root component
+                        target !is KotlinJvmTarget
+                    KmpPublicationStrategy.StandardKMPPublication ->
+                        true
+                }
+            }
     }
 
     /**
      * These are variants pointing to subcomponent variants via available-at pointers
      */
     private val _variants = project.future {
-        subcomponentTargets()
-            .filter {
-                when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
-                    KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication ->
-                        // Exclude subcomponent pointer from the root component
-                        return@filter it !is KotlinJvmTarget
-                    KmpPublicationStrategy.StandardKMPPublication ->
-                        return@filter true
-                }
-            }
+        subcomponentTargetsWithAvailableAtPointers()
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }

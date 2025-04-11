@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs
 
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import java.io.File
 
 internal data class UklibFragment(
+    @get:Input
     val identifier: String,
+    @get:Input
     val attributes: Set<String>,
+    @get:InputFiles
     val file: File,
 )

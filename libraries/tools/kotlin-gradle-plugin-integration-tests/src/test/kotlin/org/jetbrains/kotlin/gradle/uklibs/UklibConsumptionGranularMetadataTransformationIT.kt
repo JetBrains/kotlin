@@ -27,18 +27,20 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
     fun `lenient PSM consumption in GMT`(
         version: GradleVersion
     ) {
+        val targetSubset: KotlinMultiplatformExtension.() -> Unit = {
+            iosArm64()
+            iosX64()
+            linuxArm64()
+            linuxX64()
+        }
         val subsetProducer = project("empty", version) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.enableCrossCompilation()
                 project.applyMultiplatform {
-                    iosArm64()
-                    iosX64()
-                    linuxArm64()
-                    linuxX64()
-
+                    targetSubset()
                     sourceSets.all {
-                        it.addIdentifierClass()
+                        it.compileStubSourceWithSourceSetName()
                     }
                 }
             }
@@ -52,15 +54,12 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.enableCrossCompilation()
                 project.applyMultiplatform {
-                    iosArm64()
-                    iosX64()
+                    targetSubset()
                     macosArm64()
                     macosX64()
-                    linuxArm64()
-                    linuxX64()
 
                     sourceSets.all {
-                        it.addIdentifierClass()
+                        it.compileStubSourceWithSourceSetName()
                     }
                     sourceSets.commonMain.get().dependencies {
                         implementation(subsetProducer.rootCoordinate)
@@ -219,7 +218,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     }
 
                     sourceSets.all {
-                        it.addIdentifierClass()
+                        it.compileStubSourceWithSourceSetName()
                     }
                     sourceSets.getByName("consumerCommonMain").dependencies {
                         implementation(directPublisher.rootCoordinate)
@@ -289,7 +288,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     jvm()
 
                     sourceSets.all {
-                        it.addIdentifierClass()
+                        it.compileStubSourceWithSourceSetName()
                     }
                 }
             }
@@ -306,7 +305,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     jvm()
                     macosX64()
 
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     sourceSets.commonMain.get().dependencies {
                         implementation(publishedProject.rootCoordinate)
                     }
@@ -419,7 +418,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     multiplatformConfiguration()
                     sourceSets.all {
-                        it.addIdentifierClass()
+                        it.compileStubSourceWithSourceSetName()
                     }
                 }
             }

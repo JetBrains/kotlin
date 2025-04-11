@@ -9,9 +9,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
@@ -21,40 +21,36 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZi
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.File
 
 @DisableCachingByDefault(because = "This task only compresses Uklib into an archive")
 internal abstract class ArchiveUklibTask : DefaultTask() {
-    data class ArchiveUklibTaskFragment(
-        val fragment: Provider<UklibFragment>,
-        val refineesTransitiveClosure: Set<String>,
-    )
-
-    // FIXME: @Input?
-    // FIXME: Write FT to check the graph that is passed here
-    @get:Internal
-    abstract val fragments: ListProperty<ArchiveUklibTaskFragment>
+    @get:Nested
+    abstract val fragments: ListProperty<UklibFragment>
+    // @Nested doesn't propagate implicit task dependencies: https://github.com/gradle/gradle/issues/13590
+    @get:Input
+    protected val taskDependencies = fragments.map { "" }
 
     @get:OutputFile
     val outputZip: RegularFileProperty = project.objects.fileProperty().convention(
-        // FIXME: use convention name + output locations
-        project.layout.buildDirectory.file("library.${Uklib.UKLIB_EXTENSION}")
+        project.layout.buildDirectory.file("kotlin/uklibs/${project.name}.${Uklib.UKLIB_EXTENSION}")
     )
 
     @get:Internal
     val temporariesDirectory: DirectoryProperty = project.objects.directoryProperty().convention(
-        // FIXME: use streams instead tmp files
-        project.layout.buildDirectory.dir("uklibTemp")
+        // FIXME: use streams instead tmp files KT-75395
+        project.layout.buildDirectory.dir("kotlin/uklibs_tmp")
     )
 
+
     data class UklibWithDuplicateAttributes(
-        val duplicates: Set<UklibFragmentsChecker.Violation.DuplicateAttributesFragments>
+        val duplicates: Map<UklibAttributes, Set<FragmentIdentifier>>
     ) : IllegalStateException(
         """
             ${Uklib.UKLIB_NAME} can't publish with fragments that have duplicate attributes:
             
-            ${duplicates.map { "Attributes \"${it.attributes}\" appear in fragments \"${it.duplicates.map { it.identifier }.sorted()}\""}.joinToString("\n")}
+            ${duplicates.map { "Attributes \"${it.key}\" appear in fragments \"${it.value.sorted()}\""}.joinToString("\n")}
         """.trimIndent()
     )
 
@@ -66,38 +62,24 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
          *
          * FIXME: What happens when platform compilations are skipped? Write an IT?
          */
-        val compiledFragments = fragments.get().filterNot { fragment ->
-            val isMetadata = fragment.fragment.get().attributes.count() > 1
-            isMetadata && !fragment.fragment.get().file.exists()
+        val compiledFragments = fragments.get().filter { fragment ->
+            val isMetadata = fragment.attributes.count() > 1
+            val isASkippedMetadataCompilation = isMetadata && !fragment.file.exists()
+            !isASkippedMetadataCompilation
         }
-        val compiledFragmentIdentifiers = compiledFragments.map { it.fragment.get().identifier }.toSet()
 
-        // Make sure we ended up with fragments that don't have bamboos
-        val violations = UklibFragmentsChecker.findViolationsInSourceSetGraph(
-            compiledFragments.associate {
-                val fragment = it.fragment
-                val refinees = it.refineesTransitiveClosure
-                UklibFragmentsChecker.FragmentToCheck(
-                    fragment.get().identifier,
-                    fragment.get().attributes,
-                ) to refinees
-                    // Filter out bamboos which were avoided by skipped metadata compilations
-                    .intersect(compiledFragmentIdentifiers)
-            }
+        val bambooFragments = compiledFragments
+            .groupBy { it.attributes }
+            .filter { it.value.size > 1 }
+        if (bambooFragments.isNotEmpty()) throw UklibWithDuplicateAttributes(
+            duplicates = bambooFragments.mapValues { it.value.map { it.identifier }.sorted().toSet() }
         )
 
-        val duplicateAttributes = linkedSetOf<UklibFragmentsChecker.Violation.DuplicateAttributesFragments>()
-        violations.forEach {
-            when (it) {
-                is UklibFragmentsChecker.Violation.DuplicateAttributesFragments -> duplicateAttributes.add(it)
-                // We should never get here because these get validated during configuration time at UklibFromKGPModel.kt
-                else -> error("FIXME: Unexpected uklib packaging violation report to youtrack: $it")
-            }
-        }
-        if (duplicateAttributes.isNotEmpty()) throw UklibWithDuplicateAttributes(duplicateAttributes)
+        outputZip.getFile().parentFile.mkdirs()
+        temporariesDirectory.getFile().mkdirs()
 
         Uklib(
-            UklibModule(compiledFragments.map { it.fragment.get() }.toSet()),
+            UklibModule(compiledFragments.toSet()),
             Uklib.CURRENT_UMANIFEST_VERSION,
         ).serializeToZipArchive(
             outputZip = outputZip.getFile(),
@@ -105,3 +87,6 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
         )
     }
 }
+
+private typealias UklibAttributes = Set<String>
+private typealias FragmentIdentifier = String

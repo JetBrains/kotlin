@@ -52,13 +52,13 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         val url: String,
     )
 
-    // FIXME: Test publication with Android
+    // FIXME: Test publication with Android - KT-76700
 
     @GradleTest
     fun `standard kmp publication`(version: GradleVersion) {
         assertEquals<PrettyPrint<GradleMetadata>>(
             GradleMetadata(
-                variants = invariantSubcomponentKmpVariants + standardKmpPublicationMetadataVariants + jvmSubcomponentVariants,
+                variants = rootVariantsSharedByAllPublications + standardKmpPublicationMetadataVariants + jvmSubcomponentVariants,
             ).prettyPrinted,
             kmpProducer(
                 version,
@@ -71,7 +71,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
 
     @GradleTest
     fun `kmp publication with uklibs - with jvm target`(version: GradleVersion) {
-        val a = kmpProducer(
+        val producer = kmpProducer(
             version,
             withJvm = true,
         ) {
@@ -79,10 +79,10 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         }.publish()
         assertEquals<PrettyPrint<GradleMetadata>>(
             GradleMetadata(
-                variants = invariantSubcomponentKmpVariants + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmVariants,
+                variants = rootVariantsSharedByAllPublications + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmVariants,
             ).prettyPrinted,
             json.decodeFromStream<GradleMetadata>(
-                a.rootComponent.gradleMetadata.inputStream()
+                producer.rootComponent.gradleMetadata.inputStream()
             ).prettyPrinted
         )
     }
@@ -97,7 +97,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         }.publish()
         assertEquals<PrettyPrint<GradleMetadata>>(
             GradleMetadata(
-                variants = invariantSubcomponentKmpVariants + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmStubVariants,
+                variants = rootVariantsSharedByAllPublications + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmStubVariants,
             ).prettyPrinted,
             json.decodeFromStream<GradleMetadata>(
                 a.rootComponent.gradleMetadata.inputStream()
@@ -105,7 +105,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         )
     }
 
-    private val invariantSubcomponentKmpVariants = mutableSetOf(
+    private val rootVariantsSharedByAllPublications = mutableSetOf(
         Variant(
             attributes = mutableMapOf(
                 "artifactType" to "org.jetbrains.kotlin.klib",

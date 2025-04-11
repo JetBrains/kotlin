@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.api.dsl.LibraryExtension
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.compilationResolution
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
-import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -321,7 +319,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     linuxArm64()
                     linuxX64()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
@@ -358,8 +356,8 @@ class UklibConsumptionIT : KGPBaseTest() {
                     linuxArm64()
                     linuxX64()
                     jvm()
-                    sourceSets.linuxMain.get().addIdentifierClass()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "transitive"))
@@ -395,7 +393,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     linuxArm64()
                     linuxX64()
                     jvm()
-                    sourceSets.all { it.addIdentifierClass() }
+                    sourceSets.all { it.compileStubSourceWithSourceSetName() }
                     sourceSets.commonMain.dependencies {
                         implementation(direct.rootCoordinate)
                     }
@@ -488,7 +486,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     linuxArm64()
                     jvm()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
@@ -500,7 +498,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     jvm()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     sourceSets.commonMain.dependencies {
                         api(producer.rootCoordinate)
                     }

@@ -27,6 +27,12 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
+/**
+ * The classifier or metadata jar lived throught the following iterations:
+ * - "-all" when HMPP was introduced
+ * - no classifier when per-HMPP metadata jar was dropped
+ * - "-psm" with Uklibs because we want to move JVM jar for Maven JVM consumption into the place of the metadata jar
+ */
 internal val Project.psmJarClassifier: String?
     get() = when (kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> "psm"

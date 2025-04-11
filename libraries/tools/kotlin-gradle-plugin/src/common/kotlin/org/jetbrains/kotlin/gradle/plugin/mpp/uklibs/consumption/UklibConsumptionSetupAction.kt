@@ -110,6 +110,9 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
         }
 
         if (target is KotlinJvmTarget) {
+            /**
+             * FIXME: Unit test that Java base plugin resolvable configurations can consume Uklibs. Right now this is only covered by crude IT
+             */
             javaSourceSets.configureEach { sourceSet ->
                 configurations.named(sourceSet.runtimeClasspathConfigurationName).configure {
                     it.applyUklibAttributes(usageByName(KOTLIN_UKLIB_RUNTIME), uklibFragmentPlatformAttribute)

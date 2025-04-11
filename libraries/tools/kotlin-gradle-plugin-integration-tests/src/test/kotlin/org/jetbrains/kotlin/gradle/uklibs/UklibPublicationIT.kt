@@ -49,10 +49,10 @@ class UklibPublicationIT : KGPBaseTest() {
             wasmJs()
             wasmWasi()
 
-            sourceSets.iosMain.get().addIdentifierClass()
-            sourceSets.linuxMain.get().addIdentifierClass()
-            sourceSets.nativeMain.get().addIdentifierClass()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.iosMain.get().compileStubSourceWithSourceSetName()
+            sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
+            sourceSets.nativeMain.get().compileStubSourceWithSourceSetName()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }
 
         val expectedFragments = setOf(
@@ -84,7 +84,7 @@ class UklibPublicationIT : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             iosArm64()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }
 
         val expectedFragments = setOf(
@@ -198,7 +198,7 @@ class UklibPublicationIT : KGPBaseTest() {
                     iosX64()
 
                     sourceSets.all {
-                        it.addIdentifierClass()
+                        it.compileStubSourceWithSourceSetName()
                     }
                 }
             }
@@ -206,29 +206,14 @@ class UklibPublicationIT : KGPBaseTest() {
             val iosAttributes = setOf("ios_arm64", "ios_x64")
             assertEquals(
                 ArchiveUklibTask.UklibWithDuplicateAttributes(
-                    setOf(
-                        UklibFragmentsChecker.Violation.DuplicateAttributesFragments(
-                            attributes = iosAttributes,
-                            duplicates = setOf(
-                                UklibFragmentsChecker.FragmentToCheck(
-                                    identifier = "iosMain",
-                                    iosAttributes,
-                                ),
-                                UklibFragmentsChecker.FragmentToCheck(
-                                    identifier = "appleMain",
-                                    iosAttributes,
-                                ),
-                                UklibFragmentsChecker.FragmentToCheck(
-                                    identifier = "nativeMain",
-                                    iosAttributes,
-                                ),
-                                UklibFragmentsChecker.FragmentToCheck(
-                                    identifier = "commonMain",
-                                    iosAttributes,
-                                ),
-                            )
+                    mapOf(
+                        iosAttributes to setOf(
+                            "iosMain",
+                            "appleMain",
+                            "nativeMain",
+                            "commonMain"
                         )
-                    )
+                    ),
                 ),
                 catchBuildFailures<ArchiveUklibTask.UklibWithDuplicateAttributes>().buildAndReturn(
                     "publishAllPublicationsToStubRepository"
@@ -252,7 +237,7 @@ class UklibPublicationIT : KGPBaseTest() {
             androidTarget()
 
             sourceSets.all {
-                it.addIdentifierClass()
+                it.compileStubSourceWithSourceSetName()
             }
 
             with(project.extensions.getByType(LibraryExtension::class.java)) {
@@ -288,8 +273,6 @@ class UklibPublicationIT : KGPBaseTest() {
         )
     }
 
-    // FIXME: jvm { withJava }
-
     @GradleTest
     fun `uklib POM - publication with project dependencies`(
         gradleVersion: GradleVersion,
@@ -301,16 +284,12 @@ class UklibPublicationIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             val dependency = project("empty", gradleVersion) {
                 buildScriptInjection {
-//                    project.propertiesExtension.set(
-//                        PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
-//                        KmpIsolatedProjectsSupport.ENABLE.name,
-//                    )
                     project.group = "dependencyGroup"
                     project.version = "2.0"
                     project.applyMultiplatform {
                         linuxArm64()
                         linuxX64()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             }
@@ -320,7 +299,7 @@ class UklibPublicationIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         linuxArm64()
                         linuxX64()
-                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {
                             implementation(project(":dependency"))
                         }
@@ -376,7 +355,7 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             jvm()
             js()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }.publishedProject
 
         val producerApi = publishUklib(
@@ -385,7 +364,7 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             jvm()
             js()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }.publishedProject
 
         val project = publishUklib(
@@ -395,7 +374,7 @@ class UklibPublicationIT : KGPBaseTest() {
             // FIXME: Allow consuming Uklibs
             jvm()
             js()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
             sourceSets.commonMain.dependencies {
                 implementation(producerImplementation.rootCoordinate)
                 api(producerApi.rootCoordinate)
@@ -436,7 +415,7 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             iosArm64()
             iosX64()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }.publishedProject
 
         val project = publishUklib(
@@ -446,7 +425,7 @@ class UklibPublicationIT : KGPBaseTest() {
             // FIXME: Enable uklib consumption?
             iosArm64()
             iosX64()
-            sourceSets.commonMain.get().addIdentifierClass()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
             sourceSets.commonMain.dependencies {
                 implementation(producer.rootCoordinate)
             }

@@ -31,9 +31,6 @@ import java.io.File
 
 internal data class KGPUklibFragment(
     val fragment: Provider<UklibFragment>,
-    // These must be transitive because we will filter them at execution time for skipped metadata fragments
-    val refineesTransitiveClosure: Set<String>,
-    val outputFile: Provider<File>,
     val compilation: KotlinCompilation<*>,
 )
 
@@ -71,9 +68,9 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
             else -> {
                 when (val attribute = target.uklibFragmentPlatformAttribute) {
                     is UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndPublishInUmanifest -> { /* Do nothing for AGP */ }
-                    is UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest -> { error("Unexpected") }
                     is UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndFailOnPublication -> unsupportedTargets.add(attribute.unsupportedTargetName)
-                    is UklibFragmentPlatformAttribute.FailOnConsumptionAndPublication -> {  }
+                    is UklibFragmentPlatformAttribute.FailOnConsumptionAndPublication,
+                    is UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest -> { error("FIXME KT-76659: Unexpected") }
                 }
             }
         }
@@ -104,8 +101,6 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                         file = it,
                     )
                 },
-                refineesTransitiveClosure = metadataCompilation.refineesTransitiveClosure(),
-                outputFile = artifactProvider,
                 compilation = metadataCompilation,
             )
         )
@@ -136,7 +131,7 @@ private fun kgpUklibFragment(
     mainCompilation: KotlinCompilation<*>,
     fileProvider: Provider<File>,
 ): KGPUklibFragment {
-    val fragmentIdentifier = mainCompilation.fragmentIdentifier
+    val fragmentIdentifier = mainCompilation.uklibFragmentIdentifier
     val fragmentAttribute = mainCompilation.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
     return KGPUklibFragment(
         fragment = fileProvider.map {
@@ -146,15 +141,9 @@ private fun kgpUklibFragment(
                 file = it,
             )
         },
-        refineesTransitiveClosure = mainCompilation.refineesTransitiveClosure(),
-        outputFile = fileProvider,
         compilation = mainCompilation,
     )
 }
-
-private fun KotlinCompilation<*>.refineesTransitiveClosure(): Set<String> = internal.allKotlinSourceSets
-    .filterNot { it == defaultSourceSet }
-    .map { it.metadataFragmentIdentifier }.toSet()
 
 /**
  * FIXME: Write FT with necessary KGP source set structures
@@ -178,11 +167,15 @@ private fun Project.ensureSourceSetStructureIsUklibCompliant(publishedCompilatio
     val sourceSets = project.multiplatformExtension.sourceSets
     violations.forEach {
         when (it) {
-            UklibFragmentsChecker.Violation.EmptyRefinementGraph -> error("FIXME: Refinement graph is unexpectedly empty, report to youtrack")
-            is UklibFragmentsChecker.Violation.MissingFragment -> error("FIXME: Report to youtrack, this is a bug")
-            is UklibFragmentsChecker.Violation.FragmentWithEmptyAttributes -> error("FIXME: Report to youtrack, this is a bug")
-            is UklibFragmentsChecker.Violation.OrphanedIntermediateFragment -> error("FIXME: Report to youtrack, this is a bug")
-            is UklibFragmentsChecker.Violation.IncompatibleRefinementViolation -> error("FIXME: Report to youtrack, this is a bug")
+            UklibFragmentsChecker.Violation.EmptyRefinementGraph -> error("FIXME KT-76659: Refinement graph is unexpectedly empty, report to youtrack")
+            is UklibFragmentsChecker.Violation.MissingFragment -> error("FIXME KT-76659: Report to youtrack, this is a bug")
+            is UklibFragmentsChecker.Violation.FragmentWithEmptyAttributes -> error("FIXME KT-76659: Report to youtrack, this is a bug")
+            /**
+             * Orphaned intermediate fragment are impossible in the current implementation because we traverse only those source sets that
+             * are connected to the metadata compilation and the platform compilations. See
+             */
+            is UklibFragmentsChecker.Violation.OrphanedIntermediateFragment -> error("FIXME KT-76659: Report to youtrack, this is a bug")
+            is UklibFragmentsChecker.Violation.IncompatibleRefinementViolation -> error("FIXME KT-76659: Report to youtrack, this is a bug")
             is UklibFragmentsChecker.Violation.DuplicateAttributesFragments -> {
                 /**
                  * We can't validate bamboos at configuration time because metadata compilations are skipped if intermediate source set has

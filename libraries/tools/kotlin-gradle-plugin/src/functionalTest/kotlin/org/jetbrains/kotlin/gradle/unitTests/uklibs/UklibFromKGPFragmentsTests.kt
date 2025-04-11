@@ -25,6 +25,7 @@ import kotlin.test.assertEquals
 @ExperimentalWasmDsl
 class UklibFromKGPFragmentsTests {
 
+
     @Test
     fun `uklib fragments - single target project has a single fragment`() {
         buildProjectWithMPP(
@@ -45,20 +46,6 @@ class UklibFromKGPFragmentsTests {
                         )
                     ),
                     multiplatformExtension.testFragments()
-                )
-                assertEquals<PrettyPrint<List<TestRefineesFragment>>>(
-                    mutableListOf(
-                        TestRefineesFragment(
-                            identifier = "iosArm64Main",
-                            refinees = mutableSetOf(
-                                "appleMain",
-                                "commonMain",
-                                "iosMain",
-                                "nativeMain",
-                            ),
-                        ),
-                    ).prettyPrinted,
-                    multiplatformExtension.refinees().prettyPrinted,
                 )
             }
         }
@@ -120,61 +107,38 @@ class UklibFromKGPFragmentsTests {
                     ),
                     multiplatformExtension.testFragments().toSet()
                 )
-                assertEquals<PrettyPrint<List<TestRefineesFragment>>>(
-                    mutableListOf(
-                        TestRefineesFragment(
-                            identifier = "iosArm64Main",
-                            refinees = mutableSetOf(
-                                "customAppleMain",
-                                "customIosMain",
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "iosX64Main",
-                            refinees = mutableSetOf(
-                                "customAppleMain",
-                                "customIosMain",
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "jvmMain",
-                            refinees = mutableSetOf(
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "customAppleMain",
-                            refinees = mutableSetOf(
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "customIosMain",
-                            refinees = mutableSetOf(
-                                "customAppleMain",
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "customMainMain",
-                            refinees = mutableSetOf(
-                            ),
-                        ),
-                    ).prettyPrinted,
-                    multiplatformExtension.refinees().prettyPrinted,
-                )
             }
             // Check that bamboo refinement is not emitted; we must check for bamboo refinement at execution
             assertNoDiagnostics(
-                filterDiagnosticIds = listOf(
-                    KotlinToolingDiagnostics.OldNativeVersionDiagnostic,
+                filterDiagnosticIds = defaultFilteredDiagnostics + listOf(
                     KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed,
                     KotlinToolingDiagnostics.UnusedSourceSetsWarning,
                 )
             )
         }
+    }
+
+    @Test
+    fun `uklib fragments - orphan doesn't produce a configuration time exception - because it is never traversed as a Uklib fragment`() {
+        buildProjectWithMPP(
+            preApplyCode = {
+                setUklibPublicationStrategy()
+                enableCrossCompilation()
+            }
+        ) {
+            kotlin {
+                iosArm64()
+                iosX64()
+                jvm()
+
+                sourceSets.create("orphan")
+            }
+        }.evaluate().assertNoDiagnostics(
+            filterDiagnosticIds = defaultFilteredDiagnostics + listOf(
+                KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed,
+                KotlinToolingDiagnostics.UnusedSourceSetsWarning,
+            )
+        )
     }
 
     @Test
@@ -335,8 +299,7 @@ class UklibFromKGPFragmentsTests {
                 iosX64()
             }
         }.evaluate().assertNoDiagnostics(
-            filterDiagnosticIds = listOf(
-                KotlinToolingDiagnostics.OldNativeVersionDiagnostic,
+            filterDiagnosticIds = defaultFilteredDiagnostics + listOf(
                 KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed,
                 KotlinToolingDiagnostics.UnusedSourceSetsWarning,
             )
@@ -355,18 +318,4 @@ class UklibFromKGPFragmentsTests {
                 attributes = it.fragment.get().attributes,
             )
         }
-
-    internal data class TestRefineesFragment(
-        val identifier: String,
-        val refinees: Set<String>,
-    )
-
-    private suspend fun KotlinMultiplatformExtension.refinees(): List<TestRefineesFragment> =
-        validateKgpModelIsUklibCompliantAndCreateKgpFragments()
-            .map {
-                TestRefineesFragment(
-                    identifier = it.fragment.get().identifier,
-                    refinees = it.refineesTransitiveClosure,
-                )
-            }
 }

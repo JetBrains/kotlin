@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
@@ -37,31 +38,23 @@ internal suspend fun Project.createUklibPublication(): List<DefaultKotlinUsageCo
 
     val kgpFragments = multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments()
 
-    kgpFragments.forEach { fragment ->
-        archiveUklib.configure {
-            // outputFile might be a directory or a file
-            it.inputs.files(fragment.outputFile)
-        }
-    }
-
     archiveUklib.configure { task ->
-        kgpFragments.forEach { fragment ->
+        kgpFragments.forEach {
             task.fragments.add(
-                ArchiveUklibTask.ArchiveUklibTaskFragment(
-                    fragment.fragment,
-                    fragment.refineesTransitiveClosure,
-                )
+                it.fragment
             )
         }
     }
 
-    return setupOutgoingUklibConfigurations(
+    val uklibUsages = createOutgoingUklibConfigurationsAndUsages(
         archiveUklib,
         kgpFragments
     )
+
+    return uklibUsages
 }
 
-internal suspend fun Project.setupOutgoingUklibConfigurations(
+internal suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
     publishedCompilations: List<KGPUklibFragment>,
 ): List<DefaultKotlinUsageContext> {
@@ -71,14 +64,7 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attribute(isUklib, isUklibTrue)
         }
-        publishedCompilations.forEach {
-            extendsFrom(
-                it.compilation.internal.configurations.apiConfiguration
-            )
-            if (it.compilation is KotlinNativeCompilation) {
-                extendsFrom(it.compilation.internal.configurations.implementationConfiguration)
-            }
-        }
+        inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
     }
     configurations.createConsumable(UKLIB_RUNTIME_ELEMENTS_NAME) {
         attributes.apply {
@@ -86,11 +72,7 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attribute(isUklib, isUklibTrue)
         }
-        publishedCompilations.forEach {
-            it.compilation.internal.configurations.runtimeDependencyConfiguration?.let {
-                extendsFrom(it)
-            }
-        }
+        inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
     }
 
     project.artifacts.add(UKLIB_API_ELEMENTS_NAME, archiveTask) {
@@ -102,15 +84,15 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
 
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     val metadataTarget = multiplatformExtension.awaitMetadataTarget()
+    val anyMetadataCompilation = metadataTarget.compilations.first()
     val variants = mutableListOf(
         DefaultKotlinUsageContext(
-            // Whatever, this compilation doesn't matter
-            compilation = metadataTarget.compilations.getByName("main"),
+            compilation = anyMetadataCompilation,
             dependencyConfigurationName = UKLIB_RUNTIME_ELEMENTS_NAME,
             includeIntoProjectStructureMetadata = false,
         ),
         DefaultKotlinUsageContext(
-            compilation = metadataTarget.compilations.getByName("main"),
+            compilation = anyMetadataCompilation,
             dependencyConfigurationName = UKLIB_API_ELEMENTS_NAME,
             includeIntoProjectStructureMetadata = false,
         )
@@ -123,8 +105,9 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
     val jvmTarget = project.multiplatformExtension.awaitTargets().singleOrNull { it is KotlinJvmTarget }
     if (jvmTarget != null) {
         val kotlinTargetComponent = jvmTarget.components.single() as KotlinTargetSoftwareComponentImpl
+        // FIXME: KT-76687
         @Suppress("UNCHECKED_CAST")
-        variants += (kotlinTargetComponent.kotlinComponent as InternalKotlinTargetComponent).usages as Set<DefaultKotlinUsageContext>
+        variants += kotlinTargetComponent.kotlinComponent.internal.usages as Set<DefaultKotlinUsageContext>
     } else {
         // FIXME: Test that stubJvmVariant inherits dependencies from relevant configurations
         val jar = stubJvmJarTask()
@@ -133,25 +116,14 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
                 attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
                 attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
-            publishedCompilations.forEach {
-                extendsFrom(
-                    it.compilation.internal.configurations.apiConfiguration
-                )
-                if (it.compilation is KotlinNativeCompilation) {
-                    extendsFrom(it.compilation.internal.configurations.implementationConfiguration)
-                }
-            }
+            inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
         }
         configurations.createConsumable(UKLIB_JAVA_RUNTIME_ELEMENTS_STUB_NAME) {
             attributes.apply {
                 attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_RUNTIME))
                 attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
-            publishedCompilations.forEach {
-                it.compilation.internal.configurations.runtimeDependencyConfiguration?.let {
-                    extendsFrom(it)
-                }
-            }
+            inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
         }
         project.artifacts.add(UKLIB_JAVA_API_ELEMENTS_STUB_NAME, jar) {
             it.extension = "jar"
@@ -160,16 +132,15 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
             it.extension = "jar"
         }
 
-        val comp = metadataTarget.compilations.getByName("main")
         variants.addAll(
             listOf(
                 DefaultKotlinUsageContext(
-                    compilation = comp,
+                    compilation = anyMetadataCompilation,
                     dependencyConfigurationName = UKLIB_JAVA_API_ELEMENTS_STUB_NAME,
                     includeIntoProjectStructureMetadata = false,
                 ),
                 DefaultKotlinUsageContext(
-                    compilation = comp,
+                    compilation = anyMetadataCompilation,
                     dependencyConfigurationName = UKLIB_JAVA_RUNTIME_ELEMENTS_STUB_NAME,
                     includeIntoProjectStructureMetadata = false,
                 ),
@@ -180,7 +151,35 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
     return variants
 }
 
+private fun Configuration.inheritCompilationDependenciesFromPublishedCompilations(
+    publishedCompilations: List<KotlinCompilation<*>>,
+) {
+    publishedCompilations.forEach {
+        extendsFrom(
+            it.internal.configurations.apiConfiguration
+        )
+        /**
+         * If K/N is one of the published compilations, we must promote its implementation dependencies to api
+         *
+         * FIXME: Remove this extendsFrom after OSIP-667
+         */
+        if (it is KotlinNativeCompilation) {
+            extendsFrom(it.internal.configurations.implementationConfiguration)
+        }
+    }
+}
+
+private fun Configuration.inheritRuntimeDependenciesFromPublishedCompilations(
+    publishedCompilations: List<KotlinCompilation<*>>,
+) {
+    publishedCompilations.forEach {
+        it.internal.configurations.runtimeDependencyConfiguration?.let {
+            extendsFrom(it)
+        }
+    }
+}
+
 private fun Project.stubJvmJarTask(): TaskProvider<Jar> {
     val stubTaskName = "stubJvmJar"
-    return tasks.locateTask<Jar>(stubTaskName) ?: project.tasks.register(stubTaskName, Jar::class.java)
+    return tasks.locateTask<Jar>(stubTaskName) ?: tasks.register(stubTaskName, Jar::class.java)
 }

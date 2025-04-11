@@ -26,20 +26,20 @@ fun <T> Project.ignoreAccessViolations(code: () -> (T)) = (project.gradle as Gra
 fun TestProject.metadataTransformationOutputClasspath(
     sourceSetName: String,
 ): List<File> {
-    val sourceSetDependenciesTransformationTask = buildScriptReturn {
-        project.locateOrRegisterMetadataDependencyTransformationTask(
-            kotlinMultiplatform.sourceSets.getByName(sourceSetName)
-        ).name
-    }.buildAndReturn()
+    val dumpTaskName = "dump_${sourceSetName}_${generateIdentifier()}"
     val outputClasspath = providerBuildScriptReturn {
-        project.provider {
+        val gmtTask = project.provider {
             kotlinMultiplatform.sourceSets.getByName(sourceSetName)
         }.flatMap {
             project.locateOrRegisterMetadataDependencyTransformationTask(it)
-        }.flatMap {
+        }
+        project.tasks.register(dumpTaskName) {
+            it.dependsOn(gmtTask)
+        }
+        gmtTask.flatMap {
             it.allTransformedLibraries()
         }
-    }.buildAndReturn(sourceSetDependenciesTransformationTask)
+    }.buildAndReturn(dumpTaskName)
     return outputClasspath
 }
 

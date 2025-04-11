@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
-import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.junit.jupiter.api.DisplayName
 import kotlin.String
 import kotlin.collections.Map
@@ -34,16 +34,16 @@ class KmpResolutionIT : KGPBaseTest() {
             transitiveConfiguration = {
                 buildScriptInjection {
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
             directConfiguration = {
                 buildScriptInjection {
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -69,6 +69,13 @@ class KmpResolutionIT : KGPBaseTest() {
                 listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
                 listOf("commonMain", "foo-transitive-1.0-commonMain-.klib"),
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
+                mutableListOf("commonMain", "foo-transitive-1.0-commonMain-.klib"),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("iosMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
 
@@ -235,8 +242,8 @@ class KmpResolutionIT : KGPBaseTest() {
             transitiveConfiguration = {
                 buildScriptInjection {
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -245,7 +252,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     project.setUklibPublicationStrategy()
                     project.applyMultiplatform {
                         // Now it can't have linuxMain due to bamboos
-                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -444,8 +451,8 @@ class KmpResolutionIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.setUklibPublicationStrategy()
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -455,7 +462,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     project.setUklibPublicationStrategy()
                     project.setUklibResolutionStrategy()
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -649,8 +656,8 @@ class KmpResolutionIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.setUklibPublicationStrategy()
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -658,8 +665,8 @@ class KmpResolutionIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.setUklibResolutionStrategy()
                     project.applyMultiplatform {
-                        sourceSets.commonMain.get().addIdentifierClass()
-                        sourceSets.linuxMain.get().addIdentifierClass()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             },
@@ -699,6 +706,13 @@ class KmpResolutionIT : KGPBaseTest() {
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
                 ),
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
+                .relativeTransformationPathComponents().prettyPrinted
+        )
+        assertEquals<PrettyPrint<List<List<String>>>>(
+            mutableListOf<MutableList<String>>(
+                mutableListOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
+                mutableListOf("commonMain", "uklib-foo-transitive-1.0-commonMain-"),
+            ).prettyPrinted, consumer.metadataTransformationOutputClasspath("iosMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
 
@@ -865,7 +879,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     linuxArm64()
                     linuxX64()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
@@ -877,7 +891,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     jvm()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     sourceSets.commonMain.dependencies {
                         api(producer.rootCoordinate)
                     }
@@ -939,7 +953,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     linuxArm64()
                     linuxX64()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "transitive"))
@@ -954,7 +968,7 @@ class KmpResolutionIT : KGPBaseTest() {
                     linuxArm64()
                     linuxX64()
                     jvm()
-                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     sourceSets.commonMain.dependencies {
                         api(transitive.rootCoordinate)
                     }
@@ -993,6 +1007,20 @@ class KmpResolutionIT : KGPBaseTest() {
         directConfiguration: TestProject.() -> Unit,
         consumerConfiguration: TestProject.() -> Unit,
     ): TestProject {
+        val consumedTargetConfiguration: KotlinMultiplatformExtension.() -> Unit = {
+            js()
+            jvm()
+            iosArm64()
+            iosX64()
+            linuxArm64()
+            linuxX64()
+        }
+        val intermediateSubsetTargetConfiguration: KotlinMultiplatformExtension.() -> Unit = {
+            linuxArm64()
+            linuxX64()
+        }
+
+
         val transitiveProducer = project("empty", gradleVersion) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "transitive"
@@ -1002,12 +1030,7 @@ class KmpResolutionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.enableCrossCompilation()
                 project.applyMultiplatform {
-                    js()
-                    jvm()
-                    iosArm64()
-                    iosX64()
-                    linuxArm64()
-                    linuxX64()
+                    consumedTargetConfiguration()
                 }
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "foo"))
@@ -1022,9 +1045,7 @@ class KmpResolutionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.enableCrossCompilation()
                 project.applyMultiplatform {
-                    linuxArm64()
-                    linuxX64()
-
+                    intermediateSubsetTargetConfiguration()
                     sourceSets.commonMain.get().dependencies {
                         api(transitiveProducer.rootCoordinate)
                     }
@@ -1044,13 +1065,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 project.computeTransformedLibraryChecksum(false)
                 project.enableCrossCompilation()
                 project.applyMultiplatform {
-                    js()
-                    jvm()
-                    iosArm64()
-                    iosX64()
-                    linuxArm64()
-                    linuxX64()
-
+                    consumedTargetConfiguration()
                     sourceSets.commonMain.get().dependencies {
                         implementation(directProducer.rootCoordinate)
                     }
