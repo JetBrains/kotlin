@@ -39,7 +39,7 @@
     }
   },
   "findKotlinClassStats": {
-    "count": 211,
+    "count": $UINT$,
     "time": {
       "nanos": $UINT$,
       "userNanos": $UINT$,
