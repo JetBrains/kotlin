@@ -35,7 +35,7 @@ internal class SpecialInteropIntrinsicsLowering(val context: Context) : FileLowe
                 val callee = expression.symbol.owner
                 return when (callee.symbol) {
                     symbols.interopTypeOf -> {
-                        val typeArgument = expression.getTypeArgument(0)!!
+                        val typeArgument = expression.typeArguments[0]!!
                         val classSymbol = typeArgument.classifierOrNull as? IrClassSymbol
 
                         if (classSymbol == null) {
