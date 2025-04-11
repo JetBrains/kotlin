@@ -794,7 +794,7 @@ class FirElementSerializer private constructor(
             builder.addValueParameter(local.valueParameterProto(valueParameter, index, function))
         }
 
-        contractSerializer.serializeContractOfFunctionIfAny(function, builder, this)
+        contractSerializer.serializeContractOfFunctionIfAny(function, builder, local)
 
         extension.serializeFunction(function, builder, versionRequirementTable, local)
 

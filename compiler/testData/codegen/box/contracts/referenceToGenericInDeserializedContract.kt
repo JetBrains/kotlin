@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 // ISSUE: KT-76301
 
@@ -31,7 +31,7 @@ fun test_fromSource(r: Refinement<Any, String>, x: Any): String {
 // FILE: app.kt
 fun test_fromLib(r: Refinement<Any, String>, x: Any): String {
     r.validate(x)
-    return <!RETURN_TYPE_MISMATCH!>x<!>
+    return x
 }
 
 fun box(): String {
