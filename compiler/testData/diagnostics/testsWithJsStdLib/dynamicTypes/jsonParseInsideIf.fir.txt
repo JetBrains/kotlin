@@ -13,7 +13,7 @@ FILE: jsonParseInsideIf.fir.kt
                     throw R|kotlin/IllegalStateException.IllegalStateException|(String(Something is not defined.))
                 }
                 else ->  {
-                    Q|kotlin/js/JSON|.R|kotlin/js/JSON.parse|<R|kotlin/Nothing|>(R|<local>/data|)
+                    Q|kotlin/js/JSON|.R|kotlin/js/JSON.parse|<R|dynamic|>(R|<local>/data|)
                 }
             }
 

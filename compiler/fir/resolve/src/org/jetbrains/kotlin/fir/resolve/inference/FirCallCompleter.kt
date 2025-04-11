@@ -177,9 +177,7 @@ class FirCallCompleter(
             // Otherwise,
             // we miss some constraints from incorporation which leads to NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER in cases like
             // compiler/testData/diagnostics/tests/inference/nestedIfWithExpectedType.kt.
-            resolutionMode.forceFullCompletion && candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(
-                expectedType.upperBoundIfFlexible() // Here we prefer Any? to Any due to canBeNull() check inside
-            ) -> {
+            resolutionMode.forceFullCompletion && candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType) -> {
                 system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
 
@@ -225,15 +223,14 @@ class FirCallCompleter(
      *
      * @See org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createKnownTypeParameterSubstitutorForSpecialCall
      */
-    private fun Candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType: ConeRigidType): Boolean {
+    private fun Candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType: ConeKotlinType): Boolean {
         // If we're inside an assignment's RHS, we mustn't add an equality constraint because it might prevent smartcasts.
         // Example: val x: String? = null; x = if (foo) "" else throw Exception()
         if (components.context.isInsideAssignmentRhs) return false
 
         val symbol = symbol as? FirCallableSymbol ?: return false
         if (symbol.origin != FirDeclarationOrigin.Synthetic.FakeFunction ||
-            expectedType.isUnitOrNullableUnit ||
-            expectedType.isAnyOrNullableAny ||
+            expectedType.isUnitOrAnyWithArbitraryNullability() ||
             // We don't want to add an equality constraint to a nullable type to a !! call.
             // See compiler/testData/diagnostics/tests/inference/checkNotNullWithNullableExpectedType.kt
             (symbol.callableId == SyntheticCallableId.CHECK_NOT_NULL && expectedType.canBeNull(session))
@@ -251,6 +248,15 @@ class FirCallCompleter(
         }
 
         return true
+    }
+
+    /**
+     * @return true for Any?, Any!, Any, Unit?, Unit!, Unit, otherwise false
+     */
+    private fun ConeKotlinType.isUnitOrAnyWithArbitraryNullability(): Boolean {
+        if (this is ConeDynamicType) return false
+        val upperBound = upperBoundIfFlexible()
+        return with(upperBound) { isUnitOrNullableUnit || isAnyOrNullableAny }
     }
 
     private fun FirBasedSymbol<*>.isSyntheticElvisFunction(): Boolean {
