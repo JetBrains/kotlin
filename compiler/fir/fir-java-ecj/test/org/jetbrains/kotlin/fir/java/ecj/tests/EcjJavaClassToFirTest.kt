@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java.ecj.tests
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
@@ -130,13 +131,18 @@ class EcjJavaClassToFirTest : TestCase() {
             }
         """.trimIndent()
 
-        val firJavaClass = javaSourceToFir(javaCode)
-        val renderedFir = firJavaClass.render()
+        val expectedFir = """
+            public open class Test : R|kotlin/Any| {
+                public open fun publicMethod(): R|kotlin/Unit|
 
-        // Verify that the rendered FIR contains the expected elements
-        assertTrue("FIR should contain class name", renderedFir.contains("class Test"))
-        assertTrue("FIR should have ClassKind.CLASS", renderedFir.contains("classKind: CLASS"))
-        assertTrue("FIR should be public", renderedFir.contains("visibility: public"))
+            }
+        """.trimIndent()
+
+        val firJavaClass = javaSourceToFir(javaCode)
+        val renderedFir = firJavaClass.render().trim()
+
+        assertEquals("FIR should have ClassKind.CLASS", ClassKind.CLASS, firJavaClass.classKind)
+        assertEquals(expectedFir, renderedFir)
     }
 
     @Test
@@ -204,9 +210,12 @@ class EcjJavaClassToFirTest : TestCase() {
 
 class DummyFirAnnotationTypeQualifierResolver(
     session: FirSession,
-    javaTypeEnhancementState: JavaTypeEnhancementState,
+    javaTypeEnhancementState: JavaTypeEnhancementState?,
 ) :
-    AbstractJavaAnnotationTypeQualifierResolver(session, javaTypeEnhancementState)
+    AbstractJavaAnnotationTypeQualifierResolver(
+        session,
+        javaTypeEnhancementState ?: JavaTypeEnhancementState.getDefault(KotlinVersion(2, 1, 0))
+    )
 {
     override fun extractDefaultQualifiers(firClass: FirRegularClass): JavaTypeQualifiersByElementType? = null
 }
