@@ -41,7 +41,7 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationEventPublisher"
     />
     <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents"/>
-    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService"/>
     <projectService
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService"
     />

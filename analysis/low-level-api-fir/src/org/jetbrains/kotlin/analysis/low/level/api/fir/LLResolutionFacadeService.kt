@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 @LLFirInternals
-class LLFirResolveSessionService(project: Project) {
+class LLResolutionFacadeService(project: Project) {
     private val cache = LLFirSessionCache.getInstance(project)
 
     fun getResolutionFacade(module: KaModule): LLResolutionFacade {
@@ -65,8 +65,8 @@ class LLFirResolveSessionService(project: Project) {
     }
 
     companion object {
-        fun getInstance(project: Project): LLFirResolveSessionService =
-            project.getService(LLFirResolveSessionService::class.java)
+        fun getInstance(project: Project): LLResolutionFacadeService =
+            project.getService(LLResolutionFacadeService::class.java)
     }
 }
 

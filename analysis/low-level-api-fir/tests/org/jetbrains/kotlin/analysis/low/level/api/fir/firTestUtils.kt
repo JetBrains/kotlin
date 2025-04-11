@@ -49,7 +49,7 @@ internal inline fun <R> withResolveSession(context: KtElement, action: (LLResolu
 }
 
 internal inline fun <R> withResolveSession(module: KaModule, action: (LLResolutionFacade) -> R): R {
-    val resolutionFacade = LLFirResolveSessionService.getInstance(module.project).getResolutionFacade(module)
+    val resolutionFacade = LLResolutionFacadeService.getInstance(module.project).getResolutionFacade(module)
     return action(resolutionFacade)
 }
 

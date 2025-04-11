@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -139,7 +139,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
             val ktModule = ktTestModule.ktModule as KtModuleByCompilerConfiguration
 
             val project = ktModule.project
-            val resolutionFacade = LLFirResolveSessionService.getInstance(project).getResolutionFacade(ktModule as KaModule)
+            val resolutionFacade = LLResolutionFacadeService.getInstance(project).getResolutionFacade(ktModule as KaModule)
 
             val allFirFiles = module.files.filter { it.isKtFile }.zip(
                 ktModule.psiFiles

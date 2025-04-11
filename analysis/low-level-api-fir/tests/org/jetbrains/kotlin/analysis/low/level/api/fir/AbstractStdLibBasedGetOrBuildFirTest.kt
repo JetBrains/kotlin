@@ -33,7 +33,7 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
                 ktReferences.first().resolveToSymbol()?.psi as KtDeclaration
             }
 
-        val resolutionFacade = LLFirResolveSessionService.getInstance(project).getResolutionFacade(mainModule.ktModule)
+        val resolutionFacade = LLResolutionFacadeService.getInstance(project).getResolutionFacade(mainModule.ktModule)
         val fir = declaration.resolveToFirSymbol(resolutionFacade).fir
         testServices.assertions.assertEqualsToTestOutputFile(renderActualFir(fir, declaration, testServices.firRenderingOptions))
     }

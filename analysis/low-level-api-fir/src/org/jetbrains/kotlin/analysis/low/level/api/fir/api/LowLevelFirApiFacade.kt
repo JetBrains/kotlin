@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
  * Returns [LLResolutionFacade] which corresponds to containing module
  */
 fun KaModule.getResolutionFacade(project: Project): LLResolutionFacade =
-    LLFirResolveSessionService.getInstance(project).getResolutionFacade(this)
+    LLResolutionFacadeService.getInstance(project).getResolutionFacade(this)
 
 
 /**
