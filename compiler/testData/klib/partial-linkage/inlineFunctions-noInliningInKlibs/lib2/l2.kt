@@ -326,3 +326,120 @@ inline fun inlinedFunctionWithOpenClassImplAnonymousObject() {
     val foo = object : OpenClassInheritedFromRemovedOpenClass() {}
     check(foo.toString().isNotEmpty())
 }
+
+/***********************************************/
+/***** Extracted from 'inheritanceIssues': *****/
+/***********************************************/
+
+inline fun getInterfaceToAbstractClassInline() = object : InterfaceToAbstractClass {}
+inline fun getInterfaceToAbstractClassAsAnyInline(): Any = object : InterfaceToAbstractClass {}
+
+inline fun getInterfaceToOpenClassInline() = object : InterfaceToOpenClass {}
+inline fun getInterfaceToOpenClassAsAnyInline(): Any = object : InterfaceToOpenClass {}
+
+inline fun getInterfaceToFinalClassInline() = object : InterfaceToFinalClass {}
+inline fun getInterfaceToFinalClassAsAnyInline(): Any = object : InterfaceToFinalClass {}
+
+open class InterfaceToAbstractClassImpl : InterfaceToAbstractClass
+class InterfaceToAbstractClassImpl2 : InterfaceToAbstractClassImpl()
+open class InterfaceToOpenClassImpl : InterfaceToOpenClass
+class InterfaceToOpenClassImpl2 : InterfaceToOpenClassImpl()
+open class InterfaceToFinalClassImpl : InterfaceToFinalClass
+class InterfaceToFinalClassImpl2 : InterfaceToFinalClassImpl()
+
+class InterfaceToAbstractClassContainer {
+    open class InterfaceToAbstractClassImpl : InterfaceToAbstractClass
+    class InterfaceToAbstractClassImpl2 : InterfaceToAbstractClassImpl()
+    inner class InterfaceToAbstractClassInnerImpl : InterfaceToAbstractClass
+}
+class InterfaceToOpenClassContainer {
+    open class InterfaceToOpenClassImpl : InterfaceToOpenClass
+    class InterfaceToOpenClassImpl2 : InterfaceToOpenClassImpl()
+    inner class InterfaceToOpenClassInnerImpl : InterfaceToOpenClass
+}
+class InterfaceToFinalClassContainer {
+    open class InterfaceToFinalClassImpl : InterfaceToFinalClass
+    class InterfaceToFinalClassImpl2 : InterfaceToFinalClassImpl()
+    inner class InterfaceToFinalClassInnerImpl : InterfaceToFinalClass
+}
+
+inline fun getInterfaceToAbstractClassImplInline() = InterfaceToAbstractClassImpl()
+inline fun getInterfaceToAbstractClassImplAsAnyInline(): Any = InterfaceToAbstractClassImpl()
+
+inline fun getInterfaceToAbstractClassImpl2Inline() = InterfaceToAbstractClassImpl2()
+inline fun getInterfaceToAbstractClassImpl2AsAnyInline(): Any = InterfaceToAbstractClassImpl2()
+
+inline fun getInterfaceToOpenClassImplInline() = InterfaceToOpenClassImpl()
+inline fun getInterfaceToOpenClassImplAsAnyInline(): Any = InterfaceToOpenClassImpl()
+
+inline fun getInterfaceToOpenClassImpl2Inline() = InterfaceToOpenClassImpl2()
+inline fun getInterfaceToOpenClassImpl2AsAnyInline(): Any = InterfaceToOpenClassImpl2()
+
+inline fun getInterfaceToFinalClassImplInline() = InterfaceToFinalClassImpl()
+inline fun getInterfaceToFinalClassImplAsAnyInline(): Any = InterfaceToFinalClassImpl()
+
+inline fun getInterfaceToFinalClassImpl2Inline() = InterfaceToFinalClassImpl2()
+inline fun getInterfaceToFinalClassImpl2AsAnyInline(): Any = InterfaceToFinalClassImpl2()
+
+inline fun getInterfaceToAbstractClassNestedImplInline() = InterfaceToAbstractClassContainer.InterfaceToAbstractClassImpl()
+inline fun getInterfaceToAbstractClassNestedImplAsAnyInline(): Any = InterfaceToAbstractClassContainer.InterfaceToAbstractClassImpl()
+
+inline fun getInterfaceToAbstractClassNestedImpl2Inline() = InterfaceToAbstractClassContainer.InterfaceToAbstractClassImpl2()
+inline fun getInterfaceToAbstractClassNestedImpl2AsAnyInline(): Any = InterfaceToAbstractClassContainer.InterfaceToAbstractClassImpl2()
+
+inline fun getInterfaceToAbstractClassInnerImplInline() = InterfaceToAbstractClassContainer().InterfaceToAbstractClassInnerImpl()
+inline fun getInterfaceToAbstractClassInnerImplAsAnyInline(): Any = InterfaceToAbstractClassContainer().InterfaceToAbstractClassInnerImpl()
+
+inline fun getInterfaceToOpenClassNestedImplInline() = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl()
+inline fun getInterfaceToOpenClassNestedImplAsAnyInline(): Any = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl()
+
+inline fun getInterfaceToOpenClassNestedImpl2Inline() = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl2()
+inline fun getInterfaceToOpenClassNestedImpl2AsAnyInline(): Any = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl2()
+
+inline fun getInterfaceToOpenClassInnerImplInline() = InterfaceToOpenClassContainer().InterfaceToOpenClassInnerImpl()
+inline fun getInterfaceToOpenClassInnerImplAsAnyInline(): Any = InterfaceToOpenClassContainer().InterfaceToOpenClassInnerImpl()
+
+inline fun getInterfaceToFinalClassNestedImplInline() = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl()
+inline fun getInterfaceToFinalClassNestedImplAsAnyInline(): Any = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl()
+
+inline fun getInterfaceToFinalClassNestedImpl2Inline() = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl2()
+inline fun getInterfaceToFinalClassNestedImpl2AsAnyInline(): Any = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl2()
+
+inline fun getInterfaceToFinalClassInnerImplInline() = InterfaceToFinalClassContainer().InterfaceToFinalClassInnerImpl()
+inline fun getInterfaceToFinalClassInnerImplAsAnyInline(): Any = InterfaceToFinalClassContainer().InterfaceToFinalClassInnerImpl()
+
+inline fun referenceToInterfaceToAbstractClassImplInline() = InterfaceToAbstractClassImpl::class.simpleName.orEmpty()
+inline fun referenceToInterfaceToAbstractClassImpl2Inline() = InterfaceToAbstractClassImpl2::class.simpleName.orEmpty()
+
+inline fun referenceToInterfaceToFinalClassImplInline() = check(InterfaceToFinalClassImpl::class.simpleName != null)
+inline fun referenceToInterfaceToFinalClassImpl2Inline() = check(InterfaceToFinalClassImpl2::class.simpleName != null)
+
+inline fun getInterfaceToAbstractClass12_1Inline(): InterfaceToAbstractClass1 = object : InterfaceToAbstractClass1, InterfaceToAbstractClass2 {}
+inline fun getInterfaceToAbstractClass12_2Inline(): InterfaceToAbstractClass2 = object : InterfaceToAbstractClass1, InterfaceToAbstractClass2 {}
+inline fun getInterfaceToAbstractClass12AsAnyInline(): Any = object : InterfaceToAbstractClass1, InterfaceToAbstractClass2 {}
+
+inline fun getInterfaceToAbstractClassAndAbstractClass_1Inline(): InterfaceToAbstractClass1 = object : InterfaceToAbstractClass1, AbstractClass() {}
+inline fun getInterfaceToAbstractClassAndAbstractClass_2Inline(): AbstractClass = object : InterfaceToAbstractClass1, AbstractClass() {}
+inline fun getInterfaceToAbstractClassAndAbstractClassAsAnyInline(): Any = object : InterfaceToAbstractClass1, AbstractClass() {}
+
+open class InterfaceToAbstractClass12Impl : InterfaceToAbstractClass1, InterfaceToAbstractClass2
+class InterfaceToAbstractClass12Impl2 : InterfaceToAbstractClass12Impl()
+open class InterfaceToAbstractClassAndAbstractClassImpl : InterfaceToAbstractClass1, AbstractClass()
+class InterfaceToAbstractClassAndAbstractClassImpl2 : InterfaceToAbstractClassAndAbstractClassImpl()
+
+inline fun getInterfaceToAbstractClass12ImplInline() = InterfaceToAbstractClass12Impl()
+inline fun getInterfaceToAbstractClass12ImplAsAnyInline(): Any = InterfaceToAbstractClass12Impl()
+
+inline fun getInterfaceToAbstractClass12Impl2Inline() = InterfaceToAbstractClass12Impl2()
+inline fun getInterfaceToAbstractClass12Impl2AsAnyInline(): Any = InterfaceToAbstractClass12Impl2()
+
+inline fun getInterfaceToAbstractClassAndAbstractClassImplInline() = InterfaceToAbstractClassAndAbstractClassImpl()
+inline fun getInterfaceToAbstractClassAndAbstractClassImplAsAnyInline(): Any = InterfaceToAbstractClassAndAbstractClassImpl()
+
+inline fun getInterfaceToAbstractClassAndAbstractClassImpl2Inline() = InterfaceToAbstractClassAndAbstractClassImpl2()
+inline fun getInterfaceToAbstractClassAndAbstractClassImpl2AsAnyInline(): Any = InterfaceToAbstractClassAndAbstractClassImpl2()
+
+inline fun referenceToInterfaceToAbstractClass12ImplInline() = check(InterfaceToAbstractClass12Impl::class.simpleName != null)
+inline fun referenceToInterfaceToAbstractClass12Impl2Inline() = check(InterfaceToAbstractClass12Impl2::class.simpleName != null)
+inline fun referenceToInterfaceToAbstractClassAndAbstractClassImplInline() = check(InterfaceToAbstractClassAndAbstractClassImpl::class.simpleName != null)
+inline fun referenceToInterfaceToAbstractClassAndAbstractClassImpl2Inline() = check(InterfaceToAbstractClassAndAbstractClassImpl2::class.simpleName != null)

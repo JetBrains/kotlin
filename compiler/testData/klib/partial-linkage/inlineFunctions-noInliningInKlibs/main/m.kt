@@ -241,4 +241,93 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to constructor 'OpenClassInheritedFromRemovedOpenClass.<init>' can not be evaluated: Class 'OpenClassInheritedFromRemovedOpenClass' uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithCreationOfOpenClassImplThroughReference() }
     expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via anonymous object)")) { inlinedFunctionWithRemovedOpenClassAnonymousObject() }
     expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via anonymous object)")) { inlinedFunctionWithOpenClassImplAnonymousObject() }
+
+    /***********************************************/
+    /***** Extracted from 'inheritanceIssues': *****/
+    /***********************************************/
+
+    expectFailure(linkage("Anonymous object initialization error: Constructor '<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassInline() }
+    expectFailure(linkage("Anonymous object initialization error: Constructor '<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassAsAnyInline() }
+
+    expectFailure(linkage("Anonymous object initialization error: Constructor '<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassInline() }
+    expectFailure(linkage("Anonymous object initialization error: Constructor '<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassAsAnyInline() }
+
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassInline() }
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassAsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassImplInline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassImplAsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassImpl2Inline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassImpl2AsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassImplInline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassImplAsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassImpl2Inline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassImpl2AsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToFinalClassImplInline' can not be called: Function uses class 'InterfaceToFinalClassImpl' that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassImplInline() }
+    expectFailure(linkage("Constructor 'InterfaceToFinalClassImpl.<init>' can not be called: Class 'InterfaceToFinalClassImpl' inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassImplAsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToFinalClassImpl2Inline' can not be called: Function uses class 'InterfaceToFinalClassImpl' (via class 'InterfaceToFinalClassImpl2') that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassImpl2Inline() }
+    expectFailure(linkage("Constructor 'InterfaceToFinalClassImpl2.<init>' can not be called: Class 'InterfaceToFinalClassImpl2' uses class 'InterfaceToFinalClassImpl' that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassImpl2AsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassNestedImplInline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassNestedImplAsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassNestedImpl2Inline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToAbstractClassImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassNestedImpl2AsAnyInline() }
+
+    expectFailure(linkage("Inner class initialization error: Constructor 'InterfaceToAbstractClassInnerImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassInnerImplInline() }
+    expectFailure(linkage("Inner class initialization error: Constructor 'InterfaceToAbstractClassInnerImpl.<init>' should call a constructor of direct super class 'InterfaceToAbstractClass' but calls 'Any.<init>' instead")) { getInterfaceToAbstractClassInnerImplAsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassNestedImplInline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassNestedImplAsAnyInline() }
+
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassNestedImpl2Inline() }
+    expectFailure(linkage("Class initialization error: Constructor 'InterfaceToOpenClassImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassNestedImpl2AsAnyInline() }
+
+    expectFailure(linkage("Inner class initialization error: Constructor 'InterfaceToOpenClassInnerImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassInnerImplInline() }
+    expectFailure(linkage("Inner class initialization error: Constructor 'InterfaceToOpenClassInnerImpl.<init>' should call a constructor of direct super class 'InterfaceToOpenClass' but calls 'Any.<init>' instead")) { getInterfaceToOpenClassInnerImplAsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToFinalClassNestedImplInline' can not be called: Function uses class 'InterfaceToFinalClassImpl' that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassNestedImplInline() }
+    expectFailure(linkage("Constructor 'InterfaceToFinalClassImpl.<init>' can not be called: Class 'InterfaceToFinalClassImpl' inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassNestedImplAsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToFinalClassNestedImpl2Inline' can not be called: Function uses class 'InterfaceToFinalClassImpl' (via class 'InterfaceToFinalClassImpl2') that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassNestedImpl2Inline() }
+    expectFailure(linkage("Constructor 'InterfaceToFinalClassImpl2.<init>' can not be called: Class 'InterfaceToFinalClassImpl2' uses class 'InterfaceToFinalClassImpl' that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassNestedImpl2AsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToFinalClassInnerImplInline' can not be called: Function uses inner class 'InterfaceToFinalClassInnerImpl' that inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassInnerImplInline() }
+    expectFailure(linkage("Constructor 'InterfaceToFinalClassInnerImpl.<init>' can not be called: Inner class 'InterfaceToFinalClassInnerImpl' inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassInnerImplAsAnyInline() }
+
+    expectSuccess("InterfaceToAbstractClassImpl") { referenceToInterfaceToAbstractClassImplInline() }
+    expectSuccess("InterfaceToAbstractClassImpl2") { referenceToInterfaceToAbstractClassImpl2Inline() }
+
+    expectFailure(linkage("Reference to class 'InterfaceToFinalClassImpl' can not be evaluated: Expression uses class 'InterfaceToFinalClassImpl' that inherits from final class 'InterfaceToFinalClass'")) { referenceToInterfaceToFinalClassImplInline() }
+    expectFailure(linkage("Reference to class 'InterfaceToFinalClassImpl2' can not be evaluated: Expression uses class 'InterfaceToFinalClassImpl' (via class 'InterfaceToFinalClassImpl2') that inherits from final class 'InterfaceToFinalClass'")) { referenceToInterfaceToFinalClassImpl2Inline() }
+
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12_1Inline() }
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12_2Inline() }
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12AsAnyInline() }
+
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClass_1Inline() }
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClass_2Inline() }
+    expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClassAsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToAbstractClass12ImplInline' can not be called: Function uses class 'InterfaceToAbstractClass12Impl' that simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12ImplInline() }
+    expectFailure(linkage("Constructor 'InterfaceToAbstractClass12Impl.<init>' can not be called: Class 'InterfaceToAbstractClass12Impl' simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12ImplAsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToAbstractClass12Impl2Inline' can not be called: Function uses class 'InterfaceToAbstractClass12Impl' (via class 'InterfaceToAbstractClass12Impl2') that simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12Impl2Inline() }
+    expectFailure(linkage("Constructor 'InterfaceToAbstractClass12Impl2.<init>' can not be called: Class 'InterfaceToAbstractClass12Impl2' uses class 'InterfaceToAbstractClass12Impl' that simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { getInterfaceToAbstractClass12Impl2AsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToAbstractClassAndAbstractClassImplInline' can not be called: Function uses class 'InterfaceToAbstractClassAndAbstractClassImpl' that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClassImplInline() }
+    expectFailure(linkage("Constructor 'InterfaceToAbstractClassAndAbstractClassImpl.<init>' can not be called: Class 'InterfaceToAbstractClassAndAbstractClassImpl' simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClassImplAsAnyInline() }
+
+    expectFailure(linkage("Function 'getInterfaceToAbstractClassAndAbstractClassImpl2Inline' can not be called: Function uses class 'InterfaceToAbstractClassAndAbstractClassImpl' (via class 'InterfaceToAbstractClassAndAbstractClassImpl2') that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClassImpl2Inline() }
+    expectFailure(linkage("Constructor 'InterfaceToAbstractClassAndAbstractClassImpl2.<init>' can not be called: Class 'InterfaceToAbstractClassAndAbstractClassImpl2' uses class 'InterfaceToAbstractClassAndAbstractClassImpl' that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { getInterfaceToAbstractClassAndAbstractClassImpl2AsAnyInline() }
+
+    expectFailure(linkage("Reference to class 'InterfaceToAbstractClass12Impl' can not be evaluated: Expression uses class 'InterfaceToAbstractClass12Impl' that simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { referenceToInterfaceToAbstractClass12ImplInline() }
+    expectFailure(linkage("Reference to class 'InterfaceToAbstractClass12Impl2' can not be evaluated: Expression uses class 'InterfaceToAbstractClass12Impl' (via class 'InterfaceToAbstractClass12Impl2') that simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { referenceToInterfaceToAbstractClass12Impl2Inline() }
+    expectFailure(linkage("Reference to class 'InterfaceToAbstractClassAndAbstractClassImpl' can not be evaluated: Expression uses class 'InterfaceToAbstractClassAndAbstractClassImpl' that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { referenceToInterfaceToAbstractClassAndAbstractClassImplInline() }
+    expectFailure(linkage("Reference to class 'InterfaceToAbstractClassAndAbstractClassImpl2' can not be evaluated: Expression uses class 'InterfaceToAbstractClassAndAbstractClassImpl' (via class 'InterfaceToAbstractClassAndAbstractClassImpl2') that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { referenceToInterfaceToAbstractClassAndAbstractClassImpl2Inline() }
 }
