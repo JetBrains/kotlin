@@ -22,10 +22,14 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -34,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -273,15 +278,79 @@ private class EcjLazyJavaDeclarationList(
     override val declarations: List<FirDeclaration> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val declarations = mutableListOf<FirDeclaration>()
 
+        // Get the FirJavaClass and related data
+        @OptIn(SymbolInternals::class)
+        val firJavaClass = classSymbol.fir as FirJavaClass
+        val moduleData = firJavaClass.moduleData
+        val classId = classSymbol.classId
+        val dispatchReceiver = firJavaClass.defaultType()
+
         // Process API declarations using the processApiDeclarations method of EcjJavaClass
         ecjJavaClass.processApiDeclarations { declaration ->
-            // In a real implementation, we would convert the ECJ declaration to a FIR declaration
-            // and add it to the declarations list. For now, we just return the declaration as is.
+            when (declaration) {
+                is MethodDeclaration -> {
+                    // Convert method declaration to FIR
+                    val methodName = Name.identifier(String(declaration.selector))
+                    val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
+                    val methodSymbol = FirNamedFunctionSymbol(methodId)
+
+                    val isStatic = (declaration.modifiers and ClassFileConstants.AccStatic) != 0
+                    val isPublic = (declaration.modifiers and ClassFileConstants.AccPublic) != 0
+                    val isProtected = (declaration.modifiers and ClassFileConstants.AccProtected) != 0
+                    val isPrivate = (declaration.modifiers and ClassFileConstants.AccPrivate) != 0
+                    val isFinal = (declaration.modifiers and ClassFileConstants.AccFinal) != 0
+                    val isAbstract = (declaration.modifiers and ClassFileConstants.AccAbstract) != 0
+
+                    val visibility = when {
+                        isPublic -> Visibilities.Public
+                        isProtected -> Visibilities.Protected
+                        isPrivate -> Visibilities.Private
+                        else -> JavaVisibilities.PackageVisibility
+                    }
+
+                    val modality = when {
+                        isAbstract -> Modality.ABSTRACT
+                        isFinal -> Modality.FINAL
+                        else -> Modality.OPEN
+                    }
+
+                    val effectiveVisibility = visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
+
+                    val firMethod = buildJavaMethod {
+                        this.containingClassSymbol = classSymbol
+                        this.moduleData = moduleData
+                        this.isFromSource = true
+                        this.name = methodName
+                        this.symbol = methodSymbol
+                        this.isStatic = isStatic
+
+                        // For now, just use Unit as the return type
+                        this.returnTypeRef = buildResolvedTypeRef {
+                            coneType = StandardClassIds.Unit.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                        }
+
+                        this.status = FirResolvedDeclarationStatusImpl(
+                            visibility,
+                            modality,
+                            effectiveVisibility
+                        ).apply {
+                            this.isStatic = isStatic
+                            hasStableParameterNames = false
+                        }
+
+                        if (!isStatic) {
+                            this.dispatchReceiverType = dispatchReceiver
+                        }
+                    }
+
+                    declarations.add(firMethod)
+                }
+                // TODO: Add support for other declaration types (fields, nested classes, etc.)
+            }
+
             declaration
         }
 
-        // Return an empty list for now
-        emptyList()
+        declarations
     }
 }
-
