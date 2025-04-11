@@ -103,7 +103,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2Ir
                 nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings),
         )
     }
-    // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
             diagnosticReporter,
             environment.configuration.messageCollector,

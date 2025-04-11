@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.inlinedIrHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
@@ -48,9 +49,17 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
             frontend = targetFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             dependencyKind = DependencyKind.Source
+            targetBackend = TargetBackend.NATIVE
         }
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
         baseNativeDiagnosticTestConfiguration(frontend)
+
+        useAdditionalService(::LibraryProvider)
+        facadeStep(::Fir2IrNativeResultsConverter)
+        irHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+
+        facadeStep(::NativeInliningFacade)
+        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
     }
 
     override fun runTest(filePath: String) {
@@ -113,19 +122,18 @@ abstract class AbstractFirNativeDiagnosticsTestBase(
     }
 }
 
+abstract class AbstractFirNativeDiagnosticsWithIrInlinerTestBase() : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+        defaultDirectives {
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        }
+    }
+}
+
 abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractFirNativeDiagnosticsTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
-
-        globalDefaults {
-            targetBackend = TargetBackend.NATIVE
-        }
-
-        useAdditionalService(::LibraryProvider)
-
-        facadeStep(::Fir2IrNativeResultsConverter)
-        facadeStep(::NativeInliningFacade)
-        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
         facadeStep(::FirNativeKlibSerializerFacade)
 
         klibArtifactsHandlersStep {
