@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.test.services.TestServices
  * may be unacceptable in some cases.
  */
 abstract class AbstractFirLazyDeclarationResolveByReferenceTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
-    override fun checkSession(firSession: LLResolutionFacade) {
-        require(firSession.isSourceSession)
+    override fun checkSession(resolutionFacade: LLResolutionFacade) {
+        require(resolutionFacade.isSourceSession)
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -31,7 +31,7 @@ abstract class AbstractFirLazyDeclarationResolveByReferenceTest : AbstractFirLaz
             mainFile,
             testServices,
             outputRenderingMode = OutputRenderingMode.ONLY_TARGET_DECLARATION,
-        ) { firResolveSession ->
+        ) { resolutionFacade ->
             val position = testServices.expressionMarkerProvider.getCaret(mainFile)
             val reference = mainFile.findReferenceAt(position)
             if (reference == null) {
@@ -43,7 +43,7 @@ abstract class AbstractFirLazyDeclarationResolveByReferenceTest : AbstractFirLaz
                 error("Element at caret should be referencing some `${KtDeclaration::class.simpleName}`, but referenced  `${declaration?.javaClass?.simpleName}` instead")
             }
 
-            val declarationSymbol = declaration.resolveToFirSymbol(firResolveSession).fir
+            val declarationSymbol = declaration.resolveToFirSymbol(resolutionFacade).fir
             declarationSymbol to fun(phase: FirResolvePhase) {
                 declarationSymbol.lazyResolveToPhaseByDirective(phase, testServices)
             }

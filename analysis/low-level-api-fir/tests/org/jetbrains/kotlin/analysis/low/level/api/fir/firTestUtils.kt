@@ -49,8 +49,8 @@ internal inline fun <R> withResolveSession(context: KtElement, action: (LLResolu
 }
 
 internal inline fun <R> withResolveSession(module: KaModule, action: (LLResolutionFacade) -> R): R {
-    val resolveSession = LLFirResolveSessionService.getInstance(module.project).getFirResolveSession(module)
-    return action(resolveSession)
+    val resolutionFacade = LLFirResolveSessionService.getInstance(module.project).getResolutionFacade(module)
+    return action(resolutionFacade)
 }
 
 internal fun clearCaches(project: Project) {

@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 object LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder : LLFirAnalyzerFacadeFactory() {
     override fun createFirFacade(
-        firResolveSession: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
         allFirFiles: Map<TestFile, FirFile>,
         diagnosticCheckerFilter: DiagnosticCheckerFilter
-    ): LowLevelFirAnalyzerFacade = object : LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles, diagnosticCheckerFilter) {
+    ): LowLevelFirAnalyzerFacade = object : LowLevelFirAnalyzerFacade(resolutionFacade, allFirFiles, diagnosticCheckerFilter) {
         override fun runResolution(): List<FirFile> {
             val allDeclarations = allFirFiles.values.getDeclarationsToResolve().reversed()
 

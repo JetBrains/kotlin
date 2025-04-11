@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentMap
 
 /**
- * Caches [FileStructure] instances for an [LLFirResolveSession][org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade].
+ * Caches [FileStructure] instances for an [LLResolutionFacade][org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade].
  */
 internal class FileStructureCache(private val moduleResolveComponents: LLFirModuleResolveComponents) {
     /**

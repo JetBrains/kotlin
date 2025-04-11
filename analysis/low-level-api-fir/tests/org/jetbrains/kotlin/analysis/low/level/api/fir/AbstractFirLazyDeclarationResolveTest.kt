@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
-    override fun checkSession(firSession: LLResolutionFacade) {
-        require(firSession.isSourceSession)
+    override fun checkSession(resolutionFacade: LLResolutionFacade) {
+        require(resolutionFacade.isSourceSession)
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        doLazyResolveTest(mainFile, testServices, outputRenderingMode = OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { firResolveSession ->
-            findFirDeclarationToResolve(mainFile, testServices, firResolveSession)
+        doLazyResolveTest(mainFile, testServices, OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { resolutionFacade ->
+            findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
         }
     }
 

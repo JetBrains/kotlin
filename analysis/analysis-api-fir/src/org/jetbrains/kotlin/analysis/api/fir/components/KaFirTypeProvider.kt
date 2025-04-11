@@ -116,7 +116,7 @@ internal class KaFirTypeProvider(
 
     override val KtTypeReference.type: KaType
         get() = withValidityAssertion {
-            val fir = getFirBySymbols() ?: getOrBuildFirOfType<FirElement>(firResolveSession)
+            val fir = getFirBySymbols() ?: getOrBuildFirOfType<FirElement>(resolutionFacade)
             return when (fir) {
                 is FirResolvedTypeRef -> fir.coneType.asKtType()
                 is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
@@ -138,12 +138,12 @@ internal class KaFirTypeProvider(
         val parent = parent
         return when {
             parent is KtParameter && parent.ownerDeclaration != null && parent.typeReference === this ->
-                parent.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(firResolveSession, FirResolvePhase.TYPES)?.fir?.returnTypeRef
+                parent.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(resolutionFacade, FirResolvePhase.TYPES)?.fir?.returnTypeRef
 
             parent is KtCallableDeclaration && (parent is KtNamedFunction || parent is KtProperty)
                     && (parent.receiverTypeReference === this || parent.typeReference === this) -> {
                 val firCallable = parent.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
-                    firResolveSession, FirResolvePhase.TYPES
+                    resolutionFacade, FirResolvePhase.TYPES
                 )?.fir
                 if (parent.receiverTypeReference === this) {
                     firCallable?.receiverParameter?.typeRef
@@ -156,15 +156,15 @@ internal class KaFirTypeProvider(
                     val declaration = annotationEntry.parent?.parent as? KtNamedDeclaration ?: return null
                     return when {
                         declaration is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
-                            firResolveSession, FirResolvePhase.TYPES
+                            resolutionFacade, FirResolvePhase.TYPES
                         )?.fir
                         declaration is KtParameter && declaration.ownerFunction != null ->
                             declaration.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
-                                firResolveSession, FirResolvePhase.TYPES
+                                resolutionFacade, FirResolvePhase.TYPES
                             )?.fir
                         declaration is KtCallableDeclaration && (declaration is KtNamedFunction || declaration is KtProperty) -> {
                             declaration.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
-                                firResolveSession, FirResolvePhase.TYPES
+                                resolutionFacade, FirResolvePhase.TYPES
                             )?.fir
                         }
                         else -> return null
@@ -191,7 +191,7 @@ internal class KaFirTypeProvider(
 
     override val KtDoubleColonExpression.receiverType: KaType?
         get() = withValidityAssertion {
-            return when (val fir = getOrBuildFir(firResolveSession)) {
+            return when (val fir = getOrBuildFir(resolutionFacade)) {
                 is FirGetClassCall -> {
                     fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
                 }
@@ -244,7 +244,7 @@ internal class KaFirTypeProvider(
 
     override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withValidityAssertion {
         val ktFile = position.containingKtFile
-        val firFile = ktFile.getOrBuildFirFile(firResolveSession)
+        val firFile = ktFile.getOrBuildFirFile(resolutionFacade)
 
         val fileSession = firFile.llFirSession
         val sessionHolder = SessionHolderImpl(fileSession, fileSession.getScopeSession())

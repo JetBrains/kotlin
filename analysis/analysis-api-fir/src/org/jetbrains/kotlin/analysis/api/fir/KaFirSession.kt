@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class KaFirSession
 private constructor(
     val project: Project,
-    val firResolveSession: LLResolutionFacade,
+    val resolutionFacade: LLResolutionFacade,
     val extensionTools: List<LLFirResolveExtensionTool>,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
@@ -60,7 +60,7 @@ private constructor(
     expressionTypeProvider = KaFirExpressionTypeProvider(analysisSessionProvider),
     typeProvider = KaFirTypeProvider(analysisSessionProvider),
     typeInformationProvider = KaFirTypeInformationProvider(analysisSessionProvider),
-    symbolProvider = KaFirSymbolProvider(analysisSessionProvider, firResolveSession.useSiteFirSession.symbolProvider),
+    symbolProvider = KaFirSymbolProvider(analysisSessionProvider, resolutionFacade.useSiteFirSession.symbolProvider),
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider),
     symbolInformationProvider = KaFirSymbolInformationProvider(analysisSessionProvider),
     typeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider),
@@ -86,9 +86,9 @@ private constructor(
     }
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
-    override val useSiteModule: KaModule get() = firResolveSession.useSiteKtModule
+    override val useSiteModule: KaModule get() = resolutionFacade.useSiteKtModule
 
-    internal val firSession: LLFirSession get() = firResolveSession.useSiteFirSession
+    internal val firSession: LLFirSession get() = resolutionFacade.useSiteFirSession
     internal val targetPlatform: TargetPlatform get() = firSession.moduleData.platform
 
     val useSiteScopeDeclarationProvider: KotlinDeclarationProvider
@@ -115,21 +115,21 @@ private constructor(
         KaFirInternalCacheStorage(this)
     }
 
-    fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
+    fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { resolutionFacade.getScopeSessionFor(session) }
 
     companion object {
         internal fun createAnalysisSessionByFirResolveSession(
-            firResolveSession: LLResolutionFacade,
+            resolutionFacade: LLResolutionFacade,
             token: KaLifetimeToken,
         ): KaFirSession {
             token.assertIsValid()
-            val useSiteModule = firResolveSession.useSiteKtModule
-            val useSiteSession = firResolveSession.useSiteFirSession
+            val useSiteModule = resolutionFacade.useSiteKtModule
+            val useSiteSession = resolutionFacade.useSiteFirSession
 
             val extensionTools = buildList {
                 addIfNotNull(useSiteSession.llResolveExtensionTool)
                 useSiteModule.allDirectDependencies().mapNotNullTo(this) { dependency ->
-                    firResolveSession.getSessionFor(dependency).llResolveExtensionTool
+                    resolutionFacade.getSessionFor(dependency).llResolveExtensionTool
                 }
             }
 
@@ -137,8 +137,8 @@ private constructor(
 
             return createSession {
                 KaFirSession(
-                    firResolveSession.project,
-                    firResolveSession,
+                    resolutionFacade.project,
+                    resolutionFacade,
                     extensionTools,
                     token,
                     analysisSessionProvider,

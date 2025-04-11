@@ -123,7 +123,7 @@ internal class KaFirPsiJavaClassSymbol(
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override val lazyFirSymbol: Lazy<FirRegularClassSymbol> = lazyPub {
         val module = analysisSession.getModule(backingPsi)
-        val provider = analysisSession.firResolveSession.getSessionFor(module).firClassByPsiClassProvider
+        val provider = analysisSession.resolutionFacade.getSessionFor(module).firClassByPsiClassProvider
         provider.getFirClass(backingPsi)
     }
 

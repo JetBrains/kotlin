@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutO
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -212,10 +212,10 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 removedElement.potentiallyAffectsPropertyBackingFieldResolution()
 
     private fun inBlockModification(declaration: KtAnnotated, module: KaModule) {
-        val resolveSession = module.getFirResolveSession(project)
+        val resolutionFacade = module.getResolutionFacade(project)
         val firDeclaration = when (declaration) {
-            is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
-            is KtDeclaration -> declaration.resolveToFirSymbol(resolveSession).fir
+            is KtCodeFragment -> declaration.getOrBuildFirFile(resolutionFacade).codeFragment
+            is KtDeclaration -> declaration.resolveToFirSymbol(resolutionFacade).fir
             else -> errorWithFirSpecificEntries(
                 "Unexpected declaration kind: ${declaration::class.simpleName}",
                 psi = declaration,
@@ -231,7 +231,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             fir = firDeclaration,
             psi = declaration,
         ) {
-            withEntry("session", resolveSession) { it.toString() }
+            withEntry("session", resolutionFacade) { it.toString() }
         }
 
         // 2. Invalidate caches

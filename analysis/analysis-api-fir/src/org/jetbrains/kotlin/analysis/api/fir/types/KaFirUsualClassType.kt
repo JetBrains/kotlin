@@ -80,7 +80,7 @@ private class KaFirUsualClassTypePointer(
         requireIsInstance<KaFirSession>(session)
 
         val coneType = coneTypePointer.restore(session) ?: return null
-        if (coneType.isSomeFunctionType(session.firResolveSession.useSiteFirSession)) {
+        if (coneType.isSomeFunctionType(session.resolutionFacade.useSiteFirSession)) {
             return null
         }
 

@@ -49,7 +49,7 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
         backingPsi = contextReceiver,
         lazyFirSymbol = lazy(LazyThreadSafetyMode.PUBLICATION) {
             val declaration = contextReceiver.ownerDeclaration!!
-            val firSymbol = declaration.resolveToFirSymbol(session.firResolveSession)
+            val firSymbol = declaration.resolveToFirSymbol(session.resolutionFacade)
             firSymbol.fir
                 .contextParameters
                 .find { it.psi == contextReceiver }

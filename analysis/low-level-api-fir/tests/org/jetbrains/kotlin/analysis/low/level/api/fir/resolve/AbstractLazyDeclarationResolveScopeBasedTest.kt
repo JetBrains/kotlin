@@ -52,10 +52,13 @@ abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractAnalysisAp
     }
 }
 
-private fun collectAllCallableDeclarations(classSymbol: FirClassSymbol<*>, session: LLResolutionFacade): Collection<FirCallableSymbol<*>> {
+private fun collectAllCallableDeclarations(
+    classSymbol: FirClassSymbol<*>,
+    resolutionFacade: LLResolutionFacade
+): Collection<FirCallableSymbol<*>> {
     val baseScope = classSymbol.unsubstitutedScope(
-        session.useSiteFirSession,
-        session.getScopeSessionFor(session.useSiteFirSession),
+        resolutionFacade.useSiteFirSession,
+        resolutionFacade.getScopeSessionFor(resolutionFacade.useSiteFirSession),
         false,
         FirResolvePhase.STATUS,
     )

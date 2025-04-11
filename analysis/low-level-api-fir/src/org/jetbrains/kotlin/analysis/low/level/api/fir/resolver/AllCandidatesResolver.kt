@@ -72,13 +72,13 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     private val resolutionContext = ResolutionContext(firSession, bodyResolveComponents, bodyResolveComponents.transformer.context)
 
     fun getAllCandidates(
-        firResolveSession: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
         qualifiedAccess: FirQualifiedAccessExpression,
         calleeName: Name,
         element: KtElement,
         resolutionMode: ResolutionMode,
     ): List<OverloadCandidate> {
-        initializeBodyResolveContext(firResolveSession, element)
+        initializeBodyResolveContext(resolutionFacade, element)
 
         val copiedAccess = copyQualifiedAccess(qualifiedAccess, element) ?: return emptyList()
         return run {
@@ -95,12 +95,12 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     }
 
     fun getAllCandidatesForDelegatedConstructor(
-        firResolveSession: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
         delegatedConstructorCall: FirDelegatedConstructorCall,
         derivedClassLookupTag: ConeClassLikeLookupTag,
         element: KtElement
     ): List<OverloadCandidate> {
-        initializeBodyResolveContext(firResolveSession, element)
+        initializeBodyResolveContext(resolutionFacade, element)
 
         val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
         return run {
@@ -121,14 +121,14 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     }
 
     @OptIn(PrivateForInline::class, SymbolInternals::class)
-    private fun initializeBodyResolveContext(firResolveSession: LLResolutionFacade, element: KtElement) {
-        val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
+    private fun initializeBodyResolveContext(resolutionFacade: LLResolutionFacade, element: KtElement) {
+        val firFile = element.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
         // Set up needed context to get all candidates.
         val towerContext = ContextCollector.process(firFile, bodyResolveComponents, element)?.towerDataContext
         towerContext?.let { bodyResolveComponents.context.replaceTowerDataContext(it) }
         val containingDeclarations =
-            element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(firResolveSession).fir }.toList().asReversed()
+            element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(resolutionFacade).fir }.toList().asReversed()
         bodyResolveComponents.context.containers.addAll(containingDeclarations)
 
         // `towerContext` from above should already contain all the scopes for the file,

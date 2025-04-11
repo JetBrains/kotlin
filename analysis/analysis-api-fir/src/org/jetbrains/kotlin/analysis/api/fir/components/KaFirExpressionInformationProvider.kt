@@ -31,16 +31,16 @@ internal class KaFirExpressionInformationProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
         get() = withValidityAssertion {
-            val fir = getOrBuildFirSafe<FirReturnExpression>(firResolveSession) ?: return null
+            val fir = getOrBuildFirSafe<FirReturnExpression>(resolutionFacade) ?: return null
             val firTargetSymbol = fir.target.labeledElement
             if (firTargetSymbol is FirErrorFunction) return null
             return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
         }
 
     override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withValidityAssertion {
-        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
+        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
         return FirWhenExhaustivenessTransformer.computeAllMissingCases(
-            analysisSession.firResolveSession.useSiteFirSession,
+            analysisSession.resolutionFacade.useSiteFirSession,
             firWhenExpression
         )
     }

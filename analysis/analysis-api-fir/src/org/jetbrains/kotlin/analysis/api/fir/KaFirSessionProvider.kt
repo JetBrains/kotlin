@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -117,9 +117,9 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {
-        val firResolveSession = useSiteKtModule.getFirResolveSession(project)
-        val validityToken = tokenFactory.create(project, firResolveSession.useSiteFirSession.createValidityTracker())
-        return KaFirSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken)
+        val resolutionFacade = useSiteKtModule.getResolutionFacade(project)
+        val validityToken = tokenFactory.create(project, resolutionFacade.useSiteFirSession.createValidityTracker())
+        return KaFirSession.createAnalysisSessionByFirResolveSession(resolutionFacade, validityToken)
     }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {

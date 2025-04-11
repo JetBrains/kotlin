@@ -198,7 +198,7 @@ internal class KaFirSymbolProvider(
         firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
 
-    private val backingRootPackageSymbol by lazy { KaFirPackageSymbol(FqName.ROOT, firResolveSession.project, token) }
+    private val backingRootPackageSymbol by lazy { KaFirPackageSymbol(FqName.ROOT, resolutionFacade.project, token) }
 
     override val rootPackageSymbol: KaPackageSymbol
         get() = withValidityAssertion { backingRootPackageSymbol }

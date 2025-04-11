@@ -61,7 +61,7 @@ private class KaFirCompletionExtensionCandidateChecker(
     explicitReceiver: KtExpression?,
     originalFile: KtFile,
 ) : KaCompletionExtensionCandidateChecker {
-    private val firResolveSession = analysisSession.firResolveSession
+    private val resolutionFacade = analysisSession.resolutionFacade
 
     private val implicitReceivers: List<ImplicitReceiverValue<*>>
     private val firCallSiteSession: FirSession
@@ -70,11 +70,11 @@ private class KaFirCompletionExtensionCandidateChecker(
 
     init {
         val fakeFile = nameExpression.containingKtFile
-        val firFakeFile = fakeFile.getOrBuildFirFile(firResolveSession)
+        val firFakeFile = fakeFile.getOrBuildFirFile(resolutionFacade)
 
         implicitReceivers = computeImplicitReceivers(firFakeFile)
         firCallSiteSession = firFakeFile.llFirSession
-        firOriginalFile = originalFile.getOrBuildFirFile(firResolveSession)
+        firOriginalFile = originalFile.getOrBuildFirFile(resolutionFacade)
         firExplicitReceiver = explicitReceiver?.let(::findReceiverFirExpression)
     }
 
@@ -123,7 +123,7 @@ private class KaFirCompletionExtensionCandidateChecker(
     private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiverValue<*>> {
         val sessionHolder = run {
             val firSession = firFakeFile.llFirSession
-            val scopeSession = firResolveSession.getScopeSessionFor(firSession)
+            val scopeSession = resolutionFacade.getScopeSessionFor(firSession)
             SessionHolderImpl(firSession, scopeSession)
         }
 
@@ -159,10 +159,10 @@ private class KaFirCompletionExtensionCandidateChecker(
 
         val parentCall = receiverExpression.getQualifiedExpressionForReceiver()
         if (parentCall !is KtSafeQualifiedExpression) {
-            return receiverExpression.getOrBuildFirOfType<FirExpression>(firResolveSession)
+            return receiverExpression.getOrBuildFirOfType<FirExpression>(resolutionFacade)
         }
 
-        val firSafeCall = parentCall.getOrBuildFirOfType<FirSafeCallExpression>(firResolveSession)
+        val firSafeCall = parentCall.getOrBuildFirOfType<FirSafeCallExpression>(resolutionFacade)
         return firSafeCall.checkedSubjectRef.value
     }
 }

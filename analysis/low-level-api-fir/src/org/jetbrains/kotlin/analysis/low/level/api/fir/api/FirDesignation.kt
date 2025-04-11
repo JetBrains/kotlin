@@ -384,7 +384,7 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
         val targetPsiFile = targetModule.files.singleOrNull() ?: return targetPath
 
         val contextModule = targetModule.contextModule
-        val contextResolveSession = contextModule.getFirResolveSession(contextModule.project)
+        val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
 
         return buildList {
             for (targetPathDeclaration in targetPath) {
@@ -393,9 +393,9 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
                 val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
                 val originalPathDeclaration = when (originalPathPsi) {
-                    is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolveSession)?.fir
-                    is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolveSession)?.fir
-                    is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolveSession)
+                    is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)?.fir
+                    is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)?.fir
+                    is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolutionFacade)
                     else -> null
                 } ?: return null
 

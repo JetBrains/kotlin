@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  * This test iterates over all [FirResolvePhase] for the selected declaration and dump output after each phase
  */
 abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirLazyDeclarationResolveTestCase() {
-    abstract fun checkSession(firSession: LLResolutionFacade)
+    abstract fun checkSession(resolutionFacade: LLResolutionFacade)
 
     protected open val outputExtension: String get() = ".txt"
 

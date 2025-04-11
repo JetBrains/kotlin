@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class LLFirResolveSessionService(project: Project) {
     private val cache = LLFirSessionCache.getInstance(project)
 
-    fun getFirResolveSession(module: KaModule): LLResolutionFacade {
+    fun getResolutionFacade(module: KaModule): LLResolutionFacade {
         return create(module, cache::getSession)
     }
 

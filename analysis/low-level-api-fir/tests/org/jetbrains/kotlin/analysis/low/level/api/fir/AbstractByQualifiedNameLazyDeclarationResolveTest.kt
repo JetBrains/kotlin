@@ -29,8 +29,8 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val psiFile = mainFile ?: mainModule.psiFiles.first()
         val classId = testServices.moduleStructure.allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
-        val resolveSession = LLFirResolveSessionService.getInstance(psiFile.project).getFirResolveSession(mainModule.ktModule)
-        val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolveSession).findPsi(mainModule.ktModule.contentScope) as KtClassOrObject
+        val resolutionFacade = LLFirResolveSessionService.getInstance(psiFile.project).getResolutionFacade(mainModule.ktModule)
+        val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolutionFacade).findPsi(mainModule.ktModule.contentScope) as KtClassOrObject
         val file = classDeclaration.containingFile as KtFile
 
         doLazyResolveTest(file, testServices, outputRenderingMode) { firSession ->
@@ -44,8 +44,8 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
 
     open val outputRenderingMode: OutputRenderingMode = OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES
 
-    private fun findRegularClass(classId: ClassId, module: KaModule, firSession: LLResolutionFacade): FirRegularClassSymbol {
-        return firSession.getSessionFor(module).getRegularClassSymbolByClassId(classId) ?: error("'$classId' is not found")
+    private fun findRegularClass(classId: ClassId, module: KaModule, resolutionFacade: LLResolutionFacade): FirRegularClassSymbol {
+        return resolutionFacade.getSessionFor(module).getRegularClassSymbolByClassId(classId) ?: error("'$classId' is not found")
     }
 
     private object Directives : SimpleDirectivesContainer() {

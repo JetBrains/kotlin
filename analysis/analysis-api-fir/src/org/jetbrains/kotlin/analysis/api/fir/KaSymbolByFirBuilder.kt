@@ -74,9 +74,9 @@ internal class KaSymbolByFirBuilder(
     val analysisSession: KaFirSession,
     val token: KaLifetimeToken,
 ) {
-    private val firResolveSession: LLResolutionFacade get() = analysisSession.firResolveSession
+    private val resolutionFacade: LLResolutionFacade get() = analysisSession.resolutionFacade
     private val firProvider: FirSymbolProvider get() = rootSession.symbolProvider
-    val rootSession: LLFirSession get() = firResolveSession.useSiteFirSession
+    val rootSession: LLFirSession get() = resolutionFacade.useSiteFirSession
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionBuilder = FunctionSymbolBuilder()
@@ -497,7 +497,7 @@ internal class KaSymbolByFirBuilder(
             //
             // If we have such a type alias pointing to a function type, it is most likely the abbreviation of an expanded function type. An
             // abbreviation shouldn't be expanded, and so there shouldn't be any implicit expansion here.
-            return coneType.functionTypeKind(analysisSession.firResolveSession.useSiteFirSession, expandTypeAliases = false) != null
+            return coneType.functionTypeKind(analysisSession.resolutionFacade.useSiteFirSession, expandTypeAliases = false) != null
         }
 
         fun buildKtType(coneType: FirTypeRef): KaType = buildKtType(coneType.coneType)

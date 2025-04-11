@@ -80,7 +80,7 @@ internal class KaFirImportOptimizer(
     )
 
     private fun collectReferencedEntities(file: KtFile): ReferencedEntitiesResult {
-        val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }
+        val firFile = file.getOrBuildFirFile(resolutionFacade).apply { lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }
         val usedImports = mutableMapOf<FqName, MutableSet<Name>>()
         val unresolvedNames = mutableSetOf<Name>()
 

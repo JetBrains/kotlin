@@ -140,7 +140,7 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.cre
  */
 private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrObject): Boolean {
     val declarationSiteModule = getModule(declaration)
-    val declarationSiteSession = firResolveSession.getSessionFor(declarationSiteModule)
+    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.supertypeGenerators.isNotEmpty()
 }
 
@@ -149,7 +149,7 @@ private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrOb
  */
 internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtClassOrObject): Boolean {
     val declarationSiteModule = getModule(declaration)
-    val declarationSiteSession = firResolveSession.getSessionFor(declarationSiteModule)
+    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.declarationGenerators.isNotEmpty()
 }
 
@@ -243,7 +243,7 @@ internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
     declaration: KtDeclaration,
     session: KaFirSession,
 ): Lazy<S> = lazyPub {
-    declaration.resolveToFirSymbolOfType<S>(session.firResolveSession)
+    declaration.resolveToFirSymbolOfType<S>(session.resolutionFacade)
 }
 
 /**

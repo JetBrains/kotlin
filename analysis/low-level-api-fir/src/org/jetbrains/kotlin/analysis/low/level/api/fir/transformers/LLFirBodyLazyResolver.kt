@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -277,10 +277,10 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
         val module = firCodeFragment.llFirModuleData.ktModule
-        val resolveSession = module.getFirResolveSession(ktCodeFragment.project)
+        val resolutionFacade = module.getResolutionFacade(ktCodeFragment.project)
 
         fun FirTowerDataContext.withExtraScopes(): FirTowerDataContext {
-            return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
+            return resolutionFacade.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
                 .fold(this) { context, scope ->
                     val scopeWithProperSession = scope.withReplacedSessionOrNull(resolveTargetSession, resolveTargetScopeSession) ?: scope
                     context.addLocalScope(scopeWithProperSession)
@@ -291,9 +291,9 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         val contextKtFile = contextPsiElement?.containingFile as? KtFile
 
         return if (contextKtFile != null) {
-            val contextModule = resolveSession.getModule(contextKtFile)
-            val contextSession = resolveSession.sessionProvider.getResolvableSession(contextModule)
-            val contextFirFile = resolveSession.getOrBuildFirFile(contextKtFile)
+            val contextModule = resolutionFacade.getModule(contextKtFile)
+            val contextSession = resolutionFacade.sessionProvider.getResolvableSession(contextModule)
+            val contextFirFile = resolutionFacade.getOrBuildFirFile(contextKtFile)
 
             val sessionHolder = SessionHolderImpl(contextSession, contextSession.getScopeSession())
             val elementContext = ContextCollector.process(contextFirFile, sessionHolder, contextPsiElement)

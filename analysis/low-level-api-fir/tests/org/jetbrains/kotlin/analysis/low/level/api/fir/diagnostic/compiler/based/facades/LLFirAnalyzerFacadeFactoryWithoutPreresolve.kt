@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.test.model.TestFile
 
 object LLFirAnalyzerFacadeFactoryWithoutPreresolve : LLFirAnalyzerFacadeFactory() {
     override fun createFirFacade(
-        firResolveSession: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
         allFirFiles: Map<TestFile, FirFile>,
         diagnosticCheckerFilter: DiagnosticCheckerFilter
     ): LowLevelFirAnalyzerFacade {
-        return LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles, diagnosticCheckerFilter)
+        return LowLevelFirAnalyzerFacade(resolutionFacade, allFirFiles, diagnosticCheckerFilter)
     }
 }

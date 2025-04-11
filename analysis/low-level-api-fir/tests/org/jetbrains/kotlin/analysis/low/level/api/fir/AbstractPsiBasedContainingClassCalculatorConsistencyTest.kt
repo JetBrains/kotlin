@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractPsiBasedContainingClassCalculatorConsistencyTest.Directives.ALLOW_PSI_PRESENCE
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
@@ -37,8 +37,8 @@ abstract class AbstractPsiBasedContainingClassCalculatorConsistencyTest : Abstra
         get() = super.additionalDirectives + listOf(Directives)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val resolveSession = mainModule.ktModule.getFirResolveSession(mainFile.project)
-        val firFile = mainFile.getOrBuildFirFile(resolveSession)
+        val resolutionFacade = mainModule.ktModule.getResolutionFacade(mainFile.project)
+        val firFile = mainFile.getOrBuildFirFile(resolutionFacade)
 
         val allowedPsiPresence = mainModule.testModule.directives[ALLOW_PSI_PRESENCE].toSet()
         fun runChecker() {

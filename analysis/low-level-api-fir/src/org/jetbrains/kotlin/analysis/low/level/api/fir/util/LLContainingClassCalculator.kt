@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.*
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -149,7 +149,7 @@ internal object LLContainingClassCalculator {
         }
 
         val module = symbol.llFirModuleData.ktModule
-        val resolveSession = module.getFirResolveSession(module.project)
-        return psi.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(resolveSession)
+        val resolutionFacade = module.getResolutionFacade(module.project)
+        return psi.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(resolutionFacade)
     }
 }

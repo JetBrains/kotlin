@@ -87,12 +87,12 @@ private fun doTestInBlockModification(
     elementToModify: PsiElement,
     testServices: TestServices,
     dumpFirFile: Boolean,
-    firSession: LLResolutionFacade,
+    resolutionFacade: LLResolutionFacade,
 ): String {
     val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
-    val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
+    val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(resolutionFacade)
     val declarationToRender = if (dumpFirFile) {
-        file.getOrBuildFirFile(firSession).also { it.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }
+        file.getOrBuildFirFile(resolutionFacade).also { it.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }
     } else {
         firDeclarationBefore
     }
@@ -133,11 +133,11 @@ private fun doTestInBlockModification(
         declarationToRender.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
         declarationToRender.render()
     } else {
-        declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
+        declaration.getOrBuildFirOfType<FirDeclaration>(resolutionFacade)
         declarationToRender.render()
     }
 
-    val firDeclarationAfter = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
+    val firDeclarationAfter = declaration.getOrBuildFirOfType<FirDeclaration>(resolutionFacade)
     testServices.assertions.assertEquals(firDeclarationBefore, firDeclarationAfter) {
         "The declaration before and after must be the same"
     }

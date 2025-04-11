@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
@@ -76,8 +76,8 @@ internal class LLFirIdePredicateBasedProvider(
         ) return null
 
         val moduleForFile = projectStructureProvider.getModule(this, session.ktModule)
-        val sessionForFile = moduleForFile.getFirResolveSession(project)
-        return this.resolveToFirSymbol(sessionForFile).fir
+        val resolutionFacadeForFile = moduleForFile.getResolutionFacade(project)
+        return this.resolveToFirSymbol(resolutionFacadeForFile).fir
     }
 
     override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? {

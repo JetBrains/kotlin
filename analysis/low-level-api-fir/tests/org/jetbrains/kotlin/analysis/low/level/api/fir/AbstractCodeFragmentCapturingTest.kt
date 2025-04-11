@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -32,20 +32,20 @@ abstract class AbstractCodeFragmentCapturingTest : AbstractAnalysisApiBasedTest(
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val project = mainFile.project
 
-        val resolveSession = mainModule.ktModule.getFirResolveSession(project)
-        val firFile = mainFile.getOrBuildFirFile(resolveSession)
+        val resolutionFacade = mainModule.ktModule.getResolutionFacade(project)
+        val firFile = mainFile.getOrBuildFirFile(resolutionFacade)
 
         val firCodeFragment = firFile.codeFragment
         firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-        val frontendDiagnostics = mainFile.collectDiagnosticsForFile(resolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+        val frontendDiagnostics = mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
         val frontendErrors = frontendDiagnostics.filter { it.severity == Severity.ERROR }
 
         require(frontendErrors.isEmpty()) {
             frontendErrors
         }
 
-        val capturedValueData = CodeFragmentCapturedValueAnalyzer.analyze(resolveSession, firCodeFragment)
+        val capturedValueData = CodeFragmentCapturedValueAnalyzer.analyze(resolutionFacade, firCodeFragment)
 
 
         val actualText = buildString {

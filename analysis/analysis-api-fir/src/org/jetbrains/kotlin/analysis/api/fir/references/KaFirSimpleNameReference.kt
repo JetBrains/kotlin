@@ -52,7 +52,7 @@ internal class KaFirSimpleNameReference(
 
     override fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> = with(analysisSession) {
         if (expression is KtLabelReferenceExpression) {
-            val fir = expression.getOrBuildFir((analysisSession as KaFirSession).firResolveSession)
+            val fir = expression.getOrBuildFir((analysisSession as KaFirSession).resolutionFacade)
             if (fir is FirLoopJump) {
                 return listOfNotNull(fir.target.labeledElement.psi)
             }

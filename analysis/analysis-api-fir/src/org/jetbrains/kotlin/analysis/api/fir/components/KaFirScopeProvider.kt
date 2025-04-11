@@ -272,7 +272,7 @@ internal class KaFirScopeProvider(
 
     override val KtFile.importingScopeContext: KaScopeContext
         get() = withValidityAssertion {
-            val firFile = getOrBuildFirFile(firResolveSession)
+            val firFile = getOrBuildFirFile(resolutionFacade)
             val firFileSession = firFile.moduleData.session
             val firImportingScopes = createImportingScopes(
                 firFile,
@@ -296,7 +296,7 @@ internal class KaFirScopeProvider(
         val correctedPosition = parentKDoc?.owner ?: position
 
         val context = ContextCollector.process(
-            fakeFile.getOrBuildFirFile(firResolveSession),
+            fakeFile.getOrBuildFirFile(resolutionFacade),
             SessionHolderImpl(analysisSession.firSession, getScopeSession()),
             correctedPosition,
         )
@@ -406,7 +406,7 @@ internal class KaFirScopeProvider(
     }
 
     private fun getFirTypeScope(type: KaFirType): FirTypeScope? = type.coneType.scope(
-        firResolveSession.useSiteFirSession,
+        resolutionFacade.useSiteFirSession,
         getScopeSession(),
         CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution,
         requiredMembersPhase = FirResolvePhase.STATUS,
@@ -414,7 +414,7 @@ internal class KaFirScopeProvider(
 
     private fun getFirSyntheticPropertiesScope(coneType: ConeKotlinType, typeScope: FirTypeScope): FirSyntheticPropertiesScope? =
         FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
-            firResolveSession.useSiteFirSession,
+            resolutionFacade.useSiteFirSession,
             coneType,
             typeScope
         )

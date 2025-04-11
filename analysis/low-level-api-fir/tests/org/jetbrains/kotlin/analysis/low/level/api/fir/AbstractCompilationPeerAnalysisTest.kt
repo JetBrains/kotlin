@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -21,8 +21,8 @@ abstract class AbstractCompilationPeerAnalysisTest : AbstractAnalysisApiBasedTes
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val project = mainFile.project
 
-        val resolveSession = mainModule.ktModule.getFirResolveSession(project)
-        val firFile = mainFile.getOrBuildFirFile(resolveSession)
+        val resolutionFacade = mainModule.ktModule.getResolutionFacade(project)
+        val firFile = mainFile.getOrBuildFirFile(resolutionFacade)
 
         val compilationPeerData = CompilationPeerCollector.process(firFile)
 

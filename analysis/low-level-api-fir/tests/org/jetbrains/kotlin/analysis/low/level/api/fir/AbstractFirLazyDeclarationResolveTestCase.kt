@@ -48,17 +48,17 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
     protected fun findFirDeclarationToResolve(
         ktFile: KtFile,
         testServices: TestServices,
-        firResolveSession: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
         Directives.RESOLVE_FILE in testServices.moduleStructure.allDirectives -> {
-            val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
+            val session = resolutionFacade.useSiteFirSession as LLFirResolvableModuleSession
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             file to fun(phase: FirResolvePhase) {
                 file.lazyResolveToPhaseByDirective(phase, testServices)
             }
         }
         Directives.RESOLVE_DANGLING_MODIFIER in testServices.moduleStructure.allDirectives -> {
-            val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
+            val session = resolutionFacade.useSiteFirSession as LLFirResolvableModuleSession
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             val danglingModifier = file.declarations.last() as FirDanglingModifierList
             danglingModifier to fun(phase: FirResolvePhase) {
@@ -72,8 +72,8 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
                 testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(ktFile)
             }
 
-            val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, testServices.moduleStructure, firResolveSession).fir
+            val declarationSymbol = ktDeclaration.resolveToFirSymbol(resolutionFacade)
+            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, testServices.moduleStructure, resolutionFacade).fir
             firDeclaration to fun(phase: FirResolvePhase) {
                 firDeclaration.lazyResolveToPhaseByDirective(phase, testServices)
             }
@@ -83,10 +83,10 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
     protected fun chooseMemberDeclarationIfNeeded(
         symbol: FirBasedSymbol<*>,
         moduleStructure: TestModuleStructure,
-        session: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
     ): FirBasedSymbol<*> {
         val directives = moduleStructure.allDirectives
-        val memberSymbol = chooseMemberDeclarationIfNeeded(symbol, session, directives)
+        val memberSymbol = chooseMemberDeclarationIfNeeded(symbol, resolutionFacade, directives)
         val propertyPart = directives.singleOrZeroValue(Directives.RESOLVE_PROPERTY_PART) ?: return memberSymbol
         requireIsInstance<FirPropertySymbol>(memberSymbol)
 
@@ -99,7 +99,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
 
     private fun chooseMemberDeclarationIfNeeded(
         symbol: FirBasedSymbol<*>,
-        session: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
         directives: RegisteredDirectives,
     ): FirBasedSymbol<*> {
         val memberClassFilters = listOfNotNull(
@@ -120,7 +120,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         val filteredSymbols = declarations.filter(filter)
         return when (filteredSymbols.size) {
             0 -> {
-                (classSymbol as? FirClassSymbol)?.let { deepSearch(it, session, filter) }
+                (classSymbol as? FirClassSymbol)?.let { deepSearch(it, resolutionFacade, filter) }
                     ?: error("Empty result for:${declarations.joinToString("\n")}")
             }
             1 -> filteredSymbols.single()
@@ -130,12 +130,12 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
 
     private fun deepSearch(
         classSymbol: FirClassSymbol<*>,
-        session: LLResolutionFacade,
+        resolutionFacade: LLResolutionFacade,
         filter: (FirBasedSymbol<*>) -> Boolean,
     ): FirBasedSymbol<*>? {
         val baseScope = classSymbol.unsubstitutedScope(
-            session.useSiteFirSession,
-            session.getScopeSessionFor(session.useSiteFirSession),
+            resolutionFacade.useSiteFirSession,
+            resolutionFacade.getScopeSessionFor(resolutionFacade.useSiteFirSession),
             false,
             FirResolvePhase.STATUS,
         )
@@ -143,7 +143,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         val scopes: List<FirContainingNamesAwareScope> = listOfNotNull(
             baseScope,
             FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
-                session.useSiteFirSession,
+                resolutionFacade.useSiteFirSession,
                 classSymbol.defaultType(),
                 baseScope,
             )

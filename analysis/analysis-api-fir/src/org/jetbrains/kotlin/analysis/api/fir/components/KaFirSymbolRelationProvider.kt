@@ -214,7 +214,7 @@ internal class KaFirSymbolRelationProvider(
 
     override val KaSymbol.containingModule: KaModule
         get() = withValidityAssertion {
-            getContainingKtModule(analysisSession.firResolveSession)
+            getContainingKtModule(analysisSession.resolutionFacade)
         }
 
     private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {

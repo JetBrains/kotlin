@@ -126,11 +126,11 @@ internal class KaFirResolver(
 
         val implicitInvokeCall = run {
             val parentCallExpression = element.parent as? KtCallExpression
-            parentCallExpression?.getOrBuildFir(analysisSession.firResolveSession) as? FirImplicitInvokeCall
+            parentCallExpression?.getOrBuildFir(analysisSession.resolutionFacade) as? FirImplicitInvokeCall
         }
 
         val wholeQualifier = implicitInvokeCall?.explicitReceiver
-            ?: element.getOrBuildFir(analysisSession.firResolveSession)
+            ?: element.getOrBuildFir(analysisSession.resolutionFacade)
 
         if (wholeQualifier !is FirResolvedQualifier) return false
 
@@ -230,7 +230,7 @@ internal class KaFirResolver(
             ?: psi.getContainingDotQualifiedExpressionForSelectorExpression()
             ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
             ?: psi
-        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
+        val fir = psiToResolve.getOrBuildFir(analysisSession.resolutionFacade) ?: return emptyList()
         if (fir is FirDiagnosticHolder) {
             return fir.getErrorCallInfo(psiToResolve)
         }
@@ -423,7 +423,7 @@ internal class KaFirResolver(
         if (binaryExpression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
         val leftOfBinary = deparenthesize(binaryExpression.left)
         if (leftOfBinary != lhs && !(leftOfBinary is KtQualifiedExpression && leftOfBinary.selectorExpression == lhs)) return null
-        val firBinaryExpression = binaryExpression.getOrBuildFir(analysisSession.firResolveSession)
+        val firBinaryExpression = binaryExpression.getOrBuildFir(analysisSession.resolutionFacade)
         if (firBinaryExpression is FirFunctionCall) {
             if (firBinaryExpression.origin == FirFunctionCallOrigin.Operator &&
                 firBinaryExpression.calleeReference.name in OperatorNameConventions.ASSIGNMENT_OPERATIONS
@@ -993,7 +993,7 @@ internal class KaFirResolver(
 
     @OptIn(SymbolInternals::class)
     private fun getInitializerOfReferencedLocalVariable(variableReference: FirExpression): FirFunctionCall? {
-        return variableReference.toReference(firResolveSession.useSiteFirSession)
+        return variableReference.toReference(resolutionFacade.useSiteFirSession)
             ?.toResolvedVariableSymbol()
             ?.fir
             ?.initializer as? FirFunctionCall
@@ -1307,7 +1307,7 @@ internal class KaFirResolver(
 
         val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptyList()
         val candidates = AllCandidatesResolver(analysisSession.firSession).getAllCandidates(
-            analysisSession.firResolveSession,
+            analysisSession.resolutionFacade,
             originalFunctionCall,
             calleeName,
             psi,
@@ -1344,10 +1344,10 @@ internal class KaFirResolver(
             }
         }
 
-        val derivedClass = findDerivedClass(psi)?.resolveToFirSymbolOfTypeSafe<FirClassSymbol<*>>(firResolveSession) ?: return emptyList()
+        val derivedClass = findDerivedClass(psi)?.resolveToFirSymbolOfTypeSafe<FirClassSymbol<*>>(resolutionFacade) ?: return emptyList()
 
         val candidates = AllCandidatesResolver(analysisSession.firSession)
-            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass.toLookupTag(), psi)
+            .getAllCandidatesForDelegatedConstructor(analysisSession.resolutionFacade, this, derivedClass.toLookupTag(), psi)
 
         return candidates.mapNotNull {
             convertToKaCallCandidateInfo(
@@ -1624,7 +1624,7 @@ internal class KaFirResolver(
                 exception = e,
             ) {
                 withPsiEntry("psi", element, analysisSession::getModule)
-                element.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
+                element.getOrBuildFir(resolutionFacade)?.let { withFirEntry("fir", it) }
             }
         }
 

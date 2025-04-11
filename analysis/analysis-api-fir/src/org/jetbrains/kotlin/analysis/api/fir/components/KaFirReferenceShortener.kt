@@ -109,7 +109,7 @@ internal class KaFirReferenceShortener(
             kDocQualifiersToShorten = emptyList(),
         )
 
-        val towerContext = FirTowerDataContextProvider.create(firResolveSession, declarationToVisit)
+        val towerContext = FirTowerDataContextProvider.create(resolutionFacade, declarationToVisit)
 
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
@@ -121,7 +121,7 @@ internal class KaFirReferenceShortener(
             selection,
             classShortenStrategy = { classShortenStrategy(buildSymbol(it) as KaClassLikeSymbol) },
             callableShortenStrategy = { callableShortenStrategy(buildSymbol(it) as KaCallableSymbol) },
-            firResolveSession,
+            resolutionFacade,
         )
         firDeclaration.accept(CollectingVisitor(collector))
 
@@ -158,7 +158,7 @@ internal class KaFirReferenceShortener(
     private fun KtElement.getCorrespondingFirElement(): FirElement? {
         require(this is KtFile || this is KtDeclaration)
 
-        val firElement = getOrBuildFir(firResolveSession)
+        val firElement = getOrBuildFir(resolutionFacade)
 
         return when (firElement) {
             is FirDeclaration -> firElement
@@ -175,12 +175,12 @@ private class FirTowerDataContextProvider private constructor(
     private val contextProvider: ContextCollector.ContextProvider
 ) {
     companion object {
-        fun create(firResolveSession: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
-            val firFile = targetElement.containingKtFile.getOrBuildFirFile(firResolveSession)
+        fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
+            val firFile = targetElement.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
             val sessionHolder = run {
-                val firSession = firResolveSession.useSiteFirSession
-                val scopeSession = firResolveSession.getScopeSessionFor(firSession)
+                val firSession = resolutionFacade.useSiteFirSession
+                val scopeSession = resolutionFacade.getScopeSessionFor(firSession)
 
                 SessionHolderImpl(firSession, scopeSession)
             }
@@ -273,10 +273,10 @@ private data class AvailableSymbol<out T>(
 )
 
 private class FirShorteningContext(val analysisSession: KaFirSession) {
-    private val firResolveSession = analysisSession.firResolveSession
+    private val resolutionFacade = analysisSession.resolutionFacade
 
     private val firSession: FirSession
-        get() = firResolveSession.useSiteFirSession
+        get() = resolutionFacade.useSiteFirSession
 
     class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<FirClassifierSymbol<*>>)
 
@@ -529,7 +529,7 @@ private class ElementsToShortenCollector(
     private val selection: TextRange,
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
-    private val firResolveSession: LLResolutionFacade,
+    private val resolutionFacade: LLResolutionFacade,
 ) {
     val typesToShorten: MutableList<ShortenType> = mutableListOf()
     val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
@@ -807,7 +807,7 @@ private class ElementsToShortenCollector(
          *    }
          */
         if (shorteningContext.findPropertiesInScopes(scopes, name).isNotEmpty()) {
-            val firForElement = element.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression
+            val firForElement = element.getOrBuildFir(resolutionFacade) as? FirQualifiedAccessExpression
             val typeArguments = firForElement?.typeArguments ?: emptyList()
             val qualifiedAccessCandidates = findCandidatesForPropertyAccess(classSymbol.annotations, typeArguments, name, element)
             if (qualifiedAccessCandidates.mapNotNull { it.candidate.originScope }.hasScopeCloserThan(scopeForClass, element)) return false
@@ -996,7 +996,7 @@ private class ElementsToShortenCollector(
                 val shortClassName = classToImport.shortClassName
                 if (expression.getReferencedNameAsName() != shortClassName) return
 
-                val contextProvider = FirTowerDataContextProvider.create(firResolveSession, expression)
+                val contextProvider = FirTowerDataContextProvider.create(resolutionFacade, expression)
                 val positionScopes = shorteningContext.findScopesAtPosition(expression, getNamesToImport(), contextProvider) ?: return
                 val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, shortClassName) ?: return
                 when {
@@ -1052,7 +1052,7 @@ private class ElementsToShortenCollector(
             }
         }
         val candidates = AllCandidatesResolver(shorteningContext.analysisSession.firSession).getAllCandidates(
-            firResolveSession, fakeFirQualifiedAccess, name, expressionInScope, ResolutionMode.ContextIndependent,
+            resolutionFacade, fakeFirQualifiedAccess, name, expressionInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
             when (overloadCandidate.candidate.lowestApplicability) {
@@ -1076,7 +1076,7 @@ private class ElementsToShortenCollector(
             calleeReference = fakeCalleeReference
         }
         val candidates = AllCandidatesResolver(shorteningContext.analysisSession.firSession).getAllCandidates(
-            firResolveSession, fakeFirQualifiedAccess, name, elementInScope, ResolutionMode.ContextIndependent,
+            resolutionFacade, fakeFirQualifiedAccess, name, elementInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
             overloadCandidate.candidate.lowestApplicability == CandidateApplicability.RESOLVED
@@ -1099,7 +1099,7 @@ private class ElementsToShortenCollector(
      */
     private fun KtExpression.isCompanionMemberUsedForEnumEntryInit(resolvedSymbol: FirCallableSymbol<*>): Boolean {
         val enumEntry = getNonStrictParentOfType<KtEnumEntry>() ?: return false
-        val firEnumEntry = enumEntry.resolveToFirSymbol(firResolveSession) as? FirEnumEntrySymbol ?: return false
+        val firEnumEntry = enumEntry.resolveToFirSymbol(resolutionFacade) as? FirEnumEntrySymbol ?: return false
         val classNameOfResolvedSymbol = resolvedSymbol.callableId.className ?: return false
         return firEnumEntry.callableId.className == classNameOfResolvedSymbol.parent() &&
                 classNameOfResolvedSymbol.shortName() == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT

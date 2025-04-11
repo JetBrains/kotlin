@@ -95,10 +95,10 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
 }
 
 @KaImplementationDetail
-fun collectUseSiteContainers(element: PsiElement, resolveSession: LLResolutionFacade): List<FirDeclaration>? {
+fun collectUseSiteContainers(element: PsiElement, resolutionFacade: LLResolutionFacade): List<FirDeclaration>? {
     val containingDeclaration = element.getNonLocalContainingOrThisDeclaration { it.isAutonomousElement } ?: return null
     val containingFile = containingDeclaration.containingKtFile
-    val firFile = resolveSession.getOrBuildFirFile(containingFile)
+    val firFile = resolutionFacade.getOrBuildFirFile(containingFile)
     return FirElementFinder.findPathToDeclarationWithTarget(firFile, containingDeclaration)
 }
 
