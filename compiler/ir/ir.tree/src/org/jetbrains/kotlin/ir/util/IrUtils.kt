@@ -806,7 +806,7 @@ fun IrValueParameter.copyTo(
             expression = originalDefault.expression.deepCopyWithSymbols(irFunction),
         )
     }
-    @Suppress("DEPRECATED_COMPILER_API")
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     return factory.createValueParameter(
         startOffset = startOffset,
         endOffset = endOffset,

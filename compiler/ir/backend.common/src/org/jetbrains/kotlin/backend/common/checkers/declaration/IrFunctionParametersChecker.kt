@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.declaration
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -14,7 +15,7 @@ internal object IrFunctionParametersChecker : IrFunctionChecker {
         declaration: IrFunction,
         context: CheckerContext,
     ) {
-        @Suppress("DEPRECATED_COMPILER_API")
+        @OptIn(DeprecatedForRemovalCompilerApi::class)
         for ((i, param) in declaration.valueParameters.withIndex()) {
             if (param.indexInOldValueParameters != i) {
                 context.error(declaration, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")

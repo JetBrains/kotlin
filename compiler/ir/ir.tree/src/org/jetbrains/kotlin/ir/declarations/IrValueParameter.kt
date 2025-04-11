@@ -32,6 +32,8 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      *
      * Please replace with [indexInOldValueParameters],
      * or migrate to new parameter API with [indexInParameters].
+     *
+     * See docs/backend/IR_parameter_api_migration.md
      */
     @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var index: Int by ::indexInOldValueParameters
@@ -48,9 +50,9 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      * ##### This is a deprecated API
      * Instead, use [IrFunction.parameters] together with [indexInParameters].
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var indexInOldValueParameters: Int = -1
         @DelicateIrParameterIndexSetter
         set

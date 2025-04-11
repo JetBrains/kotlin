@@ -14,6 +14,7 @@ dependencies {
 
 optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
+optInTo("org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi")
 
 sourceSets {
     "main" { projectDefault() }

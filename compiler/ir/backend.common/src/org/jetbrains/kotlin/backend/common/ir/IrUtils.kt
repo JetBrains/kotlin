@@ -49,7 +49,6 @@ inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder
     deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
     replaceWith = "org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver",
 )
-@Suppress("DEPRECATED_COMPILER_API")
 fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     IrValueParameterBuilder().run {
         this.type = type

@@ -379,8 +379,10 @@ open class IrFactory(
 
     /**
      * Please use [createValueParameter] overload that takes [IrParameterKind] parameter.
+     *
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun createValueParameter(
         startOffset: Int,
         endOffset: Int,

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -52,6 +52,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
             val parameters = _parameters
             for (parameter in parameters) {
+                @OptIn(DeprecatedForRemovalCompilerApi::class)
                 parameter.indexInOldValueParameters = -1
                 parameter.indexInParameters = -1
             }
@@ -62,6 +63,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
                 val kind = requireNotNull(parameter._kind) { "Kind must be set explicitly when adding a parameter" }
 
                 parameter.indexInParameters = index
+                @OptIn(DeprecatedForRemovalCompilerApi::class)
                 parameter.indexInOldValueParameters = when (kind) {
                     IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1
                     IrParameterKind.Context, IrParameterKind.Regular -> oldIndex++
@@ -86,9 +88,9 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
          * ##### This is a deprecated API
          * Modify the [parameters] list directly.
          *
-         * Details on the API migration: KT-68003
+         * See [Parameter API migration guide](/docs/backend/IR_parameter_api_migration.md)
          */
-        @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+        @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
         set(value) {
             setReceiverParameter(IrParameterKind.DispatchReceiver, value)
         }
@@ -97,14 +99,14 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      * The first parameter of kind [IrParameterKind.ExtensionReceiver] in [parameters], if present.
      *
      * ##### This is a deprecated API
-     * Drop-in replacement:
+     * Drop-in replacement (discouraged):
      * ```kotlin
      * parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
      * ```
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var extensionReceiverParameter: IrValueParameter?
         get() = _parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
         set(value) {
@@ -119,6 +121,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         var reindexSubsequent = false
         if (index >= 0) {
             val old = parameters[index]
+            @OptIn(DeprecatedForRemovalCompilerApi::class)
             old.indexInOldValueParameters = -1
             old.indexInParameters = -1
             old._kind = null
@@ -140,6 +143,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         }
 
         if (value != null) {
+            @OptIn(DeprecatedForRemovalCompilerApi::class)
             value.indexInOldValueParameters = -1
             value.indexInParameters = index
             value.kind = kind
@@ -155,20 +159,20 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
     private var _contextReceiverParametersCount: Int = 0
 
     /**
-     * The number of context parameters in the [parameters] and [valueParameters] lists.
+     * The number of context parameters in the [valueParameters] list.
      *
      * There first `contextReceiverParametersCount` parameters in [valueParameters] are [IrParameterKind.Context],
      * the following are [IrParameterKind.Regular].
      *
      * ##### This is a deprecated API
-     * Instead, use [parameters] directly. A drop-in replacement:
+     * Instead, use [parameters] directly. A drop-in replacement (discouraged):
      * ```
      * parameters.count { it.kind == IrParameterKind.Context }
      * ```
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var contextReceiverParametersCount: Int
         get() = _contextReceiverParametersCount
         set(value) {
@@ -187,14 +191,14 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      * leaving dispatch and extension receiver intact.
      *
      * ##### This is a deprecated API
-     * Use [parameters] instead. A drop-in replacement:
+     * Use [parameters] instead. A drop-in replacement (discouraged):
      * ```
      * parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
      * ```
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var valueParameters: List<IrValueParameter>
         get() = _parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
         set(value) {
@@ -231,6 +235,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
                 else -> {
                     oldValueParameters?.add(param)
                     param.indexInParameters = -1
+                    @OptIn(DeprecatedForRemovalCompilerApi::class)
                     param.indexInOldValueParameters = -1
                     param._kind = null
                 }
@@ -245,6 +250,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         for (i in 0..<actualContextParameterCount) {
             val param = valueParameters[i]
             parameters += param
+            @OptIn(DeprecatedForRemovalCompilerApi::class)
             param.indexInOldValueParameters = i
             param.kind = IrParameterKind.Context
         }
@@ -252,6 +258,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         for (i in actualContextParameterCount..<valueParameters.size) {
             val param = valueParameters[i]
             parameters += param
+            @OptIn(DeprecatedForRemovalCompilerApi::class)
             param.indexInOldValueParameters = i
             param.kind = IrParameterKind.Regular
         }
@@ -265,6 +272,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
     internal fun reindexValueParameters() {
         var indexInOldValueParameters = 0
         for (param in _parameters) {
+            @OptIn(DeprecatedForRemovalCompilerApi::class)
             param.indexInOldValueParameters = when (param._kind) {
                 null -> -1
                 IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1

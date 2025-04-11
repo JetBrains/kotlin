@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -117,6 +117,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                     is IrLocalDelegatedPropertyReference -> getter.owner
                     else -> error("Unexpected reference to a property from $this")
                 }
+                @OptIn(DeprecatedForRemovalCompilerApi::class)
                 if (accessor != null) {
                     hasDispatchReceiver = accessor.dispatchReceiverParameter != null
                     hasExtensionReceiver = accessor.extensionReceiverParameter != null
@@ -172,14 +173,14 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * - If you want a number of _all_ arguments (which you should most of the time), use [arguments.size] instead.
      * - If you want a number of a particular [IrParameterKind] of parameters, you have to reach out to the corresponding function.
      *
-     * A drop-in replacement:
+     * A drop-in replacement (discouraged):
      * ```
      * symbol.owner.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
      * ```
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     val valueArgumentsCount: Int
         get() {
             ensureTargetShapeInitialized()
@@ -222,7 +223,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * In future, if we evaluate [dispatchReceiver] is not really useful (provides little win over just reaching to
      * function.dispatchReceiverParameter and then using [arguments]), it will be deprecated.
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
     var dispatchReceiver: IrExpression?
         get() {
@@ -251,14 +252,14 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *
      * ##### This is a deprecated API!
      * Only use [arguments] instead. If you need to know the meaning of the arguments, reach out to the corresponding function's parameters.
-     * A drop-in replacement:
+     * A drop-in replacement (discouraged):
      * ```
      * arguments[symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }]
      * ```
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var extensionReceiver: IrExpression?
         get() {
             ensureTargetShapeInitialized()
@@ -395,9 +396,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * ```
      * If you need to know the [IrParameterKind] of the argument, reach out to the corresponding function's parameter.
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun getValueArgument(index: Int): IrExpression? {
         ensureTargetShapeInitialized()
         val actualIndex = getRealValueArgumentIndex(index)
@@ -425,9 +426,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * ```
      * If you need to know the [IrParameterKind] of the arguments, reach out to the corresponding function's parameter.
      *
-     * Details on the API migration: KT-68003
+     * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         ensureTargetShapeInitialized()
         val actualIndex = getRealValueArgumentIndex(index)

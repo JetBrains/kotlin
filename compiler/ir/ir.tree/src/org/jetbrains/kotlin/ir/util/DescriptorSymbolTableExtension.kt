@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -371,6 +372,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         name: Name? = null,
         isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
+            @OptIn(DeprecatedForRemovalCompilerApi::class)
             irFactory.createValueParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
