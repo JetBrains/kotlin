@@ -81,16 +81,16 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
                 ::FirScopeDumpHandler,
             )
         }
+        facadeStep(::Fir2IrResultsConverter)
+        irHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+        facadeStep(::JsIrInliningFacade)
+        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
     }
 }
 
 abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
-
-        facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::JsIrInliningFacade)
-        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         facadeStep(::FirJsKlibSerializerFacade)
 
@@ -118,15 +118,6 @@ abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) :
         super.configure(builder)
         defaultDirectives {
             LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
-        }
-
-        facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::JsIrInliningFacade)
-
-        irHandlersStep {
-            useHandlers(
-                ::IrDiagnosticsHandler
-            )
         }
     }
 }
