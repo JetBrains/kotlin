@@ -56,12 +56,6 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
-  @TestMetadata("dataClassOperators")
-  public void testDataClassOperators() {
-    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/dataClassOperators/");
-  }
-
-  @Test
   @TestMetadata("enums")
   public void testEnums() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/enums/");
@@ -203,12 +197,6 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("stdlibTypes")
   public void testStdlibTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/stdlibTypes/");
-  }
-
-  @Test
-  @TestMetadata("strings")
-  public void testStrings() {
-    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/strings/");
   }
 
   @Test
