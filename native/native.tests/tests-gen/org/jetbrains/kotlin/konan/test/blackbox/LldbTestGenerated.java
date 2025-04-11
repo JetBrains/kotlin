@@ -113,12 +113,6 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
-  @TestMetadata("kt42208WithInlinedFunInKlib.kt")
-  public void testKt42208WithInlinedFunInKlib() {
-    runTest("native/native.tests/testData/lldb/kt42208WithInlinedFunInKlib.kt");
-  }
-
-  @Test
   @TestMetadata("kt42208WithPassingLambdaToAnotherFunction.kt")
   public void testKt42208WithPassingLambdaToAnotherFunction() {
     runTest("native/native.tests/testData/lldb/kt42208WithPassingLambdaToAnotherFunction.kt");
@@ -146,12 +140,6 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("kt42208WithVariableAndNestingWithInlinedFunInKlib.kt")
   public void testKt42208WithVariableAndNestingWithInlinedFunInKlib() {
     runTest("native/native.tests/testData/lldb/kt42208WithVariableAndNestingWithInlinedFunInKlib.kt");
-  }
-
-  @Test
-  @TestMetadata("kt42208WithVariableWithInlinedFunInKlib.kt")
-  public void testKt42208WithVariableWithInlinedFunInKlib() {
-    runTest("native/native.tests/testData/lldb/kt42208WithVariableWithInlinedFunInKlib.kt");
   }
 
   @Test
