@@ -118,12 +118,6 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   }
 
   @Test
-  @TestMetadata("propertyTransformations")
-  public void testPropertyTransformations() {
-    runTest("compiler/testData/klib/partial-linkage/propertyTransformations/");
-  }
-
-  @Test
   @TestMetadata("referencingUnusableDeclarations")
   public void testReferencingUnusableDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/");

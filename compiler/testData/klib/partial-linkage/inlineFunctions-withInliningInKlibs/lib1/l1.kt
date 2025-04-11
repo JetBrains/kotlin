@@ -306,3 +306,40 @@ inline val removedInlineVal: Int
 inline var removedInlineVar: Int
     get() = 231
     set(_) = Unit
+
+/*****************************************************/
+/***** Extracted from 'propertyTransformations': *****/
+/*****************************************************/
+
+open class OpenClassWithProperties {
+    @Suppress("MemberVisibilityCanBePrivate")
+    var lastRecordedState: String = ""
+
+    open var openNonInlineToInlineProperty: String
+        get() = "OpenClassWithProperties.openNonInlineToInlineProperty"
+        set(value) { lastRecordedState = "OpenClassWithProperties.openNonInlineToInlineProperty=$value" }
+
+    open var openNonInlineToInlinePropertyWithDelegation: String
+        get() = "OpenClassWithProperties.openNonInlineToInlinePropertyWithDelegation"
+        set(value) { lastRecordedState = "OpenClassWithProperties.openNonInlineToInlinePropertyWithDelegation=$value" }
+
+    //inline var newInlineProperty1: String
+    //    get() = "OpenClassWithProperties.newInlineProperty1"
+    //    set(value) { lastRecordedState = "OpenClassWithProperties.newInlineProperty1=$value" }
+
+    //inline var newInlineProperty2: String
+    //    get() = "OpenClassWithProperties.newInlineProperty2"
+    //    set(value) { lastRecordedState = "OpenClassWithProperties.newInlineProperty2=$value" }
+
+    //var newNonInlineProperty: String
+    //    get() = "OpenClassWithProperties.newNonInlineProperty"
+    //    set(value) { lastRecordedState = "OpenClassWithProperties.newNonInlineProperty=$value" }
+
+    fun newInlineProperty1Reader(): String = TODO("Not implemented: OpenClassWithProperties.newInlineProperty1Reader()")
+    fun newInlineProperty2Reader(): String = TODO("Not implemented: OpenClassWithProperties.newInlineProperty2Reader()")
+    fun newNonInlinePropertyReader(): String = TODO("Not implemented: OpenClassWithProperties.newNonInlinePropertyReader()")
+
+    fun newInlineProperty1Writer(value: String): Unit = TODO("Not implemented: OpenClassWithProperties.newInlineProperty1Writer()")
+    fun newInlineProperty2Writer(value: String): Unit = TODO("Not implemented: OpenClassWithProperties.newInlineProperty2Writer()")
+    fun newNonInlinePropertyWriter(value: String): Unit = TODO("Not implemented: OpenClassWithProperties.newNonInlinePropertyWriter()")
+}

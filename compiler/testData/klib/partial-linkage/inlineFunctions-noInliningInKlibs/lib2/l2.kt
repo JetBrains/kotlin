@@ -452,3 +452,53 @@ annotation class MyAnnotation
 
 @MyAnnotationMarker(MyAnnotation::class)
 data class MyAnnotationHolder(val x: Int)
+
+/*****************************************************/
+/***** Extracted from 'propertyTransformations': *****/
+/*****************************************************/
+
+class OpenClassWithPropertiesImpl : OpenClassWithProperties() {
+    override var openNonInlineToInlineProperty: String
+        get() = "OpenClassWithPropertiesImpl.openNonInlineToInlineProperty"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesImpl.openNonInlineToInlineProperty=$value" }
+
+    override var openNonInlineToInlinePropertyWithDelegation: String
+        get() = super.openNonInlineToInlinePropertyWithDelegation + " called from OpenClassWithPropertiesImpl.openNonInlineToInlinePropertyWithDelegation"
+        set(value) { super.openNonInlineToInlinePropertyWithDelegation = "$value called from OpenClassWithPropertiesImpl.openNonInlineToInlinePropertyWithDelegation" }
+
+    var newInlineProperty1: String // overrides accidentally appeared inline property
+        get() = "OpenClassWithPropertiesImpl.newInlineProperty1"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesImpl.newInlineProperty1=$value" }
+
+    inline var newInlineProperty2: String // overrides accidentally appeared inline property
+        get() = "OpenClassWithPropertiesImpl.newInlineProperty2"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesImpl.newInlineProperty2=$value" }
+
+    inline var newNonInlineProperty: String // overrides accidentally appeared non-inline function
+        get() = "OpenClassWithPropertiesImpl.newNonInlineProperty"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesImpl.newNonInlineProperty=$value" }
+}
+
+fun openNonInlineToInlinePropertyInOpenClass(oc: OpenClassWithProperties): String = oc.openNonInlineToInlineProperty
+fun openNonInlineToInlinePropertyWithDelegationInOpenClass(oc: OpenClassWithProperties): String = oc.openNonInlineToInlinePropertyWithDelegation
+fun newInlineProperty1InOpenClass(oc: OpenClassWithProperties): String = oc.newInlineProperty1Reader()
+fun newInlineProperty2InOpenClass(oc: OpenClassWithProperties): String = oc.newInlineProperty2Reader()
+fun newNonInlinePropertyInOpenClass(oc: OpenClassWithProperties): String = oc.newNonInlinePropertyReader()
+
+fun openNonInlineToInlinePropertyInOpenClassImpl(oci: OpenClassWithPropertiesImpl): String = oci.openNonInlineToInlineProperty
+fun openNonInlineToInlinePropertyWithDelegationInOpenClassImpl(oci: OpenClassWithPropertiesImpl): String = oci.openNonInlineToInlinePropertyWithDelegation
+fun newInlineProperty1InOpenClassImpl(oci: OpenClassWithPropertiesImpl): String = oci.newInlineProperty1
+fun newInlineProperty2InOpenClassImpl(oci: OpenClassWithPropertiesImpl): String = oci.newInlineProperty2
+fun newNonInlinePropertyInOpenClassImpl(oci: OpenClassWithPropertiesImpl): String = oci.newNonInlineProperty
+
+fun openNonInlineToInlinePropertyInOpenClass(oc: OpenClassWithProperties, value: String): String { oc.openNonInlineToInlineProperty = value; return oc.lastRecordedState }
+fun openNonInlineToInlinePropertyWithDelegationInOpenClass(oc: OpenClassWithProperties, value: String): String { oc.openNonInlineToInlinePropertyWithDelegation = value; return oc.lastRecordedState }
+fun newInlineProperty1InOpenClass(oc: OpenClassWithProperties, value: String): String { oc.newInlineProperty1Writer(value); return oc.lastRecordedState }
+fun newInlineProperty2InOpenClass(oc: OpenClassWithProperties, value: String): String { oc.newInlineProperty2Writer(value); return oc.lastRecordedState }
+fun newNonInlinePropertyInOpenClass(oc: OpenClassWithProperties, value: String): String { oc.newNonInlinePropertyWriter(value); return oc.lastRecordedState }
+
+fun openNonInlineToInlinePropertyInOpenClassImpl(oci: OpenClassWithPropertiesImpl, value: String): String { oci.openNonInlineToInlineProperty = value; return oci.lastRecordedState }
+fun openNonInlineToInlinePropertyWithDelegationInOpenClassImpl(oci: OpenClassWithPropertiesImpl, value: String): String { oci.openNonInlineToInlinePropertyWithDelegation = value; return oci.lastRecordedState }
+fun newInlineProperty1InOpenClassImpl(oci: OpenClassWithPropertiesImpl, value: String): String { oci.newInlineProperty1 = value; return oci.lastRecordedState }
+fun newInlineProperty2InOpenClassImpl(oci: OpenClassWithPropertiesImpl, value: String): String { oci.newInlineProperty2 = value; return oci.lastRecordedState }
+fun newNonInlinePropertyInOpenClassImpl(oci: OpenClassWithPropertiesImpl, value: String): String { oci.newNonInlineProperty = value; return oci.lastRecordedState }

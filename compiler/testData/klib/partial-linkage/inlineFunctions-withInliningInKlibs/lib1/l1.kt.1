@@ -306,3 +306,40 @@ public annotation class MyAnnotationMarker(
 //inline var removedInlineVar: Int
 //    get() = 321
 //    set(_) = Unit
+
+/*****************************************************/
+/***** Extracted from 'propertyTransformations': *****/
+/*****************************************************/
+
+open class OpenClassWithProperties {
+    @Suppress("MemberVisibilityCanBePrivate")
+    var lastRecordedState: String = ""
+
+    inline var openNonInlineToInlineProperty: String
+        get() = "OpenClassWithPropertiesV2.openNonInlineToInlineProperty"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesV2.openNonInlineToInlineProperty=$value" }
+
+    inline var openNonInlineToInlinePropertyWithDelegation: String
+        get() = "OpenClassWithPropertiesV2.openNonInlineToInlinePropertyWithDelegation"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesV2.openNonInlineToInlinePropertyWithDelegation=$value" }
+
+    inline var newInlineProperty1: String
+        get() = "OpenClassWithPropertiesV2.newInlineProperty1"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesV2.newInlineProperty1=$value" }
+
+    inline var newInlineProperty2: String
+        get() = "OpenClassWithPropertiesV2.newInlineProperty2"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesV2.newInlineProperty2=$value" }
+
+    var newNonInlineProperty: String
+        get() = "OpenClassWithPropertiesV2.newNonInlineProperty"
+        set(value) { lastRecordedState = "OpenClassWithPropertiesV2.newNonInlineProperty=$value" }
+
+    fun newInlineProperty1Reader(): String = newInlineProperty1
+    fun newInlineProperty2Reader(): String = newInlineProperty2
+    fun newNonInlinePropertyReader(): String = newNonInlineProperty
+
+    fun newInlineProperty1Writer(value: String) { newInlineProperty1 = value }
+    fun newInlineProperty2Writer(value: String) { newInlineProperty2 = value }
+    fun newNonInlinePropertyWriter(value: String) { newNonInlineProperty = value }
+}

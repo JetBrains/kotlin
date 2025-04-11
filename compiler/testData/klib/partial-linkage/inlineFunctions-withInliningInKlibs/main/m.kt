@@ -373,4 +373,39 @@ fun box() = abiTest {
     expectSuccess(231) { removedInlineVarReferenceInvoke() }
     expectSuccess(231) { removedInlineVarReferenceGet() }
     expectSuccess(Unit) { removedInlineVarReferenceSet() }
+
+    /*****************************************************/
+    /***** Extracted from 'propertyTransformations': *****/
+    /*****************************************************/
+
+    val ocwpi: OpenClassWithPropertiesImpl = OpenClassWithPropertiesImpl()
+    val ocwp: OpenClassWithProperties = ocwpi
+
+    expectSuccess("OpenClassWithPropertiesV2.openNonInlineToInlineProperty") { openNonInlineToInlinePropertyInOpenClass(ocwp) }
+    expectSuccess("OpenClassWithPropertiesV2.openNonInlineToInlinePropertyWithDelegation") { openNonInlineToInlinePropertyWithDelegationInOpenClass(ocwp) }
+    expectSuccess("OpenClassWithPropertiesV2.newInlineProperty1") { newInlineProperty1InOpenClass(ocwp) }
+    expectSuccess("OpenClassWithPropertiesV2.newInlineProperty2") { newInlineProperty2InOpenClass(ocwp) }
+    expectSuccess( // TODO: this should be fixed in JS, KT-56762
+        if (testMode.isJs) "OpenClassWithPropertiesImpl.newNonInlineProperty" else "OpenClassWithPropertiesV2.newNonInlineProperty"
+    ) { newNonInlinePropertyInOpenClass(ocwp) }
+
+    expectSuccess("OpenClassWithPropertiesImpl.openNonInlineToInlineProperty") { openNonInlineToInlinePropertyInOpenClassImpl(ocwpi) }
+    expectSuccess("OpenClassWithPropertiesV2.openNonInlineToInlinePropertyWithDelegation called from OpenClassWithPropertiesImpl.openNonInlineToInlinePropertyWithDelegation") { openNonInlineToInlinePropertyWithDelegationInOpenClassImpl(ocwpi) }
+    expectSuccess("OpenClassWithPropertiesImpl.newInlineProperty1") { newInlineProperty1InOpenClassImpl(ocwpi) }
+    expectSuccess("OpenClassWithPropertiesImpl.newInlineProperty2") { newInlineProperty2InOpenClassImpl(ocwpi) }
+    expectSuccess("OpenClassWithPropertiesImpl.newNonInlineProperty") { newNonInlinePropertyInOpenClassImpl(ocwpi) }
+
+    expectSuccess("OpenClassWithPropertiesV2.openNonInlineToInlineProperty=a") { openNonInlineToInlinePropertyInOpenClass(ocwp, "a") }
+    expectSuccess("OpenClassWithPropertiesV2.openNonInlineToInlinePropertyWithDelegation=b") { openNonInlineToInlinePropertyWithDelegationInOpenClass(ocwp, "b") }
+    expectSuccess("OpenClassWithPropertiesV2.newInlineProperty1=c") { newInlineProperty1InOpenClass(ocwp, "c") }
+    expectSuccess("OpenClassWithPropertiesV2.newInlineProperty2=d") { newInlineProperty2InOpenClass(ocwp, "d") }
+    expectSuccess( // TODO: this should be fixed in JS, KT-56762
+        if (testMode.isJs) "OpenClassWithPropertiesImpl.newNonInlineProperty=e" else "OpenClassWithPropertiesV2.newNonInlineProperty=e"
+    ) { newNonInlinePropertyInOpenClass(ocwp, "e") }
+
+    expectSuccess("OpenClassWithPropertiesImpl.openNonInlineToInlineProperty=f") { openNonInlineToInlinePropertyInOpenClassImpl(ocwpi, "f") }
+    expectSuccess("OpenClassWithPropertiesV2.openNonInlineToInlinePropertyWithDelegation=h called from OpenClassWithPropertiesImpl.openNonInlineToInlinePropertyWithDelegation") { openNonInlineToInlinePropertyWithDelegationInOpenClassImpl(ocwpi, "h") }
+    expectSuccess("OpenClassWithPropertiesImpl.newInlineProperty1=i") { newInlineProperty1InOpenClassImpl(ocwpi, "i") }
+    expectSuccess("OpenClassWithPropertiesImpl.newInlineProperty2=j") { newInlineProperty2InOpenClassImpl(ocwpi, "j") }
+    expectSuccess("OpenClassWithPropertiesImpl.newNonInlineProperty=k") { newNonInlinePropertyInOpenClassImpl(ocwpi, "k") }
 }

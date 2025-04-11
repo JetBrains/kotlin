@@ -115,12 +115,6 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
-  @TestMetadata("propertyTransformations")
-  public void testPropertyTransformations() {
-    runTest("compiler/testData/klib/partial-linkage/propertyTransformations/");
-  }
-
-  @Test
   @TestMetadata("referencingUnusableDeclarations")
   public void testReferencingUnusableDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/");
