@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
-import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -152,13 +151,6 @@ fun main() {
                 suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
-            }
-        }
-
-        // KLIB cross-compilation tests.
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
-            testClass<AbstractFirKlibCrossCompilationIdentityTest> {
-                model()
             }
         }
 

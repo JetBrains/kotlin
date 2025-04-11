@@ -67,7 +67,7 @@ fun TestCompilationArtifact.KLIB.dumpMetadata(
     signatureVersion: KotlinIrSignatureVersion?
 ): String = klibFile.dumpMetadata(kotlinNativeClassLoader, printSignatures, signatureVersion)
 
-internal fun File.dumpMetadata(
+fun File.dumpMetadata(
     kotlinNativeClassLoader: ClassLoader,
     printSignatures: Boolean,
     signatureVersion: KotlinIrSignatureVersion?
@@ -83,7 +83,7 @@ fun TestCompilationArtifact.KLIB.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
 ): String = klibFile.dumpIr(kotlinNativeClassLoader)
 
-internal fun File.dumpIr(
+fun File.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
 ): String = invokeKlibTool(
     kotlinNativeClassLoader,
