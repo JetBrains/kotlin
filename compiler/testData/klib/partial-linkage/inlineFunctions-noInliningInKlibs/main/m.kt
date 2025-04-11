@@ -221,4 +221,11 @@ fun box() = abiTest {
     expectSuccess(-3) { suspendToNonSuspendFunction3(3) }
     expectFailure(linkage("Function 'nonSuspendToSuspendFunction' can not be called: Suspend function can be called only from a coroutine or another suspend function")) { nonSuspendToSuspendFunction3(6) }
     expectSuccess(-7) { nonSuspendToSuspendFunction4(7) }
+
+    /********************************************/
+    /***** Extracted from 'removeCallable': *****/
+    /********************************************/
+
+    expectFailure(linkage("Function 'removedFunction' can not be called: No function found for symbol '/removedFunction'")) { callInlinedRemovedFunction() }
+    expectFailure(linkage("Property accessor 'removedProperty.<get-removedProperty>' can not be called: No property accessor found for symbol '/removedProperty.<get-removedProperty>'")) { readInlinedRemovedProperty() }
 }

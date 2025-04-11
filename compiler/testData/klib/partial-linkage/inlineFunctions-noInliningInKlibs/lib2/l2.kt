@@ -277,3 +277,10 @@ private inline fun <R> runInlined(block: () -> R): R = block() // a-la kotlin.ru
 fun suspendToNonSuspendFunction3(x: Int): Int = runCoroutine { runInlined { Functions.suspendToNonSuspendFunction(x) } }
 fun nonSuspendToSuspendFunction3(x: Int): Int = runInlined { Functions.nonSuspendToSuspendFunction(x) }
 fun nonSuspendToSuspendFunction4(x: Int): Int = runCoroutine { runInlined { Functions.nonSuspendToSuspendFunction(x) } }
+
+/********************************************/
+/***** Extracted from 'removeCallable': *****/
+/********************************************/
+
+inline fun callInlinedRemovedFunction() = removedFunction()
+inline fun readInlinedRemovedProperty() = removedProperty
