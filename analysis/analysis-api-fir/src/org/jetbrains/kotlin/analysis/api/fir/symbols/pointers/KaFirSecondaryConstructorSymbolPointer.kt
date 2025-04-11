@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
-internal class KaFirConstructorSymbolPointer(
+/** @see KaFirPrimaryConstructorSymbolPointer */
+internal class KaFirSecondaryConstructorSymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
-    private val isPrimary: Boolean,
     private val signature: FirCallableSignature,
     originalSymbol: KaConstructorSymbol?,
 ) : KaFirMemberSymbolPointer<KaConstructorSymbol>(ownerPointer, originalSymbol = originalSymbol) {
@@ -29,13 +29,15 @@ internal class KaFirConstructorSymbolPointer(
             processDeclaredConstructors(it)
         } ?: return null
 
-        if (firConstructor.isPrimary != isPrimary) return null
+
+        // Another pointer covers primary constructors
+        if (firConstructor.isPrimary) return null
+
         return firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||
-            other is KaFirConstructorSymbolPointer &&
+            other is KaFirSecondaryConstructorSymbolPointer &&
             other.signature == signature &&
-            other.isPrimary == isPrimary &&
             hasTheSameOwner(other)
 }
