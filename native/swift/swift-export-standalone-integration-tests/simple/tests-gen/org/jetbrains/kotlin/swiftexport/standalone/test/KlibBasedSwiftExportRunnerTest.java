@@ -32,12 +32,6 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
-  @TestMetadata("any")
-  public void testAny() {
-    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/any/");
-  }
-
-  @Test
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/classes/");
@@ -59,6 +53,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("contextParameters")
   public void testContextParameters() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/contextParameters/");
+  }
+
+  @Test
+  @TestMetadata("dataClassOperators")
+  public void testDataClassOperators() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/dataClassOperators/");
   }
 
   @Test
