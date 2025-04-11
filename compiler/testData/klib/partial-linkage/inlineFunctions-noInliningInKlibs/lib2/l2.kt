@@ -443,3 +443,12 @@ inline fun referenceToInterfaceToAbstractClass12ImplInline() = check(InterfaceTo
 inline fun referenceToInterfaceToAbstractClass12Impl2Inline() = check(InterfaceToAbstractClass12Impl2::class.simpleName != null)
 inline fun referenceToInterfaceToAbstractClassAndAbstractClassImplInline() = check(InterfaceToAbstractClassAndAbstractClassImpl::class.simpleName != null)
 inline fun referenceToInterfaceToAbstractClassAndAbstractClassImpl2Inline() = check(InterfaceToAbstractClassAndAbstractClassImpl2::class.simpleName != null)
+
+/*************************************/
+/***** Extracted from 'kt73511': *****/
+/*************************************/
+
+annotation class MyAnnotation
+
+@MyAnnotationMarker(MyAnnotation::class)
+data class MyAnnotationHolder(val x: Int)

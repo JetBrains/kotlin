@@ -330,4 +330,10 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to class 'InterfaceToAbstractClass12Impl2' can not be evaluated: Expression uses class 'InterfaceToAbstractClass12Impl' (via class 'InterfaceToAbstractClass12Impl2') that simultaneously inherits from 2 classes: 'InterfaceToAbstractClass1', 'InterfaceToAbstractClass2'")) { referenceToInterfaceToAbstractClass12Impl2Inline() }
     expectFailure(linkage("Reference to class 'InterfaceToAbstractClassAndAbstractClassImpl' can not be evaluated: Expression uses class 'InterfaceToAbstractClassAndAbstractClassImpl' that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { referenceToInterfaceToAbstractClassAndAbstractClassImplInline() }
     expectFailure(linkage("Reference to class 'InterfaceToAbstractClassAndAbstractClassImpl2' can not be evaluated: Expression uses class 'InterfaceToAbstractClassAndAbstractClassImpl' (via class 'InterfaceToAbstractClassAndAbstractClassImpl2') that simultaneously inherits from 2 classes: 'AbstractClass', 'InterfaceToAbstractClass1'")) { referenceToInterfaceToAbstractClassAndAbstractClassImpl2Inline() }
+
+    /*************************************/
+    /***** Extracted from 'kt73511': *****/
+    /*************************************/
+
+    expectSuccess("MyAnnotationHolder(x=42)") { createMyAnnotationHolderInstance(42).toString() }
 }

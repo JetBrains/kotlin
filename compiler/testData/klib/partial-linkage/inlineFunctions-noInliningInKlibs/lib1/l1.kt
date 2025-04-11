@@ -1,5 +1,9 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
+import kotlin.annotation.AnnotationRetention.BINARY
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.reflect.KClass
+
 /**************************************************/
 /***** Extracted from 'classTransformations': *****/
 /**************************************************/
@@ -279,3 +283,13 @@ class SuperSuperClassReplacedBySuperClass : SuperSuperClass() {
 class SuperClassReplacedBySuperSuperClass : SuperClass() {
     override fun inheritsFrom() = "SuperClassReplacedBySuperSuperClass -> " + super.inheritsFrom()
 }
+
+/*************************************/
+/***** Extracted from 'kt73511': *****/
+/*************************************/
+
+@Target(CLASS)
+@Retention(BINARY)
+public annotation class MyAnnotationMarker(
+    val markerClass: KClass<out Annotation>
+)
