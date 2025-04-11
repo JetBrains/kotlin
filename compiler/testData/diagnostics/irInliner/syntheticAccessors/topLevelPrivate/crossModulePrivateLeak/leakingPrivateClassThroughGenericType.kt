@@ -2,8 +2,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 
-// MODULE: lib
-// FILE: a.kt
 private class Private
 
 private inline fun <reified T> parameterized(): String {
@@ -12,9 +10,3 @@ private inline fun <reified T> parameterized(): String {
 }
 
 internal inline fun inlineFun() = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>parameterized<Private>()<!>
-
-// MODULE: main()(lib)
-// FILE: main.kt
-fun box(): String {
-    return "OK" // Callsite of `inlineFun()` is omitted, to avoid test pipeline crash in public inliner after error diagnostic in dependent module
-}
