@@ -40,12 +40,6 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   }
 
   @Test
-  @TestMetadata("callableReferenceOperations")
-  public void testCallableReferenceOperations() {
-    runTest("compiler/testData/klib/partial-linkage/callableReferenceOperations/");
-  }
-
-  @Test
   @TestMetadata("changeClassVisibility")
   public void testChangeClassVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeClassVisibility/");
@@ -169,6 +163,12 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   @TestMetadata("replaceCallableReturnType")
   public void testReplaceCallableReturnType() {
     runTest("compiler/testData/klib/partial-linkage/replaceCallableReturnType/");
+  }
+
+  @Test
+  @TestMetadata("richReferencesOperations")
+  public void testRichReferencesOperations() {
+    runTest("compiler/testData/klib/partial-linkage/richReferencesOperations/");
   }
 
   @Test
