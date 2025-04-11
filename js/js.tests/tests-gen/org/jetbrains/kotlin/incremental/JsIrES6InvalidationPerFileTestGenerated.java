@@ -220,12 +220,6 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
   }
 
   @Test
-  @TestMetadata("fileNameCaseClash")
-  public void testFileNameCaseClash() {
-    runTest("js/js.translator/testData/incremental/invalidation/fileNameCaseClash/");
-  }
-
-  @Test
   @TestMetadata("fileNameClash")
   public void testFileNameClash() {
     runTest("js/js.translator/testData/incremental/invalidation/fileNameClash/");

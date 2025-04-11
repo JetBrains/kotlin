@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.diagnostics.warning2
+import org.jetbrains.kotlin.ir.IrFileEntry
 
 object JsKlibErrors {
+    val CLASHED_FILES_IN_CASE_INSENSITIVE_FS by error1<PsiElement, List<IrFileEntry>>()
+
     val EXPORTING_JS_NAME_CLASH by error2<PsiElement, String, List<JsKlibExport>>()
     val EXPORTING_JS_NAME_CLASH_ES by warning2<PsiElement, String, List<JsKlibExport>>()
 
@@ -39,7 +42,17 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         }
     }
 
+    @JvmField
+    val JS_CLASHED_FILES = Renderer<List<IrFileEntry>> { files ->
+        files.joinToString("\n", limit = 10) { "    ${it.name}" }
+    }
+
     override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+        map.put(
+            JsKlibErrors.CLASHED_FILES_IN_CASE_INSENSITIVE_FS,
+            "The file has the same package and name (or @JsFileName value) but different casing as the following files:\n{0}\nThis may cause issues in case-insensitive filesystems. To fix it, consider renaming file, adding @JsFileName annotation or changing its package.",
+            JS_CLASHED_FILES
+        )
         map.put(
             JsKlibErrors.EXPORTING_JS_NAME_CLASH,
             "Exporting name ''{0}'' clashes with {1}",

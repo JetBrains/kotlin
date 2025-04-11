@@ -106,6 +106,28 @@ public class FirJsOldFrontendDiagnosticsWithBackendWithInlinedFunInKlibTestGener
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FinalArtifactClashes {
+    @Test
+    public void testAllFilesPresentInFinalArtifactClashes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("fileNameAndPackagesClashes.kt")
+    public void testFileNameAndPackagesClashes() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes/fileNameAndPackagesClashes.kt");
+    }
+
+    @Test
+    @TestMetadata("jsFileNameAndPackagesClashes.kt")
+    public void testJsFileNameAndPackagesClashes() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/finalArtifactClashes/jsFileNameAndPackagesClashes.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline")
   @TestDataPath("$PROJECT_ROOT")
   public class Inline {

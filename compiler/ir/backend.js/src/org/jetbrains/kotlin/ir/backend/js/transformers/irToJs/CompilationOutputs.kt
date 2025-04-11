@@ -69,7 +69,11 @@ abstract class CompilationOutputs {
     }
 
     fun deleteNonWrittenFiles(outputDir: File, writtenFiles: Set<File>) {
-        Files.walk(outputDir.toPath()).map { it.toFile() }.filter { it != outputDir && it !in writtenFiles }.forEach(File::delete)
+        Files.walk(outputDir.toPath())
+            .parallel()
+            .map { it.toFile() }
+            .filter { it != outputDir && it !in writtenFiles }
+            .forEach(File::delete)
     }
 
     fun getFullTsDefinition(moduleName: String, moduleKind: ModuleKind): String {

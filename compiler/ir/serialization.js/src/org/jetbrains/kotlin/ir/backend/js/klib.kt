@@ -596,7 +596,7 @@ fun serializeModuleIntoKlib(
                     // Should IrInlinerBeforeKlibSerialization be set, then calls should have already been checked during pre-serialization,
                     // and there's no need to raise duplicates of those warnings here.
                     doCheckCalls = !configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
-                    doCheckExportedDeclarations = true,
+                    doModuleLevelChecks = true,
                     cleanFilesIrData,
                     moduleExportedNames,
                 )

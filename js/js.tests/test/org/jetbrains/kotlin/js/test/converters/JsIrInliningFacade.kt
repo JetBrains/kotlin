@@ -50,7 +50,7 @@ class JsIrInliningFacade(
                 irDiagnosticReporter,
                 configuration,
                 doCheckCalls = true,
-                doCheckExportedDeclarations = false,
+                doModuleLevelChecks = false,
             )
         )
         if (diagnosticReporter.hasErrors) {
