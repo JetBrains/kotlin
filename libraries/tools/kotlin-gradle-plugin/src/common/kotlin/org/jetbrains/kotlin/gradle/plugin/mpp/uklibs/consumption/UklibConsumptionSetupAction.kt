@@ -8,22 +8,27 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_API
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_METADATA
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_API
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_METADATA
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
 internal val UklibConsumptionSetupAction = KotlinProjectSetupAction {
     when (project.kotlinPropertiesProvider.kmpResolutionStrategy) {
@@ -89,33 +94,52 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
          * - KotlinNativeTarget binaries have additional export configuration that must be able to resolve a Uklib
          * - hostSpecificMetadataConfiguration probably must be able to resolve leniently
          */
-        target.compilations.configureEach {
+        target.compilations.configureEach { compilation ->
             /**
              * All resolvable configurations should select for KOTLIN_UKLIB_API Usage. Relying on Usage specifically is crucial because it
              * is an attribute with an explicit precedence and if there is a disambiguation rule that reduces the set of compatible variants
              * to 1 using Usage, the disambiguation phase ends which is what we want in [SelectBestMatchingVariantForKmpResolutionUsage].
              */
-            with(it.internal.configurations.compileDependencyConfiguration.attributes) {
-                attribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_API))
-            }
-            it.internal.configurations.runtimeDependencyConfiguration?.attributes?.let {
-                with(it) {
-                    attribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_RUNTIME))
-                }
-            }
-
-            listOfNotNull(
-                it.internal.configurations.compileDependencyConfiguration,
-                it.internal.configurations.runtimeDependencyConfiguration,
+            compilation as InternalKotlinCompilation
+            listOfNotNull<Pair<Configuration, Usage>>(
+                compilation.internal.configurations.compileDependencyConfiguration to usageByName(KOTLIN_UKLIB_API),
+                compilation.internal.configurations.runtimeDependencyConfiguration?.let { it to usageByName(KOTLIN_UKLIB_RUNTIME)},
             ).forEach {
-                with(it.attributes) {
-                    attribute(uklibStateAttribute, uklibStateDecompressed)
-                    attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
-                    attribute(isMetadataJar, notMetadataJar)
-                    attribute(isUklib, isUklibTrue)
+                it.first.applyUklibAttributes(it.second, uklibFragmentPlatformAttribute)
+            }
+        }
+
+        if (target is KotlinJvmTarget) {
+            javaSourceSets.configureEach { sourceSet ->
+                configurations.named(sourceSet.runtimeClasspathConfigurationName).configure {
+                    it.applyUklibAttributes(usageByName(KOTLIN_UKLIB_RUNTIME), uklibFragmentPlatformAttribute)
+                    it.attributes.attribute<KotlinPlatformType>(
+                        KotlinPlatformType.attribute,
+                        KotlinPlatformType.jvm,
+                    )
+                }
+                configurations.named(sourceSet.compileClasspathConfigurationName).configure {
+                    it.applyUklibAttributes(usageByName(KOTLIN_UKLIB_API), uklibFragmentPlatformAttribute)
+                    it.attributes.attribute<KotlinPlatformType>(
+                        KotlinPlatformType.attribute,
+                        KotlinPlatformType.jvm,
+                    )
                 }
             }
         }
+    }
+}
+
+private fun Configuration.applyUklibAttributes(
+    usage: Usage,
+    uklibFragmentPlatformAttribute: String,
+) {
+    with(attributes) {
+        attribute(USAGE_ATTRIBUTE, usage)
+        attribute(uklibStateAttribute, uklibStateDecompressed)
+        attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
+        attribute(isMetadataJar, notMetadataJar)
+        attribute(isUklib, isUklibTrue)
     }
 }
 
