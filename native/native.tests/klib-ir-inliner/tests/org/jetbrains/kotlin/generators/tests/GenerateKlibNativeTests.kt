@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.headerklib.*
 import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.konan.test.dump.*
+import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.*
@@ -293,6 +294,13 @@ fun main() {
                 )
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
+            }
+        }
+
+        // KLIB cross-compilation tests.
+        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
+            testClass<AbstractFirKlibCrossCompilationIdentityTest> {
+                model()
             }
         }
     }

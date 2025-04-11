@@ -77,7 +77,7 @@ internal object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
 }
 
-internal object RegularKotlinNativeClassLoader {
+object RegularKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader()
 }
 
