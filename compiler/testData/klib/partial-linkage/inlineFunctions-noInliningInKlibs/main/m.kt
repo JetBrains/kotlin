@@ -191,4 +191,34 @@ fun box() = abiTest {
 
     expectSuccess { getClassToValueInline(); "OK" }
     expectSuccess { getClassToValueAsAnyInline(); "OK" }
+
+
+    /*****************************************************/
+    /***** Extracted from 'functionTransformations': *****/
+    /*****************************************************/
+
+    val oci: OpenClassImpl = OpenClassImpl()
+    val oc: OpenClass = oci
+
+    expectSuccess("OpenClassV2.openNonInlineToInlineFunction(1)") { openNonInlineToInlineFunctionInOpenClass(oc, 1) }
+    expectSuccess("OpenClassV2.openNonInlineToInlineFunctionWithDelegation(2)") { openNonInlineToInlineFunctionWithDelegationInOpenClass(oc, 2) }
+    expectSuccess("OpenClassV2.newInlineFunction1(3)") { newInlineFunction1InOpenClass(oc, 3) }
+    expectSuccess("OpenClassV2.newInlineFunction2(4)") { newInlineFunction2InOpenClass(oc, 4) }
+    expectSuccess( // TODO: this should be fixed in JS, KT-56762
+        if (testMode.isJs) "OpenClassImpl.newNonInlineFunction(5)" else "OpenClassV2.newNonInlineFunction(5)"
+    ) { newNonInlineFunctionInOpenClass(oc, 5) }
+    expectSuccess("OpenClassImpl.openNonInlineToInlineFunction(6)") { openNonInlineToInlineFunctionInOpenClassImpl(oci, 6) }
+    expectSuccess("OpenClassV2.openNonInlineToInlineFunctionWithDelegation(7) called from OpenClassImpl.openNonInlineToInlineFunctionWithDelegation(7)") { openNonInlineToInlineFunctionWithDelegationInOpenClassImpl(oci, 7) }
+    expectSuccess("OpenClassImpl.newInlineFunction1(8)") { newInlineFunction1InOpenClassImpl(oci, 8) }
+    expectSuccess("OpenClassImpl.newInlineFunction2(9)") { newInlineFunction2InOpenClassImpl(oci, 9) }
+    expectSuccess("OpenClassImpl.newNonInlineFunction(10)") { newNonInlineFunctionInOpenClassImpl(oci, 10) }
+
+    expectSuccess("Functions.inlineLambdaToNoinlineLambda(3) { 6 }") { inlineLambdaToNoinlineLambda(3) }
+    expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToNoinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToNoinlineLambda'")) { inlineLambdaToNoinlineLambda(-3) }
+    expectSuccess("Functions.inlineLambdaToCrossinlineLambda(5) { 10 }") { inlineLambdaToCrossinlineLambda(5) }
+    expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToCrossinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToCrossinlineLambda'")) { inlineLambdaToCrossinlineLambda(-5) }
+
+    expectSuccess(-3) { suspendToNonSuspendFunction3(3) }
+    expectFailure(linkage("Function 'nonSuspendToSuspendFunction' can not be called: Suspend function can be called only from a coroutine or another suspend function")) { nonSuspendToSuspendFunction3(6) }
+    expectSuccess(-7) { nonSuspendToSuspendFunction4(7) }
 }

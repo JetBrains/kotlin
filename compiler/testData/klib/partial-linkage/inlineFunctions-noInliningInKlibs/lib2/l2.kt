@@ -1,5 +1,7 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
+import kotlin.coroutines.*
+
 /**************************************************/
 /***** Extracted from 'classTransformations': *****/
 /**************************************************/
@@ -232,3 +234,46 @@ inline fun getValueToClassAsAnyInline(): Any = ValueToClass(4)
 
 inline fun getClassToValueInline(): ClassToValue = ClassToValue(2)
 inline fun getClassToValueAsAnyInline(): Any = ClassToValue(4)
+
+/*****************************************************/
+/***** Extracted from 'functionTransformations': *****/
+/*****************************************************/
+
+// Auxiliary function to imitate coroutines.
+private fun <R> runCoroutine(coroutine: suspend () -> R): R {
+    var coroutineResult: Result<R>? = null
+
+    coroutine.startCoroutine(Continuation(EmptyCoroutineContext) { result ->
+        coroutineResult = result
+    })
+
+    return (coroutineResult ?: error("Coroutine finished without any result")).getOrThrow()
+}
+
+class OpenClassImpl : OpenClass() {
+    override fun openNonInlineToInlineFunction(x: Int): String = "OpenClassImpl.openNonInlineToInlineFunction($x)"
+    override fun openNonInlineToInlineFunctionWithDelegation(x: Int): String = super.openNonInlineToInlineFunctionWithDelegation(x) + " called from OpenClassImpl.openNonInlineToInlineFunctionWithDelegation($x)"
+    fun newInlineFunction1(x: Int): String = "OpenClassImpl.newInlineFunction1($x)" // overrides accidentally appeared inline function
+    @Suppress("NOTHING_TO_INLINE") inline fun newInlineFunction2(x: Int): String = "OpenClassImpl.newInlineFunction2($x)" // overrides accidentally appeared inline function
+    @Suppress("NOTHING_TO_INLINE") inline fun newNonInlineFunction(x: Int): String = "OpenClassImpl.newNonInlineFunction($x)" // overrides accidentally appeared non-inline function
+}
+
+fun openNonInlineToInlineFunctionInOpenClass(oc: OpenClass, x: Int): String = oc.openNonInlineToInlineFunction(x)
+fun openNonInlineToInlineFunctionWithDelegationInOpenClass(oc: OpenClass, x: Int): String = oc.openNonInlineToInlineFunctionWithDelegation(x)
+fun newInlineFunction1InOpenClass(oc: OpenClass, x: Int): String = oc.newInlineFunction1Caller(x)
+fun newInlineFunction2InOpenClass(oc: OpenClass, x: Int): String = oc.newInlineFunction2Caller(x)
+fun newNonInlineFunctionInOpenClass(oc: OpenClass, x: Int): String = oc.newNonInlineFunctionCaller(x)
+fun openNonInlineToInlineFunctionInOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.openNonInlineToInlineFunction(x)
+fun openNonInlineToInlineFunctionWithDelegationInOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.openNonInlineToInlineFunctionWithDelegation(x)
+fun newInlineFunction1InOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.newInlineFunction1(x)
+fun newInlineFunction2InOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.newInlineFunction2(x)
+fun newNonInlineFunctionInOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.newNonInlineFunction(x)
+
+fun inlineLambdaToNoinlineLambda(x: Int): String = Functions.inlineLambdaToNoinlineLambda(x) { if (it > 0) it.toString() else return "inlineLambdaToNoinlineLambda($x)" }
+fun inlineLambdaToCrossinlineLambda(x: Int): String = Functions.inlineLambdaToCrossinlineLambda(x) { if (it > 0) it.toString() else return "inlineLambdaToCrossinlineLambda($x)" }
+
+private inline fun <R> runInlined(block: () -> R): R = block() // a-la kotlin.run() but without contracts and special annotation
+
+fun suspendToNonSuspendFunction3(x: Int): Int = runCoroutine { runInlined { Functions.suspendToNonSuspendFunction(x) } }
+fun nonSuspendToSuspendFunction3(x: Int): Int = runInlined { Functions.nonSuspendToSuspendFunction(x) }
+fun nonSuspendToSuspendFunction4(x: Int): Int = runCoroutine { runInlined { Functions.nonSuspendToSuspendFunction(x) } }

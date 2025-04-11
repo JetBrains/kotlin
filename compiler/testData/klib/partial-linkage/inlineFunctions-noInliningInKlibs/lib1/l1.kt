@@ -165,3 +165,28 @@ interface XProperty2 { /*val property2: Int*/ }
 interface XProperty2Default { /*val property2: Int get() = 42*/ }
 
 fun interface FunctionalInterfaceToInterface : XAnswer
+
+/*****************************************************/
+/***** Extracted from 'functionTransformations': *****/
+/*****************************************************/
+
+object Functions {
+    @Suppress("RedundantSuspendModifier") suspend fun <R> wrapCoroutine(coroutine: suspend () -> R): R = coroutine.invoke()
+    suspend fun suspendToNonSuspendFunction(x: Int): Int = wrapCoroutine { -x }
+    fun nonSuspendToSuspendFunction(x: Int): Int = -x
+
+    inline fun inlineLambdaToNoinlineLambda(x: Int, lambda: (Int) -> String): String = "Functions.inlineLambdaToNoinlineLambda($x) { ${lambda(x * 2)} }"
+    inline fun inlineLambdaToCrossinlineLambda(x: Int, lambda: (Int) -> String): String = "Functions.inlineLambdaToCrossinlineLambda($x) { ${lambda(x * 2)} }"
+}
+
+open class OpenClass {
+    open fun openNonInlineToInlineFunction(x: Int): String = "OpenClass.openNonInlineToInlineFunction($x)"
+    open fun openNonInlineToInlineFunctionWithDelegation(x: Int): String = "OpenClass.openNonInlineToInlineFunctionWithDelegation($x)"
+    //inline fun newInlineFunction1(x: Int): String = "OpenClass.newInlineFunction1($x)"
+    //inline fun newInlineFunction2(x: Int): String = "OpenClass.newInlineFunction2($x)"
+    //fun newNonInlineFunction(x: Int): String = "OpenClass.newNonInlineFunction($x)"
+
+    fun newInlineFunction1Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction1Caller($x)")
+    fun newInlineFunction2Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction2Caller($x)")
+    fun newNonInlineFunctionCaller(x: Int): String = TODO("Not implemented: OpenClass.newNonInlineFunctionCaller($x)")
+}

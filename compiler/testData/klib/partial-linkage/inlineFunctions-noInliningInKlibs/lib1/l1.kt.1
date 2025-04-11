@@ -165,3 +165,28 @@ interface XProperty2 { val property2: Int }
 interface XProperty2Default { val property2: Int get() = 42 }
 
 /*fun*/ interface FunctionalInterfaceToInterface : XAnswer
+
+/*****************************************************/
+/***** Extracted from 'functionTransformations': *****/
+/*****************************************************/
+
+object Functions {
+    @Suppress("RedundantSuspendModifier") suspend fun <R> wrapCoroutine(coroutine: suspend () -> R): R = coroutine.invoke()
+    fun suspendToNonSuspendFunction(x: Int): Int = -x
+    suspend fun nonSuspendToSuspendFunction(x: Int): Int = wrapCoroutine { -x }
+
+    inline fun inlineLambdaToNoinlineLambda(x: Int, noinline lambda: (Int) -> String): String = "Functions.inlineLambdaToNoinlineLambda($x) { ${lambda(x * 2)} }"
+    inline fun inlineLambdaToCrossinlineLambda(x: Int, crossinline lambda: (Int) -> String): String = "Functions.inlineLambdaToCrossinlineLambda($x) { ${lambda(x * 2)} }"
+}
+
+open class OpenClass {
+    inline fun openNonInlineToInlineFunction(x: Int): String = "OpenClassV2.openNonInlineToInlineFunction($x)"
+    inline fun openNonInlineToInlineFunctionWithDelegation(x: Int): String = "OpenClassV2.openNonInlineToInlineFunctionWithDelegation($x)"
+    inline fun newInlineFunction1(x: Int): String = "OpenClassV2.newInlineFunction1($x)"
+    inline fun newInlineFunction2(x: Int): String = "OpenClassV2.newInlineFunction2($x)"
+    fun newNonInlineFunction(x: Int): String = "OpenClassV2.newNonInlineFunction($x)"
+
+    fun newInlineFunction1Caller(x: Int): String = newInlineFunction1(x)
+    fun newInlineFunction2Caller(x: Int): String = newInlineFunction2(x)
+    fun newNonInlineFunctionCaller(x: Int): String = newNonInlineFunction(x)
+}
