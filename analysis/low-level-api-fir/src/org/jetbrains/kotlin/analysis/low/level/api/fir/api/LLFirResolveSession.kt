@@ -119,7 +119,7 @@ class LLFirResolveSession internal constructor(
         return diagnosticProvider.collectDiagnostics(ktFile, filter)
     }
 
-    fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
+    internal fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
         val containingKtFile = ktDeclaration.containingKtFile
         val module = getModule(containingKtFile)
 
