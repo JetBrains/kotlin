@@ -293,3 +293,16 @@ class SuperClassReplacedBySuperSuperClass : SuperClass() {
 public annotation class MyAnnotationMarker(
     val markerClass: KClass<out Annotation>
 )
+
+/******************************************************/
+/***** Extracted from 'richReferencesOperations': *****/
+/******************************************************/
+
+inline fun removedInlineFun(x: Int): Int = x
+
+inline val removedInlineVal: Int
+    get() = 321
+
+inline var removedInlineVar: Int
+    get() = 231
+    set(_) = Unit

@@ -452,3 +452,37 @@ annotation class MyAnnotation
 
 @MyAnnotationMarker(MyAnnotation::class)
 data class MyAnnotationHolder(val x: Int)
+
+/******************************************************/
+/***** Extracted from 'richReferencesOperations': *****/
+/******************************************************/
+
+// inline fun
+fun createRemovedInlineFunReference(): Any = ::removedInlineFun
+fun removedInlineFunReferenceName(): String = ::removedInlineFun.name
+fun removedInlineFunReferenceReturnType(): Any = ::removedInlineFun.returnType
+fun removedInlineFunReferenceHashCode(): Int = ::removedInlineFun.hashCode()
+fun removedInlineFunReferenceEquals(): Boolean = ::removedInlineFun.equals(Any())
+fun removedInlineFunReferenceToString(): String = ::removedInlineFun.toString()
+fun removedInlineFunReferenceInvoke(): Int = ::removedInlineFun.invoke(123)
+
+// inline val
+fun createRemovedInlineValReference(): Any = ::removedInlineVal
+fun removedInlineValReferenceName(): String = ::removedInlineVal.name
+fun removedInlineValReferenceReturnType(): Any = ::removedInlineVal.returnType
+fun removedInlineValReferenceHashCode(): Int = ::removedInlineVal.hashCode()
+fun removedInlineValReferenceEquals(): Boolean = ::removedInlineVal.equals(Any())
+fun removedInlineValReferenceToString(): String = ::removedInlineVal.toString()
+fun removedInlineValReferenceInvoke(): Int = ::removedInlineVal.invoke()
+fun removedInlineValReferenceGet(): Int = ::removedInlineVal.get()
+
+// inline var
+fun createRemovedInlineVarReference(): Any = ::removedInlineVar
+fun removedInlineVarReferenceName(): String = ::removedInlineVar.name
+fun removedInlineVarReferenceReturnType(): Any = ::removedInlineVar.returnType
+fun removedInlineVarReferenceHashCode(): Int = ::removedInlineVar.hashCode()
+fun removedInlineVarReferenceEquals(): Boolean = ::removedInlineVar.equals(Any())
+fun removedInlineVarReferenceToString(): String = ::removedInlineVar.toString()
+fun removedInlineVarReferenceInvoke(): Int = ::removedInlineVar.invoke()
+fun removedInlineVarReferenceGet(): Int = ::removedInlineVar.get()
+fun removedInlineVarReferenceSet(): Unit = ::removedInlineVar.set(123)
