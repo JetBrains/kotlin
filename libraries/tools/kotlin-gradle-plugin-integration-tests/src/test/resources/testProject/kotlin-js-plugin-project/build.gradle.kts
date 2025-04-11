@@ -9,7 +9,6 @@ version = "1.0"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") }
 }
 
 kotlin.sourceSets {
