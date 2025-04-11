@@ -96,10 +96,13 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
 
         override fun visitWhenExpression(whenExpression: FirWhenExpression, data: UsageState) {
             whenExpression.subjectVariable?.initializer?.accept(this, UsageState.Used)
+
+            // See: replaceReturnTypeIfNotExhaustive
+            val branchData = if (!whenExpression.usedAsExpression && !whenExpression.isExhaustive) UsageState.Unused else data
             for (branch in whenExpression.branches) {
                 branch.condition.accept(this, UsageState.Used)
                 if (!branch.result.isUnitBlock) {
-                    branch.result.accept(this, data)
+                    branch.result.accept(this, branchData)
                 }
             }
         }
