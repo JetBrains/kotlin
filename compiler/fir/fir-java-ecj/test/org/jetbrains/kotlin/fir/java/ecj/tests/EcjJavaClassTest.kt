@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.java.ecj
+package org.jetbrains.kotlin.fir.java.ecj.tests
 
 import junit.framework.TestCase
 import org.eclipse.jdt.internal.compiler.ast.FieldDeclaration
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
+import org.jetbrains.kotlin.fir.java.ecj.EcjJavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.junit.Test
