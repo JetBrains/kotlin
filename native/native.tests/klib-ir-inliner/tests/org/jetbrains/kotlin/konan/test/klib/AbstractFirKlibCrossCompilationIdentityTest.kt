@@ -13,17 +13,21 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClass
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.konan.test.klib.ManifestWritingTest.Companion.readManifestAndSanitize
-import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -93,6 +97,19 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
             useHandlers(::FirDiagnosticsHandler)
         }
         facadeStep(::Fir2IrNativeResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+                ::NoFir2IrCompilationErrorsHandler,
+            )
+        }
+        facadeStep(::NativePreSerializationLoweringFacade)
+        loweredIrHandlersStep{
+            useHandlers(
+                ::IrDiagnosticsHandler,
+                ::NoFir2IrCompilationErrorsHandler,
+            )
+        }
         facadeStep(::FirNativeKlibSerializerFacade)
         klibArtifactsHandlersStep {
             useHandlers(::NativeKlibCrossCompilationIdentityHandler)
