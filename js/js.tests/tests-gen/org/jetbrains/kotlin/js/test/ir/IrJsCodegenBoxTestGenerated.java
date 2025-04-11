@@ -7298,6 +7298,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("referenceToGenericInDeserializedContract.kt")
+    public void testReferenceToGenericInDeserializedContract() {
+      runTest("compiler/testData/codegen/box/contracts/referenceToGenericInDeserializedContract.kt");
+    }
+
+    @Test
     @TestMetadata("require.kt")
     public void testRequire() {
       runTest("compiler/testData/codegen/box/contracts/require.kt");

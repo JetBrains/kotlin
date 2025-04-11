@@ -7204,6 +7204,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("referenceToGenericInDeserializedContract.kt")
+    public void testReferenceToGenericInDeserializedContract() {
+      runTest("compiler/testData/codegen/box/contracts/referenceToGenericInDeserializedContract.kt");
+    }
+
+    @Test
     @TestMetadata("require.kt")
     public void testRequire() {
       runTest("compiler/testData/codegen/box/contracts/require.kt");
