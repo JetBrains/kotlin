@@ -24,13 +24,13 @@ class LLFirResolveSessionService(project: Project) {
         return create(module, cache::getSession)
     }
 
-    private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolvableResolveSession {
+    private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
         val resolutionStrategyProvider = createResolutionStrategyProvider(module, moduleProvider)
         val diagnosticProvider = createDiagnosticProvider(moduleProvider, sessionProvider)
 
-        return LLFirResolvableResolveSession(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
+        return LLFirResolveSession(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
     }
 
     private fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {

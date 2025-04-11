@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -278,7 +277,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
         val module = firCodeFragment.llFirModuleData.ktModule
-        val resolveSession = module.getFirResolveSession(ktCodeFragment.project) as LLFirResolvableResolveSession
+        val resolveSession = module.getFirResolveSession(ktCodeFragment.project)
 
         fun FirTowerDataContext.withExtraScopes(): FirTowerDataContext {
             return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
