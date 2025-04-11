@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java.ecj.tests
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -31,13 +30,14 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.junit.Test
 import java.nio.file.Files
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Tests for converting EcjJavaClass to FirJavaClass.
  */
-class EcjJavaClassToFirTest : TestCase() {
+class EcjJavaClassToFirTest {
 
     /**
      * Helper method that takes a Java source as a string and returns a FIR Java class.
@@ -143,7 +143,7 @@ class EcjJavaClassToFirTest : TestCase() {
         val firJavaClass = javaSourceToFir(javaCode)
         val renderedFir = firJavaClass.render().trim()
 
-        assertEquals("FIR should have ClassKind.CLASS", ClassKind.CLASS, firJavaClass.classKind)
+        assertEquals(ClassKind.CLASS, firJavaClass.classKind, "FIR should have ClassKind.CLASS")
         assertEquals(expectedFir, renderedFir)
     }
 

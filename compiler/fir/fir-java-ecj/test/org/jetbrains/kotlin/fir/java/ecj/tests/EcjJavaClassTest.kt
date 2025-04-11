@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.fir.java.ecj.tests
 
-import junit.framework.TestCase
 import org.eclipse.jdt.internal.compiler.ast.FieldDeclaration
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.jetbrains.kotlin.fir.java.ecj.EcjJavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.junit.Test
 import java.nio.file.Files
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
-class EcjJavaClassTest : TestCase() {
+class EcjJavaClassTest {
 
     /**
      * Helper function to check if all expected declarations are present in a Java class.
@@ -42,7 +44,7 @@ class EcjJavaClassTest : TestCase() {
             // Find the class
             val classId = ClassId(FqName(packageName), FqName(className), false)
             val ecjJavaClass = finder.findClass(classId)
-            assertNotNull("Class not found: $classId", ecjJavaClass)
+            assertNotNull(ecjJavaClass, "Class not found: $classId")
 
             // Process API declarations and collect their names
             val foundDeclarations = mutableListOf<String>()
@@ -50,7 +52,7 @@ class EcjJavaClassTest : TestCase() {
             // Add the class itself to the list of declarations
             foundDeclarations.add(className)
 
-            ecjJavaClass!!.processApiDeclarations { declaration ->
+            ecjJavaClass.processApiDeclarations { declaration ->
                 val name = when (declaration) {
                     is TypeDeclaration -> declaration.name
                     is MethodDeclaration -> declaration.selector
@@ -65,21 +67,21 @@ class EcjJavaClassTest : TestCase() {
             // Check that all expected declarations are present
             for (expectedDeclaration in expectedDeclarations) {
                 assertTrue(
+                    foundDeclarations.contains(expectedDeclaration),
                     "Expected declaration not found: $expectedDeclaration. Found declarations: $foundDeclarations",
-                    foundDeclarations.contains(expectedDeclaration)
                 )
             }
 
             // Check that no unexpected declarations are present
             assertEquals(
-                "Found unexpected declarations",
                 expectedDeclarations.size,
-                foundDeclarations.size
+                foundDeclarations.size,
+                "Found unexpected declarations",
             )
             for (foundDeclaration in foundDeclarations) {
                 assertTrue(
+                    expectedDeclarations.contains(foundDeclaration),
                     "Unexpected declaration found: $foundDeclaration",
-                    expectedDeclarations.contains(foundDeclaration)
                 )
             }
         } finally {
@@ -159,14 +161,14 @@ class EcjJavaClassTest : TestCase() {
             tempFile.writeText(javaCode)
             val finder = EcjJavaClassFinder(listOf(tempFile))
             val ecjJavaClass = finder.findClass(nestedClassId)
-            assertNotNull("Nested class not found: $nestedClassId", ecjJavaClass)
+            assertNotNull(ecjJavaClass, "Nested class not found: $nestedClassId")
 
             val foundDeclarations = mutableListOf<String>()
 
             // Add the nested class itself to the list of declarations
             foundDeclarations.add(nestedClassId.shortClassName.asString())
 
-            ecjJavaClass!!.processApiDeclarations { declaration ->
+            ecjJavaClass.processApiDeclarations { declaration ->
                 val name = when (declaration) {
                     is TypeDeclaration -> declaration.name
                     is MethodDeclaration -> declaration.selector
@@ -179,8 +181,8 @@ class EcjJavaClassTest : TestCase() {
 
             for (expectedDeclaration in expectedDeclarations) {
                 assertTrue(
+                    foundDeclarations.contains(expectedDeclaration),
                     "Expected declaration not found in nested class: $expectedDeclaration. Found declarations: $foundDeclarations",
-                    foundDeclarations.contains(expectedDeclaration)
                 )
             }
         } finally {

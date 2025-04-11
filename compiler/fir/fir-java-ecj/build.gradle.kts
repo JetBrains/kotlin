@@ -12,7 +12,15 @@ dependencies {
     api(project(":compiler:fir:fir-deserialization"))
     implementation("org.eclipse.jdt:ecj:3.41.0")
 
-    testImplementation(libs.junit4)
+    testApi(platform(libs.junit.bom))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testApi(libs.junit.platform.launcher)
+    testApi(kotlinTest("junit5"))
 }
 
 sourceSets {
@@ -20,8 +28,11 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<Test> {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+    dependsOn(":dist")
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(17))
     })
+    workingDir = rootDir
+    useJUnitPlatform()
 }
