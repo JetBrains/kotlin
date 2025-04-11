@@ -1,0 +1,16 @@
+public final enum class Test : R|kotlin/Any| {
+    public final static fun values(): R|kotlin/Array<test/Test>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/Test| {
+    }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/Test>|
+        public get(): R|kotlin/enums/EnumEntries<test/Test>|
+
+    public final static enum entry ONE: R|test/Test|
+    public final static enum entry TWO: R|test/Test|
+    public final static enum entry THREE: R|test/Test|
+    public open fun method(): R|kotlin/Unit|
+
+}

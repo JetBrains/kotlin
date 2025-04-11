@@ -1,0 +1,6 @@
+public open class Test : R|kotlin/Any| {
+    public open fun publicMethod(): R|kotlin/Unit|
+
+    public field publicField: R|kotlin/Int|
+
+}

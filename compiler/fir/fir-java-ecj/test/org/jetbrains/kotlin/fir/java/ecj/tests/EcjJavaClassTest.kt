@@ -11,11 +11,9 @@ import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.jetbrains.kotlin.fir.java.ecj.EcjJavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class EcjJavaClassTest {
 
@@ -52,7 +50,7 @@ class EcjJavaClassTest {
             // Add the class itself to the list of declarations
             foundDeclarations.add(className)
 
-            ecjJavaClass.processApiDeclarations { declaration ->
+            ecjJavaClass?.processApiDeclarations { declaration ->
                 val name = when (declaration) {
                     is TypeDeclaration -> declaration.name
                     is MethodDeclaration -> declaration.selector
@@ -168,7 +166,7 @@ class EcjJavaClassTest {
             // Add the nested class itself to the list of declarations
             foundDeclarations.add(nestedClassId.shortClassName.asString())
 
-            ecjJavaClass.processApiDeclarations { declaration ->
+            ecjJavaClass?.processApiDeclarations { declaration ->
                 val name = when (declaration) {
                     is TypeDeclaration -> declaration.name
                     is MethodDeclaration -> declaration.selector

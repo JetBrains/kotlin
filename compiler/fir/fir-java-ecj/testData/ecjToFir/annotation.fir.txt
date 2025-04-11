@@ -1,0 +1,6 @@
+public abstract annotation class Test : R|kotlin/Any| {
+    public/*package*/ open fun value(): R|kotlin/Unit|
+
+    public/*package*/ open fun count(): R|kotlin/Unit|
+
+}

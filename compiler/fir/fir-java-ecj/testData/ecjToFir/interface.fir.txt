@@ -1,0 +1,8 @@
+public abstract interface Test : R|kotlin/Any| {
+    public/*package*/ open fun method1(): R|kotlin/Unit|
+
+    public/*package*/ open fun method2(): R|kotlin/Unit|
+
+    public/*package*/ field CONSTANT: R|kotlin/Int|
+
+}

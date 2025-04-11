@@ -78,6 +78,7 @@ dependencies {
     testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":generators:analysis-api-generator"))
     testApi(projectTests(":plugins:scripting:scripting-tests"))
+    testApi(projectTests(":compiler:fir:fir-java-ecj"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssig
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginInteractionFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
+import org.jetbrains.kotlin.fir.java.ecj.tests.AbstractEcjJavaToFirConverterTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
@@ -438,6 +439,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDataFrameBlackBoxCodegenTest> {
                 model("box")
+            }
+        }
+
+        testGroup("compiler/fir/fir-java-ecj/tests-gen", "compiler/fir/fir-java-ecj/testData") {
+            testClass<AbstractEcjJavaToFirConverterTest> {
+                model("ecjToFir", extension = "java")
             }
         }
     }
