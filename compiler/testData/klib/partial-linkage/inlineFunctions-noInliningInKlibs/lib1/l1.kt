@@ -4,6 +4,12 @@
 /***** Extracted from 'classTransformations': *****/
 /**************************************************/
 
+class Class {
+    fun f() = "FAIL: Class.f"
+    val p get() = "FAIL: Class.p"
+    override fun toString() = "FAIL: Class.toString"
+}
+
 class ClassToEnum {
     class Foo
     object Bar
@@ -144,7 +150,10 @@ class ClassToAbstractClass {
     fun getGreeting() = "Hello, $name!"
 }
 
-class RemovedClass
+class RemovedClass {
+    fun f() = "FAIL: RemovedClass.f"
+    val p get() = "FAIL: RemovedClass.p"
+}
 enum class EnumClassWithDisappearingEntry { UNCHANGED, REMOVED }
 
 object PublicTopLevelLib1 {
@@ -197,3 +206,12 @@ open class OpenClass {
 
 fun removedFunction(): String = "FAIL: removedFunction"
 val removedProperty: String get() = "FAIL: removedProperty"
+
+/*****************************************/
+/***** Extracted from 'removeClass': *****/
+/*****************************************/
+
+abstract class RemovedAbstractClass
+interface RemovedInterface
+
+open class RemovedOpenClass

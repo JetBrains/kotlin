@@ -284,3 +284,45 @@ fun nonSuspendToSuspendFunction4(x: Int): Int = runCoroutine { runInlined { Func
 
 inline fun callInlinedRemovedFunction() = removedFunction()
 inline fun readInlinedRemovedProperty() = removedProperty
+
+/*****************************************/
+/***** Extracted from 'removeClass': *****/
+/*****************************************/
+
+open class OpenClassInheritedFromRemovedOpenClass : RemovedOpenClass()
+
+inline fun inlinedFunctionWithRemovedOpenClassVariableType() {
+    val foo: RemovedOpenClass? = null
+    check(foo == null)
+}
+
+inline fun inlinedFunctionWithOpenClassImplVariableType() {
+    val foo: OpenClassInheritedFromRemovedOpenClass? = null
+    check(foo == null)
+}
+
+inline fun inlinedFunctionWithCreationOfRemovedOpenClass() {
+    check(RemovedOpenClass().toString() != "Yellow Submarine")
+}
+
+inline fun inlinedFunctionWithCreationOfOpenClassImpl() {
+    check(OpenClassInheritedFromRemovedOpenClass().toString() != "Yellow Submarine")
+}
+
+inline fun inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() {
+    check(run(::RemovedOpenClass).toString() != "Yellow Submarine")
+}
+
+inline fun inlinedFunctionWithCreationOfOpenClassImplThroughReference() {
+    check(run(::OpenClassInheritedFromRemovedOpenClass).toString() != "Yellow Submarine")
+}
+
+inline fun inlinedFunctionWithRemovedOpenClassAnonymousObject() {
+    val foo = object : RemovedOpenClass() {}
+    check(foo.toString().isNotEmpty())
+}
+
+inline fun inlinedFunctionWithOpenClassImplAnonymousObject() {
+    val foo = object : OpenClassInheritedFromRemovedOpenClass() {}
+    check(foo.toString().isNotEmpty())
+}

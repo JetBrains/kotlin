@@ -228,4 +228,17 @@ fun box() = abiTest {
 
     expectFailure(linkage("Function 'removedFunction' can not be called: No function found for symbol '/removedFunction'")) { callInlinedRemovedFunction() }
     expectFailure(linkage("Property accessor 'removedProperty.<get-removedProperty>' can not be called: No property accessor found for symbol '/removedProperty.<get-removedProperty>'")) { readInlinedRemovedProperty() }
+
+    /*****************************************/
+    /***** Extracted from 'removeClass': *****/
+    /*****************************************/
+
+    expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithRemovedOpenClassVariableType() }
+    expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via class 'OpenClassInheritedFromRemovedOpenClass')")) { inlinedFunctionWithOpenClassImplVariableType() }
+    expectFailure(linkage("Constructor 'RemovedOpenClass.<init>' can not be called: No constructor found for symbol '/RemovedOpenClass.<init>'")) { inlinedFunctionWithCreationOfRemovedOpenClass() }
+    expectFailure(linkage("Constructor 'OpenClassInheritedFromRemovedOpenClass.<init>' can not be called: Class 'OpenClassInheritedFromRemovedOpenClass' uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithCreationOfOpenClassImpl() }
+    expectFailure(linkage("Reference to constructor 'RemovedOpenClass.<init>' can not be evaluated: No constructor found for symbol '/RemovedOpenClass.<init>'")) { inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() }
+    expectFailure(linkage("Reference to constructor 'OpenClassInheritedFromRemovedOpenClass.<init>' can not be evaluated: Class 'OpenClassInheritedFromRemovedOpenClass' uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithCreationOfOpenClassImplThroughReference() }
+    expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via anonymous object)")) { inlinedFunctionWithRemovedOpenClassAnonymousObject() }
+    expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via anonymous object)")) { inlinedFunctionWithOpenClassImplAnonymousObject() }
 }
