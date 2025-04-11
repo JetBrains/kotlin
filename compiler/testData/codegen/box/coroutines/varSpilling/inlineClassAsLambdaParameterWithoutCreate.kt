@@ -14,9 +14,11 @@ suspend fun suspendHere(): Unit = suspendCoroutineUninterceptedOrReturn { x ->
 @JvmInline
 value class IC(val s: String)
 
-fun builder(c: suspend (ic: IC) -> Unit) {
-    c.startCoroutine(IC("OK"), Continuation(EmptyCoroutineContext) {
-        it.getOrThrow()
+fun builder(c: suspend (ic: IC, Unit, Unit) -> Unit) {
+    suspend {
+        c(IC("OK"), Unit, Unit)
+    }.startCoroutine(Continuation(EmptyCoroutineContext) {
+            it.getOrThrow()
     })
 }
 
@@ -24,7 +26,7 @@ var c: Continuation<Unit>? = null
 
 fun box() : String {
     var res = "FAIL"
-    builder { ic ->
+    builder { ic, _, _ ->
         res = ic.s
         suspendHere()
         // No NPE here.

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.continuationClassVarsCountByType
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -182,20 +183,21 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             val varsCountByType = HashMap<Type, Int>()
 
             val parametersFields = function.parameters.map {
+                val unboxedType = it.type.unboxInlineClass()
                 val field = if (it in usedParams) addField {
-                    val normalizedType = context.defaultTypeMapper.mapType(it.type).normalize()
+                    val normalizedType = context.defaultTypeMapper.mapType(unboxedType).normalize()
                     val index = varsCountByType[normalizedType]?.plus(1) ?: 0
                     varsCountByType[normalizedType] = index
                     // Rename `$this` to avoid being caught by inlineCodegenUtils.isCapturedFieldName()
                     name = Name.identifier("${normalizedType.descriptor[0]}$$index")
-                    type = if (normalizedType == AsmTypes.OBJECT_TYPE) context.irBuiltIns.anyNType else it.type
+                    type = if (normalizedType == AsmTypes.OBJECT_TYPE) context.irBuiltIns.anyNType else unboxedType
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
                     visibility =
                         if (it.kind == IrParameterKind.Regular) JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                         else DescriptorVisibilities.PRIVATE
                 } else null
-                ParameterInfo(field, it.type, it.name, it.origin)
+                ParameterInfo(field, unboxedType, it.type, it.name, it.origin)
             }
 
             this.continuationClassVarsCountByType = varsCountByType
@@ -237,17 +239,12 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         endOffset = UNDEFINED_OFFSET,
                         origin = JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA_PARAMETER,
                         name = param.name,
-                        type = param.type
+                        type = param.fieldType
                     ).apply {
                         context.createIrBuilder(this@override.symbol).apply {
                             val receiver = irGet(dispatchReceiverParameter!!)
                             initializer = irBlock(resultType = type) {
-                                if (type.isInlineClassType()) {
-                                    val tmp = irTemporary(irGetField(receiver, param.field!!))
-                                    +irIfNull(type, irGet(tmp), irNull(), irGet(tmp))
-                                } else {
-                                    +irGetField(receiver, param.field!!)
-                                }
+                                +irGetField(receiver, param.field!!, param.fieldType)
                             }
                         }
                     }
@@ -260,7 +257,11 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression
                         val lvar = localVals[parameter.indexInParameters] ?: return expression
-                        return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
+                        val param = parameterInfos[parameter.indexInParameters]
+                        // suspend lambda's parameters are all Any?, meaning, that inline classes are boxed
+                        // however, lowered suspend lambda's fields contain unboxed inline classes.
+                        // Thus, we need to update all types of suspend lambda argument's usages.
+                        return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol).coerceToBoxedIfNeeded(param)
                     }
                 }, null)
 
@@ -346,11 +347,27 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         val result = irTemporary(constructorCall, "result")
         for ((index, field) in fieldsForUnbound.withIndex()) {
             if (field.isUsed) {
-                +irSetField(irGet(result), field.field!!, irGet(nonDispatchParameters[index]))
+                +irSetField(irGet(result), field.field!!, irGet(nonDispatchParameters[index]).coerceToUnboxedIfNeeded(field))
             }
         }
         return irGet(result)
     }
+
+    private fun IrExpression.coerceToUnboxedIfNeeded(field: ParameterInfo): IrExpression =
+        if (!field.boxedType.isInlineClassType()) this
+        else IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.fieldType, context.symbols.unsafeCoerceIntrinsic).apply {
+            typeArguments[0] = field.boxedType
+            typeArguments[1] = field.fieldType
+            arguments[0] = this@coerceToUnboxedIfNeeded
+        }
+
+    private fun IrExpression.coerceToBoxedIfNeeded(field: ParameterInfo): IrExpression =
+        if (!field.boxedType.isInlineClassType()) this
+        else IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.boxedType, context.symbols.unsafeCoerceIntrinsic).apply {
+            typeArguments[0] = field.fieldType
+            typeArguments[1] = field.boxedType
+            arguments[0] = this@coerceToBoxedIfNeeded
+        }
 
     private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression {
         val argument = irCall(
@@ -385,6 +402,12 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         }
 }
 
-private data class ParameterInfo(val field: IrField?, val type: IrType, val name: Name, val origin: IrDeclarationOrigin) {
+private data class ParameterInfo(
+    val field: IrField?,
+    val fieldType: IrType,
+    val boxedType: IrType,
+    val name: Name,
+    val origin: IrDeclarationOrigin,
+) {
     val isUsed = field != null
 }

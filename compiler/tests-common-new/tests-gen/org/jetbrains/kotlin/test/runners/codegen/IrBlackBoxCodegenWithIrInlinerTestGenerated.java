@@ -15969,6 +15969,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       }
 
       @Test
+      @TestMetadata("inlineClassAsLambdaParameterWithoutCreate.kt")
+      public void testInlineClassAsLambdaParameterWithoutCreate() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/inlineClassAsLambdaParameterWithoutCreate.kt");
+      }
+
+      @Test
       @TestMetadata("kt19475.kt")
       public void testKt19475() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt19475.kt");
@@ -15996,6 +16002,18 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       @TestMetadata("kt75926.kt")
       public void testKt75926() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt75926.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaInlineClassParamUnspill.kt")
+      public void testLambdaInlineClassParamUnspill() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/lambdaInlineClassParamUnspill.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaInlineClassParamUnspillWithoutCreate.kt")
+      public void testLambdaInlineClassParamUnspillWithoutCreate() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/lambdaInlineClassParamUnspillWithoutCreate.kt");
       }
 
       @Test

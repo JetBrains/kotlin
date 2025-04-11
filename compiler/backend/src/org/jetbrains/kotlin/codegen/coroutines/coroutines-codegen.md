@@ -1035,6 +1035,12 @@ receiver, `J$0` - the first argument, `L$1` - the second one.
 This way, we can reuse spilled variables cleanup logic for parameters. If we used separate fields for parameters, we would need to manually
 push `null` to them as we do for spilled variable fields if we do not need them anymore.
 
+We unspill the lambda parameter before state-machine in `invokeSuspend` - this way, their values are visible in debugger.
+
+If lambda parameter is unboxed inline class with reference underlying type, we store only unboxed value.
+
+We store the parameters in `create`, if there is one, or in `invoke`'s mangled function.
+
 #### invoke
 `invoke` is basically `startCoroutine` without an interception. In `invoke`, we call `create` and resume a new instance with dummy value by
 calling `invokeSuspend`. We cannot just call `invokeSuspend` without calling the constructor first because that would not create a
