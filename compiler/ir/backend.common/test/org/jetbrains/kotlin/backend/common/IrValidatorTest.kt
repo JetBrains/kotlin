@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -1355,7 +1356,7 @@ class IrValidatorTest {
         )
     }
 
-    @OptIn(DelicateIrParameterIndexSetter::class)
+    @OptIn(DelicateIrParameterIndexSetter::class, DeprecatedForRemovalCompilerApi::class)
     @Test
     fun `functions with incorrect parameter index are reported`() {
         val file = createIrFile()
