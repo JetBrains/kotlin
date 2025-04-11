@@ -44,9 +44,21 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("externalFunctionsWithContextParameters.kt")
+  public void testExternalFunctionsWithContextParameters() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalFunctionsWithContextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("externalInterfaceClassLiteral.kt")
   public void testExternalInterfaceClassLiteral() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalInterfaceClassLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("externalNestedTypealias.kt")
+  public void testExternalNestedTypealias() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalNestedTypealias.kt");
   }
 
   @Test
@@ -511,6 +523,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("expectActualExports.kt")
     public void testExpectActualExports() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/expectActualExports.kt");
@@ -532,6 +550,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("jsExportOnNestedDeclarations.kt")
     public void testJsExportOnNestedDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNestedDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypealias.kt")
+    public void testNestedTypealias() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nestedTypealias.kt");
     }
 
     @Test
@@ -637,6 +661,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     public void testCompileTimeStringWithTopLevelVal() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/compileTimeStringWithTopLevelVal.kt");
     }
+
+    @Test
+    @TestMetadata("nestedTypealias.kt")
+    public void testNestedTypealias() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/nestedTypealias.kt");
+    }
   }
 
   @Nested
@@ -662,6 +692,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @Test
     public void testAllFilesPresentInModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/contextParameters.kt");
     }
 
     @Test
@@ -704,6 +740,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("prohibitedOnNonNative.kt")
     public void testProhibitedOnNonNative() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/prohibitedOnNonNative.kt");
+    }
+
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/typealias.kt");
     }
 
     @Test

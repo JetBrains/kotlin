@@ -33,5 +33,18 @@ declare namespace JS_TESTS {
         function createList(): kotlin.collections.KtMutableList<any /*UnknownType **/>;
         function defaultParametersAtTheBegining(a: string | undefined, b: string): string;
         function nonDefaultParameterInBetween(a: string | undefined, b: string, c?: string): string;
+        class Scope1 {
+            constructor(a: string);
+            get a(): string;
+            getA(): string;
+        }
+        class Scope2 {
+            constructor(a: string);
+            get a(): string;
+            getA(): string;
+        }
+        function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;
+        function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
+        function getWithExtension(_this_: foo.Scope1): string;
     }
 }

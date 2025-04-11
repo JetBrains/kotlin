@@ -7513,6 +7513,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("js/js.translator/testData/box/jsCode/contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("continue.kt")
     public void testContinue() {
       runTest("js/js.translator/testData/box/jsCode/continue.kt");

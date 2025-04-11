@@ -6,6 +6,8 @@
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // WITH_STDLIB
+// LANGUAGE: +ContextParameters
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // FILE: functions.kt
 
 @file:JsExport
@@ -78,3 +80,25 @@ fun defaultParametersAtTheBegining(a: String = "Default Value", b: String) = "$a
 
 
 fun nonDefaultParameterInBetween(a: String = "Default A", b: String, c: String = "Default C") = "$a and $b and $c"
+
+// KQA-1835
+
+class Scope1(val a: String) {
+    fun getA(): String = a
+}
+
+
+class Scope2(val a: String) {
+    fun getA(): String = a
+}
+
+
+context(scope1: Scope1, scope2: Scope2)
+fun concatWithContextParameters() = scope1.getA() + scope2.getA()
+
+
+context(scope1: Scope1)
+fun Scope2.concatWithExtensionAndContextParameter() = scope1.getA() + getA()
+
+        
+fun Scope1.getWithExtension() = getA()

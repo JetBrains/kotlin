@@ -15,6 +15,13 @@ import formatList = JS_TESTS.foo.formatList;
 import createList = JS_TESTS.foo.createList;
 import defaultParametersAtTheBegining = JS_TESTS.foo.defaultParametersAtTheBegining;
 import nonDefaultParametersInBetween = JS_TESTS.foo.nonDefaultParameterInBetween;
+import concatWithContextParameters = JS_TESTS.foo.concatWithContextParameters;
+import Scope1 = JS_TESTS.foo.Scope1;
+import Scope2 = JS_TESTS.foo.Scope2;
+import concatWithExtensionAndContextParameter = JS_TESTS.foo.concatWithExtensionAndContextParameter;
+import getWithExtension = JS_TESTS.foo.getWithExtension;
+import context = JS_TESTS.foo.context;
+
 function assert(condition: boolean) {
     if (!condition) {
         throw "Assertion failed";
@@ -66,6 +73,17 @@ function box(): string {
     assert(nonDefaultParametersInBetween("A",  "B") == "A and B and Default C")
     assert(nonDefaultParametersInBetween(undefined,  "B", "C") == "Default A and B and C")
     assert(nonDefaultParametersInBetween(undefined,  "B") == "Default A and B and Default C")
+
+    assert(concatWithContextParameters(new Scope1("A"), new Scope2("B")) == "AB")
+    assert(concatWithContextParameters(new Scope1("B"), new Scope2("A")) == "BA")
+
+    assert(concatWithExtensionAndContextParameter(new Scope1("A"), new Scope2("B")) == "AB")
+    assert(concatWithExtensionAndContextParameter(new Scope1("B"), new Scope2("A")) == "BA")
+
+    assert(getWithExtension(new Scope1("A")) == "A")
+
+    assert(context(new Scope1("A"), new Scope2("B"), concatWithContextParameters) == "AB")
+    assert(context(new Scope1("B"), new Scope2("A"), concatWithContextParameters) == "BA")
 
     return "OK";
 }
