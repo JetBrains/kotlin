@@ -22,6 +22,9 @@ dependencies {
 
 optInToUnsafeDuringIrConstructionAPI()
 
+// This is only a temporary (~days) measure to allow deprecating old IR parameter API (KT-73189) just before we finish the migration (KT-73226).
+optInTo("org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi")
+
 sourceSets {
     "main" { projectDefault() }
     "test" {}

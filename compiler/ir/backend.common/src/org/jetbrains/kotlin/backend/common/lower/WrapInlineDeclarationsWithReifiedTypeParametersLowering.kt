@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * with substituted types.
  */
 @PhaseDescription("WrapInlineDeclarationsWithReifiedTypeParametersLowering")
+// This is only a temporary (~days) measure to allow deprecating old IR parameter API (KT-73189) just before we finish the migration (KT-74392).
+@OptIn(org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi::class)
 class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: LoweringContext) : BodyLoweringPass {
     private val irFactory
         get() = context.irFactory
