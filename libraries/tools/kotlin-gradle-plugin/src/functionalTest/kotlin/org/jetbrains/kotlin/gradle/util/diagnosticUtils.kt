@@ -80,7 +80,9 @@ internal fun Project.checkDiagnostics(
 
 // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
 // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
-internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic)) {
+internal val defaultFilteredDiagnostics = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic)
+
+internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = defaultFilteredDiagnostics) {
     val actualDiagnostics =
         kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
     assertTrue(

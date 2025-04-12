@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 /**
  * The fragment identifier is recorded as umanifest fragment identifier and as the fragment directory name in the Uklib archive
  */
-internal val KotlinSourceSet.fragmentIdentifier: String
+private val KotlinSourceSet.uklibFragmentIdentifier: String
     get() = name
-internal val KotlinCompilation<*>.fragmentIdentifier: String
-    get() = defaultSourceSet.fragmentIdentifier
+internal val KotlinCompilation<*>.uklibFragmentIdentifier: String
+    get() = defaultSourceSet.uklibFragmentIdentifier

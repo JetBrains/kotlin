@@ -25,6 +25,7 @@ import kotlin.test.assertEquals
 @ExperimentalWasmDsl
 class UklibFromKGPFragmentsTests {
 
+
     @Test
     fun `uklib fragments - single target project has a single fragment`() {
         buildProjectWithMPP(
@@ -109,13 +110,35 @@ class UklibFromKGPFragmentsTests {
             }
             // Check that bamboo refinement is not emitted; we must check for bamboo refinement at execution
             assertNoDiagnostics(
-                filterDiagnosticIds = listOf(
-                    KotlinToolingDiagnostics.OldNativeVersionDiagnostic,
+                filterDiagnosticIds = defaultFilteredDiagnostics + listOf(
                     KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed,
                     KotlinToolingDiagnostics.UnusedSourceSetsWarning,
                 )
             )
         }
+    }
+
+    @Test
+    fun `uklib fragments - orphan doesn't produce a configuration time exception - because it is never traversed as a Uklib fragment`() {
+        buildProjectWithMPP(
+            preApplyCode = {
+                setUklibPublicationStrategy()
+                enableCrossCompilation()
+            }
+        ) {
+            kotlin {
+                iosArm64()
+                iosX64()
+                jvm()
+
+                sourceSets.create("orphan")
+            }
+        }.evaluate().assertNoDiagnostics(
+            filterDiagnosticIds = defaultFilteredDiagnostics + listOf(
+                KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed,
+                KotlinToolingDiagnostics.UnusedSourceSetsWarning,
+            )
+        )
     }
 
     @Test
@@ -276,8 +299,7 @@ class UklibFromKGPFragmentsTests {
                 iosX64()
             }
         }.evaluate().assertNoDiagnostics(
-            filterDiagnosticIds = listOf(
-                KotlinToolingDiagnostics.OldNativeVersionDiagnostic,
+            filterDiagnosticIds = defaultFilteredDiagnostics + listOf(
                 KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed,
                 KotlinToolingDiagnostics.UnusedSourceSetsWarning,
             )
