@@ -15,7 +15,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttrib
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_API
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_METADATA
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
 internal val UklibConsumptionSetupAction = KotlinProjectSetupAction {
@@ -91,7 +96,6 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
          */
         /**
          * FIXME: This set of configurations is not correct. At the least:
-         * - KotlinNativeTarget binaries have additional export configuration that must be able to resolve a Uklib
          * - hostSpecificMetadataConfiguration probably must be able to resolve leniently
          */
         target.compilations.configureEach { compilation ->
@@ -106,6 +110,29 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
                 compilation.internal.configurations.runtimeDependencyConfiguration?.let { it to usageByName(KOTLIN_UKLIB_RUNTIME)},
             ).forEach {
                 it.first.applyUklibAttributes(it.second, uklibFragmentPlatformAttribute)
+            }
+        }
+
+        if (target is KotlinNativeTarget) {
+            target.binaries.all {
+                val uklibResolvingConfiguration = when (it) {
+                    is Framework -> it.exportConfigurationName
+                    is AbstractNativeLibrary -> it.exportConfigurationName
+                    is AbstractExecutable -> {
+                        null
+                    }
+                }
+                if (uklibResolvingConfiguration != null) {
+                    configurations.named(uklibResolvingConfiguration).configure {
+                        it.applyUklibAttributes(usageByName(KOTLIN_UKLIB_API), uklibFragmentPlatformAttribute)
+                    }
+                }
+            }
+            target.compilations.configureEach { compilation ->
+                compilation.resolvableApiConfiguration().applyUklibAttributes(
+                    usageByName(KOTLIN_UKLIB_API),
+                    uklibFragmentPlatformAttribute,
+                )
             }
         }
 

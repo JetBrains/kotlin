@@ -86,8 +86,10 @@ internal val KotlinNativeConfigureBinariesSideEffect = KotlinTargetSideEffect<Ko
  * Creates a resolvable configuration from non-resolvable "api" of [KotlinNativeCompilation]
  * Kotlin Native requires that only API dependencies can be exported. So we need to resolve API-only dependencies
  * and exported dependencies to check that.
+ *
+ * FIXME: KT-76704 consider removing this configuration and the validation that exported klibs are present in the api scope configuration
  */
-private fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration {
+internal fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration {
     val apiConfiguration = compilation.internal.configurations.apiConfiguration
     return project
         .configurations.maybeCreateResolvable(lowerCamelCaseName("resolvable", apiConfiguration.name)) {
