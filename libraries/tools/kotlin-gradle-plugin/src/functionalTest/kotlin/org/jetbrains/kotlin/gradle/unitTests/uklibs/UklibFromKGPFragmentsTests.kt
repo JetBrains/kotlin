@@ -46,20 +46,6 @@ class UklibFromKGPFragmentsTests {
                     ),
                     multiplatformExtension.testFragments()
                 )
-                assertEquals<PrettyPrint<List<TestRefineesFragment>>>(
-                    mutableListOf(
-                        TestRefineesFragment(
-                            identifier = "iosArm64Main",
-                            refinees = mutableSetOf(
-                                "appleMain",
-                                "commonMain",
-                                "iosMain",
-                                "nativeMain",
-                            ),
-                        ),
-                    ).prettyPrinted,
-                    multiplatformExtension.refinees().prettyPrinted,
-                )
             }
         }
     }
@@ -119,51 +105,6 @@ class UklibFromKGPFragmentsTests {
                         )
                     ),
                     multiplatformExtension.testFragments().toSet()
-                )
-                assertEquals<PrettyPrint<List<TestRefineesFragment>>>(
-                    mutableListOf(
-                        TestRefineesFragment(
-                            identifier = "iosArm64Main",
-                            refinees = mutableSetOf(
-                                "customAppleMain",
-                                "customIosMain",
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "iosX64Main",
-                            refinees = mutableSetOf(
-                                "customAppleMain",
-                                "customIosMain",
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "jvmMain",
-                            refinees = mutableSetOf(
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "customAppleMain",
-                            refinees = mutableSetOf(
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "customIosMain",
-                            refinees = mutableSetOf(
-                                "customAppleMain",
-                                "customMainMain",
-                            ),
-                        ),
-                        TestRefineesFragment(
-                            identifier = "customMainMain",
-                            refinees = mutableSetOf(
-                            ),
-                        ),
-                    ).prettyPrinted,
-                    multiplatformExtension.refinees().prettyPrinted,
                 )
             }
             // Check that bamboo refinement is not emitted; we must check for bamboo refinement at execution
@@ -355,18 +296,4 @@ class UklibFromKGPFragmentsTests {
                 attributes = it.fragment.get().attributes,
             )
         }
-
-    internal data class TestRefineesFragment(
-        val identifier: String,
-        val refinees: Set<String>,
-    )
-
-    private suspend fun KotlinMultiplatformExtension.refinees(): List<TestRefineesFragment> =
-        validateKgpModelIsUklibCompliantAndCreateKgpFragments()
-            .map {
-                TestRefineesFragment(
-                    identifier = it.fragment.get().identifier,
-                    refinees = it.refineesTransitiveClosure,
-                )
-            }
 }

@@ -31,9 +31,6 @@ import java.io.File
 
 internal data class KGPUklibFragment(
     val fragment: Provider<UklibFragment>,
-    // These must be transitive because we will filter them at execution time for skipped metadata fragments
-    val refineesTransitiveClosure: Set<String>,
-    val outputFile: Provider<File>,
     val compilation: KotlinCompilation<*>,
 )
 
@@ -104,8 +101,6 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                         file = it,
                     )
                 },
-                refineesTransitiveClosure = metadataCompilation.refineesTransitiveClosure(),
-                outputFile = artifactProvider,
                 compilation = metadataCompilation,
             )
         )
@@ -146,15 +141,9 @@ private fun kgpUklibFragment(
                 file = it,
             )
         },
-        refineesTransitiveClosure = mainCompilation.refineesTransitiveClosure(),
-        outputFile = fileProvider,
         compilation = mainCompilation,
     )
 }
-
-private fun KotlinCompilation<*>.refineesTransitiveClosure(): Set<String> = internal.allKotlinSourceSets
-    .filterNot { it == defaultSourceSet }
-    .map { it.metadataFragmentIdentifier }.toSet()
 
 /**
  * FIXME: Write FT with necessary KGP source set structures
